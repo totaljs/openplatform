@@ -1,11 +1,70 @@
-NEWSCHEMA('Application').make(function(schema) {
+global.APPLICATIONS = [];
 
-	schema.define('version', 'String(10)');
-	schema.define('name', 'String(80)', true);
-	schema.define('picture', 'String(500)');
-	schema.define('author', 'String(60)');
-	schema.define('description', 'String(500)');
-	schema.define('email', 'Email', true);
-	schema.define('roles', '[String(50)]', true);
+function Application() {
 
-});
+	this.name = '';
+	this.picture = '';
+	this.version = '';
+	this.author = '';
+	this.description = '';
+	this.email = '';
+	this.roles = '';
+	this.url = '';
+	this.status = '';
+
+	this.online = false;          // Current application state according `openplatform` url adress
+	this.notifications = false;   // Can create notifications for users
+	this.serviceworker = false;   // Can communicate via API
+
+	// Custom headers
+	this.headers = {};
+	this.cookies = {};
+
+	// Meta data
+	this.openplatform = 'url-to-openplatform.json';
+	this.datecreated = null;
+	this.dateupdated = null;
+}
+
+/**
+ * Downloads info about app
+ * @param {Function(err)} callback
+ * @return {Application}
+ */
+Application.prototype.reload = function(callback) {
+	var self = this;
+	U.request(self.openplatform, ['get'], null, function(err, response) {
+
+		self.dateupdated = new Date();
+
+		if (err) {
+			this.online = false;
+			this.status = err.toString();
+			return callback && callback(err);
+		}
+
+		var app = response.parseJSON();
+
+		if (!app || !app.openplatform) {
+			this.online = false;
+			this.status = response;
+			return callback && callback(err);
+		}
+
+		app = app.openplatform;
+
+		self.name = app.name;
+		self.picture = app.picture;
+		self.description = app.description;
+		self.roles = app.roles;
+		self.url = app.url;
+		self.version = app.version;
+		self.author = app.author;
+		self.status = 'ready';
+		self.online = true;
+
+		callback && callback(null, self);
+
+	}, self.cookies, self.headers);
+	return self;
+};
