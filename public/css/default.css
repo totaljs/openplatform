@@ -1,0 +1,4 @@
+/*auto*/
+
+html, body { height: 100%; position: relative; }
+.notifications { height: 100%; background-color: red; width: 200px; float: right; }

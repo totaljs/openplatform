@@ -13,4 +13,13 @@ function User() {
 	this.email = '';
 	this.login = '';
 	this.password = '';
+
+	this.datecreated = null;
+	this.datelogged = null;
+	this.dateupdated = null;
+
+	// Internal settings
+	this.online = false;
+	this.sounds = true;
+	this.notifications = true;
 }

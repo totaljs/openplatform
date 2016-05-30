@@ -10,9 +10,10 @@ function Application() {
 	this.email = '';
 	this.roles = '';
 	this.url = '';
+	this.serviceurl = '';
 	this.status = '';
 
-	this.online = false;          // Current application state according `openplatform` url adress
+	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
 	this.serviceworker = false;   // Can communicate via API
 
