@@ -1,7 +1,9 @@
-name                            : total.js
-author                          : You company name
-version                         : 1.01
+name                            : Open Platform
+version                         : 0.0.1
+author                          : Peter Širka
 secret                          : secret-key-for-web
+
+url                             : http://127.0.0.1:8000
 
 // Mail settings
 mail.smtp                       : smtp.yourwebsite.com

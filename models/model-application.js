@@ -16,6 +16,8 @@ function Application() {
 	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
 	this.serviceworker = false;   // Can communicate via API
+	this.users = false;
+	this.applications = false;
 
 	// Custom headers
 	this.headers = {};
