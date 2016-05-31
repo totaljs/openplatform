@@ -126,18 +126,18 @@ COMPONENT('validation', function() {
 	};
 });
 
+/**
+ * Checkbox
+ * @version 1.0.0
+ */
 COMPONENT('checkbox', function() {
 
 	var self = this;
 	var required = self.attr('data-required') === 'true';
-	var input;
 
 	self.validate = function(value) {
 		var is = false;
 		var type = typeof(value);
-
-		if (input.prop('disabled'))
-			return true;
 
 		if (type === 'undefined' || type === 'object')
 			value = '';
@@ -152,8 +152,14 @@ COMPONENT('checkbox', function() {
 
 	self.make = function() {
 		self.element.addClass('ui-checkbox');
-		self.html('<label><input type="checkbox" data-component-bind="" /><span{1}>{0}</span></label>'.format(self.html(), required ? ' class="ui-checkbox-label-required"' : ''));
-		input = self.find('input');
+		self.html('<div><i class="fa fa-check"></i></div><span{1}>{0}</span>'.format(self.html(), required ? ' class="ui-checkbox-label-required"' : ''));
+		self.element.on('click', function() {
+			self.getter(!self.get(), 2, true);
+		});
+	};
+
+	self.setter = function(value) {
+		self.element.toggleClass('ui-checkbox-checked', value ? true : false);
 	};
 });
 
@@ -570,10 +576,6 @@ COMPONENT('cookie', function() {
 	};
 });
 
-// ==========================================================
-// @{BLOCK manager}
-// ==========================================================
-
 COMPONENT('expander', function() {
 	var self = this;
 	self.readonly();
@@ -725,16 +727,18 @@ COMPONENT('textboxtags', function() {
 });
 
 COMPONENT('page', function() {
+
 	var self = this;
 	var isProcessed = false;
 	var isProcessing = false;
 	var reload = self.attr('data-reload');
 
+	self.readonly();
+
 	self.hide = function() {
 		self.set('');
 	};
 
-	self.getter = null;
 	self.setter = function(value) {
 
 		if (isProcessing)
@@ -745,17 +749,14 @@ COMPONENT('page', function() {
 
 		if (isProcessed || !is) {
 			el.toggleClass('hidden', !is);
-
 			if (is && reload)
 				self.get(reload)();
-
 			return;
 		}
 
-		var loading = FIND('loading');
-		loading.show();
+		SETTER('loading', 'show');
 		isProcessing = true;
-		INJECT(el.attr('data-template'), el, function() {
+		IMPORT(el.attr('data-template'), el, function() {
 			isProcessing = false;
 
 			var init = el.attr('data-init');
@@ -770,7 +771,7 @@ COMPONENT('page', function() {
 
 			isProcessed = true;
 			el.toggleClass('hidden', !is);
-			loading.hide(1200);
+			SETTER('loading', 'hide', 1200);
 		});
 	};
 });
@@ -2270,9 +2271,6 @@ COMPONENT('pagination', function() {
 			self.element.toggleClass('hidden', true);
 	};
 });
-// ==========================================================
-// @{end}
-// ==========================================================
 
 jC.parser(function(path, value, type) {
 

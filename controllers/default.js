@@ -1,8 +1,3 @@
 exports.install = function() {
-	F.route('/', view_index);
+	F.route('/*', 'index');
 };
-
-function view_index() {
-	var self = this;
-	self.view('index');
-}

@@ -3,9 +3,6 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 button { outline: 0; }
 .hidden { display: none; }
 
-/* ==========================================================
- * @{BLOCK manager}
- * ========================================================== */
 .ui-grid-page { font-size: 14px; color: silver; margin-bottom: 10px; }
 .ui-grid tbody tr:hover { background-color: #F8F8F8; }
 .ui-grid tbody tr:first-child td { border-top: 0; }
@@ -155,7 +152,7 @@ button { outline: 0; }
 .ui-confirm-visible { opacity: 1; }
 .ui-confirm-visible .ui-confirm-body { -webkit-transform: scale(1); transform: scale(1); }
 
-.ui-loading { position: fixed; width: 100%; height: 100%; background-color: rgba(255,255,255,0.8); background-image: url(../img/preloader.gif); background-repeat: no-repeat; background-position: 50% 50%; left: 0; top: 0; z-index: 100; }
+.ui-loading { position: fixed; width: 100%; height: 100%; background-color: rgba(255,255,255,0.8); background-image: url(../img/preloader.gif); background-repeat: no-repeat; background-position: 95% 95%; left: 0; top: 0; z-index: 100; }
 
 .ui-pagination { height: 60px; border-top: 2px solid #F0F0F0; padding-top: 20px; margin-top: 20px; }
 .ui-pagination nav { border: 1px solid #E0E0E0; position: relative; display: inline-block; border-radius: 3px; }
@@ -171,9 +168,6 @@ button { outline: 0; }
     .ui-pagination div { float: none; margin-bottom: 10px; }
     .ui-confirm button { display: block; margin: 10px 0 0; display: block; width: 100%; }
 }
-/* ==========================================================
- * @{end}
- * ========================================================== */
 
 .ui-textbox-container * { box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
 .ui-textbox { border: 2px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
@@ -220,10 +214,12 @@ button { outline: 0; }
 .ui-disabled { background-color: #F0F0F0; cursor: not-allowed; }
 .ui-disabled > div { background-color: #F0F0F0; }
 
-.ui-checkbox { margin-bottom: 3px; line-height: 16px; font-size: 12px; }
-.ui-checkbox label { cursor: pointer; }
-.ui-checkbox label span { cursor: pointer; }
-.ui-checkbox input { vertical-align: middle; cursor: pointer; }
+.ui-checkbox { margin-bottom: 5px; line-height: 10px; font-size: 14px; }
+.ui-checkbox span { cursor: pointer; vertical-align: middle; }
+.ui-checkbox div { position: relative; display: inline-block; width: 18px; height: 18px; border: 2px solid #E0E0E0; margin-right: 8px; vertical-align: middle; cursor: pointer; color: white; font-size: 13px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 3px; }
+.ui-checkbox .fa { display: none; }
+.ui-checkbox-checked div { background-color: #017CCA; border-color: #017CCA; }
+.ui-checkbox-checked .fa { display: block !important; }
 label { vertical-align: middle; }
 label input { vertical-align: middle; margin-right: 3px; }
 label span { vertical-align: middle; }

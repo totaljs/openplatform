@@ -1,5 +1,5 @@
 @{layout('')}
-@{title(CONFIG('name') + ' v' + CONFIG('version'))}
+@{title(CONFIG('name'))}
 
 <!DOCTYPE html>
 <html>
@@ -16,82 +16,55 @@
 </head>
 <body>
 
-<!--
+	<div data-component="message" data-button="@(Close)"></div>
+	<div data-component="confirm"></div>
+	<div data-component="loading" class="ui-loading"></div>
+
 	<header>
-		<svg width="60px" height="60px" viewBox="-26 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg>
-		<div>Open Platform <b>v@{config.version}</b></div>
+		<div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div>
+		<nav class="menu">
+			<a href="/" class="jR">Dashboard</a>
+			<a href="/settings/applications/" class="jR">Applications</a>
+			<a href="/settings/members/" class="jR">Members</a>
+		</nav>
+		<div class="user">Peter Širka</div>
 	</header>
-	<div><svg class="w100p" viewBox="0 0 1170 30" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h1170s-441.424 30-578.518 30c-137.094 0-591.482-30-591.482-30z" fill="#F8F8F8"/></svg></div>
-	<br />
-	<br />
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-9">
-				<section>
-					<label>Applications</label>
-					<div>
-						<ul class="applications">
-							<li><img src="http://iosicongallery.com/img/512/placeboard-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-							<li><img src="http://iosicongallery.com/img/512/maxcurve-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-							<li class="offline"><img src="http://iosicongallery.com/img/512/dorado-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-							<li><img src="http://iosicongallery.com/img/512/weather-fine-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-							<li><img src="http://iosicongallery.com/img/512/music-paradise-player-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-							<li><img src="http://iosicongallery.com/img/512/microsoft-outlook-email-calendar-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-						</ul>
-					</div>
-				</section>
-			</div>
-			<div class="col-md-3">
 
-			</div>
-		</div>
-	</div>
--->
+	<div data-component="page" data-component-path="common.page" data-if="dashboard" class="hidden" data-template="/templates/dashboard.html"></div>
+	<div data-component="page" data-component-path="common.page" data-if="applications" class="hidden" data-template="/templates/applications.html"></div>
+	<div data-component="page" data-component-path="common.page" data-if="members" class="hidden" data-template="/templates/members.html"></div>
 
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-9">
-				<div class="padding">
+	<script>
 
-					<header>
-						<div><svg width="60px" height="60px" viewBox="-26 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div>
-						<h1><b>Open</b> Platform <b>v@{config.version}</b></h1>
-					</header>
+		var common = {};
 
-					<!--
-					<section>
-						<label><i class="fa fa-spin fa-refresh"></i>Running applications</label>
-						<div>
-							<ul class="applications">
-								<li><img src="http://iosicongallery.com/img/512/placeboard-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-								<li><img src="http://iosicongallery.com/img/512/maxcurve-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-							</ul>
-						</div>
-					</section>
-					<br />
-					-->
+		var user = {};
+		user.sounds = true;
+		user.notifications = true;
 
-					<section>
-						<label><i class="fa fa-th"></i>Applications</label>
-						<div>
-							<ul class="applications">
-								<li><img src="http://iosicongallery.com/img/512/placeboard-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-								<li><img src="http://iosicongallery.com/img/512/maxcurve-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-								<li class="offline"><img src="http://iosicongallery.com/img/512/dorado-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-								<li><img src="http://iosicongallery.com/img/512/weather-fine-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-								<li><img src="http://iosicongallery.com/img/512/music-paradise-player-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-								<li><img src="http://iosicongallery.com/img/512/microsoft-outlook-email-calendar-2016.png" alt="" border="0" class="img-responsive img-rounded" />Todomator<span>v1.0.0</span></li>
-							</ul>
-						</div>
-					</section>
-				</div>
-			</div>
- 		</div>
-	</div>
+		jR.route('/', function() {
+			SET('common.page', 'dashboard');
+		});
 
-	<div class="notifications">
-		<label><i class="fa fa-bell"></i>@(Notifications)</label>
-	</div>
+		jR.route('/settings/applications/', function() {
+			SET('common.page', 'applications');
+		});
+
+		jR.route('/settings/members/', function() {
+			SET('common.page', 'members');
+		});
+
+		jR.on('location', function(url) {
+			$('.menu').find('a').each(function() {
+				var el = $(this);
+				el.toggleClass('selected', el.attr('href') === url);
+			});
+		});
+
+		$('.jR').jRouting(true);
+
+	</script>
+
 
 </body>
 </html>

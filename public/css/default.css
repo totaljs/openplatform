@@ -1,19 +1,36 @@
 /*auto*/
 
 $font    : 'Source Sans Pro';
-$color   : #408EB9;
+$color   : #017CCA;
+$linear  : linear-gradient(#F0F0F0,white);
 
-html,body { height: 100%; overflow: hidden; }
-body { font-smoothing: antialiased; background-color: #F8F8F8; margin: 0; padding: 0; }
+html,body { height: 100%; }
+body { font-smoothing: antialiased; background-color: #F0F0F0; margin: 0; padding: 0; }
 
-header { height: 80px; }
+header { height: 40px; background-color: white; padding: 0; margin: 0; }
 header div { float: left; }
-header h1 { float: left; margin: 15px 0 0 8px; }
+
+.logo { float: left; height: 40px; padding: 7px 0 0 8px; width: 50px; text-align: center; border-right: 1px solid #F0F0F0; }
+.user { float: right; padding: 13px 20px 0 0; color: gray; font-size: 11px; }
+
 h1 { font-weight: 400; font-family: $font; margin: 0 0 20px; padding: 0 0 10px; color: $color; font-size: 16px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 h1 b { font-weight: 700; }
+
+.menu { float: left; margin: 0; font-size: 12px; padding: 0; }
+.menu a { position: relative; display: inline-block; width: 120px; border-right: 1px solid #F0F0F0; text-align: center; padding: 11px 0 12px; color: gray; font-family: $font; text-transform: uppercase; }
+.menu a:hover { text-decoration: none; background-color: #F8F8F8; }
+.menu .selected { background: $linear; color: black; font-weight: 700; }
+
+.npb { padding-bottom: 0 !important; }
+.np { padding: 0 !important; }
+
+.widgets { background: white; padding: 30px 0 12px; }
+.widget { background-color: white; font-size: 11px; padding: 20px; border-radius: 4px; }
+
 .w100p { width: 100%; }
 
-.version { font-size: 11px; margin: 10px 0 20px 0; color: silver; }
+.version { font-size: 11px; margin: 5px 0 20px 15px; color: #A0A0A0; }
+.version * { vertical-align: middle; }
 
 .mainmenu { float: left; margin: 25px 0 0 30px; }
 .mainmenu .fa { margin-right: 5px; }
@@ -39,19 +56,21 @@ h1 b { font-weight: 700; }
 .usermenu-logout { padding: 8px 10px; border-radius: 4px; background-color: #F0F0F0; }
 .usermenu .selected { color: #408EB9; }
 
-section { border: 1px solid #F0F0F0; background-color: white; border-radius: 4px; }
-section > label { font-family: $font; text-transform: uppercase; color: #A0A0A0; padding: 15px 20px; display: block; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); border-radius: 4px 4px 0 0; font-size: 11px; font-weight: 700; }
+section { border: 1px solid #F0F0F0; background-color: white; border-radius: 4px; margin-bottom: 30px; }
+section > label { font-family: $font; text-transform: uppercase; color: #A0A0A0; padding: 10px 18px; display: block; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); border-radius: 4px 4px 0 0; font-size: 11px; font-weight: 700; }
 section > label .fa { margin-right: 7px; }
 
-.padding { padding: 20px; }
-.m { margin-bottom: 20px; }
+.padding { padding: 18px; }
+.m { margin-bottom: 15px; }
 .cl { clear: both; }
 .center { text-align: center; }
 
-.applications { margin: 0; padding: 0; list-style-type: none; }
-.applications li { position: relative; display: inline-block; width: 11.1%; padding: 12px 20px; font-size: 12px; line-height: 14px; cursor: pointer; margin: 15px 10px; }
+.applications li { position: relative; display: inline-block; width: 14.2%; padding: 12px 20px; font-size: 12px; line-height: 14px; cursor: pointer; margin: 15px 10px 0; }
 .applications span { display: block; font-size: 11px; color: gray; }
 .applications img { margin-bottom: 10px; }
+.applications > div > div { padding: 10px; }
+.applications .name { text-overflow: ellipsis; overflow: hidden; word-wrap: nowrap; font-size: 12px; }
+.applications .fa-circle { font-size: 11px; display: inline; margin-right: 5px; color: #6DBC41; }
 
 .applications .offline { cursor: not-allowed; opacity: 0.8; color: #A0A0A0; background-color: #F0F0F0; border-radius: 4px; }
 .applications .offline span { color: #A0A0A0; }
@@ -61,3 +80,8 @@ section > label .fa { margin-right: 7px; }
 .notifications label { font-family: $font; text-transform: uppercase; color: silver; padding: 15px 20px; display: block; border-bottom: 1px solid #F0F0F0; font-size: 11px; font-weight: 700; text-align: center; }
 .notifications label .fa { margin-right: 5px; }
 
+.notification { font-size: 12px; margin-bottom: 10px; }
+.notification > img { float: left; width: 24px; border-radius: 4px; }
+.notification > div { padding: 2px 0 10px; margin-left: 40px; border-bottom: 1px solid #F0F0F0; line-height: 14px; font-size: 11px; color: gray; }
+.notification > div > div { font-weight: bold; margin-bottom: 3px; font-size: 12px; color: black; }
+.notification > div > div span { font-weight: normal; font-size: 11px; }

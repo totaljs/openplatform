@@ -2,6 +2,7 @@ global.APPLICATIONS = [];
 
 function Application() {
 
+	this.alias = '';
 	this.name = '';
 	this.picture = '';
 	this.version = '';
@@ -12,6 +13,7 @@ function Application() {
 	this.url = '';
 	this.serviceurl = '';
 	this.status = '';
+	this.search = '';
 
 	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
