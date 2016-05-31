@@ -1,15 +1,15 @@
 const Fs = require('fs');
-const OpenPlatform = global.OpenPlatform = {};
+const OPENPLATFORM = global.OPENPLATFORM = {};
 
-OpenPlatform.Users = {};
-OpenPlatform.Applications = {};
+OPENPLATFORM.Users = {};
+OPENPLATFORM.Applications = {};
 
 /**
  * Finds user by its ID
  * @param {String} id
  * @return {User}
  */
-OpenPlatform.Users.find = function(id) {
+OPENPLATFORM.Users.find = function(id) {
 	for (var i = 0, length = USERS.length; i < length; i++) {
 		if (USERS[i].id === id)
 			return USERS[i];
@@ -20,7 +20,7 @@ OpenPlatform.Users.find = function(id) {
  * Saves users
  * @return {Boolean}
  */
-OpenPlatform.Users.save = function(callback) {
+OPENPLATFORM.Users.save = function(callback) {
 	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(USERS), callback);
 	return true;
 };
@@ -29,7 +29,7 @@ OpenPlatform.Users.save = function(callback) {
  * Loads users
  * @return {Boolean}
  */
-OpenPlatform.Users.load = function(callback) {
+OPENPLATFORM.Users.load = function(callback) {
 	Fs.readFile(F.path.databases('users.json'), function(err, data) {
 
 		callback && setImmediate(callback(err));
@@ -45,6 +45,10 @@ OpenPlatform.Users.load = function(callback) {
 				item.dateupdated = new Date(item.dateupdated);
 			if (item.datecreated)
 				item.datecreated = new Date(item.datecreated);
+			if (item.datelast)
+				item.datelast = new Date(item.datelast);
+			if (item.datelogged)
+				item.datelogged = new Date(item.datelogged);
 		}
 
 	});
@@ -56,7 +60,7 @@ OpenPlatform.Users.load = function(callback) {
  * Saves applications
  * @return {Boolean}
  */
-OpenPlatform.Applications.save = function(callback) {
+OPENPLATFORM.Applications.save = function(callback) {
 	Fs.writeFile(F.path.databases('applications.json'), JSON.stringify(APPLICATIONS), callback);
 	return true;
 };
@@ -65,7 +69,7 @@ OpenPlatform.Applications.save = function(callback) {
  * Loads users
  * @return {Boolean}
  */
-OpenPlatform.Applications.load = function(callback) {
+OPENPLATFORM.Applications.load = function(callback) {
 	Fs.readFile(F.path.databases('users.json'), function(err, data) {
 
 		callback && setImmediate(callback(err));

@@ -1,9 +1,10 @@
 name                            : OpenPlatform
 version                         : 0.0.1
 author                          : Peter Širka
-secret                          : secret-key-for-web
+secret                          : 2016OP
 
 url                             : http://127.0.0.1:8000
+superadmin                      : admin:admin
 
 // Mail settings
 mail.smtp                       : smtp.yourwebsite.com

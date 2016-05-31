@@ -17,6 +17,7 @@ function User() {
 	this.datecreated = null;
 	this.datelogged = null;
 	this.dateupdated = null;
+	this.datelast = null;
 
 	// Internal settings
 	this.online = false;
