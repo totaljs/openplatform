@@ -11,18 +11,23 @@ header { height: 40px; background-color: white; padding: 0; margin: 0; }
 header div { float: left; }
 
 .logo { float: left; height: 40px; padding: 7px 0 0 8px; width: 50px; text-align: center; border-right: 1px solid #F0F0F0; }
-.user { float: right; padding: 13px 20px 0 0; color: gray; font-size: 11px; }
+.user { float: right; padding: 13px 10px 0 0; color: gray; font-size: 11px; }
 
 h1 { font-weight: 400; font-family: $font; margin: 0 0 20px; padding: 0 0 10px; color: $color; font-size: 16px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 h1 b { font-weight: 700; }
 
 .menu { float: left; margin: 0; font-size: 12px; padding: 0; }
 .menu a { position: relative; display: inline-block; width: 120px; border-right: 1px solid #F0F0F0; text-align: center; padding: 11px 0 12px; color: gray; font-family: $font; text-transform: uppercase; }
-.menu a:hover { text-decoration: none; background-color: #F8F8F8; }
-.menu .selected { background: $linear; color: black; font-weight: 700; }
+.menu a:hover { text-decoration: none; background-color: #ECECEC; }
+.menu .selected { background-color: #ECECEC; color: black; font-weight: 700; }
 
+.green { color: #A0D468; }
+.red { color: #ED5565; }
+
+.npt { padding-top: 0 !important; }
 .npb { padding-bottom: 0 !important; }
 .np { padding: 0 !important; }
+.mr5 { margin-right: 5px; }
 
 .widgets { background: white; padding: 30px 0 12px; }
 .widget { background-color: white; font-size: 11px; padding: 20px; border-radius: 4px; }
@@ -48,10 +53,10 @@ h1 b { font-weight: 700; }
 .submenu .selected { color: #408EB9 !important; }
 .submenu .fa { width: 12px; }
 
-.usermenu { float: right; margin: 25px 0 0 50px; }
+.usermenu { float: right; margin: 10px 10px 0 0; }
 .usermenu .fa { margin-right: 5px; }
-.usermenu a { color: gray; margin-left: 20px; text-decoration: none !important; }
-.usermenu a:hover { color: #408EB9; }
+.usermenu a { color: gray; margin-left: 5px; text-decoration: none !important; }
+.usermenu a:hover { color: $color; }
 .usermenu a:first-child { margin-left: 0; }
 .usermenu-logout { padding: 8px 10px; border-radius: 4px; background-color: #F0F0F0; }
 .usermenu .selected { color: #408EB9; }
@@ -61,7 +66,7 @@ section > label { font-family: $font; text-transform: uppercase; color: #A0A0A0;
 section > label .fa { margin-right: 7px; }
 
 .padding { padding: 18px; }
-.m { margin-bottom: 15px; }
+.m { margin-bottom: 15px !important; }
 .cl { clear: both; }
 .center { text-align: center; }
 
@@ -85,3 +90,4 @@ section > label .fa { margin-right: 7px; }
 .notification > div { padding: 2px 0 10px; margin-left: 40px; border-bottom: 1px solid #F0F0F0; line-height: 14px; font-size: 11px; color: gray; }
 .notification > div > div { font-weight: bold; margin-bottom: 3px; font-size: 12px; color: black; }
 .notification > div > div span { font-weight: normal; font-size: 11px; }
+

@@ -13,6 +13,7 @@ function User() {
 	this.email = '';
 	this.login = '';
 	this.password = '';
+	this.status = '';
 
 	this.datecreated = null;
 	this.datelogged = null;
@@ -22,5 +23,6 @@ function User() {
 	// Internal settings
 	this.online = false;
 	this.sounds = true;
+	this.blocked = false;
 	this.notifications = true;
 }

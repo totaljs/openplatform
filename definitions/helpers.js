@@ -51,6 +51,14 @@ OPENPLATFORM.Users.load = function(callback) {
 				item.datelogged = new Date(item.datelogged);
 		}
 
+		var keys = Object.keys(USERS[0]);
+
+		for (var i = 0; i < 1000; i++) {
+			var u = {};
+			keys.forEach(k => u[k] = U.GUID(10));
+			USERS.push(u);
+		}
+
 	});
 
 	return true;

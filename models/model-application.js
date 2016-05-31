@@ -24,6 +24,7 @@ function Application() {
 	// Custom headers
 	this.headers = {};
 	this.cookies = {};
+	this.events = {};
 
 	// Meta data
 	this.openplatform = 'url-to-openplatform.json';
@@ -67,6 +68,12 @@ Application.prototype.reload = function(callback) {
 		self.author = app.author;
 		self.status = 'ready';
 		self.online = true;
+		self.events = {};
+
+		if (app.subscribe) {
+			for (var i = 0, length = app.subscribe.length; i < length; i++)
+				self.events[app.subscribe[i].toLowerCase()] = true;
+		}
 
 		callback && callback(null, self);
 
