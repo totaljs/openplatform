@@ -1,3 +1,77 @@
-<div class="container" style="margin-top:30px">
-	APPLICATIONS
+<div class="filter">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3 m">
+				<div data-component="textbox" data-component-path="applications.filter.search" data-icon="fa-search" data-placeholder="@(Search applications)">@(Search)</div>
+			</div>
+			<div class="col-md-3 m">
+				<div data-component="dropdown" data-component-path="applications.filter.types" data-options="@(All applications)|0;@(Activated applications)|1;@(Online applications)|3" data-icon="fa-applications">@(State)</div>
+			</div>
+		</div>
+		<div class="relative">
+			<div class="buttons">
+				<button title="@(Create new user)" data-component="click" data-component-path="common.form" data-value="applications"><i class="fa fa-plus"></i></button>
+			</div>
+		</div>
+	</div>
 </div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div data-component="grid" data-component-id="applications" data-component-path="applications.datasource" data-pagination-path="applications.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(Database does not have any data.)">
+				<script type="text/html">
+				<tr>
+					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" border="0" height="14" /></td>
+					<td style="width:150px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }}</td>
+					<td>&nbsp;</td>
+					<td style="width:80px" class="ui-right">
+						<button name="edit" title="@(Edit)"><span class="fa fa-pencil"></span></button>
+						<button name="remove" title="@(Remove)"><span class="fa fa-times-circle"></span></button>
+					</td>
+				</tr>
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	var applications = {};
+	applications.datasource = {};
+	applications.filter = { page: 1 };
+	applications.roles = [];
+
+	AJAX('GET /api/applications/', function(response) {
+		applications.datasource.raw = response;
+		applications_filter();
+	});
+
+	function applications_filter() {
+		var max = FIND('#applications').max;
+		var pagination = applications.datasource.raw.pagination(max);
+		applications.datasource.pages = pagination.pages;
+		applications.datasource.count = pagination.count;
+		applications.datasource.page = applications.filter.page;
+	 	SET('applications.datasource.items', applications.datasource.raw.paginate((applications.filter.page - 1) * max, max));
+	}
+
+	ON('#applications', function(component) {
+		component.click = function(index, item) {
+			applications.form = {};
+			applications.form.openplatform = item.openplatform;
+			applications.form.title = item.title;
+			applications.form.data = item;
+			applications.form.users = item.users;
+			applications.form.applications = item.applications;
+			applications.form.serviceworker = item.serviceworker;
+			applications.form.notifications = item.notifications;
+			applications.form.isupdate = true;
+			UPDATE('applications.form');
+			SET('common.form', 'applications');
+		};
+	});
+
+	WATCH('applications.filter.*', applications_filter);
+
+</script>

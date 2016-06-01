@@ -1,15 +1,21 @@
 const Fs = require('fs');
 const OPENPLATFORM = global.OPENPLATFORM = {};
+const HEADERS = {};
 
-OPENPLATFORM.Users = {};
-OPENPLATFORM.Applications = {};
+HEADERS['x-openplatform'] = CONFIG('version');
+HEADERS['x-openplatform-url'] = CONFIG('url');
+
+OPENPLATFORM.Application = MODEL('model-application').Application;
+OPENPLATFORM.User = MODEL('model-user').User;
+OPENPLATFORM.users = {};
+OPENPLATFORM.applications = {};
 
 /**
  * Finds user by its ID
  * @param {String} id
  * @return {User}
  */
-OPENPLATFORM.Users.find = function(id) {
+OPENPLATFORM.users.find = function(id) {
 	for (var i = 0, length = USERS.length; i < length; i++) {
 		if (USERS[i].id === id)
 			return USERS[i];
@@ -20,7 +26,7 @@ OPENPLATFORM.Users.find = function(id) {
  * Saves users
  * @return {Boolean}
  */
-OPENPLATFORM.Users.save = function(callback) {
+OPENPLATFORM.users.save = function(callback) {
 	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(USERS), callback);
 	return true;
 };
@@ -29,7 +35,7 @@ OPENPLATFORM.Users.save = function(callback) {
  * Loads users
  * @return {Boolean}
  */
-OPENPLATFORM.Users.load = function(callback) {
+OPENPLATFORM.users.load = function(callback) {
 	Fs.readFile(F.path.databases('users.json'), function(err, data) {
 
 		callback && setImmediate(callback(err));
@@ -51,14 +57,6 @@ OPENPLATFORM.Users.load = function(callback) {
 				item.datelogged = new Date(item.datelogged);
 		}
 
-		var keys = Object.keys(USERS[0]);
-
-		for (var i = 0; i < 1000; i++) {
-			var u = {};
-			keys.forEach(k => u[k] = U.GUID(10));
-			USERS.push(u);
-		}
-
 	});
 
 	return true;
@@ -68,17 +66,25 @@ OPENPLATFORM.Users.load = function(callback) {
  * Saves applications
  * @return {Boolean}
  */
-OPENPLATFORM.Applications.save = function(callback) {
+OPENPLATFORM.applications.save = function(callback) {
 	Fs.writeFile(F.path.databases('applications.json'), JSON.stringify(APPLICATIONS), callback);
 	return true;
+};
+
+OPENPLATFORM.applications.create = function(url, callback) {
+	var app = new OPENPLATFORM.Application();
+	app.openplatform = url;
+	app.reload(function(err) {
+		callback(err, app);
+	});
 };
 
 /**
  * Loads users
  * @return {Boolean}
  */
-OPENPLATFORM.Applications.load = function(callback) {
-	Fs.readFile(F.path.databases('users.json'), function(err, data) {
+OPENPLATFORM.applications.load = function(callback) {
+	Fs.readFile(F.path.databases('applications.json'), function(err, data) {
 
 		callback && setImmediate(callback(err));
 
@@ -98,4 +104,8 @@ OPENPLATFORM.Applications.load = function(callback) {
 	});
 
 	return true;
+};
+
+OPENPLATFORM.applications.uid = function(url) {
+	return url.toLowerCase().replace(/^(http|https)\:\/\//g, '').replace(/www\./g, '').trim().hash();
 };

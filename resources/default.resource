@@ -1,0 +1,1 @@
+error-invalid-openplatform    : The resource doesn't contain any information about OpenPlatform.

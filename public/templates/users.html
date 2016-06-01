@@ -2,16 +2,21 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-3 m">
-				<div data-component="textbox" data-component-path="users.filter.search" data-icon="fa-search" data-placeholder="Search users">Search</div>
+				<div data-component="textbox" data-component-path="users.filter.search" data-icon="fa-search" data-placeholder="@(Search users)">@(Search)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdowncheckbox" data-component-path="users.filter.types" data-placeholder="All users" data-options="Activated users|1;Blocked users|2;Online users|3" data-icon="fa-users">State</div>
+				<div data-component="dropdown" data-component-path="users.filter.types" data-options="@(All users)|0;@(Activated users)|1;@(Blocked users)|2;@(Online users)|3" data-icon="fa-users">@(State)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdowncheckbox" data-component-path="users.filter.roles" data-placeholder="All roles" data-source="users.roles" data-icon="fa-unlock">Roles</div>
+				<div data-component="dropdowncheckbox" data-component-path="users.filter.roles" data-placeholder="@(All roles)" data-source="users.roles" data-icon="fa-unlock" data-empty="@(No roles)">@(Roles)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdowncheckbox" data-component-path="users.filter.applications" data-placeholder="All applications" data-source="users.applications" data-icon="fa-th">Applications</div>
+				<div data-component="dropdowncheckbox" data-component-path="users.filter.applications" data-placeholder="All applications" data-source="users.applications" data-icon="fa-th" data-empty="@(No applications)">@(Applications)</div>
+			</div>
+		</div>
+		<div class="relative">
+			<div class="buttons">
+				<button title="@(Create new user)" data-component="click" data-component-path="common.form" data-value="users"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
 	</div>
@@ -20,7 +25,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<div data-component="grid" data-component-id="users" data-component-path="users" data-pagination-path="users.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(Database does not have any data.)">
+			<div data-component="grid" data-component-id="users" data-component-path="users.datasource" data-pagination-path="users.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(Database does not have any data.)">
 				<script type="text/html">
 				<tr>
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
@@ -28,7 +33,7 @@
 					<td>&nbsp;</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-pencil"></span></button>
-						<button name="remove" title="@(Remove)"><span class="fa fa-times"></span></button>
+						<button name="remove" title="@(Remove)"><span class="fa fa-times-circle"></span></button>
 					</td>
 				</tr>
 				</script>
@@ -39,22 +44,39 @@
 
 <script>
 	var users = {};
-	users.items = null;
+	users.datasource = {};
 	users.filter = { page: 1 };
 	users.roles = [];
 
-	AJAX('GET /api/users/', null, function(response) {
-		users.datasource = response;
+	AJAX('GET /api/users/', function(response) {
+		users.datasource.raw = response;
 		users_filter();
+	});
+
+	AJAX('GET /api/applications/', function(response) {
+
+		var roles = ['superadmin'];
+
+		for (var i = 0, length = response.length; i < length; i++) {
+			var item = response[i];
+			if (!item.roles || !item.roles.length)
+				continue;
+			for (var j = 0, jl = item.roles.length; j < jl; j++)
+				if (roles.indexOf(item.roles[j]) === -1)
+					roles.push(item.roles[j]);
+		}
+
+		SET('users.roles', roles);
+		SET('users.applications', response);
 	});
 
 	function users_filter() {
 		var max = FIND('#users').max;
-		var pagination = users.datasource.pagination(max);
-		users.pages = pagination.pages;
-		users.count = pagination.count;
-		users.page = users.filter.page;
-	 	SET('users.items', users.datasource.paginate((users.filter.page - 1) * max, max));
+		var pagination = users.datasource.raw.pagination(max);
+		users.datasource.pages = pagination.pages;
+		users.datasource.count = pagination.count;
+		users.datasource.page = users.filter.page;
+	 	SET('users.datasource.items', users.datasource.raw.paginate((users.filter.page - 1) * max, max));
 	}
 
 	WATCH('users.filter.*', users_filter);

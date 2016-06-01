@@ -1,27 +1,34 @@
 COMPONENT('click', function() {
 	var self = this;
 
+	self.readonly();
+
+	self.click = function() {
+		var value = self.attr('data-value');
+		if (typeof(value) === 'string')
+			self.set(self.parser(value));
+		else
+			self.get(self.attr('data-component-path'))(self);
+	};
+
 	self.make = function() {
 
-		self.element.on('click', function() {
-			self.get(self.attr('data-component-path'))();
-		});
+		self.element.on('click', self.click);
 
 		var enter = self.attr('data-enter');
 		if (!enter)
 			return;
+
 		$(enter).on('keydown', 'input', function(e) {
 			if (e.keyCode !== 13)
 				return;
 			setTimeout(function() {
-				if (self.element.get(0).disabled === true)
+				if (self.element.get(0).disabled)
 					return;
-				self.get(self.attr('data-component-path'))();
+				self.click();
 			}, 100);
 		});
 	};
-
-	self.readonly();
 });
 
 COMPONENT('visible', function() {
@@ -856,6 +863,7 @@ COMPONENT('form', function() {
 
 	var self = this;
 	var autocenter;
+	var condition;
 
 	if (!MAN.$$form) {
 		MAN.$$form = true;
@@ -870,7 +878,6 @@ COMPONENT('form', function() {
 				component.resize();
 			});
 		});
-
 	}
 
 	var hide = self.hide = function() {
@@ -901,8 +908,8 @@ COMPONENT('form', function() {
 		var submit = self.attr('data-submit');
 		var enter = self.attr('data-enter');
 
+		condition = self.attr('data-if');
 		autocenter = self.attr('data-autocenter') !== 'false';
-		self.condition = self.attr('data-if');
 		self.element.empty();
 
 		$(document.body).append('<div id="' + self._id + '" class="hidden ui-form-container"' + (self.attr('data-top') ? ' style="z-index:10"' : '') + '><div class="ui-form-container-padding"><div class="ui-form" style="max-width:' + width + '"><div class="ui-form-title"><span class="fa fa-times ui-form-button-close" data-id="' + self.id + '"></span>' + self.attr('data-title') + '</div>' + content + '</div></div>');
@@ -944,7 +951,7 @@ COMPONENT('form', function() {
 	self.getter = null;
 	self.setter = function(value) {
 
-		var isHidden = !EVALUATE(self.path, self.condition);
+		var isHidden = condition !== value;
 		self.element.toggleClass('hidden', isHidden);
 
 		if (window.$calendar)
@@ -2312,4 +2319,264 @@ jC.formatter(function(path, value, type) {
 	}
 
 	return value.format(2);
+});
+
+COMPONENT('photoupload', function() {
+
+	var self = this;
+	var input;
+	var last;
+
+	self.readonly();
+
+	self.make = function() {
+		var id = 'photoupload' + self.id;
+
+		self.element.addClass('ui-photoupload');
+		self.html('<img src="/img/face.jpg" alt="" class="img-responsive" />');
+		$(document.body).append('<input type="file" id="{0}" class="hidden" accept="image/*" />'.format(id));
+
+		input = $('#' + id);
+
+		self.element.on('click', function() {
+			input.click();
+		});
+
+		input.on('change', function(evt) {
+
+			var email = self.get();
+			var files = evt.target.files;
+			var data = new FormData();
+			var el = this;
+
+			data.append('email', email);
+
+			for (var i = 0, length = files.length; i < length; i++)
+				data.append('file' + i, files[i]);
+
+			var loading = FIND('loading');
+
+			if (loading)
+				loading.show();
+
+			jC.UPLOAD(self.attr('data-url'), data, function(response, err) {
+
+				if (loading)
+					loading.hide(500);
+
+				if (err) {
+					var message = FIND('message');
+					if (message)
+						message.warning(self.attr('data-upload-error') || err.toString());
+					else
+						alert(self.attr('data-upload-error') || err.toString());
+					return;
+				}
+
+				last = self.get();
+				self.find('img').attr('src', Tangular.helpers.photo(last) + '?ts=' + Date.now());
+				el.value = '';
+			});
+		});
+	};
+
+	self.setter = function(value) {
+		if (value && !value.isEmail())
+			value = '';
+
+		if (last === value)
+			return;
+
+		last = value;
+		self.find('img').attr('src', Tangular.helpers.photo(value) + (value ? '?ts=' + Date.now() : ''));
+	};
+});
+
+COMPONENT('checkboxlist', function() {
+	var self = this;
+	var template = Tangular.compile('<div class="{0} ui-checkboxlist-checkbox"><label><input type="checkbox" value="{{ id }}"><span>{{ name }}</span></label></div>'.format(self.attr('data-class')));
+
+	self.make = function() {
+
+		self.element.on('click', 'input', function() {
+			var arr = self.get() || [];
+			var value = self.parser(this.value);
+			var index = arr.indexOf(value);
+			if (index === -1)
+				arr.push(value);
+			else
+				arr.splice(index, 1);
+			self.set(arr);
+		});
+
+		self.element.on('click', '.ui-checkboxlist-selectall', function() {
+			var arr = [];
+			var inputs = self.element.find('input');
+			var value = self.get();
+
+			if (value && inputs.length === value.length) {
+				self.set(arr);
+				return;
+			}
+
+			inputs.each(function() {
+				arr.push(self.parser(this.value));
+			});
+
+			self.set(arr);
+		});
+
+		self.make = function() {
+
+			var options = self.attr('data-options');
+			if (!options)
+				return;
+
+			var arr = options.split(';');
+			var datasource = [];
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				var item = arr[i].split('|');
+				datasource.push({ id: item[1] === undefined ? item[0] : item[1], name: item[0] });
+			}
+
+			self.redraw(datasource);
+		};
+
+		self.setter = function(value) {
+			self.element.find('input').each(function() {
+				this.checked = value && value.indexOf(self.parser(this.value)) !== -1;
+			});
+		};
+
+		self.redraw = function(arr) {
+			var builder = [];
+			var kn = self.attr('data-source-text') || 'name';
+			var kv = self.attr('data-source-value') || 'id';
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				var item = arr[i];
+				if (typeof(item) === 'string')
+					builder.push(template({ id: item, name: item }));
+				else
+					builder.push(template({ id: item[kv] === undefined ? item[kn] : item[kv], name: item[kn] }));
+			}
+
+			if (!builder.length)
+				return;
+
+			builder.push('<div class="clearfix"></div><div class="col-md-12"><div class="ui-checkboxlist-selectall"><a href="javascript:void(0)"><i class="fa fa-object-group mr5"></i>{0}</a></div></div>'.format(self.attr('data-button')));
+			self.html(builder.join(''));
+			return self;
+		};
+
+		var datasource = self.attr('data-source');
+		if (datasource) {
+			self.watch(datasource, function(path, value) {
+				if (!value)
+					value = [];
+				self.redraw(value);
+			}, true);
+		}
+	};
+});
+
+COMPONENT('tagger', function() {
+
+	var self = this;
+	var elements;
+
+	self.readonly();
+
+	self.make = function() {
+		elements = self.find('[data-name]');
+		elements.each(function() {
+			this.$tagger = {};
+			this.$tagger.def = this.innerHTML;
+		});
+	};
+
+	self.arrow = function(value) {
+		return FN(value.replace(/\&gt\;/g, '>').replace(/\&lt\;/g, '<').replace(/\&amp\;/g, '&'));
+	};
+
+	self.setter = function(value) {
+
+		if (!value) {
+			self.element.addClass('hidden');
+			return;
+		}
+
+		// self.element.toggleClass('transparent', true).removeClass('hidden');
+		elements.each(function() {
+
+			var name = this.getAttribute('data-name');
+			var format = this.getAttribute('data-format');
+			var type = this.getAttribute('data-type');
+			var visible = this.getAttribute('data-visible');
+			var before = this.getAttribute('data-before');
+			var after = this.getAttribute('data-after');
+			var val = name ? GET(name, value) : value;
+			var key;
+			var cache = this.$tagger;
+
+			if (format) {
+				key = 'format';
+				if (!cache[key])
+					format = cache[key] = self.arrow(format);
+				else
+					format = cache[key];
+			}
+
+			var typeval = typeof(val);
+
+			switch (type) {
+				case 'date':
+					if (typeval === 'string')
+						val = val.parseDate();
+					else if (typeval === 'number')
+						val = new Date(val);
+					else
+						val = '';
+					break;
+
+				case 'number':
+				case 'currency':
+					if (typeval === 'string')
+						val = val.parseFloat();
+					if (typeof(val) !== 'number')
+						val = '';
+					break;
+			}
+
+			if ((val || val === 0) && format)
+				val = format(val);
+
+			if (visible) {
+				key = 'visible';
+				if (!cache[key])
+					visible = cache[key] = self.arrow(visible);
+				else
+					visible = cache[key];
+				var is = visible(val);
+				$(this).toggleClass('hidden', !is);
+				return;
+			}
+
+			val = val === null || val === undefined ? '' : val.toString();
+
+			if (val && !format)
+				val = Ta.helpers.encode(val);
+
+			if (val) {
+				if (this.innerHTML !== val)
+					this.innerHTML = (before ? before : '') + val + (after ? after : '');
+				return;
+			}
+
+			if (this.innerHTML !== cache.def)
+				this.innerHTML = cache.def;
+		});
+		self.element.removeClass('transparent hidden');
+	};
 });

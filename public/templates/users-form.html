@@ -1,0 +1,77 @@
+<div data-component="form" data-component-path="common.form" data-if="users" data-title="User's details" data-autocenter="true" data-width="900px">
+	<div class="padding">
+		<div class="row">
+			<div class="col-md-3">
+				<br />
+				<div data-component="photoupload" data-component-path="users.form.email" data-url="/api/upload/photo/" data-upload-error="@(The file is too large.)"></div>
+				<br />
+				<div class="help center"><i class="fa fa-camera"></i>@(Photo is created according to the email address.)</div>
+			</div>
+			<div class="col-md-9" style="border-left: 1px solid #F0F0F0">
+				<div class="padding">
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.firtname" data-maxlength="50" data-required="true">@(First name)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.lastname" data-maxlength="50" data-required="true">@(Last name)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.email" data-maxlength="120" data-required="true" data-component-type="email" data-control-icon="fa-envelope">@(Email address)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.phone" data-maxlength="30" data-component-type="phone" data-control-icon="fa-phone">@(Phone number)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="help">@(User can change these settings)</div>
+							<div class="mt10" data-component="checkbox" data-component-path="users.form.sounds">@(Enable sounds)</div>
+							<div data-component="checkbox" data-component-path="users.form.notifications">@(Enable flying notifications)</div>
+						</div>
+						<div class="col-md-6">
+							<div class="help">@(Internal settings)</div>
+							<div class="mt10" data-component="checkbox" data-component-path="users.form.blocked">@(User is blocked)</div>
+							<div data-component="checkbox" data-component-path="users.form.welcome" class="b">@(Send a welcome email)</div>
+						</div>
+					</div>
+					<hr />
+					<div class="help" style="margin-top:30px"><i class="fa fa-info-circle"></i>@(User can change the password when is logged.)</div>
+					<br />
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.login" data-maxlength="120" data-required="true" data-control-icon="fa-user">@(Login name)</div>
+							<div class="help"><i class="fa fa-envelope"></i>@(Login name can be an email address.)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.password" data-maxlength="30" data-required="true" data-control-icon="fa-lock">@(Password)</div>
+							<div class="help"><a href="javascript:void(0)" data-component="click" data-component-path="userform_generatepassword">@(Generate password)</a></div>
+						</div>
+					</div>
+					<hr />
+					<h2><i class="fa fa-th"></i>@(Applications)</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="ui-form-buttons">
+		<div class="row">
+			<div class="col-md-9 col-md-offset-3">
+				<div class="padding npt npb">
+					<div data-component="validation" data-component-path="users.form" class="inline">
+						<button name="submit">@(SAVE)</button>
+					</div>
+					<button name="cancel">@(Cancel)</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function userform_generatepassword() {
+		SET('users.form.password', (Math.random() * 10000).toString(16).replace(/[^\w\d]/g, '').substring(0, 8));
+	}
+</script>

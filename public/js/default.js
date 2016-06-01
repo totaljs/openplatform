@@ -3,6 +3,8 @@ $(document).ready(function() {
 });
 
 Tangular.register('photo', function(value) {
+	if (!value)
+		return '/img/face.jpg';
 	return '/photos/' + value.replace(/@|\./g, '_') + '.jpg';
 });
 

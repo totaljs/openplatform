@@ -2,9 +2,9 @@ global.APPLICATIONS = [];
 
 function Application() {
 
-	this.alias = '';
+	this.title = '';
 	this.name = '';
-	this.picture = '';
+	this.icon = '';
 	this.version = '';
 	this.author = '';
 	this.description = '';
@@ -22,8 +22,6 @@ function Application() {
 	this.applications = false;
 
 	// Custom headers
-	this.headers = {};
-	this.cookies = {};
 	this.events = {};
 
 	// Meta data
@@ -39,7 +37,7 @@ function Application() {
  */
 Application.prototype.reload = function(callback) {
 	var self = this;
-	U.request(self.openplatform, ['get'], null, function(err, response) {
+	U.request(self.openplatform, ['get'], function(err, response) {
 
 		self.dateupdated = new Date();
 
@@ -50,17 +48,15 @@ Application.prototype.reload = function(callback) {
 		}
 
 		var app = response.parseJSON();
-
-		if (!app || !app.openplatform) {
+		if (!app) {
 			this.online = false;
 			this.status = response;
 			return callback && callback(err);
 		}
 
-		app = app.openplatform;
-
+		self.id = OPENPLATFORM.applications.uid(self.openplatform);
 		self.name = app.name;
-		self.picture = app.picture;
+		self.icon = app.icon;
 		self.description = app.description;
 		self.roles = app.roles;
 		self.url = app.url;
@@ -80,3 +76,5 @@ Application.prototype.reload = function(callback) {
 	}, self.cookies, self.headers);
 	return self;
 };
+
+exports.Application = Application;

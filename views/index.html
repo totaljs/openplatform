@@ -41,6 +41,10 @@
 
 		var common = {};
 
+		common.forms = {};
+		common.page = '';
+		common.form = '';
+
 		var user = {};
 		user.sounds = true;
 		user.notifications = true;
@@ -65,6 +69,13 @@
 		});
 
 		$('.jR').jRouting(true);
+
+		WATCH('common.form', function(path, value) {
+			if (!value || common.forms[value])
+				return;
+			common.forms[value] = true;
+			IMPORT('/templates/{0}-form.html'.format(value));
+		}, true);
 
 	</script>
 

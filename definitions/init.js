@@ -1,4 +1,4 @@
 F.on('ready', function() {
-	OPENPLATFORM.Users.load();
-	OPENPLATFORM.Applications.load();
+	OPENPLATFORM.users.load();
+	OPENPLATFORM.applications.load();
 });

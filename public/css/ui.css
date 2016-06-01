@@ -14,8 +14,8 @@ button { outline: 0; }
 .ui-grid .hellip { text-overflow: ellipsis; display: block; white-space: nowrap; overflow: hidden; }
 .ui-grid { text-align: left; margin-bottom: 20px; }
 .ui-grid td button { display: inline-block; position: relative; text-decoration: none; border: 0; border-left: 1px solid #E0E0E0; padding: 0; margin: 0; width: 26px; background-color: transparent; cursor: pointer; text-align: center; color: #46B0D8; font-size: 14px; outline: 0; }
-.ui-grid .fa { margin: 0; padding: 0; }
-.ui-grid .fa-circle { font-size: 10px; margin-right: 3px; }
+.ui-grid .fa { margin: 0; padding: 0; line-height: 0; vertical-align: middle; }
+.ui-grid .fa-circle { margin-right: 5px; }
 .ui-grid .active { background-color: rgba(200,200,200,0.1); }
 .ui-grid .fa-times-circle { color: red; }
 .ui-grid td button:first-child { border-left: 0; }
@@ -42,19 +42,17 @@ button { outline: 0; }
 .ui-form-animate { transform: translate(0,0) scale(1); opacity: 1; }
 .ui-form-padding { padding: 0 30px; }
 .ui-form-title { padding: 20px; font-size: 20px; user-select: none; color: #AAB2BD; background-color: #F8F8F8; font-family: 'Source Sans Pro'; }
-.ui-form-title .fa-times { float: right; cursor: pointer; font-size: 18px; margin-top: 4px; }
+.ui-form-title .fa-times { float: right; cursor: pointer; font-size: 22px; margin-top: 4px; }
 .ui-form-title .fa-times:hover { color: black; }
 .ui-form-title .fa-times:active { margin-top: 5px; }
-.ui-form-buttons { padding: 20px; border-top: 5px solid #F0F0F0; background-color: #F8F8F8; }
+.ui-form-buttons { padding: 30px 20px; background-color: #F8F8F8; }
 .ui-form-buttons button { border: 2px solid #E0E0E0; background-color: white; border-radius: 4px; height: 45px; padding: 0 15px; color: black; margin: 0; cursor: pointer; font-family: Arial; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; }
 .ui-form-buttons button .fa { width: 16px; }
 .ui-form-buttons button:hover { border-color: silver; }
 .ui-form-buttons button:active { background-color: #D0D0D0; }
-.ui-form-buttons button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
+.ui-form-buttons button:disabled { background-color: #F5F5F5 !important; border-color: #ECECEC !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
 .ui-form-buttons button[name="submit"] { width: 220px; margin-right: 15px; font-weight: bold; }
-.ui-form-buttons button[name="cancel"] { color: gray; }
-.ui-form-buttons div { position: relative; display: inline-block; vertical-align: middle; }
-.ui-form-buttons label { float: right; margin: 12px 0 0 0; font-size: 11px; }
+.ui-form-buttons button[name="cancel"] { color: #A0A0A0; font-size: 12px; }
 
 .ui-dropdowncheckbox-container { display: block; text-align: left; position: relative; }
 .ui-dropdowncheckbox { border: 2px solid #E0E0E0; padding: 0 8px; border-radius: 2px; outline: 0; overflow: hidden; width: 100%; background-color: white; height: 34px; cursor: pointer; }
@@ -195,12 +193,11 @@ button { outline: 0; }
 .button:disabled { color: silver; border-color: #E0E0E0; cursor: not-allowed; background: white; }
 .button-small { padding: 13px 0; }
 
-.ui-disabled { background-color: #F0F0F0; cursor: not-allowed; }
-.ui-disabled > div { background-color: #F0F0F0; }
+.ui-disabled .ui-textbox { background-color: #F0F0F0; cursor: not-allowed; }
 
-.ui-checkbox { margin-bottom: 5px; line-height: 10px; font-size: 14px; }
+.ui-checkbox { margin-bottom: 5px; line-height: 10px; font-size: 12px; }
 .ui-checkbox span { cursor: pointer; vertical-align: middle; }
-.ui-checkbox div { position: relative; display: inline-block; width: 18px; height: 18px; border: 2px solid #E0E0E0; margin-right: 8px; vertical-align: middle; cursor: pointer; color: white; font-size: 13px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 3px; }
+.ui-checkbox div { position: relative; display: inline-block; width: 16px; height: 16px; border: 2px solid #E0E0E0; margin-right: 8px; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 3px; }
 .ui-checkbox .fa { display: none; }
 .ui-checkbox-checked div { background-color: #017CCA; border-color: #017CCA; }
 .ui-checkbox-checked .fa { display: block !important; }
@@ -213,7 +210,8 @@ label span { vertical-align: middle; }
 .ui-left { text-align: left !important; }
 .ui-right { text-align: right !important; }
 
-.ui-error { margin: 15px 0; padding: 0; list-style-type: none; border: 2px solid #BE3A48; border-left-width: 0; border-right-width: 0; padding: 10px 0; color: #BE3A48; }
+.ui-error-nm ul { margin: 0 !important; }
+.ui-error { margin: 15px 0; padding: 0; list-style-type: none; padding: 10px 0; color: #BE3A48; }
 .ui-error li { display: block; }
 .ui-error li .fa { width: 14px; }
 
@@ -242,6 +240,16 @@ label span { vertical-align: middle; }
 .ui-expander-expanded .ui-expander-fade { display: none; }
 .ui-expander-expanded .ui-expander-container { max-height: 1500px !important; }
 
+label { vertical-align: middle; }
+label input { vertical-align: middle; margin-right: 5px; }
+label span { vertical-align: middle; }
+.ui-checkboxlist-checkbox { line-height: 16px; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.ui-checkboxlist-checkbox label { cursor: pointer; }
+.ui-checkboxlist-checkbox label span { cursor: pointer; }
+.ui-checkboxlist-checkbox input { vertical-align: middle; cursor: pointer; }
+.ui-checkboxlist-selectall { margin-top: 20px; font-size: 11px; display: none; }
+.ui-checkboxlist-selectall .fa { margin-right: 5px; }
+
 .filter { border-bottom: 2px solid #E0E0E0; padding: 20px 0 10px; margin-bottom: 25px; font-size: 11px; background-color: #F5F5F5; box-shadow: 0 5px 5px rgba(100,100,100,0.05); }
 .filter {
 	.caption { font-size: 20px; margin-bottom: 20px; font-family: 'Source Sans Pro'; color: #AAB2BD; }
@@ -249,12 +257,15 @@ label span { vertical-align: middle; }
 	.ui-dropdown { height: 28px; padding-top: 1px; }
 	.ui-dropdown select { height: 18px; font-size: 11px; }
 	.ui-dropdown-label { font-size: 11px; }
-	.ui-dropdown .fa { right: 10px; top: 7px; }
+	.ui-dropdown .fa { right: 8px; top: 7px; }
 	.ui-textbox-label { font-size: 11px; }
 	.ui-textbox { padding: 5px 2px 4px 5px; }
 	.ui-textbox input { font-size: 11px; }
 	.ui-dropdowncheckbox-label { font-size: 11px; }
 	.ui-dropdowncheckbox { height: 28px; }
 	.ui-dropdowncheckbox-selected { font-size: 11px; }
-	.ui-dropdowncheckbox .fa { margin-top: 5px; font-size: 14px; }
+	.ui-dropdowncheckbox .fa { margin-top: 7px; font-size: 11px; }
 }
+
+.ui-photoupload { cursor: pointer; }
+.ui-photoupload img { margin-left: auto; margin-right: auto; border-radius: 100px; border: 2px solid #E0E0E0; }

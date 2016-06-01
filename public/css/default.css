@@ -16,18 +16,28 @@ header div { float: left; }
 h1 { font-weight: 400; font-family: $font; margin: 0 0 20px; padding: 0 0 10px; color: $color; font-size: 16px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 h1 b { font-weight: 700; }
 
+h2 { font-weight: 400; font-family: 'Source Sans Pro'; margin: 0 0 12px 0; padding: 0; color: gray; font-size: 20px; }
+h2 b { font-weight: 700; }
+h2 .fa { margin-right: 10px; }
+
 .menu { float: left; margin: 0; font-size: 12px; padding: 0; }
 .menu a { position: relative; display: inline-block; width: 120px; border-right: 1px solid #F0F0F0; text-align: center; padding: 11px 0 12px; color: gray; font-family: $font; text-transform: uppercase; }
-.menu a:hover { text-decoration: none; background-color: #ECECEC; }
-.menu .selected { background-color: #ECECEC; color: black; font-weight: 700; }
+.menu a:hover { text-decoration: none; color: black; }
+.menu .selected { background-color: $color; color: white !important; font-weight: 700; }
+.menu .selected:before { content: '\f0d7'; position: absolute; left: 50px; top: 25px; font-family: 'FontAwesome'; color: $color; font-size: 25px; }
 
 .green { color: #A0D468; }
 .red { color: #ED5565; }
+.b { font-weight: bold; }
 
+.nmt { margin-top: 0 !important; }
+.nmb { margin-bottom: 0 !important; }
 .npt { padding-top: 0 !important; }
 .npb { padding-bottom: 0 !important; }
 .np { padding: 0 !important; }
 .mr5 { margin-right: 5px; }
+.mt5 { margin-top: 5px; }
+.mt10 { margin-top: 10px; }
 
 .widgets { background: white; padding: 30px 0 12px; }
 .widget { background-color: white; font-size: 11px; padding: 20px; border-radius: 4px; }
@@ -36,15 +46,6 @@ h1 b { font-weight: 700; }
 
 .version { font-size: 11px; margin: 5px 0 20px 15px; color: #A0A0A0; }
 .version * { vertical-align: middle; }
-
-.mainmenu { float: left; margin: 25px 0 0 30px; }
-.mainmenu .fa { margin-right: 5px; }
-.mainmenu > div { position: relative; display: inline-block; padding: 0 18px 5px 18px; margin-left: 20px; border: 1px solid #F0F0F0; border-top: 0; border-radius: 0 0 4px 4px; border-bottom-width: 2px; }
-.mainmenu > div a { color: #AAB2BD; }
-.mainmenu a { font-size: 16px; font-weight: 700; color: gray; margin-left: 20px; text-decoration: none !important; padding-bottom: 3px; text-transform: uppercase; font-family: $font; }
-.mainmenu a:hover { border-bottom: 2px solid #408EB9; color: #408EB9; }
-.mainmenu a:first-child { margin-left: 0; }
-.mainmenu .selected { color: #408EB9; }
 
 .submenu { padding: 0 0 25px; }
 .submenu label { color: #505050; display: block; font-size: 12px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; }
@@ -65,10 +66,18 @@ section { border: 1px solid #F0F0F0; background-color: white; border-radius: 4px
 section > label { font-family: $font; text-transform: uppercase; color: #A0A0A0; padding: 10px 18px; display: block; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); border-radius: 4px 4px 0 0; font-size: 11px; font-weight: 700; }
 section > label .fa { margin-right: 7px; }
 
+.ui-form section { border-color: #ECECEC; }
+.silver { color: #A0A0A0; }
+
 .padding { padding: 18px; }
 .m { margin-bottom: 15px !important; }
 .cl { clear: both; }
 .center { text-align: center; }
+.bg-smoke { background-color: #F8F8F8; }
+.fs11 { font-size: 11px !important; }
+.help { font-size: 11px; color: #A0A0A0; margin-top: 7px; line-height: 13px; }
+.help .fa { margin-right: 5px; }
+.help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
 
 .applications li { position: relative; display: inline-block; width: 14.2%; padding: 12px 20px; font-size: 12px; line-height: 14px; cursor: pointer; margin: 15px 10px 0; }
 .applications span { display: block; font-size: 11px; color: gray; }
@@ -91,3 +100,8 @@ section > label .fa { margin-right: 7px; }
 .notification > div > div { font-weight: bold; margin-bottom: 3px; font-size: 12px; color: black; }
 .notification > div > div span { font-weight: normal; font-size: 11px; }
 
+.filter .buttons { position: absolute; right: 0; top: 10px; }
+.filter .buttons button { width: 34px; height: 30px; text-align: center; margin: 0; padding: 0; background-color: #E0E0E0; border: 0; font-size: 16px; outline: 0; border-radius: 0 0 4px 4px; margin-left: 5px; transition: all 0.1s; }
+.filter .buttons button:hover { background-color: #D0D0D0; }
+.relative { position: relative; }
+.inline { position: relative; display: inline-block; }

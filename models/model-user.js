@@ -13,7 +13,6 @@ function User() {
 	this.email = '';
 	this.login = '';
 	this.password = '';
-	this.status = '';
 
 	this.datecreated = null;
 	this.datelogged = null;
@@ -26,3 +25,5 @@ function User() {
 	this.blocked = false;
 	this.notifications = true;
 }
+
+exports.User = User;
