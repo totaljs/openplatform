@@ -23,12 +23,23 @@ function Application() {
 
 	// Custom headers
 	this.events = {};
+	this.origin = [];  			  // Can contains only IP address
 
 	// Meta data
 	this.openplatform = 'url-to-openplatform.json';
 	this.datecreated = null;
 	this.dateupdated = null;
 }
+
+Application.prototype.prepare = function(item) {
+	var keys = Object.keys(item);
+	var self = this;
+	for (var i = 0, length = keys.length; i < length; i++) {
+		var key = keys[i];
+		self[key] = item[key];
+	}
+	return self;
+};
 
 /**
  * Downloads info about app
@@ -37,19 +48,19 @@ function Application() {
  */
 Application.prototype.reload = function(callback) {
 	var self = this;
-	U.request(self.openplatform, ['get'], function(err, response) {
+	U.request(self.openplatform, ['get', '< 3'], function(err, response) {
 
 		self.dateupdated = new Date();
 
 		if (err) {
-			this.online = false;
-			this.status = err.toString();
+			self.online = false;
+			self.status = err.toString();
 			return callback && callback(err);
 		}
 
 		var app = response.parseJSON();
 		if (!app) {
-			this.online = false;
+			self.online = false;
 			this.status = response;
 			return callback && callback(err);
 		}
@@ -60,11 +71,16 @@ Application.prototype.reload = function(callback) {
 		self.description = app.description;
 		self.roles = app.roles;
 		self.url = app.url;
+		self.email = app.email;
 		self.version = app.version;
 		self.author = app.author;
 		self.status = 'ready';
 		self.online = true;
 		self.events = {};
+		self.origin = app.origin;
+
+		if (!(self.origin instanceof Array))
+			self.origin = null;
 
 		if (app.subscribe) {
 			for (var i = 0, length = app.subscribe.length; i < length; i++)

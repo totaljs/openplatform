@@ -52,7 +52,7 @@ function json_upload_photo() {
 
 function json_applications_download() {
 	var self = this;
-	U.request(self.query.url, ['get'], function(err, response) {
+	U.request(self.query.openplatform, ['get'], function(err, response) {
 		if (err)
 			return self.invalid().push(err);
 		if (response.isJSON())

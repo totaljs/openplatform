@@ -35,7 +35,8 @@ h2 .fa { margin-right: 10px; }
 .npt { padding-top: 0 !important; }
 .npb { padding-bottom: 0 !important; }
 .np { padding: 0 !important; }
-.mr5 { margin-right: 5px; }
+.mr3 { margin-right: 3px !important; }
+.mr5 { margin-right: 5px !important; }
 .mt5 { margin-top: 5px; }
 .mt10 { margin-top: 10px; }
 
@@ -105,3 +106,7 @@ section > label .fa { margin-right: 7px; }
 .filter .buttons button:hover { background-color: #D0D0D0; }
 .relative { position: relative; }
 .inline { position: relative; display: inline-block; }
+
+.tag { position: relative; height: 23px; display: block; float: left; max-width: 200px; padding: 5px 10px 0 12px; border: 1px solid #c7deeb; border-left-width: 0; border-radius: 0 3px 3px 0; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; background-color: #d5ebf0; color: #505050; user-select: none; margin: 3px 8px; z-index: 2; text-decoration: none; line-height: 10px; }
+.tag:before { content: ''; width: 16px; height: 17px; position: absolute; left: -8px; top: 2px; transform: rotate(45deg); border-left: 1px solid #c7deeb; border-bottom: 1px solid #c7deeb; border-radius: 2px; z-index: 1; background-color: #d5ebf0; border-bottom-left-radius: 3px; }
+.tag:after { content: ''; width: 6px; height: 6px; background-color: #fff; border-radius: 4px; border: 1px solid #c7deeb; position: absolute; top: 6px; left: -1px; z-index: 2; }

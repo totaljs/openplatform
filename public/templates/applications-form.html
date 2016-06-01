@@ -76,7 +76,7 @@
 	WATCH('applications.form.openplatform', function(path, value) {
 		if (!value || !value.isURL())
 			return;
-		AJAX('GET /api/applications/download', { url: value }, function(response) {
+		AJAX('GET /api/applications/download/', { openplatform: value }, function(response) {
 			SET('applications.form.data', response);
 			if (!applications.form.title)
 				SET('applications.form.title', response.name);

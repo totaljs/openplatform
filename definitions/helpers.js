@@ -91,19 +91,30 @@ OPENPLATFORM.applications.load = function(callback) {
 		if (!data)
 			return;
 
-		APPLICATIONS = data.toString('utf8').parseJSON();
+		APPLICATIONS = [];
 
-		for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
-			var item = APPLICATIONS[i];
+		var arr = data.toString('utf8').parseJSON();
+		for (var i = 0, length = arr.length; i < length; i++) {
+			var item = arr[i];
 			if (item.dateupdated)
 				item.dateupdated = new Date(item.dateupdated);
 			if (item.datecreated)
 				item.datecreated = new Date(item.datecreated);
+			APPLICATIONS.push(new OPENPLATFORM.Application().prepare(item));
 		}
 
+		// Reloads applications
+		OPENPLATFORM.applications.reload();
 	});
 
 	return true;
+};
+
+OPENPLATFORM.applications.reload = function(callback) {
+	APPLICATIONS.wait((item, next) => item.reload(next), function() {
+		OPENPLATFORM.applications.save();
+		callback && callback();
+	});
 };
 
 OPENPLATFORM.applications.uid = function(url) {

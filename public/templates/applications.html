@@ -23,10 +23,10 @@
 				<script type="text/html">
 				<tr>
 					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" border="0" height="14" /></td>
-					<td style="width:150px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }}</td>
-					<td>&nbsp;</td>
+					<td><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }} <span class="fs11 silver">v{{ version }}</span></td>
+					<td style="width:80px"><i class="fa fa-clock-o silver mr3"></i>{{ dateupdated | format('@(HH:mm)')}}</td>
 					<td style="width:80px" class="ui-right">
-						<button name="edit" title="@(Edit)"><span class="fa fa-pencil"></span></button>
+						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
 						<button name="remove" title="@(Remove)"><span class="fa fa-times-circle"></span></button>
 					</td>
 				</tr>

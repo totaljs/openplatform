@@ -28,6 +28,7 @@ NEWSCHEMA('Application').make(function(schema) {
 			}
 
 			// Save all applications into the file
+			APPLICATIONS.quicksort('title');
 			OPENPLATFORM.applications.save();
 
 			// Responds

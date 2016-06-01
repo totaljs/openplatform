@@ -13,17 +13,13 @@ button { outline: 0; }
 .ui-grid table .fa { text-align: center; min-width: 14px; width: 14px; vertical-align: middle; margin-top: -2px; }
 .ui-grid .hellip { text-overflow: ellipsis; display: block; white-space: nowrap; overflow: hidden; }
 .ui-grid { text-align: left; margin-bottom: 20px; }
-.ui-grid td button { display: inline-block; position: relative; text-decoration: none; border: 0; border-left: 1px solid #E0E0E0; padding: 0; margin: 0; width: 26px; background-color: transparent; cursor: pointer; text-align: center; color: #46B0D8; font-size: 14px; outline: 0; }
 .ui-grid .fa { margin: 0; padding: 0; line-height: 0; vertical-align: middle; }
 .ui-grid .fa-circle { margin-right: 5px; }
 .ui-grid .active { background-color: rgba(200,200,200,0.1); }
 .ui-grid .fa-times-circle { color: red; }
+.ui-grid td button { display: inline-block; position: relative; text-decoration: none; border: 0; border-left: 1px solid #E0E0E0; padding: 0; margin: 0; width: 26px; background-color: transparent; cursor: pointer; text-align: center; color: #46B0D8; font-size: 14px; outline: 0; line-height: 16px; }
 .ui-grid td button:first-child { border-left: 0; }
 .ui-grid td a:hover, .ui-grid td button:hover { color: #4CC1E9; }
-.ui-grid .row button { display: block; width: 100%; margin: 5px 0 5px; padding: 0; border: 1px solid #D0D0D0; border-radius: 4px; background-color: white; padding: 18px 0; font: normal normal 14px Arial; vertical-align: middle; color: gray; }
-.ui-grid .row button:hover { border: 1px solid silver; }
-.ui-grid .row button:active { background: white; color: #A4A4A4; }
-.ui-grid .row button .fa { width: 20px; color: #377BB5; }
 
 .badge { font-size: 9px; padding: 0 6px; border-radius: 4px; background-color: #F0F0F0; line-height: 12px; vertical-align: middle; margin-top: -2px; position: relative; display: inline-block; }
 .badge-blue { background-color: #4CC1E9; color: white; }
@@ -267,5 +263,6 @@ label span { vertical-align: middle; }
 	.ui-dropdowncheckbox .fa { margin-top: 7px; font-size: 11px; }
 }
 
+.img-rounded { border-radius: 25px; }
 .ui-photoupload { cursor: pointer; }
 .ui-photoupload img { margin-left: auto; margin-right: auto; border-radius: 100px; border: 2px solid #E0E0E0; }
