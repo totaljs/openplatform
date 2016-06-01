@@ -960,7 +960,7 @@ COMPONENT('form', function() {
 		if (!isHidden) {
 			self.resize();
 			var el = self.element.find('input,select,textarea');
-			if (el.length > 0)
+			if (el.length)
 				el.eq(0).focus();
 
 			self.element.animate({ scrollTop: 0 }, 0, function() {

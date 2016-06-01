@@ -11,7 +11,7 @@ exports.install = function() {
 
 function redirect() {
 	var self = this;
-	self.cookie('__uop', F.encrypt({ id: 'admin:admin', expire: new Date().add('5 days') }, 'UsSer'), '5 days');
+	self.cookie('__uop', F.encrypt({ id: 'A349340384038', expire: new Date().add('5 days') }, 'UsSer'), '5 days');
 	self.redirect('/');
 }
 

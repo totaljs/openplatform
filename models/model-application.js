@@ -2,6 +2,7 @@ global.APPLICATIONS = [];
 
 function Application() {
 
+	this.id = 0;
 	this.title = '';
 	this.name = '';
 	this.icon = '';
@@ -30,6 +31,25 @@ function Application() {
 	this.datecreated = null;
 	this.dateupdated = null;
 }
+
+Application.prototype.readonly = function() {
+	var self = this;
+	var item = {};
+	item.id = self.openplatform;
+	item.title = self.title;
+	item.name = self.name;
+	item.description = self.description;
+	item.version = self.version;
+	item.icon = self.icon;
+	item.author = self.author;
+	item.email = self.email;
+	item.applications = self.applications;
+	item.serviceworker = self.serviceworker;
+	item.notifications = self.notifications;
+	item.users = self.users;
+	item.online = self.online;
+	return item;
+};
 
 Application.prototype.prepare = function(item) {
 	var keys = Object.keys(item);

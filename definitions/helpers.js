@@ -1,6 +1,7 @@
 const Fs = require('fs');
 const OPENPLATFORM = global.OPENPLATFORM = {};
 const HEADERS = {};
+const REG_PHOTO = /@|\./g;
 
 HEADERS['x-openplatform'] = CONFIG('version');
 HEADERS['x-openplatform-url'] = CONFIG('url');
@@ -20,7 +21,11 @@ OPENPLATFORM.users.find = function(id) {
 		if (USERS[i].id === id)
 			return USERS[i];
 	}
-}
+};
+
+OPENPLATFORM.users.photo = function(email) {
+	return CONFIG('url') + '/photos/' + email.replace(REG_PHOTO, '_').toLowerCase() + '.jpg';
+};
 
 /**
  * Saves users
@@ -43,10 +48,10 @@ OPENPLATFORM.users.load = function(callback) {
 		if (!data)
 			return;
 
-		USERS = data.toString('utf8').parseJSON();
+		var arr = data.toString('utf8').parseJSON();
 
-		for (var i = 0, length = USERS.length; i < length; i++) {
-			var item = USERS[i];
+		for (var i = 0, length = arr.length; i < length; i++) {
+			var item = arr[i];
 			if (item.dateupdated)
 				item.dateupdated = new Date(item.dateupdated);
 			if (item.datecreated)
@@ -55,6 +60,7 @@ OPENPLATFORM.users.load = function(callback) {
 				item.datelast = new Date(item.datelast);
 			if (item.datelogged)
 				item.datelogged = new Date(item.datelogged);
+			USERS.push(new OPENPLATFORM.User().prepare(item));
 		}
 
 	});

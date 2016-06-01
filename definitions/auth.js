@@ -12,13 +12,12 @@ F.onAuthorize = function(req, res, flags, next) {
 	if (!user || user.expire < F.datetime.getTime())
 		return next(false);
 
-	if (user.id === CONFIG('superadmin'))
-		return next(true, { alias: 'Administrator' });
-
 	user = USERS.findItem('id', user.id);
-	if (!user)
+	if (!user || user.blocked)
 		return next(false);
 
-	user.datelast = F.datetime;
+	user.datelogged = F.datetime;
+	user.online = true;
+
 	next(true, user);
 };

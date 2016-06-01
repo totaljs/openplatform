@@ -263,6 +263,6 @@ label span { vertical-align: middle; }
 	.ui-dropdowncheckbox .fa { margin-top: 7px; font-size: 11px; }
 }
 
-.img-rounded { border-radius: 25px; }
+.img-application { border-radius: 25px; }
 .ui-photoupload { cursor: pointer; }
 .ui-photoupload img { margin-left: auto; margin-right: auto; border-radius: 100px; border: 2px solid #E0E0E0; }

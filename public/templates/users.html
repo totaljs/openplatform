@@ -16,7 +16,7 @@
 		</div>
 		<div class="relative">
 			<div class="buttons">
-				<button title="@(Create new user)" data-component="click" data-component-path="common.form" data-value="users"><i class="fa fa-plus"></i></button>
+				<button title="@(Create new user)" data-component="click" data-component-path="users_create"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
 	</div>
@@ -29,8 +29,9 @@
 				<script type="text/html">
 				<tr>
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
-					<td style="width:150px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}</td>
+					<td style="width:150px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
 					<td>&nbsp;</td>
+					<td style="width:150px"><i class="fa fa-clock-o silver mr3"></i>{{ datelogged | format('@(yyyy-MM-dd HH:mm)')}}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
 						<button name="remove" title="@(Remove)"><span class="fa fa-times-circle"></span></button>
@@ -42,33 +43,111 @@
 	</div>
 </div>
 
+<div data-component="form" data-component-path="common.form" data-if="users" data-title="User's details" data-autocenter="true" data-width="900px" data-component-id="users.form">
+	<div class="padding">
+		<div class="row">
+			<div class="col-md-3">
+				<br />
+				<div data-component="photoupload" data-component-path="users.form.email" data-url="/upload/photo/" data-upload-error="@(The file is too large.)"></div>
+				<br />
+				<div class="help center"><i class="fa fa-camera"></i>@(Photo is created according to the email address.)</div>
+			</div>
+			<div class="col-md-9" style="border-left: 1px solid #F0F0F0">
+				<div class="padding npb">
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.firstname" data-maxlength="50" data-required="true">@(First name)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.lastname" data-maxlength="50" data-required="true">@(Last name)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.email" data-maxlength="120" data-required="true" data-component-type="email" data-control-icon="fa-envelope">@(Email address)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.phone" data-maxlength="30" data-component-type="phone" data-control-icon="fa-phone">@(Phone number)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="help">@(User can change these settings)</div>
+							<div class="mt10" data-component="checkbox" data-component-path="users.form.sounds">@(Enable sounds)</div>
+							<div data-component="checkbox" data-component-path="users.form.notifications">@(Enable flying notifications)</div>
+						</div>
+						<div class="col-md-6">
+							<div class="help">@(Internal settings)</div>
+							<div class="mt10" data-component="checkbox" data-component-path="users.form.superadmin">@(Super administrator)</div>
+							<div data-component="checkbox" data-component-path="users.form.blocked">@(User is blocked)</div>
+							<div data-component="checkbox" data-component-path="users.form.welcome" class="b">@(Send a welcome email)</div>
+						</div>
+					</div>
+					<hr />
+					<div class="help" style="margin-top:30px"><i class="fa fa-info-circle"></i>@(User can change the password when is logged.)</div>
+					<br />
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.login" data-maxlength="120" data-required="true" data-control-icon="fa-user">@(Login name)</div>
+							<div class="help"><i class="fa fa-envelope"></i>@(Login name can be an email address.)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.password" data-maxlength="30" data-required="true" data-control-icon="fa-lock">@(Password)</div>
+							<div class="help"><a href="javascript:void(0)" data-component="click" data-component-path="userform_generatepassword">@(Generate password)</a></div>
+						</div>
+					</div>
+					<br />
+					<div data-component="applications" data-component-path="users.form.applications" data-source="users.applications">
+						<script type="text/html">
+							<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
+								<div class="userapp-header">
+									<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
+									<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" alt="{{ title }}" /></div>
+									<b>{{ title }}</b>
+									<div class="fs11">v{{ version }}</div>
+								</div>
+								{{ if roles && roles.length }}
+								<div class="userapp-roles">
+									{{ foreach m in roles }}
+										<div><label><input type="checkbox" value="{{ m }}" />{{ m }}</label></div>
+									{{ end }}
+								</div>
+								{{ fi }}
+							</div>
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="ui-form-buttons">
+		<div class="row">
+			<div class="col-md-9 col-md-offset-3">
+				<div class="padding npt npb">
+					<div data-component="validation" data-component-path="users.form" class="inline">
+						<button name="submit">@(SAVE)</button>
+					</div>
+					<button name="cancel">@(Cancel)</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
 	var users = {};
 	users.datasource = {};
 	users.filter = { page: 1 };
 	users.roles = [];
 
-	AJAX('GET /api/users/', function(response) {
-		users.datasource.raw = response;
-		users_filter();
-	});
+	function users_refresh() {
+		AJAX('GET /internal/users/', function(response) {
+			users.datasource.raw = response;
+			users_filter();
+		});
 
-	AJAX('GET /api/applications/', function(response) {
-
-		var roles = ['superadmin'];
-
-		for (var i = 0, length = response.length; i < length; i++) {
-			var item = response[i];
-			if (!item.roles || !item.roles.length)
-				continue;
-			for (var j = 0, jl = item.roles.length; j < jl; j++)
-				if (roles.indexOf(item.roles[j]) === -1)
-					roles.push(item.roles[j]);
-		}
-
-		SET('users.roles', roles);
-		SET('users.applications', response);
-	});
+		AJAX('GET /internal/applications/', 'users.applications');
+	}
 
 	function users_filter() {
 		var max = FIND('#users').max;
@@ -79,6 +158,106 @@
 	 	SET('users.datasource.items', users.datasource.raw.paginate((users.filter.page - 1) * max, max));
 	}
 
+	function users_create() {
+		SET('users.form', { sounds: true, notifications: true, email: '@' }, true);
+		SET('common.form', 'users');
+	}
+
+	ON('#users.form', function(component) {
+		component.submit = function(hide) {
+			AJAX('POST /internal/users/', users.form, function(response) {
+				console.log(response);
+			});
+		};
+	});
+
+	ON('#users', function(component) {
+		component.click = function(index, item) {
+			var tmp = $.extend({}, item);
+			tmp.password = '**********';
+			SET('users.form', tmp, true);
+			SET('common.form', 'users');
+		};
+	});
+
 	WATCH('users.filter.*', users_filter);
+	SCHEDULE('#users', 'manually', '5 minutes', users_refresh);
+
+	function userform_generatepassword() {
+		SET('users.form.password', (Math.random() * 10000).toString(16).replace(/[^\w\d]/g, '').substring(0, 8));
+	}
+
+	COMPONENT('applications', function() {
+		var self = this;
+
+		self.make = function() {
+			var el = self.find('script');
+			self.template = Tangular.compile(el.html());
+			el.remove();
+
+			self.element.on('click', '.userapp-checkbox', function() {
+				var el = $(this).closest('.userapp-container');
+				var cls = 'userapp-container-disabled';
+				var id = el.attr('data-id').parseInt();
+				el.toggleClass(cls);
+
+				var apps = self.get();
+
+				if (el.hasClass(cls))
+					delete apps[id];
+				else
+					apps[id] = [];
+
+				self.change(true);
+			});
+
+			self.element.on('change', 'input', function() {
+				var el = $(this).closest('.userapp-container');
+				var id = el.attr('data-id').parseInt();
+				var apps = self.get();
+				var app = apps[id];
+				var index = app.indexOf(this.value);
+
+				self.change(true);
+
+				if (this.checked) {
+					if (index === -1)
+						app.push(this.value);
+					return;
+				}
+
+				if (index !== -1)
+					app.splice(index, 1);
+			});
+		};
+
+		self.watch(self.attr('data-source'), function(path, value) {
+			if (!value)
+				return;
+			var builder = [];
+			for (var i = 0, length = value.length; i < length; i++)
+				builder.push(self.template(value[i]));
+			self.html(builder.join(''));
+		}, true);
+
+		self.setter = function(value) {
+			var cls = 'userapp-container-disabled';
+			self.find('.userapp-container').each(function() {
+				var el = $(this);
+				var id = el.attr('data-id').parseInt();
+				if (value && value[id]) {
+					el.removeClass(cls);
+					el.find('input').each(function() {
+						this.checked = value[id].indexOf(this.value) !== -1;
+					});
+				} else {
+					el.addClass(cls);
+					el.find('input').prop('checked', false);
+				}
+			});
+		};
+	});
+
+	users_refresh();
 
 </script>
