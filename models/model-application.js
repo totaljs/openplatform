@@ -15,12 +15,14 @@ function Application() {
 	this.serviceurl = '';
 	this.status = '';
 	this.search = '';
+	this.responsive = false;
 
 	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
 	this.serviceworker = false;   // Can communicate via API
 	this.users = false;
 	this.applications = false;
+	this.mobile = false;
 
 	// Custom headers
 	this.events = {};
@@ -46,6 +48,7 @@ Application.prototype.readonly = function() {
 	item.applications = self.applications;
 	item.serviceworker = self.serviceworker;
 	item.notifications = self.notifications;
+	item.mobile = self.mobile;
 	item.users = self.users;
 	item.online = self.online;
 	return item;
@@ -70,7 +73,7 @@ Application.prototype.reload = function(callback) {
 	var self = this;
 	U.request(self.openplatform, ['get', '< 3'], function(err, response) {
 
-		self.dateupdated = new Date();
+		self.dateupdated = F.datetime;
 
 		if (err) {
 			self.online = false;
@@ -94,6 +97,7 @@ Application.prototype.reload = function(callback) {
 		self.email = app.email;
 		self.version = app.version;
 		self.author = app.author;
+		self.responsive = app.responsive || false;
 		self.status = 'ready';
 		self.online = true;
 		self.events = {};

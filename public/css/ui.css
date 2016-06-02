@@ -190,6 +190,7 @@ button { outline: 0; }
 .button-small { padding: 13px 0; }
 
 .ui-disabled .ui-textbox { background-color: #F0F0F0; cursor: not-allowed; }
+.ui-disabled .ui-dropdown { background-color: #F0F0F0; cursor: not-allowed; }
 
 .ui-checkbox { margin-bottom: 5px; line-height: 10px; font-size: 12px; }
 .ui-checkbox span { cursor: pointer; vertical-align: middle; }

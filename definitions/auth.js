@@ -1,23 +1,19 @@
-const COOKIE = '__uop';
-const EXPIRE = '5 days';
-const SECRET = 'UsSer';
-
 F.onAuthorize = function(req, res, flags, next) {
 
-	var cookie = req.cookie(COOKIE);
+	var cookie = req.cookie(CONFIG('cookie'));
 	if (!cookie)
 		return next(false);
 
-	var user = F.decrypt(cookie, SECRET);
+	var user = F.decrypt(cookie);
 	if (!user || user.expire < F.datetime.getTime())
 		return next(false);
 
-	user = USERS.findItem('id', user.id);
-	if (!user || user.blocked)
+	session = USERS.findItem('id', user.id);
+	if (!session || session.blocked || session.resetcounter !== user.resetcounter)
 		return next(false);
 
-	user.datelogged = F.datetime;
-	user.online = true;
+	session.datelogged = F.datetime;
+	session.online = true;
 
-	next(true, user);
+	next(true, session);
 };

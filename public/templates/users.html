@@ -8,7 +8,7 @@
 				<div data-component="dropdown" data-component-path="users.filter.types" data-options="@(All users)|0;@(Activated users)|1;@(Blocked users)|2;@(Online users)|3" data-icon="fa-users">@(State)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdowncheckbox" data-component-path="users.filter.roles" data-placeholder="@(All roles)" data-source="users.roles" data-icon="fa-unlock" data-empty="@(No roles)">@(Roles)</div>
+				<div data-component="dropdowncheckbox" data-component-path="users.filter.roles" data-placeholder="@(All groups)" data-source="users.groups" data-icon="fa-folder" data-empty="@(No groups)">@(Groups)</div>
 			</div>
 			<div class="col-md-3 m">
 				<div data-component="dropdowncheckbox" data-component-path="users.filter.applications" data-placeholder="All applications" data-source="users.applications" data-icon="fa-th" data-empty="@(No applications)">@(Applications)</div>
@@ -16,6 +16,9 @@
 		</div>
 		<div class="relative">
 			<div class="buttons">
+				<button title="@(Send email)" data-component="click" data-component-path="users_email"><i class="fa fa-envelope"></i></button>
+				<button title="@(Change permissions)" data-component="click" data-component-path="users_permissions"><i class="fa fa-th"></i></button>
+				<button title="@(Replace group)" data-component="click" data-component-path="users_regroup"><i class="fa fa-folder"></i></button>
 				<button title="@(Create new user)" data-component="click" data-component-path="users_create"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
@@ -29,8 +32,8 @@
 				<script type="text/html">
 				<tr>
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
-					<td style="width:150px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
-					<td>&nbsp;</td>
+					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
+					<td><span class="fs11 silver">{{ group }}</span></td>
 					<td style="width:150px"><i class="fa fa-clock-o silver mr3"></i>{{ datelogged | format('@(yyyy-MM-dd HH:mm)')}}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
@@ -51,6 +54,35 @@
 				<div data-component="photoupload" data-component-path="users.form.email" data-url="/upload/photo/" data-upload-error="@(The file is too large.)"></div>
 				<br />
 				<div class="help center"><i class="fa fa-camera"></i>@(Photo is created according to the email address.)</div>
+				<hr />
+				<div data-component="template" data-component-path="users.form" data-properties="datecreated, dateupdated, datelogged, online">
+					<script type="text/html">
+						{{ if datelogged }}
+						<div class="keyvalue">
+							<div class="key">Logged</div>
+							<div class="value">{{ if online }}<span class="badge badge-green mr5">online</span>{{ fi }}{{ datelogged | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+						{{ if datecreated }}
+						<div class="keyvalue">
+							<div class="key">Created</div>
+							<div class="value">{{ datecreated | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+						{{ if dateupdated }}
+						<div class="keyvalue">
+							<div class="key">Updated</div>
+							<div class="value">{{ dateupdated | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+						{{ if datepassword }}
+						<div class="keyvalue">
+							<div class="key">Password changed</div>
+							<div class="value">{{ datepassword | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+					</script>
+				</div>
 			</div>
 			<div class="col-md-9" style="border-left: 1px solid #F0F0F0">
 				<div class="padding npb">
@@ -70,6 +102,16 @@
 							<div data-component="textbox" data-component-path="users.form.phone" data-maxlength="30" data-component-type="phone" data-control-icon="fa-phone">@(Phone number)</div>
 						</div>
 					</div>
+					<hr />
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-component="dropdown" data-component-path="users.form.group" data-source="users.groups" data-empty="">@(Select existing group)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-component="textbox" data-component-path="users.form.group" data-maxlength="60">@(Group)</div>
+						</div>
+					</div>
+					<hr />
 					<div class="row">
 						<div class="col-md-6">
 							<div class="help">@(User can change these settings)</div>
@@ -78,9 +120,9 @@
 						</div>
 						<div class="col-md-6">
 							<div class="help">@(Internal settings)</div>
-							<div class="mt10" data-component="checkbox" data-component-path="users.form.superadmin">@(Super administrator)</div>
-							<div data-component="checkbox" data-component-path="users.form.blocked">@(User is blocked)</div>
-							<div data-component="checkbox" data-component-path="users.form.welcome" class="b">@(Send a welcome email)</div>
+							<div class="mt10 b red" data-component="checkbox" data-component-path="users.form.blocked">@(User is blocked)</div>
+							<div data-component="checkbox" data-component-path="users.form.superadmin">@(Super administrator)</div>
+							<div data-component="checkbox" data-component-path="users.form.welcome">@(Send sign in email)</div>
 						</div>
 					</div>
 					<hr />
@@ -96,8 +138,11 @@
 							<div class="help"><a href="javascript:void(0)" data-component="click" data-component-path="userform_generatepassword">@(Generate password)</a></div>
 						</div>
 					</div>
+					<hr />
+					<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
+					<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
 					<br />
-					<div data-component="applications" data-component-path="users.form.applications" data-source="users.applications">
+					<div data-component="applications" data-component-path="users.form.applications" data-source="users.applications" class="mt10">
 						<script type="text/html">
 							<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
 								<div class="userapp-header">
@@ -140,9 +185,22 @@
 	users.filter = { page: 1 };
 	users.roles = [];
 
+	// Prevents downloading form as template
+	common.forms.users = true;
+
 	function users_refresh() {
+
 		AJAX('GET /internal/users/', function(response) {
 			users.datasource.raw = response;
+
+			var groups = {};
+
+			response.forEach(function(item) {
+				if (item.group)
+					groups[item.group] = true;
+			});
+
+			SET('users.groups', Object.keys(groups));
 			users_filter();
 		});
 
@@ -181,6 +239,11 @@
 	});
 
 	WATCH('users.filter.*', users_filter);
+	WATCH('users.form.welcome', function(path, value) {
+		if (value && users.form.password.substring(0, 3) === '***')
+			userform_generatepassword();
+	});
+
 	SCHEDULE('#users', 'manually', '5 minutes', users_refresh);
 
 	function userform_generatepassword() {

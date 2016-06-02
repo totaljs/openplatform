@@ -12,10 +12,12 @@ function User() {
 	this.email = '';
 	this.login = '';
 	this.password = '';
+	this.group = '';
 
 	this.datecreated = null;
 	this.datelogged = null;
 	this.dateupdated = null;
+	this.datepassword = null;
 
 	// Internal settings
 	this.online = false;
@@ -23,6 +25,12 @@ function User() {
 	this.blocked = false;
 	this.superadmin = false;
 	this.notifications = true;
+	this.resetcounter = 0;
+}
+
+User.prototype.logoff = function() {
+	this.online = false;
+	return this;
 }
 
 User.prototype.readonly = function() {
@@ -37,6 +45,7 @@ User.prototype.readonly = function() {
 	item.alias = self.alias;
 	item.online = self.online;
 	item.blocked = self.blocked;
+	item.group = self.group;
 	item.notifications = self.notifications;
 	return item;
 };

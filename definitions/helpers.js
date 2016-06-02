@@ -1,7 +1,7 @@
 const Fs = require('fs');
 const OPENPLATFORM = global.OPENPLATFORM = {};
-const HEADERS = {};
 const REG_PHOTO = /@|\./g;
+const HEADERS = {};
 
 HEADERS['x-openplatform'] = CONFIG('version');
 HEADERS['x-openplatform-url'] = CONFIG('url');
@@ -10,6 +10,7 @@ OPENPLATFORM.Application = MODEL('model-application').Application;
 OPENPLATFORM.User = MODEL('model-user').User;
 OPENPLATFORM.users = {};
 OPENPLATFORM.applications = {};
+OPENPLATFORM.settings = {};
 
 /**
  * Finds user by its ID

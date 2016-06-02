@@ -23,6 +23,7 @@ h2 .fa { margin-right: 10px; }
 .menu { float: left; margin: 0; font-size: 12px; padding: 0; }
 .menu a { position: relative; display: inline-block; width: 120px; border-right: 1px solid #F0F0F0; text-align: center; padding: 11px 0 12px; color: gray; font-family: $font; text-transform: uppercase; }
 .menu a:hover { text-decoration: none; color: black; }
+.menu .fa { margin-right: 5px; }
 .menu .selected { background-color: $color; color: white !important; font-weight: 700; }
 .menu .selected:before { content: '\f0d7'; position: absolute; left: 50px; top: 25px; font-family: 'FontAwesome'; color: $color; font-size: 25px; }
 
@@ -125,4 +126,11 @@ section > label .fa { margin-right: 7px; }
 .userapp-roles label { cursor: pointer; }
 .userapp-roles div:nth-child(odd) { background-color: #F8F8F8; }
 .userapp-roles input { margin-right: 5px; }
+
+.keyvalue { border-bottom: 1px solid #F0F0F0; padding: 5px 0; margin-bottom: 10px; transition: all 0.3s; }
+.keyvalue:hover { background-color: #F8F8F8; padding-left: 10px; padding-right: 10px; }
+.keyvalue .key { font-size: 11px; font-weight: bold; margin-bottom: 2px; color: gray; }
+.keyvalue .value { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 14px; color: #A0A0A0; }
+.keyvalue .fa { margin-right: 5px; }
+.upper { text-transform: uppercase; }
 

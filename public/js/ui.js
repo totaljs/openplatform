@@ -161,6 +161,7 @@ COMPONENT('checkbox', function() {
 		self.element.addClass('ui-checkbox');
 		self.html('<div><i class="fa fa-check"></i></div><span{1}>{0}</span>'.format(self.html(), required ? ' class="ui-checkbox-label-required"' : ''));
 		self.element.on('click', function() {
+			self.dirty(false);
 			self.getter(!self.get(), 2, true);
 		});
 	};
@@ -224,7 +225,7 @@ COMPONENT('dropdown', function() {
 		select.html(builder.join(''));
 
 		var disabled = arr.length === 0;
-		select.parent().toggleClass('ui-disabled', disabled);
+		self.element.toggleClass('ui-disabled', disabled);
 		select.prop('disabled', disabled);
 	};
 
@@ -463,8 +464,14 @@ COMPONENT('textarea', function() {
 
 COMPONENT('template', function() {
 	var self = this;
+	var properties;
+
 	self.readonly();
 	self.make = function(template) {
+
+		properties = self.attr('data-properties');
+		if (properties)
+			properties = properties.split(',').trim();
 
 		if (template) {
 			self.template = Tangular.compile(template);
@@ -482,7 +489,14 @@ COMPONENT('template', function() {
 		script.remove();
 	};
 
-	self.setter = function(value) {
+	self.setter = function(value, path) {
+
+		if (properties && path !== self.path) {
+			var key = path.substring(self.path.length + 1);
+			if (!key || properties.indexOf(key))
+				return;
+		}
+
 		if (NOTMODIFIED(self.id, value))
 			return;
 		if (!value)

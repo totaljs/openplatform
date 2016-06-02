@@ -4,7 +4,8 @@ author                          : Peter Širka
 secret                          : 2016OP
 
 url                             : http://127.0.0.1:8000
-superadmin                      : admin:admin
+cookie                          : __uop
+cookie-expiration               : 5 days
 
 // Mail settings
 mail.smtp                       : smtp.yourwebsite.com

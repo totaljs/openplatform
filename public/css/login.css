@@ -1,0 +1,34 @@
+/*auto*/
+
+html { overflow-y: scroll; overflow-x: hidden; height: 100%; padding: 0; margin: 0; }
+body { padding: 0 20px; margin: 0; font:normal 12px Arial !important; color: #656D78; background-color: #F0F0F0; background-size: cover; font-smoothing: antialiased; height: 100%; position: relative; }
+
+.header { height: 100px; background-color: white; }
+.center { text-align: center; }
+.form { max-width: 380px; margin: -50px auto 0; display: block !important; background-color: white; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.2); opacity: 0; transform: scale(0.5); transition: 0.5s all; }
+.form-visible { opacity: 1; transform: scale(1); }
+.padding { padding: 30px; }
+
+input { font-size: 14px !important; padding: 3px 3px; }
+
+.ui-button { height: 60px !important; font-size: 15px; font-weight: bold; background-color: #017CCA; color: white; border: 1px solid white; outline: 0; border-radius: 3px; }
+.ui-button:active { opacity: 0.9; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.4); color: #CCEEFE; }
+.ui-button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; border: 1px solid #E0E0E0; }
+
+h1 { font: normal 400 20px 'Source Sans Pro'; color: #017CCA; margin: 0; padding: 0; }
+h1 b { font-weight: 700; }
+
+.links { list-style-type: none; margin: 0 0 5px 0; padding: 0; }
+.links li { display: block; margin-bottom: 3px; font-size: 14px; color: #017CCA; }
+.links a {}
+.links .fa { width: 14px; text-align: center; margin-right: 3px; }
+
+@media(max-width: 720px) {
+	.form { max-width: 300px; margin: 0 auto; }
+}
+
+.center-container { display: table; width: 100%; height: 100%; }
+.center-body { display: table-cell; vertical-align: middle; height: 100%; }
+
+.logo { background-color: #F0F0F0; border-radius: 4px 4px 0 0; text-align: center; padding: 30px 0; }
+.logo svg { margin-left: 15px; }

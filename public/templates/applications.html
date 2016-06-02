@@ -5,7 +5,10 @@
 				<div data-component="textbox" data-component-path="applications.filter.search" data-icon="fa-search" data-placeholder="@(Search applications)">@(Search)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdown" data-component-path="applications.filter.types" data-options="@(All applications)|0;@(Activated applications)|1;@(Online applications)|3">@(State)</div>
+				<div data-component="dropdown" data-component-path="applications.filter.types" data-options="@(All applications)|0;@(Online applications)|1;@(Offline applications)|2">@(State)</div>
+			</div>
+			<div class="col-md-3 m">
+				<div data-component="dropdowncheckbox" data-component-path="applications.filter.permissions" data-placeholder="@(All applications)" data-options="@(Service worker)|serviceworker;@(Notifications)|notifications;@(Users)|users;@(Applications)|applications;@(Mobile devices)|mobile">@(Permissions)</div>
 			</div>
 		</div>
 		<div class="relative">
@@ -24,6 +27,7 @@
 				<tr>
 					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" border="0" height="14" /></td>
 					<td><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }} <span class="fs11 silver">v{{ version }}</span></td>
+					<td style="width:200px" class="{{ if responsive }}green{{ else }}silver{{ fi }} fs11">{{ if !responsive }}not{{ fi }} optimized for mobile devices</td>
 					<td style="width:80px"><i class="fa fa-clock-o silver mr3"></i>{{ dateupdated | format('@(HH:mm)')}}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
@@ -71,6 +75,7 @@
 					<div data-component="checkbox" data-component-path="applications.form.notifications">@(Allow notifications)</div>
 					<div data-component="checkbox" data-component-path="applications.form.users">@(Allow to read users)</div>
 					<div data-component="checkbox" data-component-path="applications.form.applications">@(Allow to read applications)</div>
+					<div data-component="checkbox" data-component-path="applications.form.mobile">@(Allow for mobile devices)</div>
 				</div>
 			</div>
 		</div>
@@ -95,6 +100,9 @@
 	applications.filter = { page: 1 };
 	applications.roles = [];
 
+	// Prevents downloading form as template
+	common.forms.applications = true;
+
 	function applications_refresh() {
 		AJAX('GET /internal/applications/', function(response) {
 			applications.datasource.raw = response;
@@ -112,7 +120,7 @@
 	}
 
 	function applications_create() {
-		SET('applications.form', { serviceworker: true, notifications: true }, true);
+		SET('applications.form', { isnew: true, serviceworker: true, notifications: true }, true);
 		SET('common.form', 'applications');
 	}
 
@@ -125,6 +133,7 @@
 			applications.form.users = item.users;
 			applications.form.applications = item.applications;
 			applications.form.serviceworker = item.serviceworker;
+			applications.form.mobile = item.mobile;
 			applications.form.notifications = item.notifications;
 			applications.form.isupdate = true;
 			UPDATE('applications.form', true);
@@ -166,6 +175,10 @@
 	WATCH('applications.form.openplatform', function(path, value) {
 		if (!value || !value.isURL())
 			return;
+
+		if (applications.form.isnew && applications.datasource.raw.findIndex('openplatform', value) !== -1)
+			return SET('applications.form.data', [{ error: '@(You have registered this application.)' }]);
+
 		AJAX('GET /internal/applications/download/', { openplatform: value }, function(response) {
 			SET('applications.form.data', response);
 			if (!applications.form.title)

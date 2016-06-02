@@ -1,6 +1,8 @@
 exports.install = function() {
 	F.route('/*', 'index', ['authorize']);
+	F.route('/', 'login', ['unauthorize']);
 	F.route('/login/', redirect);
+	F.route('/logoff/', logoff, ['authorize']);
 
 	// Localization
 	F.localize('/templates/*.html', ['compress']);
@@ -11,7 +13,7 @@ exports.install = function() {
 
 function redirect() {
 	var self = this;
-	self.cookie('__uop', F.encrypt({ id: 'A349340384038', expire: new Date().add('5 days') }, 'UsSer'), '5 days');
+	self.cookie(CONFIG('cookie'), F.encrypt({ id: 'A349340384038', expire: new Date().add('5 days') }, 'UsSer'), '5 days');
 	self.redirect('/');
 }
 
@@ -30,4 +32,11 @@ function photo(req, res) {
 		else
 			res.file(F.path.public('img/face.jpg'));
 	});
+}
+
+function logoff() {
+	var self = this;
+	self.cookie(CONFIG('cookie'), '', '-1 day');
+	self.user.logoff();
+	self.redirect('/');
 }

@@ -4,6 +4,7 @@ NEWSCHEMA('Application').make(function(schema) {
 	schema.define('title', 'String(50)', true);
 	schema.define('notifications', Boolean);
 	schema.define('users', Boolean);
+	schema.define('mobile', Boolean);
 	schema.define('applications', Boolean);
 	schema.define('serviceworker', Boolean);
 
@@ -19,11 +20,12 @@ NEWSCHEMA('Application').make(function(schema) {
 			item.title = model.title;
 			item.notifications = model.notifications;
 			item.users = model.users;
+			item.mobile = model.mobile;
 			item.applications = model.applications;
 			item.serviceworker = model.serviceworker;
 
 			if (!update) {
-				item.datecreated = new Date();
+				item.datecreated = F.datetime;
 				APPLICATIONS.push(item);
 			}
 

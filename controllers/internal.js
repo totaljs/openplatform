@@ -8,13 +8,20 @@ exports.install = function() {
 	F.route('/internal/applications/', json_applications_query, ['authorize']);
 	F.route('/internal/applications/', json_schema_save, ['authorize', 'post', '*Application']);
 	F.route('/internal/applications/download/', json_applications_download, ['authorize']);
+
+	// Account
+	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
 };
 
 function json_users_query() {
 	var self = this;
 	if (!self.user.superadmin)
 		return self.invalid().push('error-permission');
-	self.json(USERS);
+	self.json(USERS, false, function(k, v) {
+		if (k === 'password')
+			return undefined;
+		return v;
+	});
 }
 
 function json_applications_query() {
@@ -70,4 +77,9 @@ function json_upload_photo() {
 		filter.save(F.path.public('photos/' + email), (err) => self.callback()(err, SUCCESS(true)));
 		F.touch('/photos/' + email);
 	});
+}
+
+function json_schema_exec() {
+	var self = this;
+	self.$workflow('exec', self, self.callback());
 }
