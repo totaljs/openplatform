@@ -9,6 +9,8 @@ exports.install = function() {
 	F.route('/internal/applications/', json_schema_save, ['authorize', 'post', '*Application']);
 	F.route('/internal/applications/download/', json_applications_download, ['authorize']);
 
+	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
+
 	// Account
 	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
 };
@@ -82,4 +84,9 @@ function json_upload_photo() {
 function json_schema_exec() {
 	var self = this;
 	self.$workflow('exec', self, self.callback());
+}
+
+function json_dashboard_applications() {
+	var self = this;
+	self.json(self.user.getApplications());
 }

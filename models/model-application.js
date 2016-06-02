@@ -51,6 +51,7 @@ Application.prototype.readonly = function() {
 	item.mobile = self.mobile;
 	item.users = self.users;
 	item.online = self.online;
+	item.url = self.url;
 	return item;
 };
 

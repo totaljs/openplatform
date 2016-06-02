@@ -31,7 +31,18 @@ function User() {
 User.prototype.logoff = function() {
 	this.online = false;
 	return this;
-}
+};
+
+User.prototype.getApplications = function() {
+	var arr = [];
+	var self = this;
+	for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
+		var item = APPLICATIONS[i];
+		if (self.applications[item.id])
+			arr.push(item.readonly());
+	}
+	return arr;
+};
 
 User.prototype.readonly = function() {
 	var self = this;

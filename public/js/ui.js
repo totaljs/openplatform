@@ -1474,89 +1474,85 @@ COMPONENT('tagger', function() {
 	};
 });
 
-COMPONENT('process', function() {
+COMPONENT('applications', function() {
 
 	var self = this;
-	var iframe;
+	var running = self.attr('data-running') === 'true';
 
-	self.launched = false;
-	self.visibled = false;
-
+	self.template = Tangular.compile('<div class="col-md-2 ui-app" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
 	self.readonly();
 
 	self.make = function() {
-		self.element.addClass('ui-process');
-		self.append('<iframe src="/loading.html" class="hidden" frameworkder="0"></iframe><div></div>');
-		iframe = self.element.find('iframe');
+		self.toggle('row applications');
+		self.element.on('click', '.ui-app', function() {
+			SET(self.attr('data-run'), $(this).attr('data-id'));
+		});
+
+		self.element.on('click', '.fa-times-circle', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			SETTER('loading', 'show');
+			SETTER('processes', 'kill', $(this).closest('.ui-app').attr('data-id'));
+			SETTER('loading', 'hide', 1000);
+		});
 	};
 
-	self.close = function() {
+	self.setter = function(value, path) {
 
-		var launched = self.attr('data-path-launched');
-		var arr = self.get(launched);
-		var index = arr.findIndex(self.id);
+		var apps = self.find('.ui-app');
+		var builder = [];
+		var processes = [];
+		var stamp = Math.floor(Math.random() * 10000);
 
-		if (index === -1)
-			return;
+		for (var i = 0, length = value.length; i < length; i++) {
+			var item = value[i];
+			var el = apps.filter('[data-id="{0}"]'.format(item.id));
 
-		arr.splice(index, 1);
-		UPDATE(launched);
+			el.attr('data-stamp', stamp);
 
-		iframe.attr('src', '/loading.html');
-		self.launched = false;
-		self.visibled = false;
-	};
+			if (!el.length) {
+				if (running && !item.running)
+					continue;
+				builder.push(self.template(item));
+				continue;
+			}
 
-	self.setter = function(value) {
+			if (running && !item.running) {
+				el.remove();
+				continue;
+			}
 
-		if (value !== self.id) {
-			self.element.toggleClass('hidden', true);
-			self.visibled = false;
-			return;
+			el.find('img').attr('src', item.icon);
+			el.find('.name').html((item.running ? '<i class="fa fa-circle"></i>' : '') + item.title);
+			el.find('.version').html('v' + item.version);
+			el.toggleClass('offline', !item.online);
 		}
 
-		self.element.toggleClass('hidden', false);
-		self.visibled = true;
+		if (builder.length)
+			self.append(builder.join(''));
 
-		if (self.launched)
-			return;
-
-		setTimeout(function() {
-			self.element.find('div').addClass('visible');
-		}, 500);
-
-		self.launched = true;
-		setTimeout(function() {
-
-			self.element.toggleClass('hidden', false);
-
-			// Loads application
-			iframe.attr('src', self.attr('data-url'));
-
-			// Registers app into the launched apps
-			var launched = self.attr('data-path-launched');
-			if (launched)
-				self.push(launched, self.id);
-
-			setTimeout(function() {
-				iframe.removeClass('hidden');
-			}, 500);
-
-			setTimeout(function() {
-				self.element.find('div').remove();
-			}, 1000);
-		}, 1000);
+		apps.filter('[data-stamp!="{0}"]'.format(stamp)).remove();
 	};
 });
 
-COMPONENT('toolbar', function() {
+COMPONENT('processes', function() {
+
 	var self = this;
+	var iframes = [];
+	var toolbar;
+	var source;
+
+	self.template = Tangular.compile('<div class="ui-process" data-id="{{ id }}"><iframe src="{{ url }}" frameborder="0"></iframe><div>');
+	self.singleton();
 	self.readonly();
 
 	self.make = function() {
-		self.html('<div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button>');
-		self.element.addClass('ui-process-toolbar hidden');
-		self.element.on('click', 'button', function() {
+
+		source = self.attr('data-source');
+		self.html('<div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>');
+		toolbar = self.find('.ui-process-toolbar');
+
+		toolbar.on('click', 'button', function() {
 			switch (this.name) {
 				case 'close':
 					self.set('');
@@ -1565,18 +1561,71 @@ COMPONENT('toolbar', function() {
 		});
 	};
 
+	self.minimize = function() {
+
+		iframes.forEach(function(item) {
+			if (!item.element.hasClass('hidden'))
+				item.element.addClass('hidden');
+		});
+
+		toolbar.addClass('hidden');
+		return self;
+	};
+
+	self.kill = function(id) {
+		var index = iframes.findIndex('id', id);
+		if (index === -1)
+			return self;
+
+		var iframe = iframes[index];
+		iframes.splice(index, 1);
+
+		if (!iframe.element.hasClass('hidden'))
+			self.minimize();
+
+		iframe.element.remove();
+		iframe.item.running = false;
+
+		UPDATE(source);
+		return self;
+	};
+
+	self.title = function(value) {
+		toolbar.find('label').text(value);
+		toolbar.removeClass('hidden');
+		return self;
+	};
+
 	self.setter = function(value) {
 
-		if (!value) {
-			self.element.toggleClass('hidden', true);
+		self.minimize();
+
+		if (!value)
+			return;
+
+		var iframe = iframes.findItem('id', value);
+		if (iframe) {
+			self.title(iframe.title);
+			iframe.element.removeClass('hidden');
 			return;
 		}
 
-		self.element.toggleClass('hidden', false);
-		FIND('process', true).forEach(function(component) {
-			if (component.id === value)
-				self.find('label').html(component.attr('data-name'));
-		});
-	};
-});
+		var item = GET(source).findItem('id', value);
+		if (!item)
+			return;
 
+		self.append(self.template(item));
+		item.running = true;
+		iframe = {};
+		iframe.id = item.id;
+		iframe.item = item;
+		iframe.title = item.title;
+		iframe.element = self.find('[data-id="{0}"]'.format(item.id));
+		iframe.dateopened = new Date();
+		iframes.push(iframe);
+
+		UPDATE(source, 100);
+		self.title(iframe.title);
+	};
+
+});

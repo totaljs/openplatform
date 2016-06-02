@@ -150,6 +150,8 @@
 				applications_refresh();
 				success();
 				hide();
+				if (window.dashboard)
+					window.dashboard_refresh();
 			});
 		};
 	});

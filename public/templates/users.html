@@ -142,7 +142,7 @@
 					<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
 					<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
 					<br />
-					<div data-component="applications" data-component-path="users.form.applications" data-source="users.applications" class="mt10">
+					<div data-component="applications-management" data-component-path="users.form.applications" data-source="users.applications" class="mt10">
 						<script type="text/html">
 							<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
 								<div class="userapp-header">
@@ -255,7 +255,7 @@
 		SET('users.form.password', (Math.random() * 10000).toString(16).replace(/[^\w\d]/g, '').substring(0, 8));
 	}
 
-	COMPONENT('applications', function() {
+	COMPONENT('applications-management', function() {
 		var self = this;
 
 		self.make = function() {

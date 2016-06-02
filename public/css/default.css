@@ -4,7 +4,7 @@ $font    : 'Source Sans Pro';
 $color   : #017CCA;
 $linear  : linear-gradient(#F0F0F0,white);
 
-html,body { height: 100%; }
+html,body { height: 100%; overflow: hidden; }
 body { font-smoothing: antialiased; background-color: #F0F0F0; margin: 0; padding: 0; }
 
 header { height: 40px; background-color: white; padding: 0; margin: 0; }
@@ -50,9 +50,6 @@ h2 .fa { margin-right: 10px; }
 
 .w100p { width: 100%; }
 
-.version { font-size: 11px; margin: 5px 0 20px 15px; color: #A0A0A0; }
-.version * { vertical-align: middle; }
-
 .submenu { padding: 0 0 25px; }
 .submenu label { color: #505050; display: block; font-size: 12px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; }
 .submenu a { display: block; font-size: 14px; color: #9F9F9F; margin-bottom: 5px; text-decoration: none; }
@@ -85,12 +82,15 @@ section > label .fa { margin-right: 7px; }
 .help .fa { margin-right: 5px; }
 .help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
 
-.applications li { position: relative; display: inline-block; width: 14.2%; padding: 12px 20px; font-size: 12px; line-height: 14px; cursor: pointer; margin: 15px 10px 0; }
 .applications span { display: block; font-size: 11px; color: gray; }
+.applications .fa-times-circle { position: absolute; cursor: pointer; color: #ED5565; font-size: 20px; }
+.applications .fa-times-circle:active { margin-top: 1px; }
 .applications img { margin-bottom: 10px; }
+.applications { line-height: 15px; }
 .applications > div > div { padding: 10px; }
-.applications .name { text-overflow: ellipsis; overflow: hidden; word-wrap: nowrap; font-size: 12px; }
+.applications .name { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-size: 12px; }
 .applications .fa-circle { font-size: 11px; display: inline; margin-right: 5px; color: #6DBC41; }
+.ui-app { cursor: pointer; }
 
 .applications .offline { cursor: not-allowed; opacity: 0.8; color: #A0A0A0; background-color: #F0F0F0; border-radius: 4px; }
 .applications .offline span { color: #A0A0A0; }
@@ -140,6 +140,7 @@ section > label .fa { margin-right: 7px; }
 .ui-process-toolbar { position: fixed; height: 40px; left: 0; top: 0; right: 0; background: linear-gradient(#018FE2,#017CCA); box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 11; }
 .ui-process-toolbar .close { float: right; font-size: 20px; width: 40px; height: 40px; border: 0; background: transparent; color: white; text-align: center; outline: 0; cursor: pointer; transition: 0.3s all; }
 .ui-process-toolbar .close:hover { opacity: 0.8; }
+.ui-process-toolbar .close:active { margin-top: 1px; }
 .ui-process-toolbar label { font-size: 16px; color: white; float: left; margin: 8px 0 0 20px; font-family: $font; }
 .ui-process-toolbar .logo { width: 50px; height: 40px; background-color: white; }
 

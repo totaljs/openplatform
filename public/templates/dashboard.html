@@ -31,13 +31,10 @@
 	<div class="row">
 		<div class="col-md-8">
 
-			<section>
+			<section data-component="visible" data-component-path="dashboard.applications" data-if="value.findIndex('running', true) !== -1" class="hidden">
 				<label><i class="fa fa-spin fa-refresh"></i>Running applications</label>
 				<div class="padding">
-					<div class="row applications">
-						<div class="col-md-2"><div><img src="http://iosicongallery.com/img/512/placeboard-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name"><i class="fa fa-circle"></i>Todomator<span>v1.0.0</span></div></div></div>
-						<div class="col-md-2"><div><img src="http://iosicongallery.com/img/512/microsoft-outlook-email-calendar-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name"><i class="fa fa-circle"></i>Todomator<span>v1.0.0</span></div></div></div>
-					</div>
+					<div data-component="applications" data-component-path="dashboard.applications" data-run="dashboard.current" data-running="true"></div>
 				</div>
 			</section>
 
@@ -60,19 +57,13 @@
 			</div>
 			<br />
 
-			<section>
+			<section data-component="visible" data-component-path="dashboard.applications" data-if="value.length" class="hidden">
 				<label><i class="fa fa-th"></i>Applications</label>
 				<div class="padding">
-					<div class="row applications">
-						<div class="col-md-2"><div><img src="http://iosicongallery.com/img/512/placeboard-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name">Todomator</div><span>v1.0.0</span></div></div>
-						<div class="col-md-2"><div><img src="http://iosicongallery.com/img/512/maxcurve-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name">Todomator</div><span>v1.0.0</span></div></div>
-						<div class="col-md-2 offline"><div><img src="http://iosicongallery.com/img/512/dorado-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name">Todomator</div><span>v1.0.0</span></div></div>
-						<div class="col-md-2"><div><img src="http://iosicongallery.com/img/512/weather-fine-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name">Todomator</div><span>v1.0.0</span></div></div>
-						<div class="col-md-2"><div><img src="http://iosicongallery.com/img/512/music-paradise-player-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name">Todomator</div><span>v1.0.0</span></div></div>
-						<div class="col-md-2"><div><img src="http://iosicongallery.com/img/512/microsoft-outlook-email-calendar-2016.png" alt="" border="0" class="img-responsive img-rounded" /><div class="name">Todomator</div><span>v1.0.0</span></div></div>
-					</div>
+					<div data-component="applications" data-component-path="dashboard.applications" data-run="dashboard.current"></div>
 				</div>
 			</section>
+
 		</div>
 		<div class="col-md-4">
 			<section>
@@ -107,6 +98,44 @@
 	</div>
 </div>
 
-<div data-component="toolbar" data-component-path="common.current"></div>
-<div data-component="process" class="hidden" data-component-path="common.current" data-path-launched="common.launched" data-name="Dokumenty" data-component-id="app-docs" data-url="https://www.todomator.com/"></div>
+<div data-component="processes" data-component-path="dashboard.current" data-source="dashboard.applications"></div>
+
+<script>
+	var dashboard = {};
+
+	dashboard.applications = [];
+	dashboard.current = '';
+
+	function dashboard_refresh() {
+
+		var running = {};
+		for (var i = 0, length = dashboard.applications.length; i < length; i++) {
+			var app = dashboard.applications[i];
+			if (app.running)
+				running[app.id] = true;
+		}
+
+		AJAX('GET /internal/dashboard/applications', function(response) {
+			for (var i = 0, length = response.length; i < length; i++) {
+				var is = running[response[i].id];
+				response[i].running = is === true;
+				delete running[response[i].id];
+			}
+
+			SET('dashboard.applications', response);
+
+			setTimeout(function() {
+				Object.keys(running).forEach(function(id) {
+					SETTER('processes', 'kill', id);
+				});
+			}, 1000);
+
+		});
+	}
+
+	// Each 3 minutes will be refresh
+	setInterval(dashboard_refresh, 1000 * 60 * 3);
+	dashboard_refresh();
+
+</script>
 
