@@ -1627,5 +1627,27 @@ COMPONENT('processes', function() {
 		UPDATE(source, 100);
 		self.title(iframe.title);
 	};
+});
+
+COMPONENT('notifications', function() {
+	var self = this;
+
+	self.template = Tangular.compile('<div class="notification"><img src="{{ icon }}" alt="{{ title }}" border="0" /><div><div class="header">{{ title }}<span>{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}</span></div>{{ body }}</div></div>');
+	self.readonly();
+
+	self.make = function() {
+
+	};
+
+	self.setter = function(value) {
+		var builder = [];
+
+		for (var i = 0, length = value.length; i < length; i++) {
+			var item = value[i];
+			builder.push(self.template(item));
+		}
+
+		self.html(builder);
+	};
 
 });

@@ -37,6 +37,10 @@ OPENPLATFORM.users.save = function(callback) {
 	return true;
 };
 
+OPENPLATFORM.users.create_notification = function(user, obj){
+
+};
+
 /**
  * Loads users
  * @return {Boolean}
