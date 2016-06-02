@@ -47,6 +47,7 @@ User.prototype.readonly = function() {
 	item.blocked = self.blocked;
 	item.group = self.group;
 	item.notifications = self.notifications;
+	item.dateupdated = self.dateupdated;
 	return item;
 };
 

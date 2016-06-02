@@ -224,7 +224,12 @@
 	ON('#users.form', function(component) {
 		component.submit = function(hide) {
 			AJAX('POST /internal/users/', users.form, function(response) {
-				console.log(response);
+				SET('users.form.response', response);
+				if (!response.success)
+					return;
+				success();
+				users_refresh();
+				hide();
 			});
 		};
 	});

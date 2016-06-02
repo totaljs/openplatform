@@ -2,7 +2,7 @@ exports.install = function() {
 	// Users
 	F.route('/internal/users/', json_users_query, ['authorize']);
 	F.route('/internal/users/', json_schema_save, ['authorize', 'post', '*User']);
-	F.route('/internal/upload/photo/', json_upload_photo, ['authorize', 'upload', 'authorize'], 512);
+	F.route('/internal/upload/photo/', json_upload_photo, ['authorize', 'upload'], 512);
 
 	// Applications
 	F.route('/internal/applications/', json_applications_query, ['authorize']);
@@ -37,7 +37,7 @@ function json_applications_download() {
 	if (!self.user.superadmin)
 		return self.invalid().push('error-permission');
 
-	U.request(self.query.openplatform, ['get'], function(err, response) {
+	U.request(self.query.openplatform, ['get', 'dnscache', '< 5'], function(err, response) {
 		if (err)
 			return self.invalid().push(err);
 		if (response.isJSON())
@@ -56,7 +56,7 @@ function json_schema_save() {
 function json_upload_photo() {
 	var self = this;
 	var file = self.files[0];
-	var email = self.body.email || '';
+	var email = self.user.superadmin ? self.body.email || '' : self.user.email;
 
 	if (!email.isEmail()) {
 		self.invalid().push('error-email');

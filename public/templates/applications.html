@@ -144,7 +144,12 @@
 	ON('#applications.form', function(component) {
 		component.submit = function(hide) {
 			AJAX('POST /internal/applications/', applications.form, function(response) {
-				console.log(response);
+				SET('applications.form.response', response);
+				if (!response.success)
+					return;
+				applications_refresh();
+				success();
+				hide();
 			});
 		};
 	});

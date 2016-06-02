@@ -25,3 +25,29 @@ Array.prototype.paginate = function(skip, take) {
 	}
 	return arr;
 };
+
+function success() {
+	var el = $('#success');
+	SETTER('loading', 'hide', 500);
+	el.css({ right: '90%' }).delay(500).fadeIn(100).animate({ right: '2%' }, 1500, 'easeOutBounce', function() {
+		setTimeout(function() {
+			el.fadeOut(200);
+		}, 800);
+	});
+}
+
+jQuery.easing.easeOutBounce = function(e, f, a, h, g) {
+	if ((f /= g) < (1 / 2.75)) {
+		return h * (7.5625 * f * f) + a
+	} else {
+		if (f < (2 / 2.75)) {
+			return h * (7.5625 * (f -= (1.5 / 2.75)) * f + 0.75) + a
+		} else {
+			if (f < (2.5 / 2.75)) {
+				return h * (7.5625 * (f -= (2.25 / 2.75)) * f + 0.9375) + a
+			} else {
+				return h * (7.5625 * (f -= (2.625 / 2.75)) * f + 0.984375) + a
+			}
+		}
+	}
+};

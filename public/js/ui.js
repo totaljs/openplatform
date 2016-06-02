@@ -577,176 +577,6 @@ COMPONENT('error', function() {
 	};
 });
 
-COMPONENT('cookie', function() {
-	var self = this;
-	self.readonly();
-	self.singleton();
-	self.make = function() {
-		var cookie = localStorage.getItem('cookie');
-		if (cookie) {
-			self.element.addClass('hidden');
-			return;
-		}
-
-		self.element.removeClass('hidden').addClass('ui-cookie');
-		self.element.append('<button>' + (self.attr('data-button') || 'OK') + '</button>');
-		self.element.on('click', 'button', function() {
-			localStorage.setItem('cookie', '1');
-			self.element.addClass('hidden');
-		});
-	};
-});
-
-COMPONENT('expander', function() {
-	var self = this;
-	self.readonly();
-	self.make = function() {
-		self.element.addClass('ui-expander');
-		self.element.wrapInner('<div class="ui-expander-container"></div>');
-		self.append('<div class="ui-expander-fade"></div><div class="ui-expander-button"><span class="fa fa-angle-double-down"></span></div>');
-		self.element.on('click', '.ui-expander-button', function() {
-			self.element.toggleClass('ui-expander-expanded');
-			self.element.find('.ui-expander-button').find('.fa').toggleClass('fa-angle-double-down fa-angle-double-up');
-		});
-	};
-});
-
-COMPONENT('textboxtags', function() {
-
-	var self = this;
-	var isRequired = self.attr('data-required') === 'true';
-	var isString = false;
-	var container;
-
-	if (!window.$textboxtagstemplate)
-		window.$textboxtagstemplate = Tangular.compile('<li class="ui-textboxtags-tag" data-name="{{ name }}">{{ name }}<span class="fa fa-times"></span></li>');
-
-	var template = window.$textboxtagstemplate;
-
-	self.validate = function(value) {
-		return isRequired ? value && value.length > 0 : true;
-	};
-
-	self.make = function() {
-
-		var height = self.attr('data-height');
-		var icon = self.attr('data-icon');
-		var content = self.html();
-		var html = '<div class="ui-textboxtags-values"' + (height ? ' style="min-height:' + height + '"' : '') + '><ul></ul><input type="text" placeholder="' + (self.attr('data-placeholder') || '') + '" /></div>';
-
-		isString = self.type === 'string';
-
-		if (content.length === 0) {
-			self.element.addClass('ui-textboxtags');
-			self.element.append(html);
-		} else {
-			self.element.empty();
-			self.element.append('<div class="ui-textboxtags-label' + (isRequired ? ' ui-textboxtags-label-required' : '') + '">' + (icon ? '<span class="fa ' + icon + '"></span> ' : '') + content + ':</div>');
-			self.element.append('<div class="ui-textboxtags">' + html + '</div>');
-		}
-
-		self.element.on('click', function(e) {
-			self.element.find('input').focus();
-		});
-
-		container = self.element.find('ul');
-		container.on('click', '.fa-times', function(e) {
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			var el = $(this);
-			var arr = self.get();
-
-			if (isString)
-				arr = self.split(arr);
-
-			if (!arr || !(arr instanceof Array) || !arr.length)
-				return;
-
-			var index = arr.indexOf(el.parent().attr('data-name'));
-			if (index === -1)
-				return;
-
-			arr.splice(index, 1);
-			self.change(true);
-			self.set(isString ? arr.join(', ') : arr);
-		});
-
-		self.element.on('keydown', 'input', function(e) {
-
-			if (e.keyCode === 8) {
-				if (this.value)
-					return;
-				var arr = self.get();
-				if (isString)
-					arr = self.split(arr);
-				if (!arr || !(arr instanceof Array) || !arr.length)
-					return;
-				arr.pop();
-				self.change(true);
-				self.set(isString ? arr.join(', ') : arr);
-				return;
-			}
-
-			if (e.keyCode !== 13)
-				return;
-
-			if (!this.value)
-				return;
-
-			var arr = self.get();
-			var value = this.value;
-
-			if (isString)
-				arr = self.split(arr);
-
-			if (!(arr instanceof Array))
-				arr = [];
-
-			if (arr.indexOf(value) === -1)
-				arr.push(value);
-			else
-				return;
-
-			this.value = '';
-			self.change(true);
-			self.set(isString ? arr.join(', ') : arr);
-		});
-	};
-
-	self.split = function(value) {
-		if (!value)
-			return new Array(0);
-		var arr = value.split(',');
-		for (var i = 0, length = arr.length; i < length; i++)
-			arr[i] = arr[i].trim();
-		return arr;
-	};
-
-	self.setter = function(value) {
-
-		if (NOTMODIFIED(self.id, value))
-			return;
-
-		container.empty();
-
-		if (!value || !value.length)
-			return;
-
-		var arr = isString ? self.split(value) : value;
-		var builder = '';
-		for (var i = 0, length = arr.length; i < length; i++)
-			builder += template({ name: arr[i] });
-
-		container.append(builder);
-	};
-
-	self.state = function(type) {
-		self.element.find('.ui-textboxtags').toggleClass('ui-textboxtags-invalid', self.isInvalid());
-	};
-});
-
 COMPONENT('page', function() {
 
 	var self = this;
@@ -988,250 +818,6 @@ COMPONENT('form', function() {
 	};
 });
 
-COMPONENT('pictures', function() {
-
-	var self = this;
-
-	self.skip = false;
-
-	self.make = function() {
-		self.element.addClass('ui-pictures');
-	};
-
-	self.readonly();
-
-	self.setter = function(value) {
-
-		if (typeof(value) === 'string')
-			value = value.split(',');
-
-		if (this.skip) {
-			this.skip = false;
-			return;
-		}
-
-		this.element.find('.fa').unbind('click');
-		this.element.find('img').unbind('click');
-		this.element.empty();
-
-		if (!(value instanceof Array) || value.length === 0)
-			return;
-
-		for (var i = 0, length = value.length; i < length; i++) {
-			var id = value[i];
-			if (id)
-				this.element.append('<div data-id="' + id + '" class="col-xs-3 m"><span class="fa fa-times"></span><img src="/images/small/' + id + '.jpg" class="img-responsive" alt="" /></div>');
-		}
-
-		var self = this;
-		this.element.find('.fa').bind('click', function(e) {
-
-			var el = $(this).parent().remove();
-			var id = [];
-
-			self.element.find('div').each(function() {
-				id.push($(this).attr('data-id'));
-			});
-
-			self.skip = true;
-			self.set(id);
-		});
-
-		this.element.find('img').bind('click', function() {
-
-			var selected = self.element.find('.selected');
-			var el = $(this);
-
-			el.toggleClass('selected');
-
-			if (selected.length === 0)
-				return;
-
-			var id1 = el.parent().attr('data-id');
-			var id2 = selected.parent().attr('data-id');
-			var arr = self.get();
-
-			var index1 = arr.indexOf(id1);
-			var index2 = arr.indexOf(id2);
-
-			arr[index1] = id2;
-			arr[index2] = id1;
-
-			setTimeout(function() {
-				self.change();
-				self.set(arr);
-			}, 500);
-		});
-	};
-});
-
-COMPONENT('fileupload', function() {
-
-	var self = this;
-
-	self.error = function(err) {};
-	self.readonly();
-	self.setter = null;
-
-	var isRequired = this.element.attr('data-required') === 'true';
-
-	this.make = function() {
-
-		var element = this.element;
-		var content = self.html();
-		var placeholder = self.attr('data-placeholder');
-		var icon = self.attr('data-icon');
-		var accept = self.attr('data-accept');
-		var url = self.attr('data-url');
-
-		if (!url) {
-			if (window.managerurl)
-				url = window.managerurl + '/upload/';
-			else
-				url = window.location.pathname
-		}
-
-		var multiple = self.attr('data-multiple') === 'true';
-		var html = '<span class="fa fa-folder"></span><input type="file"' + (accept ? ' accept="' + accept + '"' : '') + (multiple ? ' multiple="multiple"' : '') + ' class="ui-fileupload-input" /><input type="text" placeholder="' + (placeholder ? placeholder : '') + '" readonly="readonly" />';
-
-		if (content.length > 0) {
-			element.empty();
-			element.append('<div class="ui-fileupload-label' + (isRequired ? ' ui-fileupload-label-required' : '') + '">' + (icon ? '<span class="fa ' + icon + '"></span> ' : '') + content + ':</div>');
-			element.append('<div class="ui-fileupload">' + html + '</div>');
-		} else {
-			element.addClass('ui-fileupload');
-			element.append(html);
-		}
-
-		element.find('.ui-fileupload-input').bind('change', function(evt) {
-			var files = evt.target.files;
-			var filename = [];
-			var el = this;
-			$(el).parent().find('input[type="text"]').val(filename.join(', '));
-
-			var data = new FormData();
-			for (var i = 0, length = files.length; i < length; i++)
-				data.append('file' + i, files[i]);
-
-			var loading = FIND('loading');
-			if (loading)
-				loading.show();
-
-			$.components.UPLOAD(url, data, function(response, err) {
-
-				if (err) {
-
-					if (loading)
-						loading.hide(500);
-
-					var message = FIND('message');
-					if (message)
-						message.warning(self.attr('data-error-large'));
-					else
-						alert(self.attr('data-error-large'));
-
-					return;
-				}
-
-				self.change();
-				el.value = '';
-
-				if (self.attr('data-extension') === 'false') {
-					for (var i = 0, length = response.length; i < length; i++) {
-						var filename = response[i];
-						var index = filename.lastIndexOf('.');
-						if (index === -1)
-							continue;
-						response[i] = filename.substring(0, index);
-					}
-				}
-
-				if (self.attr('data-singlefile') === 'true')
-					self.set(response[0]);
-				else
-					self.push(response);
-
-				if (loading)
-					loading.hide(500);
-			});
-		});
-	};
-});
-
-COMPONENT('repeater-group', function() {
-
-	var self = this;
-	var template_group;
-	var group;
-
-	self.readonly();
-
-	self.make = function() {
-		group = self.attr('data-group');
-		self.element.find('script').each(function(index) {
-			var element = $(this);
-			var html = element.html();
-			element.remove();
-
-			if (!index) {
-				self.template = Tangular.compile(html);
-				return;
-			}
-
-			template_group = Tangular.compile(html);
-		});
-	};
-
-	self.setter = function(value) {
-
-		if (!value || !value.length) {
-			self.element.empty();
-			return;
-		}
-
-		if (NOTMODIFIED(self.id, value))
-			return;
-
-		var length = value.length;
-		var groups = {};
-
-		for (var i = 0; i < length; i++) {
-			var name = value[i][group];
-			if (!name)
-				name = '0';
-
-			if (!groups[name])
-				groups[name] = [value[i]];
-			else
-				groups[name].push(value[i]);
-		}
-
-		var index = 0;
-		var builder = '';
-		var keys = Object.keys(groups);
-
-		keys.sort();
-		keys.forEach(function(key) {
-			var arr = groups[key];
-
-			if (key !== '0') {
-				var options = {};
-				options[group] = key;
-				options.length = arr.length;
-				builder += template_group(options);
-			}
-
-			for (var i = 0, length = arr.length; i < length; i++) {
-				var item = arr[i];
-				item.index = index++;
-				builder += self.template(item).replace(/\$index/g, index.toString()).replace(/\$/g, self.path + '[' + index + ']');
-			}
-		});
-
-		self.element.empty().append(builder);
-	};
-});
-
 COMPONENT('dropdowncheckbox', function() {
 
 	var self = this;
@@ -1457,582 +1043,6 @@ COMPONENT('dropdowncheckbox', function() {
 		window.$dropdowncheckboxelement.addClass('hidden');
 		window.$dropdowncheckboxelement = null;
 	});
-});
-
-COMPONENT('crop', function() {
-	var self = this;
-	var width, height, canvas, context;
-	var img = new Image();
-	var can = false;
-	var is = false;
-	var zoom = 100;
-	var current = { x: 0, y: 0 };
-	var offset = { x: 0, y: 0 };
-	var cache = { x: 0, y: 0, zoom: 0 };
-	var bgcolor = '';
-
-	self.noValid();
-	self.getter = null;
-
-	img.onload = function () {
-		can = true;
-		zoom = 100;
-
-		var nw = (img.width / 2) >> 0;
-		var nh = (img.height / 2) >> 0;
-
-		if (img.width > width) {
-
-			var ratio;
-			var p;
-
-			p = (width / (img.width / 100)) >> 0;
-			zoom -= zoom - p;
-			nh = ((img.height * (p / 100)) / 2) >> 0;
-			nw = ((img.width * (p / 100)) / 2) >> 0;
-		}
-
-		 // centering
-		cache.x = current.x = (width / 2) - nw;
-		cache.y = current.y = (height / 2) - nh;
-		cache.zoom = zoom;
-
-		self.redraw();
-	};
-
-	self.resize = function(w, h) {
-		width = w;
-		height = h;
-		canvas.width = w;
-		canvas.height = h;
-		self.element.find('.ui-crop-size').empty().append('<i class="fa fa-image mr5"></i>{0}x{1}'.format(w, h));
-	};
-
-	self.output = function(type) {
-		if (type)
-			return canvas.toDataURL(type);
-		if (!bgcolor && isTransparent(context))
-			return canvas.toDataURL('image/png');
-		return canvas.toDataURL('image/jpeg');
-	};
-
-	self.make = function() {
-
-		bgcolor = self.attr('data-background');
-		width = parseInt(self.attr('data-width') || 0);
-		height = parseInt(self.attr('data-height') || 0);
-		self.element.addClass('ui-crop');
-		self.append(Tangular.render('<input type="file" style="display:none" accept="image/*" /><ul><li data-type="upload"><span class="fa fa-folder"></span></li><li data-type="plus"><span class="fa fa-plus"></span></li><li data-type="refresh"><span class="fa fa-refresh"></span></li><li data-type="minus"><span class="fa fa-minus"></span></li></ul><canvas width="{{ width }}" height="{{ height }}"></canvas><div class="ui-crop-size"><i class="fa fa-image mr5"></i>{{width}}x{{height}}</div>', { width: width, height: height }));
-		canvas = self.find('canvas').get(0);
-		context = canvas.getContext('2d');
-
-		self.element.on('click', 'li', function(e) {
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			var count = parseInt();
-			var type = $(this).attr('data-type');
-
-			switch (type) {
-				case 'upload':
-					self.find('input').trigger('click');
-					break;
-				case 'plus':
-					zoom += 5;
-					if (zoom > 300)
-						zoom = 300;
-					current.x -= 5;
-					current.y -= 5;
-					self.redraw();
-				break;
-				case 'minus':
-					zoom -= 5;
-					if (zoom < 5)
-						zoom = 5;
-					current.x += 5;
-					current.y += 5;
-					self.redraw();
-					break;
-				case 'refresh':
-					zoom = cache.zoom;
-					x = cache.x;
-					y = cache.y;
-					self.redraw();
-					break;
-			}
-
-		});
-
-		self.find('input').on('change', function() {
-			var file = this.files[0];
-			var reader = new FileReader();
-
-			reader.onload = function () {
-				img.src = reader.result;
-				setTimeout(function() {
-					self.change();
-				}, 500);
-			};
-
-			reader.readAsDataURL(file);
-			this.value = '';
-		});
-
-		$(canvas).on('mousedown', function (e) {
-
-			if (self.disabled || !can)
-				return;
-
-			is = true;
-			var rect = canvas.getBoundingClientRect();
-			var x = e.clientX - rect.left;
-			var y = e.clientY - rect.top;
-			offset.x = x - current.x;
-			offset.y = y - current.y;
-		});
-
-		var allow = (self.attr('data-dragdrop') || 'true') === 'true';
-
-		if (allow) {
-			$(canvas).on('dragenter dragover dragexit drop dragleave', function (e) {
-
-				if (self.disabled)
-					return;
-
-				e.stopPropagation();
-				e.preventDefault();
-
-				switch (e.type) {
-					case 'drop':
-						self.element.removeClass('ui-crop-dragdrop');
-						break;
-					case 'dragenter':
-					case 'dragover':
-						self.element.addClass('ui-crop-dragdrop');
-						return;
-					case 'dragexit':
-					case 'dragleave':
-					default:
-						self.element.removeClass('ui-crop-dragdrop');
-						return;
-				}
-
-				var files = e.originalEvent.dataTransfer.files;
-				var reader = new FileReader();
-
-				reader.onload = function () {
-					img.src = reader.result;
-					setTimeout(function() {
-						self.change();
-					}, 500);
-				};
-
-				reader.readAsDataURL(files[0]);
-			});
-		}
-
-		self.element.on('mousemove mouseup', function (e) {
-
-			if (e.type === 'mouseup') {
-				if (is)
-					self.change();
-				is = false;
-				return;
-			}
-
-			if (self.disabled)
-				return;
-
-			if (!can || !is) return;
-			var rect = canvas.getBoundingClientRect();
-			var x = e.clientX - rect.left;
-			var y = e.clientY - rect.top;
-			current.x = x - offset.x;
-			current.y = y - offset.y;
-			self.redraw();
-		});
-	};
-
-	self.redraw = function() {
-
-		var w = img.width;
-		var h = img.height;
-
-		w = ((w / 100) * zoom) >> 0;
-		h = ((h / 100) * zoom) >> 0;
-
-		context.clearRect(0, 0, width, height);
-
-		if (bgcolor) {
-			context.fillStyle = bgcolor;
-			context.fillRect(0, 0, width, height)
-		}
-
-		if (can)
-			context.drawImage(img, current.x || 0, current.y || 0, w, h);
-	};
-
-	self.setter = function(value) {
-
-		if (!value) {
-			can = false;
-			self.redraw();
-			return;
-		}
-
-		img.src = (self.attr('data-format') || '{0}').format(value);
-	};
-
-	function isTransparent(ctx) {
-		var id = ctx.getImageData(0, 0, width, height);
-		for (var i = 0, length = id.data.length; i < length; i += 4)
-		if (id.data[i + 3] !== 255) return true;
-		return false;
-	}
-});
-
-COMPONENT('codemirror', function() {
-
-	var self = this;
-	var required = self.attr('data-required') === 'true';
-	var skipA = false;
-	var skipB = false;
-	var editor;
-	var timeout;
-
-	self.validate = function(value) {
-		return required ? value && value.length > 0 : true;
-	};
-
-	self.make = function() {
-
-		var height = self.element.attr('data-height');
-		var icon = self.element.attr('data-icon');
-		var content = self.element.html();
-
-		self.element.empty();
-		self.element.append('<div class="ui-codemirror-label' + (required ? ' ui-codemirror-label-required' : '') + '">' + (icon ? '<span class="fa ' + icon + '"></span> ' : '') + content + ':</div><div class="ui-codemirror"></div>');
-		var container = self.element.find('.ui-codemirror');
-
-		editor = CodeMirror(container.get(0), { lineNumbers: self.attr('data-linenumbers') === 'true', mode: self.attr('data-type') || 'htmlmixed', indentUnit: 4 });
-
-		if (height !== 'auto')
-			editor.setSize('100%', height || '200px');
-
-		editor.on('change', function(a, b) {
-
-			if (skipB && b.origin !== 'paste') {
-				skipB = false;
-				return;
-			}
-
-			clearTimeout(timeout);
-			timeout = setTimeout(function() {
-				skipA = true;
-				self.reset(true);
-				self.dirty(false);
-				self.set(editor.getValue());
-			}, 200);
-		});
-
-		skipB = true;
-	};
-
-	self.getter = null;
-	self.setter = function(value, path) {
-
-		if (skipA === true) {
-			skipA = false;
-			return;
-		}
-
-		skipB = true;
-		editor.setValue(value || '');
-		editor.refresh();
-		skipB = true;
-
-		CodeMirror.commands['selectAll'](editor);
-		var f = editor.getCursor(true);
-		var t = editor.getCursor(false);
-		skipB = true;
-		editor.setValue(editor.getValue());
-		skipB = true;
-
-		setTimeout(function() {
-			editor.refresh();
-		}, 200);
-
-		setTimeout(function() {
-			editor.refresh();
-		}, 1000);
-	};
-
-	self.state = function(type) {
-		self.element.find('.ui-codemirror').toggleClass('ui-codemirror-invalid', self.isInvalid());
-	};
-});
-
-COMPONENT('calendar', function() {
-
-	var self = this;
-	var skip = false;
-	var skipDay = false;
-	var callback;
-
-	self.days = self.attr('data-days').split(',');
-	self.months = self.attr('data-months').split(',');
-	self.first = parseInt(self.attr('data-firstday'));
-	self.today = self.attr('data-today');
-	self.months_short = [];
-
-	for (var i = 0, length = self.months.length; i < length; i++) {
-		var m = self.months[i];
-		if (m.length > 4)
-			m = m.substring(0, 3) + '.';
-		self.months_short.push(m);
-	}
-
-	self.readonly();
-	self.click = function(date) {};
-
-	function getMonthDays(dt) {
-
-		var m = dt.getMonth();
-		var y = dt.getFullYear();
-
-		if (m === -1) {
-			m = 11;
-			y--;
-		}
-
-		return (32 - new Date(y, m, 32).getDate());
-	}
-
-	function calculate(year, month, selected) {
-
-		var d = new Date(year, month, 1);
-		var output = { header: [], days: [], month: month, year: year };
-		var firstDay = self.first;
-		var firstCount = 0;
-		var from = d.getDay() - firstDay;
-		var today = new Date();
-		var ty = today.getFullYear();
-		var tm = today.getMonth();
-		var td = today.getDate();
-		var sy = selected ? selected.getFullYear() : -1;
-		var sm = selected ? selected.getMonth() : -1;
-		var sd = selected ? selected.getDate() : -1;
-		var days = getMonthDays(d);
-
-		if (from < 0)
-			from = 7 + from;
-
-		while (firstCount++ < 7) {
-			output.header.push({ index: firstDay, name: self.days[firstDay] });
-			firstDay++;
-			if (firstDay > 6)
-				firstDay = 0;
-		}
-
-		var index = 0;
-		var indexEmpty = 0;
-		var count = 0;
-		var prev = getMonthDays(new Date(year, month - 1, 1)) - from;
-
-		for (var i = 0; i < days + from; i++) {
-
-			count++;
-			var obj = { isToday: false, isSelected: false, isEmpty: false, isFuture: false, number: 0, index: count };
-
-			if (i >= from) {
-				index++;
-				obj.number = index;
-				obj.isSelected = sy === year && sm === month && sd === index;
-				obj.isToday = ty === year && tm === month && td === index;
-				obj.isFuture = ty < year;
-
-				if (!obj.isFuture && year === ty) {
-					if (tm < month)
-						obj.isFuture = true;
-					else if (tm === month)
-						obj.isFuture = td < index;
-				}
-
-			} else {
-				indexEmpty++;
-				obj.number = prev + indexEmpty;
-				obj.isEmpty = true;
-			}
-
-			output.days.push(obj);
-		}
-
-		indexEmpty = 0;
-		for (var i = count; i < 42; i++) {
-			count++;
-			indexEmpty++;
-			var obj = { isToday: false, isSelected: false, isEmpty: true, isFuture: false, number: indexEmpty, index: count };
-			output.days.push(obj);
-		}
-
-		return output;
-	}
-
-	self.hide = function() {
-		if (self.element.hasClass('hidden'))
-			return;
-		self.element.addClass('hidden');
-		return self;
-	};
-
-	self.toggle = function(el, value, callback, offset) {
-		if (self.element.hasClass('hidden'))
-			self.show(el, value, callback, offset);
-		else
-			self.hide();
-		return self;
-	};
-
-	self.show = function(el, value, callback, offset) {
-
-		if (!el)
-			return self.hide();
-
-		var off = el.offset();
-		var h = el.innerHeight();
-
-		self.element.css({ left: off.left + (offset || 0), top: off.top + h + 12 }).removeClass('hidden');
-		self.click = callback;
-		self.date(value);
-		return self;
-	};
-
-	self.make = function() {
-
-		self.element.addClass('ui-calendar hidden');
-
-		self.element.on('click', '.ui-calendar-today', function() {
-			var dt = new Date();
-			self.hide();
-			if (self.click)
-				self.click(dt);
-		});
-
-		self.element.on('click', '.ui-calendar-day', function() {
-			var arr = this.getAttribute('data-date').split('-');
-			var dt = new Date(parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2]));
-			skip = true;
-			self.element.find('.ui-calendar-selected').removeClass('ui-calendar-selected');
-			$(this).addClass('ui-calendar-selected');
-			self.hide();
-			if (self.click)
-				self.click(dt);
-		});
-
-		self.element.on('click', 'button', function(e) {
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			var arr = this.getAttribute('data-date').split('-');
-			var dt = new Date(parseInt(arr[0]), parseInt(arr[1]), 1);
-			switch (this.name) {
-				case 'prev':
-					dt.setMonth(dt.getMonth() - 1);
-					break;
-				case 'next':
-					dt.setMonth(dt.getMonth() + 1);
-					break;
-			}
-			skipDay = true;
-			self.date(dt);
-		});
-
-		$(document.body).on('scroll', function() {
-			if (window.$calendar)
-				window.$calendar.hide();
-		});
-
-		window.$calendar = self;
-	};
-
-	self.date = function(value) {
-
-		if (typeof(value) === 'string')
-			value = value.parseDate();
-
-		var empty = !value;
-
-		if (skipDay) {
-			skipDay = false;
-			empty = true;
-		}
-
-		if (skip) {
-			skip = false;
-			return;
-		}
-
-		if (!value)
-			value = new Date();
-
-		old = value;
-
-		var output = calculate(value.getFullYear(), value.getMonth(), value);
-		var builder = [];
-
-		for (var i = 0; i < 42; i++) {
-
-			var item = output.days[i];
-
-			if (i % 7 === 0) {
-				if (builder.length > 0)
-					builder.push('</tr>');
-				builder.push('<tr>');
-			}
-
-			var cls = [];
-
-			if (item.isEmpty)
-				cls.push('ui-calendar-disabled');
-			else
-				cls.push('ui-calendar-day');
-
-			if (!empty && item.isSelected)
-				cls.push('ui-calendar-selected');
-
-			if (item.isToday)
-				cls.push('ui-calendar-day-today');
-
-			builder.push('<td class="' + cls.join(' ') + '" data-date="' + output.year + '-' + output.month + '-' + item.number + '">' + item.number + '</td>');
-		}
-
-		builder.push('</tr>');
-
-		var header = [];
-		for (var i = 0; i < 7; i++)
-			header.push('<th>' + output.header[i].name + '</th>');
-
-		self.element.html('<div class="ui-calendar-header"><button class="ui-calendar-header-prev" name="prev" data-date="' + output.year + '-' + output.month + '"><span class="fa fa-chevron-left"></span></button><div class="ui-calendar-header-info">' + self.months[value.getMonth()] + ' ' + value.getFullYear() + '</div><button class="ui-calendar-header-next" name="next" data-date="' + output.year + '-' + output.month + '"><span class="fa fa-chevron-right"></span></button></div><table cellpadding="0" cellspacing="0" border="0"><thead>' + header.join('') + '</thead><tbody>' + builder.join('') + '</tbody></table>' + (self.today ? '<div><a href="javascript:void(0)" class="ui-calendar-today">' + self.today + '</a></div>' : ''));
-	};
-});
-
-COMPONENT('tabmenu', function() {
-	var self = this;
-	self.readonly();
-	self.make = function() {
-		self.element.on('click', 'li', function() {
-			var el = $(this);
-			if (el.hasClass('selected'))
-				return;
-			self.set(self.parser(el.attr('data-value')));
-		});
-	};
-	self.setter = function(value) {
-		self.element.find('.selected').removeClass('selected');
-		self.element.find('li[data-value="' + value + '"]').addClass('selected');
-	};
 });
 
 /**
@@ -2293,48 +1303,6 @@ COMPONENT('pagination', function() {
 	};
 });
 
-jC.parser(function(path, value, type) {
-
-	if (type === 'date') {
-		if (value instanceof Date)
-			return value;
-
-		if (!value)
-			return null;
-
-		var isEN = value.indexOf('.') === -1;
-		var tmp = isEN ? value.split('-') : value.split('.');
-		if (tmp.length !== 3)
-			return null;
-		var dt = isEN ? new Date(parseInt(tmp[0]) || 0, (parseInt(tmp[1], 10) || 0) - 1, parseInt(tmp[2], 10) || 0) : new Date(parseInt(tmp[2]) || 0, (parseInt(tmp[1], 10) || 0) - 1, parseInt(tmp[0], 10) || 0);
-		return dt;
-	}
-
-	return value;
-});
-
-jC.formatter(function(path, value, type) {
-
-	if (type === 'date') {
-		if (value instanceof Date)
-			return value.format(this.attr('data-component-format'));
-		if (!value)
-			return value;
-		return new Date(Date.parse(value)).format(this.attr('data-component-format'));
-	}
-
-	if (type !== 'currency')
-		return value;
-
-	if (typeof(value) !== 'number') {
-		value = parseFloat(value);
-		if (isNaN(value))
-			value = 0;
-	}
-
-	return value.format(2);
-});
-
 COMPONENT('photoupload', function() {
 
 	var self = this;
@@ -2403,95 +1371,6 @@ COMPONENT('photoupload', function() {
 
 		last = value;
 		self.find('img').attr('src', Tangular.helpers.photo(value) + (value ? '?ts=' + Date.now() : ''));
-	};
-});
-
-COMPONENT('checkboxlist', function() {
-	var self = this;
-	var template = Tangular.compile('<div class="{0} ui-checkboxlist-checkbox"><label><input type="checkbox" value="{{ id }}"><span>{{ name }}</span></label></div>'.format(self.attr('data-class')));
-
-	self.make = function() {
-
-		self.element.on('click', 'input', function() {
-			var arr = self.get() || [];
-			var value = self.parser(this.value);
-			var index = arr.indexOf(value);
-			if (index === -1)
-				arr.push(value);
-			else
-				arr.splice(index, 1);
-			self.set(arr);
-		});
-
-		self.element.on('click', '.ui-checkboxlist-selectall', function() {
-			var arr = [];
-			var inputs = self.element.find('input');
-			var value = self.get();
-
-			if (value && inputs.length === value.length) {
-				self.set(arr);
-				return;
-			}
-
-			inputs.each(function() {
-				arr.push(self.parser(this.value));
-			});
-
-			self.set(arr);
-		});
-
-		self.make = function() {
-
-			var options = self.attr('data-options');
-			if (!options)
-				return;
-
-			var arr = options.split(';');
-			var datasource = [];
-
-			for (var i = 0, length = arr.length; i < length; i++) {
-				var item = arr[i].split('|');
-				datasource.push({ id: item[1] === undefined ? item[0] : item[1], name: item[0] });
-			}
-
-			self.redraw(datasource);
-		};
-
-		self.setter = function(value) {
-			self.element.find('input').each(function() {
-				this.checked = value && value.indexOf(self.parser(this.value)) !== -1;
-			});
-		};
-
-		self.redraw = function(arr) {
-			var builder = [];
-			var kn = self.attr('data-source-text') || 'name';
-			var kv = self.attr('data-source-value') || 'id';
-
-			for (var i = 0, length = arr.length; i < length; i++) {
-				var item = arr[i];
-				if (typeof(item) === 'string')
-					builder.push(template({ id: item, name: item }));
-				else
-					builder.push(template({ id: item[kv] === undefined ? item[kn] : item[kv], name: item[kn] }));
-			}
-
-			if (!builder.length)
-				return;
-
-			builder.push('<div class="clearfix"></div><div class="col-md-12"><div class="ui-checkboxlist-selectall"><a href="javascript:void(0)"><i class="fa fa-object-group mr5"></i>{0}</a></div></div>'.format(self.attr('data-button')));
-			self.html(builder.join(''));
-			return self;
-		};
-
-		var datasource = self.attr('data-source');
-		if (datasource) {
-			self.watch(datasource, function(path, value) {
-				if (!value)
-					value = [];
-				self.redraw(value);
-			}, true);
-		}
 	};
 });
 
@@ -2594,3 +1473,110 @@ COMPONENT('tagger', function() {
 		self.element.removeClass('transparent hidden');
 	};
 });
+
+COMPONENT('process', function() {
+
+	var self = this;
+	var iframe;
+
+	self.launched = false;
+	self.visibled = false;
+
+	self.readonly();
+
+	self.make = function() {
+		self.element.addClass('ui-process');
+		self.append('<iframe src="/loading.html" class="hidden" frameworkder="0"></iframe><div></div>');
+		iframe = self.element.find('iframe');
+	};
+
+	self.close = function() {
+
+		var launched = self.attr('data-path-launched');
+		var arr = self.get(launched);
+		var index = arr.findIndex(self.id);
+
+		if (index === -1)
+			return;
+
+		arr.splice(index, 1);
+		UPDATE(launched);
+
+		iframe.attr('src', '/loading.html');
+		self.launched = false;
+		self.visibled = false;
+	};
+
+	self.setter = function(value) {
+
+		if (value !== self.id) {
+			self.element.toggleClass('hidden', true);
+			self.visibled = false;
+			return;
+		}
+
+		self.element.toggleClass('hidden', false);
+		self.visibled = true;
+
+		if (self.launched)
+			return;
+
+		setTimeout(function() {
+			self.element.find('div').addClass('visible');
+		}, 500);
+
+		self.launched = true;
+		setTimeout(function() {
+
+			self.element.toggleClass('hidden', false);
+
+			// Loads application
+			iframe.attr('src', self.attr('data-url'));
+
+			// Registers app into the launched apps
+			var launched = self.attr('data-path-launched');
+			if (launched)
+				self.push(launched, self.id);
+
+			setTimeout(function() {
+				iframe.removeClass('hidden');
+			}, 500);
+
+			setTimeout(function() {
+				self.element.find('div').remove();
+			}, 1000);
+		}, 1000);
+	};
+});
+
+COMPONENT('toolbar', function() {
+	var self = this;
+	self.readonly();
+
+	self.make = function() {
+		self.html('<div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button>');
+		self.element.addClass('ui-process-toolbar hidden');
+		self.element.on('click', 'button', function() {
+			switch (this.name) {
+				case 'close':
+					self.set('');
+					break;
+			}
+		});
+	};
+
+	self.setter = function(value) {
+
+		if (!value) {
+			self.element.toggleClass('hidden', true);
+			return;
+		}
+
+		self.element.toggleClass('hidden', false);
+		FIND('process', true).forEach(function(component) {
+			if (component.id === value)
+				self.find('label').html(component.attr('data-name'));
+		});
+	};
+});
+

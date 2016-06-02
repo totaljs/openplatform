@@ -71,7 +71,7 @@ Application.prototype.prepare = function(item) {
  */
 Application.prototype.reload = function(callback) {
 	var self = this;
-	U.request(self.openplatform, ['get', '< 3'], function(err, response) {
+	U.request(self.openplatform, ['get', '< 5', 'dnscache'], function(err, response) {
 
 		self.dateupdated = F.datetime;
 
