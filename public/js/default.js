@@ -2,6 +2,10 @@ $(document).ready(function() {
 
 });
 
+Tangular.register('urlencode', function(value) {
+	return encodeURIComponent(value);
+});
+
 Tangular.register('photo', function(value) {
 	if (!value)
 		return '/img/face.jpg';

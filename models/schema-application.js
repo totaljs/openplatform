@@ -1,6 +1,6 @@
 NEWSCHEMA('Application').make(function(schema) {
 
-	schema.define('openplatform', 'Url', true);
+	schema.define('id', 'Url', true);
 	schema.define('title', 'String(50)', true);
 	schema.define('notifications', Boolean);
 	schema.define('users', Boolean);
@@ -37,11 +37,11 @@ NEWSCHEMA('Application').make(function(schema) {
 			callback(SUCCESS(true));
 		};
 
-		var item = APPLICATIONS.findItem('id', OPENPLATFORM.applications.uid(model.openplatform));
+		var item = APPLICATIONS.findItem('id', OPENPLATFORM.applications.uid(model.id));
 		if (item)
 			return process(null, item, true);
 
-		OPENPLATFORM.applications.create(model.openplatform, process);
+		OPENPLATFORM.applications.create(model.id, process);
 	});
 
 });

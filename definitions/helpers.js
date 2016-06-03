@@ -37,10 +37,6 @@ OPENPLATFORM.users.save = function(callback) {
 	return true;
 };
 
-OPENPLATFORM.users.create_notification = function(user, obj){
-
-};
-
 /**
  * Loads users
  * @return {Boolean}
@@ -84,7 +80,7 @@ OPENPLATFORM.applications.save = function(callback) {
 
 OPENPLATFORM.applications.create = function(url, callback) {
 	var app = new OPENPLATFORM.Application();
-	app.openplatform = url;
+	app.id = url;
 	app.reload(function(err) {
 		callback(err, app);
 	});

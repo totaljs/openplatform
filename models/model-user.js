@@ -1,4 +1,7 @@
+const Fs = require('fs');
 const REG_PHOTO = /@|\./g;
+const EMPTYARRAY = [];
+
 global.USERS = [];
 
 function User() {
@@ -18,6 +21,7 @@ function User() {
 	this.datelogged = null;
 	this.dateupdated = null;
 	this.datepassword = null;
+	this.widgets = null;
 
 	// Internal settings
 	this.online = false;
@@ -26,6 +30,7 @@ function User() {
 	this.superadmin = false;
 	this.notifications = true;
 	this.resetcounter = 0;
+	this.notificationscounter = 0;
 }
 
 User.prototype.logoff = function() {
@@ -38,10 +43,52 @@ User.prototype.getApplications = function() {
 	var self = this;
 	for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
 		var item = APPLICATIONS[i];
-		if (self.applications[item.id])
+		if (self.applications[item.internal])
 			arr.push(item.readonly());
 	}
 	return arr;
+};
+
+User.prototype.getNotifications = function(callback) {
+	var self = this;
+
+	if (!self.notificationscounter) {
+		callback(null, '[]');
+		return;
+	}
+
+	var filename = F.path.databases('notifications_{0}.json'.format(self.id.hash()));
+
+	U.queue('user.notifications', 15, function(next) {
+		Fs.readFile(filename, function(err, response) {
+
+			self.notificationscounter = 0;
+			next();
+
+			if (err)
+				return callback(null, '[]');
+
+			// Removes the file when it exists
+			Fs.unlink(filename, NOOP);
+
+			// Responds (on client-side are notifications cached)
+			callback(null, '[' + response.toString('utf8').substring(1) + ']');
+		});
+	});
+
+	return self;
+};
+
+User.prototype.notify = function(notification, callback) {
+	var self = this;
+	U.queue('user.notify', 15, function(next) {
+		Fs.appendFile(F.path.databases('notifications_{0}.json'.format(self.id.toString().hash())), ',' + JSON.stringify(notification), function() {
+			next();
+			self.notificationscounter++;
+			callback && callback();
+		});
+	});
+	return self;
 };
 
 User.prototype.readonly = function() {
@@ -59,6 +106,8 @@ User.prototype.readonly = function() {
 	item.group = self.group;
 	item.notifications = self.notifications;
 	item.dateupdated = self.dateupdated;
+	item.sounds = self.sounds;
+	item.widgets = self.widgets;
 	return item;
 };
 

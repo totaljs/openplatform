@@ -2,7 +2,8 @@ global.APPLICATIONS = [];
 
 function Application() {
 
-	this.id = 0;
+	this.id = 'url-to-openplatform.json';
+	this.internal = 0;
 	this.title = '';
 	this.name = '';
 	this.icon = '';
@@ -10,7 +11,6 @@ function Application() {
 	this.author = '';
 	this.description = '';
 	this.email = '';
-	this.roles = '';
 	this.url = '';
 	this.serviceurl = '';
 	this.status = '';
@@ -24,12 +24,12 @@ function Application() {
 	this.applications = false;
 	this.mobile = false;
 
-	// Custom headers
-	this.events = {};
-	this.origin = [];  			  // Can contains only IP address
+	this.events = null;           // events
+	this.origin = null; 		  // Can contains only IP address
+	this.widgets = null;          // Widgets (Object array)
+	this.roles = null;
 
 	// Meta data
-	this.openplatform = 'url-to-openplatform.json';
 	this.datecreated = null;
 	this.dateupdated = null;
 }
@@ -37,7 +37,7 @@ function Application() {
 Application.prototype.readonly = function() {
 	var self = this;
 	var item = {};
-	item.id = self.openplatform;
+	item.id = self.id;
 	item.title = self.title;
 	item.name = self.name;
 	item.description = self.description;
@@ -48,10 +48,15 @@ Application.prototype.readonly = function() {
 	item.applications = self.applications;
 	item.serviceworker = self.serviceworker;
 	item.notifications = self.notifications;
+	item.responsive = self.responsive;
 	item.mobile = self.mobile;
 	item.users = self.users;
 	item.online = self.online;
 	item.url = self.url;
+	item.internal = self.internal;
+	item.widgets = self.widgets;
+	item.events = self.events;
+	item.widgets = self.widgets;
 	return item;
 };
 
@@ -72,7 +77,7 @@ Application.prototype.prepare = function(item) {
  */
 Application.prototype.reload = function(callback) {
 	var self = this;
-	U.request(self.openplatform, ['get', '< 5', 'dnscache'], function(err, response) {
+	U.request(self.id, ['get', '< 5', 'dnscache'], function(err, response) {
 
 		self.dateupdated = F.datetime;
 
@@ -89,7 +94,7 @@ Application.prototype.reload = function(callback) {
 			return callback && callback(err);
 		}
 
-		self.id = OPENPLATFORM.applications.uid(self.openplatform);
+		self.internal = OPENPLATFORM.applications.uid(self.id);
 		self.name = app.name;
 		self.icon = app.icon;
 		self.description = app.description;
@@ -104,6 +109,20 @@ Application.prototype.reload = function(callback) {
 		self.events = {};
 		self.origin = app.origin;
 
+		var widgets = app.widgets;
+		if (widgets instanceof Array) {
+			self.widgets = [];
+			for (var i = 0, length = widgets.length; i < length; i++) {
+				var w = widgets[i];
+				if (!w)
+					continue;
+				self.widgets.push({ internal: w.url.hash(), name: w.name, url: w.url, interval: w.internal || 15000 });
+			}
+			if (!self.widgets.length)
+				self.widgets = null;
+		} else
+			self.widgets = null;
+
 		if (!(self.origin instanceof Array))
 			self.origin = null;
 
@@ -113,7 +132,6 @@ Application.prototype.reload = function(callback) {
 		}
 
 		callback && callback(null, self);
-
 	}, self.cookies, self.headers);
 	return self;
 };

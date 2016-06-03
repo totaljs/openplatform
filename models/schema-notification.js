@@ -9,7 +9,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 	schema.setSave(function(error, model, controller, callback) {
 
-		var app = APPLICATIONS.findItem('openplatform', model.id);
+		var app = APPLICATIONS.findItem('id', model.id);
 		if (!app) {
 			error.push('error-application-notfound');
 			return callback();
@@ -20,10 +20,12 @@ NEWSCHEMA('Notification').make(function(schema) {
 			return callback();
 		}
 
+/*
 		if (app.origin && app.origin.length && app.origin.indexOf(controller.ip) === -1) {
 			error.push('error-application-origin');
 			return callback();
 		}
+*/
 
 		var user = USERS.findItem('id', model.user);
 		if (!user) {
@@ -31,16 +33,19 @@ NEWSCHEMA('Notification').make(function(schema) {
 			return callback();
 		}
 
-		if (!user.applications[app.id]) {
+		if (!user.applications[app.internal]) {
 			error.push('error-user-application');
 			return callback();
 		}
 
 		// DONE
 		var item = model.$clean();
-		item.id = UID();
+		item.internal = app.internal;
 
-		OPENPLATFORM.users.create_notification(user, item);
+		delete item.id;
+		delete item.user;
+
+		user.notify(item);
 		callback(SUCCESS(true, item.id));
 	});
 });

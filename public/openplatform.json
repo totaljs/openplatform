@@ -1,0 +1,11 @@
+{
+	"name": "Todomator",
+	"version": "1.0.0",
+	"icon": "http://iosicongallery.com/img/256/textastic-code-editor-2012.png",
+	"url": "https://www.todomator.com",
+	"author": "Peter Širka",
+	"email": "petersirka@gmail.com",
+	"roles": ["create"],
+	"widgets": [{"name":"Chart","url":"https://www.todomator.com/widget.svg"}],
+	"origin": ["148.251.79.153"]
+}

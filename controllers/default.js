@@ -1,7 +1,6 @@
 exports.install = function() {
 	F.route('/*', 'index', ['authorize']);
 	F.route('/', 'login', ['unauthorize']);
-	F.route('/login/', redirect);
 	F.route('/logoff/', logoff, ['authorize']);
 
 	// Localization

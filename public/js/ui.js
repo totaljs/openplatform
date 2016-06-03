@@ -1479,13 +1479,16 @@ COMPONENT('applications', function() {
 	var self = this;
 	var running = self.attr('data-running') === 'true';
 
-	self.template = Tangular.compile('<div class="col-md-2 ui-app" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
+	self.template = Tangular.compile('<div class="col-md-2 col-sm-3 col-xs-4 ui-app{{ if !online }} offline{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
 	self.readonly();
 
 	self.make = function() {
 		self.toggle('row applications');
 		self.element.on('click', '.ui-app', function() {
-			SET(self.attr('data-run'), $(this).attr('data-id'));
+			var el = $(this);
+			if (el.hasClass('offline'))
+				return;
+			SET(self.attr('data-run'), el.attr('data-id'));
 		});
 
 		self.element.on('click', '.fa-times-circle', function(e) {
@@ -1590,6 +1593,33 @@ COMPONENT('processes', function() {
 		return self;
 	};
 
+	self.open = function(id, url) {
+		var item = GET(source).findItem('id', id);
+		if (!item)
+			return;
+		var iframe = iframes.findItem('id', id);
+		if (!iframe) {
+			self.set(id);
+			SETTER('loading', 'show');
+			setTimeout(function() {
+				self.open(id, url);
+				SETTER('loading', 'hide', 1000);
+			}, 2000);
+
+			return self;
+		}
+
+		SETTER('loading', 'show');
+		if (iframe.element.hasClass('hidden'))
+			self.minimize();
+		iframe.element.removeClass('hidden');
+		if (url)
+			iframe.element.attr('src');
+		SETTER('loading', 'hide', 1000);
+		self.title(iframe.title);
+		return self;
+	};
+
 	self.title = function(value) {
 		toolbar.find('label').text(value);
 		toolbar.removeClass('hidden');
@@ -1631,23 +1661,289 @@ COMPONENT('processes', function() {
 
 COMPONENT('notifications', function() {
 	var self = this;
+	var loaded = false;
+	var sum = -1;
 
-	self.template = Tangular.compile('<div class="notification"><img src="{{ icon }}" alt="{{ title }}" border="0" /><div><div class="header">{{ title }}<span>{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}</span></div>{{ body }}</div></div>');
+	self.template = Tangular.compile('<div class="notification" data-id="{{ openplatform }}" data-url="{{ url }}" data-internal="{{ id }}"><img src="{{ icon }}" alt="{{ title }}" border="0" /><div><div class="header"><i class="fa fa-times-circle"></i>{{ title }}<span>{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}</span></div>{{ body }}</div></div>');
 	self.readonly();
 
 	self.make = function() {
+		self.watch(self.attr('data-source'), function(value) {
+			if (value && value.length)
+				self.load();
+		}, true);
 
+		self.element.on('click', '.fa-times-circle', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var el = $(this).closest('.notification');
+			var id = el.attr('data-internal');
+			var items = self.get();
+			var index = items.findIndex('id', parseInt(id));
+			if (index === -1)
+				return;
+			items.splice(index, 1);
+			self.update();
+		});
+
+		self.element.on('click', '.notification-clear', function() {
+			self.set([]);
+			self.save();
+		});
+
+		self.element.on('click', '.notification', function(e) {
+			var el = $(this);
+			var apps = GET(self.attr('data-source'));
+			var app = apps.findItem('id', el.attr('data-id'));
+			if (!app)
+				return;
+			SETTER('processes', 'open', app.id, el.attr('data-url'));
+		});
+	};
+
+	self.load = function() {
+		if (loaded)
+			return self;
+		var local = localStorage.getItem('op_notifications' + HASH(user.id));
+		if (local)
+			self.set(JSON.parse(local));
+		loaded = true;
+		return self;
+	};
+
+	self.save = function() {
+		if (!loaded)
+			return;
+		localStorage.setItem('op_notifications' + HASH(user.id), JSON.stringify(self.get()));
 	};
 
 	self.setter = function(value) {
+
+		if (!value || !value.length) {
+			if (sum === 0)
+				return;
+			sum = 0;
+			self.html('<div class="notification-empty"><i class="fa fa-check-circle"></i>{0}</div>'.format(self.attr('data-label-empty')));
+			return;
+		}
+
+		if (sum === value.length)
+			return;
+
+		sum = value.length;
+
 		var builder = [];
+		var apps = GET(self.attr('data-source'));
+		var missing = [];
 
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i];
+			var app = apps.findItem('internal', item.internal);
+
+			if (!app) {
+				missing.push(item.internal);
+				continue;
+			}
+
+			item.id = i;
+			item.icon = app.icon;
+			item.title = app.title;
+			item.openplatform = app.id;
+
 			builder.push(self.template(item));
 		}
 
+		if (builder.length) {
+			if (builder.length > 6)
+				builder = builder.take(6);
+			builder.push('<a href="javasc' + 'ript:void(0)" class="notification-clear"><i class="fa fa-trash"></i>{0}</a>'.format(self.attr('data-label-clear')));
+		}
+
 		self.html(builder);
+		setTimeout(function() { self.save(); }, 50);
+
+		if (!missing.length)
+			return;
+
+		for (var i = 0, length = missing.length; i < length; i++) {
+			var index = value.findIndex('internal', missing[i]);
+			if (index !== -1)
+				value.splice(index, 1);
+		}
+	};
+});
+
+COMPONENT('audio', function() {
+	var self = this;
+	var can = false;
+	var volume = 0.5;
+
+	self.items = [];
+	self.readonly();
+	self.singleton();
+
+	self.make = function() {
+		var audio = document.createElement('audio');
+		if (audio.canPlayType && audio.canPlayType('audio/mpeg').replace(/no/, ''))
+			can = true;
 	};
 
+	self.play = function(url) {
+
+		if (!can || self.disabled)
+			return;
+
+		var audio = new window.Audio();
+
+		audio.src = url;
+		audio.volume = volume;
+		audio.play();
+
+		audio.onended = function() {
+			audio.$destroy = true;
+			self.cleaner();
+		};
+
+		audio.onerror = function() {
+			audio.$destroy = true;
+			self.cleaner();
+		};
+
+		audio.onabort = function() {
+			audio.$destroy = true;
+			self.cleaner();
+		};
+
+		self.items.push(audio);
+		return self;
+	};
+
+	self.cleaner = function() {
+		var index = 0;
+		while (true) {
+			var item = self.items[index++];
+			if (item === undefined)
+				return self;
+			if (!item.$destroy)
+				continue;
+			item.pause();
+			item.onended = null;
+			item.onerror = null;
+			item.onsuspend = null;
+			item.onabort = null;
+			item = null;
+			index--;
+			self.items.splice(index, 1);
+		}
+		return self;
+	};
+
+	self.stop = function(url) {
+
+		if (!url) {
+			self.items.forEach(function(item) {
+				item.$destroy = true;
+			});
+			return self.cleaner();
+		}
+
+		var index = self.items.findIndex('src', url);
+		if (index === -1)
+			return self;
+		self.items[index].$destroy = true;
+		return self.cleaner();
+	};
+
+	self.setter = function(value) {
+
+		if (value === undefined)
+			value = 0.5;
+		else
+			value = (value / 100);
+
+		if (value > 1)
+			value = 1;
+		else if (value < 0)
+			value = 0;
+
+		volume = value ? +value : 0;
+		for (var i = 0, length = self.items.length; i < length; i++) {
+			var a = self.items[i];
+			if (!a.$destroy)
+				a.volume = value;
+		}
+	};
+});
+
+COMPONENT('widgets', function() {
+	var self = this;
+	var source;
+	var widgets = {};
+	var items = [];
+	var interval = 0;
+
+	self.template = Tangular.compile('<div class="col-md-4 col-sm-6 m widget" data-id="{{ id }}" data-internal="{{ interval }}"><div class="widget-title">{{ name }}</div><div class="widget-svg"><div class="silver center"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div>');
+	self.readonly();
+	self.make = function() {
+		self.toggle('row widgets hidden');
+		source = self.attr('data-source');
+		self.watch(source, function(path, value) {
+			if (!value)
+				return;
+			self.update();
+		});
+
+		setInterval(function() {
+			var length = items.length;
+			if (!length)
+				return;
+			interval++;
+			var sum = interval * 1000;
+			for (var i = 0; i < length; i++) {
+				if (sum % items[i].interval === 0)
+					self.reload(items[i]);
+			}
+		}, 1000);
+	};
+
+	self.reload = function(item, index) {
+		AJAX('GET /internal/dashboard/widgets/{0}/?ts={1}'.format(item.id, self.id + 'X' + index), function(response) {
+			response = response.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ');
+			item.element.html(response);
+		});
+	};
+
+	self.setter = function(value, path) {
+		if (!value) {
+			self.toggle('hidden', true);
+			return;
+		}
+
+		var apps = GET(source);
+		var has = false;
+		for (var i = 0, length = value.length; i < length; i++) {
+			var item = value[i].split('X');
+			var a = item[0].parseInt();
+			var b = item[1].parseInt();
+			var app = apps.findItem('internal', a);
+			if (!app)
+				continue;
+			var widget = app.widgets.findItem('internal', b);
+			if (!widget)
+				continue;
+			has = true;
+			if (widgets[widget.internal])
+				continue;
+			widgets[widget.internal] = true;
+			widget.id = app.internal + 'X' + widget.internal;
+			self.append(self.template(widget));
+			var obj = { id: widget.id, element: self.find('[data-id="{0}"] .widget-svg'.format(widget.id)), interval: widget.interval };
+			items.push(obj);
+			setTimeout(function() {
+				self.reload(obj, 0);
+			}, 1000);
+		}
+
+		self.toggle('hidden', !has);
+	};
 });

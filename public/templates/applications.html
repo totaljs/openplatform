@@ -59,7 +59,7 @@
 					<div class="row">
 						<div class="col-md-12 m">
 							<div data-component="disable" data-component-path="applications.form.isupdate" data-if="value === true">
-								<div data-component="textbox" data-component-path="applications.form.openplatform" data-maxlength="500" data-required="true" data-component-type="url" data-component-keypress-delay="2000">@(URL address to openplatform.json)</div>
+								<div data-component="textbox" data-component-path="applications.form.id" data-maxlength="500" data-required="true" data-component-type="url" data-component-keypress-delay="2000">@(URL address to openplatform.json)</div>
 								<div data-component="error" data-component-path="applications.form.data" class="ui-error-nm"></div>
 							</div>
 						</div>
@@ -72,7 +72,7 @@
 					<br />
 					<div class="silver"><i class="fa fa-lock mr5"></i>@(Permissions)</div>
 					<div class="mt10" data-component="checkbox" data-component-path="applications.form.serviceworker">@(Allow service worker)</div>
-					<div data-component="checkbox" data-component-path="applications.form.notifications">@(Allow notifications)</div>
+					<div data-component="checkbox" data-component-path="applications.form.notifications">@(Allow push notifications)</div>
 					<div data-component="checkbox" data-component-path="applications.form.users">@(Allow to read users)</div>
 					<div data-component="checkbox" data-component-path="applications.form.applications">@(Allow to read applications)</div>
 					<div data-component="checkbox" data-component-path="applications.form.mobile">@(Allow for mobile devices)</div>
@@ -127,7 +127,7 @@
 	ON('#applications', function(component) {
 		component.click = function(index, item) {
 			applications.form = {};
-			applications.form.openplatform = item.openplatform;
+			applications.form.id = item.id;
 			applications.form.title = item.title;
 			applications.form.data = item;
 			applications.form.users = item.users;
@@ -179,14 +179,14 @@
 		};
 	});
 
-	WATCH('applications.form.openplatform', function(path, value) {
+	WATCH('applications.form.id', function(path, value) {
 		if (!value || !value.isURL())
 			return;
 
-		if (applications.form.isnew && applications.datasource.raw.findIndex('openplatform', value) !== -1)
+		if (applications.form.isnew && applications.datasource.raw.findIndex('id', value) !== -1)
 			return SET('applications.form.data', [{ error: '@(You have registered this application.)' }]);
 
-		AJAX('GET /internal/applications/download/', { openplatform: value }, function(response) {
+		AJAX('GET /internal/applications/download/', { id: value }, function(response) {
 			SET('applications.form.data', response);
 			if (!applications.form.title)
 				SET('applications.form.title', response.name);

@@ -9,24 +9,7 @@
 				</div>
 			</section>
 
-			<div class="row">
-				<div class="col-md-4 m">
-					<div class="widget">
-						SVG WIDGET 1
-					</div>
-				</div>
-				<div class="col-md-4 m">
-					<div class="widget">
-						SVG WIDGET 2
-					</div>
-				</div>
-				<div class="col-md-4 m">
-					<div class="widget">
-						SVG WIDGET 3
-					</div>
-				</div>
-			</div>
-			<br />
+			<div data-component="widgets" data-component-path="user.widgets" data-source="dashboard.applications"></div>
 
 			<section data-component="visible" data-component-path="dashboard.applications" data-if="value.length" class="hidden">
 				<label><i class="fa fa-th"></i>Applications</label>
@@ -39,10 +22,12 @@
 		<div class="col-md-4">
 			<section>
 				<label><i class="fa fa-bell"></i>Notifications</label>
-				<div class="padding" data-component="notifications" data-component-path="dashboard.notifications"></div>
+				<div class="padding">
+					<div data-component="notifications" data-component-path="dashboard.notifications" data-source="dashboard.applications" data-label-empty="@(You don't have any notifications.)" data-label-clear="@(Clear all notifications)"></div>
+				</div>
 			</section>
-			<div data-component-class="hidden" class="hidden" data-component="checkbox" data-component-path="user.sounds">Enable sounds</div>
-			<div data-component-class="hidden" class="hidden" data-component="checkbox" data-component-path="user.notifications">Enable flying notifications</div>
+			<div data-component-class="hidden" class="hidden" data-component="checkbox" data-component-path="user.sounds">@(Enable sounds)</div>
+			<div data-component-class="hidden" class="hidden" data-component="checkbox" data-component-path="user.notifications">@(Enable flying notifications)</div>
 		</div>
 	</div>
 </div>
@@ -52,8 +37,9 @@
 <script>
 	var dashboard = {};
 
-	dashboard.applications = [];
 	dashboard.current = '';
+	dashboard.applications = [];
+	dashboard.notifications = [];
 
 	function dashboard_refresh() {
 
@@ -78,9 +64,29 @@
 					SETTER('processes', 'kill', id);
 				});
 			}, 1000);
-
 		});
 	}
+
+	function dashboard_notifications() {
+		AJAX('GET /internal/dashboard/notifications/', function(response) {
+			var arr = [];
+			for (var i = 0, length = response.length; i < length; i++) {
+				var item = response[i];
+				var app = dashboard.applications.findItem('internal', item.internal);
+				if (!app)
+					continue;
+				arr.push(item);
+			}
+
+			if (!arr.length)
+				return;
+
+			PUSH('dashboard.notifications', arr);
+		});
+	}
+
+	setInterval(dashboard_notifications, 1000 * 30);
+	setTimeout(dashboard_notifications, 1000);
 
 	// Each 3 minutes will be refresh
 	setInterval(dashboard_refresh, 1000 * 60 * 3);
