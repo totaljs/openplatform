@@ -2,6 +2,21 @@ $(document).ready(function() {
 
 });
 
+function isError(err) {
+	if (!err)
+		return false;
+	err = err.toString().toLowerCase();
+	if (err.indexOf('unauthorized') === -1)
+		location.href = '/';
+	return true;
+}
+
+function isOffline() {
+	if (navigator.onLine === undefined)
+		return false;
+	return navigator.onLine !== true;
+}
+
 Tangular.register('urlencode', function(value) {
 	return encodeURIComponent(value);
 });

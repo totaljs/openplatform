@@ -4,7 +4,7 @@ $font    : 'Source Sans Pro';
 $color   : #017CCA;
 $linear  : linear-gradient(#F0F0F0,white);
 
-html,body { height: 100%; overflow: hidden; }
+html,body { height: 100%; }
 body { font-smoothing: antialiased; background-color: #F0F0F0; margin: 0; padding: 0; }
 
 header { height: 40px; background-color: white; padding: 0; margin: 0; }
@@ -25,7 +25,7 @@ h2 .fa { margin-right: 10px; }
 .menu a:hover { text-decoration: none; color: black; }
 .menu .fa { margin-right: 5px; }
 .menu .selected { background-color: $color; color: white !important; font-weight: 700; }
-.menu .selected:before { content: '\f0d7'; position: absolute; left: 50px; top: 25px; font-family: 'FontAwesome'; color: $color; font-size: 25px; }
+.menu-bk .selected:before { content: '\f0d7'; position: absolute; left: 50px; top: 25px; font-family: 'FontAwesome'; color: $color; font-size: 25px; }
 
 #success { height: 30px; left: 0; top: 5px; right: 0; background: linear-gradient(#66B258,#509D43); font-size: 25px; line-height: 0; position: fixed; z-index: 20; color: white; text-align: right; padding: 3px 10px 0 0; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: none; border-radius: 0 50px 50px 0; }
 .container-padding { padding: 50px 0 20px; }
@@ -47,7 +47,7 @@ h2 .fa { margin-right: 10px; }
 
 .widgets { margin-bottom: 15px; }
 .widget-svg { background-color: white; font-size: 11px; padding: 10px; border-radius: 0 0 4px 4px; }
-.widget-title { font-size: 11px; text-align: center; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); color: #A0A0A0; padding: 5px 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; }
+.widget-title { font-size: 11px; text-align: center; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); color: #A0A0A0; padding: 10px 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; }
 .widget svg { width: 100%; height: auto; }
 
 .w100p { width: 100%; }
@@ -67,9 +67,12 @@ h2 .fa { margin-right: 10px; }
 .usermenu-logout { padding: 8px 10px; border-radius: 4px; background-color: #F0F0F0; }
 .usermenu .selected { color: #408EB9; }
 
-section { border: 1px solid #F0F0F0; background-color: white; border-radius: 4px; margin-bottom: 30px; }
+section { border: 1px solid #F0F0F0; background-color: white; border-radius: 4px; margin-bottom: 30px; position: relative; }
 section > label { font-family: $font; text-transform: uppercase; color: #A0A0A0; padding: 10px 18px; display: block; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); border-radius: 4px 4px 0 0; font-size: 11px; font-weight: 700; }
 section > label .fa { margin-right: 7px; }
+.section-button { position: absolute; margin: 10px 0 0 0; right: 15px; font-size: 11px; }
+.section-button a { color: #A0A0A0; }
+.section-button .fa { margin-right: 5px; }
 
 .ui-form section { border-color: #ECECEC; }
 .silver { color: #A0A0A0; }
@@ -98,17 +101,15 @@ section > label .fa { margin-right: 7px; }
 .applications .offline span { color: #A0A0A0; }
 .applications .offline img { filter: grayscale(100%); }
 
-.notifications { height: 100%; background-color: white; position: fixed; right: 0; top: 0; bottom: 0; width: 25%; }
-.notifications label { font-family: $font; text-transform: uppercase; color: silver; padding: 15px 20px; display: block; border-bottom: 1px solid #F0F0F0; font-size: 11px; font-weight: 700; text-align: center; }
-.notifications label .fa { margin-right: 5px; }
-
+.notifications { overflow: hidden; }
 .notification { font-size: 12px; margin-bottom: 10px; cursor: pointer; }
 .notification > img { float: left; width: 24px; border-radius: 4px; }
 .notification > div { padding: 2px 0 10px; margin-left: 40px; border-bottom: 1px solid #F0F0F0; line-height: 14px; font-size: 11px; color: gray; }
 .notification > div > div { font-weight: bold; margin-bottom: 3px; font-size: 12px; color: black; }
 .notification > div > div span { font-weight: normal; font-size: 11px; margin-left: 5px; }
 .notification .fa-times-circle { cursor: pointer; color: #A0A0A0; margin-right: 5px; font-size: 14px; }
-.notification-clear { font-size: 11px; color: #A0A0A0; margin-left: 40px; }
+.notification-clear { margin: 0 0 15px 40px; border-bottom: 1px solid #F0F0F0; padding-bottom: 3px; }
+.notification-clear a { font-size: 11px; color: #A0A0A0; }
 .notification-clear .fa { margin-right: 5px; }
 .notification-empty { font-size: 11px; text-align: center; color: #A0A0A0; padding: 20px 0; }
 .notification-empty .fa { font-size: 30px; display: block; margin-bottom: 5px; color: silver; }
@@ -148,7 +149,14 @@ section > label .fa { margin-right: 7px; }
 .ui-process-toolbar .close { float: right; font-size: 20px; width: 40px; height: 40px; border: 0; background: transparent; color: white; text-align: center; outline: 0; cursor: pointer; transition: 0.3s all; }
 .ui-process-toolbar .close:hover { opacity: 0.8; }
 .ui-process-toolbar .close:active { margin-top: 1px; }
-.ui-process-toolbar label { font-size: 16px; color: white; float: left; margin: 8px 0 0 20px; font-family: $font; }
+.ui-process-toolbar label { font-size: 16px; color: white; float: left; margin: 8px 0 0 10px; font-family: $font; }
 .ui-process-toolbar .logo { width: 50px; height: 40px; background-color: white; }
+.ui-processes-dock { float: left; padding: 8px 0 0 0; }
+.ui-processes-dock a { float: left; margin-left: 10px; }
+.ui-processes-dock a:active { margin-top: 1px; }
+.ui-processes-dock img { border-radius: 4px; }
 
+.ui-applications-widgets a { display: block; font-size: 16px; border-bottom: 1px solid #F0F0F0; padding: 5px 0; line-height: 16px; transition: 0.3s all; }
+.ui-applications-widgets a span { font-size: 11px; display: block; color: #A0A0A0; }
+.ui-applications-widgets a:hover { text-decoration: none; background-color: #F8F8F8; padding: 5px 10px; }
 

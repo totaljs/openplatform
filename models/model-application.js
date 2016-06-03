@@ -108,6 +108,7 @@ Application.prototype.reload = function(callback) {
 		self.online = true;
 		self.events = {};
 		self.origin = app.origin;
+		self.search = (self.name + ' ' + self.title).toSearch();
 
 		var widgets = app.widgets;
 		if (widgets instanceof Array) {

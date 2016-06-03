@@ -7,17 +7,20 @@ exports.install = function() {
 	// Users
 	F.route('/internal/users/', json_users_query, ['authorize']);
 	F.route('/internal/users/', json_schema_save, ['authorize', 'post', '*User']);
+	F.route('/internal/users/', json_schema_delete, ['authorize', 'delete', '*User']);
 	F.route('/internal/upload/photo/', json_upload_photo, ['authorize', 'upload'], 512);
 
 	// Applications
 	F.route('/internal/applications/', json_applications_query, ['authorize']);
 	F.route('/internal/applications/', json_schema_save, ['authorize', 'post', '*Application']);
+	F.route('/internal/applications/', json_schema_delete, ['authorize', 'delete', '*Application']);
 	F.route('/internal/applications/download/', json_applications_download, ['authorize']);
 
 	// Dashboard
 	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
 	F.route('/internal/dashboard/notifications/', json_dashboard_notifications, ['authorize']);
 	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets, ['authorize']);
+	F.route('/internal/dashboard/widgets/{id}/add/', json_dashboard_widgets_add, ['authorize']);
 
 	// Account
 	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
@@ -26,7 +29,7 @@ exports.install = function() {
 
 function json_notify() {
 	var item = GETSCHEMA('Notification').create();
-	var index = U.random(APPLICATIONS.length - 1);
+	var index = U.random(APPLICATIONS.length - 1, 0);
 	var self = this;
 	item.type = 0;
 	item.body = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt et veniam sequi architecto natus harum eligendi delectus reiciendis, debitis aliquid.';
@@ -153,4 +156,14 @@ function json_dashboard_notifications() {
 			return self.invalid().push(err);
 		self.content(response, 'application/json');
 	});
+}
+
+function json_schema_delete() {
+	var self = this;
+	self.$remove(self.body.id, self.callback());
+}
+
+function json_dashboard_widgets_add(id) {
+	var self = this;
+	self.json(SUCCESS(self.user.addWidget(id)));
 }

@@ -5,7 +5,7 @@
 				<div data-component="textbox" data-component-path="applications.filter.search" data-icon="fa-search" data-placeholder="@(Search applications)">@(Search)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdown" data-component-path="applications.filter.types" data-options="@(All applications)|0;@(Online applications)|1;@(Offline applications)|2">@(State)</div>
+				<div data-component="dropdown" data-component-path="applications.filter.type" data-options="@(All applications)|0;@(Online applications)|1;@(Offline applications)|2" data-component-type="number" data-component-value="0">@(State)</div>
 			</div>
 			<div class="col-md-3 m">
 				<div data-component="dropdowncheckbox" data-component-path="applications.filter.permissions" data-placeholder="@(All applications)" data-options="@(Service worker)|serviceworker;@(Notifications)|notifications;@(Users)|users;@(Applications)|applications;@(Mobile devices)|mobile">@(Permissions)</div>
@@ -22,7 +22,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<div data-component="grid" data-component-id="applications" data-component-path="applications.datasource" data-pagination-path="applications.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(Database does not have any data.)">
+			<div data-component="grid" data-component-id="applications" data-component-path="applications.datasource" data-pagination-path="applications.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(The database does not contain any data.)">
 				<script type="text/html">
 				<tr>
 					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" border="0" height="14" /></td>
@@ -104,7 +104,11 @@
 	common.forms.applications = true;
 
 	function applications_refresh() {
-		AJAX('GET /internal/applications/', function(response) {
+		AJAX('GET /internal/applications/', function(response, err) {
+
+			if (isError(err))
+				return;
+
 			applications.datasource.raw = response;
 			applications_filter();
 		});
@@ -119,13 +123,57 @@
 	 	SET('applications.datasource.items', applications.datasource.raw.paginate((applications.filter.page - 1) * max, max));
 	}
 
+	WATCH('applications.filter', function(path, value) {
+		KEYPRESS(function() {
+			var items = applications.datasource.raw;
+			var filtered = [];
+			var search = (value.search || '').toLowerCase().removeDiacritics().replace(/y/g, 'i');
+
+			for (var i = 0, length = items.length; i < length; i++) {
+				var item = items[i];
+
+				if (search && item.search.indexOf(search) === -1)
+					continue;
+
+				if ((value.type === 1 && !item.online) || (value.type === 2 && item.online))
+					continue;
+
+				if (value.permissions && value.permissions.length) {
+					var skip = false;
+					for (var j = 0, jl = value.permissions.length; j < jl; j++) {
+						if (!item[value.permissions[j]]) {
+							skip = true;
+							break;
+						}
+					}
+					if (skip)
+						continue;
+				}
+
+				filtered.push(item);
+			}
+
+			SET('applications.datasource.items', filtered);
+
+		}, 500, 'applications.datasource.items');
+	});
+
 	function applications_create() {
 		SET('applications.form', { isnew: true, serviceworker: true, notifications: true }, true);
 		SET('common.form', 'applications');
 	}
 
 	ON('#applications', function(component) {
-		component.click = function(index, item) {
+		component.click = function(index, item, button) {
+
+			if (button.name === 'remove') {
+				SETTER('confirm', 'confirm', '@(Are you sure you want to remove the application <b>{0}</b>?)'.format(item.title), ['@(Yes)', '@(No)'], function(index) {
+					if (index)
+						return;
+					AJAX('DELETE /internal/applications/', { id: item.internal }, applications_refresh);
+				});
+				return;
+			}
 			applications.form = {};
 			applications.form.id = item.id;
 			applications.form.title = item.title;
@@ -143,7 +191,11 @@
 
 	ON('#applications.form', function(component) {
 		component.submit = function(hide) {
-			AJAX('POST /internal/applications/', applications.form, function(response) {
+			AJAX('POST /internal/applications/', applications.form, function(response, err) {
+
+				if (isError(err))
+					return;
+
 				SET('applications.form.response', response);
 				if (!response.success)
 					return;
@@ -152,11 +204,13 @@
 				hide();
 				if (window.dashboard)
 					window.dashboard_refresh();
+				if (window.users_refresh_applications)
+					window.users_refresh_applications();
 			});
 		};
 	});
 
-	WATCH('applications.filter.*', applications_filter);
+
 	SCHEDULE('#applications', 'manually', '5 minutes', applications_refresh);
 
 	COMPONENT('icon', function() {
@@ -186,7 +240,11 @@
 		if (applications.form.isnew && applications.datasource.raw.findIndex('id', value) !== -1)
 			return SET('applications.form.data', [{ error: '@(You have registered this application.)' }]);
 
-		AJAX('GET /internal/applications/download/', { id: value }, function(response) {
+		AJAX('GET /internal/applications/download/', { id: value }, function(response, err) {
+
+			if (isError(err))
+				return;
+
 			SET('applications.form.data', response);
 			if (!applications.form.title)
 				SET('applications.form.title', response.name);

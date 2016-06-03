@@ -688,7 +688,7 @@ COMPONENT('grid', function() {
 			var empty = self.attr('data-empty');
 			if (empty) {
 				page.html('&nbsp;');
-				output.push('<tr><td style="text-align:center;padding:50px 0;background-color:white"><div style="padding:40px 20px;border:2px solid #F0F0F0;max-width:500px;margin:0 auto;border-radius:4px">{0}</div></td></tr>'.format(empty));
+				output.push('<tr><td style="background-color:#F0F0F0;text-align:center;padding:50px 0"><div style="padding:40px 20px;border:2px solid #E0E0E0;max-width:500px;margin:0 auto;border-radius:4px">{0}</div></td></tr>'.format(empty));
 			} else
 				page.empty();
 		} else {
@@ -1358,6 +1358,7 @@ COMPONENT('photoupload', function() {
 				last = self.get();
 				self.find('img').attr('src', Tangular.helpers.photo(last) + '?ts=' + Date.now());
 				el.value = '';
+				self.set(last);
 			});
 		});
 	};
@@ -1538,6 +1539,43 @@ COMPONENT('applications', function() {
 	};
 });
 
+COMPONENT('processes-dock', function() {
+	var self = this;
+	var target;
+
+	self.template = Tangular.compile('<a href="javascript:void(0)" data-id="{{ id }}" title="{{ title }}"><img src="{{ icon }}" width="25" alt="{{ title }}" border="0" /></a>');
+	self.readonly();
+
+	self.make = function() {
+		self.toggle('ui-processes-dock hidden-xs hidden-sm');
+		self.element.on('click', 'a', function() {
+			SET(self.attr('data-run'), $(this).attr('data-id'));
+		});
+	};
+
+	self.setter = function(value) {
+		var builder = [];
+
+		for (var i = 0, length = value.length; i < length; i++) {
+			var item = value[i];
+			if (!item.running)
+				continue;
+			builder.push(self.template(item));
+			if (builder.length > 8)
+				break;
+		}
+
+		self.toggle('hidden', builder.length <= 1);
+
+		if (builder.length > 1) {
+			builder = builder.join('');
+			if (NOTMODIFIED(self.id, builder))
+				return;
+			self.html(builder);
+		}
+	};
+});
+
 COMPONENT('processes', function() {
 
 	var self = this;
@@ -1545,14 +1583,14 @@ COMPONENT('processes', function() {
 	var toolbar;
 	var source;
 
-	self.template = Tangular.compile('<div class="ui-process" data-id="{{ id }}"><iframe src="{{ url }}" frameborder="0"></iframe><div>');
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}"><iframe src="/loading.html" frameborder="0"></iframe><div>');
 	self.singleton();
 	self.readonly();
 
 	self.make = function() {
 
 		source = self.attr('data-source');
-		self.html('<div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>');
+		self.html('<div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><div data-component="processes-dock" data-component-path="{0}" data-run="{1}"></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>'.format(source, self.path));
 		toolbar = self.find('.ui-process-toolbar');
 
 		toolbar.on('click', 'button', function() {
@@ -1562,6 +1600,10 @@ COMPONENT('processes', function() {
 					break;
 			}
 		});
+	};
+
+	self.is = function() {
+		return toolbar.hasClass('hidden') === false;
 	};
 
 	self.minimize = function() {
@@ -1576,6 +1618,7 @@ COMPONENT('processes', function() {
 	};
 
 	self.kill = function(id) {
+
 		var index = iframes.findIndex('id', id);
 		if (index === -1)
 			return self;
@@ -1587,8 +1630,10 @@ COMPONENT('processes', function() {
 			self.minimize();
 
 		iframe.element.remove();
-		iframe.item.running = false;
-
+		var apps = GET(source);
+		var item = apps.findItem('id', id);
+		if (item)
+			item.running = false;
 		UPDATE(source);
 		return self;
 	};
@@ -1629,7 +1674,6 @@ COMPONENT('processes', function() {
 	self.setter = function(value) {
 
 		self.minimize();
-
 		if (!value)
 			return;
 
@@ -1648,11 +1692,18 @@ COMPONENT('processes', function() {
 		item.running = true;
 		iframe = {};
 		iframe.id = item.id;
-		iframe.item = item;
 		iframe.title = item.title;
 		iframe.element = self.find('[data-id="{0}"]'.format(item.id));
 		iframe.dateopened = new Date();
 		iframes.push(iframe);
+
+		setTimeout(function() {
+			iframe.element.removeClass('ui-process-animation');
+		}, 200);
+
+		setTimeout(function() {
+			iframe.element.find('iframe').attr('src', item.url);
+		}, 1500);
 
 		UPDATE(source, 100);
 		self.title(iframe.title);
@@ -1666,8 +1717,11 @@ COMPONENT('notifications', function() {
 
 	self.template = Tangular.compile('<div class="notification" data-id="{{ openplatform }}" data-url="{{ url }}" data-internal="{{ id }}"><img src="{{ icon }}" alt="{{ title }}" border="0" /><div><div class="header"><i class="fa fa-times-circle"></i>{{ title }}<span>{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}</span></div>{{ body }}</div></div>');
 	self.readonly();
+	self.singleton();
 
 	self.make = function() {
+		self.toggle('notifications');
+
 		self.watch(self.attr('data-source'), function(value) {
 			if (value && value.length)
 				self.load();
@@ -1699,6 +1753,15 @@ COMPONENT('notifications', function() {
 				return;
 			SETTER('processes', 'open', app.id, el.attr('data-url'));
 		});
+
+		$(window).on('resize', self.resize);
+		setTimeout(self.resize, 100);
+	};
+
+	self.resize = function() {
+		var w = WIDTH();
+		var h = w === 'lg' || w === 'md' ? $(window).height() - (self.element.offset().top + 50) : 'auto';
+		self.element.css({ height: h });
 	};
 
 	self.load = function() {
@@ -1754,9 +1817,9 @@ COMPONENT('notifications', function() {
 		}
 
 		if (builder.length) {
-			if (builder.length > 6)
-				builder = builder.take(6);
-			builder.push('<a href="javasc' + 'ript:void(0)" class="notification-clear"><i class="fa fa-trash"></i>{0}</a>'.format(self.attr('data-label-clear')));
+			if (builder.length > 15)
+				builder = builder.take(15);
+			builder = '<div class="notification-clear"><a href="javasc' + 'ript:void(0)"><i class="fa fa-trash"></i>{0}</a></div>'.format(self.attr('data-label-clear')) + builder.join('');
 		}
 
 		self.html(builder);
@@ -1790,7 +1853,7 @@ COMPONENT('audio', function() {
 
 	self.play = function(url) {
 
-		if (!can || self.disabled)
+		if (!can || self.disabled || !user.sounds)
 			return;
 
 		var audio = new window.Audio();
@@ -1901,14 +1964,20 @@ COMPONENT('widgets', function() {
 			var sum = interval * 1000;
 			for (var i = 0; i < length; i++) {
 				if (sum % items[i].interval === 0)
-					self.reload(items[i]);
+					self.reload(items[i], internal);
 			}
 		}, 1000);
 	};
 
 	self.reload = function(item, index) {
+		if (!item.app.online)
+			return;
 		AJAX('GET /internal/dashboard/widgets/{0}/?ts={1}'.format(item.id, self.id + 'X' + index), function(response) {
 			response = response.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ');
+			var hash = HASH(response);
+			if (hash === item.hash)
+				return;
+			item.hash = hash;
 			item.element.html(response);
 		});
 	};
@@ -1937,7 +2006,7 @@ COMPONENT('widgets', function() {
 			widgets[widget.internal] = true;
 			widget.id = app.internal + 'X' + widget.internal;
 			self.append(self.template(widget));
-			var obj = { id: widget.id, element: self.find('[data-id="{0}"] .widget-svg'.format(widget.id)), interval: widget.interval };
+			var obj = { id: widget.id, element: self.find('[data-id="{0}"] .widget-svg'.format(widget.id)), interval: widget.interval, app: app };
 			items.push(obj);
 			setTimeout(function() {
 				self.reload(obj, 0);
@@ -1945,5 +2014,51 @@ COMPONENT('widgets', function() {
 		}
 
 		self.toggle('hidden', !has);
+	};
+});
+
+COMPONENT('applications-widgets', function() {
+	var self = this;
+
+	self.template = Tangular.compile('<a href="javascript:void(0)" data-id="{{ id }}">{{ title }}<span>{{ name }}</span></a>');
+	self.readonly();
+
+	self.make = function() {
+		self.toggle('ui-applications-widgets');
+		self.element.on('click', 'a', function() {
+			var id = $(this).attr('data-id');
+			SET('common.form', ''); // hack
+			SETTER('loading', 'show');
+			AJAX('GET /internal/dashboard/widgets/{0}/add/'.format(id), function(response, err) {
+				SETTER('loading', 'hide', 1000);
+				if (isError(err))
+					return;
+				if (!response.success)
+					return;
+				if (!user.widgets)
+					user.widgets = [];
+				PUSH('user.widgets', id);
+			});
+		});
+	};
+
+	self.setter = function(value) {
+
+		if (!value)
+			return;
+
+		var builder = [];
+
+		for (var i = 0, length = value.length; i < length; i++) {
+			var item = value[i];
+			if (!item.widgets)
+				continue;
+
+			item.widgets.forEach(function(widget) {
+				builder.push(self.template({ id: item.internal + 'X' + widget.internal, title: item.title, name: widget.name }));
+			});
+		}
+
+		self.html(builder);
 	};
 });

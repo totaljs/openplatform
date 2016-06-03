@@ -1,5 +1,13 @@
 <div class="container" style="margin-top:30px">
 	<div class="row">
+		<div class="col-md-4">
+			<section>
+				<label><i class="fa fa-bell"></i>Notifications</label>
+				<div class="padding">
+					<div data-component="notifications" data-component-path="dashboard.notifications" data-source="dashboard.applications" data-label-empty="@(You don't have any notifications.)" data-label-clear="@(Clear all notifications)"></div>
+				</div>
+			</section>
+		</div>
 		<div class="col-md-8">
 
 			<section data-component="visible" data-component-path="dashboard.applications" data-if="value.findIndex('running', true) !== -1" class="hidden">
@@ -12,22 +20,13 @@
 			<div data-component="widgets" data-component-path="user.widgets" data-source="dashboard.applications"></div>
 
 			<section data-component="visible" data-component-path="dashboard.applications" data-if="value.length" class="hidden">
+				<div class="section-button hidden" data-component="visible" data-component-path="dashboard.canwidgets"><a href="javascript:void(0)" data-component="click" data-component-path="common.form" data-value="widgets"><i class="fa fa-bar-chart"></i>Widgets</a></div>
 				<label><i class="fa fa-th"></i>Applications</label>
 				<div class="padding">
 					<div data-component="applications" data-component-path="dashboard.applications" data-run="dashboard.current"></div>
 				</div>
 			</section>
 
-		</div>
-		<div class="col-md-4">
-			<section>
-				<label><i class="fa fa-bell"></i>Notifications</label>
-				<div class="padding">
-					<div data-component="notifications" data-component-path="dashboard.notifications" data-source="dashboard.applications" data-label-empty="@(You don't have any notifications.)" data-label-clear="@(Clear all notifications)"></div>
-				</div>
-			</section>
-			<div data-component-class="hidden" class="hidden" data-component="checkbox" data-component-path="user.sounds">@(Enable sounds)</div>
-			<div data-component-class="hidden" class="hidden" data-component="checkbox" data-component-path="user.notifications">@(Enable flying notifications)</div>
 		</div>
 	</div>
 </div>
@@ -40,6 +39,8 @@
 	dashboard.current = '';
 	dashboard.applications = [];
 	dashboard.notifications = [];
+	dashboard.notification = null;
+	dashboard.canwidgets = false;
 
 	function dashboard_refresh() {
 
@@ -50,14 +51,25 @@
 				running[app.id] = true;
 		}
 
-		AJAX('GET /internal/dashboard/applications', function(response) {
+		AJAX('GET /internal/dashboard/applications/', function(response, err) {
+
+			if (isError(err))
+				return;
+
+			dashboard.canwidgets = false;
+
 			for (var i = 0, length = response.length; i < length; i++) {
-				var is = running[response[i].id];
-				response[i].running = is === true;
-				delete running[response[i].id];
+				var a = response[i];
+				var is = running[a.id];
+				a.running = is === true;
+				delete running[a.id];
+				if (!a.widgets || !a.widgets.length || dashboard.canwidgets)
+					continue;
+				dashboard.canwidgets = true;
 			}
 
 			SET('dashboard.applications', response);
+			NOTIFY('dashboard.canwidgets');
 
 			setTimeout(function() {
 				Object.keys(running).forEach(function(id) {
@@ -68,8 +80,13 @@
 	}
 
 	function dashboard_notifications() {
-		AJAX('GET /internal/dashboard/notifications/', function(response) {
+		AJAX('GET /internal/dashboard/notifications/', function(response, err) {
+
+			if (isError(err))
+				return;
+
 			var arr = [];
+
 			for (var i = 0, length = response.length; i < length; i++) {
 				var item = response[i];
 				var app = dashboard.applications.findItem('internal', item.internal);
@@ -81,7 +98,37 @@
 			if (!arr.length)
 				return;
 
+			SETTER('audio', 'play', '/sounds/beep.mp3');
 			PUSH('dashboard.notifications', arr);
+
+			if (!user.notifications || !window.Notification || window.Notification.permission !== 'granted' || !FIND('processes').is()) {
+				if (common.isfocused)
+					return;
+			}
+
+			var url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+
+			if (dashboard.notification) {
+				dashboard.notification.onclick = null;
+				dashboard.notification = null;
+			}
+
+			dashboard.notification = new Notification(document.title, { icon: url + '/img/system.png', body: '@(You have new notifications ({0}x).)'.format(arr.length) });
+			dashboard.notification.onclick = function() {
+				SETTER('processes', 'minimize');
+				window.focus();
+				if (!dashboard.notification)
+					return;
+				dashboard.notification.close();
+				dashboard.notification = null;
+			};
+
+			setTimeout(function() {
+				if (!dashboard.notification)
+					return;
+				dashboard.notification.close();
+				dashboard.notification = null;
+			}, 10000);
 		});
 	}
 

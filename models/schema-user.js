@@ -1,7 +1,7 @@
 NEWSCHEMA('User').make(function(schema) {
 
 	schema.define('id', 'String(50)');
-	schema.define('alias', 'String(50)', true);
+	schema.define('alias', 'String(50)');
 	schema.define('firstname', 'Capitalize(50)', true);
 	schema.define('lastname', 'Capitalize(50)', true);
 	schema.define('group', 'String(60)');
@@ -25,13 +25,14 @@ NEWSCHEMA('User').make(function(schema) {
 			return callback();
 		}
 
-		user.alias = model.alias;
 		user.firstname = model.firstname;
 		user.lastname = model.lastname;
 		user.email = model.email;
 		user.phone = model.phone;
 		user.login = model.login;
 		user.group = model.group;
+		user.search = (user.lastname + ' ' + user.firstname + ' ' + user.group).toSearch();
+		user.alias = model.firstname + ' ' + model.lastname;
 
 		if (!model.password.startsWith('****')) {
 			user.password = model.password.hash('sha256');
@@ -57,4 +58,16 @@ NEWSCHEMA('User').make(function(schema) {
 		callback(SUCCESS(true));
 	});
 
+	schema.setRemove(function(error, id, callback) {
+
+		var index = USERS.findIndex('id', id);
+		if (index === -1) {
+			error.push('error-user-notfound');
+			return callback();
+		}
+
+		USERS.splice(index, 1);
+		OPENPLATFORM.users.save();
+		callback(SUCCESS(true));
+	});
 });

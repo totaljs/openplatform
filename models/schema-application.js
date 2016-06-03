@@ -23,6 +23,7 @@ NEWSCHEMA('Application').make(function(schema) {
 			item.mobile = model.mobile;
 			item.applications = model.applications;
 			item.serviceworker = model.serviceworker;
+			item.search = (model.name + ' ' + model.title).toSearch();
 
 			if (!update) {
 				item.datecreated = F.datetime;
@@ -37,11 +38,49 @@ NEWSCHEMA('Application').make(function(schema) {
 			callback(SUCCESS(true));
 		};
 
-		var item = APPLICATIONS.findItem('id', OPENPLATFORM.applications.uid(model.id));
+		var item = APPLICATIONS.findItem('internal', OPENPLATFORM.applications.uid(model.id));
 		if (item)
 			return process(null, item, true);
 
 		OPENPLATFORM.applications.create(model.id, process);
+	});
+
+	schema.setRemove(function(error, id, callback) {
+
+		var index = APPLICATIONS.findIndex('internal', id);
+		if (index === -1) {
+			error.push('error-application-notfound');
+			return callback();
+		}
+
+		var item = APPLICATIONS[index];
+		APPLICATIONS.splice(index, 1);
+		OPENPLATFORM.applications.save();
+
+		var save = false;
+
+		// Clears user's profiles
+		for (var i = 0, length = USERS.length; i < length; i++) {
+			var user = USERS[i];
+			if (user.applications[item.internal]) {
+				delete user.applications[item.internal];
+				save = true;
+			}
+
+			if (!user.widgets || !user.widgets.length)
+				continue;
+
+			var id = item.internal.toString() + 'X';
+			user.widgets = user.widgets.remove(n => n.startsWith(id));
+			if (!user.widgets.length)
+				user.widgets = null;
+			save = true;
+		}
+
+		if (save)
+			OPENPLATFORM.users.save();
+
+		callback(SUCCESS(true));
 	});
 
 });

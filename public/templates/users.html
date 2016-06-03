@@ -5,13 +5,13 @@
 				<div data-component="textbox" data-component-path="users.filter.search" data-icon="fa-search" data-placeholder="@(Search users)">@(Search)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdown" data-component-path="users.filter.types" data-options="@(All users)|0;@(Activated users)|1;@(Blocked users)|2;@(Online users)|3" data-icon="fa-users">@(State)</div>
+				<div data-component="dropdown" data-component-path="users.filter.type" data-options="@(All users)|0;@(Activated users)|1;@(Blocked users)|2;@(Online users)|3" data-icon="fa-users" data-component-type="number" data-component-value="0">@(State)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdowncheckbox" data-component-path="users.filter.roles" data-placeholder="@(All groups)" data-source="users.groups" data-icon="fa-folder" data-empty="@(No groups)">@(Groups)</div>
+				<div data-component="dropdowncheckbox" data-component-path="users.filter.groups" data-placeholder="@(All groups)" data-source="users.groups" data-icon="fa-folder" data-empty="@(No groups)">@(Groups)</div>
 			</div>
 			<div class="col-md-3 m">
-				<div data-component="dropdowncheckbox" data-component-path="users.filter.applications" data-placeholder="All applications" data-source="users.applications" data-icon="fa-th" data-empty="@(No applications)">@(Applications)</div>
+				<div data-component="dropdowncheckbox" data-component-path="users.filter.applications" data-placeholder="All applications" data-source="users.applications" data-source-text="title" data-source-value="internal" data-component-type="number" data-icon="fa-th" data-empty="@(No applications)">@(Applications)</div>
 			</div>
 		</div>
 		<div class="relative">
@@ -34,7 +34,7 @@
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
 					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
 					<td><span class="fs11 silver">{{ group }}</span></td>
-					<td style="width:150px"><i class="fa fa-clock-o silver mr3"></i>{{ datelogged | format('@(yyyy-MM-dd HH:mm)')}}</td>
+					<td style="width:150px">{{ if datelogged }}<i class="fa fa-clock-o silver mr3"></i>{{ datelogged | format('@(yyyy-MM-dd HH:mm)')}}{{ else }}@(not logged){{ fi }}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
 						<button name="remove" title="@(Remove)"><span class="fa fa-times-circle"></span></button>
@@ -51,7 +51,7 @@
 		<div class="row">
 			<div class="col-md-3">
 				<br />
-				<div data-component="photoupload" data-component-path="users.form.email" data-url="/upload/photo/" data-upload-error="@(The file is too large.)"></div>
+				<div data-component="photoupload" data-component-path="users.form.email" data-url="/internal/upload/photo/" data-upload-error="@(The file is too large.)"></div>
 				<br />
 				<div class="help center"><i class="fa fa-camera"></i>@(Photo is created according to the email address.)</div>
 				<hr />
@@ -144,7 +144,7 @@
 					<br />
 					<div data-component="applications-management" data-component-path="users.form.applications" data-source="users.applications" class="mt10">
 						<script type="text/html">
-							<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
+							<div class="userapp-container userapp-container-disabled" data-id="{{ internal }}">
 								<div class="userapp-header">
 									<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
 									<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" alt="{{ title }}" /></div>
@@ -190,11 +190,14 @@
 
 	function users_refresh() {
 
-		AJAX('GET /internal/users/', function(response) {
-			users.datasource.raw = response;
+		AJAX('GET /internal/users/', function(response, err) {
+
+			if (isError(err))
+				return;
 
 			var groups = {};
 
+			users.datasource.raw = response;
 			response.forEach(function(item) {
 				if (item.group)
 					groups[item.group] = true;
@@ -204,6 +207,10 @@
 			users_filter();
 		});
 
+		users_refresh_applications();
+	}
+
+	function users_refresh_applications() {
 		AJAX('GET /internal/applications/', 'users.applications');
 	}
 
@@ -217,13 +224,17 @@
 	}
 
 	function users_create() {
-		SET('users.form', { sounds: true, notifications: true, email: '@' }, true);
+		SET('users.form', { sounds: true, notifications: true, email: '@', applications: {} }, true);
 		SET('common.form', 'users');
 	}
 
 	ON('#users.form', function(component) {
 		component.submit = function(hide) {
-			AJAX('POST /internal/users/', users.form, function(response) {
+			AJAX('POST /internal/users/', users.form, function(response, err) {
+
+				if (isError(err))
+					return;
+
 				SET('users.form.response', response);
 				if (!response.success)
 					return;
@@ -235,7 +246,17 @@
 	});
 
 	ON('#users', function(component) {
-		component.click = function(index, item) {
+		component.click = function(index, item, button) {
+
+			if (button.name === 'remove') {
+				SETTER('confirm', 'confirm', '@(Are you sure you want to remove the user <b>{0} {1}</b>?)'.format(item.firstname, item.lastname), ['@(Yes)', '@(No)'], function(index) {
+					if (index)
+						return;
+					AJAX('DELETE /internal/users/', { id: item.id }, users_refresh);
+				});
+				return;
+			}
+
 			var tmp = $.extend({}, item);
 			tmp.password = '**********';
 			SET('users.form', tmp, true);
@@ -243,7 +264,6 @@
 		};
 	});
 
-	WATCH('users.filter.*', users_filter);
 	WATCH('users.form.welcome', function(path, value) {
 		if (value && users.form.password.substring(0, 3) === '***')
 			userform_generatepassword();
@@ -324,6 +344,43 @@
 				}
 			});
 		};
+	});
+
+	WATCH('users.filter', function(path, value) {
+		KEYPRESS(function() {
+			var items = users.datasource.raw;
+			var filtered = [];
+			var search = (value.search || '').toLowerCase().removeDiacritics().replace(/y/g, 'i');
+			var skip = false;
+
+			for (var i = 0, length = items.length; i < length; i++) {
+				var item = items[i];
+
+				if (search && item.search.indexOf(search) === -1)
+					continue;
+
+				if ((value.type === 3 && !item.online) || (value.type === 1 && item.blocked) || (value.type === 2 && !item.blocked))
+					continue;
+
+				if (value.groups && value.groups.length && value.groups.indexOf(item.group) === -1)
+					continue;
+
+				if (value.applications && value.applications.length) {
+					skip = true;
+					for (var j = 0, jl = value.applications.length; j < jl; j++) {
+						if (item.applications[value.applications[i]]) {
+							skip = false;
+							break;
+						}
+					}
+					if (skip)
+						continue;
+				}
+
+				filtered.push(item);
+			}
+			SET('users.datasource.items', filtered);
+		}, 500, 'users.datasource.items');
 	});
 
 	users_refresh();

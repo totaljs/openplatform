@@ -56,6 +56,12 @@
 		common.page = '';
 		common.form = '';
 
+		$(window).focus(function() {
+			common.isfocused = true;
+		}).blur(function() {
+			common.isfocused = false;
+		});
+
 		var user = JSON.parse('@{json(user.readonly())}');
 		user.volume = 0.5;
 
@@ -92,8 +98,11 @@
 			if (!value || common.forms[value])
 				return;
 			common.forms[value] = true;
-			IMPORT('/templates/{0}-form.html'.format(value));
+			IMPORT('/templates/form-{0}.html'.format(value));
 		}, true);
+
+		if (window.Notification && window.Notification.permission !== 'granted')
+			window.Notification.requestPermission();
 
 	</script>
 
