@@ -1,5 +1,122 @@
-<div data-component="form" data-component-path="common.form" data-if="widgets" data-title="Widgets" data-autocenter="true" data-width="400px" data-component-id="dashboard.widgets">
+<div data-component="form" data-component-path="common.form" data-if="widgets" data-title="Widgets" data-autocenter="true" data-width="600px" data-component-id="dashboard.widgets">
 	<div class="padding">
-		<div data-component="applications-widgets" data-component-path="dashboard.applications"></div>
+		<div data-component="userwidgets" data-component-path="dashboard.applications">
+			<script type="text/html">
+				<div class="userwidget-container{{ if !selected }} userwidget-container-disabled{{ fi }}" data-id="{{ id }}"{{ if selected }} draggable="true"{{ fi }}>
+					<div class="userwidget-header">
+						<div class="userwidget-checkbox"><i class="fa fa-check"></i></div>
+						<div class="userwidget-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" alt="{{ title }}" /></div>
+						<b>{{ name }}</b>
+						<div class="fs11">{{ title }}</div>
+					</div>
+				</div>
+			</script>
+		</div>
 	</div>
 </div>
+
+<script>
+COMPONENT('userwidgets', function() {
+	var self = this;
+	var dragsource;
+
+	self.readonly();
+
+	self.make = function() {
+		var el = self.find('script');
+		self.toggle('userwidget');
+		self.template = Tangular.compile(el.html());
+		el.remove();
+
+		self.element.on('click', '.userwidget-checkbox', function() {
+			var el = $(this).closest('.userwidget-container');
+			var cls = 'userwidget-container-disabled';
+			var id = el.attr('data-id');
+			el.toggleClass(cls);
+			el.attr('draggable', !el.hasClass(cls));
+			self.change(true);
+		});
+
+		self.element.on('dragstart dragover drop', '.userwidget-container', function(e) {
+
+			if (e.type === 'dragover') {
+				e.preventDefault();
+				return;
+			}
+
+			if (e.type === 'dragstart') {
+				dragsource = $(e.target);
+				if (!dragsource.hasClass('userwidget-container'))
+					dragsource = dragsource.closest('.userwidget-container');
+				return;
+			}
+
+			var el = $(e.target).closest('.userwidget-container');
+			if (!el.hasClass('userwidget-container'))
+				el = el.closest('.userwidget-container');
+			el.before(dragsource);
+		});
+	};
+
+	self.save = function() {
+		AJAX('GET /internal/dashboard/widgets/{0}/add/'.format(id), function(response, err) {
+			SETTER('loading', 'hide', 1000);
+			if (isError(err))
+				return;
+			if (!response.success)
+				return;
+			if (!user.widgets)
+				user.widgets = [];
+			PUSH('user.widgets', id);
+		});
+	};
+
+	self.setter = function(value) {
+
+		if (!value)
+			return;
+
+		var builder = [];
+		var widgets = [];
+		var cleaned = [];
+		var processed = {};
+		var item;
+
+		for (var i = 0, length = value.length; i < length; i++) {
+			item = value[i];
+			if (!item.widgets)
+				continue;
+			item.widgets.forEach(function(widget) {
+				widgets.push({ id: item.internal + 'X' + widget.internal, title: item.title, name: widget.name, icon: item.icon });
+			});
+		}
+
+		widgets.push({ id: '111X111', title: item.title, name: 'Uncompleted tasks', icon: item.icon });
+		widgets.push({ id: '112X112', title: item.title, name: 'Completed tasks', icon: item.icon });
+		widgets.push({ id: '113X113', title: item.title, name: 'Count of users', icon: item.icon });
+
+		for (var i = 0, length = user.widgets.length; i < length; i++) {
+			item = widgets.findItem('id', user.widgets[i]);
+			if (item) {
+				processed[item.id] = true;
+				item.selected = true;
+				cleaned.push(item);
+			}
+		}
+
+		for (var i = 0, length = widgets.length; i < length; i++) {
+			item = widgets[i];
+			if (processed[item.id])
+				continue;
+			cleaned.push(item);
+		}
+
+		for (var i = 0, length = cleaned.length; i < length; i++) {
+			item = cleaned[i];
+			builder.push(self.template(item));
+		}
+
+		self.html(builder);
+	};
+});
+</script>

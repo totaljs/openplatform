@@ -1964,7 +1964,7 @@ COMPONENT('widgets', function() {
 			var sum = interval * 1000;
 			for (var i = 0; i < length; i++) {
 				if (sum % items[i].interval === 0)
-					self.reload(items[i], internal);
+					self.reload(items[i], interval);
 			}
 		}, 1000);
 	};
@@ -2014,51 +2014,5 @@ COMPONENT('widgets', function() {
 		}
 
 		self.toggle('hidden', !has);
-	};
-});
-
-COMPONENT('applications-widgets', function() {
-	var self = this;
-
-	self.template = Tangular.compile('<a href="javascript:void(0)" data-id="{{ id }}">{{ title }}<span>{{ name }}</span></a>');
-	self.readonly();
-
-	self.make = function() {
-		self.toggle('ui-applications-widgets');
-		self.element.on('click', 'a', function() {
-			var id = $(this).attr('data-id');
-			SET('common.form', ''); // hack
-			SETTER('loading', 'show');
-			AJAX('GET /internal/dashboard/widgets/{0}/add/'.format(id), function(response, err) {
-				SETTER('loading', 'hide', 1000);
-				if (isError(err))
-					return;
-				if (!response.success)
-					return;
-				if (!user.widgets)
-					user.widgets = [];
-				PUSH('user.widgets', id);
-			});
-		});
-	};
-
-	self.setter = function(value) {
-
-		if (!value)
-			return;
-
-		var builder = [];
-
-		for (var i = 0, length = value.length; i < length; i++) {
-			var item = value[i];
-			if (!item.widgets)
-				continue;
-
-			item.widgets.forEach(function(widget) {
-				builder.push(self.template({ id: item.internal + 'X' + widget.internal, title: item.title, name: widget.name }));
-			});
-		}
-
-		self.html(builder);
 	};
 });
