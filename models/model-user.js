@@ -49,22 +49,6 @@ User.prototype.getApplications = function() {
 	return arr;
 };
 
-User.prototype.addWidget = function(id) {
-	var self = this;
-	if (self.widgets.indexOf(id) !== -1)
-		return false;
-	var arr = id.split('X');
-	var item = APPLICATIONS.findItem('internal', arr[0].parseInt());
-	if (!item || !item.widgets)
-		return false;
-	var widget = item.widgets.findItem('internal', arr[1].parseInt());
-	if (!widget)
-		return false;
-	self.widgets.push(id);
-	OPENPLATFORM.users.save();
-	return true;
-};
-
 User.prototype.getNotifications = function(callback) {
 	var self = this;
 

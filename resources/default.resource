@@ -10,3 +10,4 @@ error-application-permissions   : Application doesn't have permission for this o
 error-application-origin        : Your IP address is not valid for this operation.
 error-user-notfound             : User not found.
 error-user-application          : User doesn't have allowed this application.
+error-user-widgets              : The application with widget was not found in the repository.

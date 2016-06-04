@@ -8,6 +8,7 @@ exports.install = function() {
 	F.route('/internal/users/', json_users_query, ['authorize']);
 	F.route('/internal/users/', json_schema_save, ['authorize', 'post', '*User']);
 	F.route('/internal/users/', json_schema_delete, ['authorize', 'delete', '*User']);
+	F.route('/internal/users/notify/', json_schema_save, ['authorize', 'post', '*Notify']);
 	F.route('/internal/upload/photo/', json_upload_photo, ['authorize', 'upload'], 512);
 
 	// Applications
@@ -19,11 +20,12 @@ exports.install = function() {
 	// Dashboard
 	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
 	F.route('/internal/dashboard/notifications/', json_dashboard_notifications, ['authorize']);
-	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets, ['authorize']);
+	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets_svg, ['authorize']);
 	F.route('/internal/dashboard/widgets/{id}/add/', json_dashboard_widgets_add, ['authorize']);
 
 	// Account
 	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
+	F.route('/internal/account/', json_account_save, ['authorize', 'post', '*Account']);
 	F.route('/notify/', json_notify);
 };
 
@@ -38,7 +40,7 @@ function json_notify() {
 	item.$save(self, self.callback());
 }
 
-function json_dashboard_widgets(id) {
+function json_dashboard_widgets_svg(id) {
 	var self = this;
 	var empty = '<svg></svg>';
 	var arr = id.split('X');
@@ -109,7 +111,7 @@ function json_schema_save() {
 	var self = this;
 	if (!self.user.superadmin)
 		return self.invalid().push('error-permission');
-	self.$save(self.callback());
+	self.$save(self, self.callback());
 }
 
 function json_upload_photo() {
@@ -166,4 +168,14 @@ function json_schema_delete() {
 function json_dashboard_widgets_add(id) {
 	var self = this;
 	self.json(SUCCESS(self.user.addWidget(id)));
+}
+
+function json_dashboard_widgets_save() {
+	var self = this;
+	self.$save(self, self.callback());
+}
+
+function json_account_save() {
+	var self = this;
+	self.$save(self, self.callback());
 }

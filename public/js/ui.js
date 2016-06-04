@@ -930,7 +930,7 @@ COMPONENT('dropdowncheckbox', function() {
 
 	function prepare(path, value) {
 
-		if (NOTMODIFIED(path, value))
+		if (NOTMODIFIED(self.id, value))
 			return;
 
 		var clsempty = 'ui-dropdowncheckbox-values-empty';
@@ -1715,7 +1715,7 @@ COMPONENT('notifications', function() {
 	var loaded = false;
 	var sum = -1;
 
-	self.template = Tangular.compile('<div class="notification" data-id="{{ openplatform }}" data-url="{{ url }}" data-internal="{{ id }}"><img src="{{ icon }}" alt="{{ title }}" border="0" /><div><div class="header"><i class="fa fa-times-circle"></i>{{ title }}<span>{{ datecreated | format(\'yyyy-MM-dd HH:mm\') }}</span></div>{{ body }}</div></div>');
+	self.template = Tangular.compile('<div class="notification{{ if type === 1 }} notification-success{{ fi }}{{ if type === 2 }} notification-alert{{ fi }}" data-id="{{ openplatform }}" data-url="{{ url }}" data-internal="{{ id }}"><img src="{{ icon }}" alt="{{ title }}" border="0" /><div><div class="header"><i class="fa fa-times-circle"></i>{{ title }}<span>{{ datecreated | time }}</span></div>{{ body }}</div></div>');
 	self.readonly();
 	self.singleton();
 
@@ -1747,11 +1747,22 @@ COMPONENT('notifications', function() {
 
 		self.element.on('click', '.notification', function(e) {
 			var el = $(this);
+			var id = el.attr('data-id');
+			var url = el.attr('data-url');
+
+			if (!id) {
+				if (url)
+					window.open(url);
+				else
+					el.find('.fa-times-circle').trigger('click');
+				return;
+			}
+
 			var apps = GET(self.attr('data-source'));
-			var app = apps.findItem('id', el.attr('data-id'));
+			var app = apps.findItem('id', id);
 			if (!app)
 				return;
-			SETTER('processes', 'open', app.id, el.attr('data-url'));
+			SETTER('processes', 'open', app.id, url);
 		});
 
 		$(window).on('resize', self.resize);
@@ -1801,8 +1812,17 @@ COMPONENT('notifications', function() {
 
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i];
-			var app = apps.findItem('internal', item.internal);
 
+			// OP
+			if (!item.internal) {
+				item.id = i;
+				item.icon = '/img/system.png';
+				item.title = document.title;
+				builder.push(self.template(item));
+				continue;
+			}
+
+			var app = apps.findItem('internal', item.internal);
 			if (!app) {
 				missing.push(item.internal);
 				continue;

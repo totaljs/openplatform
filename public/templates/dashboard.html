@@ -89,9 +89,11 @@
 
 			for (var i = 0, length = response.length; i < length; i++) {
 				var item = response[i];
-				var app = dashboard.applications.findItem('internal', item.internal);
-				if (!app)
-					continue;
+				if (item.internal) {
+					var app = dashboard.applications.findItem('internal', item.internal);
+					if (!app)
+						continue;
+				}
 				arr.push(item);
 			}
 
@@ -102,7 +104,7 @@
 			PUSH('dashboard.notifications', arr);
 
 			if (!user.notifications || !window.Notification || window.Notification.permission !== 'granted' || !FIND('processes').is()) {
-				if (common.isfocused)
+				if (common.isfocused && jR.url === '/')
 					return;
 			}
 

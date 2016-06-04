@@ -113,6 +113,8 @@ section > label .fa { margin-right: 7px; }
 .notification-clear .fa { margin-right: 5px; }
 .notification-empty { font-size: 11px; text-align: center; color: #A0A0A0; padding: 20px 0; }
 .notification-empty .fa { font-size: 30px; display: block; margin-bottom: 5px; color: silver; }
+.notification-success > div { color: #6DBC41; border-color: #6DBC41; }
+.notification-alert > div { color: #ED5565; border-color: #ED5565; }
 
 .filter .buttons { position: absolute; right: 0; top: 10px; }
 .filter .buttons button { width: 34px; height: 30px; text-align: center; margin: 0; padding: 0; background-color: #E0E0E0; border: 0; font-size: 16px; outline: 0; border-radius: 0 0 4px 4px; margin-left: 5px; transition: all 0.1s; }

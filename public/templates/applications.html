@@ -27,7 +27,7 @@
 				<tr>
 					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" border="0" height="14" /></td>
 					<td><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }} <span class="fs11 silver">v{{ version }}</span></td>
-					<td style="width:200px" class="{{ if responsive }}green{{ else }}silver{{ fi }} fs11">{{ if !responsive }}not{{ fi }} optimized for mobile devices</td>
+					<td style="width:200px" class="{{ if responsive }}green{{ else }}silver{{ fi }} fs11">{{ if !responsive }}@(not){{ fi }} @(optimized for mobile devices)</td>
 					<td style="width:80px"><i class="fa fa-clock-o silver mr3"></i>{{ dateupdated | format('@(HH:mm)')}}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
@@ -40,7 +40,7 @@
 	</div>
 </div>
 
-<div data-component="form" data-component-path="common.form" data-if="applications" data-title="Application's details" data-autocenter="true" data-width="900px" data-component-id="applications.form">
+<div data-component="form" data-component-path="common.form" data-if="applications" data-title="@(Application's details)" data-autocenter="true" data-width="900px" data-component-id="applications.form">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-3">
@@ -59,8 +59,13 @@
 					<div class="row">
 						<div class="col-md-12 m">
 							<div data-component="disable" data-component-path="applications.form.isupdate" data-if="value === true">
-								<div data-component="textbox" data-component-path="applications.form.id" data-maxlength="500" data-required="true" data-component-type="url" data-component-keypress-delay="2000">@(URL address to openplatform.json)</div>
+								<div data-component="textbox" data-component-path="applications.form.id" data-maxlength="500" data-required="true" data-component-type="url" data-component-keypress-delay="2000">@(URL address to <b>openplatform.json</b>)</div>
 								<div data-component="error" data-component-path="applications.form.data" class="ui-error-nm"></div>
+								<div data-component="template" data-component-path="applications.form.data">
+									<script type="text/html">
+										<div class="help"><i class="fa fa-info-circle"></i>{{ description }}</div>
+									</script>
+								</div>
 							</div>
 						</div>
 					</div>

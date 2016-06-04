@@ -16,6 +16,7 @@
 		</div>
 		<div class="relative">
 			<div class="buttons">
+				<button title="@(Notify users)" data-component="click" data-component-path="common.form" data-value="notify"><i class="fa fa-bell"></i></button>
 				<button title="@(Send email)" data-component="click" data-component-path="users_email"><i class="fa fa-envelope"></i></button>
 				<button title="@(Change permissions)" data-component="click" data-component-path="users_permissions"><i class="fa fa-th"></i></button>
 				<button title="@(Replace group)" data-component="click" data-component-path="users_regroup"><i class="fa fa-folder"></i></button>
@@ -34,7 +35,7 @@
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
 					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
 					<td><span class="fs11 silver">{{ group }}</span></td>
-					<td style="width:150px">{{ if datelogged }}<i class="fa fa-clock-o silver mr3"></i>{{ datelogged | format('@(yyyy-MM-dd HH:mm)')}}{{ else }}@(not logged){{ fi }}</td>
+					<td style="width:150px">{{ if datelogged }}<i class="fa fa-clock-o silver mr3"></i>{{ datelogged | time }}{{ else }}@(not logged){{ fi }}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
 						<button name="remove" title="@(Remove)"><span class="fa fa-times-circle"></span></button>
@@ -46,7 +47,7 @@
 	</div>
 </div>
 
-<div data-component="form" data-component-path="common.form" data-if="users" data-title="User's details" data-autocenter="true" data-width="900px" data-component-id="users.form">
+<div data-component="form" data-component-path="common.form" data-if="users" data-title="@(User's details)" data-autocenter="true" data-width="900px" data-component-id="users.form">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-3">
@@ -60,7 +61,7 @@
 						{{ if datelogged }}
 						<div class="keyvalue">
 							<div class="key">Logged</div>
-							<div class="value">{{ if online }}<span class="badge badge-green mr5">online</span>{{ fi }}{{ datelogged | format('@(yyyy-MM-dd HH:mm)') }}</div>
+							<div class="value">{{ if online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ datelogged | format('@(yyyy-MM-dd HH:mm)') }}</div>
 						</div>
 						{{ fi }}
 						{{ if datecreated }}
