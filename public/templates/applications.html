@@ -70,11 +70,17 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-12 m">
 							<div data-component="textbox" data-component-path="applications.form.title" data-maxlength="50" data-required="true">@(Title)</div>
 						</div>
 					</div>
-					<br />
+					<div class="row">
+						<div class="col-md-6">
+							<div data-component="textbox" data-component-path="applications.form.secret" data-maxlength="30">@(Secret key)</div>
+						</div>
+					</div>
+					<div class="help">@(The secret key is a prevention for hijacking of request headers. You can obtain this secret from the author of this application.)</div>
+					<hr />
 					<div class="silver"><i class="fa fa-lock mr5"></i>@(Permissions)</div>
 					<div class="mt10" data-component="checkbox" data-component-path="applications.form.serviceworker">@(Allow service worker)</div>
 					<div data-component="checkbox" data-component-path="applications.form.notifications">@(Allow push notifications)</div>
@@ -185,6 +191,7 @@
 			applications.form.data = item;
 			applications.form.users = item.users;
 			applications.form.applications = item.applications;
+			applications.form.secret = item.secret;
 			applications.form.serviceworker = item.serviceworker;
 			applications.form.mobile = item.mobile;
 			applications.form.notifications = item.notifications;

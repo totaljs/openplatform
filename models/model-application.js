@@ -16,6 +16,7 @@ function Application() {
 	this.status = '';
 	this.search = '';
 	this.responsive = false;
+	this.secret = '';
 
 	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
@@ -54,9 +55,30 @@ Application.prototype.readonly = function() {
 	item.online = self.online;
 	item.url = self.url;
 	item.internal = self.internal;
-	item.widgets = self.widgets;
 	item.events = self.events;
 	item.widgets = self.widgets;
+	return item;
+};
+
+Application.prototype.export = function() {
+	var self = this;
+	var item = {};
+	item.id = self.id;
+	item.title = self.title;
+	item.name = self.name;
+	item.description = self.description;
+	item.version = self.version;
+	item.icon = self.icon;
+	item.author = self.author;
+	item.email = self.email;
+	item.applications = self.applications;
+	item.serviceworker = self.serviceworker;
+	item.notifications = self.notifications;
+	item.responsive = self.responsive;
+	item.mobile = self.mobile;
+	item.users = self.users;
+	item.online = self.online;
+	item.url = self.url;
 	return item;
 };
 
@@ -109,6 +131,7 @@ Application.prototype.reload = function(callback) {
 		self.events = {};
 		self.origin = app.origin;
 		self.search = (self.name + ' ' + self.title).toSearch();
+		self.serviceurl = app.serviceworker;
 
 		var widgets = app.widgets;
 		if (widgets instanceof Array) {

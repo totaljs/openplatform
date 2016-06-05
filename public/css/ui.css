@@ -145,6 +145,9 @@ button { outline: 0; }
     .ui-pagination nav { display: inline-block; }
     .ui-pagination div { float: none; margin-bottom: 10px; }
     .ui-confirm button { display: block; margin: 10px 0 0; display: block; width: 100%; }
+    .ui-form-buttons button[name="submit"] { width: 100%; margin-bottom: 10px; display: block; margin-right: 0; }
+    .ui-form-buttons button[name="cancel"] { width: 100%; }
+    .ui-form-buttons .inline { display: block; }
 }
 
 .ui-textbox-container * { box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }

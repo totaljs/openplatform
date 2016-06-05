@@ -31,6 +31,7 @@ function User() {
 	this.notifications = true;
 	this.resetcounter = 0;
 	this.notificationscounter = 0;
+	this.internal = 0;
 }
 
 User.prototype.logoff = function() {
@@ -82,7 +83,8 @@ User.prototype.getNotifications = function(callback) {
 User.prototype.notify = function(notification, callback) {
 	var self = this;
 	U.queue('user.notify', 15, function(next) {
-		Fs.appendFile(F.path.databases('notifications_{0}.json'.format(self.id.toString().hash())), ',' + JSON.stringify(notification), function() {
+		Fs.appendFile(F.path.databases('notifications_{0}.json'.format(self.internal)), ',' + JSON.stringify(notification), function() {
+			console.log(arguments);
 			next();
 			self.notificationscounter++;
 			callback && callback();
@@ -111,6 +113,25 @@ User.prototype.readonly = function() {
 	return item;
 };
 
+User.prototype.export = function() {
+	var self = this;
+	var item = {};
+	item.id = self.id;
+	item.firstname = self.firstname;
+	item.lastname = self.lastname;
+	item.photo = OPENPLATFORM.users.photo(self.email);
+	item.email = self.email;
+	item.phone = self.phone;
+	item.alias = self.alias;
+	item.online = self.online;
+	item.blocked = self.blocked;
+	item.group = self.group;
+	item.notifications = self.notifications;
+	item.dateupdated = self.dateupdated;
+	item.sounds = self.sounds;
+	return item;
+};
+
 User.prototype.prepare = function(item) {
 	var keys = Object.keys(item);
 	var self = this;
@@ -119,6 +140,7 @@ User.prototype.prepare = function(item) {
 		self[key] = item[key];
 	}
 	self.search = (self.lastname + ' ' + self.firstname + ' ' + self.group).toSearch();
+	self.internal = (self.id || '').hash();
 	return self;
 };
 

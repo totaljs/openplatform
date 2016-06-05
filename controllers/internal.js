@@ -2,7 +2,7 @@ const HEADERS = {};
 
 exports.install = function() {
 
-	HEADERS['x-openplatfrom'] = CONFIG('url');
+	HEADERS['x-openplatfrom'] = F.config.url;
 
 	// Users
 	F.route('/internal/users/', json_users_query, ['authorize']);
@@ -58,6 +58,12 @@ function json_dashboard_widgets_svg(id) {
 		return self.content(empty);
 
 	HEADERS['x-openplatfrom-user'] = self.user.id;
+
+	if (app.secret)
+		HEADERS['x-openplatfrom-secret'] = app.secret;
+	else if (HEADERS['x-openplatfrom-secret'])
+		delete HEADERS['x-openplatfrom-secret'];
+
 	U.request(widget.url, ['get'], function(err, response) {
 		if (err)
 			return self.content(empty);

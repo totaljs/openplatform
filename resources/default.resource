@@ -6,6 +6,7 @@ error-login-ddos                : Your computer has been blocked for 15 minutes.
 error-login-useragent           : Your web browser is not supported.
 error-login-blocked             : Your account has been blocked. Please contact administrator.
 error-application-notfound      : Application not found.
+error-application-secret        : A secret key is not valid.
 error-application-permissions   : Application doesn't have permission for this operation.
 error-application-origin        : Your IP address is not valid for this operation.
 error-user-notfound             : User not found.
