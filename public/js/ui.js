@@ -1587,6 +1587,14 @@ COMPONENT('processes', function() {
 	self.singleton();
 	self.readonly();
 
+	self.makeurl = function(url) {
+		var qs = 'openplatform={0}'.format(encodeURIComponent(common.url + '/api/profile/?user=' + encodeURIComponent(user.id)));
+		var index = url.indexOf('?');
+		if (index === -1)
+			return url + '?' + qs;
+		return url + '&' + qs;
+	};
+
 	self.make = function() {
 
 		source = self.attr('data-source');
@@ -1650,7 +1658,6 @@ COMPONENT('processes', function() {
 				self.open(id, url);
 				SETTER('loading', 'hide', 1000);
 			}, 2000);
-
 			return self;
 		}
 
@@ -1659,7 +1666,7 @@ COMPONENT('processes', function() {
 			self.minimize();
 		iframe.element.removeClass('hidden');
 		if (url)
-			iframe.element.attr('src');
+			iframe.element.attr('src', self.makeurl(url));
 		SETTER('loading', 'hide', 1000);
 		self.title(iframe.title);
 		return self;
@@ -1702,7 +1709,7 @@ COMPONENT('processes', function() {
 		}, 200);
 
 		setTimeout(function() {
-			iframe.element.find('iframe').attr('src', item.url);
+			iframe.element.find('iframe').attr('src', self.makeurl(item.url));
 		}, 1500);
 
 		UPDATE(source, 100);

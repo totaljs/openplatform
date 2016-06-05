@@ -63,7 +63,9 @@
 								<div data-component="error" data-component-path="applications.form.data" class="ui-error-nm"></div>
 								<div data-component="template" data-component-path="applications.form.data">
 									<script type="text/html">
+										{{ if description }}
 										<div class="help"><i class="fa fa-info-circle"></i>{{ description }}</div>
+										{{ fi }}
 									</script>
 								</div>
 							</div>

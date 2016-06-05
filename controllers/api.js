@@ -3,6 +3,7 @@ exports.install = function() {
 	F.route('/api/notifications/', json_notification, ['#authorize', 'post', '*Notification']);
 	F.route('/api/applications/', json_applications, ['#authorize']);
 	F.route('/api/users/', json_users, ['#authorize']);
+	F.route('/api/profile/', json_profile, ['#authorize']);
 };
 
 F.middleware('authorize', function(req, res, next, options, controller) {
@@ -24,15 +25,18 @@ F.middleware('authorize', function(req, res, next, options, controller) {
 	}
 
 	var type = req.split[1];
-	if (type === 'notification')
-		type = 'notifications';
-
-	if (!app[type]) {
+	if (type !== 'profile' && !app[type]) {
 		next = null;
 		return controller.invalid().push('error-application-permissions');
 	}
 
-	var user = USERS.findItem('id', req.headers['x-openplatform-user'] || '');
+	var iduser;
+	if (type === 'profile')
+		iduser = req.query.user;
+	if (!iduser)
+		iduser = req.headers['x-openplatform-user'] || '';
+
+	var user = USERS.findItem('id', iduser);
 	if (!user) {
 		next = null;
 		return controller.invalid().push('error-user-notfound');
@@ -82,4 +86,9 @@ function json_notification() {
 function json_serviceworker() {
 	var self = this;
 	self.$save(self, self.callback());
+}
+
+function json_profile() {
+	var self = this;
+	self.json(self.user.readonly());
 }
