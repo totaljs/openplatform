@@ -8,42 +8,51 @@ exports.install = function() {
 
 F.middleware('authorize', function(req, res, next, options, controller) {
 
-	var app = APPLICATIONS.findItem('id', req.headers['x-openplatform-id'] || '');
+	var idapp = req.headers['x-openplatform-id'] || '';
+	var iduser = req.headers['x-openplatform-user'] || '';
+
+	if (!idapp || !iduser) {
+		next = null;
+		controller.status = 400;
+		return controller.invalid().push('error-invalid-headers');
+	}
+
+	var app = APPLICATIONS.findItem('id', idapp);
 	if (!app) {
 		next = null;
+		controller.status = 400;
 		return controller.invalid().push('error-application-notfound');
 	}
 
 	if (app.origin && app.origin.length && app.origin.indexOf(req.ip) === -1) {
 		next = null;
+		controller.status = 400;
 		return controller.invalid().push('error-application-origin');
 	}
 
 	if (app.secret && app.secret !== req.headers['x-openplatform-secret']) {
 		next = null;
+		controller.status = 400;
 		return controller.invalid().push('error-application-secret');
 	}
 
 	var type = req.split[1];
 	if (type !== 'profile' && !app[type]) {
 		next = null;
+		controller.status = 400;
 		return controller.invalid().push('error-application-permissions');
 	}
-
-	var iduser;
-	if (type === 'profile')
-		iduser = req.query.user;
-	if (!iduser)
-		iduser = req.headers['x-openplatform-user'] || '';
 
 	var user = USERS.findItem('id', iduser);
 	if (!user) {
 		next = null;
+		controller.status = 400;
 		return controller.invalid().push('error-user-notfound');
 	}
 
 	if (!user.applications[app.internal]) {
 		next = null;
+		controller.status = 400;
 		return self.invalid().push('error-user-application');
 	}
 

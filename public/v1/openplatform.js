@@ -1,33 +1,76 @@
 var OPENPLATFORM = {};
 
 OPENPLATFORM.version = '1.0.0';
+OPENPLATFORM.callbacks = {};
+OPENPLATFORM.events = {};
 
-function OP_OPEN(selector) {
-}
+function OP_SEND(type, body, callback) {
+	var data = {};
+	data.openplatform = true;
+	data.type = type;
+	data.body = body;
 
-function OP_EXEC(selector, data, callback) {
-}
+	if (callback) {
+		data.callback = (Math.random() * 1000000).toString(32).replace(/\./g, '');
+		OPENPLATFORM.callbacks[data.callback] = callback;
+	}
 
-function OP_SEND(selector, data) {
+	top.postMessage(JSON.stringify(data), '*');
 }
 
 function OP_ON(name, callback) {
-}
-
-function OP_LIST(callback) {
+	if (!OPENPLATFORM.events[name])
+		OPENPLATFORM.events[name] = [];
+	OPENPLATFORM.events[name].push(callback);
 }
 
 function OP_PROFILE(callback) {
+	OP_SEND('profile', null, callback);
 }
 
-function OP_MEMBERS(callback) {
+function OP_APPLICATIONS(callback) {
+	OP_SEND('applications', null, callback);
+}
+
+function OP_USERS(callback) {
+	OP_SEND('users', null, callback);
 }
 
 function OP_INFO(callback) {
+	OP_SEND('info', null, callback);
+}
+
+function OP_MINIMIZE(callback) {
+	OP_ON('minimize', callback);
+}
+
+function OP_MAXIMIZE(callback) {
+	OP_ON('maximize', callback);
+}
+
+function OP_CLOSE(callback) {
+	OP_ON('kill', callback);
 }
 
 window.addEventListener('message', function(e) {
-	var data = JSON.parse(e.originalEvent.data);
-	data.type = '';
-	data.data = null;
+	try {
+		var data = JSON.parse(e.data);
+		if (!data.openplatform)
+			return;
+		if (data.callback) {
+			var callback = OPENPLATFORM.callbacks[data.callback];
+			if (callback) {
+				callback(data.error, data.body);
+				delete OPENPLATFORM.callbacks[data.callback];
+			}
+			return;
+		}
+
+		var events = OPENPLATFORM.events[data.type];
+		if (!events)
+			return;
+		events.forEach(function(e) {
+			e(data.body);
+		});
+	} catch (e) {}
 });

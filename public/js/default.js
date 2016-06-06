@@ -1,5 +1,68 @@
-$(document).ready(function() {
+$(window).on('message', function(e) {
+		var data = JSON.parse(e.originalEvent.data);
+		if (!data.openplatform)
+			return;
+		var processes = FIND('processes');
+		var item = processes.findItem(e.originalEvent.source);
+		var tmp;
+		var app;
+		switch (data.type) {
+			case 'profile':
+				tmp = $.extend({}, user);
+				delete tmp.widgets;
+				processes.message(item, 'profile', tmp, data.callback);
+				break;
 
+			case 'info':
+				tmp = {};
+				tmp.version = common.version;
+				tmp.name = common.name;
+				tmp.url = common.url;
+				tmp.language = common.language;
+				tmp.isfocused = common.isfocused;
+				tmp.ismobile = isMOBILE;
+				tmp.datetime = common.datetime;
+				processes.message(item, 'info', tmp, data.callback);
+				break;
+
+			case 'users':
+				app = dashboard.applications.findItem('id', item.id);
+
+				if (!app)
+					return;
+
+				if (!app.users) {
+					processes.message(item, 'users', null, data.callback, new Error('You don\'t have permissions for this operation.'));
+					return;
+				}
+				AJAXCACHE('GET /internal/dashboard/users/', function(response, err) {
+					processes.message(item, 'users', response, data.callback, err);
+				}, 1000 * 120);
+				break;
+
+			case 'applications':
+				app = dashboard.applications.findItem('id', item.id);
+
+				if (!app)
+					return;
+
+				if (!app.applications) {
+					processes.message(item, 'applications', null, data.callback, new Error('You don\'t have permissions for this operation.'));
+					return;
+				}
+
+				var arr = [];
+				for (var i = 0, length = dashboard.applications.length; i < length; i++) {
+					tmp = $.extend({}, dashboard.applications[i]);
+					delete tmp.events;
+					delete tmp.internal;
+					delete tmp.widgets;
+					arr.push(tmp);
+				}
+
+				processes.message(item, 'applications', arr, data.callback);
+				break;
+		}
 });
 
 function isError(err) {

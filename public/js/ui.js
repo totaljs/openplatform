@@ -1587,12 +1587,34 @@ COMPONENT('processes', function() {
 	self.singleton();
 	self.readonly();
 
+	self.message = function(item, type, message, callbackid, error) {
+		var data = {};
+		data.openplatform = true;
+		data.type = type;
+		data.body = message;
+
+		if (error)
+			data.error = error;
+
+		if (callbackid)
+			data.callback = callbackid;
+		item.element.find('iframe').get(0).contentWindow.postMessage(JSON.stringify(data), '*');
+		return true;
+	};
+
 	self.makeurl = function(url) {
-		var qs = 'openplatform={0}'.format(encodeURIComponent(common.url + '/api/profile/?user=' + encodeURIComponent(user.id)));
+		var qs = 'openplatform={0}&openplatform-user={1}'.format(encodeURIComponent(common.url), encodeURIComponent(user.id));
 		var index = url.indexOf('?');
 		if (index === -1)
 			return url + '?' + qs;
 		return url + '&' + qs;
+	};
+
+	self.findItem = function(obj) {
+		for (var i = 0, length = iframes.length; i < length; i++) {
+			if (iframes[i].iframe.get(0).contentWindow === obj)
+				return iframes[i];
+		}
 	};
 
 	self.make = function() {
@@ -1617,8 +1639,10 @@ COMPONENT('processes', function() {
 	self.minimize = function() {
 
 		iframes.forEach(function(item) {
-			if (!item.element.hasClass('hidden'))
-				item.element.addClass('hidden');
+			if (item.element.hasClass('hidden'))
+				return;
+			item.element.addClass('hidden');
+			self.message(item, 'minimize');
 		});
 
 		toolbar.addClass('hidden');
@@ -1637,11 +1661,20 @@ COMPONENT('processes', function() {
 		if (!iframe.element.hasClass('hidden'))
 			self.minimize();
 
-		iframe.element.remove();
+		// Timeout for iframe cleaning scripts
+		setTimeout(function() {
+			iframe.iframe.attr('src', 'about:blank');
+			iframe.element.remove();
+		}, 2000);
+
 		var apps = GET(source);
 		var item = apps.findItem('id', id);
-		if (item)
+
+		if (item) {
 			item.running = false;
+			self.message(iframe, 'kill');
+		}
+
 		UPDATE(source);
 		return self;
 	};
@@ -1666,9 +1699,10 @@ COMPONENT('processes', function() {
 			self.minimize();
 		iframe.element.removeClass('hidden');
 		if (url)
-			iframe.element.attr('src', self.makeurl(url));
+			iframe.iframe.attr('src', self.makeurl(url));
 		SETTER('loading', 'hide', 1000);
 		self.title(iframe.title);
+		self.message(iframe, 'maximize');
 		return self;
 	};
 
@@ -1686,6 +1720,7 @@ COMPONENT('processes', function() {
 
 		var iframe = iframes.findItem('id', value);
 		if (iframe) {
+			self.message(iframe, 'maximize');
 			self.title(iframe.title);
 			iframe.element.removeClass('hidden');
 			return;
@@ -1701,6 +1736,7 @@ COMPONENT('processes', function() {
 		iframe.id = item.id;
 		iframe.title = item.title;
 		iframe.element = self.find('[data-id="{0}"]'.format(item.id));
+		iframe.iframe = iframe.element.find('iframe');
 		iframe.dateopened = new Date();
 		iframes.push(iframe);
 
@@ -1709,7 +1745,7 @@ COMPONENT('processes', function() {
 		}, 200);
 
 		setTimeout(function() {
-			iframe.element.find('iframe').attr('src', self.makeurl(item.url));
+			iframe.iframe.attr('src', self.makeurl(item.url));
 		}, 1500);
 
 		UPDATE(source, 100);
@@ -1744,6 +1780,7 @@ COMPONENT('notifications', function() {
 			if (index === -1)
 				return;
 			items.splice(index, 1);
+			self.save();
 			self.update();
 		});
 
@@ -2000,12 +2037,20 @@ COMPONENT('widgets', function() {
 		if (!item.app.online)
 			return;
 		AJAX('GET /internal/dashboard/widgets/{0}/?ts={1}'.format(item.id, self.id + 'X' + index), function(response) {
-			response = response.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ');
-			var hash = HASH(response);
+			if (!response)
+				return self.empty();
+			var svg = response.trim();
+			if (!svg.startsWith('<svg'))
+				return self.content(empty);
+			var index = svg.indexOf('>');
+			if (index === -1)
+				return self.content(empty);
+			svg = svg.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ').replace(/\s+\>/g, '>');
+			var hash = HASH(svg);
 			if (hash === item.hash)
 				return;
 			item.hash = hash;
-			item.element.html(response);
+			item.element.html('<svg width="400" height="200" version="1.0" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 400 200">' + svg.substring(index + 1));
 		});
 	};
 

@@ -54,7 +54,11 @@
 
 		var common = {};
 
+		common.datetime = new Date();
+		common.name = '@{config.name}';
 		common.url = '@{config.url}';
+		common.version = '@{config.version}';
+		common.language = '@{language}';
 		common.forms = {};
 		common.page = '';
 		common.form = '';

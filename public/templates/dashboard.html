@@ -119,6 +119,8 @@
 			dashboard.notification.onclick = function() {
 				SETTER('processes', 'minimize');
 				window.focus();
+				if (jR.url !== '/')
+					jR.redirect('/');
 				if (!dashboard.notification)
 					return;
 				dashboard.notification.close();

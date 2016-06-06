@@ -1,4 +1,5 @@
 const HEADERS = {};
+const EMPTYARRAY = [];
 
 HEADERS['x-openplatform'] = F.config.url;
 
@@ -19,12 +20,13 @@ NEWSCHEMA('Service').make(function(schema) {
 		}
 
 		if (!arr.length)
-			return callback(SUCCESS(true, 0));
+			return callback(SUCCESS(true, EMPTYARRAY));
 
-		var count = 0;
+		var apps = [];
 		var data = JSON.stringify(model.$clean());
 
 		HEADERS['x-openplatform-user'] = controller.user.id;
+		HEADERS['x-openplatform-id'] = controller.app.id;
 
 		arr.wait(function(item, next) {
 
@@ -33,11 +35,11 @@ NEWSCHEMA('Service').make(function(schema) {
 			else if (HEADERS_SECRET['x-openplatform-secret'])
 				delete HEADERS_SECRET['x-openplatform-secret'];
 
-			U.request(item.serviceurl, ['post', 'json'], data, function(err, response) {
+			U.request(item.serviceurl, ['post', 'json', 'dnscache', '< 1', 2000], data, function(err, response) {
 				if (!err)
-					count++;
+					apps.push(item.id);
 				next();
 			}, null, HEADERS);
-		}, () => callback(SUCCESS(true, count)));
+		}, () => callback(SUCCESS(true, apps)));
 	});
 });

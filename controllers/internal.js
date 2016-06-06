@@ -20,6 +20,7 @@ exports.install = function() {
 	// Dashboard
 	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
 	F.route('/internal/dashboard/notifications/', json_dashboard_notifications, ['authorize']);
+	F.route('/internal/dashboard/users/', json_dashboard_users, ['authorize']);
 	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets_svg, ['authorize']);
 	F.route('/internal/dashboard/widgets/{id}/add/', json_dashboard_widgets_add, ['authorize']);
 
@@ -42,20 +43,19 @@ function json_notify() {
 
 function json_dashboard_widgets_svg(id) {
 	var self = this;
-	var empty = '<svg></svg>';
 	var arr = id.split('X');
 
 	var index = self.user.widgets.indexOf(id);
 	if (index === -1)
-		return self.content(empty);
+		return self.empty();
 
 	var app = APPLICATIONS.findItem('internal', arr[0].parseInt());
 	if (!app || !app.widgets)
-		return self.content(empty);
+		return self.empty();
 
 	var widget = app.widgets.findItem('internal', arr[1].parseInt());
 	if (!widget)
-		return self.content(empty);
+		return self.empty();
 
 	HEADERS['x-openplatfrom-user'] = self.user.id;
 
@@ -64,19 +64,11 @@ function json_dashboard_widgets_svg(id) {
 	else if (HEADERS['x-openplatfrom-secret'])
 		delete HEADERS['x-openplatfrom-secret'];
 
-	U.request(widget.url, ['get'], function(err, response) {
+	U.request(widget.url, ['get', 'dnscache', '< 30', 1500], function(err, response) {
 		if (err)
-			return self.content(empty);
-
-		var svg = response.trim();
-		if (!svg.startsWith('<svg'))
-			return self.content(empty);
-
-		var index = svg.indexOf('>');
-		if (index === -1)
-			return self.content(empty);
-
-		self.content('<svg width="400" height="200" version="1.0" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 400 200">' + svg.substring(index + 1));
+			return self.empty();
+		self.content(response);
+		// self.content('<svg width="400" height="200" version="1.0" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 400 200">' + svg.substring(index + 1));
 	}, null, HEADERS);
 }
 
@@ -184,4 +176,16 @@ function json_dashboard_widgets_save() {
 function json_account_save() {
 	var self = this;
 	self.$save(self, self.callback());
+}
+
+function json_dashboard_users() {
+	var self = this;
+	var arr = [];
+
+	for (var i = 0, length = USERS.length; i < length; i++) {
+		var item = USERS[i];
+		arr.push(item.export());
+	}
+
+	self.json(arr);
 }
