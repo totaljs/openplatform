@@ -1,11 +1,13 @@
 exports.install = function() {
 	F.route('/api/serviceworker/', json_serviceworker, ['#authorize', 'post', '*Service'], 128);
-	F.route('/api/notifications/', json_notification, ['#authorize', 'post', '*Notification']);
-	F.route('/api/applications/', json_applications, ['#authorize']);
-	F.route('/api/users/', json_users, ['#authorize']);
-	F.route('/api/profile/', json_profile, ['#authorize']);
+	F.route('/api/notifications/', json_notifications, ['#authorize', 'post', '*Notification']);
+	F.route('/api/applications/',  json_applications,  ['#authorize']);
+	F.route('/api/users/',         json_users,         ['#authorize']);
+	F.route('/api/profile/',       json_profile,       ['#authorize']);
+	F.route('/api/openplatform/',  json_openplatform,  ['#authorize']);
 };
 
+// Middleware for API
 F.middleware('authorize', function(req, res, next, options, controller) {
 
 	var idapp = req.headers['x-openplatform-id'] || '';
@@ -37,7 +39,7 @@ F.middleware('authorize', function(req, res, next, options, controller) {
 	}
 
 	var type = req.split[1];
-	if (type !== 'profile' && !app[type]) {
+	if (type !== 'profile' && type !== 'openplatform' && !app[type]) {
 		next = null;
 		controller.status = 400;
 		return controller.invalid().push('error-application-permissions');
@@ -60,6 +62,16 @@ F.middleware('authorize', function(req, res, next, options, controller) {
 	controller.app = app;
 	next();
 });
+
+function json_serviceworker() {
+	var self = this;
+	self.$save(self, self.callback());
+}
+
+function json_notifications() {
+	var self = this;
+	self.$save(self, self.callback());
+}
 
 function json_applications() {
 	var self = this;
@@ -87,17 +99,13 @@ function json_users() {
 	self.json(arr);
 }
 
-function json_notification() {
-	var self = this;
-	self.$save(self, self.callback());
-}
-
-function json_serviceworker() {
-	var self = this;
-	self.$save(self, self.callback());
-}
-
 function json_profile() {
 	var self = this;
-	self.json(self.user.readonly());
+	self.json(self.user.export());
 }
+
+function json_openplatform() {
+	var self = this;
+	self.json(OPENPLATFORM.info);
+}
+

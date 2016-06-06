@@ -1,28 +1,28 @@
+// App notifications
 NEWSCHEMA('Notification').make(function(schema) {
 
 	schema.define('type', Number);                 // 0: info, 1: success, 1: alert
-	schema.define('body', 'String(5000)', true);   // Message
-	schema.define('url', 'Url');             // Open URL in application iFrame
-	schema.define('datecreated', Date);
+	schema.define('body', 'String(5000)', true);   // A Message
+	schema.define('url', 'Url');                   // Open URL in application iFrame
 
 	schema.setSave(function(error, model, controller, callback) {
 		var item = model.$clean();
 		if (!item.url)
 			item.url = controller.app.url;
-		if (!item.datecreated)
-			item.datecreated = new Date();
+		item.datecreated = new Date();
 		item.internal = controller.app.internal;
 		controller.user.notify(item);
 		callback(SUCCESS(true));
 	});
 });
 
+// Intenral admin notifications
 NEWSCHEMA('Notify').make(function(schema) {
 
 	schema.define('type', Number);                 // 0: info, 1: success, 1: alert
-	schema.define('group', '[String]');
-	schema.define('body', 'String(5000)', true);
-	schema.define('url', 'Url');
+	schema.define('group', '[String]');            // User's group
+	schema.define('body', 'String(5000)', true);   // A message
+	schema.define('url', 'Url');                   // URL
 
 	schema.setSave(function(error, model, controller, callback) {
 

@@ -3,14 +3,19 @@ const OPENPLATFORM = global.OPENPLATFORM = {};
 const REG_PHOTO = /@|\./g;
 const HEADERS = {};
 
-HEADERS['x-openplatform'] = CONFIG('version');
-HEADERS['x-openplatform-url'] = CONFIG('url');
+var timeout_save_users;
+var timeout_save_applications;
+var counter_save_users = 0;
+var counter_save_applications = 0;
+
+HEADERS['x-openplatform'] = F.config.url;
 
 OPENPLATFORM.Application = MODEL('model-application').Application;
 OPENPLATFORM.User = MODEL('model-user').User;
 OPENPLATFORM.users = {};
 OPENPLATFORM.applications = {};
 OPENPLATFORM.settings = {};
+OPENPLATFORM.info = { version: F.config.version, name: F.config.name, url: F.config.url };
 
 /**
  * Finds user by its ID
@@ -24,16 +29,27 @@ OPENPLATFORM.users.find = function(id) {
 	}
 };
 
+/**
+ * Creates link to photo
+ * @param {String} email
+ * @return {String}
+ */
 OPENPLATFORM.users.photo = function(email) {
-	return CONFIG('url') + '/photos/' + email.replace(REG_PHOTO, '_').toLowerCase() + '.jpg';
+	return F.config.url + '/photos/' + email.replace(REG_PHOTO, '_').toLowerCase() + '.jpg';
 };
 
 /**
  * Saves users
  * @return {Boolean}
  */
-OPENPLATFORM.users.save = function(callback) {
-	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(USERS), callback);
+OPENPLATFORM.users.save = function() {
+	if (counter_save_users < 10)
+		clearTimeout(timeout_save_users);
+	counter_save_users++;
+ 	timeout_save_users = setTimeout(function() {
+		Fs.writeFile(F.path.databases('users.json'), JSON.stringify(USERS), NOOP);
+		counter_save_users = 0;
+	}, 1000);
 	return true;
 };
 
@@ -73,8 +89,14 @@ OPENPLATFORM.users.load = function(callback) {
  * Saves applications
  * @return {Boolean}
  */
-OPENPLATFORM.applications.save = function(callback) {
-	Fs.writeFile(F.path.databases('applications.json'), JSON.stringify(APPLICATIONS), callback);
+OPENPLATFORM.applications.save = function() {
+	if (counter_save_applications < 10)
+		clearTimeout(timeout_save_applications);
+	counter_save_applications++;
+ 	timeout_save_applications = setTimeout(function() {
+		Fs.writeFile(F.path.databases('applications.json'), JSON.stringify(APPLICATIONS), NOOP);
+		counter_save_applications = 0;
+	}, 1000);
 	return true;
 };
 
