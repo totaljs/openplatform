@@ -1,0 +1,145 @@
+----------------------------------------------------> PID: 46416 (v3.0)
+====================================================
+PID          : 46421
+node.js      : v4.4.5
+total.js     : v2.0.0-43
+====================================================
+Name         : OpenPlatform
+Version      : 0.0.1
+Author       : Peter Širka
+Date         : 2016-06-06 08:26:00
+Mode         : debug
+====================================================
+
+http://127.0.0.1:9037/
+
+----------------------------------------------------> /controllers/api.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /controllers/api.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /models/schema-service.js (modified)
+----------------------------------------------------> /controllers/api.js (modified)
+----------------------------------------------------> /resources/default.resource (modified)
+----------------------------------------------------> /controllers/api.js (modified)
+----------------------------------------------------> /controllers/api.js (modified)
+----------------------------------------------------> /controllers/internal.js (modified)
+----------------------------------------------------> /controllers/internal.js (modified)
+----------------------------------------------------> /controllers/internal.js (modified)
+{ '0': null }
+{ '0': null }
+----------------------------------------------------> /controllers/internal.js (modified)
+----------------------------------------------------> /models/model-user.js (modified)
+----------------------------------------------------> /models/model-user.js (modified)
+======= 2016-06-06 10:59:37: internal ---> TypeError: Cannot read property 'url' of undefined (http://openplatform.totaljs.com/notify/) TypeError: Cannot read property 'url' of undefined
+    at SchemaBuilderEntity.onSave (/www/www/totaljs.com.openplatform/models/schema-notification.js:11:29)
+    at /www/node_modules/total.js/builders.js:712:9
+    at SchemaBuilderEntity.$prepare.callback [as $prepare] (/www/node_modules/total.js/builders.js:1042:3)
+    at SchemaBuilderEntity.save (/www/node_modules/total.js/builders.js:697:7)
+    at SchemaInstance.SchemaBuilderEntity.$prepare.SchemaInstance.$save (/www/node_modules/total.js/builders.js:1929:17)
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:41:7)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+----------------------------------------------------> /controllers/internal.js (modified)
+======= 2016-06-06 11:00:07: internal ---> TypeError: Cannot read property 'id' of undefined (http://openplatform.totaljs.com/notify/) TypeError: Cannot read property 'id' of undefined
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:41:31)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+    at F.onAuthorize (/www/www/totaljs.com.openplatform/definitions/auth.js:13:10)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.prepare (/www/node_modules/total.js/index.js:9681:3)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doEnd (/www/node_modules/total.js/index.js:9829:8)
+    at IncomingMessage.<anonymous> (/www/node_modules/total.js/index.js:9582:32)
+    at emitNone (events.js:67:13)
+======= 2016-06-06 11:00:07: internal ---> TypeError: Cannot read property 'url' of undefined (http://openplatform.totaljs.com/notify/) TypeError: Cannot read property 'url' of undefined
+    at SchemaBuilderEntity.onSave (/www/www/totaljs.com.openplatform/models/schema-notification.js:11:29)
+    at /www/node_modules/total.js/builders.js:712:9
+    at SchemaBuilderEntity.$prepare.callback [as $prepare] (/www/node_modules/total.js/builders.js:1042:3)
+    at SchemaBuilderEntity.save (/www/node_modules/total.js/builders.js:697:7)
+    at SchemaInstance.SchemaBuilderEntity.$prepare.SchemaInstance.$save (/www/node_modules/total.js/builders.js:1929:17)
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:42:7)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+======= 2016-06-06 11:00:09: internal ---> TypeError: Cannot read property 'url' of undefined (http://openplatform.totaljs.com/notify/) TypeError: Cannot read property 'url' of undefined
+    at SchemaBuilderEntity.onSave (/www/www/totaljs.com.openplatform/models/schema-notification.js:11:29)
+    at /www/node_modules/total.js/builders.js:712:9
+    at SchemaBuilderEntity.$prepare.callback [as $prepare] (/www/node_modules/total.js/builders.js:1042:3)
+    at SchemaBuilderEntity.save (/www/node_modules/total.js/builders.js:697:7)
+    at SchemaInstance.SchemaBuilderEntity.$prepare.SchemaInstance.$save (/www/node_modules/total.js/builders.js:1929:17)
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:42:7)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+======= 2016-06-06 11:00:48: internal ---> TypeError: Cannot read property 'url' of undefined (http://openplatform.totaljs.com/notify/) TypeError: Cannot read property 'url' of undefined
+    at SchemaBuilderEntity.onSave (/www/www/totaljs.com.openplatform/models/schema-notification.js:11:29)
+    at /www/node_modules/total.js/builders.js:712:9
+    at SchemaBuilderEntity.$prepare.callback [as $prepare] (/www/node_modules/total.js/builders.js:1042:3)
+    at SchemaBuilderEntity.save (/www/node_modules/total.js/builders.js:697:7)
+    at SchemaInstance.SchemaBuilderEntity.$prepare.SchemaInstance.$save (/www/node_modules/total.js/builders.js:1929:17)
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:42:7)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+======= 2016-06-06 11:00:49: internal ---> TypeError: Cannot read property 'url' of undefined (http://openplatform.totaljs.com/notify/) TypeError: Cannot read property 'url' of undefined
+    at SchemaBuilderEntity.onSave (/www/www/totaljs.com.openplatform/models/schema-notification.js:11:29)
+    at /www/node_modules/total.js/builders.js:712:9
+    at SchemaBuilderEntity.$prepare.callback [as $prepare] (/www/node_modules/total.js/builders.js:1042:3)
+    at SchemaBuilderEntity.save (/www/node_modules/total.js/builders.js:697:7)
+    at SchemaInstance.SchemaBuilderEntity.$prepare.SchemaInstance.$save (/www/node_modules/total.js/builders.js:1929:17)
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:42:7)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+----------------------------------------------------> /controllers/internal.js (modified)
+======= 2016-06-06 11:00:50: internal ---> TypeError: Cannot read property 'id' of undefined (http://openplatform.totaljs.com/notify/) TypeError: Cannot read property 'id' of undefined
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:41:32)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+    at F.onAuthorize (/www/www/totaljs.com.openplatform/definitions/auth.js:13:10)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.prepare (/www/node_modules/total.js/index.js:9681:3)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doEnd (/www/node_modules/total.js/index.js:9829:8)
+    at IncomingMessage.<anonymous> (/www/node_modules/total.js/index.js:9582:32)
+    at emitNone (events.js:67:13)
+----------------------------------------------------> /controllers/internal.js (modified)
+----------------------------------------------------> /models/schema-notification.js (modified)
+{ type: 0,
+  body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt et veniam sequi architecto natus harum eligendi delectus reiciendis, debitis aliquid.',
+  url: undefined,
+  datecreated: Mon Jun 06 2016 11:02:25 GMT+0200 (CEST),
+  user: 'A349340384038' }
+----------------------------------------------------> /models/schema-notification.js (modified)
+======= 2016-06-06 11:02:43: internal ---> TypeError: Cannot read property 'id' of undefined (http://openplatform.totaljs.com/notify) TypeError: Cannot read property 'id' of undefined
+    at Object.json_notify (/www/www/totaljs.com.openplatform/controllers/internal.js:40:32)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doExecute (/www/node_modules/total.js/index.js:9740:23)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.isError [as execute] (/www/node_modules/total.js/index.js:9650:15)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doAuthorization (/www/node_modules/total.js/index.js:9791:8)
+    at /www/node_modules/total.js/index.js:9692:9
+    at F.onAuthorize (/www/www/totaljs.com.openplatform/definitions/auth.js:13:10)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.prepare (/www/node_modules/total.js/index.js:9681:3)
+    at Subscribe.Framework.$load.arr.forEach.arr.forEach.arr.forEach.Framework.log.Framework.logger.Framework.responseStatic.Framework.mode.Framework.listener.Framework._request_continue.self._cors.self._cors.self._cors.Framework._upgrade.Framework._upgrade_continue.Subscribe.execute.Subscribe.doEnd (/www/node_modules/total.js/index.js:9829:8)
+    at IncomingMessage.<anonymous> (/www/node_modules/total.js/index.js:9582:32)
+    at emitNone (events.js:67:13)
+---> { type: 0,
+  body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt et veniam sequi architecto natus harum eligendi delectus reiciendis, debitis aliquid.',
+  url: undefined,
+  datecreated: Mon Jun 06 2016 11:02:45 GMT+0200 (CEST),
+  user: 'A349340384038',
+  internal: undefined }

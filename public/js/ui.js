@@ -2045,7 +2045,7 @@ COMPONENT('widgets', function() {
 			var index = svg.indexOf('>');
 			if (index === -1)
 				return self.content(empty);
-			svg = svg.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ').replace(/\s+\>/g, '>');
+			svg = svg.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ').replace(/\s+\>/g, '>').replace(/\<script.*?\<\/script\>/gi, '');
 			var hash = HASH(svg);
 			if (hash === item.hash)
 				return;

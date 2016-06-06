@@ -84,7 +84,6 @@ User.prototype.notify = function(notification, callback) {
 	var self = this;
 	U.queue('user.notify', 15, function(next) {
 		Fs.appendFile(F.path.databases('notifications_{0}.json'.format(self.internal)), ',' + JSON.stringify(notification), function() {
-			console.log(arguments);
 			next();
 			self.notificationscounter++;
 			callback && callback();

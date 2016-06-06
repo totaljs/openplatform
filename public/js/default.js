@@ -1,3 +1,5 @@
+window.openplatform = true;
+
 $(window).on('message', function(e) {
 		var data = JSON.parse(e.originalEvent.data);
 		if (!data.openplatform)
@@ -15,6 +17,7 @@ $(window).on('message', function(e) {
 
 			case 'info':
 				tmp = {};
+				tmp.openplatform = true;
 				tmp.version = common.version;
 				tmp.name = common.name;
 				tmp.url = common.url;

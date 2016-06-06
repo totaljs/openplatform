@@ -37,7 +37,7 @@ function json_notify() {
 	item.type = 0;
 	item.body = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt et veniam sequi architecto natus harum eligendi delectus reiciendis, debitis aliquid.';
 	item.user = 'A349340384038';
-	item.id = APPLICATIONS[index].id;
+	self.app = APPLICATIONS[index];
 	item.$save(self, self.callback());
 }
 
