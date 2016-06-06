@@ -1,8 +1,9 @@
-<div class="container" style="margin-top:30px">
+<div class="container-empty"></div>
+<div class="container">
 	<div class="row">
 		<div class="col-md-4">
 			<section>
-				<label><i class="fa fa-bell"></i>Notifications</label>
+				<label><i class="fa fa-bell"></i>@(Notifications)</label>
 				<div class="padding">
 					<div data-component="notifications" data-component-path="dashboard.notifications" data-source="dashboard.applications" data-label-empty="@(You don't have any notifications.)" data-label-clear="@(Clear all notifications)"></div>
 				</div>
@@ -11,7 +12,7 @@
 		<div class="col-md-8">
 
 			<section data-component="visible" data-component-path="dashboard.applications" data-if="value.findIndex('running', true) !== -1" class="hidden">
-				<label><i class="fa fa-spin fa-refresh"></i>Running applications</label>
+				<label><i class="fa fa-spin fa-refresh"></i>@(Running applications)</label>
 				<div class="padding">
 					<div data-component="applications" data-component-path="dashboard.applications" data-run="dashboard.current" data-running="true"></div>
 				</div>
@@ -20,8 +21,8 @@
 			<div data-component="widgets" data-component-path="user.widgets" data-source="dashboard.applications"></div>
 
 			<section data-component="visible" data-component-path="dashboard.applications" data-if="value.length" class="hidden">
-				<div class="section-button hidden" data-component="visible" data-component-path="dashboard.canwidgets"><a href="javascript:void(0)" data-component="click" data-component-path="common.form" data-value="widgets"><i class="fa fa-bar-chart"></i>Widgets</a></div>
-				<label><i class="fa fa-th"></i>Applications</label>
+				<div class="section-button hidden" data-component="visible" data-component-path="dashboard.canwidgets"><a href="javascript:void(0)" data-component="click" data-component-path="common.form" data-value="widgets"><i class="fa fa-bar-chart"></i>@(Widgets)</a></div>
+				<label><i class="fa fa-th"></i>@(Applications)</label>
 				<div class="padding">
 					<div data-component="applications" data-component-path="dashboard.applications" data-run="dashboard.current"></div>
 				</div>

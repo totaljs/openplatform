@@ -3,7 +3,7 @@ version                         : 0.0.1
 author                          : Peter Širka
 secret                          : 2016OP
 
-url                             : http://127.0.0.1:8000
+url                             : http://openplatform.totaljs.com
 cookie                          : __uop
 cookie-expiration               : 5 days
 

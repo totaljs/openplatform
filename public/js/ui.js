@@ -1646,6 +1646,7 @@ COMPONENT('processes', function() {
 		});
 
 		toolbar.addClass('hidden');
+		$('html').removeClass('noscroll');
 		return self;
 	};
 
@@ -1711,6 +1712,7 @@ COMPONENT('processes', function() {
 	self.title = function(value) {
 		toolbar.find('label').text(value);
 		toolbar.removeClass('hidden');
+		$('html').addClass('noscroll');
 		return self;
 	};
 

@@ -1,0 +1,1 @@
+nativefier --app-name "OpenPlatform" --disable-context-menu --disable-dev-tools -b --overwrite --icon "icon.icns" "http://openplatform.totaljs.com"

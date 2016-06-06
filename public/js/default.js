@@ -1,5 +1,11 @@
 window.openplatform = true;
 
+$(document).on('ready', function() {
+	$('.logo').on('click', function() {
+		$('.menu').toggleClass('menu-visible');
+	});
+});
+
 $(window).on('message', function(e) {
 		var data = JSON.parse(e.originalEvent.data);
 		if (!data.openplatform)
@@ -8,6 +14,8 @@ $(window).on('message', function(e) {
 		var item = processes.findItem(e.originalEvent.source);
 		var tmp;
 		var app;
+
+		console.log(data);
 		switch (data.type) {
 
 			case 'profile':
@@ -50,6 +58,10 @@ $(window).on('message', function(e) {
 				// TODO: add user privileges
 				if (app)
 					SETTER('processes', 'open', app.id, data.body);
+				break;
+
+			case 'loading':
+				SETTER('loading', data.body ? 'show' : 'hide');
 				break;
 
 			case 'notify':

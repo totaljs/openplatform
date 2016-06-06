@@ -7,8 +7,11 @@ $linear  : linear-gradient(#F0F0F0,white);
 html,body { height: 100%; }
 body { font-smoothing: antialiased; background-color: #F0F0F0; margin: 0; padding: 0; }
 
-header { height: 40px; background-color: white; padding: 0; margin: 0; }
+header { background-color: white; padding: 0; margin: 0; min-height: 40px; }
 header div { float: left; }
+
+.noscroll { overflow: hidden; }
+.noscroll body { overflow: hidden; }
 
 .logo { float: left; height: 40px; padding: 7px 0 0 8px; width: 50px; text-align: center; border-right: 1px solid #F0F0F0; }
 .user { float: right; padding: 13px 10px 0 0; color: gray; font-size: 11px; }
@@ -88,8 +91,8 @@ section > label .fa { margin-right: 7px; }
 .help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
 
 .applications span { display: block; font-size: 11px; color: gray; }
-.applications .fa-times-circle { position: absolute; cursor: pointer; color: #ED5565; font-size: 20px; }
-.applications .fa-times-circle:active { margin-top: 1px; }
+.applications .fa-times-circle { position: absolute; cursor: pointer; color: #ED5565; font-size: 20px; width: 25px; padding: 10px 0; margin-top: -10px; }
+.applications .fa-times-circle:active { margin-top: -8px; }
 .applications img { margin-bottom: 10px; }
 .applications { line-height: 15px; }
 .applications > div > div { padding: 10px; }
@@ -171,3 +174,14 @@ section > label .fa { margin-right: 7px; }
 .ui-applications-widgets a span { font-size: 11px; display: block; color: #A0A0A0; }
 .ui-applications-widgets a:hover { text-decoration: none; background-color: #F8F8F8; padding: 5px 10px; }
 
+.container-empty { height: 30px; }
+
+@media(max-width: 768px) {
+	.menu { display: none; width: 100%; float: none; padding-top: 40px; }
+	.menu a { display: block; width: 100%; border-top: 1px solid #F0F0F0; }
+	.menu-visible { display: block; }
+	.container-empty { height: 20px; }
+	section { margin-bottom: 20px; }
+	.widgets { margin-bottom: 5px; }
+	.ui-process-toolbar .close { width: 50px; }
+}
