@@ -1658,8 +1658,10 @@ COMPONENT('processes', function() {
 		var iframe = iframes[index];
 		iframes.splice(index, 1);
 
-		if (!iframe.element.hasClass('hidden'))
+		if (!iframe.element.hasClass('hidden')) {
+			iframe.element.addClass('hidden');
 			self.minimize();
+		}
 
 		// Timeout for iframe cleaning scripts
 		setTimeout(function() {

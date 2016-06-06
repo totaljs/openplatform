@@ -80,60 +80,62 @@
 	}
 
 	function dashboard_notifications() {
-		AJAX('GET /internal/dashboard/notifications/', function(response, err) {
+		AJAX('GET /internal/dashboard/notifications/', dashboard_notifications_process);
+	}
 
-			if (isError(err))
+	function dashboard_notifications_process(response, err) {
+
+		if (isError(err))
+			return;
+
+		var arr = [];
+
+		for (var i = 0, length = response.length; i < length; i++) {
+			var item = response[i];
+			if (item.internal) {
+				var app = dashboard.applications.findItem('internal', item.internal);
+				if (!app)
+					continue;
+			}
+			arr.push(item);
+		}
+
+		if (!arr.length)
+			return;
+
+		SETTER('audio', 'play', '/sounds/beep.mp3');
+		PUSH('dashboard.notifications', arr);
+
+		if (!user.notifications || !window.Notification || window.Notification.permission !== 'granted' || !FIND('processes').is()) {
+			if (common.isfocused && jR.url === '/')
 				return;
+		}
 
-			var arr = [];
+		var url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
 
-			for (var i = 0, length = response.length; i < length; i++) {
-				var item = response[i];
-				if (item.internal) {
-					var app = dashboard.applications.findItem('internal', item.internal);
-					if (!app)
-						continue;
-				}
-				arr.push(item);
-			}
+		if (dashboard.notification) {
+			dashboard.notification.onclick = null;
+			dashboard.notification = null;
+		}
 
-			if (!arr.length)
+		dashboard.notification = new Notification(document.title, { icon: url + '/img/system.png', body: '@(You have new notifications ({0}x).)'.format(arr.length) });
+		dashboard.notification.onclick = function() {
+			SETTER('processes', 'minimize');
+			window.focus();
+			if (jR.url !== '/')
+				jR.redirect('/');
+			if (!dashboard.notification)
 				return;
+			dashboard.notification.close();
+			dashboard.notification = null;
+		};
 
-			SETTER('audio', 'play', '/sounds/beep.mp3');
-			PUSH('dashboard.notifications', arr);
-
-			if (!user.notifications || !window.Notification || window.Notification.permission !== 'granted' || !FIND('processes').is()) {
-				if (common.isfocused && jR.url === '/')
-					return;
-			}
-
-			var url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
-
-			if (dashboard.notification) {
-				dashboard.notification.onclick = null;
-				dashboard.notification = null;
-			}
-
-			dashboard.notification = new Notification(document.title, { icon: url + '/img/system.png', body: '@(You have new notifications ({0}x).)'.format(arr.length) });
-			dashboard.notification.onclick = function() {
-				SETTER('processes', 'minimize');
-				window.focus();
-				if (jR.url !== '/')
-					jR.redirect('/');
-				if (!dashboard.notification)
-					return;
-				dashboard.notification.close();
-				dashboard.notification = null;
-			};
-
-			setTimeout(function() {
-				if (!dashboard.notification)
-					return;
-				dashboard.notification.close();
-				dashboard.notification = null;
-			}, 10000);
-		});
+		setTimeout(function() {
+			if (!dashboard.notification)
+				return;
+			dashboard.notification.close();
+			dashboard.notification = null;
+		}, 10000);
 	}
 
 	setInterval(dashboard_notifications, 1000 * 30);

@@ -5,17 +5,81 @@ OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
 
-function OP_SEND(type, body, callback) {
+OPENPLATFORM.loading = function(visible) {
+	return OPENPLATFORM.send('loading', visible);
+};
+
+OPENPLATFORM.maximize = function(url) {
+	return OPENPLATFORM.send('maximize', url);
+};
+
+OPENPLATFORM.open = function(id) {
+	return OPENPLATFORM.send('open', id);
+};
+
+OPENPLATFORM.minimize = function() {
+	return OPENPLATFORM.send('minimize');
+};
+
+OPENPLATFORM.close = function() {
+	return OPENPLATFORM.send('kill');
+};
+
+OPENPLATFORM.notify = function(type, body, url) {
+
+	if (typeof(type) === 'string') {
+		url = body;
+		body = type;
+		type = 0;
+	}
+
+	return OPENPLATFORM.send('notify', { type: type, body: body, url: url || '', datecreated: new Date() });
+};
+
+OPENPLATFORM.getProfile = function(callback) {
+	return OPENPLATFORM.send('profile', callback);
+};
+
+OPENPLATFORM.getApplications = function(callback) {
+	return OPENPLATFORM.send('applications', callback);
+};
+
+OPENPLATFORM.getUsers = function(callback) {
+	return OPENPLATFORM.send('users', callback);
+};
+
+OPENPLATFORM.getInfo = function(callback) {
+	return OPENPLATFORM.send('info', callback);
+};
+
+OPENPLATFORM.onMinimize = function(callback) {
+	return OPENPLATFORM.on('minimize', callback);
+};
+
+OPENPLATFORM.onMaximize = function(callback) {
+	return OPENPLATFORM.on('maximize', callback);
+};
+
+OPENPLATFORM.onClose = function(callback) {
+	return OPENPLATFORM.on('kill', callback);
+};
+
+OPENPLATFORM.send = function(type, body, callback) {
+
+	if (typeof(body) === 'function') {
+		callback = body;
+		body = null;
+	}
 
 	var data = {};
 	data.openplatform = true;
 	data.type = type;
-	data.body = body;
+	data.body = body || null;
 	data.sender = true;
 
 	if (!top) {
 		if (callback)
-			callback(new Error('Application is not runned in the openplatform scope.'));
+			callback(new Error('The application is not runned in the openplatform scope.'));
 		return;
 	}
 
@@ -25,41 +89,15 @@ function OP_SEND(type, body, callback) {
 	}
 
 	top.postMessage(JSON.stringify(data), '*');
-}
+	return OPENPLATFORM;
+};
 
-function OP_ON(name, callback) {
+OPENPLATFORM.on = function(name, callback) {
 	if (!OPENPLATFORM.events[name])
 		OPENPLATFORM.events[name] = [];
 	OPENPLATFORM.events[name].push(callback);
-}
-
-function OP_PROFILE(callback) {
-	OP_SEND('profile', null, callback);
-}
-
-function OP_APPLICATIONS(callback) {
-	OP_SEND('applications', null, callback);
-}
-
-function OP_USERS(callback) {
-	OP_SEND('users', null, callback);
-}
-
-function OP_INFO(callback) {
-	OP_SEND('info', null, callback);
-}
-
-function OP_MINIMIZE(callback) {
-	OP_ON('minimize', callback);
-}
-
-function OP_MAXIMIZE(callback) {
-	OP_ON('maximize', callback);
-}
-
-function OP_CLOSE(callback) {
-	OP_ON('kill', callback);
-}
+	return OPENPLATFORM;
+};
 
 window.addEventListener('message', function(e) {
 	try {
@@ -91,9 +129,3 @@ window.addEventListener('message', function(e) {
 		});
 	} catch (e) {}
 }, false);
-
-OP_INFO(function(err, response) {
-	if (err)
-		return;
-	OPENPLATFORM.info = response;
-});

@@ -9,6 +9,7 @@ $(window).on('message', function(e) {
 		var tmp;
 		var app;
 		switch (data.type) {
+
 			case 'profile':
 				tmp = $.extend({}, user);
 				delete tmp.widgets;
@@ -30,7 +31,6 @@ $(window).on('message', function(e) {
 
 			case 'users':
 				app = dashboard.applications.findItem('id', item.id);
-
 				if (!app)
 					return;
 
@@ -38,10 +38,45 @@ $(window).on('message', function(e) {
 					processes.message(item, 'users', null, data.callback, new Error('You don\'t have permissions for this operation.'));
 					return;
 				}
+
 				AJAXCACHE('GET /internal/dashboard/users/', function(response, err) {
 					processes.message(item, 'users', response, data.callback, err);
 				}, 1000 * 120);
+
 				break;
+
+			case 'maximize':
+				app = dashboard.applications.findItem('id', item.id);
+				// TODO: add user privileges
+				if (app)
+					SETTER('processes', 'open', app.id, data.body);
+				break;
+
+			case 'notify':
+				app = dashboard.applications.findItem('id', item.id);
+				if (!app || !app.notifications)
+					return;
+				dashboard_notifications_process([{ internal: app.internal, datecreated: data.body.datecreated, type: data.body.type, body: data.body.body, url: data.body.url }]);
+				break;
+
+			case 'minimize':
+				app = dashboard.applications.findItem('id', item.id);
+				if (app && dashboard.current === app.id)
+					SETTER('processes', 'minimize');
+				break;
+
+			case 'open':
+				app = dashboard.applications.findItem('id', data.body);
+				if (app)
+					SET('dashboard.current', app.id);
+				break;
+
+			case 'kill':
+				app = dashboard.applications.findItem('id', item.id);
+				if (app)
+					SETTER('processes', 'kill', item.id);
+				break;
+
 
 			case 'applications':
 				app = dashboard.applications.findItem('id', item.id);

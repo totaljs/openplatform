@@ -62,11 +62,10 @@
 		common.forms = {};
 		common.page = '';
 		common.form = '';
+		common.isfocused = true;
 
-		$(window).focus(function() {
-			common.isfocused = true;
-		}).blur(function() {
-			common.isfocused = false;
+		$(window).on('focus blur', function(e) {
+			common.isfocused = e.type === 'focus';
 		});
 
 		var user = JSON.parse('@{json(user.readonly())}');
