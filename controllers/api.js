@@ -101,7 +101,9 @@ function json_users() {
 
 function json_profile() {
 	var self = this;
-	self.json(self.user.export());
+	var user = self.user.export();
+	user.roles = self.app.roles;
+	self.json(user);
 }
 
 function json_openplatform() {

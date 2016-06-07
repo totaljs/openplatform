@@ -15,12 +15,14 @@ $(window).on('message', function(e) {
 		var tmp;
 		var app;
 
-		console.log(data);
 		switch (data.type) {
 
 			case 'profile':
 				tmp = $.extend({}, user);
 				delete tmp.widgets;
+				app = dashboard.applications.findItem('id', item.id);
+				if (app)
+					tmp.roles = app.roles;
 				processes.message(item, 'profile', tmp, data.callback);
 				break;
 

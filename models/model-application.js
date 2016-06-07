@@ -57,6 +57,7 @@ Application.prototype.readonly = function() {
 	item.internal = self.internal;
 	item.events = self.events;
 	item.widgets = self.widgets;
+	item.roles = self.roles;
 	return item;
 };
 
