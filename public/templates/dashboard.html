@@ -64,6 +64,11 @@
 				var is = running[a.id];
 				a.running = is === true;
 				delete running[a.id];
+
+				// Kills the app when is offline
+				if (a.running && !a.online)
+					SETTER('processes', 'kill', a.id);
+
 				if (!a.widgets || !a.widgets.length || dashboard.canwidgets)
 					continue;
 				dashboard.canwidgets = true;
