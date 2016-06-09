@@ -738,7 +738,6 @@ COMPONENT('form', function() {
 		var ui = self.find('.ui-form');
 		var fh = ui.innerHeight();
 		var wh = $(window).height();
-
 		var r = (wh / 2) - (fh / 2);
 		if (r > 30)
 			ui.css({ marginTop: (r - 15) + 'px' });

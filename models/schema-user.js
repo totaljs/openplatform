@@ -4,6 +4,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('alias', 'String(50)');
 	schema.define('firstname', 'Capitalize(50)', true);
 	schema.define('lastname', 'Capitalize(50)', true);
+	schema.define('language', 'Lower(2)');
 	schema.define('group', 'String(60)');
 	schema.define('email', 'Email', true);
 	schema.define('phone', 'Phone');
@@ -31,6 +32,7 @@ NEWSCHEMA('User').make(function(schema) {
 		user.phone = model.phone;
 		user.login = model.login;
 		user.group = model.group;
+		user.language = model.language;
 		user.search = (user.lastname + ' ' + user.firstname + ' ' + user.group).toSearch();
 		user.alias = model.firstname + ' ' + model.lastname;
 
@@ -53,6 +55,12 @@ NEWSCHEMA('User').make(function(schema) {
 			user.id = UID();
 			user.internal = model.id.hash();
 			USERS.push(user);
+		}
+
+		if (model.welcome) {
+			user.tokenizer();
+			model.token = user.token;
+			F.mail(model.email, '@(Welcome to OpenPlatform)', '~mails/registration', model, model.language);
 		}
 
 		OPENPLATFORM.users.save();

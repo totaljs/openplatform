@@ -11,6 +11,7 @@ function User() {
 	this.firstname = '';
 	this.lastname = '';
 	this.applications = {};
+	this.language = '';
 	this.phone = '';
 	this.email = '';
 	this.login = '';
@@ -110,6 +111,7 @@ User.prototype.readonly = function() {
 	item.dateupdated = self.dateupdated;
 	item.sounds = self.sounds;
 	item.widgets = self.widgets;
+	item.language = self.language;
 	return item;
 };
 
@@ -130,7 +132,13 @@ User.prototype.export = function() {
 	item.notifications = self.notifications;
 	item.dateupdated = self.dateupdated;
 	item.sounds = self.sounds;
+	item.language = self.language;
 	return item;
+};
+
+User.prototype.tokenizer = function() {
+	this.token = U.GUID(25);
+	return this;
 };
 
 User.prototype.prepare = function(item) {

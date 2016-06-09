@@ -41,6 +41,26 @@ NEWSCHEMA('Login').make(function(schema) {
 		// Sends a response
 		callback(SUCCESS(true));
 	});
+
+	schema.addWorkflow('token', function(error, model, controller, callback) {
+
+		var err = protection(controller);
+		if (err) {
+			error.push(err);
+			return callback();
+		}
+
+		var user = USERS.findItem('token', controller.query.token);
+		if (!user) {
+			error.push('error-token');
+			return callback();
+		}
+
+		user.tokenizer();
+		controller.cookie(CONFIG('cookie'), F.encrypt({ id: user.id, resetcounter: user.resetcounter, expire: new Date().add(CONFIG('cookie-expiration')) }), '5 days');
+		callback(SUCCESS(true));
+	});
+
 });
 
 function protection(controller) {

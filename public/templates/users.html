@@ -35,6 +35,7 @@
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
 					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
 					<td><span class="fs11 silver">{{ group }}</span></td>
+					<td style="width:60px">{{ if language }}<i class="fa fa-language mr5"></i><span class="badge badge-blue">{{ language }}</span>{{ fi }}</td>
 					<td style="width:150px">{{ if datelogged }}<i class="fa fa-clock-o silver mr3"></i>{{ datelogged | time }}{{ else }}@(not logged){{ fi }}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
@@ -101,6 +102,11 @@
 						</div>
 						<div class="col-md-6 m">
 							<div data-component="textbox" data-component-path="users.form.phone" data-maxlength="30" data-component-type="phone" data-control-icon="fa-phone">@(Phone number)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3 m">
+							<div data-component="dropdown" data-component-path="users.form.language" data-source="common.languages" data-empty="" data-icon="fa-language">@(Language)</div>
 						</div>
 					</div>
 					<hr />

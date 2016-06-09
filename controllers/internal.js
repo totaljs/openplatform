@@ -26,6 +26,7 @@ exports.install = function() {
 
 	// Account
 	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
+	F.route('/internal/password/', json_schema_exec, ['post', '*Password']);
 	F.route('/internal/account/', json_account_save, ['authorize', 'post', '*Account']);
 	F.route('/notify/', json_notify);
 };

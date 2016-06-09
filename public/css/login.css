@@ -32,3 +32,6 @@ h1 b { font-weight: 700; }
 
 .logo { background-color: #F0F0F0; border-radius: 4px 4px 0 0; text-align: center; padding: 30px 0; }
 .logo svg { margin-left: 15px; }
+
+.success { font-size: 12px; background-color: #8CC152; color: white; padding: 10px 50px; line-height: 16px; margin: 20px 0 0; text-align: center; }
+.success .fa { margin-right: 5px; }

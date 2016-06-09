@@ -17,3 +17,14 @@ F.onAuthorize = function(req, res, flags, next) {
 
 	next(true, session);
 };
+
+// Sets online=false fo all users
+F.on('service', function(interval) {
+	if (interval % 5 !== 0)
+		return;
+
+	OPENPLATFORM.users.save();
+
+	for (var i = 0, length = USERS.length; i < length; i++)
+		USERS[i].online = false;
+});

@@ -1,6 +1,6 @@
 exports.install = function() {
 	F.route('/*', 'index', ['authorize']);
-	F.route('/', 'login', ['unauthorize']);
+	F.route('/', view_login, ['unauthorize']);
 	F.route('/logoff/', logoff, ['authorize']);
 
 	// Localization
@@ -38,4 +38,19 @@ function logoff() {
 	self.cookie(CONFIG('cookie'), '', '-1 day');
 	self.user.logoff();
 	self.redirect('/');
+}
+
+function view_login() {
+	var self = this;
+
+	if (!self.query.token) {
+		self.view('login');
+		return;
+	}
+
+	GETSCHEMA('Login').workflow2('token', self, function(err, response) {
+		if (err)
+			return self.view('login');
+		self.redirect('/account/?password=1');
+	});
 }
