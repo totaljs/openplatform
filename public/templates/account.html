@@ -6,7 +6,7 @@
 			<section>
 				<label><i class="fa fa-user"></i>@(My account)</label>
 				<div>
-					<div class="padding">
+					<div class="padding npb">
 						<div class="center">
 							<br />
 							<div data-component="photoupload" data-component-path="user.email" data-url="/internal/upload/photo/" data-upload-error="@(The file is too large.)"></div>
@@ -15,13 +15,38 @@
 						<hr />
 						<div class="mt10" data-component="checkbox" data-component-path="account.sounds">@(Enable sounds)</div>
 						<div data-component="checkbox" data-component-path="account.notifications">@(Enable flying notifications)</div>
+						<hr />
+						<div data-component="checkbox" data-component-path="account.ispassword" class="m">@(I want to change my password)</div>
+					</div>
+					<div data-component="visible" data-component-path="account.ispassword" class="filter padding">
+						<div class="help"><i class="fa fa-warning"></i>@(Be carefully with changing your password and don't forgot to sign in with a new password.)</div>
+						<br />
+						<div data-component="disable" data-component-path="account.ispassword" data-if="!value">
+							<div class="row">
+								<div class="col-md-12 m">
+									<div data-component="textbox" data-component-path="account.password" data-required="true" data-component-type="password" data-maxlength="30">@(Password)</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 m">
+									<div data-component="textbox" data-component-path="account.passwordreply" data-required="true" data-component-type="password" data-maxlength="30">@(Password again)</div>
+								</div>
+							</div>
+							<div data-component="password-progress" data-component-path="account.password">@(Password strength:)</div>
+						</div>
+					</div>
+					<div class="padding npt">
+						<div class="row">
+							<div class="col-md-12" data-component="validation" data-component-path="account" data-if="!value.ispassword || (value.password && value.password === value.passwordreply)">
+								<button class="button upper" disabled="disabled" data-component="click" data-component-path="account_save">@(Save)</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
 		</div>
 	</div>
 </div>
-
 
 <script>
 	var account = {};
@@ -33,18 +58,68 @@
 		UPDATE('account');
 	}
 
-	WATCH('account.*', function(path, value) {
-
-		if (account.skip) {
-			account.skip = false;
+	function account_save() {
+		if (!jC.valid('account.*') || BLOCKED('account', 3000))
 			return;
-		}
-
-		KEYPRESS(function() {
-			AJAX('POST /internal/account/', account, NOOP);
+		SETTER('loading', 'show');
+		AJAX('POST /internal/account/', account, function(response) {
+			SETTER('loading', 'hide', 1000);
+			if (!response.success)
+				return;
 			user.sounds = account.sounds;
 			user.notifications = account.notifications;
-		}, 1000, 'account');
-	});
+			SET('account.ispassword', false);
+			RESET('account.*');
+			success();
+		});
+	}
 
+	COMPONENT('password-progress', function() {
+		var self = this;
+		var div;
+		self.readonly();
+		self.make = function() {
+			self.append('<div style="height:6px;border-radius:4px;margin-top:2px"></div>');
+			div = self.find('div');
+			self.render(0);
+		};
+
+		self.render = function(value) {
+
+			if (!value) {
+				self.element.addClass('hidden');
+				return;
+			}
+
+			self.element.removeClass('hidden');
+			var color = 'red';
+			if (value >= 40 && value <= 60)
+				color = 'orange';
+			if (value > 60)
+				color = 'green';
+			div.css({ 'background-color': color, width: value + '%' });
+		};
+
+		self.setter = function(value) {
+			if (!value)
+				return self.render(0);
+			var points = 0;
+			var max = 6;
+			if (value.match(/\d+/))
+				points++;
+			if (value.match(/[a-z]/g))
+				points++;
+			if (value.match(/[A-Z]/g))
+				points++;
+			if (value.match(/[\*\&\{\}\]\[\~\$\@\+\-\_\<\>\.\,\!\/\\\=\#]/g))
+				points++;
+			if (value.length > 5)
+				points++;
+			if (value.length > 7)
+				points++;
+			if (value === '123456' || value === '12345678')
+				points = 2;
+			self.render(Math.round((points / max) * 100));
+		};
+	});
 </script>

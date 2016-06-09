@@ -24,7 +24,7 @@ h2 b { font-weight: 700; }
 h2 .fa { margin-right: 10px; }
 
 .menu { float: left; margin: 0; font-size: 12px; padding: 0; }
-.menu a { position: relative; display: inline-block; width: 120px; border-right: 1px solid #F0F0F0; text-align: center; padding: 11px 0 12px; color: gray; font-family: $font; text-transform: uppercase; }
+.menu a { position: relative; display: inline-block; width: 120px; border-right: 1px solid #F0F0F0; text-align: center; padding: 11px 0 12px; color: gray; font-family: $font; text-transform: uppercase; font-weight: 700; }
 .menu a:hover { text-decoration: none; color: black; }
 .menu .fa { margin-right: 5px; }
 .menu .selected { background-color: $color; color: white !important; font-weight: 700; }
@@ -52,6 +52,7 @@ h2 .fa { margin-right: 10px; }
 .widgets .widget-svg { background-color: white; font-size: 11px; padding: 10px; border-radius: 0 0 4px 4px; }
 .widgets .widget-title { font-size: 11px; text-align: center; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); color: #A0A0A0; padding: 10px 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; }
 .widgets .widget svg { width: 100%; height: auto; }
+.widgets .widget { cursor: pointer; }
 
 .w100p { width: 100%; }
 

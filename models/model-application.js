@@ -80,6 +80,7 @@ Application.prototype.export = function() {
 	item.users = self.users;
 	item.online = self.online;
 	item.url = self.url;
+	item.roles = self.roles;
 	return item;
 };
 

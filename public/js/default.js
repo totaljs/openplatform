@@ -15,9 +15,16 @@ $(window).on('message', function(e) {
 		var tmp;
 		var app;
 
+		if (!item)
+			return;
+
 		switch (data.type) {
 
 			case 'profile':
+
+				if (!item)
+					return;
+
 				tmp = $.extend({}, user);
 				delete tmp.widgets;
 				app = dashboard.applications.findItem('id', item.id);
@@ -40,6 +47,10 @@ $(window).on('message', function(e) {
 				break;
 
 			case 'users':
+
+				if (!item)
+					return;
+
 				app = dashboard.applications.findItem('id', item.id);
 				if (!app)
 					return;
@@ -56,6 +67,10 @@ $(window).on('message', function(e) {
 				break;
 
 			case 'maximize':
+
+				if (!item)
+					return;
+
 				app = dashboard.applications.findItem('id', item.id);
 				// TODO: add user privileges
 				if (app)
@@ -67,6 +82,10 @@ $(window).on('message', function(e) {
 				break;
 
 			case 'notify':
+
+				if (!item)
+					return;
+
 				app = dashboard.applications.findItem('id', item.id);
 				if (!app || !app.notifications)
 					return;
@@ -74,6 +93,10 @@ $(window).on('message', function(e) {
 				break;
 
 			case 'minimize':
+
+				if (!item)
+					return;
+
 				app = dashboard.applications.findItem('id', item.id);
 				if (app && dashboard.current === app.id)
 					SETTER('processes', 'minimize');
@@ -86,6 +109,10 @@ $(window).on('message', function(e) {
 				break;
 
 			case 'kill':
+
+				if (!item)
+					return;
+
 				app = dashboard.applications.findItem('id', item.id);
 				if (app)
 					SETTER('processes', 'kill', item.id);
@@ -93,6 +120,10 @@ $(window).on('message', function(e) {
 
 
 			case 'applications':
+
+				if (!item)
+					return;
+
 				app = dashboard.applications.findItem('id', item.id);
 
 				if (!app)

@@ -21,8 +21,8 @@ exports.install = function() {
 	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
 	F.route('/internal/dashboard/notifications/', json_dashboard_notifications, ['authorize']);
 	F.route('/internal/dashboard/users/', json_dashboard_users, ['authorize']);
+	F.route('/internal/dashboard/widgets/', json_dashboard_widgets_save, ['authorize', 'post', '*Widget']);
 	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets_svg, ['authorize']);
-	F.route('/internal/dashboard/widgets/{id}/add/', json_dashboard_widgets_add, ['authorize']);
 
 	// Account
 	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
@@ -134,6 +134,8 @@ function json_upload_photo() {
 		filter.quality(90);
 		filter.output('jpg');
 		filter.save(F.path.public('photos/' + email), (err) => self.callback()(err, SUCCESS(true)));
+
+		// Refreshes internal cache
 		F.touch('/photos/' + email);
 	});
 }
@@ -161,11 +163,6 @@ function json_dashboard_notifications() {
 function json_schema_delete() {
 	var self = this;
 	self.$remove(self.body.id, self.callback());
-}
-
-function json_dashboard_widgets_add(id) {
-	var self = this;
-	self.json(SUCCESS(self.user.addWidget(id)));
 }
 
 function json_dashboard_widgets_save() {

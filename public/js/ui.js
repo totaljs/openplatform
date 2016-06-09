@@ -1583,7 +1583,7 @@ COMPONENT('processes', function() {
 	var toolbar;
 	var source;
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}"><iframe src="/loading.html" frameborder="0"></iframe><div>');
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}" data-token="{{ $.token }}"><iframe src="/loading.html" frameborder="0"></iframe><div>');
 	self.singleton();
 	self.readonly();
 
@@ -1734,12 +1734,13 @@ COMPONENT('processes', function() {
 		if (!item)
 			return;
 
-		self.append(self.template(item));
-		item.running = true;
 		iframe = {};
+		iframe.token = (Math.random() * 1000000 >> 0).toString();
+		self.append(self.template(item, iframe));
+		item.running = true;
 		iframe.id = item.id;
 		iframe.title = item.title;
-		iframe.element = self.find('[data-id="{0}"]'.format(item.id));
+		iframe.element = self.find('[data-token="{0}"]'.format(iframe.token));
 		iframe.iframe = iframe.element.find('iframe');
 		iframe.dateopened = new Date();
 		iframes.push(iframe);
@@ -2022,6 +2023,26 @@ COMPONENT('widgets', function() {
 			if (!value)
 				return;
 			self.update();
+		});
+
+		self.element.on('click', '.widget', function() {
+			var el = $(this);
+			var arr = el.attr('data-id').split('X');
+
+			arr[0] = arr[0].parseInt();
+			arr[1] = arr[1].parseInt();
+
+			if (!widgets[arr[1]])
+				return;
+
+			var apps = GET(source);
+			var app = apps.findItem('internal', arr[0]);
+			if (!app)
+				return;
+			var widget = app.widgets.findItem('internal', arr[1]);
+			if (!widget)
+				return;
+			SETTER('processes', 'open', app.id, widget.click || app.url);
 		});
 
 		setInterval(function() {
