@@ -17,9 +17,9 @@
 		<div class="relative">
 			<div class="buttons">
 				<button title="@(Notify users)" data-component="click" data-component-path="common.form" data-value="notify"><i class="fa fa-bell"></i></button>
-				<button title="@(Send email)" data-component="click" data-component-path="users_email"><i class="fa fa-envelope"></i></button>
-				<button title="@(Change permissions)" data-component="click" data-component-path="users_permissions"><i class="fa fa-th"></i></button>
-				<button title="@(Replace group)" data-component="click" data-component-path="users_regroup"><i class="fa fa-folder"></i></button>
+				<button title="@(Send email)" data-component="click" data-component-path="common.form" data-value="email"><i class="fa fa-envelope"></i></button>
+				<button title="@(Change permissions)" data-component="click" data-component-path="common.form" data-value="permissions"><i class="fa fa-th"></i></button>
+				<button title="@(Rename group)" data-component="click" data-component-path="common.form" data-value="renamegroup"><i class="fa fa-folder"></i></button>
 				<button title="@(Create new user)" data-component="click" data-component-path="users_create"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
@@ -35,6 +35,7 @@
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
 					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
 					<td><span class="fs11 silver">{{ group }}</span></td>
+					<td style="width:60px">{{ if language }}<i class="fa fa-language mr5"></i><span class="badge badge-blue">{{ language }}</span>{{ fi }}</td>
 					<td style="width:150px">{{ if datelogged }}<i class="fa fa-clock-o silver mr3"></i>{{ datelogged | time }}{{ else }}@(not logged){{ fi }}</td>
 					<td style="width:80px" class="ui-right">
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
@@ -101,6 +102,11 @@
 						</div>
 						<div class="col-md-6 m">
 							<div data-component="textbox" data-component-path="users.form.phone" data-maxlength="30" data-component-type="phone" data-control-icon="fa-phone">@(Phone number)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3 m">
+							<div data-component="dropdown" data-component-path="users.form.language" data-source="common.languages" data-empty="" data-icon="fa-language">@(Language)</div>
 						</div>
 					</div>
 					<hr />
@@ -280,6 +286,7 @@
 		var self = this;
 
 		self.make = function() {
+
 			var el = self.find('script');
 			self.template = Tangular.compile(el.html());
 			el.remove();
@@ -318,16 +325,16 @@
 				if (index !== -1)
 					app.splice(index, 1);
 			});
-		};
 
-		self.watch(self.attr('data-source'), function(path, value) {
-			if (!value)
-				return;
-			var builder = [];
-			for (var i = 0, length = value.length; i < length; i++)
-				builder.push(self.template(value[i]));
-			self.html(builder.join(''));
-		}, true);
+			self.watch(self.attr('data-source'), function(path, value) {
+				if (!value)
+					return;
+				var builder = [];
+				for (var i = 0, length = value.length; i < length; i++)
+					builder.push(self.template(value[i]));
+				self.html(builder.join(''));
+			}, true);
+		};
 
 		self.setter = function(value) {
 			var cls = 'userapp-container-disabled';

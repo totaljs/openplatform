@@ -8,7 +8,10 @@ exports.install = function() {
 	F.route('/internal/users/', json_users_query, ['authorize']);
 	F.route('/internal/users/', json_schema_save, ['authorize', 'post', '*User']);
 	F.route('/internal/users/', json_schema_delete, ['authorize', 'delete', '*User']);
+	F.route('/internal/users/group/', json_schema_save, ['authorize', 'post', '*UserGroup']);
+	F.route('/internal/users/permissions/', json_schema_save, ['authorize', 'post', '*UserPermissions']);
 	F.route('/internal/users/notify/', json_schema_save, ['authorize', 'post', '*Notify']);
+	F.route('/internal/users/newsletter/', json_schema_save, ['authorize', 'post', '*UserNewsletter']);
 	F.route('/internal/upload/photo/', json_upload_photo, ['authorize', 'upload'], 512);
 
 	// Applications
@@ -26,6 +29,7 @@ exports.install = function() {
 
 	// Account
 	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
+	F.route('/internal/password/', json_schema_exec, ['post', '*Password']);
 	F.route('/internal/account/', json_account_save, ['authorize', 'post', '*Account']);
 	F.route('/notify/', json_notify);
 };

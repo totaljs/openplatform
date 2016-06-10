@@ -55,6 +55,7 @@
 		account.sounds = user.sounds;
 		account.notifications = user.notifications;
 		account.skip = true;
+		account.ispassword = jC.parseQuery().password === '1';
 		UPDATE('account');
 	}
 

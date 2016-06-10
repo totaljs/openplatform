@@ -16,7 +16,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 	});
 });
 
-// Intenral admin notifications
+// Internal admin notifications
 NEWSCHEMA('Notify').make(function(schema) {
 
 	schema.define('type', Number);                 // 0: info, 1: success, 1: alert

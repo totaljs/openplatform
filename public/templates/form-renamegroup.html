@@ -1,0 +1,36 @@
+<div data-component="form" data-title="@(Rename group)" data-component-path="common.form" data-if="renamegroup" data-width="450px" data-center="true" data-component-id="renamegroup">
+	<div class="padding">
+		<div class="row">
+			<div class="col-md-12">
+				<div data-component="dropdown" data-component-path="renamegroup.group_old" data-source="users.groups" data-required="true" data-empty="" class="m" data-component-value="''">@(Existing group)</div>
+				<div data-component="textbox" data-component-path="renamegroup.group_new" data-required="true" class="m" data-component-value="''">@(New name)</div>
+			</div>
+		</div>
+	</div>
+	<div class="ui-form-buttons">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="padding npt npb">
+					<div data-component="validation" data-component-path="renamegroup" class="inline">
+						<button name="submit" class="upper" data-component="click" data-component-path="renamegroup_submit">@(Submit)</button>
+					</div>
+					<button name="cancel">@(Cancel)</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var renamegroup = {};
+	function renamegroup_submit() {
+		RESET('renamegroup.*');
+		AJAX('POST /internal/users/group/', renamegroup, function(response, err) {
+			if (isError(err))
+				return;
+			DEFAULT('renamegroup.*');
+			if (window.users_refresh)
+				window.users_refresh();
+			SET('common.form', '');
+		});
+	}
+</script>

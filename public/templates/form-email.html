@@ -1,0 +1,54 @@
+<div data-component="form" data-component-path="common.form" data-if="email" data-title="@(Email for users)" data-autocenter="true" data-width="600px" data-component-id="form.email">
+	<br />
+	<div class="ui-form-padding">
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-component="dropdowncheckbox" data-component-path="formemail.group" data-source="users.groups" data-component-value="null">@(Group)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-component="textbox" data-component-path="formemail.subject" data-maxlength="100" data-required="true" data-component-value="''">@(Subject)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 m">
+				<div data-component="textarea" data-component-path="formemail.body" data-required="true" data-control-icon="fa-envelope" data-component-value="''" data-height="200px">@(Message)</div>
+			</div>
+		</div>
+		<div data-component="error" data-component-path="formemail.response" class="ui-error-nm" data-component-value="null"></div>
+	</div>
+	<br />
+	<div class="ui-form-buttons">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="padding npt npb">
+					<div data-component="validation" data-component-path="formemail" class="inline">
+						<button name="submit">@(SEND)</button>
+					</div>
+					<button name="cancel">@(Cancel)</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+var formemail = {};
+ON('#form.email', function(component) {
+	component.submit = function(hide) {
+		RESET('formemail.*');
+		SETTER('loading', 'show');
+		AJAX('POST /internal/users/newsletter/', formemail, function(response, err) {
+			SETTER('loading', 'hide', 1000);
+			if (isError(err))
+				return;
+			SET('formemail.response', response);
+			if (!response.success)
+				return;
+			hide();
+			DEFAULT('formemail.*');
+		});
+	};
+});
+</script>

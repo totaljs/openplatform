@@ -1,0 +1,61 @@
+<div data-component="form" data-title="@(Permissions)" data-component-path="common.form" data-if="permissions" data-width="600px" data-center="true" data-component-id="permissions">
+	<div class="padding">
+		<div class="row">
+			<div class="col-md-6 m">
+				<div data-component="dropdown" data-component-path="permissions.type" data-options="@(Extend)|0;@(Set)|1;@(Remove)|2" data-component-value="0" data-component-type="number">@(Operation)</div>
+			</div>
+			<div class="col-md-6 m">
+				<div data-component="dropdown" data-component-path="permissions.group" data-source="users.groups" data-empty="" data-component-value="''">@(Group)</div>
+			</div>
+		</div>
+		<hr />
+		<h2>@(Applications)</h2>
+		<br />
+		<div data-component="applications-management" data-component-path="permissions.applications" data-source="users.applications" data-component-value="{}">
+			<script type="text/html">
+				<div class="userapp-container userapp-container-disabled" data-id="{{ internal }}">
+					<div class="userapp-header">
+						<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
+						<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" alt="{{ title }}" /></div>
+						<b>{{ title }}</b>
+						<div class="fs11">v{{ version }}</div>
+					</div>
+					{{ if roles && roles.length }}
+					<div class="userapp-roles">
+						{{ foreach m in roles }}
+							<div><label><input type="checkbox" value="{{ m }}" />{{ m }}</label></div>
+						{{ end }}
+					</div>
+					{{ fi }}
+				</div>
+			</script>
+		</div>
+
+	</div>
+	<div class="ui-form-buttons">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="padding npt npb">
+					<div data-component="validation" data-component-path="permissions" class="inline">
+						<button name="submit" class="upper" data-component="click" data-component-path="permissions_submit">@(Submit)</button>
+					</div>
+					<button name="cancel">@(Cancel)</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var permissions = {};
+	function permissions_submit() {
+		RESET('permissions.*');
+		AJAX('POST /internal/users/permissions/', permissions, function(response, err) {
+			if (isError(err))
+				return;
+			DEFAULT('permissions.*');
+			if (window.users_refresh)
+				window.users_refresh();
+			SET('common.form', '');
+		});
+	}
+</script>

@@ -13,6 +13,7 @@
 		</div>
 		<div class="relative">
 			<div class="buttons">
+				<button title="@(Change permissions)" data-component="click" data-component-path="applications_permissions"><i class="fa fa-th"></i></button>
 				<button title="@(Create new user)" data-component="click" data-component-path="applications_create"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
@@ -224,6 +225,14 @@
 		};
 	});
 
+	function applications_permissions() {
+		jR.redirect('/settings/users/');
+		WAIT(function() {
+			return window.users_refresh ? true : false;
+		}, function() {
+			SET('common.form', 'permissions', 500);
+		});
+	}
 
 	SCHEDULE('#applications', 'manually', '5 minutes', applications_refresh);
 
