@@ -50,7 +50,8 @@ h2 .fa { margin-right: 10px; }
 
 .widgets { margin-bottom: 15px; }
 .widgets .widget-svg { background-color: white; font-size: 11px; padding: 10px; border-radius: 0 0 4px 4px; }
-.widgets .widget-title { font-size: 11px; text-align: center; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); color: #A0A0A0; padding: 10px 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; }
+.widgets .widget-title { font-size: 11px; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); color: #A0A0A0; padding: 10px 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; line-height: 16px; }
+.widgets .widget-title img { border-radius: 4px; margin-right: 4px; vertical-align: middle; }
 .widgets .widget svg { width: 100%; height: auto; }
 .widgets .widget { cursor: pointer; }
 
@@ -92,9 +93,9 @@ section > label .fa { margin-right: 7px; }
 .help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
 
 .applications span { display: block; font-size: 11px; color: gray; }
-.applications .fa-times-circle { position: absolute; cursor: pointer; color: #ED5565; font-size: 20px; width: 25px; padding: 10px 0; margin-top: -10px; }
+.applications .fa-times-circle { position: absolute; cursor: pointer; color: #ED5565; font-size: 20px; width: 25px; padding: 10px 0; margin: -10px 0 0 -1px; }
 .applications .fa-times-circle:active { margin-top: -8px; }
-.applications img { margin-bottom: 10px; }
+.applications img { margin-bottom: 10px; border: 1px solid #E0E0E0; }
 .applications { line-height: 15px; }
 .applications > div > div { padding: 10px; }
 .applications .name { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-size: 12px; }
@@ -137,6 +138,7 @@ section > label .fa { margin-right: 7px; }
 .userapp-checkbox { float: left; width: 30px; height: 30px; background-color: white; margin-right: 10px; border-radius: 4px; border: 2px solid #F0F0F0; cursor: pointer; color: #A0D468; padding: 3px 0 0 0; text-align: center; font-size: 20px; }
 .userapp-container-disabled .userapp-checkbox .fa { display: none; }
 .userapp-icon { float: left; margin-right: 10px; }
+.userapp-icon img { border: 1px solid #E0E0E0; }
 .userapp-header { height: 40px; line-height: 15px; }
 .userapp-roles { margin-bottom: 10px; line-height: 0; }
 .userapp-roles div { width: 33.3%; position: relative; display: inline-block; background-color: #F0F0F0; padding: 5px 10px; font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
@@ -160,7 +162,7 @@ section > label .fa { margin-right: 7px; }
 .keyvalue .fa { margin-right: 5px; }
 .upper { text-transform: uppercase; }
 
-.ui-process-toolbar { position: fixed; height: 40px; left: 0; top: 0; right: 0; background: linear-gradient(#018FE2,#017CCA); box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 11; }
+.ui-process-toolbar { position: fixed; height: 40px; left: 0; top: 0; right: 0; background-color: #017CCA; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 11; border-bottom: 1px solid white; }
 .ui-process-toolbar .close { float: right; font-size: 20px; width: 40px; height: 40px; border: 0; background: transparent; color: white; text-align: center; outline: 0; cursor: pointer; transition: 0.3s all; }
 .ui-process-toolbar .close:hover { opacity: 0.8; }
 .ui-process-toolbar .close:active { margin-top: 1px; }

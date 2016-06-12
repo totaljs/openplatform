@@ -92,25 +92,6 @@
 			SET('common.page', 'account');
 		});
 
-		jR.on('location', function(url) {
-			$('.menu').removeClass('menu-visible').find('a').each(function() {
-				var el = $(this);
-				el.toggleClass('selected', el.attr('href') === url);
-			});
-		});
-
-		jRouting.clientside('.jR');
-
-		WATCH('common.form', function(path, value) {
-			if (!value || common.forms[value])
-				return;
-			common.forms[value] = true;
-			IMPORT('/templates/form-{0}.html'.format(value));
-		}, true);
-
-		if (window.Notification && window.Notification.permission !== 'granted')
-			window.Notification.requestPermission();
-
 		Tangular.register('time', function(value) {
 			var diff = Date.now() - value.parseDate().getTime();
 			var minutes = ((diff / 1000) / 60) >> 0;
@@ -136,7 +117,6 @@
 			var years = (month / 12) >> 0;
 			return years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago';
 		});
-
 	</script>
 
 

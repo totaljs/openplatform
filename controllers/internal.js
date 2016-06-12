@@ -2,7 +2,7 @@ const HEADERS = {};
 
 exports.install = function() {
 
-	HEADERS['x-openplatfrom'] = F.config.url;
+	HEADERS['x-openplatform'] = F.config.url;
 
 	// Users
 	F.route('/internal/users/', json_users_query, ['authorize']);
@@ -19,6 +19,7 @@ exports.install = function() {
 	F.route('/internal/applications/', json_schema_save, ['authorize', 'post', '*Application']);
 	F.route('/internal/applications/', json_schema_delete, ['authorize', 'delete', '*Application']);
 	F.route('/internal/applications/download/', json_applications_download, ['authorize']);
+	F.route('/internal/applications/refresh/', json_applications_refresh, ['authorize']);
 
 	// Dashboard
 	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
@@ -61,18 +62,17 @@ function json_dashboard_widgets_svg(id) {
 	if (!widget)
 		return self.empty();
 
-	HEADERS['x-openplatfrom-user'] = self.user.id;
+	HEADERS['x-openplatform-user'] = self.user.id;
 
 	if (app.secret)
-		HEADERS['x-openplatfrom-secret'] = app.secret;
-	else if (HEADERS['x-openplatfrom-secret'])
-		delete HEADERS['x-openplatfrom-secret'];
+		HEADERS['x-openplatform-secret'] = app.secret;
+	else if (HEADERS['x-openplatform-secret'])
+		delete HEADERS['x-openplatform-secret'];
 
-	U.request(widget.url, ['get', 'dnscache', '< 30', 1500], function(err, response) {
-		if (err)
+	U.request(widget.url, ['get', 'dnscache', '< 30', 1500], function(err, response, code) {
+		if (err || code !== 200)
 			return self.empty();
 		self.content(response);
-		// self.content('<svg width="400" height="200" version="1.0" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 400 200">' + svg.substring(index + 1));
 	}, null, HEADERS);
 }
 
@@ -189,4 +189,12 @@ function json_dashboard_users() {
 	}
 
 	self.json(arr);
+}
+
+function json_applications_refresh() {
+	var self = this;
+	var app = APPLICATIONS.findItem('id', self.query.id);
+	if (!app)
+		return self.json(SUCCESS(false));
+	app.reload((err) => self.json(SUCCESS(!err)));
 }

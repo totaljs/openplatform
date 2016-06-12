@@ -102,7 +102,7 @@ function json_users() {
 function json_profile() {
 	var self = this;
 	var user = self.user.export();
-	user.roles = self.app.roles;
+	user.roles = self.user.applications[self.app.internal];
 	self.json(user);
 }
 

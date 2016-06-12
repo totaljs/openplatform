@@ -1479,7 +1479,7 @@ COMPONENT('applications', function() {
 	var self = this;
 	var running = self.attr('data-running') === 'true';
 
-	self.template = Tangular.compile('<div class="col-md-2 col-sm-3 col-xs-4 ui-app{{ if !online }} offline{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
+	self.template = Tangular.compile('<div class="col-md-3 col-sm-3 col-xs-6 ui-app{{ if !online }} offline{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
 	self.readonly();
 
 	self.make = function() {
@@ -1581,6 +1581,7 @@ COMPONENT('processes', function() {
 	var iframes = [];
 	var toolbar;
 	var source;
+	var redirect;
 
 	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}" data-token="{{ $.token }}"><iframe src="/loading.html" frameborder="0"></iframe><div>');
 	self.singleton();
@@ -1661,6 +1662,7 @@ COMPONENT('processes', function() {
 		if (!iframe.element.hasClass('hidden')) {
 			iframe.element.addClass('hidden');
 			self.minimize();
+			location.hash = '';
 		}
 
 		// Timeout for iframe cleaning scripts
@@ -1685,14 +1687,12 @@ COMPONENT('processes', function() {
 		var item = GET(source).findItem('id', id);
 		if (!item)
 			return;
+
 		var iframe = iframes.findItem('id', id);
 		if (!iframe) {
+			redirect = url || item.url;
 			self.set(id);
 			SETTER('loading', 'show');
-			setTimeout(function() {
-				self.open(id, url);
-				SETTER('loading', 'hide', 1000);
-			}, 2000);
 			return self;
 		}
 
@@ -1705,6 +1705,7 @@ COMPONENT('processes', function() {
 		SETTER('loading', 'hide', 1000);
 		self.title(iframe.title);
 		self.message(iframe, 'maximize');
+		location.hash = item.linker;
 		return self;
 	};
 
@@ -1718,7 +1719,14 @@ COMPONENT('processes', function() {
 	self.setter = function(value) {
 
 		self.minimize();
-		if (!value)
+
+		if (!value) {
+			location.hash = '';
+			return;
+		}
+
+		var item = GET(source).findItem('id', value);
+		if (!item)
 			return;
 
 		var iframe = iframes.findItem('id', value);
@@ -1726,12 +1734,9 @@ COMPONENT('processes', function() {
 			self.message(iframe, 'maximize');
 			self.title(iframe.title);
 			iframe.element.removeClass('hidden');
+			location.hash = item.linker;
 			return;
 		}
-
-		var item = GET(source).findItem('id', value);
-		if (!item)
-			return;
 
 		iframe = {};
 		iframe.token = (Math.random() * 1000000 >> 0).toString();
@@ -1748,9 +1753,21 @@ COMPONENT('processes', function() {
 			iframe.element.removeClass('ui-process-animation');
 		}, 200);
 
-		setTimeout(function() {
-			iframe.iframe.attr('src', self.makeurl(item.url));
-		}, 1500);
+		location.hash = item.linker;
+
+		if (item.session) {
+			doSession(self.makeurl(item.session), function() {
+				setTimeout(function() {
+					iframe.iframe.attr('src', self.makeurl(redirect || item.url));
+					redirect = '';
+				}, 1000);
+			});
+		} else {
+			setTimeout(function() {
+				iframe.iframe.attr('src', self.makeurl(redirect || item.url));
+				redirect = '';
+			}, 1500);
+		}
 
 		UPDATE(source, 100);
 		self.title(iframe.title);
@@ -2013,7 +2030,7 @@ COMPONENT('widgets', function() {
 	var items = [];
 	var interval = 0;
 
-	self.template = Tangular.compile('<div class="col-md-4 col-sm-6 m widget" data-id="{{ id }}" data-internal="{{ interval }}"><div class="widget-title">{{ name }}</div><div class="widget-svg"><div class="silver center"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div>');
+	self.template = Tangular.compile('<div class="col-md-4 col-sm-6 m widget" data-id="{{ id }}" data-internal="{{ interval }}"><div class="widget-title"><img src="{{ $.icon }}" width="12" alt="{{ $.name }}" />{{ $.name }}: {{ name }}</div><div class="widget-svg"><div class="silver center"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div>');
 	self.readonly();
 	self.make = function() {
 		self.toggle('row widgets hidden');
@@ -2041,7 +2058,7 @@ COMPONENT('widgets', function() {
 			var widget = app.widgets.findItem('internal', arr[1]);
 			if (!widget)
 				return;
-			SETTER('processes', 'open', app.id, widget.click || app.url);
+			SETTER('processes', 'open', app.id, widget.redirect || app.url);
 		});
 
 		setInterval(function() {
@@ -2074,7 +2091,7 @@ COMPONENT('widgets', function() {
 			if (hash === item.hash)
 				return;
 			item.hash = hash;
-			item.element.html('<svg width="400" height="200" version="1.0" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 400 200">' + svg.substring(index + 1));
+			item.element.html('<svg width="400" height="200" version="1.0" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 400 200">' + svg.substring(index + 1));
 		});
 	};
 
@@ -2101,7 +2118,7 @@ COMPONENT('widgets', function() {
 				continue;
 			widgets[widget.internal] = true;
 			widget.id = app.internal + 'X' + widget.internal;
-			self.append(self.template(widget));
+			self.append(self.template(widget, app));
 			var obj = { id: widget.id, element: self.find('[data-id="{0}"] .widget-svg'.format(widget.id)), interval: widget.interval, app: app };
 			items.push(obj);
 			setTimeout(function() {

@@ -45,8 +45,11 @@ User.prototype.getApplications = function() {
 	var self = this;
 	for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
 		var item = APPLICATIONS[i];
-		if (self.applications[item.internal])
-			arr.push(item.readonly());
+		if (self.applications[item.internal]) {
+			var app = item.readonly();
+			app.roles = self.applications[item.internal];
+			arr.push(app);
+		}
 	}
 	return arr;
 };
@@ -107,6 +110,7 @@ User.prototype.readonly = function() {
 	item.online = self.online;
 	item.blocked = self.blocked;
 	item.group = self.group;
+	item.superadmin = self.superadmin;
 	item.notifications = self.notifications;
 	item.dateupdated = self.dateupdated;
 	item.sounds = self.sounds;
@@ -129,6 +133,7 @@ User.prototype.export = function() {
 	item.online = self.online;
 	item.blocked = self.blocked;
 	item.group = self.group;
+	item.superadmin = self.superadmin;
 	item.notifications = self.notifications;
 	item.dateupdated = self.dateupdated;
 	item.sounds = self.sounds;

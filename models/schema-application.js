@@ -26,6 +26,7 @@ NEWSCHEMA('Application').make(function(schema) {
 			item.applications = model.applications;
 			item.serviceworker = model.serviceworker;
 			item.search = (model.name + ' ' + model.title).toSearch();
+			item.linker = model.title.slug();
 
 			if (!update) {
 				item.datecreated = F.datetime;

@@ -30,7 +30,8 @@
 					<td><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }} <span class="fs11 silver">v{{ version }}</span></td>
 					<td style="width:200px" class="{{ if responsive }}green{{ else }}silver{{ fi }} fs11">{{ if !responsive }}@(not){{ fi }} @(optimized for mobile devices)</td>
 					<td style="width:80px"><i class="fa fa-clock-o silver mr3"></i>{{ dateupdated | format('@(HH:mm)')}}</td>
-					<td style="width:80px" class="ui-right">
+					<td style="width:100px" class="ui-right">
+						<button name="refresh" title="@(Refresh)"><span class="fa fa-refresh"></span></button>
 						<button name="edit" title="@(Edit)"><span class="fa fa-cog"></span></button>
 						<button name="remove" title="@(Remove)"><span class="fa fa-times-circle"></span></button>
 					</td>
@@ -179,6 +180,17 @@
 
 	ON('#applications', function(component) {
 		component.click = function(index, item, button) {
+			if (button.name === 'refresh') {
+				SETTER('loading', 'show');
+				AJAX('GET /internal/applications/refresh/?id=' + encodeURIComponent(item.id), function(response) {
+					SETTER('loading', 'hide', 1000);
+					if (response.success) {
+						success();
+						applications_refresh();
+					}
+				});
+				return;
+			}
 
 			if (button.name === 'remove') {
 				SETTER('confirm', 'confirm', '@(Are you sure you want to remove the application <b>{0}</b>?)'.format(item.title), ['@(Yes)', '@(No)'], function(index) {
@@ -188,6 +200,7 @@
 				});
 				return;
 			}
+
 			applications.form = {};
 			applications.form.id = item.id;
 			applications.form.title = item.title;

@@ -41,6 +41,7 @@ Application.prototype.readonly = function() {
 	item.id = self.id;
 	item.title = self.title;
 	item.name = self.name;
+	item.linker = self.linker;
 	item.description = self.description;
 	item.version = self.version;
 	item.icon = self.icon;
@@ -56,6 +57,7 @@ Application.prototype.readonly = function() {
 	item.url = self.url;
 	item.internal = self.internal;
 	item.events = self.events;
+	item.session = self.session;
 	item.widgets = self.widgets;
 	item.roles = self.roles;
 	return item;
@@ -67,6 +69,7 @@ Application.prototype.export = function() {
 	item.id = self.id;
 	item.title = self.title;
 	item.name = self.name;
+	item.linker = self.linker;
 	item.description = self.description;
 	item.version = self.version;
 	item.icon = self.icon;
@@ -80,6 +83,7 @@ Application.prototype.export = function() {
 	item.users = self.users;
 	item.online = self.online;
 	item.url = self.url;
+	item.session = self.session;
 	item.roles = self.roles;
 	return item;
 };
@@ -129,6 +133,7 @@ Application.prototype.reload = function(callback) {
 		self.author = app.author;
 		self.responsive = app.responsive || false;
 		self.status = 'ready';
+		self.session = app.session;
 		self.online = true;
 		self.events = {};
 		self.origin = app.origin;
@@ -142,7 +147,7 @@ Application.prototype.reload = function(callback) {
 				var w = widgets[i];
 				if (!w)
 					continue;
-				self.widgets.push({ internal: w.url.hash(), name: w.name, url: w.url, interval: w.internal || 15000 });
+				self.widgets.push({ internal: w.url.hash(), name: w.name, url: w.url, interval: w.internal || 15000, roles: w.roles, redirect: w.redirect });
 			}
 			if (!self.widgets.length)
 				self.widgets = null;

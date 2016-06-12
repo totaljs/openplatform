@@ -146,6 +146,14 @@ COMPONENT('userwidgets', function() {
 			if (!item.widgets)
 				continue;
 			item.widgets.forEach(function(widget) {
+
+				if (widget.roles && widget.roles.length) {
+					if (!item.roles || !item.roles.length)
+						return;
+					if (!widget.roles.hasRoles(item.roles))
+						return;
+				}
+
 				widgets.push({ id: item.internal + 'X' + widget.internal, title: item.title, name: widget.name, icon: item.icon });
 			});
 		}

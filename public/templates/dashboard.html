@@ -42,6 +42,7 @@
 	dashboard.notifications = [];
 	dashboard.notification = null;
 	dashboard.canwidgets = false;
+	dashboard.ready = false;
 
 	function dashboard_refresh() {
 
@@ -59,11 +60,16 @@
 
 			dashboard.canwidgets = false;
 
+			var def;
+
 			for (var i = 0, length = response.length; i < length; i++) {
 				var a = response[i];
 				var is = running[a.id];
 				a.running = is === true;
 				delete running[a.id];
+
+				if ('#' + a.linker === location.hash)
+					def = a;
 
 				// Kills the app when is offline
 				if (a.running && !a.online)
@@ -77,6 +83,12 @@
 			SET('dashboard.applications', response);
 			NOTIFY('dashboard.canwidgets');
 
+			if (!dashboard.ready && def) {
+				SETTER('loading', 'show');
+				SET('dashboard.current', def.id, 3000);
+			}
+
+			dashboard.ready = true;
 			setTimeout(function() {
 				Object.keys(running).forEach(function(id) {
 					SETTER('processes', 'kill', id);
