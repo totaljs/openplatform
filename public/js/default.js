@@ -142,6 +142,7 @@ $(window).on('message', function(e) {
 				for (var i = 0, length = dashboard.applications.length; i < length; i++) {
 					tmp = $.extend({}, dashboard.applications[i]);
 					delete tmp.events;
+					delete tmp.session;
 					delete tmp.internal;
 					delete tmp.widgets;
 					arr.push(tmp);
@@ -212,10 +213,10 @@ Array.prototype.paginate = function(skip, take) {
 function success() {
 	var el = $('#success');
 	SETTER('loading', 'hide', 500);
-	el.css({ right: '90%' }).delay(500).fadeIn(100).animate({ right: '2%' }, 1500, 'easeOutBounce', function() {
+	el.delay(500).fadeIn(100, function() {
 		setTimeout(function() {
 			el.fadeOut(200);
-		}, 800);
+		}, 3000);
 	});
 }
 
@@ -235,12 +236,34 @@ jQuery.easing.easeOutBounce = function(e, f, a, h, g) {
 	}
 };
 
-function doSession(url, callback) {
+function doSession(iframe, url, callback) {
+
+	var chrome = navigator.userAgent.indexOf('Chrome') > -1;
+	var safari = navigator.userAgent.indexOf('Safari') > -1;
+
+	if (chrome && safari)
+		safari = false;
+
 	var w = 200;
 	var h = 120;
 	var left = (screen.width /2) - (w / 2);
 	var top = (screen.height / 2) - (h / 2);
 	SETTER('loading', 'show');
+
+	if (!safari) {
+		iframe.attr('src', url);
+		iframe.css({ opacity: 0 });
+		iframe.on('load', function() {
+			SETTER('loading', 'hide', 1000);
+			iframe.off('load');
+			callback();
+			setTimeout(function() {
+				iframe.animate({ opacity: 1 }, 500);
+			}, 1000);
+		});
+		return;
+	}
+
 	var w = window.open(url, 'OpenPlatform initialization', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
 	$(w).ready(function() {
 		setTimeout(function() {

@@ -22,22 +22,37 @@ function User() {
 	this.datelogged = null;
 	this.dateupdated = null;
 	this.datepassword = null;
-	this.widgets = null;
+	this.widgets = null;                  // contains widgets (array)
+	this.sounds = true;                   // enables/disables client-side sounds
 
 	// Internal settings
-	this.online = false;
-	this.sounds = true;
-	this.blocked = false;
-	this.superadmin = false;
-	this.notifications = true;
-	this.resetcounter = 0;
-	this.notificationscounter = 0;
-	this.internal = 0;
+	this.online = false;                  // is the user online?
+	this.blocked = false;                 // is the user blocked?
+	this.superadmin = false;              // superadmin (the user will be an access to all applications and users)
+	this.notifications = true;            // enables/disables notifications
+	this.resetcounter = 0;                // can log off user (it's for super admin)
+	this.notificationscounter = 0;        // count of notifications
+	this.internal = 0;                    // internal user identificator
+	this.token = '';                      // user token e.g. for auto-login
+	this.session = '';                    // session identificator
+	this.security = '';                   // for signature
 }
+
+User.prototype.signature = function(app) {
+	var session = this.session + '~' + this.internal + '~' + app.internal;
+	return session + '~' + (this.security + session).hash();
+};
 
 User.prototype.logoff = function() {
 	this.online = false;
+	this.secure();
+	OPENPLATFORM.users.save();
 	return this;
+};
+
+User.prototype.secure = function() {
+	this.session = U.GUID(30);
+	this.security = U.GUID(5);
 };
 
 User.prototype.getApplications = function() {
@@ -48,6 +63,7 @@ User.prototype.getApplications = function() {
 		if (self.applications[item.internal]) {
 			var app = item.readonly();
 			app.roles = self.applications[item.internal];
+			app.token = self.signature(app);
 			arr.push(app);
 		}
 	}
@@ -141,8 +157,10 @@ User.prototype.export = function() {
 	return item;
 };
 
+// Re-Creates the token
 User.prototype.tokenizer = function() {
 	this.token = U.GUID(25);
+	OPENPLATFORM.users.save();
 	return this;
 };
 

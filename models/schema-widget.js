@@ -16,7 +16,6 @@ NEWSCHEMA('Widget').make(function(schema) {
 			}
 
 			var app = APPLICATIONS.findItem('internal', idapp);
-
 			if (!app) {
 				error.push('error-user-widgets');
 				return callback();

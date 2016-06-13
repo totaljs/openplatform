@@ -147,7 +147,15 @@ Application.prototype.reload = function(callback) {
 				var w = widgets[i];
 				if (!w)
 					continue;
-				self.widgets.push({ internal: w.url.hash(), name: w.name, url: w.url, interval: w.internal || 15000, roles: w.roles, redirect: w.redirect });
+				var interval = w.internal || 15000;
+				if (interval < 10000)
+					interval = 10000;
+				var size = w.size || 1;
+				if (size > 3)
+					size = 3;
+				else if (size < 0)
+					size = 1;
+				self.widgets.push({ internal: w.url.hash(), name: w.name, url: w.url, interval: interval, roles: w.roles, redirect: w.redirect, size: size });
 			}
 			if (!self.widgets.length)
 				self.widgets = null;

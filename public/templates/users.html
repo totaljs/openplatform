@@ -238,13 +238,15 @@
 	ON('#users.form', function(component) {
 		component.submit = function(hide) {
 			AJAX('POST /internal/users/', users.form, function(response, err) {
-
 				if (isError(err))
 					return;
-
 				SET('users.form.response', response);
 				if (!response.success)
 					return;
+
+				if (users.form.id === user.id && window.dashboard_refresh)
+					window.dashboard_refresh();
+
 				success();
 				users_refresh();
 				hide();

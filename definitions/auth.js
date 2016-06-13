@@ -24,7 +24,6 @@ F.on('service', function(interval) {
 		return;
 
 	OPENPLATFORM.users.save();
-
 	for (var i = 0, length = USERS.length; i < length; i++)
 		USERS[i].online = false;
 });

@@ -3,8 +3,7 @@ exports.install = function() {
 	F.route('/api/notifications/', json_notifications, ['#authorize', 'post', '*Notification']);
 	F.route('/api/applications/',  json_applications,  ['#authorize']);
 	F.route('/api/users/',         json_users,         ['#authorize']);
-	F.route('/api/profile/',       json_profile,       ['#authorize']);
-	F.route('/api/openplatform/',  json_openplatform,  ['#authorize']);
+	F.route('/session/',           json_session);
 };
 
 // Middleware for API
@@ -15,47 +14,48 @@ F.middleware('authorize', function(req, res, next, options, controller) {
 
 	if (!idapp || !iduser) {
 		next = null;
-		controller.status = 400;
-		return controller.invalid().push('error-invalid-headers');
+		controller.invalid(400).push('error-invalid-headers');
+		return false;
 	}
 
 	var app = APPLICATIONS.findItem('id', idapp);
+
 	if (!app) {
 		next = null;
-		controller.status = 400;
-		return controller.invalid().push('error-application-notfound');
+		controller.invalid(400).push('error-application-notfound');
+		return false;
 	}
 
 	if (app.origin && app.origin.length && app.origin.indexOf(req.ip) === -1) {
 		next = null;
-		controller.status = 400;
-		return controller.invalid().push('error-application-origin');
+		controller.invalid(400).push('error-application-origin');
+		return false;
 	}
 
 	if (app.secret && app.secret !== req.headers['x-openplatform-secret']) {
 		next = null;
-		controller.status = 400;
-		return controller.invalid().push('error-application-secret');
+		controller.invalid(400).push('error-application-secret');
+		return false;
 	}
 
 	var type = req.split[1];
-	if (type !== 'profile' && type !== 'openplatform' && !app[type]) {
+	if (type !== 'openplatform' && !app[type]) {
 		next = null;
-		controller.status = 400;
-		return controller.invalid().push('error-application-permissions');
+		controller.invalid(400).push('error-application-permissions');
+		return false;
 	}
 
 	var user = USERS.findItem('id', iduser);
 	if (!user) {
 		next = null;
-		controller.status = 400;
-		return controller.invalid().push('error-user-notfound');
+		controller.invalid().push('error-user-notfound');
+		return false;
 	}
 
 	if (!user.applications[app.internal]) {
 		next = null;
-		controller.status = 400;
-		return self.invalid().push('error-user-application');
+		self.invalid(400).push('error-user-application');
+		return false;
 	}
 
 	req.user = user;
@@ -106,8 +106,35 @@ function json_profile() {
 	self.json(user);
 }
 
-function json_openplatform() {
+function json_session() {
+
 	var self = this;
-	self.json(OPENPLATFORM.info);
+	var idapp = self.req.headers['x-openplatform-id'] || '';
+	if (!idapp)
+		return self.invalid(400).push('error-invalid-headers');
+
+	var token = self.query.token || '';
+	var arr = token.split('~');
+	if (arr.length !== 4)
+		return self.invalid(400).push('error-invalid-token');
+
+	var user = USERS.findItem('internal', arr[1].parseInt());
+	if (!user || !user.online || user.session !== arr[0])
+		return self.invalid(400).push('error-invalid-token');
+
+	var app = APPLICATIONS.findItem('internal', arr[2].parseInt());
+	if (!app || !user.applications[app.internal] || user.signature(app) !== token)
+		return self.invalid(400).push('error-invalid-token');
+
+	if (app.origin && app.origin.length && app.origin.indexOf(self.req.ip) === -1)
+		return self.invalid(400).push('error-application-origin');
+
+	if (app.secret && app.secret !== self.req.headers['x-openplatform-secret'])
+		return self.invalid(400).push('error-application-secret');
+
+	var output = user.export();
+	output.roles = user.applications[app.internal];
+	output.openplatform = OPENPLATFORM.info;
+	self.json(output);
 }
 

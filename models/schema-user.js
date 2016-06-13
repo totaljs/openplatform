@@ -56,6 +56,7 @@ NEWSCHEMA('User').make(function(schema) {
 		if (!user.id) {
 			user.id = UID();
 			user.internal = model.id.hash();
+			user.secure();
 			USERS.push(user);
 		}
 

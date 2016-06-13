@@ -1582,8 +1582,9 @@ COMPONENT('processes', function() {
 	var toolbar;
 	var source;
 	var redirect;
+	var loader;
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}" data-token="{{ $.token }}"><iframe src="/loading.html" frameborder="0"></iframe><div>');
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}" data-token="{{ $.token }}"><iframe src="/loading.html" frameborder="0" scrolling="no"></iframe><div>');
 	self.singleton();
 	self.readonly();
 
@@ -1602,8 +1603,8 @@ COMPONENT('processes', function() {
 		return true;
 	};
 
-	self.makeurl = function(url) {
-		var qs = 'openplatform={0}&openplatform-user={1}'.format(encodeURIComponent(common.url), encodeURIComponent(user.id));
+	self.makeurl = function(url, app) {
+		var qs = 'openplatform={0}'.format(encodeURIComponent(common.url + '/session/?token=' + app.token));
 		var index = url.indexOf('?');
 		if (index === -1)
 			return url + '?' + qs;
@@ -1620,7 +1621,9 @@ COMPONENT('processes', function() {
 	self.make = function() {
 
 		source = self.attr('data-source');
-		self.html('<div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><div data-component="processes-dock" data-component-path="{0}" data-run="{1}"></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>'.format(source, self.path));
+		self.html('<div class="ui-process-toolbar-loading"></div><div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><div data-component="processes-dock" data-component-path="{0}" data-run="{1}"></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>'.format(source, self.path));
+
+		loader = self.find('.ui-process-toolbar-loading');
 		toolbar = self.find('.ui-process-toolbar');
 
 		toolbar.on('click', 'button', function() {
@@ -1701,7 +1704,7 @@ COMPONENT('processes', function() {
 			self.minimize();
 		iframe.element.removeClass('hidden');
 		if (url)
-			iframe.iframe.attr('src', self.makeurl(url));
+			iframe.iframe.attr('src', self.makeurl(url, item));
 		SETTER('loading', 'hide', 1000);
 		self.title(iframe.title);
 		self.message(iframe, 'maximize');
@@ -1747,6 +1750,7 @@ COMPONENT('processes', function() {
 		iframe.element = self.find('[data-token="{0}"]'.format(iframe.token));
 		iframe.iframe = iframe.element.find('iframe');
 		iframe.dateopened = new Date();
+		iframe.session = item.session;
 		iframes.push(iframe);
 
 		setTimeout(function() {
@@ -1756,18 +1760,23 @@ COMPONENT('processes', function() {
 		location.hash = item.linker;
 
 		if (item.session) {
-			doSession(self.makeurl(item.session), function() {
+			doSession(iframe.iframe, self.makeurl(item.session, item), function() {
 				setTimeout(function() {
-					iframe.iframe.attr('src', self.makeurl(redirect || item.url));
+					iframe.iframe.attr('src', self.makeurl(redirect || item.url, item));
 					redirect = '';
 				}, 1000);
 			});
 		} else {
 			setTimeout(function() {
-				iframe.iframe.attr('src', self.makeurl(redirect || item.url));
+				iframe.iframe.attr('src', self.makeurl(redirect || item.url, item));
 				redirect = '';
 			}, 1500);
 		}
+
+		loader.css({ width: 0 }).removeClass('hidden');
+		loader.delay(100).animate({ width: '100%' }, 1000, function() {
+			loader.addClass('hidden');
+		});
 
 		UPDATE(source, 100);
 		self.title(iframe.title);
@@ -2029,8 +2038,9 @@ COMPONENT('widgets', function() {
 	var widgets = {};
 	var items = [];
 	var interval = 0;
+	var empty = '<svg></svg>';
 
-	self.template = Tangular.compile('<div class="col-md-4 col-sm-6 m widget" data-id="{{ id }}" data-internal="{{ interval }}"><div class="widget-title"><img src="{{ $.icon }}" width="12" alt="{{ $.name }}" />{{ $.name }}: {{ name }}</div><div class="widget-svg"><div class="silver center"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div>');
+	self.template = Tangular.compile('<div class="{{ if size === 1 }}col-md-4 col-sm-6{{ fi }}{{ if size === 2 }}col-sm-6{{ fi }}{{ if size === 3 }}col-md-12{{ fi }} m widget" data-id="{{ id }}" data-internal="{{ interval }}"><div class="widget-title"><img src="{{ $.icon }}" width="12" alt="{{ $.name }}" />{{ $.name }}: {{ name }}</div><div class="widget-svg"><div class="silver center"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div>');
 	self.readonly();
 	self.make = function() {
 		self.toggle('row widgets hidden');
@@ -2091,7 +2101,10 @@ COMPONENT('widgets', function() {
 			if (hash === item.hash)
 				return;
 			item.hash = hash;
-			item.element.html('<svg width="400" height="200" version="1.0" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 400 200">' + svg.substring(index + 1));
+			var widget = item.app.widgets.findItem('id', item.id);
+			if (!widget)
+				return;
+			item.element.html('<svg width="{0}" height="200" version="1.0" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 {0} 200">'.format(widget.size === 1 ? 400 : widget.size === 2 ? 600 : 800) + svg.substring(index + 1));
 		});
 	};
 

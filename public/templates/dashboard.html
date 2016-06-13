@@ -47,10 +47,11 @@
 	function dashboard_refresh() {
 
 		var running = {};
+
 		for (var i = 0, length = dashboard.applications.length; i < length; i++) {
 			var app = dashboard.applications[i];
 			if (app.running)
-				running[app.id] = true;
+				running[app.id] = app.token;
 		}
 
 		AJAX('GET /internal/dashboard/applications/', function(response, err) {
@@ -64,19 +65,22 @@
 
 			for (var i = 0, length = response.length; i < length; i++) {
 				var a = response[i];
-				var is = running[a.id];
-				a.running = is === true;
+				var token = running[a.id];
+				a.running = token ? true : false;
 				delete running[a.id];
 
 				if ('#' + a.linker === location.hash)
 					def = a;
 
-				// Kills the app when is offline
-				if (a.running && !a.online)
+				// Kills the app when is offline or when the token is changed
+				if ((a.running && !a.online) || (token && token !== a.token)) {
+					a.running = false;
 					SETTER('processes', 'kill', a.id);
+				}
 
 				if (!a.widgets || !a.widgets.length || dashboard.canwidgets)
 					continue;
+
 				dashboard.canwidgets = true;
 			}
 

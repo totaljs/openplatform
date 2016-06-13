@@ -6,6 +6,7 @@ $linear  : linear-gradient(#F0F0F0,white);
 
 html,body { height: 100%; }
 body { font-smoothing: antialiased; background-color: #F0F0F0; margin: 0; padding: 0; }
+svg { font-family: Arial; font-size: 14px; }
 
 header { background-color: white; padding: 0; margin: 0; min-height: 40px; }
 header div { float: left; }
@@ -30,10 +31,10 @@ h2 .fa { margin-right: 10px; }
 .menu .selected { background-color: $color; color: white !important; font-weight: 700; }
 .menu-bk .selected:before { content: '\f0d7'; position: absolute; left: 50px; top: 25px; font-family: 'FontAwesome'; color: $color; font-size: 25px; }
 
-#success { height: 30px; left: 0; top: 5px; right: 0; background: linear-gradient(#66B258,#509D43); font-size: 25px; line-height: 0; position: fixed; z-index: 20; color: white; text-align: right; padding: 3px 10px 0 0; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: none; border-radius: 0 50px 50px 0; }
+#success { left: 50%; top: 28px; background: linear-gradient(#66B258,#509D43); font-size: 18px; line-height: 0; position: fixed; z-index: 20; color: white; text-align: right; padding: 2px 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: none; border-radius: 20px; margin-left: -30px; }
 .container-padding { padding: 50px 0 20px; }
 
-.green { color: #A0D468; }
+.green { color: #8CC152; }
 .red { color: #ED5565; }
 .b { font-weight: bold; }
 
@@ -162,12 +163,14 @@ section > label .fa { margin-right: 7px; }
 .keyvalue .fa { margin-right: 5px; }
 .upper { text-transform: uppercase; }
 
-.ui-process-toolbar { position: fixed; height: 40px; left: 0; top: 0; right: 0; background-color: #017CCA; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 11; border-bottom: 1px solid white; }
+.ui-process-toolbar { position: fixed; height: 40px; left: 0; top: 0; right: 0; background-color: #017CCA; box-shadow: 0 0 10px rgba(0,0,0,0.3); z-index: 11; }
 .ui-process-toolbar .close { float: right; font-size: 20px; width: 40px; height: 40px; border: 0; background: transparent; color: white; text-align: center; outline: 0; cursor: pointer; transition: 0.3s all; }
 .ui-process-toolbar .close:hover { opacity: 0.8; }
 .ui-process-toolbar .close:active { margin-top: 1px; }
 .ui-process-toolbar label { font-size: 16px; color: white; float: left; margin: 8px 0 0 10px; font-family: $font; }
 .ui-process-toolbar .logo { width: 50px; height: 40px; background-color: white; }
+.ui-process-toolbar-loading { left: 0; width: 0; height: 3px; background-color: #F6BB42; border-radius: 0 10px 10px 0; position: fixed; z-index: 101; top: 0; border-bottom: 1px solid rgba(255,255,255,0.5); }
+
 .ui-processes-dock { float: left; padding: 8px 0 0 0; }
 .ui-processes-dock a { float: left; margin-left: 10px; }
 .ui-processes-dock a:active { margin-top: 1px; }
