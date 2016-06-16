@@ -4,6 +4,7 @@ OPENPLATFORM.version = '1.0.0';
 OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
+OPENPLATFORM.minimized = false;
 
 OPENPLATFORM.loading = function(visible) {
 	return OPENPLATFORM.send('loading', visible);
@@ -110,6 +111,8 @@ window.addEventListener('message', function(e) {
 
 		if (!data.openplatform)
 			return;
+
+		OPENPLATFORM.minimized = data.type === 'minimize';
 
 		if (data.callback) {
 			var callback = OPENPLATFORM.callbacks[data.callback];
