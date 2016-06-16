@@ -64,8 +64,8 @@ $(window).on('message', function(e) {
 					return;
 				}
 
-				AJAXCACHE('GET /internal/dashboard/users/', function(response, err) {
-					processes.message(item, 'users', response, data.callback, err);
+				AJAXCACHE('GET /internal/dashboard/users/', function(response) {
+					processes.message(item, 'users', response, data.callback);
 				}, 1000 * 120);
 
 				break;
@@ -79,6 +79,19 @@ $(window).on('message', function(e) {
 				// TODO: add user privileges
 				if (app)
 					SETTER('processes', 'open', app.id, data.body);
+				break;
+
+			case 'restart':
+				app = dashboard.applications.findItem('id', item.id);
+
+				if (app) {
+					SETTER('loading', 'show');
+					SETTER('processes', 'kill', app.id);
+					setTimeout(function() {
+						SETTER('processes', 'open', app.id, data.body || app.url);
+					}, 4000);
+				}
+
 				break;
 
 			case 'loading':
@@ -281,4 +294,33 @@ Array.prototype.hasRoles = function(value) {
 			return false;
 	}
 	return true;
+};
+
+String.prototype.isJSON = function() {
+	var self = this;
+	if (self.length <= 1)
+		return false;
+
+	var l = self.length - 1;
+	var a;
+	var b;
+	var i = 0;
+
+	while (true) {
+		a = self.substring(i, i + 1);
+		i++;
+		if (a === ' ' || a === '\n' || a === '\r' || a === '\t')
+			continue;
+		break;
+	}
+
+	while (true) {
+		b = self.substring(l, l + 1);
+		l--;
+		if (b === ' ' || b === '\n' || b === '\r' || b === '\t')
+			continue;
+		break;
+	}
+
+	return (a === '"' && b === '"') || (a === '[' && b === ']') || (a === '{' && b === '}');
 };

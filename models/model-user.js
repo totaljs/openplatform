@@ -30,6 +30,7 @@ function User() {
 	this.blocked = false;                 // is the user blocked?
 	this.superadmin = false;              // superadmin (the user will be an access to all applications and users)
 	this.notifications = true;            // enables/disables notifications
+	this.notificationsemail = true;       // enables/disables email notifications
 	this.resetcounter = 0;                // can log off user (it's for super admin)
 	this.notificationscounter = 0;        // count of notifications
 	this.internal = 0;                    // internal user identificator
@@ -128,6 +129,7 @@ User.prototype.readonly = function() {
 	item.group = self.group;
 	item.superadmin = self.superadmin;
 	item.notifications = self.notifications;
+	item.notificationsemail = self.notificationsemail;
 	item.dateupdated = self.dateupdated;
 	item.sounds = self.sounds;
 	item.widgets = self.widgets;

@@ -15,7 +15,7 @@ OPENPLATFORM.User = MODEL('model-user').User;
 OPENPLATFORM.users = {};
 OPENPLATFORM.applications = {};
 OPENPLATFORM.settings = {};
-OPENPLATFORM.info = { version: F.config.version, name: F.config.name, url: F.config.url };
+OPENPLATFORM.info = { version: F.config.version, name: F.config.name, url: F.config.url, author: F.config.author, email: F.config['author-email'] };
 
 /**
  * Finds user by its ID
@@ -60,7 +60,7 @@ OPENPLATFORM.users.save = function() {
 OPENPLATFORM.users.load = function(callback) {
 	Fs.readFile(F.path.databases('users.json'), function(err, data) {
 
-		callback && setImmediate(callback(err));
+		callback && setImmediate(() => callback(err));
 
 		if (!data)
 			return;
@@ -115,7 +115,7 @@ OPENPLATFORM.applications.create = function(url, callback) {
 OPENPLATFORM.applications.load = function(callback) {
 	Fs.readFile(F.path.databases('applications.json'), function(err, data) {
 
-		callback && setImmediate(callback(err));
+		callback && setImmediate(() => callback(err));
 
 		if (!data)
 			return;
@@ -149,3 +149,42 @@ OPENPLATFORM.applications.reload = function(callback) {
 OPENPLATFORM.applications.uid = function(url) {
 	return url.toLowerCase().replace(/^(http|https)\:\/\//g, '').replace(/www\./g, '').trim().hash();
 };
+
+OPENPLATFORM.settings.save = function(callback) {
+
+	var settings = {};
+
+	settings.name = F.config.name;
+	settings.email = F.config.email;
+	settings.url = F.config.url;
+	settings.author = F.config.author;
+	settings.smtp = F.config['mail.smtp'];
+	settings.smtpsettings = F.config['mail.smtp.options'];
+
+	Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(settings), (err) => callback && setImmediate(() => callback(err)));
+	return true;
+};
+
+OPENPLATFORM.settings.load = function(callback) {
+	Fs.readFile(F.path.databases('settings.json'), function(err, data) {
+
+		callback && setImmediate(() => callback(err));
+
+		if (!data)
+			return;
+
+		var settings = data.toString('utf8').parseJSON();
+		F.config.url = settings.url;
+		F.config.author = settings.author;
+		F.config.email = settings.email;
+		F.config.name = settings.name;
+		F.config['mail.smtp'] = settings.smtp;
+		F.config['mail.smtp.options'] = settings.smtpsettings;
+
+		// Internal framework hack: cleans mail settings cache
+		delete F.temporary['mail-settings'];
+	});
+
+	return true;
+};
+

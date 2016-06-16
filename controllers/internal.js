@@ -21,12 +21,16 @@ exports.install = function() {
 	F.route('/internal/applications/download/', json_applications_download, ['authorize']);
 	F.route('/internal/applications/refresh/', json_applications_refresh, ['authorize']);
 
+	// Settings
+	F.route('/internal/settings/', json_settings_read, ['authorize', '*Settings']);
+	F.route('/internal/settings/', json_settings_save, ['authorize', 'post', '*Settings']);
+
 	// Dashboard
 	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
 	F.route('/internal/dashboard/notifications/', json_dashboard_notifications, ['authorize']);
 	F.route('/internal/dashboard/users/', json_dashboard_users, ['authorize']);
 	F.route('/internal/dashboard/widgets/', json_dashboard_widgets_save, ['authorize', 'post', '*Widget']);
-	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets_svg, ['authorize']);
+	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets_content, ['authorize']);
 
 	// Account
 	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
@@ -46,7 +50,7 @@ function json_notify() {
 	item.$save(self, self.callback());
 }
 
-function json_dashboard_widgets_svg(id) {
+function json_dashboard_widgets_content(id) {
 	var self = this;
 	var arr = id.split('X');
 
@@ -69,10 +73,10 @@ function json_dashboard_widgets_svg(id) {
 	else if (HEADERS['x-openplatform-secret'])
 		delete HEADERS['x-openplatform-secret'];
 
-	U.request(widget.url, ['get', 'dnscache', '< 30', 1500], function(err, response, code) {
+	U.request(widget.url, ['get', 'dnscache', '< 30', 1500], function(err, response, code, headers) {
 		if (err || code !== 200)
 			return self.empty();
-		self.content(response);
+		self.content(response, 'text/plain');
 	}, null, HEADERS);
 }
 
@@ -197,4 +201,14 @@ function json_applications_refresh() {
 	if (!app)
 		return self.json(SUCCESS(false));
 	app.reload((err) => self.json(SUCCESS(!err)));
+}
+
+function json_settings_read() {
+	var self = this;
+	self.$read(self.callback());
+}
+
+function json_settings_save() {
+	var self = this;
+	self.$async(self.callback(), 1).$workflow('smtp', self).$save(self);
 }

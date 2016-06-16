@@ -1479,7 +1479,7 @@ COMPONENT('applications', function() {
 	var self = this;
 	var running = self.attr('data-running') === 'true';
 
-	self.template = Tangular.compile('<div class="col-md-3 col-sm-3 col-xs-6 ui-app{{ if !online }} offline{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
+	self.template = Tangular.compile('<div class="col-md-2 col-sm-3 col-xs-6 ui-app{{ if !online }} offline{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
 	self.readonly();
 
 	self.make = function() {
@@ -1700,11 +1700,14 @@ COMPONENT('processes', function() {
 		}
 
 		SETTER('loading', 'show');
+
 		if (iframe.element.hasClass('hidden'))
 			self.minimize();
+
 		iframe.element.removeClass('hidden');
 		if (url)
 			iframe.iframe.attr('src', self.makeurl(url, item));
+
 		SETTER('loading', 'hide', 1000);
 		self.title(iframe.title);
 		self.message(iframe, 'maximize');
@@ -1824,11 +1827,13 @@ COMPONENT('notifications', function() {
 			var id = el.attr('data-id');
 			var url = el.attr('data-url');
 
+			setTimeout(function() {
+				el.find('.fa-times-circle').trigger('click');
+			}, 1000);
+
 			if (!id) {
 				if (url)
 					window.open(url);
-				else
-					el.find('.fa-times-circle').trigger('click');
 				return;
 			}
 
@@ -1840,7 +1845,7 @@ COMPONENT('notifications', function() {
 		});
 
 		$(window).on('resize', self.resize);
-		setTimeout(self.resize, 100);
+		setTimeout(self.resize, 300);
 	};
 
 	self.resize = function() {
@@ -2039,8 +2044,9 @@ COMPONENT('widgets', function() {
 	var items = [];
 	var interval = 0;
 	var empty = '<svg></svg>';
+	var charts = {};
 
-	self.template = Tangular.compile('<div class="{{ if size === 1 }}col-md-4 col-sm-6{{ fi }}{{ if size === 2 }}col-sm-6{{ fi }}{{ if size === 3 }}col-md-12{{ fi }} m widget" data-id="{{ id }}" data-internal="{{ interval }}"><div class="widget-title"><img src="{{ $.icon }}" width="12" alt="{{ $.name }}" />{{ $.name }}: {{ name }}</div><div class="widget-svg"><div class="silver center"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div>');
+	self.template = Tangular.compile('<div class="{{ if size === 1 }}col-md-4 col-sm-6{{ fi }}{{ if size === 2 }}col-sm-8{{ fi }}{{ if size === 3 }}col-md-12{{ fi }} widget" data-id="{{ id }}" data-internal="{{ interval }}"><div style="background:{{ background }};color:{{ color }}"><div class="widget-title"><img src="{{ $.icon }}" width="12" alt="{{ $.name }}" />{{ $.name }}: {{ name }}</div><div class="widget-svg"><div class="widget-loading"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div></div>');
 	self.readonly();
 	self.make = function() {
 		self.toggle('row widgets hidden');
@@ -2084,38 +2090,79 @@ COMPONENT('widgets', function() {
 		}, 1000);
 	};
 
+	self.clear = function() {
+		Object.keys(charts).forEach(function(key) {
+			charts[key].destroy();
+			delete charts[key];
+		});
+
+		Object.keys(widgets).forEach(function(key) {
+			delete widgets[key];
+		});
+
+		items.forEach(function(item) {
+			item.element.closest('.widget').remove();
+		});
+
+		items = [];
+	};
+
 	self.reload = function(item, index) {
 		if (!item.app.online)
 			return;
+
+		var widget = item.app.widgets.findItem('id', item.id);
+		if (!widget)
+			return;
+
 		AJAX('GET /internal/dashboard/widgets/{0}/?ts={1}'.format(item.id, self.id + 'X' + index), function(response) {
+
 			if (!response)
 				return self.empty();
-			var svg = response.trim();
+
+			if (response.isJSON()) {
+				response = JSON.parse(response);
+				// chart.js
+				if (charts[item.id])
+					charts[item.id].destroy();
+				else
+					item.element.html('<canvas width="{0}" height="{1}"></canvas>'.format(widget.size === 1 ? 400 : widget.size === 2 ? 600 : 800, widget.size === 1 ? 250 : widget.size === 2 ? 180 : 220));
+
+				charts[item.id] = new Chart(item.element.find('canvas').get(0), response);
+				return;
+			}
+
+			var svg = response.toString().trim();
 			if (!svg.startsWith('<svg'))
-				return self.content(empty);
+				return item.element.html(empty);
 			var index = svg.indexOf('>');
 			if (index === -1)
-				return self.content(empty);
+				return item.element.html(empty);
 			svg = svg.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ').replace(/\s+\>/g, '>').replace(/\<script.*?\<\/script\>/gi, '');
 			var hash = HASH(svg);
 			if (hash === item.hash)
 				return;
 			item.hash = hash;
-			var widget = item.app.widgets.findItem('id', item.id);
-			if (!widget)
-				return;
-			item.element.html('<svg width="{0}" height="200" version="1.0" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 {0} 200">'.format(widget.size === 1 ? 400 : widget.size === 2 ? 600 : 800) + svg.substring(index + 1));
+			item.element.html('<svg width="{0}" height="250" version="1.0" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" viewBox="0 0 {0} 250">'.format(widget.size === 1 ? 400 : widget.size === 2 ? 600 : 800) + svg.substring(index + 1));
 		});
 	};
 
 	self.setter = function(value, path) {
+
 		if (!value) {
 			self.toggle('hidden', true);
 			return;
 		}
 
+		if (NOTMODIFIED(self.id, value))
+			return;
+
+
+		self.clear();
+
 		var apps = GET(source);
 		var has = false;
+
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i].split('X');
 			var a = item[0].parseInt();
@@ -2134,9 +2181,11 @@ COMPONENT('widgets', function() {
 			self.append(self.template(widget, app));
 			var obj = { id: widget.id, element: self.find('[data-id="{0}"] .widget-svg'.format(widget.id)), interval: widget.interval, app: app };
 			items.push(obj);
-			setTimeout(function() {
-				self.reload(obj, 0);
-			}, 1000);
+			(function(obj) {
+				setTimeout(function() {
+					self.reload(obj, 0);
+				}, 1000);
+			})(obj);
 		}
 
 		self.toggle('hidden', !has);

@@ -85,12 +85,23 @@
 					</div>
 					<div class="help">@(The secret key is a prevention for hijacking of request headers. You can obtain this secret from the author of this application.)</div>
 					<hr />
-					<div class="silver"><i class="fa fa-lock mr5"></i>@(Permissions)</div>
-					<div class="mt10" data-component="checkbox" data-component-path="applications.form.serviceworker">@(Allow service worker)</div>
+					<div class="silver m" style="font-size:18px"><i class="fa fa-lock mr5"></i>@(Permissions)</div>
+					<div data-component="checkbox" data-component-path="applications.form.serviceworker">@(Allow service worker)</div>
 					<div data-component="checkbox" data-component-path="applications.form.notifications">@(Allow push notifications)</div>
 					<div data-component="checkbox" data-component-path="applications.form.users">@(Allow to read users)</div>
 					<div data-component="checkbox" data-component-path="applications.form.applications">@(Allow to read applications)</div>
 					<div data-component="checkbox" data-component-path="applications.form.mobile">@(Allow for mobile devices)</div>
+					<br />
+					<div class="row">
+						<div class="col-md-12 m">
+							<div data-component="textbox" data-component-path="applications.form.settings" data-maxlength="200" data-control-icon="fa-cog" data-placeholder="@(You can type your own custom settings.)">@(Custom settings)</div>
+							<div data-component="template" data-component-path="applications.form.data">
+								<script type="text/html">
+									<div class="help">{{ if settings }}<i class="fa fa-life-saver"></i>{{ settings }}{{ else }}@(Each application can have special settings and this settings must be documented in the its documentation.){{ fi }}</div>
+								</script>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -208,6 +219,7 @@
 			applications.form.users = item.users;
 			applications.form.applications = item.applications;
 			applications.form.secret = item.secret;
+			applications.form.settings = item.settings;
 			applications.form.serviceworker = item.serviceworker;
 			applications.form.mobile = item.mobile;
 			applications.form.notifications = item.notifications;

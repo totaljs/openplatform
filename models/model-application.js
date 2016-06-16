@@ -17,6 +17,7 @@ function Application() {
 	this.search = '';
 	this.responsive = false;
 	this.secret = '';
+	this.settings = '';           // Application settings
 
 	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
@@ -58,6 +59,7 @@ Application.prototype.readonly = function() {
 	item.internal = self.internal;
 	item.events = self.events;
 	item.session = self.session;
+	item.settings = self.settings;
 	item.widgets = self.widgets;
 	item.roles = self.roles;
 	return item;
@@ -105,7 +107,7 @@ Application.prototype.prepare = function(item) {
  */
 Application.prototype.reload = function(callback) {
 	var self = this;
-	U.request(self.id, ['get', '< 5', 'dnscache'], function(err, response) {
+	U.request(self.id, ['get', '< 5', 'dnscache'], function(err, response, status, headers, ip) {
 
 		self.dateupdated = F.datetime;
 
@@ -155,7 +157,7 @@ Application.prototype.reload = function(callback) {
 					size = 3;
 				else if (size < 0)
 					size = 1;
-				self.widgets.push({ internal: w.url.hash(), name: w.name, url: w.url, interval: interval, roles: w.roles, redirect: w.redirect, size: size });
+				self.widgets.push({ internal: w.url.hash(), name: w.name, url: w.url, interval: interval, roles: w.roles, redirect: w.redirect, size: size, background: w.background || 'white', color: w.color || '#A0A0A0' });
 			}
 			if (!self.widgets.length)
 				self.widgets = null;
@@ -163,7 +165,9 @@ Application.prototype.reload = function(callback) {
 			self.widgets = null;
 
 		if (!(self.origin instanceof Array))
-			self.origin = null;
+			self.origin = [ip];
+		else if (self.origin.indexOf(ip) === -1)
+			self.origin.push(ip);
 
 		if (app.subscribe) {
 			for (var i = 0, length = app.subscribe.length; i < length; i++)

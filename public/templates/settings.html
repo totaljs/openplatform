@@ -5,12 +5,86 @@
 				<section>
 					<label><i class="fa fa-cogs"></i>@(Settings)</label>
 					<div>
-						<div class="padding">
-							asdsadsa
+						<div class="padding bg-smoke npt">
+							<div class="padding">
+								<br />
+								<div class="row">
+									<div class="col-md-12">
+										<div data-component="textbox" data-component-path="settings.url" data-maxlength="500" data-required="true" data-component-type="url" data-placeholder="http://openplatform.yourdomain.com">@(OpenPlatform URL address)</div>
+									</div>
+								</div>
+							</div>
 						</div>
+						<div class="padding npb">
+							<div class="padding">
+								<h2><i class="fa fa-universal-access color"></i>@(OpenPlatform)</h2>
+								<div class="row">
+									<br />
+									<div class="col-md-6 m">
+										<div data-component="textbox" data-component-path="settings.name" data-maxlength="50" data-required="true" data-component-value="''">@(OpenPlatform name)</div>
+									</div>
+									<div class="col-md-6 m">
+										<div data-component="textbox" data-component-path="settings.email" data-maxlength="120" data-required="true" data-component-type="email" data-component-value="'@'" data-control-icon="fa-envelope">@(Support email)</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6 m">
+										<div data-component="textbox" data-component-path="settings.author" data-maxlength="50" data-required="true" data-component-value="''" data-control-icon="fa-building">@(Company)</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="padding bg-smoke">
+							<div class="padding">
+								<h2><i class="fa fa-envelope color"></i>@(SMTP settings)</h2>
+								<br />
+								<div class="row">
+									<div class="col-md-6 m">
+										<div data-component="textbox" data-component-path="settings.smtp" data-maxlength="50" data-required="true" data-component-value="''" data-icon="fa-globe" data-placeholder="e.g. smtp.yourdomain.com">@(Hostname)</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 m">
+										<div data-component="textbox" data-component-path="settings.smtpsettings" data-maxlength="300" data-required="true" data-component-value="''" data-control-icon="fa-code">@(SMTP settings (JSON))</div>
+										<div class="help">@(The SMTP settings must be according to the Total.js documentation.)</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<br />
+						<div class="padding">
+							<div data-component="error" data-component-path="settings.response" class="ui-error-nmt"></div>
+							<div class="row">
+								<div class="col-md-6 col-md-offset-3" data-component="validation" data-component-path="settings">
+									<button class="button upper" disabled="disabled" data-component="click" data-component-path="settings_save">@(Save)</button>
+								</div>
+							</div>
+						</div>
+						<br />
 					</div>
 				</section>
 			</div>
 		</div>
 	</div>
 </div>
+<script>
+	var settings = {};
+
+	function settings_refresh() {
+		AJAX('GET /internal/settings/', 'settings');
+	}
+
+	function settings_save() {
+		if (!jC.valid('settings.*') || BLOCKED('settings', 3000))
+			return;
+		SETTER('loading', 'show');
+		RESET('settings.*', true);
+		AJAX('POST /internal/settings/', settings, function(response) {
+			SETTER('loading', 'hide', 1000);
+			SET('settings.response', response);
+			if (!response.success)
+				return;
+			success();
+		});
+	}
+</script>

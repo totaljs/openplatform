@@ -11,7 +11,8 @@
 	<meta name="robots" content="noindex, nofollow" />
 	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700" />
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" />
-	<script src="//code.jquery.com/jquery-3.0.0.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.min.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 </head>
 <body>
@@ -34,9 +35,7 @@
 			@{if user.superadmin}
 			<a href="/settings/applications/" class="jR">@(Applications)</a>
 			<a href="/settings/users/" class="jR">@(Users)</a>
-			<!--
 			<a href="/settings/" class="jR"><i class="fa fa-cogs"></i>@(Settings)</a>
-			-->
 			@{fi}
 		</nav>
 	</header>
@@ -47,8 +46,10 @@
 	@{if user.superadmin}
 	<div data-component="page" data-component-path="common.page" data-if="applications" class="hidden" data-template="/templates/applications.html"></div>
 	<div data-component="page" data-component-path="common.page" data-if="users" class="hidden" data-template="/templates/users.html"></div>
-	<div data-component="page" data-component-path="common.page" data-if="settings" class="hidden" data-template="/templates/settings.html"></div>
+	<div data-component="page" data-component-path="common.page" data-if="settings" class="hidden" data-template="/templates/settings.html" data-reload="settings_refresh"></div>
 	@{fi}
+
+	<div id="bottom"></div>
 
 	<script>
 

@@ -15,6 +15,7 @@
 						<hr />
 						<div class="mt10" data-component="checkbox" data-component-path="account.sounds">@(Enable sounds)</div>
 						<div data-component="checkbox" data-component-path="account.notifications">@(Enable flying notifications)</div>
+						<div data-component="checkbox" data-component-path="account.notificationsemail">@(Enable email notifications)</div>
 						<hr />
 						<div data-component="checkbox" data-component-path="account.ispassword" class="m">@(I want to change my password)</div>
 					</div>
@@ -54,6 +55,7 @@
 	function account_refresh() {
 		account.sounds = user.sounds;
 		account.notifications = user.notifications;
+		account.notificationsemail = user.notificationsemail;
 		account.skip = true;
 		account.ispassword = jC.parseQuery().password === '1';
 		UPDATE('account');

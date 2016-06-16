@@ -13,6 +13,10 @@ OPENPLATFORM.maximize = function(url) {
 	return OPENPLATFORM.send('maximize', url);
 };
 
+OPENPLATFORM.restart = function() {
+	return OPENPLATFORM.send('restart', location.href);
+};
+
 OPENPLATFORM.open = function(id) {
 	return OPENPLATFORM.send('open', id);
 };

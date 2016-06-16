@@ -16,3 +16,4 @@ error-application-origin        : Your IP address is not valid for this operatio
 error-user-notfound             : User not found.
 error-user-application          : User doesn't have allowed this application.
 error-user-widgets              : The application with widget was not found in the repository.
+error-settings-smtp             : A problem with SMTP: @.

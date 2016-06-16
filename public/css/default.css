@@ -34,6 +34,7 @@ h2 .fa { margin-right: 10px; }
 #success { left: 50%; top: 28px; background: linear-gradient(#66B258,#509D43); font-size: 18px; line-height: 0; position: fixed; z-index: 20; color: white; text-align: right; padding: 2px 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: none; border-radius: 20px; margin-left: -30px; }
 .container-padding { padding: 50px 0 20px; }
 
+.color { color: #017CCA; }
 .green { color: #8CC152; }
 .red { color: #ED5565; }
 .b { font-weight: bold; }
@@ -49,12 +50,14 @@ h2 .fa { margin-right: 10px; }
 .mt5 { margin-top: 5px; }
 .mt10 { margin-top: 10px; }
 
-.widgets { margin-bottom: 15px; }
-.widgets .widget-svg { background-color: white; font-size: 11px; padding: 10px; border-radius: 0 0 4px 4px; }
-.widgets .widget-title { font-size: 11px; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); color: #A0A0A0; padding: 10px 18px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; line-height: 16px; }
+.widgets { }
+.widgets .widget-svg { font-size: 11px; padding: 0; border-radius: 0 0 4px 4px; }
+.widgets .widget-title { font-size: 11px; text-align: left; padding: 10px 18px 5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; line-height: 16px; }
 .widgets .widget-title img { border-radius: 4px; margin-right: 4px; vertical-align: middle; }
 .widgets .widget svg { width: 100%; height: auto; }
-.widgets .widget { cursor: pointer; }
+.widgets .widget { cursor: pointer; margin-bottom: 25px; }
+.widget-loading { padding: 48px 0; text-align: center; }
+.widget > div { border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
 .w100p { width: 100%; }
 
@@ -76,6 +79,7 @@ h2 .fa { margin-right: 10px; }
 section { border: 1px solid #F0F0F0; background-color: white; border-radius: 4px; margin-bottom: 30px; position: relative; }
 section > label { font-family: $font; text-transform: uppercase; color: #A0A0A0; padding: 10px 18px; display: block; border-bottom: 1px solid #F0F0F0; background: linear-gradient(white,#F8F8F8); border-radius: 4px 4px 0 0; font-size: 11px; font-weight: 700; }
 section > label .fa { margin-right: 7px; }
+section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 .section-button { position: absolute; margin: 10px 0 0 0; right: 15px; font-size: 11px; }
 .section-button a { color: #A0A0A0; }
 .section-button .fa { margin-right: 5px; }

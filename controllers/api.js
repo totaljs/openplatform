@@ -3,6 +3,7 @@ exports.install = function() {
 	F.route('/api/notifications/', json_notifications, ['#authorize', 'post', '*Notification']);
 	F.route('/api/applications/',  json_applications,  ['#authorize']);
 	F.route('/api/users/',         json_users,         ['#authorize']);
+	F.route('/openplatform/',      json_info);
 	F.route('/session/',           json_session);
 };
 
@@ -92,8 +93,9 @@ function json_users() {
 	var arr = [];
 
 	for (var i = 0, length = USERS.length; i < length; i++) {
-		var item = USERS[i];
-		arr.push(item.export());
+		var item = USERS[i].export();
+		item.has = USERS[i].applications[self.app.internal] ? true : false;
+		arr.push(item);
 	}
 
 	self.json(arr);
@@ -133,8 +135,12 @@ function json_session() {
 		return self.invalid(400).push('error-application-secret');
 
 	var output = user.export();
+	output.settings = app.settings;
 	output.roles = user.applications[app.internal];
 	output.openplatform = OPENPLATFORM.info;
 	self.json(output);
 }
 
+function json_info() {
+	this.json(OPENPLATFORM.info);
+}
