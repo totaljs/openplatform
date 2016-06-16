@@ -1687,6 +1687,7 @@ COMPONENT('processes', function() {
 	};
 
 	self.open = function(id, url) {
+
 		var item = GET(source).findItem('id', id);
 		if (!item)
 			return;
@@ -1695,7 +1696,6 @@ COMPONENT('processes', function() {
 		if (!iframe) {
 			redirect = url || item.url;
 			self.set(id);
-			SETTER('loading', 'show');
 			return self;
 		}
 
@@ -1741,6 +1741,7 @@ COMPONENT('processes', function() {
 			self.title(iframe.title);
 			iframe.element.removeClass('hidden');
 			location.hash = item.linker;
+			SETTER('loading', 'hide', 1000);
 			return;
 		}
 
@@ -1781,6 +1782,7 @@ COMPONENT('processes', function() {
 			loader.addClass('hidden');
 		});
 
+		SETTER('loading', 'hide', 2000);
 		UPDATE(source, 100);
 		self.title(iframe.title);
 	};
@@ -2120,7 +2122,15 @@ COMPONENT('widgets', function() {
 			if (!response)
 				return self.empty();
 
+			var hash;
+
 			if (response.isJSON()) {
+
+				hash = HASH(response);
+				if (hash === item.hash)
+					return;
+
+				item.hash = hash;
 				response = JSON.parse(response);
 				// chart.js
 				if (charts[item.id])
@@ -2139,7 +2149,7 @@ COMPONENT('widgets', function() {
 			if (index === -1)
 				return item.element.html(empty);
 			svg = svg.replace(/id\=".*?\"/g, '').replace(/\s{2,}/g, ' ').replace(/\s+\>/g, '>').replace(/\<script.*?\<\/script\>/gi, '');
-			var hash = HASH(svg);
+			hash = HASH(svg);
 			if (hash === item.hash)
 				return;
 			item.hash = hash;
