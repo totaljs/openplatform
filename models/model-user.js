@@ -123,7 +123,6 @@ User.prototype.readonly = function() {
 	item.photo = OPENPLATFORM.users.photo(self.email);
 	item.email = self.email;
 	item.phone = self.phone;
-	item.alias = self.alias;
 	item.online = self.online;
 	item.blocked = self.blocked;
 	item.group = self.group;
@@ -147,7 +146,6 @@ User.prototype.export = function() {
 	item.photo = OPENPLATFORM.users.photo(self.email);
 	item.email = self.email;
 	item.phone = self.phone;
-	item.alias = self.alias;
 	item.online = self.online;
 	item.blocked = self.blocked;
 	item.group = self.group;
@@ -175,6 +173,8 @@ User.prototype.prepare = function(item) {
 	}
 	self.search = (self.lastname + ' ' + self.firstname + ' ' + self.group).toSearch();
 	self.internal = (self.id || '').hash();
+	if (!(self.widgets instanceof Array))
+		self.widgets = [];
 	return self;
 };
 

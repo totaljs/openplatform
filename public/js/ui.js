@@ -133,10 +133,6 @@ COMPONENT('validation', function() {
 	};
 });
 
-/**
- * Checkbox
- * @version 1.0.0
- */
 COMPONENT('checkbox', function() {
 
 	var self = this;
@@ -504,48 +500,6 @@ COMPONENT('template', function() {
 		KEYPRESS(function() {
 			self.html(self.template(value)).removeClass('hidden');
 		}, 100, self.id);
-	};
-});
-
-COMPONENT('repeater', function() {
-
-	var self = this;
-	var recompile = false;
-
-	self.readonly();
-
-	self.make = function() {
-		var element = self.element.find('script');
-
-		if (!element.length) {
-			element = self.element;
-			self.element = self.element.parent();
-		}
-
-		var html = element.html();
-		element.remove();
-		self.template = Tangular.compile(html);
-		recompile = html.indexOf('data-component="') !== -1;
-	};
-
-	self.setter = function(value) {
-
-		if (!value || !value.length) {
-			self.empty();
-			return;
-		}
-
-		var builder = [];
-		for (var i = 0, length = value.length; i < length; i++) {
-			var item = value[i];
-			item.index = i;
-			builder.push(self.template(item).replace(/\$index/g, i.toString()).replace(/\$/g, self.path + '[' + i + ']'));
-		}
-
-		self.html(builder);
-
-		if (recompile)
-		   jC.compile();
 	};
 });
 
@@ -1044,10 +998,6 @@ COMPONENT('dropdowncheckbox', function() {
 	});
 });
 
-/**
- * Disable
- * @version 1.0.0
- */
 COMPONENT('disable', function() {
 	var self = this;
 	var condition = self.attr('data-if');
@@ -1080,10 +1030,6 @@ COMPONENT('disable', function() {
 	};
 });
 
-/**
- * Confirm Message
- * @version 1.0.0
- */
 COMPONENT('confirm', function() {
 	var self = this;
 	var is = false;
@@ -1169,10 +1115,6 @@ COMPONENT('loading', function() {
 	};
 });
 
-/**
- * Pagination
- * @version 1.0.0
- */
 COMPONENT('pagination', function() {
 
 	var self = this;
@@ -1479,7 +1421,7 @@ COMPONENT('applications', function() {
 	var self = this;
 	var running = self.attr('data-running') === 'true';
 
-	self.template = Tangular.compile('<div class="col-md-2 col-sm-3 col-xs-6 ui-app{{ if !online }} offline{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
+	self.template = Tangular.compile('<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 ui-app{{ if !online }} offline{{ fi }}{{ if !mobile }} hidden-xs hidden-sm{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" onerror="onImageError(this)" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
 	self.readonly();
 
 	self.make = function() {
@@ -1525,7 +1467,14 @@ COMPONENT('applications', function() {
 				continue;
 			}
 
-			el.find('img').attr('src', item.icon);
+			var img = el.find('img');
+
+			if (!item.online) {
+				if (img.attr('src') !== '/img/empty.png')
+					img.attr('src', item.icon);
+			} else
+				img.attr('src', item.icon);
+
 			el.find('.name').html((item.running ? '<i class="fa fa-circle"></i>' : '') + item.title);
 			el.find('.version').html('v' + item.version);
 			el.toggleClass('offline', !item.online);
@@ -1687,7 +1636,6 @@ COMPONENT('processes', function() {
 	};
 
 	self.open = function(id, url) {
-
 		var item = GET(source).findItem('id', id);
 		if (!item)
 			return;
@@ -1696,6 +1644,7 @@ COMPONENT('processes', function() {
 		if (!iframe) {
 			redirect = url || item.url;
 			self.set(id);
+			SETTER('loading', 'show');
 			return self;
 		}
 
@@ -1741,7 +1690,6 @@ COMPONENT('processes', function() {
 			self.title(iframe.title);
 			iframe.element.removeClass('hidden');
 			location.hash = item.linker;
-			SETTER('loading', 'hide', 1000);
 			return;
 		}
 
@@ -1754,7 +1702,7 @@ COMPONENT('processes', function() {
 		iframe.element = self.find('[data-token="{0}"]'.format(iframe.token));
 		iframe.iframe = iframe.element.find('iframe');
 		iframe.dateopened = new Date();
-		iframe.session = item.session;
+		iframe.session = item.sessionurl;
 		iframes.push(iframe);
 
 		setTimeout(function() {
@@ -1763,8 +1711,8 @@ COMPONENT('processes', function() {
 
 		location.hash = item.linker;
 
-		if (item.session) {
-			doSession(iframe.iframe, self.makeurl(item.session, item), function() {
+		if (item.sessionurl) {
+			createSession(iframe.iframe, self.makeurl(item.sessionurl, item), function() {
 				setTimeout(function() {
 					iframe.iframe.attr('src', self.makeurl(redirect || item.url, item));
 					redirect = '';
@@ -1782,7 +1730,7 @@ COMPONENT('processes', function() {
 			loader.addClass('hidden');
 		});
 
-		SETTER('loading', 'hide', 2000);
+		SETTER('loading', 'hide', 4000);
 		UPDATE(source, 100);
 		self.title(iframe.title);
 	};
@@ -2048,7 +1996,7 @@ COMPONENT('widgets', function() {
 	var empty = '<svg></svg>';
 	var charts = {};
 
-	self.template = Tangular.compile('<div class="{{ if size === 1 }}col-md-4 col-sm-6{{ fi }}{{ if size === 2 }}col-sm-8{{ fi }}{{ if size === 3 }}col-md-12{{ fi }} widget" data-id="{{ id }}" data-internal="{{ interval }}"><div style="background:{{ background }};color:{{ color }}"><div class="widget-title"><img src="{{ $.icon }}" width="12" alt="{{ $.name }}" />{{ $.name }}: {{ name }}</div><div class="widget-svg"><div class="widget-loading"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div></div>');
+	self.template = Tangular.compile('<div class="{{ if size === 1 }}col-md-4 col-sm-4{{ fi }}{{ if size === 2 }}col-sm-8{{ fi }}{{ if size === 3 }}col-md-12{{ fi }} widget" data-id="{{ id }}" data-internal="{{ interval }}"><div style="background:{{ background }};color:{{ color }}"><div class="widget-title"><img src="{{ $.icon }}" width="12" alt="{{ $.name }}" />{{ $.name }}: {{ name }}</div><div class="widget-svg"><div class="widget-loading"><i class="fa fa-spin fa-spinner fa-2x"></i></div></div></div></div>');
 	self.readonly();
 	self.make = function() {
 		self.toggle('row widgets hidden');
@@ -2110,7 +2058,7 @@ COMPONENT('widgets', function() {
 	};
 
 	self.reload = function(item, index) {
-		if (!item.app.online)
+		if (!item.app.online || !item.app.widgets)
 			return;
 
 		var widget = item.app.widgets.findItem('id', item.id);
@@ -2136,7 +2084,7 @@ COMPONENT('widgets', function() {
 				if (charts[item.id])
 					charts[item.id].destroy();
 				else
-					item.element.html('<canvas width="{0}" height="{1}"></canvas>'.format(widget.size === 1 ? 400 : widget.size === 2 ? 600 : 800, widget.size === 1 ? 250 : widget.size === 2 ? 180 : 220));
+					item.element.html('<div style="padding:10px"><canvas width="{0}" height="{1}"></canvas></div>'.format(widget.size === 1 ? 380 : widget.size === 2 ? 580 : 780, widget.size === 1 ? 234 : widget.size === 2 ? 154 : 194));
 
 				charts[item.id] = new Chart(item.element.find('canvas').get(0), response);
 				return;
@@ -2167,7 +2115,6 @@ COMPONENT('widgets', function() {
 		if (NOTMODIFIED(self.id, value))
 			return;
 
-
 		self.clear();
 
 		var apps = GET(source);
@@ -2178,7 +2125,7 @@ COMPONENT('widgets', function() {
 			var a = item[0].parseInt();
 			var b = item[1].parseInt();
 			var app = apps.findItem('internal', a);
-			if (!app)
+			if (!app || !app.widgets)
 				continue;
 			var widget = app.widgets.findItem('internal', b);
 			if (!widget)

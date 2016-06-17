@@ -26,7 +26,7 @@
 			<div data-component="grid" data-component-id="applications" data-component-path="applications.datasource" data-pagination-path="applications.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(The database does not contain any data.)">
 				<script type="text/html">
 				<tr>
-					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" border="0" height="14" /></td>
+					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" onerror="onImageError(this)" border="0" height="14" /></td>
 					<td><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }} <span class="fs11 silver">v{{ version }}</span></td>
 					<td style="width:200px" class="{{ if responsive }}green{{ else }}silver{{ fi }} fs11">{{ if !responsive }}@(not){{ fi }} @(optimized for mobile devices)</td>
 					<td style="width:80px"><i class="fa fa-clock-o silver mr3"></i>{{ dateupdated | format('@(HH:mm)')}}</td>
@@ -268,7 +268,7 @@
 		self.readonly();
 
 		self.make = function() {
-			self.html('<img src="{0}" class="img-responsive img-application" alt="Application Icon" />'.format(last));
+			self.html('<img src="{0}" class="img-responsive img-application" onerror="onImageError(this)" alt="Application Icon" />'.format(last));
 		};
 
 		self.setter = function(value) {

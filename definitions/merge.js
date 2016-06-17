@@ -1,3 +1,5 @@
+// Merging static files
+
 F.merge('/js/default.js', '/js/jctajr.min.js', '/js/ui.js', '/js/default.js');
 F.merge('/js/login.js', '/js/jctajr.min.js', '/js/ui.js');
 

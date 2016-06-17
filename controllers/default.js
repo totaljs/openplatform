@@ -1,15 +1,17 @@
 exports.install = function() {
-	F.route('/*', 'index', ['authorize']);
-	F.route('/', view_login, ['unauthorize']);
-	F.route('/logoff/', logoff, ['authorize']);
+	// Common routes
+	F.route('/',        view_login, ['unauthorize']);
+	F.route('/*',      'index',     ['authorize']);
+	F.route('/logoff/', logoff,     ['authorize']);
 
-	// Localization
+	// Localization for client-side templates
 	F.localize('/templates/*.html', ['compress']);
 
-	// File routing
+	// Photo handling
 	F.file('/photos/*.jpg', photo);
 };
 
+// Process user's photos
 function photo(req, res) {
 	var id = req.split[2];
 	var path = F.path.public(req.url.substring(1));
@@ -20,12 +22,12 @@ function photo(req, res) {
 
 	F.path.exists(path, function(e) {
 		if (e)
-			res.file(path);
-		else
-			res.file(F.path.public('img/face.jpg'));
+			return res.file(path);
+		res.file(F.path.public('img/face.jpg'));
 	});
 }
 
+// Performs sign out
 function logoff() {
 	var self = this;
 	self.cookie(CONFIG('cookie'), '', '-1 day');
@@ -33,6 +35,7 @@ function logoff() {
 	self.redirect('/');
 }
 
+// Returns login form or can perform auto-login according to `token` in query string
 function view_login() {
 	var self = this;
 

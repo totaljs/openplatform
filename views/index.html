@@ -25,6 +25,7 @@
 
 	<header>
 		<div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div>
+		<img src="/img/empty.png" class="user-photo" />
 		<div class="usermenu">
 			<a href="/logoff/"><i class="fa fa-power-off"></i></a>
 		</div>
@@ -53,8 +54,9 @@
 
 	<script>
 
-		var common = {};
+		Chart.defaults.global.legend.display = false;
 
+		var common = {};
 		common.datetime = new Date();
 		common.name = '@{config.name}';
 		common.url = '@{config.url}';
@@ -72,7 +74,9 @@
 
 		var user = JSON.parse('@{json(user.readonly())}');
 		user.volume = 0.5;
+		$('.user-photo').attr('src', user.photo);
 
+		// Routing
 		jR.route('/', function() {
 			SET('common.page', 'dashboard');
 		});
@@ -93,30 +97,32 @@
 			SET('common.page', 'account');
 		});
 
+		// Important: this helper is here for localization
+		// The JavaScript below contains bad code because the code contains Total.js localization elements (but it works when)
 		Tangular.register('time', function(value) {
 			var diff = Date.now() - value.parseDate().getTime();
 			var minutes = ((diff / 1000) / 60) >> 0;
 
 			if (minutes < 60) {
 				if (minutes < 3)
-					return 'now';
-				return minutes + ' minutes ago';
+					return '@(now)';
+				return @(minutes + ' minutes ago');
 			}
 
 			var hours = (minutes / 60) >> 0;
 			if (hours < 24)
-				return hours + ' ' + Tangular.helpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago';
+				return @(hours + ' ' + Tangular.helpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
 
 			var days = (hours / 24) >> 0;
 			if (days < 30)
-				return days + ' ' + Tangular.helpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago';
+				return @(days + ' ' + Tangular.helpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
 
 			var months = (days / 29) >> 0;
 			if (months < 12)
-				return months + ' ' + Tangular.helpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago';
+				return @(months + ' ' + Tangular.helpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
 
 			var years = (month / 12) >> 0;
-			return years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago';
+			return @(years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
 		});
 	</script>
 

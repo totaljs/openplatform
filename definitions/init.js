@@ -10,9 +10,7 @@ F.on('ready', function() {
 });
 
 F.on('service', function(counter) {
-
 	// Realods all applications each 5 minutes
 	if (counter % 5 === 0)
 		OPENPLATFORM.applications.reload();
-
 });

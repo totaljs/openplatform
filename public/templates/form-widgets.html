@@ -8,7 +8,7 @@
 				<div class="userwidget-container{{ if !selected }} userwidget-container-disabled{{ fi }}" data-id="{{ id }}"{{ if selected }} draggable="true"{{ fi }}>
 					<div class="userwidget-header">
 						<div class="userwidget-checkbox"><i class="fa fa-check"></i></div>
-						<div class="userwidget-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" alt="{{ title }}" /></div>
+						<div class="userwidget-icon"><img src="{{ icon }}" class="img-rounded" onerror="onImageError(this)" width="30" border="0" alt="{{ title }}" /></div>
 						<b>{{ name }}</b>
 						<div class="fs11">{{ title }}</div>
 					</div>
@@ -148,9 +148,7 @@ COMPONENT('userwidgets', function() {
 			item.widgets.forEach(function(widget) {
 
 				if (widget.roles && widget.roles.length) {
-					if (!item.roles || !item.roles.length)
-						return;
-					if (!widget.roles.hasRoles(item.roles))
+					if (!item.roles || !item.roles.length || !widget.roles.hasRoles(item.roles))
 						return;
 				}
 

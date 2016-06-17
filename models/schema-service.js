@@ -1,12 +1,15 @@
 const HEADERS = {};
 const EMPTYARRAY = [];
 
-HEADERS['x-openplatform'] = F.config.url;
-
 NEWSCHEMA('Service').make(function(schema) {
 
 	schema.define('event', 'String(100)');   // Event name
 	schema.define('data', 'Object');         // Custom data (JSON)
+
+	schema.setPrepare(function(name, value) {
+		if (name === 'event')
+			return value.toLowerCase();
+	});
 
 	schema.setSave(function(error, model, options, callback) {
 
@@ -25,6 +28,7 @@ NEWSCHEMA('Service').make(function(schema) {
 		var apps = [];
 		var data = JSON.stringify(model.$clean());
 
+		HEADERS['x-openplatform'] = F.config.url;
 		HEADERS['x-openplatform-user'] = controller.user.id;
 		HEADERS['x-openplatform-id'] = controller.app.id;
 

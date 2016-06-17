@@ -11,159 +11,159 @@ $(document).ready(function() {
 });
 
 $(window).on('message', function(e) {
-		var data = JSON.parse(e.originalEvent.data);
-		if (!data.openplatform)
-			return;
-		var processes = FIND('processes');
-		var item = processes.findItem(e.originalEvent.source);
-		var tmp;
-		var app;
+	var data = JSON.parse(e.originalEvent.data);
+	if (!data.openplatform)
+		return;
+	var processes = FIND('processes');
+	var item = processes.findItem(e.originalEvent.source);
+	var tmp;
+	var app;
 
-		if (!item)
-			return;
+	if (!item)
+		return;
 
-		switch (data.type) {
+	switch (data.type) {
 
-			case 'profile':
+		case 'profile':
 
-				if (!item)
-					return;
+			if (!item)
+				return;
 
-				tmp = $.extend({}, user);
+			tmp = $.extend({}, user);
+			delete tmp.widgets;
+			app = dashboard.applications.findItem('id', item.id);
+			if (app)
+				tmp.roles = app.roles;
+			processes.message(item, 'profile', tmp, data.callback);
+			break;
+
+		case 'info':
+			tmp = {};
+			tmp.openplatform = true;
+			tmp.version = common.version;
+			tmp.name = common.name;
+			tmp.url = common.url;
+			tmp.language = common.language;
+			tmp.isfocused = common.isfocused;
+			tmp.ismobile = isMOBILE;
+			tmp.datetime = common.datetime;
+			processes.message(item, 'info', tmp, data.callback);
+			break;
+
+		case 'users':
+
+			if (!item)
+				return;
+
+			app = dashboard.applications.findItem('id', item.id);
+			if (!app)
+				return;
+
+			if (!app.users) {
+				processes.message(item, 'users', null, data.callback, new Error('You don\'t have permissions for this operation.'));
+				return;
+			}
+
+			AJAXCACHE('GET /internal/dashboard/users/', function(response) {
+				processes.message(item, 'users', response, data.callback);
+			}, 1000 * 120);
+
+			break;
+
+		case 'maximize':
+
+			if (!item)
+				return;
+
+			app = dashboard.applications.findItem('id', item.id);
+			// TODO: add user privileges
+			if (app)
+				SETTER('processes', 'open', app.id, data.body);
+			break;
+
+		case 'restart':
+			app = dashboard.applications.findItem('id', item.id);
+
+			if (app) {
+				SETTER('loading', 'show');
+				SETTER('processes', 'kill', app.id);
+				setTimeout(function() {
+					SETTER('processes', 'open', app.id, data.body || app.url);
+				}, 4000);
+			}
+
+			break;
+
+		case 'loading':
+			SETTER('loading', data.body ? 'show' : 'hide');
+			break;
+
+		case 'notify':
+
+			if (!item)
+				return;
+
+			app = dashboard.applications.findItem('id', item.id);
+			if (!app || !app.notifications)
+				return;
+			dashboard_notifications_process([{ internal: app.internal, datecreated: data.body.datecreated, type: data.body.type, body: data.body.body, url: data.body.url }]);
+			break;
+
+		case 'minimize':
+
+			if (!item)
+				return;
+
+			app = dashboard.applications.findItem('id', item.id);
+			if (app && dashboard.current === app.id)
+				SETTER('processes', 'minimize');
+			break;
+
+		case 'open':
+			app = dashboard.applications.findItem('id', data.body);
+			if (app)
+				SET('dashboard.current', app.id);
+			break;
+
+		case 'kill':
+
+			if (!item)
+				return;
+
+			app = dashboard.applications.findItem('id', item.id);
+			if (app)
+				SETTER('processes', 'kill', item.id);
+			break;
+
+
+		case 'applications':
+
+			if (!item)
+				return;
+
+			app = dashboard.applications.findItem('id', item.id);
+
+			if (!app)
+				return;
+
+			if (!app.applications) {
+				processes.message(item, 'applications', null, data.callback, new Error('You don\'t have permissions for this operation.'));
+				return;
+			}
+
+			var arr = [];
+			for (var i = 0, length = dashboard.applications.length; i < length; i++) {
+				tmp = $.extend({}, dashboard.applications[i]);
+				delete tmp.events;
+				delete tmp.sessionurl;
+				delete tmp.internal;
 				delete tmp.widgets;
-				app = dashboard.applications.findItem('id', item.id);
-				if (app)
-					tmp.roles = app.roles;
-				processes.message(item, 'profile', tmp, data.callback);
-				break;
+				arr.push(tmp);
+			}
 
-			case 'info':
-				tmp = {};
-				tmp.openplatform = true;
-				tmp.version = common.version;
-				tmp.name = common.name;
-				tmp.url = common.url;
-				tmp.language = common.language;
-				tmp.isfocused = common.isfocused;
-				tmp.ismobile = isMOBILE;
-				tmp.datetime = common.datetime;
-				processes.message(item, 'info', tmp, data.callback);
-				break;
-
-			case 'users':
-
-				if (!item)
-					return;
-
-				app = dashboard.applications.findItem('id', item.id);
-				if (!app)
-					return;
-
-				if (!app.users) {
-					processes.message(item, 'users', null, data.callback, new Error('You don\'t have permissions for this operation.'));
-					return;
-				}
-
-				AJAXCACHE('GET /internal/dashboard/users/', function(response) {
-					processes.message(item, 'users', response, data.callback);
-				}, 1000 * 120);
-
-				break;
-
-			case 'maximize':
-
-				if (!item)
-					return;
-
-				app = dashboard.applications.findItem('id', item.id);
-				// TODO: add user privileges
-				if (app)
-					SETTER('processes', 'open', app.id, data.body);
-				break;
-
-			case 'restart':
-				app = dashboard.applications.findItem('id', item.id);
-
-				if (app) {
-					SETTER('loading', 'show');
-					SETTER('processes', 'kill', app.id);
-					setTimeout(function() {
-						SETTER('processes', 'open', app.id, data.body || app.url);
-					}, 4000);
-				}
-
-				break;
-
-			case 'loading':
-				SETTER('loading', data.body ? 'show' : 'hide');
-				break;
-
-			case 'notify':
-
-				if (!item)
-					return;
-
-				app = dashboard.applications.findItem('id', item.id);
-				if (!app || !app.notifications)
-					return;
-				dashboard_notifications_process([{ internal: app.internal, datecreated: data.body.datecreated, type: data.body.type, body: data.body.body, url: data.body.url }]);
-				break;
-
-			case 'minimize':
-
-				if (!item)
-					return;
-
-				app = dashboard.applications.findItem('id', item.id);
-				if (app && dashboard.current === app.id)
-					SETTER('processes', 'minimize');
-				break;
-
-			case 'open':
-				app = dashboard.applications.findItem('id', data.body);
-				if (app)
-					SET('dashboard.current', app.id);
-				break;
-
-			case 'kill':
-
-				if (!item)
-					return;
-
-				app = dashboard.applications.findItem('id', item.id);
-				if (app)
-					SETTER('processes', 'kill', item.id);
-				break;
-
-
-			case 'applications':
-
-				if (!item)
-					return;
-
-				app = dashboard.applications.findItem('id', item.id);
-
-				if (!app)
-					return;
-
-				if (!app.applications) {
-					processes.message(item, 'applications', null, data.callback, new Error('You don\'t have permissions for this operation.'));
-					return;
-				}
-
-				var arr = [];
-				for (var i = 0, length = dashboard.applications.length; i < length; i++) {
-					tmp = $.extend({}, dashboard.applications[i]);
-					delete tmp.events;
-					delete tmp.session;
-					delete tmp.internal;
-					delete tmp.widgets;
-					arr.push(tmp);
-				}
-
-				processes.message(item, 'applications', arr, data.callback);
-				break;
-		}
+			processes.message(item, 'applications', arr, data.callback);
+			break;
+	}
 });
 
 jR.on('location', function(url) {
@@ -249,9 +249,15 @@ jQuery.easing.easeOutBounce = function(e, f, a, h, g) {
 	}
 };
 
-function doSession(iframe, url, callback) {
+function onImageError(image) {
+	// image.onerror = null;
+	image.src = '/img/empty.png';
+	return true;
+}
 
-	var chrome = navigator.userAgent.indexOf('Chrome') > -1;
+function createSession(iframe, url, callback) {
+
+	var chrome = navigator.userAgent.match(/Chrome|CriOS/gi) ? true : false;
 	var safari = navigator.userAgent.indexOf('Safari') > -1;
 
 	if (chrome && safari)

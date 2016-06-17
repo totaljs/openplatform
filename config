@@ -1,6 +1,8 @@
+// You can rewrite all info
 name                            : OpenPlatform
 version                         : 0.0.1
 author                          : Peter Širka
+email                           : petersirka@gmail.com
 secret                          : 2016OP
 
 url                             : http://openplatform.totaljs.com

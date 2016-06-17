@@ -33,7 +33,7 @@
 				<script type="text/html">
 				<tr>
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
-					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">blocked</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">superadmin</span>{{ fi }}</td>
+					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">@(superadmin)</span>{{ fi }}</td>
 					<td><span class="fs11 silver">{{ group }}</span></td>
 					<td style="width:60px">{{ if language }}<i class="fa fa-language mr5"></i><span class="badge badge-blue">{{ language }}</span>{{ fi }}</td>
 					<td style="width:150px">{{ if datelogged }}<i class="fa fa-clock-o silver mr3"></i>{{ datelogged | time }}{{ else }}@(not logged){{ fi }}</td>
@@ -61,25 +61,25 @@
 					<script type="text/html">
 						{{ if datelogged }}
 						<div class="keyvalue">
-							<div class="key">Logged</div>
+							<div class="key">@(Logged)</div>
 							<div class="value">{{ if online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ datelogged | format('@(yyyy-MM-dd HH:mm)') }}</div>
 						</div>
 						{{ fi }}
 						{{ if datecreated }}
 						<div class="keyvalue">
-							<div class="key">Created</div>
+							<div class="key">@(Created)</div>
 							<div class="value">{{ datecreated | format('@(yyyy-MM-dd HH:mm)') }}</div>
 						</div>
 						{{ fi }}
 						{{ if dateupdated }}
 						<div class="keyvalue">
-							<div class="key">Updated</div>
+							<div class="key">@(Updated)</div>
 							<div class="value">{{ dateupdated | format('@(yyyy-MM-dd HH:mm)') }}</div>
 						</div>
 						{{ fi }}
 						{{ if datepassword }}
 						<div class="keyvalue">
-							<div class="key">Password changed</div>
+							<div class="key">@(Password changed)</div>
 							<div class="value">{{ datepassword | format('@(yyyy-MM-dd HH:mm)') }}</div>
 						</div>
 						{{ fi }}
@@ -154,7 +154,7 @@
 							<div class="userapp-container userapp-container-disabled" data-id="{{ internal }}">
 								<div class="userapp-header">
 									<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
-									<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" alt="{{ title }}" /></div>
+									<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" onerror="onImageError(this)" alt="{{ title }}" /></div>
 									<b>{{ title }}</b>
 									<div class="fs11">v{{ version }}</div>
 								</div>

@@ -1,3 +1,7 @@
+// `User`
+// `UserGroup`
+// `UserNewsletter`
+
 const Fs = require('fs');
 
 NEWSCHEMA('User').make(function(schema) {
@@ -174,7 +178,7 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 	});
 });
 
-// Internal admin newsletter
+// Internal newsletter (admin can send email)
 NEWSCHEMA('UserNewsletter').make(function(schema) {
 
 	schema.define('group', '[String]');            // User's group

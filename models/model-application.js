@@ -2,40 +2,48 @@ global.APPLICATIONS = [];
 
 function Application() {
 
+	// openplatform.json:
 	this.id = 'url-to-openplatform.json';
-	this.internal = 0;
-	this.title = '';
 	this.name = '';
 	this.icon = '';
 	this.version = '';
 	this.author = '';
 	this.description = '';
 	this.email = '';
-	this.url = '';
-	this.serviceurl = '';
+	this.url = '';                // Application URL
+	this.serviceurl = '';         // URL for service worker
+	this.sessionurl = '';         // URL to create a session
+	this.responsive = false;
+
+	// internal properties:
 	this.status = '';
 	this.search = '';
-	this.responsive = false;
+	this.internal = 0;
+	this.title = '';
 	this.secret = '';
 	this.settings = '';           // Application settings
 
 	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
 	this.serviceworker = false;   // Can communicate via API
-	this.users = false;
-	this.applications = false;
-	this.mobile = false;
+	this.users = false;           // Can read all users?
+	this.applications = false;    // Would be read all applications?
+	this.mobile = false;          // Is to be visible for mobile devices?
 
-	this.events = null;           // events
+	this.events = null;           // Registered events for service worker
 	this.origin = null; 		  // Can contains only IP address
-	this.widgets = null;          // Widgets (Object array)
-	this.roles = null;
+	this.widgets = null;          // Widgets (Object Array)
+	this.roles = null;            // Roles (Stirng Array)
 
 	// Meta data
 	this.datecreated = null;
 	this.dateupdated = null;
 }
 
+/**
+ * Generates a public data
+ * @return {[type]} [description]
+ */
 Application.prototype.readonly = function() {
 	var self = this;
 	var item = {};
@@ -58,13 +66,17 @@ Application.prototype.readonly = function() {
 	item.url = self.url;
 	item.internal = self.internal;
 	item.events = self.events;
-	item.session = self.session;
+	item.sessionurl = self.sessionurl;
 	item.settings = self.settings;
 	item.widgets = self.widgets;
 	item.roles = self.roles;
 	return item;
 };
 
+/**
+ * Generates a public data for other applications
+ * @return {Object}
+ */
 Application.prototype.export = function() {
 	var self = this;
 	var item = {};
@@ -85,7 +97,7 @@ Application.prototype.export = function() {
 	item.users = self.users;
 	item.online = self.online;
 	item.url = self.url;
-	item.session = self.session;
+	item.sessionurl = self.sessionurl;
 	item.roles = self.roles;
 	return item;
 };
@@ -135,7 +147,7 @@ Application.prototype.reload = function(callback) {
 		self.author = app.author;
 		self.responsive = app.responsive || false;
 		self.status = 'ready';
-		self.session = app.session;
+		self.sessionurl = app.sessionurl;
 		self.online = true;
 		self.events = {};
 		self.origin = app.origin;
@@ -147,7 +159,7 @@ Application.prototype.reload = function(callback) {
 			self.widgets = [];
 			for (var i = 0, length = widgets.length; i < length; i++) {
 				var w = widgets[i];
-				if (!w)
+				if (!w || !w.url)
 					continue;
 				var interval = w.internal || 15000;
 				if (interval < 10000)
@@ -166,8 +178,10 @@ Application.prototype.reload = function(callback) {
 
 		if (!(self.origin instanceof Array))
 			self.origin = [ip];
+		/*
 		else if (self.origin.indexOf(ip) === -1)
 			self.origin.push(ip);
+		*/
 
 		if (app.subscribe) {
 			for (var i = 0, length = app.subscribe.length; i < length; i++)

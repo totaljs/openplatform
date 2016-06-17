@@ -4,7 +4,6 @@ OPENPLATFORM.version = '1.0.0';
 OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
-OPENPLATFORM.minimized = false;
 
 OPENPLATFORM.loading = function(visible) {
 	return OPENPLATFORM.send('loading', visible);
@@ -66,7 +65,7 @@ OPENPLATFORM.onMaximize = function(callback) {
 };
 
 OPENPLATFORM.onClose = function(callback) {
-	return OPENPLATFORM.on('kill', callback);
+	return OPENPLATFORM.on('close', callback);
 };
 
 OPENPLATFORM.send = function(type, body, callback) {
@@ -112,8 +111,6 @@ window.addEventListener('message', function(e) {
 		if (!data.openplatform)
 			return;
 
-		OPENPLATFORM.minimized = data.type === 'minimize';
-
 		if (data.callback) {
 			var callback = OPENPLATFORM.callbacks[data.callback];
 			if (callback) {
@@ -127,6 +124,9 @@ window.addEventListener('message', function(e) {
 
 		if (data.sender)
 			return;
+
+		if (data.type === 'kill')
+			data.type = 'close';
 
 		var events = OPENPLATFORM.events[data.type];
 		if (!events)

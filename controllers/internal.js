@@ -2,52 +2,68 @@ const HEADERS = {};
 
 exports.install = function() {
 
-	HEADERS['x-openplatform'] = F.config.url;
-
 	// Users
-	F.route('/internal/users/', json_users_query, ['authorize']);
-	F.route('/internal/users/', json_schema_save, ['authorize', 'post', '*User']);
-	F.route('/internal/users/', json_schema_delete, ['authorize', 'delete', '*User']);
-	F.route('/internal/users/group/', json_schema_save, ['authorize', 'post', '*UserGroup']);
-	F.route('/internal/users/permissions/', json_schema_save, ['authorize', 'post', '*UserPermissions']);
-	F.route('/internal/users/notify/', json_schema_save, ['authorize', 'post', '*Notify']);
-	F.route('/internal/users/newsletter/', json_schema_save, ['authorize', 'post', '*UserNewsletter']);
-	F.route('/internal/upload/photo/', json_upload_photo, ['authorize', 'upload'], 512);
+	F.route('/internal/users/',                    json_users_query,               ['authorize']);
+	F.route('/internal/users/',                    json_schema_save,               ['authorize', 'post', '*User']);
+	F.route('/internal/users/',                    json_schema_delete,             ['authorize', 'delete', '*User']);
+	F.route('/internal/users/group/',              json_schema_save,               ['authorize', 'post', '*UserGroup']);
+	F.route('/internal/users/permissions/',        json_schema_save,               ['authorize', 'post', '*UserPermissions']);
+	F.route('/internal/users/notify/',             json_schema_save,               ['authorize', 'post', '*Notify']);
+	F.route('/internal/users/newsletter/',         json_schema_save,               ['authorize', 'post', '*UserNewsletter']);
+	F.route('/internal/upload/photo/',             json_upload_photo,              ['authorize', 'upload'], 512);
 
 	// Applications
-	F.route('/internal/applications/', json_applications_query, ['authorize']);
-	F.route('/internal/applications/', json_schema_save, ['authorize', 'post', '*Application']);
-	F.route('/internal/applications/', json_schema_delete, ['authorize', 'delete', '*Application']);
-	F.route('/internal/applications/download/', json_applications_download, ['authorize']);
-	F.route('/internal/applications/refresh/', json_applications_refresh, ['authorize']);
+	F.route('/internal/applications/',             json_applications_query,        ['authorize']);
+	F.route('/internal/applications/',             json_schema_save,               ['authorize', 'post', '*Application']);
+	F.route('/internal/applications/',             json_schema_delete,             ['authorize', 'delete', '*Application']);
+	F.route('/internal/applications/download/',    json_applications_download,     ['authorize']);
+	F.route('/internal/applications/refresh/',     json_applications_refresh,      ['authorize']);
 
 	// Settings
-	F.route('/internal/settings/', json_settings_read, ['authorize', '*Settings']);
-	F.route('/internal/settings/', json_settings_save, ['authorize', 'post', '*Settings']);
+	F.route('/internal/settings/',                 json_settings_read,             ['authorize', '*Settings']);
+	F.route('/internal/settings/',                 json_settings_save,             ['authorize', 'post', '*Settings']);
 
 	// Dashboard
-	F.route('/internal/dashboard/applications/', json_dashboard_applications, ['authorize']);
-	F.route('/internal/dashboard/notifications/', json_dashboard_notifications, ['authorize']);
-	F.route('/internal/dashboard/users/', json_dashboard_users, ['authorize']);
-	F.route('/internal/dashboard/widgets/', json_dashboard_widgets_save, ['authorize', 'post', '*Widget']);
-	F.route('/internal/dashboard/widgets/{id}/', json_dashboard_widgets_content, ['authorize']);
+	F.route('/internal/dashboard/applications/',   json_dashboard_applications,    ['authorize']);
+	F.route('/internal/dashboard/notifications/',  json_dashboard_notifications,   ['authorize']);
+	F.route('/internal/dashboard/users/',          json_dashboard_users,           ['authorize']);
+	F.route('/internal/dashboard/widgets/',        json_dashboard_widgets_save,    ['authorize', 'post', '*Widget']);
+	F.route('/internal/dashboard/widgets/{id}/',   json_dashboard_widgets_content, ['authorize']);
 
 	// Account
-	F.route('/internal/login/', json_schema_exec, ['post', '*Login']);
-	F.route('/internal/password/', json_schema_exec, ['post', '*Password']);
-	F.route('/internal/account/', json_account_save, ['authorize', 'post', '*Account']);
-	F.route('/notify/', json_notify);
+	F.route('/internal/login/',                    json_schema_exec,               ['unauthorize', 'post', '*Login']);
+	F.route('/internal/password/',                 json_schema_exec,               ['unauthorize', 'post', '*Password']);
+	F.route('/internal/account/',                  json_account_save,              ['authorize', 'post', '*Account']);
 };
 
-function json_notify() {
-	var item = GETSCHEMA('Notification').create();
-	var index = U.random(APPLICATIONS.length - 1, 0);
+function json_schema_save() {
 	var self = this;
-	item.type = 0;
-	item.body = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt et veniam sequi architecto natus harum eligendi delectus reiciendis, debitis aliquid.';
-	item.user = 'A349340384038';
-	self.app = APPLICATIONS[index];
-	item.$save(self, self.callback());
+	if (!self.user.superadmin)
+		return self.invalid().push('error-permission');
+	self.$save(self, self.callback());
+}
+
+function json_schema_exec() {
+	var self = this;
+	self.$workflow('exec', self, self.callback());
+}
+
+function json_schema_delete() {
+	var self = this;
+	self.$remove(self.body.id, self.callback());
+}
+function json_dashboard_applications() {
+	var self = this;
+	self.json(self.user.getApplications());
+}
+
+function json_dashboard_notifications() {
+	var self = this;
+	self.user.getNotifications(function(err, response) {
+		if (err)
+			return self.invalid().push(err);
+		self.content(response, 'application/json');
+	});
 }
 
 function json_dashboard_widgets_content(id) {
@@ -67,6 +83,7 @@ function json_dashboard_widgets_content(id) {
 		return self.empty();
 
 	HEADERS['x-openplatform-user'] = self.user.id;
+	HEADERS['x-openplatform'] = F.config.url;
 
 	if (app.secret)
 		HEADERS['x-openplatform-secret'] = app.secret;
@@ -113,13 +130,6 @@ function json_applications_download() {
 	});
 }
 
-function json_schema_save() {
-	var self = this;
-	if (!self.user.superadmin)
-		return self.invalid().push('error-permission');
-	self.$save(self, self.callback());
-}
-
 function json_upload_photo() {
 	var self = this;
 	var file = self.files[0];
@@ -146,31 +156,6 @@ function json_upload_photo() {
 		// Refreshes internal cache
 		F.touch('/photos/' + email);
 	});
-}
-
-function json_schema_exec() {
-	var self = this;
-	self.$workflow('exec', self, self.callback());
-}
-
-function json_dashboard_applications() {
-	var self = this;
-	// self.user.notify({ type: 0, body: 'Lorem 10 asdôlkj saldsaj lsadj lsajdlsajjlsad', internal: APPLICATIONS[0].internal, datecreated: new Date() });
-	self.json(self.user.getApplications());
-}
-
-function json_dashboard_notifications() {
-	var self = this;
-	self.user.getNotifications(function(err, response) {
-		if (err)
-			return self.invalid().push(err);
-		self.content(response, 'application/json');
-	});
-}
-
-function json_schema_delete() {
-	var self = this;
-	self.$remove(self.body.id, self.callback());
 }
 
 function json_dashboard_widgets_save() {

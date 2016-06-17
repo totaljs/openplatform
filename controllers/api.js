@@ -1,13 +1,14 @@
+// Public API for applications
 exports.install = function() {
 	F.route('/api/serviceworker/', json_serviceworker, ['#authorize', 'post', '*Service'], 128);
 	F.route('/api/notifications/', json_notifications, ['#authorize', 'post', '*Notification']);
 	F.route('/api/applications/',  json_applications,  ['#authorize']);
 	F.route('/api/users/',         json_users,         ['#authorize']);
-	F.route('/openplatform/',      json_info);
-	F.route('/session/',           json_session);
+	F.route('/session/',           json_session);      // Uses `controller.query.token`
+	F.route('/openplatform/',      json_info);         // Doesn't need authorize, it's a public data
 };
 
-// Middleware for API
+// Middleware for API (a security element)
 F.middleware('authorize', function(req, res, next, options, controller) {
 
 	var idapp = req.headers['x-openplatform-id'] || '';
@@ -64,16 +65,19 @@ F.middleware('authorize', function(req, res, next, options, controller) {
 	next();
 });
 
+// Sends data to other applications
 function json_serviceworker() {
 	var self = this;
 	self.$save(self, self.callback());
 }
 
+// Creates a notification
 function json_notifications() {
 	var self = this;
 	self.$save(self, self.callback());
 }
 
+// Returns all registered applications
 function json_applications() {
 	var self = this;
 	var arr = [];
@@ -88,26 +92,29 @@ function json_applications() {
 	self.json(arr);
 }
 
+// Returns all users
 function json_users() {
 	var self = this;
 	var arr = [];
 
 	for (var i = 0, length = USERS.length; i < length; i++) {
 		var item = USERS[i].export();
+
+		// Does the user the application which needs this list?
 		item.has = USERS[i].applications[self.app.internal] ? true : false;
+
 		arr.push(item);
 	}
 
 	self.json(arr);
 }
 
-function json_profile() {
-	var self = this;
-	var user = self.user.export();
-	user.roles = self.user.applications[self.app.internal];
-	self.json(user);
+// Returns information about this OpenPlatform (name, version, author, URL)
+function json_info() {
+	this.json(OPENPLATFORM.info());
 }
 
+// Returns user's profile information according to the session header
 function json_session() {
 
 	var self = this;
@@ -137,10 +144,6 @@ function json_session() {
 	var output = user.export();
 	output.settings = app.settings;
 	output.roles = user.applications[app.internal];
-	output.openplatform = OPENPLATFORM.info;
+	output.openplatform = OPENPLATFORM.info();
 	self.json(output);
-}
-
-function json_info() {
-	this.json(OPENPLATFORM.info);
 }

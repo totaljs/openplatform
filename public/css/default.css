@@ -16,6 +16,7 @@ header div { float: left; }
 
 .logo { float: left; height: 40px; padding: 7px 0 0 8px; width: 50px; text-align: center; border-right: 1px solid #F0F0F0; }
 .user { float: right; padding: 13px 10px 0 0; color: gray; font-size: 11px; }
+.user-photo { float: right; height: 40px; }
 
 h1 { font-weight: 400; font-family: $font; margin: 0 0 20px; padding: 0 0 10px; color: $color; font-size: 16px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 h1 b { font-weight: 700; }
@@ -51,12 +52,12 @@ h2 .fa { margin-right: 10px; }
 .mt10 { margin-top: 10px; }
 
 .widgets { }
-.widgets .widget-svg { font-size: 11px; padding: 0; border-radius: 0 0 4px 4px; }
+.widgets .widget-svg { font-size: 11px; padding: 0; border-radius: 0 0 4px 4px; line-height: 0; }
 .widgets .widget-title { font-size: 11px; text-align: left; padding: 10px 18px 5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; border-radius: 4px 4px 0 0; line-height: 16px; }
 .widgets .widget-title img { border-radius: 4px; margin-right: 4px; vertical-align: middle; }
-.widgets .widget svg { width: 100%; height: auto; }
+.widgets .widget svg { width: 100%; height: auto; border-radius: 0 0 4px 4px; }
 .widgets .widget { cursor: pointer; margin-bottom: 25px; }
-.widget-loading { padding: 48px 0; text-align: center; }
+.widget-loading { padding: 62px 0; text-align: center; }
 .widget > div { border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
 .w100p { width: 100%; }
