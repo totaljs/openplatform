@@ -91,10 +91,10 @@ Each 3rd application must contain `openplatform.json` file which it describes th
 
 ### Server-Side communication between the OpenPlatform and Application
 
-Each server-side request into the OpenPlatform has to contain additional headers:
+Each server-side request has to contain additional headers into the OpenPlatform:
 
-- `x-openplatform-id` the full URL address to the application `openplatform.json`
-- `x-openplatform-user` the user identificator (important with except obtaining a session)
+- `x-openplatform-id` the full URL address to the application's `openplatform.json`
+- `x-openplatform-user` the user identificator (with except obtaining a session)
 - `x-openplatform-secret` (optional) additional security element (must know the OpenPlatform and the Application)
 
 #### Session `sessionurl` request
