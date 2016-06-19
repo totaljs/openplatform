@@ -97,7 +97,7 @@ Each server-side request has to contain additional headers into the OpenPlatform
 - `x-openplatform-user` __(important)___ the user identificator (with except obtaining a session)
 - `x-openplatform-secret` __(optional)__ additional security element (must know the OpenPlatform and the Application)
 
-#### Session `sessionurl` request
+#### `sessionurl` request
 
 ```html
 https://www.yourapplication.com/openplatform/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
@@ -157,7 +157,7 @@ __Response__:
 ```
 
 
-#### Application `url` request
+#### `url` request
 
 Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`).
 
