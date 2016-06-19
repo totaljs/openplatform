@@ -29,7 +29,7 @@ The platform is a simple application which can manage 3rd applications and users
 
 Each 3rd application must contain `openplatform.json` file which it describes the whole application, its roles, icon and widgets. The full URL address to `openplatform.json` is the application identificator in the OpenPlatform. The platform downloads the content of file `openplatform.json` each 5 minutes.
 
-```json
+```javascript
 {
     "name": "TestApp",
     "version": "1.0.0",
