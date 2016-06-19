@@ -10,8 +10,8 @@ __Login__:
 
 1. How does the OpenPlatform work?
 2. How does the application work in the OpenPlatform?
-3. Server-Side communication between the OpenPlatform and Application
-4. Client-Side communication between the OpenPlatform and Application
+3. Server-Side communication between the OpenPlatform and the Application
+4. Client-Side communication between the OpenPlatform and the Application
 5. Widgets
 
 ### How does the OpenPlatform work?
@@ -89,7 +89,7 @@ Each 3rd application must contain `openplatform.json` file which it describes th
 }
 ```
 
-### Server-Side communication between the OpenPlatform and Application
+### Server-Side communication between the OpenPlatform and the Application
 
 Each server-side request has to contain additional headers into the OpenPlatform:
 
@@ -159,7 +159,7 @@ __Response__:
 
 #### Application `url` request
 
-Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`). The OpenPlatform modifies the `url` about the argument `openplatform`.
+Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`).
 
 ```html
 https://www.yourapplication.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
