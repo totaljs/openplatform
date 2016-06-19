@@ -47,7 +47,7 @@ Each 3rd application must contain `openplatform.json` file which it describes th
     // URL which is opened when the user click on the application's icon
     "url": "http://openapp.totaljs.com",
 
-    // Optional. URL for obtaining session.
+    // Optional. URL for obtaining a session, it's a prevention for blocking iframe in Safari.
     "sessionurl": "http://openapp.totaljs.com/openplatform/",
 
     // Optional. Can be empty.
@@ -103,14 +103,15 @@ Each server-side request has to contain additional headers into the OpenPlatform
 https://www.yourapplication.com/openplatform/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
 
-- you have to create a request to URL address in `openplatform` argument
+- openplatform modifies the `sessionurl` about the `openplatform` argument
+- then you have to create a request to URL address stored in `openplatform` argument
 
 __Request__:
 
 ```html
 GET http://openplatform.totaljs.com/session/?token=14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 x-openplatform-id: http://openapp.totaljs.com/openplatform.json
-x-openplatform-secret: app-secret
+x-openplatform-secret: app-secret (when is)
 ```
 
 __Response__:
@@ -158,9 +159,10 @@ __Response__:
 
 #### Application `url` request
 
+Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`). The OpenPlatform modifies the `url` about the argument `openplatform`.
+
 ```html
 https://www.yourapplication.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
-
 
 
