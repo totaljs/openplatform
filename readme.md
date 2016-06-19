@@ -34,10 +34,14 @@ Each 3rd application must contain `openplatform.json` file which it describes th
     "name": "TestApp",
     "version": "1.0.0",
     "icon": "http://openapp.totaljs.com/icon.png",
+
+    // Author of the application
     "author": "Peter Širka",
+
+    // Suport email
     "email": "petersirka@gmail.com",
 
-    // Optional.
+    // Optional. The description sees only the super user of the OpenPlatform.
     "description": "Some text for the super user.",
 
     // URL which is opened when the user click on the application's icon
@@ -46,7 +50,7 @@ Each 3rd application must contain `openplatform.json` file which it describes th
     // Optional. URL for obtaining session.
     "sessionurl": "http://openapp.totaljs.com/openplatform/",
 
-    // Roles
+    // Optional. Can be empty.
     "roles": ["create", "read", "update"],
 
     // Optional.
