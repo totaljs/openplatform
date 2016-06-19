@@ -54,6 +54,7 @@ User.prototype.logoff = function() {
 User.prototype.secure = function() {
 	this.session = U.GUID(30);
 	this.security = U.GUID(5);
+	return this;
 };
 
 User.prototype.getApplications = function() {
@@ -129,7 +130,9 @@ User.prototype.readonly = function() {
 	item.superadmin = self.superadmin;
 	item.notifications = self.notifications;
 	item.notificationsemail = self.notificationsemail;
+	item.datecreated = self.datecreated;
 	item.dateupdated = self.dateupdated;
+	item.datelogged = self.datelogged;
 	item.sounds = self.sounds;
 	item.widgets = self.widgets;
 	item.language = self.language;
@@ -151,7 +154,9 @@ User.prototype.export = function() {
 	item.group = self.group;
 	item.superadmin = self.superadmin;
 	item.notifications = self.notifications;
+	item.datecreated = self.datecreated;
 	item.dateupdated = self.dateupdated;
+	item.datelogged = self.datelogged;
 	item.sounds = self.sounds;
 	item.language = self.language;
 	return item;

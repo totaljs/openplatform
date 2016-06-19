@@ -93,9 +93,9 @@ Each 3rd application must contain `openplatform.json` file which it describes th
 
 Each server-side request has to contain additional headers into the OpenPlatform:
 
-- `x-openplatform-id` the full URL address to the application's `openplatform.json`
-- `x-openplatform-user` the user identificator (with except obtaining a session)
-- `x-openplatform-secret` (optional) additional security element (must know the OpenPlatform and the Application)
+- `x-openplatform-id` __(important)___ the full URL address to the application's `openplatform.json`
+- `x-openplatform-user` __(important)___ the user identificator (with except obtaining a session)
+- `x-openplatform-secret` __(optional)__ additional security element (must know the OpenPlatform and the Application)
 
 #### Session `sessionurl` request
 
@@ -104,7 +104,57 @@ https://www.yourapplication.com/openplatform/?openplatform=http%3A%2F%2Fopenplat
 ```
 
 - you have to create a request to URL address in `openplatform` argument
-- the request has to contain 
+
+__Request__:
+
+```html
+GET http://openplatform.totaljs.com/session/?token=14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
+x-openplatform-id: http://openapp.totaljs.com/openplatform.json
+x-openplatform-secret: app-secret
+```
+
+__Response__:
+
+```javascript
+{
+    // User ID for future requests: `x-openplatform-user`
+    "id": "16061919190001xis1",
+    "alias": "Peter Širka",
+    "firstname": "Peter",
+    "lastname": "Širka",
+    "photo": "http://openplatform.totaljs.com/photos/petersirka_gmail_com.jpg",
+    "email": "petersirka@gmail.com",
+    "phone": "",
+    "online": true,
+    "blocked": false,
+    "group": "Developers",
+    "superadmin": true,
+    "notifications": true,
+    "dateupdated": "2016-06-17T19:08:32.328Z",
+    "datecreated": "2016-06-16T12:03:22.434Z",
+    "sounds": true,
+    "language": "sk",
+
+    // Application's settings
+    "settings": "",
+
+    // Application's roles
+    "roles": [
+        "create",
+        "read",
+        "update"
+    ],
+
+    // OpenPlatform's information
+    "openplatform": {
+        "version": "0.0.1",
+        "name": "OpenPlatform",
+        "url": "http://openplatform.totaljs.com",
+        "author": "Peter Širka"
+    }
+}
+```
+
 
 #### Application `url` request
 
