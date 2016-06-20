@@ -65,7 +65,18 @@ $(window).on('message', function(e) {
 			}
 
 			AJAXCACHE('GET /internal/dashboard/users/', function(response) {
-				processes.message(item, 'users', response, data.callback);
+
+				var arr = [];
+
+				response.forEach(function(item) {
+					var user = $.extend({}, item);
+					user.roles = user.applications[app.internal] || [];
+					user.has = user.applications[app.internal] ? true : false;
+					delete user.applications;
+					arr.push(user)
+				});
+
+				processes.message(item, 'users', arr, data.callback);
 			}, 1000 * 120);
 
 			break;

@@ -102,7 +102,7 @@ function json_users() {
 
 		// Does the user the application which needs this list?
 		item.roles = USERS[i].applications[self.app.internal] || EMPTYARRAY;
-		item.has = item.roles.length ? true : false;
+		item.has = USERS[i].applications[self.app.internal] ? true : false;
 
 		arr.push(item);
 	}

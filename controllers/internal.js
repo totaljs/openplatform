@@ -174,7 +174,9 @@ function json_dashboard_users() {
 
 	for (var i = 0, length = USERS.length; i < length; i++) {
 		var item = USERS[i];
-		arr.push(item.export());
+		var user = item.export();
+		user.applications = item.applications;
+		arr.push(user);
 	}
 
 	self.json(arr);
