@@ -1,39 +1,39 @@
 # OpenPlatform v1.0.0
 
 - install node.js platform `+v4`
-- download the source-code
-- run it `$ node debug.js`
+- download the source code
+- execute `$ node debug.js`
+- first time login: 123456/123456
 
-__Login__:
-- user: 123456
-- password: 123456
 
 ---
 
 ## Documentation
 
-1. How does the OpenPlatform work?
-2. How does the application work in the OpenPlatform?
+1. What is and how the OpenPlatform works?
+2. How to write an application for the OpenPlatform?
 3. Server-Side communication between the OpenPlatform and the Application
 4. Client-Side communication between the OpenPlatform and the Application
 5. Widgets
 
-## How does the OpenPlatform work?
+## What is and how the OpenPlatform works?
 
-The platform is a simple application which can manage 3rd applications and users + roles. Each application is executed in the HTML `iframe` but in the OpenPlatform's context. 3rd applications (if have privileges) can read users, applications or can create notifications or can communicate with other applications via service worker. The platform offers two ways for communication:
+The OpenPlatform is a simple node.js and total.js based application that can manage third party applications and provide them with basic services like users and roles management. Each application is executed in the OpenPlatform's context in an HTML `iframe`. Depending on the access rights, running applications can read list platform's of users and applications, create notifications and communicate with other applications via service worker. Administrator has complete control over user and applications access rights.
+
+The platform supports two ways of communication:
 
 - server-side
 - client-side via small [openplatform.js](https://github.com/totaljs/openplatform/blob/master/public/v1/openplatform.js) library
 
 ![OpenPlatform workbench](https://www.totaljs.com/img/openplatform/openplatform-auth.png)
 
-The OpenPlatform stores all users and applications in-memory and data are stored in JSON files (when are changed).
+The OpenPlatform stores all users and applications data in-memory and data are stored in JSON files (when are changed).
 
 ---
 
-### How does the application work in the OpenPlatform?
+### How to write an application for the OpenPlatform?
 
-Each 3rd application must contain `openplatform.json` file which it describes the whole application, its roles, icon and widgets. The full URL address to `openplatform.json` is the application identificator in the OpenPlatform. The platform downloads the content of the file `openplatform.json` each 5 minutes.
+Each application must contain `openplatform.json` file that contains all the necessary information for the OpenPlatform to recognize and deploy the application, setup its roles, icon and widgets. The full URL address to `openplatform.json` is used as the application identificator in the OpenPlatform. The platform downloads the content of the file `openplatform.json` every 5 minutes.
 
 ```javascript
 {
@@ -48,79 +48,79 @@ Each 3rd application must contain `openplatform.json` file which it describes th
     "email": "petersirka@gmail.com",
 
     // Optional. The description sees only the super user of the OpenPlatform.
-    "description": "Some text for the super user.",
+    "description": "Some important info for the superuser.",
 
-    // URL which is opened when the user click on the application's icon
+    // URL which to be open when the user clicks on the application's icon
     "url": "http://openapp.totaljs.com",
 
-    // Optional. URL for obtaining a session, it's a prevention for blocking iframe in Safari.
+    // Optional: session URL - workaround for iframes blocking in Safari. 
+    // more info bellow
     "sessionurl": "http://openapp.totaljs.com/openplatform/",
 
-    // Optional. Can be empty.
+    // Optional: roles used within the application. 
     "roles": ["create", "read", "update"],
 
-    // Optional.
+    // Optional: widgets to be shown on the dashboard.
     "widgets": [
         {
-            // Widget's name
+            // Widget name
             "name": "Chart.js",
 
             // Widget generator
             "url": "http://openapp.totaljs.com/widgets/chartjs/",
 
-            // Optional. When the user click on the widget then the OpenPlatform
+            // Optional: when the user clicks on the widget the OpenPlatform
             // redirects the iFrame to this URL address. Default: application "url"
             "redirect": "",
 
-            // Optional. Widget's background color. Default: white
+            // Optional: widget's background color. Default: white
             "background": "white",
 
-            // Optional. Widget's font color. Default: silver
+            // Optional: widget's font color. Default: silver
             "color": "silver",
 
-            // Optional. Size of widget "1" = 400x250, "2" = 600x250, "3" = 800x250.
+            // Optional: size of widget "1" = 400x250, "2" = 600x250, "3" = 800x250.
             // Default: 1
             "size": 1,
 
-            // Optional. Refresh interval, default 15000 (15 seconds). A minimal value
+            // Optional: refresh interval, default 15000 (15 seconds). A minimal value
             // can be 15000.
             "interval": 15000
         }
     ],
 
-    // Optional. Can contain IP addresses. The OpenPlatform checks origin IP when
-    // the platform receives a server-side request from the application. It's simple
-    // prevention for hijacking.
+    // Optional: whitelist of IP addresses to be checked by the OpenPlatform for the requests originated from 
+    // a server. Simple hijacking prevention
     "origin": ['10.77.50.11']
 }
 ```
 
-### Server-Side communication between the OpenPlatform and the Application
+### Server-side communication between the OpenPlatform and the Application
 
-Each server-side request has to contain additional headers into the OpenPlatform:
+Every request has to include following headers:
 
-- `x-openplatform-id` __(important)__ the full URL address to the application's `openplatform.json`
-- `x-openplatform-user` __(important)__ the user identificator (with except obtaining a session)
-- `x-openplatform-secret` __(optional)__ additional security element (must know the OpenPlatform and the Application)
+- `x-openplatform-id` __(important)__ full URL address to the application's `openplatform.json`
+- `x-openplatform-user` __(important)__ user identificator (with except obtaining a session)
+- `x-openplatform-secret` __(optional)__ application specific security token
 
-#### Request to: `sessionurl` (session request)
 
-- recommended to respond with a simple `plain text` content (e.g. `success`).
-- it serves for creating 3rd session cookie
+#### Request to `sessionurl` (session request)
 
 ```html
 http://openapp.totaljs.com/openplatform/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
-
-- openplatform modifies the `sessionurl` about the argument: `openplatform`
-- then you have to create a request to URL address stored in the argument: `openplatform`
+- workaround for iframes blocking in Safari. 
+- used to obtain third party session cookie.
+- the `sessionurl` should respond with a simple `plain text` response (e.g. `success`).   
+- OpenPlatform makes modifications to the `sessionurl` according to the argument `openplatform`
+- you should make request to the URL received in the response in argument `openplatform`
 
 __Request__:
 
 ```html
 GET http://openplatform.totaljs.com/session/?token=14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 x-openplatform-id: http://openapp.totaljs.com/openplatform.json
-x-openplatform-secret: app-secret (when is)
+x-openplatform-secret: app-secret (if any)
 ```
 
 __Response__:
@@ -167,7 +167,7 @@ __Response__:
 
 #### Request to: `url` (application request)
 
-Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`). The `sessionurl` was created for Safari browser because the browser has disabled 3rd cookies (by default). When the browser is Safari then the OpenPlatform opens a popup window with the `sessionurl` for creating 3rd session cookie. 
+Almost the same as `sessionurl` request with the difference that when the iframe loads `sessionurl` it is autmoatically redirected to `url` (the user doesn't see the content of the `sessionurl`). The `sessionurl` was created for the Safari browser because it comes with the third party cookies blocked by default. When Safari browser is detected, the OpenPlatform opens up a popup window with the `sessionurl` in order to create the session cookie. 
 
 ```html
 http://openapp.totaljs.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
@@ -175,8 +175,9 @@ http://openapp.totaljs.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2
 
 #### API
 
-- API doesn't need the session token
-- the user must have privileges for the operations below
+- open API to make request
+- no need for any session token 
+- the user must have privileges for the specific operations
 
 __Gets all registered users__:
 
@@ -184,7 +185,7 @@ __Gets all registered users__:
 GET http://openplatform.totaljs.com/api/users/
 x-openplatform-id: http://openapp.totaljs.com/openplatform.json
 x-openplatform-user: 16061919190001xis1
-x-openplatform-secret: app-secret (when is)
+x-openplatform-secret: app-secret (if any)
 ```
 
 __Gets the user's applications__:
@@ -193,13 +194,13 @@ __Gets the user's applications__:
 GET http://openplatform.totaljs.com/api/applications/
 x-openplatform-id: http://openapp.totaljs.com/openplatform.json
 x-openplatform-user: 16061919190001xis1
-x-openplatform-secret: app-secret (when is)
+x-openplatform-secret: app-secret (if any)
 ```
 
-__Creates a notification__:
+__Create a notification__:
 
 - creates a notification for the `x-openplatform-user`
-- user must have allowed notifications
+- notifications must be allowed for the user
 
 JSON:
 - `type`: optional, `0` info (default), `1` success, `2` alert
@@ -210,16 +211,15 @@ POST http://openplatform.totaljs.com/api/notifications/
 content-type: application/json
 x-openplatform-id: http://openapp.totaljs.com/openplatform.json
 x-openplatform-user: 16061919190001xis1
-x-openplatform-secret: app-secret (when is)
+x-openplatform-secret: app-secret (if any)
 
 { "type": 0, "body": "Message", "url": "Where does it to redirect application's iframe?" }
 ```
 
 __Sends data via ServiceWorker__:
 
-- can send data to other applications
-- other applications must have enabled subscription for `event` name
-- other applications get same object
+- can send data to other applications using `events`
+- target applications must subscribe for specific `event`
 
 JSON:
 - `event`: event name (lowercase)
@@ -230,20 +230,20 @@ POST http://openplatform.totaljs.com/api/serviceworker/
 content-type: application/json
 x-openplatform-id: http://openapp.totaljs.com/openplatform.json
 x-openplatform-user: 16061919190001xis1
-x-openplatform-secret: app-secret (when is)
+x-openplatform-secret: app-secret (if any)
 
 { "event": "event name", "data": { "your": "object" }}
 ```
 
 ### Client-Side communication between the OpenPlatform and the Application
 
-- for client-side use a small [openplatform.js](https://github.com/totaljs/openplatform/blob/master/public/v1/openplatform.js) library
+- client-side must use [openplatform.js](https://github.com/totaljs/openplatform/blob/master/public/v1/openplatform.js) library
 
-The library contains the method below:
+The library contains following method:
 
 ```javascript
 
-// is a global name
+// OPENPLATFORM is global
 console.log(typeof(OPENPLATFORM));
 
 // Shows/Hides the OpenPlatform loading progress
@@ -259,7 +259,7 @@ OPENPLATFORM.maximize('http://yourapp.com/redirect/here/');
 // Method: OPENPLATFORM.minimize();
 OPENPLATFORM.minimize();
 
-// Closes the application (it kills instance)
+// Closes the application (application instance gets killed)
 // Method: OPENPLATFORM.close();
 OPENPLATFORM.close();
 
@@ -267,7 +267,7 @@ OPENPLATFORM.close();
 // Method: OPENPLATFORM.restart();
 OPENPLATFORM.restart();
 
-// Opens another OpenPlatform's application if exists
+// Opens another OpenPlatform's application (if exists)
 // Method: OPENPLATFORM.open(id);
 OPENPLATFORM.open('http://anotherapp.com/openplatform.json');
 
@@ -318,7 +318,7 @@ OPENPLATFORM.on('close', function() {
 
 ### Widgets
 
-The OpenPlatform supports 2 types of widgets: raw `SVG` and `Chart.js`. The platform supports 3 size of charts:
+The OpenPlatform supports 2 types of widgets: raw `SVG` and `Chart.js` and 3 sizes of widget charts:
 
 - Size: `400x250` --> type 1 (default)
 - Size: `600x250` --> type 2
@@ -328,7 +328,7 @@ Sizes are declared in the file `openplatform.json`.
 
 __Chart.js__:
 
-You can find here <http://www.chartjs.org/docs/> all charts types and their data structure. Here is a simple example of `doughnut` chart:
+Documentation can be found here <http://www.chartjs.org/docs/>. Simple example of `doughnut` chart:
 
 ```json
 {
@@ -361,4 +361,3 @@ You can find here <http://www.chartjs.org/docs/> all charts types and their data
     }
 }
 ```
-
