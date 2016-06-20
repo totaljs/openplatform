@@ -312,3 +312,49 @@ OPENPLATFORM.on('close', function() {
 });
 ```
 
+### Widgets
+
+The OpenPlatform supports 2 types of widgets: raw `SVG` and `Chart.js`. The platform supports 3 size of charts:
+
+- Size: `400x250` --> type 1 (default)
+- Size: `600x250` --> type 2
+- Size: `800x250` --> type 3
+
+Sizes are declared in the file `openplatform.json`.
+
+__Chart.js__:
+
+You can find here <http://www.chartjs.org/docs/> all charts types and data structure pf all charts. Here is a simple example of `doughnut` chart:
+
+```json
+{
+    "type": "doughnut",
+    "data": {
+        "labels": [
+            "Red",
+            "Blue",
+            "Yellow"
+        ],
+        "datasets": [
+            {
+                "data": [
+                    300,
+                    50,
+                    100
+                ],
+                "backgroundColor": [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56"
+                ],
+                "hoverBackgroundColor": [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56"
+                ]
+            }
+        ]
+    }
+}
+```
+
