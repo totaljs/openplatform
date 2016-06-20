@@ -93,18 +93,18 @@ Each 3rd application must contain `openplatform.json` file which it describes th
 
 Each server-side request has to contain additional headers into the OpenPlatform:
 
-- `x-openplatform-id` __(important)___ the full URL address to the application's `openplatform.json`
-- `x-openplatform-user` __(important)___ the user identificator (with except obtaining a session)
+- `x-openplatform-id` __(important)__ the full URL address to the application's `openplatform.json`
+- `x-openplatform-user` __(important)__ the user identificator (with except obtaining a session)
 - `x-openplatform-secret` __(optional)__ additional security element (must know the OpenPlatform and the Application)
 
 #### `sessionurl` request
 
 ```html
-https://www.yourapplication.com/openplatform/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
+http://openapp.totaljs.com/openplatform/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
 
-- openplatform modifies the `sessionurl` about the `openplatform` argument
-- then you have to create a request to URL address stored in `openplatform` argument
+- openplatform modifies the `sessionurl` about the argument: `openplatform`
+- then you have to create a request to URL address stored in the argument: `openplatform`
 
 __Request__:
 
@@ -159,7 +159,7 @@ __Response__:
 
 #### `url` request
 
-Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`).
+Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`). The `sessionurl` was created for Safari browser because the browser has disabled 3rd cookies (by default). When the browser is Safari then the OpenPlatform opens a popup window with the `sessionurl` for creating 3rd session cookie. 
 
 ```html
 https://www.yourapplication.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
