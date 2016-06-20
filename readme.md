@@ -167,4 +167,69 @@ Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redir
 http://openapp.totaljs.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
 
+### API
+
+- API doesn't need the session token
+- the user must have privileges for the operations below
+
+__Get all registered users__:
+
+```html
+GET http://openplatform.totaljs.com/api/users/
+x-openplatform-id: http://openapp.totaljs.com/openplatform.json
+x-openplatform-user: 16061919190001xis1
+x-openplatform-secret: app-secret (when is)
+```
+
+__Get all registered applications__:
+
+```html
+GET http://openplatform.totaljs.com/api/applications/
+x-openplatform-id: http://openapp.totaljs.com/openplatform.json
+x-openplatform-user: 16061919190001xis1
+x-openplatform-secret: app-secret (when is)
+```
+
+__Create a notification__:
+
+- creates a notification for the `x-openplatform-user`
+- user must have allowed notifications
+
+- `type`: optional, `0` info (default), `1` success, `2` alert
+- `url`: optional, default `application URL`
+
+```html
+POST http://openplatform.totaljs.com/api/notifications/
+content-type: application/json
+x-openplatform-id: http://openapp.totaljs.com/openplatform.json
+x-openplatform-user: 16061919190001xis1
+x-openplatform-secret: app-secret (when is)
+
+{ "type": 0, "body": "Message", "url": "Where does it to redirect application's iframe?" }
+```
+
+__Send data via ServiceWorker__:
+
+- can send data to other applications
+- other applications must have enabled subscription for `event` name
+- other applications get same object
+
+- `event`: event name (lowercase)
+- `data`: object
+
+```html
+POST http://openplatform.totaljs.com/api/serviceworker/
+content-type: application/json
+x-openplatform-id: http://openapp.totaljs.com/openplatform.json
+x-openplatform-user: 16061919190001xis1
+x-openplatform-secret: app-secret (when is)
+
+{ "event": "event name", "data": { "your": "object" }}
+```
+
+
+
+
+
+
 
