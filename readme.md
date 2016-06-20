@@ -25,7 +25,7 @@ The platform is a simple application which can manage 3rd applications and users
 
 ---
 
-## How does the application work in the OpenPlatform?
+### How does the application work in the OpenPlatform?
 
 Each 3rd application must contain `openplatform.json` file which it describes the whole application, its roles, icon and widgets. The full URL address to `openplatform.json` is the application identificator in the OpenPlatform. The platform downloads the content of the file `openplatform.json` each 5 minutes.
 
@@ -89,7 +89,7 @@ Each 3rd application must contain `openplatform.json` file which it describes th
 }
 ```
 
-## Server-Side communication between the OpenPlatform and the Application
+### Server-Side communication between the OpenPlatform and the Application
 
 Each server-side request has to contain additional headers into the OpenPlatform:
 
@@ -97,7 +97,7 @@ Each server-side request has to contain additional headers into the OpenPlatform
 - `x-openplatform-user` __(important)__ the user identificator (with except obtaining a session)
 - `x-openplatform-secret` __(optional)__ additional security element (must know the OpenPlatform and the Application)
 
-### Request to: `sessionurl` (session request)
+#### Request to: `sessionurl` (session request)
 
 - recommended to respond with a simple `plain text` content (e.g. `success`).
 - it serves for creating 3rd session cookie
@@ -159,7 +159,7 @@ __Response__:
 }
 ```
 
-### Request to: `url` (application request)
+#### Request to: `url` (application request)
 
 Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redirected to `url` automatically (the user doesn't see the content of the `sessionurl`). The `sessionurl` was created for Safari browser because the browser has disabled 3rd cookies (by default). When the browser is Safari then the OpenPlatform opens a popup window with the `sessionurl` for creating 3rd session cookie. 
 
@@ -195,6 +195,7 @@ __Create a notification__:
 - creates a notification for the `x-openplatform-user`
 - user must have allowed notifications
 
+JSON:
 - `type`: optional, `0` info (default), `1` success, `2` alert
 - `url`: optional, default `application URL`
 
@@ -214,6 +215,7 @@ __Send data via ServiceWorker__:
 - other applications must have enabled subscription for `event` name
 - other applications get same object
 
+JSON:
 - `event`: event name (lowercase)
 - `data`: object
 
