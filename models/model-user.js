@@ -1,6 +1,5 @@
 const Fs = require('fs');
 const REG_PHOTO = /@|\./g;
-const EMPTYARRAY = [];
 
 global.USERS = [];
 

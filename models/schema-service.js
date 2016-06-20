@@ -1,5 +1,4 @@
 const HEADERS = {};
-const EMPTYARRAY = [];
 
 NEWSCHEMA('Service').make(function(schema) {
 

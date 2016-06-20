@@ -101,7 +101,8 @@ function json_users() {
 		var item = USERS[i].export();
 
 		// Does the user the application which needs this list?
-		item.has = USERS[i].applications[self.app.internal] ? true : false;
+		item.roles = USERS[i].applications[self.app.internal] || EMPTYARRAY;
+		item.has = item.roles.length ? true : false;
 
 		arr.push(item);
 	}
