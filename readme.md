@@ -23,6 +23,8 @@ The platform is a simple application which can manage 3rd applications and users
 
 ![OpenPlatform workbench](https://www.totaljs.com/img/openplatform/openplatform-auth.png)
 
+The OpenPlatform stores all users and applications in-memory and data are stored in JSON files (when are changed).
+
 ---
 
 ### How does the application work in the OpenPlatform?
@@ -167,12 +169,12 @@ Can be same as `sessionurl` but when the iframe loads `sessionurl` then is redir
 http://openapp.totaljs.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
 
-### API
+#### API
 
 - API doesn't need the session token
 - the user must have privileges for the operations below
 
-__Get all registered users__:
+__Gets all registered users__:
 
 ```html
 GET http://openplatform.totaljs.com/api/users/
@@ -181,7 +183,7 @@ x-openplatform-user: 16061919190001xis1
 x-openplatform-secret: app-secret (when is)
 ```
 
-__Get all registered applications__:
+__Gets the user's applications__:
 
 ```html
 GET http://openplatform.totaljs.com/api/applications/
@@ -190,7 +192,7 @@ x-openplatform-user: 16061919190001xis1
 x-openplatform-secret: app-secret (when is)
 ```
 
-__Create a notification__:
+__Creates a notification__:
 
 - creates a notification for the `x-openplatform-user`
 - user must have allowed notifications
@@ -209,7 +211,7 @@ x-openplatform-secret: app-secret (when is)
 { "type": 0, "body": "Message", "url": "Where does it to redirect application's iframe?" }
 ```
 
-__Send data via ServiceWorker__:
+__Sends data via ServiceWorker__:
 
 - can send data to other applications
 - other applications must have enabled subscription for `event` name
@@ -229,9 +231,84 @@ x-openplatform-secret: app-secret (when is)
 { "event": "event name", "data": { "your": "object" }}
 ```
 
+### Client-Side communication between the OpenPlatform and the Application
 
+- for client-side use a small [openplatform.js](https://github.com/totaljs/openplatform/blob/master/public/v1/openplatform.js) library
 
+The library contains the method below:
 
+```javascript
 
+// is a global name
+console.log(typeof(OPENPLATFORM));
 
+// Shows/Hides the OpenPlatform loading progress
+// Method: OPENPLATFORM.loading(BOOLEAN);
+OPENPLATFORM.loading(true);
+
+// Maximizes the application's iframe
+// Method: OPENPLATFORM.maximize([url]);
+OPENPLATFORM.maximize();
+OPENPLATFORM.maximize('http://yourapp.com/redirect/here/');
+
+// Minimizes the application's iframe
+// Method: OPENPLATFORM.minimize();
+OPENPLATFORM.minimize();
+
+// Closes the application (it kills instance)
+// Method: OPENPLATFORM.close();
+OPENPLATFORM.close();
+
+// Restarts the application
+// Method: OPENPLATFORM.restart();
+OPENPLATFORM.restart();
+
+// Opens another OpenPlatform's application if exists
+// Method: OPENPLATFORM.open(id);
+OPENPLATFORM.open('http://anotherapp.com/openplatform.json');
+
+// Notifies the user
+// Method: OPENPLATFORM.notify([type], body, [url_to_redirect]);
+OPENPLATFORM.notify('You have new unread messages.');
+
+// Gets the user profile
+// Method: OPENPLATFORM.getProfile(callback(err, response));
+OPENPLATFORM.getProfile(function(err, response) {
+    console.log(err, response);
+});
+
+// Gets the user's applications
+// Method: OPENPLATFORM.getApplications(callback(err, response));
+OPENPLATFORM.getApplications(function(err, response) {
+    console.log(err, response);
+});
+
+// Gets all registered users
+// Method: OPENPLATFORM.getUsers(callback(err, response));
+OPENPLATFORM.getUsers(function(err, response) {
+    console.log(err, response);
+});
+
+// Gets info about OpenPlatform
+// Method: OPENPLATFORM.getInfo(callback(err, response));
+OPENPLATFORM.getInfo(function(err, response) {
+    console.log(err, response);
+});
+```
+
+__Events__:
+
+```javascript
+OPENPLATFORM.on('minimize', function() {
+    // Is triggered when the application is minimized
+});
+
+OPENPLATFORM.on('maximize', function() {
+    // Is triggered when the application is maximized
+});
+
+OPENPLATFORM.on('close', function() {
+    // Is triggered when the application is closed
+});
+```
 
