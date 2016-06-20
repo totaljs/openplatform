@@ -1,5 +1,9 @@
 # OpenPlatform v1.0.0
 
+- install node.js platform `+v4`
+- download the source-code
+- run it `$ node debug.js`
+
 __Login__:
 - user: 123456
 - password: 123456
