@@ -324,7 +324,7 @@ Sizes are declared in the file `openplatform.json`.
 
 __Chart.js__:
 
-You can find here <http://www.chartjs.org/docs/> all charts types and data structure pf all charts. Here is a simple example of `doughnut` chart:
+You can find here <http://www.chartjs.org/docs/> all charts types and their data structure. Here is a simple example of `doughnut` chart:
 
 ```json
 {
