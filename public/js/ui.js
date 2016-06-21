@@ -1532,6 +1532,7 @@ COMPONENT('processes', function() {
 	var source;
 	var redirect;
 	var loader;
+	var current_title = document.title;
 
 	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}" data-token="{{ $.token }}"><iframe src="/loading.html" frameborder="0" scrolling="no"></iframe><div>');
 	self.singleton();
@@ -1599,6 +1600,7 @@ COMPONENT('processes', function() {
 
 		toolbar.addClass('hidden');
 		$('html').removeClass('noscroll');
+		document.title = current_title;
 		return self;
 	};
 
@@ -1668,6 +1670,7 @@ COMPONENT('processes', function() {
 		toolbar.find('label').text(value);
 		toolbar.removeClass('hidden');
 		$('html').addClass('noscroll');
+		document.title = current_title + ': ' + value;
 		return self;
 	};
 
