@@ -282,6 +282,7 @@
 	});
 
 	WATCH('applications.form.id', function(path, value) {
+
 		if (!value || !value.isURL())
 			return;
 

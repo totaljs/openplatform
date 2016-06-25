@@ -13,6 +13,7 @@ error-application-notfound      : Application not found.
 error-application-secret        : A secret key is not valid.
 error-application-permissions   : Application doesn't have permission for this operation.
 error-application-origin        : Your IP address is not valid for this operation.
+error-application-publish       : The application doesn't publish this event.
 error-user-notfound             : User not found.
 error-user-application          : User doesn't have allowed this application.
 error-user-widgets              : The application with widget was not found in the repository.

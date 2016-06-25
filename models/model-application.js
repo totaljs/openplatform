@@ -47,29 +47,31 @@ function Application() {
 Application.prototype.readonly = function() {
 	var self = this;
 	var item = {};
-	item.id = self.id;
-	item.title = self.title;
-	item.name = self.name;
-	item.linker = self.linker;
-	item.description = self.description;
-	item.version = self.version;
-	item.icon = self.icon;
-	item.author = self.author;
-	item.email = self.email;
 	item.applications = self.applications;
-	item.serviceworker = self.serviceworker;
-	item.notifications = self.notifications;
-	item.responsive = self.responsive;
-	item.mobile = self.mobile;
-	item.users = self.users;
-	item.online = self.online;
-	item.url = self.url;
+	item.author = self.author;
+	item.description = self.description;
+	item.email = self.email;
+	item.icon = self.icon;
+	item.id = self.id;
 	item.internal = self.internal;
-	item.events = self.events;
+	item.linker = self.linker;
+	item.mobile = self.mobile;
+	item.name = self.name;
+	item.notifications = self.notifications;
+	item.online = self.online;
+	item.publish = self.publish;
+	item.responsive = self.responsive;
+	item.roles = self.roles;
+	item.service = self.service;
+	item.serviceworker = self.serviceworker;
 	item.sessionurl = self.sessionurl;
 	item.settings = self.settings;
+	item.subscribe = self.subscribe;
+	item.title = self.title;
+	item.url = self.url;
+	item.users = self.users;
+	item.version = self.version;
 	item.widgets = self.widgets;
-	item.roles = self.roles;
 	return item;
 };
 
@@ -80,25 +82,28 @@ Application.prototype.readonly = function() {
 Application.prototype.export = function() {
 	var self = this;
 	var item = {};
-	item.id = self.id;
-	item.title = self.title;
-	item.name = self.name;
-	item.linker = self.linker;
-	item.description = self.description;
-	item.version = self.version;
-	item.icon = self.icon;
-	item.author = self.author;
-	item.email = self.email;
 	item.applications = self.applications;
-	item.serviceworker = self.serviceworker;
-	item.notifications = self.notifications;
-	item.responsive = self.responsive;
+	item.author = self.author;
+	item.description = self.description;
+	item.email = self.email;
+	item.icon = self.icon;
+	item.id = self.id;
+	item.linker = self.linker;
 	item.mobile = self.mobile;
-	item.users = self.users;
+	item.name = self.name;
+	item.notifications = self.notifications;
 	item.online = self.online;
-	item.url = self.url;
-	item.sessionurl = self.sessionurl;
+	item.publish = self.publish;
+	item.responsive = self.responsive;
 	item.roles = self.roles;
+	item.service = self.service;
+	item.serviceworker = self.serviceworker;
+	item.sessionurl = self.sessionurl;
+	item.subscribe = self.subscribe;
+	item.title = self.title;
+	item.url = self.url;
+	item.users = self.users;
+	item.version = self.version;
 	return item;
 };
 
@@ -151,8 +156,9 @@ Application.prototype.reload = function(callback) {
 		self.online = true;
 		self.events = {};
 		self.origin = app.origin;
+		self.service = app.service === true;
 		self.search = (self.name + ' ' + self.title).toSearch();
-		self.serviceurl = app.serviceworker;
+		self.serviceurl = app.serviceurl;
 
 		var widgets = app.widgets;
 		if (widgets instanceof Array) {
@@ -183,10 +189,15 @@ Application.prototype.reload = function(callback) {
 			self.origin.push(ip);
 		*/
 
-		if (app.subscribe) {
-			for (var i = 0, length = app.subscribe.length; i < length; i++)
-				self.events[app.subscribe[i].toLowerCase()] = true;
-		}
+		if (app.publish && app.publish instanceof Array && app.publish.length)
+			self.publish = app.publish;
+		else
+			self.publish = null;
+
+		if (app.subscribe && app.subscribe instanceof Array && app.subscribe.length)
+			self.subscribe = app.subscribe;
+		else
+			self.subscribe = null;
 
 		callback && callback(null, self);
 	}, self.cookies, self.headers);

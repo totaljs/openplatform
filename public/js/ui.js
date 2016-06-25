@@ -1451,6 +1451,10 @@ COMPONENT('applications', function() {
 
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i];
+
+			if (item.service)
+				continue;
+
 			var el = apps.filter('[data-id="{0}"]'.format(item.id));
 
 			el.attr('data-stamp', stamp);
@@ -2128,7 +2132,7 @@ COMPONENT('widgets', function() {
 			var a = item[0].parseInt();
 			var b = item[1].parseInt();
 			var app = apps.findItem('internal', a);
-			if (!app || !app.widgets)
+			if (!app || !app.widgets || app.service)
 				continue;
 			var widget = app.widgets.findItem('internal', b);
 			if (!widget)

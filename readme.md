@@ -89,6 +89,18 @@ Each application must contain `openplatform.json` file that contains all the nec
         }
     ],
 
+    // Optional: which events does the application publish?
+    "publish": ["order-create", "order-update", "order-remove"],
+
+    // Optional: on which events does the application subscribe?
+    "subscribe": ["openplatform-user-update"],
+
+    // Optional: service URL for receiving data from the Service-Worker
+    "serviceurl": "http://openapp.totaljs.com/my-subscribter/",
+
+    // Is the app service? If yes, then the application won't be visible in user's application list.
+    "service": false,
+    
     // Optional: whitelist of IP addresses to be checked by the OpenPlatform for the requests originated from 
     // a server. Simple hijacking prevention
     "origin": ['10.77.50.11']

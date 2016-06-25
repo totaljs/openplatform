@@ -10,13 +10,18 @@ NEWSCHEMA('Service').make(function(schema) {
 			return value.toLowerCase();
 	});
 
-	schema.setSave(function(error, model, options, callback) {
+	schema.setSave(function(error, model, controller, callback) {
+
+		if (!controller.app.publish[model.event]) {
+			error.push('error-application-publish');
+			return callback();
+		}
 
 		var arr = [];
 
 		for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
 			var app = APPLICATIONS[i];
-			if (!app.serviceurl || !app.serviceworker || !app.events[model.event])
+			if (!app.serviceurl || !app.serviceworker || !app.subscribe[model.event])
 				continue;
 			arr.push(app);
 		}

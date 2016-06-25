@@ -5,7 +5,7 @@ author                          : Peter Širka
 email                           : petersirka@gmail.com
 secret                          : 2016OP
 
-url                             : http://openplatform.totaljs.com
+url                             : http://127.0.0.1:8000
 languages                       : en;sk;cz;hu;ru;fr
 cookie                          : __uop
 cookie-expiration               : 5 days

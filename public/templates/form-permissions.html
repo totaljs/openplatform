@@ -16,7 +16,7 @@
 				<div class="userapp-container userapp-container-disabled" data-id="{{ internal }}">
 					<div class="userapp-header">
 						<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
-						<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" alt="{{ title }}" /></div>
+						<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" onerror="onImageError(this)" width="30" border="0" alt="{{ title }}" /></div>
 						<b>{{ title }}</b>
 						<div class="fs11">v{{ version }}</div>
 					</div>
