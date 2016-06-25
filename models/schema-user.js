@@ -17,6 +17,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('login', 'String(100)', true);
 	schema.define('password', 'String(50)', true);
 	schema.define('applications', 'Object');
+	schema.define('settings', 'Object');
 	schema.define('sounds', Boolean);
 	schema.define('notifications', Boolean);
 	schema.define('blocked', Boolean);
@@ -53,6 +54,7 @@ NEWSCHEMA('User').make(function(schema) {
 		user.sounds = model.sounds;
 		user.notifications = model.notifications;
 		user.dateupdated = F.datetime;
+		user.settings = model.settings;
 
 		if (user.blocked)
 			user.online = false;
@@ -70,6 +72,7 @@ NEWSCHEMA('User').make(function(schema) {
 			F.mail(model.email, '@(Welcome to OpenPlatform)', '~mails/registration', model, model.language);
 		}
 
+		USERS.quicksort('lastname', true, 10);
 		OPENPLATFORM.users.save();
 		callback(SUCCESS(true));
 	});

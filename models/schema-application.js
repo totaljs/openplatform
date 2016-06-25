@@ -2,7 +2,7 @@ NEWSCHEMA('Application').make(function(schema) {
 
 	schema.define('id', 'Url', true);
 	schema.define('title', 'String(50)', true);
-	schema.define('settings', 'String(200)');
+	schema.define('config', 'String(100)');
 	schema.define('secret', 'String(30)');
 	schema.define('notifications', Boolean);
 	schema.define('users', Boolean);
@@ -22,7 +22,7 @@ NEWSCHEMA('Application').make(function(schema) {
 			item.title = model.title;
 			item.notifications = model.notifications;
 			item.users = model.users;
-			item.settings = model.settings;
+			item.config = model.config;
 			item.mobile = model.mobile;
 			item.secret = model.secret;
 			item.applications = model.applications;
@@ -36,7 +36,7 @@ NEWSCHEMA('Application').make(function(schema) {
 			}
 
 			// Save all applications into the file
-			APPLICATIONS.quicksort('title');
+			APPLICATIONS.quicksort('title', true, 10);
 			OPENPLATFORM.applications.save();
 
 			// Responds

@@ -14,7 +14,7 @@ header div { float: left; }
 .noscroll { overflow: hidden; }
 .noscroll body { overflow: hidden; }
 
-.logo { float: left; height: 40px; padding: 7px 0 0 8px; width: 50px; text-align: center; border-right: 1px solid #F0F0F0; }
+.logo { float: left; height: 40px; padding: 7px 0 0 8px; width: 50px; text-align: center; border-right: 1px solid #F0F0F0; cursor: pointer; }
 .user { float: right; padding: 13px 10px 0 0; color: gray; font-size: 11px; }
 .user-photo { float: right; height: 40px; }
 
@@ -151,6 +151,8 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 .userapp-roles label { cursor: pointer; }
 .userapp-roles div:nth-child(odd) { background-color: #F8F8F8; }
 .userapp-roles input { margin-right: 5px; }
+.userapp-settings input { background-color: white; border: 2px solid #E0E0E0; padding: 5px 8px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; }
+.userapp-settings { margin-bottom: 15px; }
 
 .userwidget-container { border-bottom: 1px solid #F0F0F0; margin-bottom: 10px; background-color: white; user-select: none; }
 .userwidget-container-disabled img { filter: grayscale(100%); }

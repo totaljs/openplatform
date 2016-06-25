@@ -143,7 +143,8 @@ function json_session() {
 		return self.invalid(400).push('error-application-secret');
 
 	var output = user.export();
-	output.settings = app.settings;
+	output.settings = user.settings[app.internal];
+	output.config = app.config;
 	output.roles = user.applications[app.internal];
 	output.openplatform = OPENPLATFORM.info();
 	self.json(output);

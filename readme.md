@@ -157,8 +157,11 @@ __Response__:
     "sounds": true,
     "language": "sk",
 
-    // Application's settings
-    "settings": "",
+    // User's application settings (super-admin can change this settings)
+    "settings": ""
+
+    // Application's configuration (super-admin can change this settings)
+    "config": "",
 
     // Application's roles
     "roles": [

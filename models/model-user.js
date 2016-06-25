@@ -9,7 +9,8 @@ function User() {
 	this.alias = '';
 	this.firstname = '';
 	this.lastname = '';
-	this.applications = {};
+	this.applications = {};              // Applications
+	this.settings = {};                  // Settings of all applications
 	this.language = '';
 	this.phone = '';
 	this.email = '';

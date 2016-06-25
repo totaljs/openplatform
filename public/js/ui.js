@@ -1587,6 +1587,10 @@ COMPONENT('processes', function() {
 					break;
 			}
 		});
+
+		toolbar.on('click', '.logo', function() {
+			self.set('');
+		});
 	};
 
 	self.is = function() {
@@ -1796,7 +1800,7 @@ COMPONENT('notifications', function() {
 
 			var apps = GET(self.attr('data-source'));
 			var app = apps.findItem('id', id);
-			if (!app)
+			if (!app || app.service)
 				return;
 			SETTER('processes', 'open', app.id, url);
 		});

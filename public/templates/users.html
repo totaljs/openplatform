@@ -165,6 +165,9 @@
 									{{ end }}
 								</div>
 								{{ fi }}
+								<div class="userapp-settings">
+									<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ internal }}" placeholder="@(Custom application's settings for the app)" />
+								</div>
 							</div>
 						</script>
 					</div>
@@ -218,7 +221,8 @@
 	}
 
 	function users_refresh_applications() {
-		AJAX('GET /internal/applications/', 'users.applications');
+		if (common.form !== 'users')
+			AJAX('GET /internal/applications/', 'users.applications');
 	}
 
 	function users_filter() {
@@ -237,6 +241,18 @@
 
 	ON('#users.form', function(component) {
 		component.submit = function(hide) {
+
+			var customsettings = {};
+
+			// Collects app settings
+			$('.userapp-settings-input').each(function() {
+				if (!this.value)
+					return;
+				customsettings[this.getAttribute('data-id').parseInt()] = this.value;
+			});
+
+			users.form.settings = customsettings;
+
 			AJAX('POST /internal/users/', users.form, function(response, err) {
 				if (isError(err))
 					return;
@@ -310,13 +326,17 @@
 			});
 
 			self.element.on('change', 'input', function() {
+
+				self.change(true);
+
+				if (this.type === 'text')
+					return;
+
 				var el = $(this).closest('.userapp-container');
 				var id = el.attr('data-id').parseInt();
 				var apps = self.get();
 				var app = apps[id];
 				var index = app.indexOf(this.value);
-
-				self.change(true);
 
 				if (this.checked) {
 					if (index === -1)
@@ -335,10 +355,12 @@
 				for (var i = 0, length = value.length; i < length; i++)
 					builder.push(self.template(value[i]));
 				self.html(builder.join(''));
+				self.update();
 			}, true);
 		};
 
 		self.setter = function(value) {
+
 			var cls = 'userapp-container-disabled';
 			self.find('.userapp-container').each(function() {
 				var el = $(this);
@@ -352,6 +374,9 @@
 					el.addClass(cls);
 					el.find('input').prop('checked', false);
 				}
+
+				// HACK
+				el.find('.userapp-settings-input').val(users.form && users.form.settings ? users.form.settings[id] || '' : '');
 			});
 		};
 	});

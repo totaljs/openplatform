@@ -21,7 +21,7 @@ function Application() {
 	this.internal = 0;
 	this.title = '';
 	this.secret = '';
-	this.settings = '';           // Application settings
+	this.config = '';             // Custom configuration
 
 	this.online = false;          // Current application state according to the `openplatform` url address
 	this.notifications = false;   // Can create notifications for users
@@ -65,7 +65,7 @@ Application.prototype.readonly = function() {
 	item.service = self.service;
 	item.serviceworker = self.serviceworker;
 	item.sessionurl = self.sessionurl;
-	item.settings = self.settings;
+	item.config = self.config;
 	item.subscribe = self.subscribe;
 	item.title = self.title;
 	item.url = self.url;

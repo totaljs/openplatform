@@ -53,6 +53,10 @@
 						<div data-name="version" data-before="v"></div>
 						<div data-name="author" class="fs11 silver mt10" data-before="@(Author:) "></div>
 						<div data-name="email" class="fs11 silver"></div>
+						<div data-name="service" data-visible="n => n" class="mt10 fs11 silver">
+							<hr />
+							<i class="fa fa-cogs mr5"></i>@(The application will be used as service.)
+						</div>
 					</div>
 				</div>
 			</div>
@@ -90,11 +94,13 @@
 					<div data-component="checkbox" data-component-path="applications.form.notifications">@(Allow push notifications)</div>
 					<div data-component="checkbox" data-component-path="applications.form.users">@(Allow to read users)</div>
 					<div data-component="checkbox" data-component-path="applications.form.applications">@(Allow to read applications)</div>
-					<div data-component="checkbox" data-component-path="applications.form.mobile">@(Allow for mobile devices)</div>
+					<div data-component="visible" data-component-path="applications.form.data.service" data-if="value !== true">
+						<div data-component="checkbox" data-component-path="applications.form.mobile">@(Allow for mobile devices)</div>
+					</div>
 					<br />
 					<div class="row">
 						<div class="col-md-12 m">
-							<div data-component="textbox" data-component-path="applications.form.settings" data-maxlength="200" data-control-icon="fa-cog" data-placeholder="@(You can type your own custom settings.)">@(Custom settings)</div>
+							<div data-component="textbox" data-component-path="applications.form.config" data-maxlength="200" data-control-icon="fa-cog" data-placeholder="@(You can type your own custom configuration.)">@(Custom config)</div>
 							<div data-component="template" data-component-path="applications.form.data">
 								<script type="text/html">
 									<div class="help">{{ if settings }}<i class="fa fa-life-saver"></i>{{ settings }}{{ else }}@(Each application can have special settings and this settings must be documented in the its documentation.){{ fi }}</div>
@@ -110,7 +116,7 @@
 		<div class="row">
 			<div class="col-md-9 col-md-offset-3">
 				<div class="padding npt npb">
-					<div data-component="validation" data-component-path="applications.form" class="inline" data-if="value && value.data && value.data.url">
+					<div data-component="validation" data-component-path="applications.form" class="inline" data-if="value && value.data && value.data.name">
 						<button name="submit">@(SAVE)</button>
 					</div>
 					<button name="cancel">@(Cancel)</button>
@@ -219,7 +225,7 @@
 			applications.form.users = item.users;
 			applications.form.applications = item.applications;
 			applications.form.secret = item.secret;
-			applications.form.settings = item.settings;
+			applications.form.config = item.config;
 			applications.form.serviceworker = item.serviceworker;
 			applications.form.mobile = item.mobile;
 			applications.form.notifications = item.notifications;

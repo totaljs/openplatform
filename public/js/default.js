@@ -5,8 +5,12 @@ if (window.Notification && window.Notification.permission !== 'granted')
 
 $(document).ready(function() {
 	jR.clientside('.jR');
+
 	$('.logo').on('click', function() {
-		$('.menu').toggleClass('menu-visible');
+		if (['md', 'lg'].indexOf(WIDTH()) === -1)
+			$('.menu').toggleClass('menu-visible');
+		else
+			jR.redirect('/');
 	});
 });
 
