@@ -126,15 +126,15 @@ Every request has to include following headers:
 - `x-openplatform-secret` __(optional)__ application specific security token
 
 
-#### Request to `sessionurl` (session request)
+#### Request to `url_session` (session request)
 
 ```html
 http://openapp.totaljs.com/openplatform/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
 - workaround for iframes blocking in Safari. 
 - used to obtain third party session cookie.
-- the `sessionurl` should respond with a simple `plain text` response (e.g. `success`).   
-- OpenPlatform makes modifications to the `sessionurl` according to the argument `openplatform`
+- the `url_session` should respond with a simple `plain text` response (e.g. `success`).   
+- OpenPlatform makes modifications to the `url_session` according to the argument `openplatform`
 - you should make request to the URL received in the response in argument `openplatform`
 
 __Request__:
@@ -192,7 +192,7 @@ __Response__:
 
 #### Request to: `url` (application request)
 
-Almost the same as `sessionurl` request with the difference that when the iframe loads `sessionurl` it is autmoatically redirected to `url` (the user doesn't see the content of the `sessionurl`). The `sessionurl` was created for the Safari browser because it comes with the third party cookies blocked by default. When Safari browser is detected, the OpenPlatform opens up a popup window with the `sessionurl` in order to create the session cookie. 
+Almost the same as `url_session` request with the difference that when the iframe loads `url_session` it is autmoatically redirected to `url` (the user doesn't see the content of the `url_session`). The `url_session` was created for the Safari browser because it comes with the third party cookies blocked by default. When Safari browser is detected, the OpenPlatform opens up a popup window with the `url_session` in order to create the session cookie. 
 
 ```html
 http://openapp.totaljs.com/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
@@ -386,3 +386,9 @@ Documentation can be found here <http://www.chartjs.org/docs/>. Simple example o
     }
 }
 ```
+
+## TODO
+
+- [ ] missing email notifications
+- [ ] missing register/unregister calls for multi-permission settings
+- [ ] improve documentation
