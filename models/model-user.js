@@ -9,14 +9,15 @@ function User() {
 	this.alias = '';
 	this.firstname = '';
 	this.lastname = '';
-	this.applications = {};              // Applications
-	this.settings = {};                  // Settings of all applications
+	this.applications = {};               // Applications
+	this.settings = {};                   // Settings of all applications
 	this.language = '';
 	this.phone = '';
 	this.email = '';
 	this.login = '';
 	this.password = '';
 	this.group = '';
+	this.company = '';
 
 	this.datecreated = null;
 	this.datelogged = null;
@@ -117,30 +118,33 @@ User.prototype.notify = function(notification, callback) {
 User.prototype.readonly = function(app) {
 	var self = this;
 	var item = {};
-	item.id = self.id;
+
 	item.alias = self.alias;
-	item.firstname = self.firstname;
-	item.lastname = self.lastname;
-	item.photo = OPENPLATFORM.users.photo(self.email);
-	item.email = self.email;
-	item.phone = self.phone;
-	item.online = self.online;
 	item.blocked = self.blocked;
+	item.company = self.company;
+	item.datecreated = self.datecreated;
+	item.datelogged = self.datelogged;
+	item.dateupdated = self.dateupdated;
+	item.email = self.email;
+	item.firstname = self.firstname;
 	item.group = self.group;
-	item.superadmin = self.superadmin;
+	item.id = self.id;
+	item.language = self.language;
+	item.lastname = self.lastname;
 	item.notifications = self.notifications;
 	item.notificationsemail = self.notificationsemail;
-	item.datecreated = self.datecreated;
-	item.dateupdated = self.dateupdated;
-	item.datelogged = self.datelogged;
+	item.online = self.online;
+	item.phone = self.phone;
+	item.photo = OPENPLATFORM.users.photo(self.email);
 	item.sounds = self.sounds;
+	item.superadmin = self.superadmin;
 	item.widgets = self.widgets;
-	item.language = self.language;
 
 	if (app) {
 		item.roles = self.applications[app.internal] || EMPTYARRAY;
 		item.has = self.applications[app.internal] ? true : false;
 		item.settings = self.settings[app.internal] || '';
+		item.config = app.config;
 	}
 
 	return item;
@@ -149,28 +153,31 @@ User.prototype.readonly = function(app) {
 User.prototype.export = function(app) {
 	var self = this;
 	var item = {};
-	item.id = self.id;
+
 	item.alias = self.alias;
-	item.firstname = self.firstname;
-	item.lastname = self.lastname;
-	item.photo = OPENPLATFORM.users.photo(self.email);
-	item.email = self.email;
-	item.phone = self.phone;
-	item.online = self.online;
 	item.blocked = self.blocked;
-	item.group = self.group;
-	item.superadmin = self.superadmin;
-	item.notifications = self.notifications;
+	item.company = self.company;
 	item.datecreated = self.datecreated;
-	item.dateupdated = self.dateupdated;
 	item.datelogged = self.datelogged;
-	item.sounds = self.sounds;
+	item.dateupdated = self.dateupdated;
+	item.email = self.email;
+	item.firstname = self.firstname;
+	item.group = self.group;
+	item.id = self.id;
 	item.language = self.language;
+	item.lastname = self.lastname;
+	item.notifications = self.notifications;
+	item.online = self.online;
+	item.phone = self.phone;
+	item.photo = OPENPLATFORM.users.photo(self.email);
+	item.sounds = self.sounds;
+	item.superadmin = self.superadmin;
 
 	if (app) {
 		item.roles = self.applications[app.internal] || EMPTYARRAY;
 		item.has = self.applications[app.internal] ? true : false;
 		item.settings = self.settings[app.internal] || '';
+		item.config = app.config;
 	}
 
 	return item;

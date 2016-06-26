@@ -12,6 +12,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('lastname', 'Capitalize(50)', true);
 	schema.define('language', 'Lower(2)');
 	schema.define('group', 'String(60)');
+	schema.define('company', 'String(60)');
 	schema.define('email', 'Email', true);
 	schema.define('phone', 'Phone');
 	schema.define('login', 'String(100)', true);
@@ -39,8 +40,9 @@ NEWSCHEMA('User').make(function(schema) {
 		user.phone = model.phone;
 		user.login = model.login;
 		user.group = model.group;
+		user.company = model.company;
 		user.language = model.language;
-		user.search = (user.lastname + ' ' + user.firstname + ' ' + user.group).toSearch();
+		user.search = (user.lastname + ' ' + user.firstname + ' ' + user.group + ' ' + user.company).toSearch();
 		user.alias = model.firstname + ' ' + model.lastname;
 
 		if (!model.password.startsWith('****')) {
@@ -91,6 +93,14 @@ NEWSCHEMA('User').make(function(schema) {
 			var app = APPLICATIONS.findItem('internal', U.parseInt(item));
 			if (app)
 				app.unregister(user, next);
+			else
+				next();
+		});
+
+		app_new.wait(function(item, next) {
+			var app = APPLICATIONS.findItem('internal', U.parseInt(item));
+			if (app)
+				app.register(user, next);
 			else
 				next();
 		});
