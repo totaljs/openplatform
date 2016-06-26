@@ -1,4 +1,4 @@
-# OpenPlatform v1.0.0
+# OpenPlatform v0.0.1 (BETA)
 
 - install node.js platform `+v4`
 - download the source code
@@ -44,7 +44,7 @@ Each application must contain `openplatform.json` file that contains all the nec
     // Author of the application
     "author": "Peter Širka",
 
-    // Suport email
+    // Support email
     "email": "petersirka@gmail.com",
 
     // Optional. The description sees only the super user of the OpenPlatform.
@@ -54,8 +54,8 @@ Each application must contain `openplatform.json` file that contains all the nec
     "url": "http://openapp.totaljs.com",
 
     // Optional: session URL - workaround for iframes blocking in Safari. 
-    // more info bellow
-    "sessionurl": "http://openapp.totaljs.com/openplatform/",
+    // More info bellow.
+    "url_session": "http://openapp.totaljs.com/openplatform/",
 
     // Optional: roles used within the application. 
     "roles": ["create", "read", "update"],
@@ -96,13 +96,23 @@ Each application must contain `openplatform.json` file that contains all the nec
     "subscribe": ["openplatform-user-update"],
 
     // Optional: service URL for receiving data from the Service-Worker
-    "serviceurl": "http://openapp.totaljs.com/my-subscribter/",
+    // The platform sends an object { event: String, data: Object } (POST + application/json)
+    "url_subscribe": "http://openapp.totaljs.com/my-subscribter/",
 
-    // Is the app service? If yes, then the application won't be visible in user's application list.
+    // Is the app service? If yes, then the application won't be visible in user's
+    // application list.
     "service": false,
+
+    // Optional: it's executed when the super-admin enables the application for the user
+    // The platform sends the user object (POST + application/json)
+    "url_register": "",
     
-    // Optional: whitelist of IP addresses to be checked by the OpenPlatform for the requests originated from 
-    // a server. Simple hijacking prevention
+    // Optional: it's executed when the super-admin disables the application for the user
+    // The platform sends the user object (POST + application/json)
+    "url_unregister": "",
+    
+    // Optional: whitelist of IP addresses to be checked by the OpenPlatform for the requests
+    // originated from a server. It's a simple hijacking prevention.
     "origin": ['10.77.50.11']
 }
 ```

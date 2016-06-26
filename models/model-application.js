@@ -1,3 +1,7 @@
+const REQUEST_HEADERS = {};
+const REQUEST_FLAGS = ['post', 'json', '< 1'];
+const REQUEST_FLAGS_RELOAD = ['get', '< 5', 'dnscache'];
+
 global.APPLICATIONS = [];
 
 function Application() {
@@ -11,9 +15,12 @@ function Application() {
 	this.description = '';
 	this.email = '';
 	this.url = '';                // Application URL
-	this.serviceurl = '';         // URL for service worker
-	this.sessionurl = '';         // URL to create a session
+	this.url_session = '';        // URL to create a session
+	this.url_register = '';
+	this.url_unregister = '';
+	this.url_subscribe = '';
 	this.responsive = false;
+	this.service = false;
 
 	// internal properties:
 	this.status = '';
@@ -49,6 +56,7 @@ Application.prototype.readonly = function() {
 	var item = {};
 	item.applications = self.applications;
 	item.author = self.author;
+	item.config = self.config;
 	item.description = self.description;
 	item.email = self.email;
 	item.icon = self.icon;
@@ -64,11 +72,11 @@ Application.prototype.readonly = function() {
 	item.roles = self.roles;
 	item.service = self.service;
 	item.serviceworker = self.serviceworker;
-	item.sessionurl = self.sessionurl;
-	item.config = self.config;
 	item.subscribe = self.subscribe;
 	item.title = self.title;
 	item.url = self.url;
+	item.url_session = self.url_session;
+	item.url_subscribe = self.url_subscribe;
 	item.users = self.users;
 	item.version = self.version;
 	item.widgets = self.widgets;
@@ -98,10 +106,11 @@ Application.prototype.export = function() {
 	item.roles = self.roles;
 	item.service = self.service;
 	item.serviceworker = self.serviceworker;
-	item.sessionurl = self.sessionurl;
 	item.subscribe = self.subscribe;
 	item.title = self.title;
 	item.url = self.url;
+	item.url_session = self.url_session;
+	item.url_subscribe = self.url_subscribe;
 	item.users = self.users;
 	item.version = self.version;
 	return item;
@@ -117,6 +126,48 @@ Application.prototype.prepare = function(item) {
 	return self;
 };
 
+Application.prototype.register = function(user, callback) {
+	var self = this;
+
+	if (!self.url_register) {
+		callback && callback();
+		return false;
+	}
+
+	REQUEST_HEADERS['x-openplatform'] = F.config.url;
+	REQUEST_HEADERS['x-openplatform-user'] = user.id;
+	REQUEST_HEADERS['x-openplatform-id'] = self.id;
+
+	if (self.secret)
+		REQUEST_HEADERS['x-openplatform-secret'] = self.secret;
+	else if (REQUEST_HEADERS['x-openplatform-secret'])
+		delete REQUEST_HEADERS['x-openplatform-secret'];
+
+	U.request(self.url_register, REQUEST_FLAGS, user.export(self), callback, null, REQUEST_HEADERS);
+	return true;
+};
+
+Application.prototype.unregister = function(user, callback) {
+	var self = this;
+
+	if (!self.url_unregister) {
+		callback && callback();
+		return false;
+	}
+
+	REQUEST_HEADERS['x-openplatform'] = F.config.url;
+	REQUEST_HEADERS['x-openplatform-user'] = user.id;
+	REQUEST_HEADERS['x-openplatform-id'] = self.id;
+
+	if (self.secret)
+		REQUEST_HEADERS['x-openplatform-secret'] = self.secret;
+	else if (REQUEST_HEADERS['x-openplatform-secret'])
+		delete REQUEST_HEADERS['x-openplatform-secret'];
+
+	U.request(self.url_unregister, REQUEST_FLAGS, user.export(self), callback, null, REQUEST_HEADERS);
+	return true;
+};
+
 /**
  * Downloads info about app
  * @param {Function(err)} callback
@@ -124,7 +175,7 @@ Application.prototype.prepare = function(item) {
  */
 Application.prototype.reload = function(callback) {
 	var self = this;
-	U.request(self.id, ['get', '< 5', 'dnscache'], function(err, response, status, headers, ip) {
+	U.request(self.id, REQUEST_FLAGS_RELOAD, function(err, response, status, headers, ip) {
 
 		self.dateupdated = F.datetime;
 
@@ -152,13 +203,15 @@ Application.prototype.reload = function(callback) {
 		self.author = app.author;
 		self.responsive = app.responsive || false;
 		self.status = 'ready';
-		self.sessionurl = app.sessionurl;
 		self.online = true;
 		self.events = {};
 		self.origin = app.origin;
 		self.service = app.service === true;
 		self.search = (self.name + ' ' + self.title).toSearch();
-		self.serviceurl = app.serviceurl;
+		self.url_subscribe = app.url_subscribe;
+		self.url_register = app.url_register;
+		self.url_unregister = app.url_unregister;
+		self.url_session = app.url_session;
 
 		var widgets = app.widgets;
 		if (widgets instanceof Array) {

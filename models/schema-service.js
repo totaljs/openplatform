@@ -21,7 +21,7 @@ NEWSCHEMA('Service').make(function(schema) {
 
 		for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
 			var app = APPLICATIONS[i];
-			if (!app.serviceurl || !app.serviceworker || !app.subscribe[model.event])
+			if (!app.url_subscribe || !app.serviceworker || !app.subscribe[model.event] || app.id === controller.app.id)
 				continue;
 			arr.push(app);
 		}

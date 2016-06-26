@@ -114,7 +114,7 @@ User.prototype.notify = function(notification, callback) {
 	return self;
 };
 
-User.prototype.readonly = function() {
+User.prototype.readonly = function(app) {
 	var self = this;
 	var item = {};
 	item.id = self.id;
@@ -136,10 +136,17 @@ User.prototype.readonly = function() {
 	item.sounds = self.sounds;
 	item.widgets = self.widgets;
 	item.language = self.language;
+
+	if (app) {
+		item.roles = self.applications[app.internal] || EMPTYARRAY;
+		item.has = self.applications[app.internal] ? true : false;
+		item.settings = self.settings[app.internal] || '';
+	}
+
 	return item;
 };
 
-User.prototype.export = function() {
+User.prototype.export = function(app) {
 	var self = this;
 	var item = {};
 	item.id = self.id;
@@ -159,6 +166,13 @@ User.prototype.export = function() {
 	item.datelogged = self.datelogged;
 	item.sounds = self.sounds;
 	item.language = self.language;
+
+	if (app) {
+		item.roles = self.applications[app.internal] || EMPTYARRAY;
+		item.has = self.applications[app.internal] ? true : false;
+		item.settings = self.settings[app.internal] || '';
+	}
+
 	return item;
 };
 

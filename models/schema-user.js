@@ -48,6 +48,9 @@ NEWSCHEMA('User').make(function(schema) {
 			user.datepassword = F.datetime;
 		}
 
+		var app_old = Object.keys(user.applications);
+		var app_new = Object.keys(model.applications);
+
 		user.superadmin = model.superadmin;
 		user.applications = model.applications;
 		user.blocked = model.blocked;
@@ -74,6 +77,24 @@ NEWSCHEMA('User').make(function(schema) {
 
 		USERS.quicksort('lastname', true, 10);
 		OPENPLATFORM.users.save();
+
+		// Registers/Ungregisters
+		var unregister = [];
+
+		for (var i = 0, length = app_old.length; i < length; i++) {
+			var item = app_old[i];
+			if (app_new.indexOf(item) === -1)
+				unregister.push(item);
+		}
+
+		unregister.wait(function(item, next) {
+			var app = APPLICATIONS.findItem('internal', U.parseInt(item));
+			if (app)
+				app.unregister(user, next);
+			else
+				next();
+		});
+
 		callback(SUCCESS(true));
 	});
 

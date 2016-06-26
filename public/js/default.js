@@ -170,7 +170,7 @@ $(window).on('message', function(e) {
 			for (var i = 0, length = dashboard.applications.length; i < length; i++) {
 				tmp = $.extend({}, dashboard.applications[i]);
 				delete tmp.events;
-				delete tmp.sessionurl;
+				delete tmp.url_session;
 				delete tmp.internal;
 				delete tmp.widgets;
 				arr.push(tmp);
@@ -219,24 +219,6 @@ Tangular.register('photo', function(value) {
 		return '/img/face.jpg';
 	return '/photos/' + value.replace(/@|\./g, '_') + '.jpg';
 });
-
-Array.prototype.pagination = function(max) {
-	var length = this.length;
-	var pages = Math.ceil(length / max);
-	return { pages: pages, count: length };
-};
-
-Array.prototype.paginate = function(skip, take) {
-	var arr = [];
-	var self = this;
-	for (var i = 0, length = self.length; i < length; i++) {
-		if (arr.length >= take)
-			break;
-		if (i >= skip)
-			arr.push(self[i]);
-	}
-	return arr;
-};
 
 function success() {
 	var el = $('#success');
@@ -308,6 +290,24 @@ function createSession(iframe, url, callback) {
 		}, 1000);
 	});
 }
+
+Array.prototype.pagination = function(max) {
+	var length = this.length;
+	var pages = Math.ceil(length / max);
+	return { pages: pages, count: length };
+};
+
+Array.prototype.paginate = function(skip, take) {
+	var arr = [];
+	var self = this;
+	for (var i = 0, length = self.length; i < length; i++) {
+		if (arr.length >= take)
+			break;
+		if (i >= skip)
+			arr.push(self[i]);
+	}
+	return arr;
+};
 
 Array.prototype.hasRoles = function(value) {
 	for (var i = 0, length = this.length; i < length; i++) {

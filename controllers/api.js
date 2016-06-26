@@ -97,15 +97,8 @@ function json_users() {
 	var self = this;
 	var arr = [];
 
-	for (var i = 0, length = USERS.length; i < length; i++) {
-		var item = USERS[i].export();
-
-		// Does the user the application which needs this list?
-		item.roles = USERS[i].applications[self.app.internal] || EMPTYARRAY;
-		item.has = USERS[i].applications[self.app.internal] ? true : false;
-
-		arr.push(item);
-	}
+	for (var i = 0, length = USERS.length; i < length; i++)
+		arr.push(USERS[i].export(self.app));
 
 	self.json(arr);
 }
@@ -142,10 +135,8 @@ function json_session() {
 	if (app.secret && app.secret !== self.req.headers['x-openplatform-secret'])
 		return self.invalid(400).push('error-application-secret');
 
-	var output = user.export();
-	output.settings = user.settings[app.internal];
+	var output = user.export(app);
 	output.config = app.config;
-	output.roles = user.applications[app.internal];
 	output.openplatform = OPENPLATFORM.info();
 	self.json(output);
 }

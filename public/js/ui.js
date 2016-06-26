@@ -1713,7 +1713,7 @@ COMPONENT('processes', function() {
 		iframe.element = self.find('[data-token="{0}"]'.format(iframe.token));
 		iframe.iframe = iframe.element.find('iframe');
 		iframe.dateopened = new Date();
-		iframe.session = item.sessionurl;
+		iframe.session = item.url_session;
 		iframes.push(iframe);
 
 		setTimeout(function() {
@@ -1722,8 +1722,8 @@ COMPONENT('processes', function() {
 
 		location.hash = item.linker;
 
-		if (item.sessionurl) {
-			createSession(iframe.iframe, self.makeurl(item.sessionurl, item), function() {
+		if (item.url_session) {
+			createSession(iframe.iframe, self.makeurl(item.url_session, item), function() {
 				setTimeout(function() {
 					iframe.iframe.attr('src', self.makeurl(redirect || item.url, item));
 					redirect = '';
