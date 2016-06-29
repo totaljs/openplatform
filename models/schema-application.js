@@ -69,6 +69,7 @@ NEWSCHEMA('Application').make(function(schema) {
 			var user = USERS[i];
 			if (user.applications[item.internal]) {
 				delete user.applications[item.internal];
+				delete user.settings[item.internal];
 				save = true;
 			}
 
