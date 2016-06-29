@@ -275,6 +275,22 @@ console.log(typeof(OPENPLATFORM));
 // Method: OPENPLATFORM.loading(BOOLEAN);
 OPENPLATFORM.loading(true);
 
+// Shows a warning message
+// Method: OPENPLATFORM.warning(STRING);
+OPENPLATFORM.warning('Message');
+
+// Shows a success message
+// Method: OPENPLATFORM.success(STRING);
+OPENPLATFORM.success('Message');
+
+// Plays a sound record
+// Method: OPENPLATFORM.sound(STRING);
+OPENPLATFORM.play('URL ADDRESS TO MP3');
+
+// Stops a sound record
+// Method: OPENPLATFORM.sound(STRING);
+OPENPLATFORM.stop('URL ADDRESS TO MP3');
+
 // Maximizes the application's iframe
 // Method: OPENPLATFORM.maximize([url]);
 OPENPLATFORM.maximize();

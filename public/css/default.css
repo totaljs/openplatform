@@ -92,6 +92,7 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 .m { margin-bottom: 15px !important; }
 .cl { clear: both; }
 .center { text-align: center; }
+.right { text-align: right; }
 .bg-smoke { background-color: #F8F8F8; }
 .fs11 { font-size: 11px !important; }
 .help { font-size: 11px; color: #A0A0A0; margin-top: 7px; line-height: 13px; }

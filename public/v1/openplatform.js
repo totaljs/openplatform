@@ -9,6 +9,22 @@ OPENPLATFORM.loading = function(visible) {
 	return OPENPLATFORM.send('loading', visible);
 };
 
+OPENPLATFORM.warning = function(message) {
+	return OPENPLATFORM.send('warning', message);
+};
+
+OPENPLATFORM.success = function(message) {
+	return OPENPLATFORM.send('success', message);
+};
+
+OPENPLATFORM.play = function(url) {
+	return OPENPLATFORM.send('play', url);
+};
+
+OPENPLATFORM.stop = function(url) {
+	return OPENPLATFORM.send('stop', url);
+};
+
 OPENPLATFORM.maximize = function(url) {
 	return OPENPLATFORM.send('maximize', url);
 };

@@ -13,7 +13,17 @@
 							<div class="help">@(Click on the photo for its change.)</div>
 						</div>
 						<hr />
-						<div class="mt10" data-component="checkbox" data-component-path="account.sounds">@(Enable sounds)</div>
+						<div data-component="range" data-component-path="account.volume" data-component-type="number" data-min="0" data-max="100" data-icon="fa-volume-up">Volume</div>
+						<div class="row fs11 silver">
+							<div class="col-xs-6">
+								Low
+							</div>
+							<div class="col-xs-6 right">
+								High
+							</div>
+						</div>
+						<br />
+						<div data-component="checkbox" data-component-path="account.sounds">@(Enable sounds)</div>
 						<div data-component="checkbox" data-component-path="account.notifications">@(Enable flying notifications)</div>
 						<div data-component="checkbox" data-component-path="account.notificationsemail">@(Enable email notifications)</div>
 						<hr />
@@ -56,6 +66,7 @@
 		account.sounds = user.sounds;
 		account.notifications = user.notifications;
 		account.notificationsemail = user.notificationsemail;
+		account.volume = user.volume;
 		account.skip = true;
 		account.ispassword = jC.parseQuery().password === '1';
 		UPDATE('account');
@@ -71,11 +82,29 @@
 				return;
 			user.sounds = account.sounds;
 			user.notifications = account.notifications;
+
+			if (account.volume !== user.volume)
+				SET('user.volume', account.volume);
+
 			SET('account.ispassword', false);
 			RESET('account.*');
 			success();
 		});
 	}
+
+	WATCH('account.volume', function(path, value, type) {
+		if (type !== 2)
+			return;
+
+		var audio = FIND('audio');
+		audio.setter(value);
+		audio.play('/sounds/beep.mp3');
+
+		clearTimeout(account.playtimeout);
+		account.playtimeout = setTimeout(function() {
+			audio.setter(user.value);
+		}, 2000);
+	});
 
 	COMPONENT('password-progress', function() {
 		var self = this;

@@ -25,6 +25,7 @@ function User() {
 	this.datepassword = null;
 	this.widgets = null;                  // contains widgets (array)
 	this.sounds = true;                   // enables/disables client-side sounds
+	this.volume = 50;                     // volume in %
 
 	// Internal settings
 	this.online = false;                  // is the user online?
@@ -137,6 +138,7 @@ User.prototype.readonly = function(app) {
 	item.phone = self.phone;
 	item.photo = OPENPLATFORM.users.photo(self.email);
 	item.sounds = self.sounds;
+	item.volume = self.volume;
 	item.superadmin = self.superadmin;
 	item.widgets = self.widgets;
 
@@ -171,6 +173,7 @@ User.prototype.export = function(app) {
 	item.phone = self.phone;
 	item.photo = OPENPLATFORM.users.photo(self.email);
 	item.sounds = self.sounds;
+	item.volume = self.volume;
 	item.superadmin = self.superadmin;
 
 	if (app) {

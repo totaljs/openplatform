@@ -404,6 +404,30 @@ COMPONENT('textbox', function() {
 	};
 });
 
+COMPONENT('range', function() {
+	var self = this;
+	var required = self.attr('data-required');
+
+	self.noValid();
+
+	self.make = function() {
+		var icon = self.attr('data-icon');
+		var name = self.html();
+
+		if (icon)
+			icon = '<i class="fa {0}"></i>'.format(icon);
+
+		if (name)
+			name = '<div class="ui-range-label{1}">{2}{0}:</div>'.format(name, required ? ' ui-range-label-required' : '', icon);
+		var attrs = [];
+		attrs.attr('step', self.attr('data-step'));
+		attrs.attr('max', self.attr('data-max'));
+		attrs.attr('min', self.attr('data-min'));
+		self.element.addClass('ui-range');
+		self.html('{0}<input type="range" data-component-bind=""{1} />'.format(name, attrs.length ? ' ' + attrs.join(' ') : ''));
+	};
+});
+
 COMPONENT('textarea', function() {
 
 	var self = this;

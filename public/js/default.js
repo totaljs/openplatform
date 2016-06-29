@@ -113,6 +113,16 @@ $(window).on('message', function(e) {
 			SETTER('loading', data.body ? 'show' : 'hide');
 			break;
 
+		case 'warning':
+		case 'success':
+			SETTER('message', data.type, data.body);
+			break;
+
+		case 'play':
+		case 'stop':
+			SETTER('audio', data.type, data.body);
+			break;
+
 		case 'notify':
 
 			if (!item)
