@@ -1,17 +1,22 @@
 <div class="filter">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-3 m">
+			<div class="col-md-4 m">
 				<div data-component="textbox" data-component-path="users.filter.search" data-icon="fa-search" data-placeholder="@(Search users)">@(Search)</div>
 			</div>
-			<div class="col-md-3 m">
-				<div data-component="dropdown" data-component-path="users.filter.type" data-options="@(All users)|0;@(Activated users)|1;@(Blocked users)|2;@(Online users)|3" data-icon="fa-users" data-component-type="number" data-component-value="0">@(State)</div>
-			</div>
-			<div class="col-md-3 m">
+			<div class="col-md-4 m">
 				<div data-component="dropdowncheckbox" data-component-path="users.filter.groups" data-placeholder="@(All groups)" data-source="users.groups" data-icon="fa-folder" data-empty="@(No groups)">@(Groups)</div>
 			</div>
-			<div class="col-md-3 m">
+			<div class="col-md-4 m">
+				<div data-component="dropdowncheckbox" data-component-path="users.filter.companies" data-placeholder="@(All companies)" data-source="users.companies" data-icon="fa-building" data-empty="@(No companies)">@(Companies)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 m">
 				<div data-component="dropdowncheckbox" data-component-path="users.filter.applications" data-placeholder="All applications" data-source="users.applications" data-source-text="title" data-source-value="internal" data-component-type="number" data-icon="fa-th" data-empty="@(No applications)">@(Applications)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-component="dropdown" data-component-path="users.filter.type" data-options="@(All users)|0;@(Activated users)|1;@(Blocked users)|2;@(Online users)|3" data-icon="fa-users" data-component-type="number" data-component-value="0">@(State)</div>
 			</div>
 		</div>
 		<div class="relative">
@@ -19,6 +24,7 @@
 				<button title="@(Notify users)" data-component="click" data-component-path="common.form" data-value="notify"><i class="fa fa-bell"></i></button>
 				<button title="@(Send email)" data-component="click" data-component-path="common.form" data-value="email"><i class="fa fa-envelope"></i></button>
 				<button title="@(Change permissions)" data-component="click" data-component-path="common.form" data-value="permissions"><i class="fa fa-th"></i></button>
+				<button title="@(Rename company)" data-component="click" data-component-path="common.form" data-value="renamecompany"><i class="fa fa-building"></i></button>
 				<button title="@(Rename group)" data-component="click" data-component-path="common.form" data-value="renamegroup"><i class="fa fa-folder"></i></button>
 				<button title="@(Create new user)" data-component="click" data-component-path="users_create"><i class="fa fa-plus"></i></button>
 			</div>
@@ -411,6 +417,9 @@
 					continue;
 
 				if (value.groups && value.groups.length && value.groups.indexOf(item.group) === -1)
+					continue;
+
+				if (value.companies && value.companies.length && value.companies.indexOf(item.company) === -1)
 					continue;
 
 				if (value.applications && value.applications.length) {

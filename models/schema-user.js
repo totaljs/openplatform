@@ -150,30 +150,69 @@ NEWSCHEMA('UserGroup').make(function(schema) {
 	});
 });
 
+NEWSCHEMA('UserCompany').make(function(schema) {
+
+	schema.define('company_old', 'String(60)', true);
+	schema.define('company_new', 'String(60)', true);
+
+	schema.setSave(function(error, model, controller, callback) {
+		var count = 0;
+
+		for (var i = 0, length = USERS.length; i < length; i++) {
+			var user = USERS[i];
+			if (user.company !== model.company_old)
+				continue;
+			user.company = model.company_new;
+			count++;
+		}
+
+		if (count)
+			OPENPLATFORM.users.save();
+
+		callback(SUCCESS(true, count));
+	});
+});
+
 NEWSCHEMA('UserPermissions').make(function(schema) {
 
 	schema.define('type', Number);
 	schema.define('group', 'String(60)');
+	schema.define('company', 'String(60)');
 	schema.define('applications', Object);
 
 	schema.setSave(function(error, model, controller, callback) {
-
 
 		if (!model.applications)
 			model.applications = {};
 
 		var keys = Object.keys(model.applications);
 		var count = 0;
+		var register = {};
+		var unregister = {};
+
+		var toUnregister = function(key, user) {
+			if (!unregister[key])
+				unregister[key] = [];
+			unregister[key].push(user);
+		};
+
+		var toRegister = function(key, user) {
+			if (!register[key])
+				register[key] = [];
+			register[key].push(user);
+		};
 
 		for (var i = 0, length = USERS.length; i < length; i++) {
+
 			var user = USERS[i];
 
-			if (model.group && model.group !== user.group)
+			if ((model.group && model.group !== user.group) || (model.company && model.company !== user.company))
 				continue;
 
 			// Sets
 			if (model.type === 1) {
 				count++;
+				register_unregister(Object.keys(user.applications), keys, user, toRegister, toUnregister);
 				user.applications = U.clone(model.applications);
 				continue;
 			}
@@ -186,6 +225,7 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 					if (!user.applications[key])
 						user.applications[key] = [];
 					permissions.forEach(permission => user.applications[key].push(permission));
+					toRegister(key, user);
 					return;
 				}
 
@@ -193,13 +233,14 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 				if (model.type !== 2)
 					return;
 
-
 				if (!permissions.length) {
 					delete user.applications[key];
+					toUnregister(key, user);
 					return;
 				}
 
 				permissions.forEach((permission) => user.applications[key] = user.applications[key].remove(permission));
+				toRegister(key, user);
 			});
 
 			count++;
@@ -207,6 +248,18 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 
 		if (count)
 			OPENPLATFORM.users.save();
+
+		Object.keys(register).forEach(function(key) {
+			var app = APPLICATIONS.findItem('internal', U.parseInt(key));
+			if (app)
+				register[key].wait((user, next) => app.register(user, next));
+		});
+
+		Object.keys(unregister).forEach(function(key) {
+			var app = APPLICATIONS.findItem('internal', U.parseInt(key));
+			if (app)
+				unregister[key].wait((user, next) => app.unregister(user, next));
+		});
 
 		callback(SUCCESS(true, count));
 	});
@@ -244,3 +297,27 @@ NEWSCHEMA('UserNewsletter').make(function(schema) {
 		callback(SUCCESS(true, count));
 	});
 });
+
+function register_unregister(a, b, user, register, unregister) {
+	var key;
+	var rem = {};
+
+	for (var i = 0, length = a.length; i < length; i++) {
+		key = a[i];
+
+		if (b.indexOf(key) === -1) {
+			rem[key] = true;
+			continue;
+		}
+
+		register(key, user);
+	}
+
+	for (var i = 0, length = b.length; i < length; i++) {
+		key = b[i];
+		if (a.indexOf(key) === -1)
+			rem[key] = true;
+	}
+
+	Object.keys(rem).forEach(key => unregister(key, user));
+}
