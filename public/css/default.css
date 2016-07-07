@@ -105,7 +105,7 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 .applications img { margin-bottom: 10px; border: 1px solid #E0E0E0; }
 .applications { line-height: 15px; }
 .applications > div > div { padding: 10px; }
-.applications .name { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-size: 12px; }
+.applications .name { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-size: 12px; letter-spacing: -0.2px; }
 .applications .fa-circle { font-size: 11px; display: inline; margin-right: 5px; color: #6DBC41; }
 .ui-app { cursor: pointer; }
 
