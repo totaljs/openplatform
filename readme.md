@@ -1,3 +1,5 @@
+[![Support](https://www.totaljs.com/img/button-support.png)](https://www.totaljs.com/support/) [![Donate](https://www.totaljs.com/img/button-donate.png)](https://www.totaljs.com/#make-a-donation)
+
 # OpenPlatform v0.0.1 (BETA)
 
 - install node.js platform `+v4`
