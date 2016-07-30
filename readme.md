@@ -4,6 +4,7 @@
 
 - install node.js platform `+v4`
 - download the source code
+- execute `$ npm install`
 - execute `$ node debug.js`
 - first time login: 123456/123456
 
