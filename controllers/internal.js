@@ -126,7 +126,7 @@ function json_applications_download() {
 		if (err)
 			return self.invalid().push(err);
 		if (response.isJSON())
-			return self.json(JSON.parse(response));
+			return self.json(response.parseJSON());
 		self.invalid().push('error-invalid-openplatform');
 	});
 }
