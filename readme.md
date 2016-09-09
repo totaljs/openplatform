@@ -1,4 +1,4 @@
-[![Support](https://www.totaljs.com/img/button-support.png)](https://www.totaljs.com/support/) [![Donate](https://www.totaljs.com/img/button-donate.png)](https://www.totaljs.com/#make-a-donation)
+[![Support](https://www.totaljs.com/img/button-support.png?v=2)](https://www.totaljs.com/support/)
 
 # OpenPlatform v0.0.1 (BETA)
 
@@ -37,6 +37,8 @@ The OpenPlatform stores all users and applications data in-memory and data are s
 ### How to write an application for the OpenPlatform?
 
 Each application must contain `openplatform.json` file that contains all the necessary information for the OpenPlatform to recognize and deploy the application, setup its roles, icon and widgets. The full URL address to `openplatform.json` is used as the application identificator in the OpenPlatform. The platform downloads the content of the file `openplatform.json` every 5 minutes.
+
+__IMPORTANT:__ remove all comments before you use it :-)
 
 ```javascript
 {
