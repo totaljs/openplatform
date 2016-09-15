@@ -38,7 +38,7 @@ The OpenPlatform stores all users and applications data in-memory and data are s
 
 Each application must contain `openplatform.json` file that contains all the necessary information for the OpenPlatform to recognize and deploy the application, setup its roles, icon and widgets. The full URL address to `openplatform.json` is used as the application identificator in the OpenPlatform. The platform downloads the content of the file `openplatform.json` every 5 minutes.
 
-__IMPORTANT:__ remove all comments before you use it :-)
+__IMPORTANT:__ remove all comments before use it :-)
 
 ```javascript
 {
