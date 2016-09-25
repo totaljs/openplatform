@@ -23,9 +23,6 @@ $(window).on('message', function(e) {
 	var tmp;
 	var app;
 
-	if (!item)
-		return;
-
 	switch (data.type) {
 
 		case 'profile':
@@ -91,9 +88,7 @@ $(window).on('message', function(e) {
 				return;
 
 			app = dashboard.applications.findItem('id', item.id);
-			// TODO: add user privileges
-			if (app)
-				SETTER('processes', 'open', app.id, data.body);
+			app && SETTER('processes', 'open', app.id, data.body);
 			break;
 
 		case 'restart':
@@ -140,14 +135,22 @@ $(window).on('message', function(e) {
 				return;
 
 			app = dashboard.applications.findItem('id', item.id);
-			if (app && dashboard.current === app.id)
-				SETTER('processes', 'minimize');
+			app && dashboard.current === app.id && SETTER('processes', 'minimize');
 			break;
 
 		case 'open':
-			app = dashboard.applications.findItem('id', data.body);
-			if (app)
+			app = dashboard.applications.findItem('id', data.body.id);
+
+			if (app) {
 				SET('dashboard.current', app.id);
+				data.body.message && WAIT(function() {
+					item = processes.findItem(e.originalEvent.source);
+					return item != null;
+				}, function(err) {
+					!err && processes.message(item, 'message', data.body.message);
+				}, 1500, 15000);
+			}
+
 			break;
 
 		case 'kill':
@@ -156,10 +159,8 @@ $(window).on('message', function(e) {
 				return;
 
 			app = dashboard.applications.findItem('id', item.id);
-			if (app)
-				SETTER('processes', 'kill', item.id);
+			app && SETTER('processes', 'kill', item.id);
 			break;
-
 
 		case 'applications':
 
