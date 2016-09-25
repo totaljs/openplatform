@@ -33,8 +33,8 @@ OPENPLATFORM.restart = function() {
 	return OPENPLATFORM.send('restart', location.href);
 };
 
-OPENPLATFORM.open = function(id) {
-	return OPENPLATFORM.send('open', id);
+OPENPLATFORM.open = function(id, message) {
+	return OPENPLATFORM.send('open', { id: id, message: message });
 };
 
 OPENPLATFORM.minimize = function() {
@@ -84,6 +84,10 @@ OPENPLATFORM.onClose = function(callback) {
 	return OPENPLATFORM.on('close', callback);
 };
 
+OPENPLATFORM.onMessage = function(callback) {
+	return OPENPLATFORM.on('message', callback);
+};
+
 OPENPLATFORM.send = function(type, body, callback) {
 
 	if (typeof(body) === 'function') {
@@ -98,8 +102,7 @@ OPENPLATFORM.send = function(type, body, callback) {
 	data.sender = true;
 
 	if (!top) {
-		if (callback)
-			callback(new Error('The application is not runned in the openplatform scope.'));
+		callback && callback(new Error('The application is not runned in the openplatform scope.'));
 		return;
 	}
 
@@ -145,9 +148,7 @@ window.addEventListener('message', function(e) {
 			data.type = 'close';
 
 		var events = OPENPLATFORM.events[data.type];
-		if (!events)
-			return;
-		events.forEach(function(e) {
+		events && events.forEach(function(e) {
 			e(data.body || {});
 		});
 	} catch (e) {}

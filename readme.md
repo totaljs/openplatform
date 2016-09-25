@@ -1,6 +1,6 @@
 [![Support](https://www.totaljs.com/img/button-support.png?v=2)](https://www.totaljs.com/support/)
 
-# OpenPlatform v0.0.1 (BETA)
+# OpenPlatform v0.0.2 (BETA)
 
 - install node.js platform `+v4`
 - download the source code
@@ -314,7 +314,7 @@ OPENPLATFORM.close();
 OPENPLATFORM.restart();
 
 // Opens another OpenPlatform's application (if exists)
-// Method: OPENPLATFORM.open(id);
+// Method: OPENPLATFORM.open(id, [message]);
 OPENPLATFORM.open('http://anotherapp.com/openplatform.json');
 
 // Notifies the user
@@ -359,6 +359,10 @@ OPENPLATFORM.on('maximize', function() {
 
 OPENPLATFORM.on('close', function() {
     // Is triggered when the application is closed
+});
+
+OPENPLATFORM.on('message', function(message) {
+    // Is triggered when another application sends a message (object) via OPENPLATFORM.open('URL', { message: 'body' })
 });
 ```
 
