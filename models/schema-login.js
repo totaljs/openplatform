@@ -36,7 +36,7 @@ NEWSCHEMA('Login').make(function(schema) {
 		}
 
 		// Creates cookie
-		controller.cookie(CONFIG('cookie'), F.encrypt({ id: user.id, resetcounter: user.resetcounter, expire: F.datetime.add(CONFIG('cookie-expiration')) }).getTime(), '5 days');
+		controller.cookie(CONFIG('cookie'), F.encrypt({ id: user.id, resetcounter: user.resetcounter, expire: F.datetime.add(CONFIG('cookie-expiration')).getTime() }), '5 days');
 
 		// Sends a response
 		callback(SUCCESS(true));
