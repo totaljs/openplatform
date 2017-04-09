@@ -17,10 +17,10 @@
 </head>
 <body>
 
-	<div data-component="message" data-button="@(Close)"></div>
-	<div data-component="confirm"></div>
-	<div data-component="audio" data-component-path="user.volume"></div>
-	<div data-component="loading" class="ui-loading"></div>
+	<div data-jc="message" data-button="@(Close)"></div>
+	<div data-jc="confirm"></div>
+	<div data-jc="audio" data-jc-path="user.volume"></div>
+	<div data-jc="loading" class="ui-loading"></div>
 	<div id="success"><span class="fa fa-check-circle"></span></div>
 
 	<header>
@@ -41,13 +41,13 @@
 		</nav>
 	</header>
 
-	<div data-component="page" data-component-path="common.page" data-if="dashboard" class="hidden" data-template="/templates/dashboard.html"></div>
-	<div data-component="page" data-component-path="common.page" data-if="account" class="hidden" data-template="/templates/account.html" data-reload="account_refresh"></div>
+	<div data-jc="page" data-jc-path="common.page" data-if="dashboard" class="hidden" data-template="/templates/dashboard.html"></div>
+	<div data-jc="page" data-jc-path="common.page" data-if="account" class="hidden" data-template="/templates/account.html" data-reload="account_refresh"></div>
 
 	@{if user.superadmin}
-	<div data-component="page" data-component-path="common.page" data-if="applications" class="hidden" data-template="/templates/applications.html"></div>
-	<div data-component="page" data-component-path="common.page" data-if="users" class="hidden" data-template="/templates/users.html"></div>
-	<div data-component="page" data-component-path="common.page" data-if="settings" class="hidden" data-template="/templates/settings.html" data-reload="settings_refresh"></div>
+	<div data-jc="page" data-jc-path="common.page" data-if="applications" class="hidden" data-template="/templates/applications.html"></div>
+	<div data-jc="page" data-jc-path="common.page" data-if="users" class="hidden" data-template="/templates/users.html"></div>
+	<div data-jc="page" data-jc-path="common.page" data-if="settings" class="hidden" data-template="/templates/settings.html" data-reload="settings_refresh"></div>
 	@{fi}
 
 	<div id="bottom"></div>

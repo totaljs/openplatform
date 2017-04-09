@@ -13,7 +13,7 @@
 
 ## Documentation
 
-1. What is and how the OpenPlatform works?
+1. What is and how does the OpenPlatform work?
 2. How to write an application for the OpenPlatform?
 3. Server-Side communication between the OpenPlatform and the Application
 4. Client-Side communication between the OpenPlatform and the Application

@@ -143,9 +143,7 @@ NEWSCHEMA('UserGroup').make(function(schema) {
 			count++;
 		}
 
-		if (count)
-			OPENPLATFORM.users.save();
-
+		count && OPENPLATFORM.users.save();
 		callback(SUCCESS(true, count));
 	});
 });
@@ -166,9 +164,7 @@ NEWSCHEMA('UserCompany').make(function(schema) {
 			count++;
 		}
 
-		if (count)
-			OPENPLATFORM.users.save();
-
+		count && OPENPLATFORM.users.save();
 		callback(SUCCESS(true, count));
 	});
 });
@@ -191,8 +187,7 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 		var unregister = {};
 
 		var toUnregister = function(key, user) {
-			if (!unregister[key])
-				unregister[key] = [];
+			!unregister[key] && (unregister[key] = []);
 			unregister[key].push(user);
 		};
 
@@ -246,8 +241,7 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 			count++;
 		}
 
-		if (count)
-			OPENPLATFORM.users.save();
+		count && OPENPLATFORM.users.save();
 
 		Object.keys(register).forEach(function(key) {
 			var app = APPLICATIONS.findItem('internal', U.parseInt(key));

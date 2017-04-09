@@ -16,9 +16,9 @@
 </head>
 <body>
 
-	<div data-component="message" data-button="@(Close)"></div>
-	<div data-component="confirm"></div>
-	<div data-component="loading" class="hidden"></div>
+	<div data-jc="message" data-button="@(Close)"></div>
+	<div data-jc="confirm"></div>
+	<div data-jc="loading" class="hidden"></div>
 
 	<div class="center-container">
 		<div class="center-body">
@@ -31,35 +31,35 @@
 					<svg style="width:100%" viewBox="0 0 1170 30" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h1170s-441.424 30-578.518 30c-137.094 0-591.482-30-591.482-30z" fill="#F0F0F0"/></svg>
 				</div>
 
-				<div data-component="visible" data-component-path="password.response" data-if="value && value.success" class="success hidden">
+				<div data-jc="visible" data-jc-path="password.response" data-if="value && value.success" class="success hidden">
 					<i class="fa fa-check-circle"></i>@(We sent you an email with instructions for resetting password.)
 				</div>
 
-				<div class="padding signin" data-component="visible" data-component-path="common.form" data-if="value === 'signin'">
-					<div data-component="textbox" data-component-path="signin.login" data-required="true" data-component-value="''">@(Login)</div>
+				<div class="padding signin" data-jc="visible" data-jc-path="common.form" data-if="value === 'signin'">
+					<div data-jc="textbox" data-jc-path="signin.login" data-required="true" data-jc-value="''">@(Login)</div>
 					<br />
-					<div data-component="textbox" data-component-path="signin.password" data-component-type="password" data-required="true" data-component-value="''">@(Password)</div>
+					<div data-jc="textbox" data-jc-path="signin.password" data-jc-type="password" data-required="true" data-jc-value="''">@(Password)</div>
 					<br />
 					<ul class="links">
-						<li><span class="fa fa-lock"></span> <a href="javascript:void(0)" data-component="click" data-component-path="common.form" data-value="password">@(I can't access my account)</a></li>
+						<li><span class="fa fa-lock"></span> <a href="javascript:void(0)" data-jc="click" data-jc-path="common.form" data-value="password">@(I can't access my account)</a></li>
 						<li><span class="fa fa-question-circle"></span> <a href="javascript:void(0)">@(Help)</a></li>
 					</ul>
-					<div data-component="error" data-component-path="signin.response"></div>
-					<div data-component="validation" data-component-path="signin">
-						<button class="ui-button" disabled="disabled" data-component="click" data-component-path="doLogin" data-enter=".signin" style="margin-top:8px;width:100%">@(SIGN IN)</button>
+					<div data-jc="error" data-jc-path="signin.response"></div>
+					<div data-jc="validation" data-jc-path="signin">
+						<button class="ui-button" disabled="disabled" data-jc="click" data-jc-path="doLogin" data-enter=".signin" style="margin-top:8px;width:100%">@(SIGN IN)</button>
 					</div>
 				</div>
 
-				<div class="padding hidden password" data-component="visible" data-component-path="common.form" data-if="value === 'password'">
-					<div data-component="textbox" data-component-path="password.login" data-required="true" data-component-value="''">@(Login)</div>
+				<div class="padding hidden password" data-jc="visible" data-jc-path="common.form" data-if="value === 'password'">
+					<div data-jc="textbox" data-jc-path="password.login" data-required="true" data-jc-value="''">@(Login)</div>
 					<br />
 					<ul class="links">
-						<li><span class="fa fa-lock"></span> <a href="javascript:void(0)" data-component="click" data-component-path="common.form" data-value="signin">@(I know my access into the account)</a></li>
+						<li><span class="fa fa-lock"></span> <a href="javascript:void(0)" data-jc="click" data-jc-path="common.form" data-value="signin">@(I know my access into the account)</a></li>
 						<li><span class="fa fa-question-circle"></span> <a href="javascript:void(0)">@(Help)</a></li>
 					</ul>
-					<div data-component="error" data-component-path="password.response"></div>
-					<div data-component="validation" data-component-path="password">
-						<button class="ui-button" disabled="disabled" data-component="click" data-component-path="doPassword" data-enter=".password" style="margin-top:8px;width:100%">@(SIGN IN)</button>
+					<div data-jc="error" data-jc-path="password.response"></div>
+					<div data-jc="validation" data-jc-path="password">
+						<button class="ui-button" disabled="disabled" data-jc="click" data-jc-path="doPassword" data-enter=".password" style="margin-top:8px;width:100%">@(SIGN IN)</button>
 					</div>
 				</div>
 
@@ -79,9 +79,8 @@
 		AJAX('POST /internal/login/', signin, function(response) {
 			SETTER('loading', 'hide', 1000);
 			SET('signin.response', response);
-			if (!response.success)
-				return;
-			location.href = '/';
+			if (response.success)
+				location.href = '/';
 		});
 	}
 
@@ -93,8 +92,7 @@
 		AJAX('POST /internal/password/', password, function(response) {
 			SETTER('loading', 'hide', 1000);
 			SET('password.response', response);
-			if (response.success)
-				SET('common.form', 'signin');
+			response.success && SET('common.form', 'signin');
 		});
 	}
 

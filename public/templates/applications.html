@@ -2,19 +2,19 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-4 m">
-				<div data-component="textbox" data-component-path="applications.filter.search" data-icon="fa-search" data-placeholder="@(Search applications)">@(Search)</div>
+				<div data-jc="textbox" data-jc-path="applications.filter.search" data-icon="fa-search" data-placeholder="@(Search applications)">@(Search)</div>
 			</div>
 			<div class="col-md-4 m">
-				<div data-component="dropdown" data-component-path="applications.filter.type" data-options="@(All applications)|0;@(Online applications)|1;@(Offline applications)|2" data-component-type="number" data-component-value="0">@(State)</div>
+				<div data-jc="dropdown" data-jc-path="applications.filter.type" data-options="@(All applications)|0;@(Online applications)|1;@(Offline applications)|2" data-jc-type="number" data-jc-value="0">@(State)</div>
 			</div>
 			<div class="col-md-4 m">
-				<div data-component="dropdowncheckbox" data-component-path="applications.filter.permissions" data-placeholder="@(All applications)" data-options="@(Service worker)|serviceworker;@(Notifications)|notifications;@(Users)|users;@(Applications)|applications;@(Mobile devices)|mobile">@(Permissions)</div>
+				<div data-jc="dropdowncheckbox" data-jc-path="applications.filter.permissions" data-placeholder="@(All applications)" data-options="@(Service worker)|serviceworker;@(Notifications)|notifications;@(Users)|users;@(Applications)|applications;@(Mobile devices)|mobile">@(Permissions)</div>
 			</div>
 		</div>
 		<div class="relative">
 			<div class="buttons">
-				<button title="@(Change permissions)" data-component="click" data-component-path="applications_permissions"><i class="fa fa-th"></i></button>
-				<button title="@(Create new user)" data-component="click" data-component-path="applications_create"><i class="fa fa-plus"></i></button>
+				<button title="@(Change permissions)" data-jc="click" data-jc-path="applications_permissions"><i class="fa fa-th"></i></button>
+				<button title="@(Create new user)" data-jc="click" data-jc-path="applications_create"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
 	</div>
@@ -23,7 +23,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<div data-component="grid" data-component-id="applications" data-component-path="applications.datasource" data-pagination-path="applications.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(The database does not contain any data.)">
+			<div data-jc="grid" data-jc-id="applications" data-jc-path="applications.datasource" data-pagination-path="applications.filter.page" data-max="auto" data-page="@(Page: #)" data-pages="@(# pages,# page,# pages,# pages)" data-items="@(# items,# item,# items,# items)" data-empty="@(The database does not contain any data.)">
 				<script type="text/html">
 				<tr>
 					<td style="width:25px"><img src="{{ icon }}" alt="{{ title }}" onerror="onImageError(this)" border="0" height="14" /></td>
@@ -42,13 +42,13 @@
 	</div>
 </div>
 
-<div data-component="form" data-component-path="common.form" data-if="applications" data-title="@(Application's details)" data-width="900px" data-component-id="applications.form">
+<div data-jc="form" data-jc-path="common.form" data-if="value === 'applications'" data-title="@(Application's details)" data-width="900px" data-jc-id="applications.form" class="hidden">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-3">
 				<div class="padding">
-					<div data-component="icon" data-component-path="applications.form.data.icon"></div>
-					<div data-component="tagger" data-component-path="applications.form.data" class="mt10">
+					<div data-jc="icon" data-jc-path="applications.form.data.icon"></div>
+					<div data-jc="tagger" data-jc-path="applications.form.data" class="mt10">
 						<div data-name="name" class="b"></div>
 						<div data-name="version" data-before="v"></div>
 						<div data-name="author" class="fs11 silver mt10" data-before="@(Author:) "></div>
@@ -64,10 +64,10 @@
 				<div class="padding">
 					<div class="row">
 						<div class="col-md-12 m">
-							<div data-component="disable" data-component-path="applications.form.isupdate" data-if="value === true">
-								<div data-component="textbox" data-component-path="applications.form.id" data-maxlength="500" data-required="true" data-component-type="url" data-component-keypress-delay="2000">@(URL address to <b>openplatform.json</b>)</div>
-								<div data-component="error" data-component-path="applications.form.data" class="ui-error-nm"></div>
-								<div data-component="template" data-component-path="applications.form.data">
+							<div data-jc="disable" data-jc-path="applications.form.isupdate" data-if="value === true">
+								<div data-jc="textbox" data-jc-path="applications.form.id" data-maxlength="500" data-required="true" data-jc-type="url" data-jc-keypress-delay="2000">@(URL address to <b>openplatform.json</b>)</div>
+								<div data-jc="error" data-jc-path="applications.form.data" class="ui-error-nm"></div>
+								<div data-jc="template" data-jc-path="applications.form.data">
 									<script type="text/html">
 										{{ if description }}
 										<div class="help"><i class="fa fa-info-circle"></i>{{ description }}</div>
@@ -79,29 +79,29 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12 m">
-							<div data-component="textbox" data-component-path="applications.form.title" data-maxlength="50" data-required="true">@(Title)</div>
+							<div data-jc="textbox" data-jc-path="applications.form.title" data-maxlength="50" data-required="true">@(Title)</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-6">
-							<div data-component="textbox" data-component-path="applications.form.secret" data-maxlength="30">@(Secret key)</div>
+							<div data-jc="textbox" data-jc-path="applications.form.secret" data-maxlength="30">@(Secret key)</div>
 						</div>
 					</div>
 					<div class="help">@(The secret key is a prevention for hijacking of request headers. You can obtain this secret from the author of this application.)</div>
 					<hr />
 					<div class="silver m" style="font-size:18px"><i class="fa fa-lock mr5"></i>@(Permissions)</div>
-					<div data-component="checkbox" data-component-path="applications.form.serviceworker">@(Allow service worker)</div>
-					<div data-component="checkbox" data-component-path="applications.form.notifications">@(Allow push notifications)</div>
-					<div data-component="checkbox" data-component-path="applications.form.users">@(Allow to read users)</div>
-					<div data-component="checkbox" data-component-path="applications.form.applications">@(Allow to read applications)</div>
-					<div data-component="visible" data-component-path="applications.form.data.service" data-if="value !== true">
-						<div data-component="checkbox" data-component-path="applications.form.mobile">@(Allow for mobile devices)</div>
+					<div data-jc="checkbox" data-jc-path="applications.form.serviceworker">@(Allow service worker)</div>
+					<div data-jc="checkbox" data-jc-path="applications.form.notifications">@(Allow push notifications)</div>
+					<div data-jc="checkbox" data-jc-path="applications.form.users">@(Allow to read users)</div>
+					<div data-jc="checkbox" data-jc-path="applications.form.applications">@(Allow to read applications)</div>
+					<div data-jc="visible" data-jc-path="applications.form.data.service" data-if="value !== true">
+						<div data-jc="checkbox" data-jc-path="applications.form.mobile">@(Allow for mobile devices)</div>
 					</div>
 					<br />
 					<div class="row">
 						<div class="col-md-12 m">
-							<div data-component="textbox" data-component-path="applications.form.config" data-maxlength="200" data-control-icon="fa-cog" data-placeholder="@(You can type your own custom configuration.)">@(Custom config)</div>
-							<div data-component="template" data-component-path="applications.form.data">
+							<div data-jc="textbox" data-jc-path="applications.form.config" data-maxlength="200" data-control-icon="fa-cog" data-placeholder="@(You can type your own custom configuration.)">@(Custom config)</div>
+							<div data-jc="template" data-jc-path="applications.form.data">
 								<script type="text/html">
 									<div class="help">{{ if settings }}<i class="fa fa-life-saver"></i>{{ settings }}{{ else }}@(Each application can have special settings and this settings must be documented in the its documentation.){{ fi }}</div>
 								</script>
@@ -116,7 +116,7 @@
 		<div class="row">
 			<div class="col-md-9 col-md-offset-3">
 				<div class="padding npt npb">
-					<div data-component="validation" data-component-path="applications.form" class="inline" data-if="value && value.data && value.data.name">
+					<div data-jc="validation" data-jc-path="applications.form" class="inline" data-if="value && value.data && value.data.name">
 						<button name="submit">@(SAVE)</button>
 					</div>
 					<button name="cancel">@(Cancel)</button>
@@ -306,5 +306,5 @@
 		});
 	});
 
-	applications_refresh();
+	FIND('#applications', applications_refresh);
 </script>

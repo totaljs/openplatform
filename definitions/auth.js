@@ -9,7 +9,7 @@ F.onAuthorize = function(req, res, flags, next) {
 	if (!user || user.expire < F.datetime.getTime())
 		return next(false);
 
-	session = USERS.findItem('id', user.id);
+	var session = USERS.findItem('id', user.id);
 	if (!session || session.blocked || session.resetcounter !== user.resetcounter)
 		return next(false);
 

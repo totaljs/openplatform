@@ -690,7 +690,7 @@ COMPONENT('form', function() {
 		window.$$form_level = window.$$form_level || 1;
 		MAN.$$form = true;
 		$(document).on('click', '.ui-form-button-close', function() {
-			SET($.components.findById($(this).attr('data-id')).path, '');
+			SET($(this).attr('data-path'), '');
 			window.$$form_level--;
 		});
 
@@ -714,11 +714,10 @@ COMPONENT('form', function() {
 	}
 
 	self.readonly();
-	self.submit = function(hide) { self.hide(); };
-	self.cancel = function(hide) { self.hide(); };
+	self.submit = self.cancel = function() { self.hide(); };
 	self.onHide = function(){};
 
-	var hide = self.hide = function() {
+	self.hide = function() {
 		self.set('');
 		self.onHide();
 	};
@@ -738,63 +737,72 @@ COMPONENT('form', function() {
 
 	self.make = function() {
 		var width = self.attr('data-width') || '800px';
-		var submit = self.attr('data-submit');
 		var enter = self.attr('data-enter');
 		autocenter = self.attr('data-autocenter') === 'true';
 		self.condition = self.attr('data-if');
 
-		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}"><div class="ui-form-title"><span class="fa fa-times ui-form-button-close" data-id="{2}"></span>{3}</div>{4}</div></div>'.format(self._id, width, self.id, self.attr('data-title')));
+		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}"><div class="ui-form-title"><span class="fa fa-times ui-form-button-close" data-path="{2}"></span>{3}</div>{4}</div></div>'.format(self._id, width, self.path, self.attr('data-title')));
 
-		self.element.data(COM_ATTR, self);
 		var el = $('#' + self._id);
 		el.find('.ui-form').get(0).appendChild(self.element.get(0));
+		self.classes('-hidden');
 		self.element = el;
 
-		self.element.on('scroll', function() {
-			EXEC('$calendar.hide');
+		self.event('scroll', function() {
+			EMIT('reflow', self.name);
 		});
 
-		self.element.find('button').on('click', function(e) {
+		self.find('button').on('click', function() {
 			window.$$form_level--;
 			switch (this.name) {
 				case 'submit':
-					self.submit(hide);
+					self.submit(self.hide);
 					break;
 				case 'cancel':
-					!this.disabled && self[this.name](hide);
+					!this.disabled && self[this.name](self.hide);
 					break;
 			}
 		});
 
-		enter === 'true' && self.element.on('keydown', 'input', function(e) {
-			e.keyCode === 13 && self.element.find('button[name="submit"]').get(0).disabled && self.submit(hide);
+		enter === 'true' && self.event('keydown', 'input', function(e) {
+			e.keyCode === 13 && !self.find('button[name="submit"]').get(0).disabled && self.submit(self.hide);
 		});
-
-		return true;
 	};
 
-	self.getter = null;
-	self.setter = function(value) {
+	self.setter = function() {
 
-		var isHidden = self.condition !== value;
-		self.element.toggleClass('hidden', isHidden);
-		EXEC('$calendar.hide');
+		setTimeout2('noscroll', function() {
+			$('html').toggleClass('noscroll', $('.ui-form-container').not('.hidden').length ? true : false);
+		}, 50);
+
+		var isHidden = !EVALUATE(self.path, self.condition);
+		self.toggle('hidden', isHidden);
+		EMIT('reflow', self.name);
 
 		if (isHidden) {
-			self.element.find('.ui-form').removeClass('ui-form-animate');
+			self.release(true);
+			self.find('.ui-form').removeClass('ui-form-animate');
 			return;
 		}
 
 		self.resize();
-		var el = self.element.find('input,select,textarea');
-		el.length > 0 && el.eq(0).focus();
+		self.release(false);
+
+		var el = self.find('input[type="text"],select,textarea');
+		el.length && el.eq(0).focus();
+
 		window.$$form_level++;
-		self.element.css('z-index', window.$$form_level * 10);
-		self.element.animate({ scrollTop: 0 }, 0, function() {
-			setTimeout(function() {
-				self.element.find('.ui-form').addClass('ui-form-animate');
-			}, 300);
-		});
+		self.css('z-index', window.$$form_level * 10);
+		self.element.scrollTop(0);
+
+		setTimeout(function() {
+			self.find('.ui-form').addClass('ui-form-animate');
+		}, 300);
+
+		// Fixes a problem with freezing of scrolling in Chrome
+		setTimeout2(self.id, function() {
+			self.css('z-index', (window.$$form_level * 10) + 1);
+		}, 1000);
 	};
 });
 

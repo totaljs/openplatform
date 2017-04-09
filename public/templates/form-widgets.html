@@ -1,9 +1,9 @@
-<div data-component="form" data-component-path="common.form" data-if="widgets" data-title="@(My Widgets)" data-autocenter="true" data-width="600px" data-component-id="dashboard.widgets">
+<div data-jc="form" data-jc-path="common.form" data-if="value === 'widgets'" data-title="@(My Widgets)" data-autocenter="true" data-width="600px" data-jc-id="dashboard.widgets" class="hidden">
 	<br />
 	<div class="ui-form-padding">
 		<div class="help"><i class=" fa fa-puzzle-piece"></i>@(All supported widgets:)</div>
 		<br />
-		<div data-component="userwidgets" data-component-path="formwidgets.widgets" data-source="dashboard.applications">
+		<div data-jc="userwidgets" data-jc-path="formwidgets.widgets" data-source="dashboard.applications">
 			<script type="text/html">
 				<div class="userwidget-container{{ if !selected }} userwidget-container-disabled{{ fi }}" data-id="{{ id }}"{{ if selected }} draggable="true"{{ fi }}>
 					<div class="userwidget-header">
@@ -15,14 +15,14 @@
 				</div>
 			</script>
 		</div>
-		<div data-component="error" data-component-path="formwidgets.response" class="ui-error-nm"></div>
+		<div data-jc="error" data-jc-path="formwidgets.response" class="ui-error-nm"></div>
 	</div>
 	<br />
 	<div class="ui-form-buttons">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="padding npt npb">
-					<div data-component="validation" data-component-path="formwidgets" class="inline">
+					<div data-jc="validation" data-jc-path="formwidgets" class="inline">
 						<button name="submit">@(SAVE)</button>
 					</div>
 					<button name="cancel">@(Cancel)</button>

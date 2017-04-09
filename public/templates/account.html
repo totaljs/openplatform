@@ -9,11 +9,11 @@
 					<div class="padding npb">
 						<div class="center">
 							<br />
-							<div data-component="photoupload" data-component-path="user.email" data-url="/internal/upload/photo/" data-upload-error="@(The file is too large.)"></div>
+							<div data-jc="photoupload" data-jc-path="user.email" data-url="/internal/upload/photo/" data-upload-error="@(The file is too large.)"></div>
 							<div class="help">@(Click on the photo for its change.)</div>
 						</div>
 						<hr />
-						<div data-component="range" data-component-path="account.volume" data-component-type="number" data-min="0" data-max="100" data-icon="fa-volume-up">Volume</div>
+						<div data-jc="range" data-jc-path="account.volume" data-jc-type="number" data-min="0" data-max="100" data-icon="fa-volume-up">Volume</div>
 						<div class="row fs11 silver">
 							<div class="col-xs-6">
 								Low
@@ -23,33 +23,33 @@
 							</div>
 						</div>
 						<br />
-						<div data-component="checkbox" data-component-path="account.sounds">@(Enable sounds)</div>
-						<div data-component="checkbox" data-component-path="account.notifications">@(Enable flying notifications)</div>
-						<div data-component="checkbox" data-component-path="account.notificationsemail">@(Enable email notifications)</div>
+						<div data-jc="checkbox" data-jc-path="account.sounds">@(Enable sounds)</div>
+						<div data-jc="checkbox" data-jc-path="account.notifications">@(Enable flying notifications)</div>
+						<div data-jc="checkbox" data-jc-path="account.notificationsemail">@(Enable email notifications)</div>
 						<hr />
-						<div data-component="checkbox" data-component-path="account.ispassword" class="m">@(I want to change my password)</div>
+						<div data-jc="checkbox" data-jc-path="account.ispassword" class="m">@(I want to change my password)</div>
 					</div>
-					<div data-component="visible" data-component-path="account.ispassword" class="filter padding">
+					<div data-jc="visible" data-jc-path="account.ispassword" class="filter padding">
 						<div class="help"><i class="fa fa-warning"></i>@(Be carefully with changing your password and don't forgot to sign in with a new password.)</div>
 						<br />
-						<div data-component="disable" data-component-path="account.ispassword" data-if="!value">
+						<div data-jc="disable" data-jc-path="account.ispassword" data-if="!value">
 							<div class="row">
 								<div class="col-md-12 m">
-									<div data-component="textbox" data-component-path="account.password" data-required="true" data-component-type="password" data-maxlength="30">@(Password)</div>
+									<div data-jc="textbox" data-jc-path="account.password" data-required="true" data-jc-type="password" data-maxlength="30">@(Password)</div>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-12 m">
-									<div data-component="textbox" data-component-path="account.passwordreply" data-required="true" data-component-type="password" data-maxlength="30">@(Password again)</div>
+									<div data-jc="textbox" data-jc-path="account.passwordreply" data-required="true" data-jc-type="password" data-maxlength="30">@(Password again)</div>
 								</div>
 							</div>
-							<div data-component="password-progress" data-component-path="account.password">@(Password strength:)</div>
+							<div data-jc="password-progress" data-jc-path="account.password">@(Password strength:)</div>
 						</div>
 					</div>
 					<div class="padding npt">
 						<div class="row">
-							<div class="col-md-12" data-component="validation" data-component-path="account" data-if="!value.ispassword || (value.password && value.password === value.passwordreply)">
-								<button class="button upper" disabled="disabled" data-component="click" data-component-path="account_save">@(Save)</button>
+							<div class="col-md-12" data-jc="validation" data-jc-path="account" data-if="!value.ispassword || (value.password && value.password === value.passwordreply)">
+								<button class="button upper" disabled="disabled" data-jc="click" data-jc-path="account_save">@(Save)</button>
 							</div>
 						</div>
 					</div>

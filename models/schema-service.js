@@ -44,8 +44,7 @@ NEWSCHEMA('Service').make(function(schema) {
 				delete HEADERS_SECRET['x-openplatform-secret'];
 
 			U.request(item.serviceurl, ['post', 'json', 'dnscache', '< 1', 2000], data, function(err, response) {
-				if (!err)
-					apps.push(item.id);
+				!err && apps.push(item.id);
 				next();
 			}, null, HEADERS);
 		}, () => callback(SUCCESS(true, apps)));

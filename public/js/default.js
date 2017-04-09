@@ -4,13 +4,13 @@ if (window.Notification && window.Notification.permission !== 'granted')
 	window.Notification.requestPermission();
 
 $(document).ready(function() {
-	jR.clientside('.jR');
+	NAVIGATION.clientside('.jR');
 
 	$('.logo').on('click', function() {
 		if (['md', 'lg'].indexOf(WIDTH()) === -1)
 			$('.menu').toggleClass('menu-visible');
 		else
-			jR.redirect('/');
+			REDIRECT('/');
 	});
 });
 
@@ -74,7 +74,7 @@ $(window).on('message', function(e) {
 					user.roles = user.applications[app.internal] || [];
 					user.has = user.applications[app.internal] ? true : false;
 					delete user.applications;
-					arr.push(user)
+					arr.push(user);
 				});
 
 				processes.message(item, 'users', arr, data.callback);
@@ -192,7 +192,7 @@ $(window).on('message', function(e) {
 	}
 });
 
-jR.on('location', function(url) {
+ON('location', function(url) {
 	$('.menu').removeClass('menu-visible').find('a').each(function() {
 		var el = $(this);
 		el.toggleClass('selected', el.attr('href') === url);
@@ -243,15 +243,15 @@ function success() {
 
 jQuery.easing.easeOutBounce = function(e, f, a, h, g) {
 	if ((f /= g) < (1 / 2.75)) {
-		return h * (7.5625 * f * f) + a
+		return h * (7.5625 * f * f) + a;
 	} else {
 		if (f < (2 / 2.75)) {
-			return h * (7.5625 * (f -= (1.5 / 2.75)) * f + 0.75) + a
+			return h * (7.5625 * (f -= (1.5 / 2.75)) * f + 0.75) + a;
 		} else {
 			if (f < (2.5 / 2.75)) {
-				return h * (7.5625 * (f -= (2.25 / 2.75)) * f + 0.9375) + a
+				return h * (7.5625 * (f -= (2.25 / 2.75)) * f + 0.9375) + a;
 			} else {
-				return h * (7.5625 * (f -= (2.625 / 2.75)) * f + 0.984375) + a
+				return h * (7.5625 * (f -= (2.625 / 2.75)) * f + 0.984375) + a;
 			}
 		}
 	}

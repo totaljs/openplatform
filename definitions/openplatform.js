@@ -3,11 +3,6 @@ const OPENPLATFORM = global.OPENPLATFORM = {};
 const REG_PHOTO = /@|\./g;
 const VERSION = {};
 
-var timeout_save_users;
-var timeout_save_applications;
-var counter_save_users = 0;
-var counter_save_applications = 0;
-
 OPENPLATFORM.Application = MODEL('model-application').Application;
 OPENPLATFORM.User = MODEL('model-user').User;
 OPENPLATFORM.users = {};
@@ -53,13 +48,9 @@ OPENPLATFORM.users.photo = function(email) {
  * @return {OPENPLATFORM}
  */
 OPENPLATFORM.users.save = function() {
-	if (counter_save_users < 10)
-		clearTimeout(timeout_save_users);
-	counter_save_users++;
- 	timeout_save_users = setTimeout(function() {
+	setTimeout2('openplatform.users.save', function() {
 		Fs.writeFile(F.path.databases('users.json'), JSON.stringify(USERS), NOOP);
-		counter_save_users = 0;
-	}, 1000);
+	}, 1000, 10);
 	return OPENPLATFORM;
 };
 
@@ -101,13 +92,9 @@ OPENPLATFORM.users.load = function(callback) {
  * @return {Boolean}
  */
 OPENPLATFORM.applications.save = function() {
-	if (counter_save_applications < 10)
-		clearTimeout(timeout_save_applications);
-	counter_save_applications++;
- 	timeout_save_applications = setTimeout(function() {
+	setTimeout2('openplatform.applications.save', function() {
 		Fs.writeFile(F.path.databases('applications.json'), JSON.stringify(APPLICATIONS), NOOP);
-		counter_save_applications = 0;
-	}, 1000);
+	}, 1000, 10);
 	return OPENPLATFORM;
 };
 

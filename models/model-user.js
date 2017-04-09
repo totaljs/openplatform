@@ -1,5 +1,4 @@
 const Fs = require('fs');
-const REG_PHOTO = /@|\./g;
 
 global.USERS = [];
 
@@ -202,8 +201,7 @@ User.prototype.prepare = function(item) {
 	}
 	self.search = (self.lastname + ' ' + self.firstname + ' ' + self.group).toSearch();
 	self.internal = (self.id || '').hash();
-	if (!(self.widgets instanceof Array))
-		self.widgets = [];
+	!(self.widgets instanceof Array) && (self.widgets = []);
 	return self;
 };
 

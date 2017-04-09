@@ -10,7 +10,7 @@
 								<br />
 								<div class="row">
 									<div class="col-md-12">
-										<div data-component="textbox" data-component-path="settings.url" data-maxlength="500" data-required="true" data-component-type="url" data-placeholder="http://openplatform.yourdomain.com">@(OpenPlatform URL address)</div>
+										<div data-jc="textbox" data-jc-path="settings.url" data-maxlength="500" data-required="true" data-jc-type="url" data-placeholder="http://openplatform.yourdomain.com">@(OpenPlatform URL address)</div>
 									</div>
 								</div>
 							</div>
@@ -21,15 +21,15 @@
 								<div class="row">
 									<br />
 									<div class="col-md-6 m">
-										<div data-component="textbox" data-component-path="settings.name" data-maxlength="50" data-required="true" data-component-value="''">@(OpenPlatform name)</div>
+										<div data-jc="textbox" data-jc-path="settings.name" data-maxlength="50" data-required="true" data-jc-value="''">@(OpenPlatform name)</div>
 									</div>
 									<div class="col-md-6 m">
-										<div data-component="textbox" data-component-path="settings.email" data-maxlength="120" data-required="true" data-component-type="email" data-component-value="'@'" data-control-icon="fa-envelope">@(Support email)</div>
+										<div data-jc="textbox" data-jc-path="settings.email" data-maxlength="120" data-required="true" data-jc-type="email" data-jc-value="'@'" data-control-icon="fa-envelope">@(Support email)</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6 m">
-										<div data-component="textbox" data-component-path="settings.author" data-maxlength="50" data-required="true" data-component-value="''" data-control-icon="fa-building">@(Company)</div>
+										<div data-jc="textbox" data-jc-path="settings.author" data-maxlength="50" data-required="true" data-jc-value="''" data-control-icon="fa-building">@(Company)</div>
 									</div>
 								</div>
 							</div>
@@ -40,12 +40,12 @@
 								<br />
 								<div class="row">
 									<div class="col-md-6 m">
-										<div data-component="textbox" data-component-path="settings.smtp" data-maxlength="50" data-required="true" data-component-value="''" data-icon="fa-globe" data-placeholder="e.g. smtp.yourdomain.com">@(Hostname)</div>
+										<div data-jc="textbox" data-jc-path="settings.smtp" data-maxlength="50" data-required="true" data-jc-value="''" data-icon="fa-globe" data-placeholder="e.g. smtp.yourdomain.com">@(Hostname)</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-12 m">
-										<div data-component="textbox" data-component-path="settings.smtpsettings" data-maxlength="300" data-required="true" data-component-value="''" data-control-icon="fa-code">@(SMTP settings (JSON))</div>
+										<div data-jc="textbox" data-jc-path="settings.smtpsettings" data-maxlength="300" data-required="true" data-jc-value="''" data-control-icon="fa-code">@(SMTP settings (JSON))</div>
 										<div class="help">@(The SMTP settings must be according to the Total.js documentation.)</div>
 									</div>
 								</div>
@@ -53,10 +53,10 @@
 						</div>
 						<br />
 						<div class="padding">
-							<div data-component="error" data-component-path="settings.response" class="ui-error-nmt"></div>
+							<div data-jc="error" data-jc-path="settings.response" class="ui-error-nmt"></div>
 							<div class="row">
-								<div class="col-md-6 col-md-offset-3" data-component="validation" data-component-path="settings">
-									<button class="button upper" disabled="disabled" data-component="click" data-component-path="settings_save">@(Save)</button>
+								<div class="col-md-6 col-md-offset-3" data-jc="validation" data-jc-path="settings">
+									<button class="button upper" disabled="disabled" data-jc="click" data-jc-path="settings_save">@(Save)</button>
 								</div>
 							</div>
 						</div>
@@ -82,9 +82,7 @@
 		AJAX('POST /internal/settings/', settings, function(response) {
 			SETTER('loading', 'hide', 1000);
 			SET('settings.response', response);
-			if (!response.success)
-				return;
-			success();
+			response.success && success();
 		});
 	}
 </script>

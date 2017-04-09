@@ -45,9 +45,9 @@ NEWSCHEMA('Application').make(function(schema) {
 
 		var item = APPLICATIONS.findItem('internal', OPENPLATFORM.applications.uid(model.id));
 		if (item)
-			return process(null, item, true);
-
-		OPENPLATFORM.applications.create(model.id, process);
+			process(null, item, true);
+		else
+			OPENPLATFORM.applications.create(model.id, process);
 	});
 
 	schema.setRemove(function(error, id, callback) {
@@ -83,9 +83,7 @@ NEWSCHEMA('Application').make(function(schema) {
 			save = true;
 		}
 
-		if (save)
-			OPENPLATFORM.users.save();
-
+		save && OPENPLATFORM.users.save();
 		callback(SUCCESS(true));
 	});
 
