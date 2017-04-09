@@ -1,6 +1,6 @@
 [![Support](https://www.totaljs.com/img/button-support.png?v=2)](https://www.totaljs.com/support/)
 
-# OpenPlatform v0.0.2 (BETA)
+# OpenPlatform v1.0.0
 
 - install node.js platform `+v4`
 - download the source code
@@ -27,8 +27,6 @@ The platform supports two ways of communication:
 
 - server-side
 - client-side via small [openplatform.js](https://github.com/totaljs/openplatform/blob/master/public/v1/openplatform.js) library
-
-![OpenPlatform workbench](https://www.totaljs.com/img/openplatform/openplatform-auth.png)
 
 The OpenPlatform stores all users and applications data in-memory and data are stored in JSON files (when are changed).
 
@@ -122,25 +120,25 @@ __IMPORTANT:__ remove all comments before use it :-)
 }
 ```
 
-### Server-side communication between the OpenPlatform and the Application
+### Server-side communication between the OpenPlatform and the Application
 
 Every request has to include following headers:
 
-- `x-openplatform-id` __(important)__ full URL address to the application's `openplatform.json`
-- `x-openplatform-user` __(important)__ user identificator (with except obtaining a session)
-- `x-openplatform-secret` __(optional)__ application specific security token
-
+- `x-openplatform-id` __(important)__ a full URL address to the application's `openplatform.json`
+- `x-openplatform-user` __(important)__ an user identificator
+- `x-openplatform-secret` __(optional)__  specific application's security token
 
 #### Request to `url_session` (session request)
+
+OpenPlatform opens a small window for obtaining a cookie because e.g. Safari doesn't allow to create a cookie in iframes. So this is the only way how to create application's cookies.
 
 ```html
 http://openapp.totaljs.com/openplatform/?openplatform=http%3A%2F%2Fopenplatform.totaljs.com%2Fsession%2F%3Ftoken%3D14mp1e1r3fs9k5lrkqggewg9a1hq71~-1556735938~-684557733~1569270833
 ```
-- workaround for iframes blocking in Safari. 
-- used to obtain third party session cookie.
-- the `url_session` should respond with a simple `plain text` response (e.g. `success`).   
-- OpenPlatform makes modifications to the `url_session` according to the argument `openplatform`
-- you should make request to the URL received in the response in argument `openplatform`
+
+- this is a workaround for blocking iframes in Safari web browser
+- the `url_session` should respond with a simple `plain text` response (e.g. `success`)
+- when the window is loaded then the OpenPlatform close this window automatically and then it will open an iframe
 
 __Request__:
 
@@ -412,7 +410,7 @@ Documentation can be found here <http://www.chartjs.org/docs/>. Simple example o
 }
 ```
 
-## TODO
+## TODO
 
 - [ ] missing email notifications
 - [ ] missing register/unregister calls for multi-permission settings
