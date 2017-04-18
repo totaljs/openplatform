@@ -180,8 +180,8 @@ OPENPLATFORM.settings.save = function(callback) {
 	settings.email = F.config.email;
 	settings.url = F.config.url;
 	settings.author = F.config.author;
-	settings.smtp = F.config['mail.smtp'];
-	settings.smtpsettings = F.config['mail.smtp.options'];
+	settings.smtp = F.config['mail-smtp'];
+	settings.smtpsettings = F.config['mail-smtp-options'];
 
 	Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(settings), (err) => callback && setImmediate(() => callback(err)));
 	return OPENPLATFORM;
@@ -205,8 +205,8 @@ OPENPLATFORM.settings.load = function(callback) {
 		F.config.author = settings.author;
 		F.config.email = settings.email;
 		F.config.name = settings.name;
-		F.config['mail.smtp'] = settings.smtp;
-		F.config['mail.smtp.options'] = settings.smtpsettings;
+		F.config['mail-smtp'] = settings.smtp;
+		F.config['mail-smtp.options'] = settings.smtpsettings;
 
 		// Internal framework hack: cleans mail settings cache
 		delete F.temporary['mail-settings'];

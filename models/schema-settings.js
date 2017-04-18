@@ -12,8 +12,8 @@ NEWSCHEMA('Settings').make(function(schema) {
 		model.url = F.config.url;
 		model.author = F.config.author;
 		model.email = F.config.email;
-		model.smtp = F.config['mail.smtp'];
-		model.smtpsettings = F.config['mail.smtp.options'];
+		model.smtp = F.config['mail-smtp'];
+		model.smtpsettings = F.config['mail-smtp-options'];
 		callback();
 	});
 
@@ -37,8 +37,8 @@ NEWSCHEMA('Settings').make(function(schema) {
 		F.config.name = model.name;
 		F.config.author = model.author;
 		F.config.email = model.email;
-		F.config['mail.smtp'] = model.smtp;
-		F.config['mail.smtp.options'] = model.smtpsettings;
+		F.config['mail-smtp'] = model.smtp;
+		F.config['mail-smtp-options'] = model.smtpsettings;
 		OPENPLATFORM.settings.save(() => OPENPLATFORM.settings.load());
 		callback(SUCCESS(true));
 	});
