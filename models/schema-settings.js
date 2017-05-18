@@ -13,7 +13,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 		model.author = F.config.author;
 		model.email = F.config.email;
 		model.smtp = F.config['mail-smtp'];
-		model.smtpsettings = F.config['mail-smtp-options'];
+		model.smtpsettings = JSON.stringify(F.config['mail-smtp-options']);
 		callback();
 	});
 
@@ -38,7 +38,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 		F.config.author = model.author;
 		F.config.email = model.email;
 		F.config['mail-smtp'] = model.smtp;
-		F.config['mail-smtp-options'] = model.smtpsettings;
+		F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
 		OPENPLATFORM.settings.save(() => OPENPLATFORM.settings.load());
 		callback(SUCCESS(true));
 	});

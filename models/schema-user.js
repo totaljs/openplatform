@@ -282,7 +282,7 @@ NEWSCHEMA('UserNewsletter').make(function(schema) {
 				continue;
 			var mail = Mail.create(model.subject, html.format(model.body));
 			mail.to(user.email);
-			mail.from(F.config['mail.address.from']);
+			mail.from(F.config['mail-address-from']);
 			messages.push(mail);
 			count++;
 		}
