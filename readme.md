@@ -2,6 +2,8 @@
 
 # OpenPlatform v1.0.0
 
+[![MIT License][license-image]][license-url]
+
 - install node.js platform `+v4`
 - download the source code
 - execute `$ npm install`
@@ -415,3 +417,6 @@ Documentation can be found here <http://www.chartjs.org/docs/>. Simple example o
 - [ ] missing email notifications
 - [ ] missing register/unregister calls for multi-permission settings
 - [ ] improve documentation
+
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: license.txt
