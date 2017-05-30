@@ -206,7 +206,7 @@ OPENPLATFORM.settings.load = function(callback) {
 		F.config.email = settings.email;
 		F.config.name = settings.name;
 		F.config['mail-smtp'] = settings.smtp;
-		F.config['mail-smtp.options'] = settings.smtpsettings;
+		F.config['mail-smtp-options'] = settings.smtpsettings;
 
 		// Internal framework hack: cleans mail settings cache
 		delete F.temporary['mail-settings'];
