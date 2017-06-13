@@ -76,23 +76,23 @@
 		$('.user-photo').attr('src', user.photo);
 
 		// Routing
-		NAVIGATION.route('/', function() {
+		ROUTE('/', function() {
 			SET('common.page', 'dashboard');
 		});
 
-		NAVIGATION.route('/settings/applications/', function() {
+		ROUTE('/settings/applications/', function() {
 			SET('common.page', 'applications');
 		});
 
-		NAVIGATION.route('/settings/users/', function() {
+		ROUTE('/settings/users/', function() {
 			SET('common.page', 'users');
 		});
 
-		NAVIGATION.route('/settings/', function() {
+		ROUTE('/settings/', function() {
 			SET('common.page', 'settings');
 		});
 
-		NAVIGATION.route('/account/', function() {
+		ROUTE('/account/', function() {
 			SET('common.page', 'account');
 		});
 
