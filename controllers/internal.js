@@ -23,6 +23,7 @@ exports.install = function() {
 	// Settings
 	F.route('/internal/settings/',                 json_settings_read,             ['authorize', '*Settings']);
 	F.route('/internal/settings/',                 json_settings_save,             ['authorize', 'post', '*Settings']);
+	F.route('/internal/settings/smtp/',            json_schema_exec,               ['authorize', 'post', '*SettingsSMTP']);
 
 	// Dashboard
 	F.route('/internal/dashboard/applications/',   json_dashboard_applications,    ['authorize']);
@@ -32,27 +33,29 @@ exports.install = function() {
 	F.route('/internal/dashboard/widgets/{id}/',   json_dashboard_widgets_content, ['authorize']);
 
 	// Account
-	F.route('/internal/login/',                    json_schema_exec,               ['unauthorize', 'post', '*Login']);
-	F.route('/internal/password/',                 json_schema_exec,               ['unauthorize', 'post', '*Password']);
+	F.route('/internal/login/',                    json_account_exec,              ['unauthorize', 'post', '*Login']);
+	F.route('/internal/password/',                 json_account_exec,              ['unauthorize', 'post', '*Password']);
 	F.route('/internal/account/',                  json_account_save,              ['authorize', 'post', '*Account']);
 };
 
 function json_schema_save() {
 	var self = this;
-	if (!self.user.superadmin)
-		return self.invalid().push('error-permission');
-	self.$save(self, self.callback());
+	if (self.user.superadmin)
+		self.$save(self, self.callback());
+	else
+		self.invalid().push('error-permission');
 }
 
-function json_schema_exec() {
+function json_account_exec() {
 	var self = this;
-	self.$workflow('exec', self, self.callback());
+	self.$workflow('exec', self.callback());
 }
 
 function json_schema_delete() {
 	var self = this;
 	self.$remove(self.body.id, self.callback());
 }
+
 function json_dashboard_applications() {
 	var self = this;
 	self.json(self.user.getApplications());
@@ -62,8 +65,9 @@ function json_dashboard_notifications() {
 	var self = this;
 	self.user.getNotifications(function(err, response) {
 		if (err)
-			return self.invalid().push(err);
-		self.content(response, 'application/json');
+			self.invalid().push(err);
+		else
+			self.content(response, 'application/json');
 	});
 }
 
@@ -91,29 +95,29 @@ function json_dashboard_widgets_content(id) {
 	else if (HEADERS['x-openplatform-secret'])
 		delete HEADERS['x-openplatform-secret'];
 
-	U.request(widget.url, ['get', 'dnscache', '< 30', 1500], function(err, response, code, headers) {
+	U.request(widget.url, ['get', 'dnscache', '< 30', 1500], function(err, response, code) {
 		if (err || code !== 200)
-			return self.empty();
-		self.content(response, 'text/plain');
+			self.empty();
+		else
+			self.content(response, 'text/plain');
 	}, null, HEADERS);
 }
 
 function json_users_query() {
 	var self = this;
-	if (!self.user.superadmin)
-		return self.invalid().push('error-permission');
-	self.json(USERS, false, function(k, v) {
-		if (k === 'password')
-			return undefined;
-		return v;
-	});
+	if (self.user.superadmin)
+		self.json(USERS, false, (k, v) => k === 'password' ? undefined : v);
+	else
+		self.invalid().push('error-permission');
 }
 
 function json_applications_query() {
 	var self = this;
-	if (!self.user.superadmin)
-		return self.invalid().push('error-permission');
-	self.json(APPLICATIONS);
+	if (self.user.superadmin)
+		self.json(APPLICATIONS);
+	else
+		self.invalid().push('error-permission');
+
 }
 
 function json_applications_download() {
@@ -186,17 +190,31 @@ function json_dashboard_users() {
 function json_applications_refresh() {
 	var self = this;
 	var app = APPLICATIONS.findItem('id', self.query.id);
-	if (!app)
-		return self.json(SUCCESS(false));
-	app.reload((err) => self.json(SUCCESS(!err)));
+	if (app)
+		app.reload((err) => self.json(SUCCESS(!err)));
+	else
+		self.json(SUCCESS(false));
 }
 
 function json_settings_read() {
 	var self = this;
-	self.$read(self.callback());
+	if (self.user.superadmin)
+		self.$read(self.callback());
+	else
+		self.invalid().push('error-permission');
 }
 
 function json_settings_save() {
 	var self = this;
-	self.$async(self.callback(), 1).$workflow('smtp', self).$save(self);
+	if (self.user.superadmin)
+		self.$save(self.callback());
+	else
+		self.invalid().push('error-permission');
 }
+
+function json_schema_exec() {
+	var self = this;
+	if (self.user.superadmin)
+		self.$workflow('exec', self.callback());
+	else
+		self.invalid().push('error-permission');}

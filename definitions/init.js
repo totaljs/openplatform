@@ -1,4 +1,4 @@
-F.on('ready', function() {
+ON('ready', function() {
 	F.wait('settings');
 	OPENPLATFORM.settings.load(function() {
 		F.wait('settings');
@@ -9,7 +9,7 @@ F.on('ready', function() {
 	});
 });
 
-F.on('service', function(counter) {
+ON('service', function(counter) {
 	// Realods all applications each 5 minutes
 	counter % 5 === 0 && OPENPLATFORM.applications.reload();
 });

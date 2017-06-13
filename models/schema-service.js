@@ -10,7 +10,7 @@ NEWSCHEMA('Service').make(function(schema) {
 			return value.toLowerCase();
 	});
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback, controller) {
 
 		if (!controller.app.publish[model.event]) {
 			error.push('error-application-publish');

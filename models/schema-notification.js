@@ -5,7 +5,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 	schema.define('body', 'String(5000)', true);   // A Message
 	schema.define('url', 'Url');                   // Open URL in application iFrame
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback, controller) {
 		var item = model.$clean();
 		if (!item.url)
 			item.url = controller.app.url;
@@ -24,7 +24,7 @@ NEWSCHEMA('Notify').make(function(schema) {
 	schema.define('body', 'String(5000)', true);   // A message
 	schema.define('url', 'Url');                   // URL
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback) {
 
 		var clean = model.$clean();
 		var count = 0;

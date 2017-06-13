@@ -68,12 +68,12 @@
 		account.notificationsemail = user.notificationsemail;
 		account.volume = user.volume;
 		account.skip = true;
-		account.ispassword = jC.parseQuery().password === '1';
+		account.ispassword = MAIN.parseQuery().password === '1';
 		UPDATE('account');
 	}
 
 	function account_save() {
-		if (!jC.valid('account.*') || BLOCKED('account', 3000))
+		if (DISABLED('account.*') || BLOCKED('account', 3000))
 			return;
 		SETTER('loading', 'show');
 		AJAX('POST /internal/account/', account, function(response) {

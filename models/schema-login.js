@@ -16,7 +16,7 @@ NEWSCHEMA('Login').make(function(schema) {
 			return value.hash('sha256');
 	});
 
-	schema.addWorkflow('exec', function(error, model, controller, callback) {
+	schema.addWorkflow('exec', function(error, model, options, callback, controller) {
 
 		var err = protection(controller);
 		if (err) {
@@ -42,7 +42,7 @@ NEWSCHEMA('Login').make(function(schema) {
 		callback(SUCCESS(true));
 	});
 
-	schema.addWorkflow('token', function(error, model, controller, callback) {
+	schema.addWorkflow('token', function(error, model, options, callback, controller) {
 
 		var err = protection(controller);
 		if (err) {
@@ -70,9 +70,9 @@ function protection(controller) {
 		return 'error-login-useragent';
 	ua = ua.hash();
 	var key = ua + '-' + req.ip.hash();
-	if (DDOS[key] === undefined)
-		DDOS[key] = 1;
-	else
+	if (DDOS[key])
 		DDOS[key]++;
+	else
+		DDOS[key] = 1;
 	return DDOS[key] > 5 ? 'error-login-ddos' : null;
 }

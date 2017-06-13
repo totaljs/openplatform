@@ -8,7 +8,7 @@ COMPONENT('click', function() {
 		if (typeof(value) === 'string')
 			self.set(self.parser(value));
 		else
-			self.get(self.attr('data-component-path'))(self);
+			self.get(self.attr('data-jc-path'))(self);
 	};
 
 	self.make = function() {
@@ -58,53 +58,68 @@ COMPONENT('message', function() {
 	self.singleton();
 
 	self.make = function() {
-		self.element.addClass('ui-message hidden');
+		self.classes('ui-message hidden');
 
 		self.element.on('click', 'button', function() {
 			self.hide();
 		});
 
 		$(window).on('keyup', function(e) {
-			if (!visible)
-				return;
-			if (e.keyCode === 27)
-				self.hide();
+			visible && e.keyCode === 27 && self.hide();
 		});
 	};
 
-	self.warning = function(message, icon) {
+	self.warning = function(message, icon, fn) {
+		if (typeof(icon) === 'function') {
+			fn = icon;
+			icon = undefined;
+		}
+		self.callback = fn;
 		self.content('ui-message-warning', message, icon || 'fa-warning');
 	};
 
-	self.success = function(message, icon) {
+	self.info = function(message, icon, fn) {
+
+		if (typeof(icon) === 'function') {
+			fn = icon;
+			icon = undefined;
+		}
+
+		self.callback = fn;
+		self.content('ui-message-info', message, icon || 'fa-check-circle');
+	};
+
+	self.success = function(message, icon, fn) {
+
+		if (typeof(icon) === 'function') {
+			fn = icon;
+			icon = undefined;
+		}
+
+		self.callback = fn;
 		self.content('ui-message-success', message, icon || 'fa-check-circle');
 	};
 
 	self.hide = function() {
-		self.element.removeClass('ui-message-visible');
-		if (timer)
-			clearTimeout(timer);
+		self.callback && self.callback();
+		self.classes('-ui-message-visible');
+		timer && clearTimeout(timer);
 		timer = setTimeout(function() {
 			visible = false;
-			self.element.addClass('hidden');
+			self.classes('hidden');
 		}, 1000);
 	};
 
 	self.content = function(cls, text, icon) {
-
-		if (!is)
-			self.html('<div><div class="ui-message-body"><span class="fa fa-warning"></span><div class="ui-center"></div></div><button>' + (self.attr('data-button') || 'Close') + '</button></div>');
-
-		if (timer)
-			clearTimeout(timer);
-
+		!is && self.html('<div><div class="ui-message-body"><div class="text"></div><hr /><button>' + (self.attr('data-button') || 'Close') + '</button></div></div>');
+		timer && clearTimeout(timer);
 		visible = true;
-		self.element.find('.ui-message-body').removeClass().addClass('ui-message-body ' + cls);
-		self.element.find('.fa').removeClass().addClass('fa ' + icon);
-		self.element.find('.ui-center').html(text);
-		self.element.removeClass('hidden');
+		self.find('.ui-message-body').removeClass().addClass('ui-message-body ' + cls);
+		self.find('.fa').removeClass().addClass('fa ' + icon);
+		self.find('.text').html(text);
+		self.classes('-hidden');
 		setTimeout(function() {
-			self.element.addClass('ui-message-visible');
+			self.classes('ui-message-visible');
 		}, 5);
 	};
 });
@@ -126,7 +141,7 @@ COMPONENT('validation', function() {
 	};
 
 	self.state = function() {
-		var disabled = jC.disabled(path);
+		var disabled = DISABLED(path);
 		if (!disabled && self.evaluate)
 			disabled = !EVALUATE(self.path, self.evaluate);
 		elements.prop({ disabled: disabled });
@@ -237,7 +252,7 @@ COMPONENT('dropdown', function() {
 		self.element.addClass('ui-dropdown-container');
 
 		var label = self.html();
-		var html = '<div class="ui-dropdown"><span class="fa fa-sort"></span><select data-component-bind="">{0}</select></div>'.format(options.join(''));
+		var html = '<div class="ui-dropdown"><span class="fa fa-sort"></span><select data-jc-bind="">{0}</select></div>'.format(options.join(''));
 		var builder = [];
 
 		if (label.length) {
@@ -281,35 +296,46 @@ COMPONENT('dropdown', function() {
 COMPONENT('textbox', function() {
 
 	var self = this;
-	var required = self.attr('data-required') === 'true';
+	var isRequired = self.attr('data-required') === 'true';
+	var validation = self.attr('data-validate');
 	var input;
 	var container;
 
 	self.validate = function(value) {
 
-		var is = false;
-		var type = typeof(value);
-
-		if (input.prop('disabled'))
+		if (input.prop('disabled') || !isRequired)
 			return true;
+
+		var type = typeof(value);
 
 		if (type === 'undefined' || type === 'object')
 			value = '';
 		else
 			value = value.toString();
 
-		if (window.$calendar)
-			window.$calendar.hide();
+		EMIT('reflow', self.name);
 
-		if (self.type === 'email')
-			return value.isEmail();
-		if (self.type === 'currency')
-			return value > 0;
-		return value.length > 0;
+		switch (self.type) {
+			case 'email':
+				return value.isEmail();
+			case 'url':
+				return value.isURL();
+			case 'currency':
+			case 'number':
+				return value > 0;
+		}
+
+		return validation ? self.evaluate(value, validation, true) ? true : false : value.length > 0;
 	};
 
-	if (!required)
-		self.noValid();
+	!isRequired && self.noValid();
+
+	self.required = function(value) {
+		self.find('.ui-textbox-label').toggleClass('ui-textbox-label-required', value);
+		self.noValid(!value);
+		isRequired = value;
+		!value && self.state(1, 1);
+	};
 
 	self.make = function() {
 
@@ -320,87 +346,86 @@ COMPONENT('textbox', function() {
 		attrs.attr('type', self.type === 'password' ? self.type : 'text');
 		attrs.attr('placeholder', self.attr('data-placeholder'));
 		attrs.attr('maxlength', self.attr('data-maxlength'));
-		attrs.attr('data-component-keypress', self.attr('data-component-keypress'));
-		attrs.attr('data-component-keypress-delay', self.attr('data-component-keypress-delay'));
-		attrs.attr('data-component-bind', '');
+		attrs.attr('data-jc-keypress', self.attr('data-jc-keypress'));
+		attrs.attr('data-jc-keypress-delay', self.attr('data-jc-keypress-delay'));
+		attrs.attr('data-jc-bind', '');
+		attrs.attr('name', self.path);
 
 		tmp = self.attr('data-align');
-		if (tmp)
-			attrs.attr('class', 'ui-' + tmp);
-
-		if (self.attr('data-autofocus') === 'true')
-			attrs.attr('autofocus');
+		tmp && attrs.attr('class', 'ui-' + tmp);
+		self.attr('data-autofocus') === 'true' && attrs.attr('autofocus');
 
 		var content = self.html();
 		var icon = self.attr('data-icon');
 		var icon2 = self.attr('data-control-icon');
 		var increment = self.attr('data-increment') === 'true';
 
-		if (!icon2 && self.type === 'date')
-			icon2 = 'fa-calendar';
-
 		builder.push('<input {0} />'.format(attrs.join(' ')));
 
-		if (icon2)
-			builder.push('<div><span class="fa {0}"></span></div>'.format(icon2));
-		else if (increment)
-			builder.push('<div><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
-
-		if (increment) {
-			self.element.on('click', '.fa-caret-up,.fa-caret-down', function(e) {
-				var el = $(this);
-				var inc = -1;
-				if (el.hasClass('fa-caret-up'))
-					inc = 1;
-				self.change(true);
-				self.inc(inc);
+		if (!icon2 && self.type === 'date')
+			icon2 = 'fa-calendar';
+		else if (self.type === 'search') {
+			icon2 = 'fa-search ui-textbox-control-icon';
+			self.event('click', '.ui-textbox-control-icon', function() {
+				self.$stateremoved = false;
+				$(this).removeClass('fa-times').addClass('fa-search');
+				self.set('');
 			});
-		}
-
-		if (self.type === 'date') {
-			self.element.on('click', '.fa-calendar', function(e) {
-				e.preventDefault();
-				if (!window.$calendar)
+			self.getter2 = function(value) {
+				if (self.$stateremoved && !value)
 					return;
-				var el = $(this);
-				window.$calendar.toggle(el.parent().parent(), self.element.find('input').val(), function(date) {
-					self.set(date);
-				});
-			});
+				self.$stateremoved = value ? false : true;
+				self.find('.ui-textbox-control-icon').toggleClass('fa-times', value ? true : false).toggleClass('fa-search', value ? false : true);
+			};
 		}
+
+		icon2 && builder.push('<div><span class="fa {0}"></span></div>'.format(icon2));
+		increment && !icon2 && builder.push('<div><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
+		increment && self.event('click', '.fa-caret-up,.fa-caret-down', function() {
+			var el = $(this);
+			var inc = -1;
+			if (el.hasClass('fa-caret-up'))
+				inc = 1;
+			self.change(true);
+			self.inc(inc);
+		});
+
+		self.type === 'date' && self.event('click', '.fa-calendar', function(e) {
+			e.preventDefault();
+			window.$calendar && window.$calendar.toggle($(this).parent().parent(), self.find('input').val(), function(date) {
+				self.set(date);
+			});
+		});
 
 		if (!content.length) {
-			self.element.addClass('ui-textbox ui-textbox-container');
+			self.classes('ui-textbox ui-textbox-container');
 			self.html(builder.join(''));
 			input = self.find('input');
-			container = self.find('.ui-textbox');
+			container = self.element;
 			return;
 		}
 
 		var html = builder.join('');
 		builder = [];
-		builder.push('<div class="ui-textbox-label{0}">'.format(required ? ' ui-textbox-label-required' : ''));
-
-		if (icon)
-			builder.push('<span class="fa {0}"></span> '.format(icon));
-
+		builder.push('<div class="ui-textbox-label{0}">'.format(isRequired ? ' ui-textbox-label-required' : ''));
+		icon && builder.push('<span class="fa {0}"></span> '.format(icon));
 		builder.push(content);
 		builder.push(':</div><div class="ui-textbox">{0}</div>'.format(html));
 
 		self.html(builder.join(''));
-		self.element.addClass('ui-textbox-container');
+		self.classes('ui-textbox-container');
 		input = self.find('input');
 		container = self.find('.ui-textbox');
 	};
 
-	self.state = function(type, who) {
+	self.state = function(type) {
 		if (!type)
 			return;
 		var invalid = self.isInvalid();
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.toggleClass('ui-textbox-invalid', self.isInvalid());
+		container.toggleClass('ui-textbox-invalid', invalid);
 	};
 });
 
@@ -424,7 +449,7 @@ COMPONENT('range', function() {
 		attrs.attr('max', self.attr('data-max'));
 		attrs.attr('min', self.attr('data-min'));
 		self.element.addClass('ui-range');
-		self.html('{0}<input type="range" data-component-bind=""{1} />'.format(name, attrs.length ? ' ' + attrs.join(' ') : ''));
+		self.html('{0}<input type="range" data-jc-bind=""{1} />'.format(name, attrs.length ? ' ' + attrs.join(' ') : ''));
 	};
 });
 
@@ -464,7 +489,7 @@ COMPONENT('textarea', function() {
 		var height = element.attr('data-height');
 		var icon = element.attr('data-icon');
 		var content = element.html();
-		var html = '<textarea data-component-bind=""' + (attrs.length > 0 ? ' ' + attrs.join('') : '') + (height ? ' style="height:' + height + '"' : '') + (element.attr('data-autofocus') === 'true' ? ' autofocus="autofocus"' : '') + '></textarea>';
+		var html = '<textarea data-jc-bind=""' + (attrs.length > 0 ? ' ' + attrs.join('') : '') + (height ? ' style="height:' + height + '"' : '') + (element.attr('data-autofocus') === 'true' ? ' autofocus="autofocus"' : '') + '></textarea>';
 
 		if (content.length === 0) {
 			element.addClass('ui-textarea');
@@ -619,7 +644,7 @@ COMPONENT('grid', function() {
 		self.template = Tangular.compile(element.html());
 		self.element.on('click', 'tr', function() {});
 		self.element.addClass('ui-grid');
-		self.html('<div><div class="ui-grid-page"></div><table width="100%" cellpadding="0" cellspacing="0" border="0"><tbody></tbody></table></div><div data-component="pagination" data-component-path="{0}" data-max="8" data-pages="{1}" data-items="{2}" data-target-path="{3}"></div>'.format(self.path, self.attr('data-pages'), self.attr('data-items'), self.attr('data-pagination-path')));
+		self.html('<div><div class="ui-grid-page"></div><table width="100%" cellpadding="0" cellspacing="0" border="0"><tbody></tbody></table></div><div data-jc="pagination" data-jc-path="{0}" data-max="8" data-pages="{1}" data-items="{2}" data-target-path="{3}"></div>'.format(self.path, self.attr('data-pages'), self.attr('data-items'), self.attr('data-pagination-path')));
 		self.element.on('click', 'button', function() {
 			switch (this.name) {
 				default:
@@ -1315,7 +1340,7 @@ COMPONENT('photoupload', function() {
 			if (loading)
 				loading.show();
 
-			jC.UPLOAD(self.attr('data-url'), data, function(response, err) {
+			UPLOAD(self.attr('data-url'), data, function(response, err) {
 
 				if (loading)
 					loading.hide(500);
@@ -1475,11 +1500,10 @@ COMPONENT('applications', function() {
 		});
 	};
 
-	self.setter = function(value, path) {
+	self.setter = function(value) {
 
 		var apps = self.find('.ui-app');
 		var builder = [];
-		var processes = [];
 		var stamp = Math.floor(Math.random() * 10000);
 
 		for (var i = 0, length = value.length; i < length; i++) {
@@ -1526,7 +1550,6 @@ COMPONENT('applications', function() {
 
 COMPONENT('processes-dock', function() {
 	var self = this;
-	var target;
 
 	self.template = Tangular.compile('<a href="javascript:void(0)" data-id="{{ id }}" title="{{ title }}"><img src="{{ icon }}" width="25" alt="{{ title }}" border="0" /></a>');
 	self.readonly();
@@ -1586,6 +1609,7 @@ COMPONENT('processes', function() {
 
 		if (callbackid)
 			data.callback = callbackid;
+
 		item.element.find('iframe').get(0).contentWindow.postMessage(JSON.stringify(data), '*');
 		return true;
 	};
@@ -1608,7 +1632,7 @@ COMPONENT('processes', function() {
 	self.make = function() {
 
 		source = self.attr('data-source');
-		self.html('<div class="ui-process-toolbar-loading"></div><div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><div data-component="processes-dock" data-component-path="{0}" data-run="{1}"></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>'.format(source, self.path));
+		self.html('<div class="ui-process-toolbar-loading"></div><div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><div data-jc="processes-dock" data-jc-path="{0}" data-run="{1}"></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>'.format(source, self.path));
 
 		loader = self.find('.ui-process-toolbar-loading');
 		toolbar = self.find('.ui-process-toolbar');
@@ -2190,5 +2214,149 @@ COMPONENT('widgets', function() {
 		}
 
 		self.toggle('hidden', !has);
+	};
+});
+
+COMPONENT('exec', function() {
+	var self = this;
+	self.readonly();
+	self.blind();
+	self.make = function() {
+		self.event('click', self.attr('data-selector') || '.exec', function() {
+			var el = $(this);
+			var attr = el.attr('data-exec');
+			var path = el.attr('data-path');
+			attr && EXEC(attr, el);
+			path && SET(path, new Function('return ' + el.attr('data-value'))());
+		});
+	};
+});
+
+COMPONENT('binder', function() {
+
+	var self = this;
+	var keys;
+	var keys_unique;
+
+	self.readonly();
+	self.blind();
+
+	self.make = function() {
+		self.watch('*', self.autobind);
+		self.scan();
+
+		self.on('component', function() {
+			setTimeout2(self.id, self.scan, 200);
+		});
+
+		self.on('destroy', function() {
+			setTimeout2(self.id, self.scan, 200);
+		});
+	};
+
+	self.autobind = function(path) {
+		var mapper = keys[path];
+		var template = {};
+		mapper && mapper.forEach(function(item) {
+			var value = self.get(item.path);
+			var element = item.selector ? item.element.find(item.selector) : item.element;
+			template.value = value;
+			item.classes && classes(element, item.classes(value));
+			item.visible && element.toggleClass('hidden', item.visible(value) ? false : true);
+			item.html && element.html(item.Ta ? item.html(template) : item.html(value));
+			item.disable && element.prop('disabled', item.disable(value));
+		});
+	};
+
+	function classes(element, val) {
+		var add = '';
+		var rem = '';
+		val.split(' ').forEach(function(item) {
+			switch (item.substring(0, 1)) {
+				case '+':
+					add += (add ? ' ' : '') + item.substring(1);
+					break;
+				case '-':
+					rem += (rem ? ' ' : '') + item.substring(1);
+					break;
+				default:
+					add += (add ? ' ' : '') + item;
+					break;
+			}
+		});
+		rem && element.removeClass(rem);
+		add && element.addClass(add);
+	}
+
+	function decode(val) {
+		return val.replace(/\&\#39;/g, '\'');
+	}
+
+	self.prepare = function(code) {
+		return code.indexOf('=>') === -1 ? FN('value=>' + decode(code)) : FN(decode(code));
+	};
+
+	self.scan = function() {
+		keys = {};
+		keys_unique = {};
+		self.find('[data-b]').each(function() {
+
+			var el = $(this);
+			var path = el.attr('data-b');
+			var arr = path.split('.');
+			var p = '';
+
+			var classes = el.attr('data-b-class');
+			var html = el.attr('data-b-html');
+			var visible = el.attr('data-b-visible');
+			var disable = el.attr('data-b-disable');
+			var selector = el.attr('data-b-selector');
+			var obj = el.data('data-b');
+
+			keys_unique[path] = true;
+
+			if (!obj) {
+				obj = {};
+				obj.path = path;
+				obj.element = el;
+				obj.classes = classes ? self.prepare(classes) : undefined;
+				obj.visible = visible ? self.prepare(visible) : undefined;
+				obj.disable = disable ? self.prepare(disable) : undefined;
+				obj.selector = selector ? selector : null;
+
+				if (el.attr('data-b-template') === 'true') {
+					var tmp = el.find('script[type="text/html"]');
+					var str = '';
+
+					if (tmp.length)
+						str = tmp.html();
+					else
+						str = el.html();
+
+					if (str.indexOf('{{') !== -1) {
+						obj.html = Tangular.compile(str);
+						obj.Ta = true;
+						tmp.length && tmp.remove();
+					}
+				} else
+					obj.html = html ? self.prepare(html) : undefined;
+
+				el.data('data-b', obj);
+			}
+
+			for (var i = 0, length = arr.length; i < length; i++) {
+				p += (p ? '.' : '') + arr[i];
+				if (keys[p])
+					keys[p].push(obj);
+				else
+					keys[p] = [obj];
+			}
+		});
+
+		Object.keys(keys_unique).forEach(function(key) {
+			self.autobind(key, self.get(key));
+		});
+
+		return self;
 	};
 });

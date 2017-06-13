@@ -19,7 +19,7 @@ F.onAuthorize = function(req, res, flags, next) {
 };
 
 // Sets online=false fo all users each 5 minute
-F.on('service', function(interval) {
+ON('service', function(interval) {
 	if (interval % 5 !== 0)
 		return;
 	OPENPLATFORM.users.save();

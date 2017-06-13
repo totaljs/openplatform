@@ -84,9 +84,8 @@ function json_applications() {
 
 	for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
 		var item = APPLICATIONS[i];
-		if (!self.user.applications[item.internal])
-			continue;
-		arr.push(item.export());
+		if (self.user.applications[item.internal])
+			arr.push(item.export());
 	}
 
 	self.json(arr);

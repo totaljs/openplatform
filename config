@@ -1,18 +1,17 @@
-// You can rewrite all info
 name                            : OpenPlatform
 version                         : 0.0.1
 author                          : Peter Širka
 email                           : petersirka@gmail.com
-secret                          : 2016OP
+secret                          : OP2017
 
-url                             : http://127.0.0.1:8000
+// Languages
 languages                       : en;sk;cz;hu;ru;fr
+
+// Default values
+url                             : http://127.0.0.1:8000
 cookie                          : __uop
 cookie-expiration               : 5 days
 
-// Mail settings
+// Mail default settings
 mail-smtp                       : smtp.yourwebsite.com
 mail-smtp-options               : {"secure":false,"port":25,"user":"","password":"","timeout":10000}
-mail-address-from               : your@yourwebsite.com
-mail-address-reply              : your@yourwebsite.com
-mail-address-copy               :

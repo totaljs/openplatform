@@ -132,7 +132,7 @@ NEWSCHEMA('UserGroup').make(function(schema) {
 	schema.define('group_old', 'String(60)', true);
 	schema.define('group_new', 'String(60)', true);
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback) {
 		var count = 0;
 
 		for (var i = 0, length = USERS.length; i < length; i++) {
@@ -176,7 +176,7 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 	schema.define('company', 'String(60)');
 	schema.define('applications', Object);
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback, controller) {
 
 		if (!model.applications)
 			model.applications = {};
@@ -266,7 +266,7 @@ NEWSCHEMA('UserNewsletter').make(function(schema) {
 	schema.define('body', 'String', true);         // A message
 	schema.define('subject', 'String(100)');
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback) {
 
 		var html = F.view('~mails/newsletter');
 		var group = model.group && model.group.length ? model.group : null;

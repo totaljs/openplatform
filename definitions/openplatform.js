@@ -1,6 +1,8 @@
 const Fs = require('fs');
 const OPENPLATFORM = global.OPENPLATFORM = {};
 const REG_PHOTO = /@|\./g;
+const REG_UID1 = /^(http|https)\:\/\//g;
+const REG_UID2 = /www\./g;
 const VERSION = {};
 
 OPENPLATFORM.Application = MODEL('model-application').Application;
@@ -164,7 +166,7 @@ OPENPLATFORM.applications.reload = function(callback) {
  * @return {String}
  */
 OPENPLATFORM.applications.uid = function(url) {
-	return url.toLowerCase().replace(/^(http|https)\:\/\//g, '').replace(/www\./g, '').trim().hash();
+	return url.toLowerCase().replace(REG_UID1, '').replace(REG_UID2, '').trim().hash();
 };
 
 /**

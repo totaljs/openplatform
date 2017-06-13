@@ -2,7 +2,7 @@ NEWSCHEMA('Widget').make(function(schema) {
 
 	schema.define('array', '[String(60)]');
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback, controller) {
 
 		var arr = [];
 

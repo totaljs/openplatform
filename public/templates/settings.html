@@ -49,6 +49,8 @@
 										<div class="help">@(The SMTP settings must be according to the Total.js documentation.)</div>
 									</div>
 								</div>
+								<div data-jc="error" data-jc-path="settingssmtpresponse" class="ui-error-nm"></div>
+								<a href="javascript:void(0)" class="link exec fs11" data-exec="settings_smtp"><i class="fa fa-chevron-right mr5"></i>@(Verify SMTP server)</a>
 							</div>
 						</div>
 						<br />
@@ -74,15 +76,24 @@
 		AJAX('GET /internal/settings/', 'settings');
 	}
 
+	function settings_smtp() {
+		SETTER('loading', 'show');
+		AJAX('POST /internal/settings/smtp/', settings, function(response) {
+			SET('settingssmtpresponse', response);
+			SETTER('loading', 'hide', 1000);
+			response.success && SETTER('message', 'success', '<i class="fa fa-check-circle icon"></i>@(SMTP has been verified successfully.)');
+		});
+	}
+
 	function settings_save() {
-		if (!jC.valid('settings.*') || BLOCKED('settings', 3000))
+		if (DISABLED('settings.*') || BLOCKED('settings', 3000))
 			return;
 		SETTER('loading', 'show');
 		RESET('settings.*', true);
 		AJAX('POST /internal/settings/', settings, function(response) {
 			SETTER('loading', 'hide', 1000);
 			SET('settings.response', response);
-			response.success && success();
+			response.success && SETTER('message', 'success', '<i class="fa fa-check-circle icon"></i>@(Settings have been saved successfully.)');
 		});
 	}
 </script>

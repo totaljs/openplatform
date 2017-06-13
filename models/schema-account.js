@@ -7,7 +7,7 @@ NEWSCHEMA('Account').make(function(schema) {
 	schema.define('ispassword', Boolean);
 	schema.define('password', 'String(30)');
 
-	schema.setSave(function(error, model, controller, callback) {
+	schema.setSave(function(error, model, options, callback, controller) {
 
 		var user = controller.user;
 
