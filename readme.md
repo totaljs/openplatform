@@ -313,6 +313,17 @@ OPENPLATFORM.close();
 // Method: OPENPLATFORM.restart();
 OPENPLATFORM.restart();
 
+// Verifies OpenPlatform container for hijacking
+OPENPLATFORM.verify([callback(is)]);
+
+// Examples:
+OPENPLATFORM.verify(); 
+// or custom error handling:
+OPENPLATFORM.verify(function(is) {
+    if (!is)
+        document.body.innerHTML = '401: Unauthorized';
+});
+
 // Opens another OpenPlatform's application (if exists)
 // Method: OPENPLATFORM.open(id, [message]);
 OPENPLATFORM.open('http://anotherapp.com/openplatform.json');

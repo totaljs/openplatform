@@ -5,6 +5,55 @@ OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
 
+OPENPLATFORM.verify = function(callback) {
+
+	if (!callback)
+		callback = function(is) {
+			if (is === true)
+				return;
+			document.body.innerHTML = '401: Unauthorized';
+			setTimeout(function() {
+				window.close();
+			}, 2000);
+		};
+
+	if (!OPENPLATFORM.is) {
+		callback(false);
+		return;
+	}
+
+	var arr = location.search.substring(1).split('&');
+	var token;
+
+	for (var i = 0, length = arr.length; i < length; i++) {
+		var name = arr[i];
+		if (name.substring(0, 13) === 'openplatform=') {
+			token = decodeURIComponent(name.substring(13));
+			break;
+		}
+	}
+
+	if (token) {
+
+		var timeout = setTimeout(function() {
+			timeout = null;
+			callback(false);
+		}, 1000);
+
+		var data = {};
+		data.token = token;
+		data.ua = navigator.userAgent;
+		OPENPLATFORM.send('verify', data, function(err, response) {
+			if (timeout) {
+				callback(response === true);
+				clearTimeout(timeout);
+			}
+			timeout = null;
+		});
+	} else
+		callback(false);
+};
+
 OPENPLATFORM.loading = function(visible) {
 	return OPENPLATFORM.send('loading', visible);
 };
@@ -124,7 +173,6 @@ OPENPLATFORM.on = function(name, callback) {
 
 window.addEventListener('message', function(e) {
 	try {
-
 		var data = JSON.parse(e.data);
 
 		if (!data.openplatform)
