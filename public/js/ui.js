@@ -1479,11 +1479,11 @@ COMPONENT('applications', function() {
 	var self = this;
 	var running = self.attr('data-running') === 'true';
 
-	self.template = Tangular.compile('<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 ui-app{{ if !online }} offline{{ fi }}{{ if !mobile }} hidden-xs hidden-sm{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" onerror="onImageError(this)" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
+	self.template = Tangular.compile('<div class="ui-app{{ if !online }} offline{{ fi }}{{ if !mobile }} hidden-xs hidden-sm{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" onerror="onImageError(this)" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
 	self.readonly();
 
 	self.make = function() {
-		self.toggle('row applications');
+		self.toggle('applications');
 		self.element.on('click', '.ui-app', function() {
 			var el = $(this);
 			if (el.hasClass('offline'))
@@ -1541,9 +1541,7 @@ COMPONENT('applications', function() {
 			el.toggleClass('offline', !item.online);
 		}
 
-		if (builder.length)
-			self.append(builder.join(''));
-
+		builder.length && self.append(builder.join(''));
 		apps.filter('[data-stamp!="{0}"]'.format(stamp)).remove();
 	};
 });

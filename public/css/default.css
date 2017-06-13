@@ -107,7 +107,10 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 .applications > div > div { padding: 10px; }
 .applications .name { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-size: 12px; letter-spacing: -0.2px; }
 .applications .fa-circle { font-size: 11px; display: inline; margin-right: 5px; color: #6DBC41; }
-.ui-app { cursor: pointer; }
+
+.applications { padding: 8px 0 0 10px; }
+.ui-app .name { font-weight: bold; }
+.ui-app { width: 115px; position: relative; display: inline-block; margin: 5px 3px; cursor: pointer; }
 
 .applications .offline { cursor: not-allowed; opacity: 0.8; color: #A0A0A0; border-radius: 4px; }
 .applications .offline span { color: #A0A0A0; }
@@ -190,7 +193,16 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 
 .container-empty { height: 30px; }
 
+@media(max-width: 1200px) {
+	.ui-app { width: 112px; }
+}
+
+@media(max-width: 992px) {
+	.ui-app { width: 134px; }
+}
+
 @media(max-width: 768px) {
+	.ui-app { width: 110px; }
 	.menu { display: none; width: 100%; float: none; padding-top: 40px; }
 	.menu a { display: block; width: 100%; border-top: 1px solid #F0F0F0; }
 	.menu-visible { display: block; }

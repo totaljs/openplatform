@@ -13,7 +13,7 @@
 
 			<section data-jc="visible" data-jc-path="dashboard.applications" data-if="value.findIndex('running', true) !== -1" class="hidden">
 				<label><i class="fa fa-spin fa-refresh"></i>@(Running applications)</label>
-				<div class="padding">
+				<div>
 					<div data-jc="applications" data-jc-path="dashboard.applications" data-run="dashboard.current" data-running="true"></div>
 				</div>
 			</section>
@@ -23,7 +23,7 @@
 			<section data-jc="visible" data-jc-path="dashboard.applications" data-if="value.length" class="hidden">
 				<div class="section-button hidden" data-jc="visible" data-jc-path="dashboard.canwidgets"><a href="javascript:void(0)" data-jc="click" data-jc-path="common.form" data-value="widgets"><i class="fa fa-bar-chart"></i>@(Widgets)</a></div>
 				<label><i class="fa fa-th"></i>@(Applications)</label>
-				<div class="padding">
+				<div>
 					<div data-jc="applications" data-jc-path="dashboard.applications" data-run="dashboard.current"></div>
 				</div>
 			</section>
