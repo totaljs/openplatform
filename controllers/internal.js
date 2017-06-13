@@ -1,3 +1,4 @@
+const Fs = require('fs');
 const HEADERS = {};
 
 exports.install = function() {
@@ -36,6 +37,9 @@ exports.install = function() {
 	F.route('/internal/login/',                    json_account_exec,              ['unauthorize', 'post', '*Login']);
 	F.route('/internal/password/',                 json_account_exec,              ['unauthorize', 'post', '*Password']);
 	F.route('/internal/account/',                  json_account_save,              ['authorize', 'post', '*Account']);
+
+	// Creates photos directory
+	Fs.mkdir(F.path.public('/photos/'), NOOP);
 };
 
 function json_schema_save() {
