@@ -111,6 +111,7 @@ OPENPLATFORM.getApplications = function(openplatform, iduser, callback) {
 		openplatform = openplatform.url;
 
 	HEADERS['x-openplatform-user'] = iduser;
+
 	U.request(openplatform + '/api/applications/', FLAGS_READ, function(err, response, code) {
 
 		OPENPLATFORM.debug && console.log('OPENPLATFORM.getApplications("{0}", "{1}") -->'.format(openplatform, iduser), err, response);
@@ -134,6 +135,7 @@ OPENPLATFORM.getUsers = function(openplatform, iduser, callback) {
 		openplatform = openplatform.url;
 
 	HEADERS['x-openplatform-user'] = iduser;
+
 	U.request(openplatform + '/api/users/', FLAGS_READ, function(err, response, code) {
 
 		OPENPLATFORM.debug && console.log('OPENPLATFORM.getUsers("{0}", "{1}") -->'.format(openplatform, iduser), err, response);
@@ -262,12 +264,17 @@ F.middleware('openplatform', function(req, res, next) {
 Controller.prototype.openplatform = function() {
 	var req = this.req;
 	var obj = {};
+
 	obj.id = req.headers['x-openplatform-id'];
 	obj.openplatform = req.headers['x-openplatform'];
 	obj.user = req.headers['x-openplatform-user'];
 	obj.secret = req.headers['x-openplatform-secret'];
-	obj.event = this.body.event;
-	obj.data = this.body.data;
+
+	if (this.body) {
+		obj.event = this.body.event;
+		obj.data = this.body.data;
+	}
+
 	obj.empty = obj.openplatform && obj.user ? false : true;
 	obj.serviceworker = obj.id && obj.event;
 	return obj;
