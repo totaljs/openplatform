@@ -1,7 +1,7 @@
 // App notifications
 NEWSCHEMA('Notification').make(function(schema) {
 
-	schema.define('type', Number);                 // 0: info, 1: success, 1: alert
+	schema.define('type', Number);                 // 0: info, 1: success, 2: alert
 	schema.define('body', 'String(5000)', true);   // A Message
 	schema.define('url', 'Url');                   // Open URL in application iFrame
 

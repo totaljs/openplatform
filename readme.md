@@ -287,7 +287,7 @@ OPENPLATFORM.getInfo(openplatform, callback(err, response));
 // Send notification
 var data = {};
 data.body = 'Message';
-data.type = 0; // 0: info (default), 1: success, 1: alert
+data.type = 0; // 0: info (default), 1: success, 2: alert
 data.url = 'https://www.totaljs.com' // optional
 
 OPENPLATFORM.notify(openplatform, iduser, data, callback(err, response));
