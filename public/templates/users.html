@@ -307,6 +307,15 @@
 				customsettings[this.getAttribute('data-id').parseInt()] = this.value;
 			});
 
+			// Check roles
+			Object.keys(users.form.applications).forEach(function(key) {
+				var roles = users.form.applications[key];
+				var app = users.applications.findItem('internal', +key);
+				app && (users.form.applications[key] = users.form.applications[key].remove(function(role) {
+					return app.roles.indexOf(role) === -1;
+				}));
+			});
+
 			users.form.settings = customsettings;
 
 			AJAX('POST /internal/users/', users.form, function(response, err) {
