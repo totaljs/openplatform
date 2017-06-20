@@ -265,11 +265,56 @@ x-openplatform-secret: app-secret (if any)
 { "event": "event name", "data": { "your": "object" }}
 ```
 
+### Server-Side communication between the OpenPlatform and the Application
+
+- online for Total.js applications [serverside.js](https://github.com/totaljs/openplatform/blob/master/public/v1/serverside.js) module
+
+The library contains following methods:
+
+```javascript
+// OPENPLATFORM is global
+console.log(typeof(OPENPLATFORM));
+
+// Get list of all registered applications
+OPENPLATFORM.getApplications(openplatform, iduser, callback(err, response));
+
+// Get list of all registered users
+OPENPLATFORM.getUsers(openplatform, iduser, callback(err, response));
+
+// Get info about OpenPlatform
+OPENPLATFORM.getInfo(openplatform, callback(err, response));
+
+// Send notification
+var data = {};
+data.body = 'Message';
+data.type = 0; // 0: info (default), 1: success, 1: alert
+data.url = 'https://www.totaljs.com' // optional
+
+OPENPLATFORM.notify(openplatform, iduser, data, callback(err, response));
+
+// Send data via ServiceWorker
+OPENPLATFORM.serviceworker(openplatform, iduser, eventName, data, callback(err, response));
+```
+
+__IMPORTANT__ `config` has to contain:
+
+```html
+openplatform.url       : your url address to openplatform.json
+openplatform.secret    : your-secret (if exists)
+
+// set to "true" if you want to logging requests to console
+openplatform.debug     : false
+```
+
+- this module creates `/openplatform/` route for user authorization
+- controller's action contains `controller.openplatform()` method for obtaining data from OpenPlatform
+- module registers a middleware called `openplatform` which it performs authorization too
+
 ### Client-Side communication between the OpenPlatform and the Application
 
-- client-side must use [openplatform.js](https://github.com/totaljs/openplatform/blob/master/public/v1/openplatform.js) library
+- client-side has to use [clientside.js](https://github.com/totaljs/openplatform/blob/master/public/v1/clientside.js) library
 
-The library contains following method:
+The library contains following methods:
 
 ```javascript
 
