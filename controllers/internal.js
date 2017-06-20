@@ -8,6 +8,8 @@ exports.install = function() {
 	F.route('/internal/users/',                    json_schema_save,               ['authorize', 'post', '*User']);
 	F.route('/internal/users/',                    json_schema_delete,             ['authorize', 'delete', '*User']);
 	F.route('/internal/users/group/',              json_schema_save,               ['authorize', 'post', '*UserGroup']);
+	F.route('/internal/users/place/',              json_schema_save,               ['authorize', 'post', '*UserPlace']);
+	F.route('/internal/users/department/',         json_schema_save,               ['authorize', 'post', '*UserDepartment']);
 	F.route('/internal/users/company/',            json_schema_save,               ['authorize', 'post', '*UserCompany']);
 	F.route('/internal/users/permissions/',        json_schema_save,               ['authorize', 'post', '*UserPermissions']);
 	F.route('/internal/users/notify/',             json_schema_save,               ['authorize', 'post', '*Notify']);

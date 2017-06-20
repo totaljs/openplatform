@@ -8,6 +8,12 @@
 				<div data-jc="dropdown" data-jc-path="permissions.group" data-source="users.groups" data-empty="" data-jc-value="''">@(Group)</div>
 			</div>
 			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="permissions.department" data-source="users.departments" data-empty="" data-jc-value="''">@(Department)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="permissions.place" data-source="users.places" data-empty="" data-jc-value="''">@(Place)</div>
+			</div>
+			<div class="col-md-4 m">
 				<div data-jc="dropdown" data-jc-path="permissions.company" data-source="users.companies" data-empty="" data-jc-value="''">@(Company)</div>
 			</div>
 		</div>
@@ -56,8 +62,7 @@
 			if (isError(err))
 				return;
 			DEFAULT('permissions.*');
-			if (window.users_refresh)
-				window.users_refresh();
+			EXEC('users_refresh');
 			SET('common.form', '');
 		});
 	}

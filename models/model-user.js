@@ -18,6 +18,8 @@ function User() {
 	this.password = '';
 	this.group = '';
 	this.company = '';
+	this.place = '';
+	this.department = '';
 
 	this.datecreated = null;
 	this.datelogged = null;
@@ -126,11 +128,11 @@ User.prototype.readonly = function(app) {
 	item.datecreated = self.datecreated;
 	item.datelogged = self.datelogged;
 	item.dateupdated = self.dateupdated;
+	item.department = self.department;
 	item.email = self.email;
 	item.firstname = self.firstname;
 	item.group = self.group;
 	item.id = self.id;
-	item.reference = self.reference;
 	item.language = self.language;
 	item.lastname = self.lastname;
 	item.notifications = self.notifications;
@@ -138,9 +140,11 @@ User.prototype.readonly = function(app) {
 	item.online = self.online;
 	item.phone = self.phone;
 	item.photo = OPENPLATFORM.users.photo(self.email);
+	item.place = self.place;
+	item.reference = self.reference;
 	item.sounds = self.sounds;
-	item.volume = self.volume;
 	item.superadmin = self.superadmin;
+	item.volume = self.volume;
 	item.widgets = self.widgets;
 
 	if (app) {
@@ -163,20 +167,22 @@ User.prototype.export = function(app) {
 	item.datecreated = self.datecreated;
 	item.datelogged = self.datelogged;
 	item.dateupdated = self.dateupdated;
+	item.department = self.department;
 	item.email = self.email;
 	item.firstname = self.firstname;
 	item.group = self.group;
 	item.id = self.id;
 	item.language = self.language;
 	item.lastname = self.lastname;
-	item.reference = self.reference;
 	item.notifications = self.notifications;
 	item.online = self.online;
 	item.phone = self.phone;
 	item.photo = OPENPLATFORM.users.photo(self.email);
+	item.place = self.place;
+	item.reference = self.reference;
 	item.sounds = self.sounds;
-	item.volume = self.volume;
 	item.superadmin = self.superadmin;
+	item.volume = self.volume;
 
 	if (app) {
 		item.roles = self.applications[app.internal] || EMPTYARRAY;
@@ -202,7 +208,7 @@ User.prototype.prepare = function(item) {
 		var key = keys[i];
 		self[key] = item[key];
 	}
-	self.search = (self.lastname + ' ' + self.firstname + ' ' + self.group).toSearch();
+	self.search = (self.lastname + ' ' + self.firstname + ' ' + self.group + ' ' + self.department).toSearch();
 	self.internal = (self.id || '').hash();
 	!(self.widgets instanceof Array) && (self.widgets = []);
 	return self;

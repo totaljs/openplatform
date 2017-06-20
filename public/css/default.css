@@ -134,7 +134,7 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 
 .filter .buttons { position: absolute; right: 0; top: 10px; }
 .filter .buttons button { width: 34px; height: 30px; text-align: center; margin: 0; padding: 0; background-color: #E0E0E0; border: 0; font-size: 16px; outline: 0; border-radius: 0 0 4px 4px; margin-left: 5px; transition: all 0.1s; }
-.filter .buttons button:hover { background-color: #D0D0D0; }
+.filter .buttons button:hover { background-color: #D0D0D0; transform: scale(1.2) translate(0,1px); }
 .relative { position: relative; }
 .inline { position: relative; display: inline-block; }
 

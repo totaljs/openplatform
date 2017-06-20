@@ -1,32 +1,40 @@
 <div class="filter">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-jc="textbox" data-jc-path="users.filter.search" data-icon="fa-search" data-placeholder="@(Search users)">@(Search)</div>
 			</div>
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-jc="dropdowncheckbox" data-jc-path="users.filter.groups" data-placeholder="@(All groups)" data-source="users.groups" data-icon="fa-folder" data-empty="@(No groups)">@(Groups)</div>
 			</div>
-			<div class="col-md-4 m">
-				<div data-jc="dropdowncheckbox" data-jc-path="users.filter.companies" data-placeholder="@(All companies)" data-source="users.companies" data-icon="fa-building" data-empty="@(No companies)">@(Companies)</div>
+			<div class="col-md-3 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="users.filter.departments" data-placeholder="@(All departments)" data-source="users.departments" data-icon="fa-address-card" data-empty="@(No departments)">@(Departments)</div>
+			</div>
+			<div class="col-md-3 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="users.filter.places" data-placeholder="@(All places)" data-source="users.places" data-icon="fa-map" data-empty="@(No places)">@(Places)</div>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="users.filter.companies" data-placeholder="@(All companies)" data-source="users.companies" data-icon="fa-building" data-empty="@(No companies)">@(Companies)</div>
+			</div>
+			<div class="col-md-3 m">
 				<div data-jc="dropdowncheckbox" data-jc-path="users.filter.applications" data-placeholder="All applications" data-source="users.applications" data-source-text="title" data-source-value="internal" data-jc-type="number" data-icon="fa-th" data-empty="@(No applications)">@(Applications)</div>
 			</div>
-			<div class="col-md-4 m">
+			<div class="col-md-3 m">
 				<div data-jc="dropdown" data-jc-path="users.filter.type" data-options="@(All users)|0;@(Activated users)|1;@(Blocked users)|2;@(Online users)|3" data-icon="fa-users" data-jc-type="number" data-jc-value="0">@(State)</div>
 			</div>
 		</div>
 		<div class="relative">
 			<div class="buttons">
+				<button title="@(Create new user)" data-jc="click" data-jc-path="users_create"><i class="fa fa-plus"></i></button>
 				<button title="@(Notify users)" data-jc="click" data-jc-path="common.form" data-value="notify"><i class="fa fa-bell"></i></button>
 				<button title="@(Send email)" data-jc="click" data-jc-path="common.form" data-value="email"><i class="fa fa-envelope"></i></button>
 				<button title="@(Change permissions)" data-jc="click" data-jc-path="common.form" data-value="permissions"><i class="fa fa-th"></i></button>
 				<button title="@(Rename company)" data-jc="click" data-jc-path="common.form" data-value="renamecompany"><i class="fa fa-building"></i></button>
+				<button title="@(Rename department)" data-jc="click" data-jc-path="common.form" data-value="renamedepartment"><i class="fa fa-address-card"></i></button>
+				<button title="@(Rename place)" data-jc="click" data-jc-path="common.form" data-value="renameplace"><i class="fa fa-map"></i></button>
 				<button title="@(Rename group)" data-jc="click" data-jc-path="common.form" data-value="renamegroup"><i class="fa fa-folder"></i></button>
-				<button title="@(Create new user)" data-jc="click" data-jc-path="users_create"><i class="fa fa-plus"></i></button>
 			</div>
 		</div>
 	</div>
@@ -40,8 +48,9 @@
 				<tr>
 					<td style="width:25px"><img src="{{ email | photo }}" alt="{{ alias }}" border="0" height="14" /></td>
 					<td style="width:250px"><i class="fa fa-circle {{ if online }}green{{ else }}red{{ fi }}"></i>{{ lastname }} {{ firstname }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}{{ if superadmin }}<span class="badge badge-green ml5">@(superadmin)</span>{{ fi }}</td>
-					<td><span class="fs11 silver">{{ group }}</span></td>
-					<td class="hidden-xs hidden-sm" style="width:180px">{{ if company }}<span class="fs11 silver"><i class="fa fa-building mr5"></i>{{ company }}</span>{{ fi }}</td>
+					<td><span class="fs11">{{ group }}</span></td>
+					<td class="hidden-xs hidden-sm" style="width:170px">{{ if department }}<span class="fs11"><i class="fa fa-address-card mr5"></i>{{ department }}</span>{{ fi }}</td>
+					<td class="hidden-xs hidden-sm" style="width:170px">{{ if company }}<span class="fs11"><i class="fa fa-building mr5"></i>{{ company }}</span>{{ fi }}</td>
 					<td class="hidden-xs hidden-sm" style="width:60px">{{ if language }}<i class="fa fa-language mr5"></i><span class="badge badge-blue">{{ language }}</span>{{ fi }}</td>
 					<td class="hidden-xs hidden-sm" style="width:150px">{{ if datelogged }}<i class="fa fa-clock-o silver mr3"></i>{{ datelogged | time }}{{ else }}@(not logged){{ fi }}</td>
 					<td style="width:80px" class="ui-right">
@@ -128,6 +137,23 @@
 							<div data-jc="textbox" data-jc-path="users.form.group" data-maxlength="60">@(Group)</div>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.department" data-source="users.departments" data-empty="">@(Select existing department)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.department" data-maxlength="60">@(Department)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.place" data-source="users.places" data-empty="">@(Select existing place)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.place" data-maxlength="60">@(Place)</div>
+						</div>
+					</div>
+					<hr />
 					<div class="row">
 						<div class="col-md-6 m">
 							<div data-jc="dropdown" data-jc-path="users.form.company" data-source="users.companies" data-empty="">@(Select existing company)</div>
@@ -225,6 +251,8 @@
 
 			var groups = {};
 			var companies = {};
+			var departments = {};
+			var places = {};
 
 			users.datasource.raw = response;
 			response.forEach(function(item) {
@@ -232,10 +260,16 @@
 					groups[item.group] = true;
 				if (item.company)
 					companies[item.company] = true;
+				if (item.department)
+					departments[item.department] = true;
+				if (item.place)
+					places[item.place] = true;
 			});
 
-			SET('users.groups', Object.keys(groups));
-			SET('users.companies', Object.keys(companies));
+			SET('users.groups', Object.keys(groups).quicksort());
+			SET('users.companies', Object.keys(companies).quicksort());
+			SET('users.departments', Object.keys(departments).quicksort());
+			SET('users.places', Object.keys(places).quicksort());
 			users_filter();
 		});
 
@@ -423,6 +457,12 @@
 					continue;
 
 				if (value.companies && value.companies.length && value.companies.indexOf(item.company) === -1)
+					continue;
+
+				if (value.departments && value.departments.length && value.departments.indexOf(item.department) === -1)
+					continue;
+
+				if (value.places && value.places.length && value.places.indexOf(item.place) === -1)
 					continue;
 
 				if (value.applications && value.applications.length) {

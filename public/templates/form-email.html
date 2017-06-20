@@ -1,11 +1,25 @@
 <div data-jc="form" data-jc-path="common.form" data-if="value === 'email'" data-title="@(Email for users)" data-width="600px" data-jc-id="form.email" class="hidden">
 	<br />
 	<div class="ui-form-padding">
+		<h2><i class="fa fa-filter"></i>@(Filter)</h2>
 		<div class="row">
-			<div class="col-md-12 m">
+			<div class="col-md-6 m">
 				<div data-jc="dropdowncheckbox" data-jc-path="formemail.group" data-source="users.groups" data-jc-value="null">@(Group)</div>
 			</div>
+			<div class="col-md-6 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="formemail.department" data-source="users.departments" data-jc-value="null">@(Department)</div>
+			</div>
+			<div class="col-md-6 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="formemail.place" data-source="users.places" data-jc-value="null">@(Place)</div>
+			</div>
+			<div class="col-md-6 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="formemail.company" data-source="users.companies" data-jc-value="null">@(Company)</div>
+			</div>
 		</div>
+	</div>
+	<hr />
+	<div class="ui-form-padding">
+		<br />
 		<div class="row">
 			<div class="col-md-12 m">
 				<div data-jc="textbox" data-jc-path="formemail.subject" data-maxlength="100" data-required="true" data-jc-value="''">@(Subject)</div>
@@ -48,6 +62,7 @@ ON('#form.email', function(component) {
 				return;
 			hide();
 			DEFAULT('formemail.*');
+			SETTER('message', 'success', '<i class="fa fa-envelope-o icon"></i>@(Email has been sent successfully ({0}x).)'.format(response.value));
 		});
 	};
 });

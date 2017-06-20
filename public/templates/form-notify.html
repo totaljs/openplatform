@@ -1,4 +1,4 @@
-<div data-jc="form" data-jc-path="common.form" data-if="value === 'notify'" data-title="@(Notify users)" data-width="600px" data-jc-id="form.notify" class="hidden">
+<div data-jc="form" data-jc-path="common.form" data-if="value === 'notify'" data-title="@(Notify users)" data-width="700px" data-jc-id="form.notify" class="hidden">
 	<br />
 	<div class="ui-form-padding">
 		<div class="row">
@@ -6,11 +6,29 @@
 				<div data-jc="dropdown" data-jc-path="formnotify.type" data-jc-value="0" data-jc-type="number" data-options="@(Info)|0;@(Success)|1;@(Alert)|2">@(Notification's type)</div>
 			</div>
 		</div>
+		<br />
+	</div>
+	<div class="ui-form-padding bg-smoke">
+		<br />
+		<h2><i class="fa fa-filter"></i>@(Filter)</h2>
 		<div class="row">
-			<div class="col-md-12 m">
+			<div class="col-md-6 m">
 				<div data-jc="dropdowncheckbox" data-jc-path="formnotify.group" data-source="users.groups" data-jc-value="null">@(Group)</div>
 			</div>
+			<div class="col-md-6 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="formnotify.department" data-source="users.departments" data-jc-value="null">@(Department)</div>
+			</div>
+			<div class="col-md-6 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="formnotify.place" data-source="users.places" data-jc-value="null">@(Place)</div>
+			</div>
+			<div class="col-md-6 m">
+				<div data-jc="dropdowncheckbox" data-jc-path="formnotify.company" data-source="users.companies" data-jc-value="null">@(Company)</div>
+			</div>
 		</div>
+		<br />
+	</div>
+	<br />
+	<div class="ui-form-padding">
 		<div class="row">
 			<div class="col-md-12 m">
 				<div data-jc="textbox" data-jc-path="formnotify.body" data-maxlength="5000" data-required="true" data-control-icon="fa-envelope" data-jc-value="''">@(Message)</div>
@@ -54,6 +72,7 @@ ON('#form.notify', function(component) {
 				return;
 			hide();
 			DEFAULT('formnotify.*');
+			SETTER('message', 'success', '<i class="fa fa-bell icon"></i>@(Notification has been sent successfully ({0}x).)'.format(response.value));
 		});
 	};
 });

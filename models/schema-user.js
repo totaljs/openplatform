@@ -13,6 +13,8 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('language', 'Lower(2)');
 	schema.define('group', 'String(60)');
 	schema.define('company', 'String(60)');
+	schema.define('department', 'String(60)');
+	schema.define('place', 'String(60)');
 	schema.define('email', 'Email', true);
 	schema.define('phone', 'Phone');
 	schema.define('login', 'String(100)', true);
@@ -40,9 +42,11 @@ NEWSCHEMA('User').make(function(schema) {
 		user.phone = model.phone;
 		user.login = model.login;
 		user.group = model.group;
+		user.place = model.place;
 		user.company = model.company;
+		user.department = model.department;
 		user.language = model.language;
-		user.search = (user.lastname + ' ' + user.firstname + ' ' + user.group + ' ' + user.company).toSearch();
+		user.search = (user.lastname + ' ' + user.firstname + ' ' + user.group + ' ' + user.department + ' ' + user.company + ' ' + user.place).toSearch();
 		user.alias = model.firstname + ' ' + model.lastname;
 
 		if (!model.password.startsWith('****')) {
@@ -169,10 +173,55 @@ NEWSCHEMA('UserCompany').make(function(schema) {
 	});
 });
 
+NEWSCHEMA('UserPlace').make(function(schema) {
+
+	schema.define('place_old', 'String(60)', true);
+	schema.define('place_new', 'String(60)', true);
+
+	schema.setSave(function(error, model, controller, callback) {
+		var count = 0;
+
+		for (var i = 0, length = USERS.length; i < length; i++) {
+			var user = USERS[i];
+			if (user.place !== model.place_old)
+				continue;
+			user.place = model.place_new;
+			count++;
+		}
+
+		count && OPENPLATFORM.users.save();
+		callback(SUCCESS(true, count));
+	});
+});
+
+
+NEWSCHEMA('UserDepartment').make(function(schema) {
+
+	schema.define('department_old', 'String(60)', true);
+	schema.define('department_new', 'String(60)', true);
+
+	schema.setSave(function(error, model, controller, callback) {
+		var count = 0;
+
+		for (var i = 0, length = USERS.length; i < length; i++) {
+			var user = USERS[i];
+			if (user.department !== model.department_old)
+				continue;
+			user.department = model.department_new;
+			count++;
+		}
+
+		count && OPENPLATFORM.users.save();
+		callback(SUCCESS(true, count));
+	});
+});
+
 NEWSCHEMA('UserPermissions').make(function(schema) {
 
 	schema.define('type', Number);
 	schema.define('group', 'String(60)');
+	schema.define('place', 'String(60)');
+	schema.define('department', 'String(60)');
 	schema.define('company', 'String(60)');
 	schema.define('applications', Object);
 
@@ -201,7 +250,7 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 
 			var user = USERS[i];
 
-			if ((model.group && model.group !== user.group) || (model.company && model.company !== user.company))
+			if ((model.group && model.group !== user.group) || (model.company && model.company !== user.company) || (model.department && model.department !== user.department) || (model.place && model.place !== user.place))
 				continue;
 
 			// Sets
@@ -263,6 +312,9 @@ NEWSCHEMA('UserPermissions').make(function(schema) {
 NEWSCHEMA('UserNewsletter').make(function(schema) {
 
 	schema.define('group', '[String]');            // User's group
+	schema.define('department', '[String]');       // User's department
+	schema.define('place', '[String]');            // User's place
+	schema.define('company', '[String]');          // User's company
 	schema.define('body', 'String', true);         // A message
 	schema.define('subject', 'String(100)');
 
@@ -270,6 +322,9 @@ NEWSCHEMA('UserNewsletter').make(function(schema) {
 
 		var html = F.view('~mails/newsletter');
 		var group = model.group && model.group.length ? model.group : null;
+		var department = model.department && model.department.length ? model.department : null;
+		var place = model.place && model.place.length ? model.place : null;
+		var company = model.company && model.company.length ? model.company : null;
 		var messages = [];
 		var count = 0;
 
@@ -278,8 +333,10 @@ NEWSCHEMA('UserNewsletter').make(function(schema) {
 
 		for (var i = 0, length = USERS.length; i < length; i++) {
 			var user = USERS[i];
-			if (group && group.indexOf(user.group) === -1)
+
+			if ((group && group.indexOf(user.group) === -1) || (department && department.indexOf(user.department) === -1) || (place && place.indexOf(user.place) === -1) || (company && company.indexOf(user.company) === -1))
 				continue;
+
 			var mail = Mail.create(model.subject, html.format(model.body));
 			mail.to(user.email);
 			mail.from(F.config['mail-address-from']);

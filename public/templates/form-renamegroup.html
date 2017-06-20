@@ -28,8 +28,7 @@
 			if (isError(err))
 				return;
 			DEFAULT('renamegroup.*');
-			if (window.users_refresh)
-				window.users_refresh();
+			EXEC('users_refresh');
 			SET('common.form', '');
 		});
 	}
