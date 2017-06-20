@@ -18,12 +18,28 @@ $(window).on('message', function(e) {
 	var data = JSON.parse(e.originalEvent.data);
 	if (!data.openplatform)
 		return;
+
 	var processes = FIND('processes');
 	var item = processes.findItem(e.originalEvent.source);
 	var tmp;
 	var app;
 
 	switch (data.type) {
+
+		case 'verify':
+
+			var is = false;
+
+			for (var i = 0; i < dashboard.applications.length; i++) {
+				var app = dashboard.applications[i];
+				if (data.body.token.indexOf(app.token) === -1)
+					continue;
+				is = navigator.userAgent === data.body.ua;
+				break;
+			}
+
+			processes.message(item, 'verify', is, data.callback);
+			break;
 
 		case 'profile':
 
