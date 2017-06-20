@@ -1477,9 +1477,8 @@ COMPONENT('tagger', function() {
 COMPONENT('applications', function() {
 
 	var self = this;
-	var running = self.attr('data-running') === 'true';
 
-	self.template = Tangular.compile('<div class="ui-app{{ if !online }} offline{{ fi }}{{ if !mobile }} hidden-xs hidden-sm{{ fi }}" data-id="{{ id }}">{0}<div><img src="{{ icon }}" alt="{{ title }}" border="0" onerror="onImageError(this)" class="img-responsive img-rounded" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div><span class="version">v{{ version }}</span></div></div>'.format(running ? '<i class="fa fa-times-circle"></i>' : ''));
+	self.template = Tangular.compile('<div class="ui-app{{ if !online }} offline{{ fi }}{{ if !mobile }} hidden-xs hidden-sm{{ fi }}" data-id="{{ id }}"><button class="kill"><i class="fa fa-times-circle"></i></button><div><img src="{{ icon }}" alt="{{ title }}" border="0" onerror="onImageError(this)" class="img-responsive" /><div class="name">{{ if running }}<i class="fa fa-circle"></i>{{ fi }}{{ title }}</div></div></div>');
 	self.readonly();
 
 	self.make = function() {
@@ -1491,7 +1490,7 @@ COMPONENT('applications', function() {
 			SET(self.attr('data-run'), el.attr('data-id'));
 		});
 
-		self.element.on('click', '.fa-times-circle', function(e) {
+		self.element.on('click', '.kill', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 			SETTER('loading', 'show');
@@ -1517,14 +1516,7 @@ COMPONENT('applications', function() {
 			el.attr('data-stamp', stamp);
 
 			if (!el.length) {
-				if (running && !item.running)
-					continue;
 				builder.push(self.template(item));
-				continue;
-			}
-
-			if (running && !item.running) {
-				el.remove();
 				continue;
 			}
 
@@ -1539,6 +1531,7 @@ COMPONENT('applications', function() {
 			el.find('.name').html((item.running ? '<i class="fa fa-circle"></i>' : '') + item.title);
 			el.find('.version').html('v' + item.version);
 			el.toggleClass('offline', !item.online);
+			el.toggleClass('running', item.running);
 		}
 
 		builder.length && self.append(builder.join(''));
@@ -1615,9 +1608,7 @@ COMPONENT('processes', function() {
 	self.makeurl = function(url, app) {
 		var qs = 'openplatform={0}'.format(encodeURIComponent(common.url + '/session/?token=' + app.token));
 		var index = url.indexOf('?');
-		if (index === -1)
-			return url + '?' + qs;
-		return url + '&' + qs;
+		return index === -1 ? (url + '?' + qs) : (url + '&' + qs);
 	};
 
 	self.findItem = function(obj) {
@@ -1630,7 +1621,7 @@ COMPONENT('processes', function() {
 	self.make = function() {
 
 		source = self.attr('data-source');
-		self.html('<div class="ui-process-toolbar-loading"></div><div class="ui-process-toolbar hidden"><div class="logo"><svg width="30px" height="30px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path class="logo-animation-a" d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg></div><div data-jc="processes-dock" data-jc-path="{0}" data-run="{1}"></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>'.format(source, self.path));
+		self.html('<div class="ui-process-toolbar-loading"></div><div class="ui-process-toolbar hidden"><div class="logo"><img src="/img/logo.svg" alt="" border="0" /></div><div data-jc="processes-dock" data-jc-path="{0}" data-run="{1}"></div><label></label><button name="close" class="close"><span class="fa fa-times-circle"></span></button></div>'.format(source, self.path));
 
 		loader = self.find('.ui-process-toolbar-loading');
 		toolbar = self.find('.ui-process-toolbar');

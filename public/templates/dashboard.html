@@ -3,6 +3,7 @@
 	<div class="row">
 		<div class="col-md-4">
 			<section class="fade">
+				<div class="section-button hidden" data-jc="visible" data-jc-path="dashboard.canwidgets"><a href="javascript:void(0)" data-jc="click" data-jc-path="common.form" data-value="widgets"><i class="fa fa-bar-chart"></i>@(Widgets)</a></div>
 				<label><i class="fa fa-bell"></i>@(Notifications)</label>
 				<div class="padding">
 					<div data-jc="notifications" data-jc-path="dashboard.notifications" data-source="dashboard.applications" data-label-empty="@(You don't have any notifications.)" data-label-clear="@(Clear all notifications)"></div>
@@ -10,23 +11,10 @@
 			</section>
 		</div>
 		<div class="col-md-8">
-
-			<section data-jc="visible" data-jc-path="dashboard.applications" data-if="value.findIndex('running', true) !== -1" class="hidden">
-				<label><i class="fa fa-spin fa-refresh"></i>@(Running applications)</label>
-				<div>
-					<div data-jc="applications" data-jc-path="dashboard.applications" data-run="dashboard.current" data-running="true"></div>
-				</div>
-			</section>
-
 			<div data-jc="widgets" data-jc-path="user.widgets" data-source="dashboard.applications"></div>
-
-			<section data-jc="visible" data-jc-path="dashboard.applications" data-if="value.length" class="hidden">
-				<div class="section-button hidden" data-jc="visible" data-jc-path="dashboard.canwidgets"><a href="javascript:void(0)" data-jc="click" data-jc-path="common.form" data-value="widgets"><i class="fa fa-bar-chart"></i>@(Widgets)</a></div>
-				<label><i class="fa fa-th"></i>@(Applications)</label>
-				<div>
-					<div data-jc="applications" data-jc-path="dashboard.applications" data-run="dashboard.current"></div>
-				</div>
-			</section>
+			<div data-jc="visible" data-jc-path="dashboard.applications" data-if="value.length" class="hidden">
+				<div data-jc="applications" data-jc-path="dashboard.applications" data-run="dashboard.current"></div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -86,7 +74,8 @@
 			SET('dashboard.applications', response);
 			NOTIFY('dashboard.canwidgets');
 
-			if (!dashboard.ready && def) {
+			if (!dashboard.ready && def && !isMOBILE) {
+				location.hash = '';
 				SETTER('loading', 'show');
 				SET('dashboard.current', def.id, 3000);
 			}
@@ -128,7 +117,7 @@
 		PUSH('dashboard.notifications', arr);
 
 		if (!user.notifications || !window.Notification || window.Notification.permission !== 'granted' || !FIND('processes').is()) {
-			if (common.isfocused && jR.url === '/')
+			if (common.isfocused && NAVIGATION.url === '/')
 				return;
 		}
 
@@ -143,8 +132,7 @@
 		dashboard.notification.onclick = function() {
 			SETTER('processes', 'minimize');
 			window.focus();
-			if (jR.url !== '/')
-				jR.redirect('/');
+			NAVIGATION.url !== '/' && NAVIGATION.redirect('/');
 			if (!dashboard.notification)
 				return;
 			dashboard.notification.close();

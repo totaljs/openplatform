@@ -257,7 +257,7 @@
 	});
 
 	function applications_permissions() {
-		jR.redirect('/settings/users/');
+		REDIRECT('/settings/users/');
 		WAIT(function() {
 			return window.users_refresh ? true : false;
 		}, function() {
