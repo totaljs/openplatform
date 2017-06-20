@@ -1596,7 +1596,7 @@ COMPONENT('processes', function() {
 		data.body = message;
 
 		if (error)
-			data.error = error;
+			data.error = error.toString();
 
 		if (callbackid)
 			data.callback = callbackid;
