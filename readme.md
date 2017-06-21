@@ -438,7 +438,7 @@ OPENPLATFORM.on('message', function(message) {
 
 ### Widgets
 
-The OpenPlatform supports 2 types of widgets: raw `SVG` and `Chart.js` and 3 sizes of widget charts:
+The OpenPlatform supports 2 types of widgets: raw `SVG` and `Chart.js` (`v2.6.0`) and 3 sizes of widget charts:
 
 - Size: `400x250` --> type 1 (default)
 - Size: `600x250` --> type 2
@@ -446,7 +446,7 @@ The OpenPlatform supports 2 types of widgets: raw `SVG` and `Chart.js` and 3 siz
 
 Sizes are declared in the file `openplatform.json`.
 
-__Chart.js__:
+__Chart.js__ (v2.6.0):
 
 Documentation can be found here <http://www.chartjs.org/docs/>. Simple example of `doughnut` chart:
 
