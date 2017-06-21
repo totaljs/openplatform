@@ -36,12 +36,16 @@ OPENPLATFORM.testuser = function(roles, settings) {
 	item.alias = 'Peter Sirka';
 	item.firstname = 'Peter';
 	item.lastname = 'Sirka';
-	item.photo = '//openplatform.totaljs.com/photos/petersirka_gmail_com.jpg';
+	item.photo = 'https://openplatform.totaljs.com/photos/petersirka_gmail_com.jpg';
 	item.email = 'petersirka@gmail.com';
 	item.phone = '+421903163302';
+	item.company = 'Company';
+	item.department = 'IT department';
+	item.place = 'Slovakia';
 	item.online = true;
 	item.blocked = false;
 	item.group = 'Developers';
+	item.reference = '1PETERSIRKA';
 	item.superadmin = true;
 	item.notifications = true;
 	item.dateupdated = F.datetime;
@@ -49,7 +53,7 @@ OPENPLATFORM.testuser = function(roles, settings) {
 	item.settings = settings;
 	item.sounds = true;
 	item.language = 'en';
-	item.openplatform = { name: 'OpenPlatform', version: '1.0.0', url: 'http://openplatform.totaljs.com' };
+	item.openplatform = { name: 'OpenPlatform', version: '1.0.0', url: 'https://openplatform.totaljs.com' };
 	return item;
 };
 
@@ -110,6 +114,9 @@ OPENPLATFORM.getApplications = function(openplatform, iduser, callback) {
 	if (typeof(openplatform) === 'object')
 		openplatform = openplatform.url;
 
+	if (typeof(iduser) === 'object')
+		iduser = iduser.id;
+
 	HEADERS['x-openplatform-user'] = iduser;
 
 	U.request(openplatform + '/api/applications/', FLAGS_READ, function(err, response, code) {
@@ -133,6 +140,9 @@ OPENPLATFORM.getUsers = function(openplatform, iduser, callback) {
 
 	if (typeof(openplatform) === 'object')
 		openplatform = openplatform.url;
+
+	if (typeof(iduser) === 'object')
+		iduser = iduser.id;
 
 	HEADERS['x-openplatform-user'] = iduser;
 
@@ -158,6 +168,9 @@ OPENPLATFORM.getInfo = function(openplatform, callback) {
 	if (typeof(openplatform) === 'object')
 		openplatform = openplatform.url;
 
+	if (typeof(iduser) === 'object')
+		iduser = iduser.id;
+
 	U.request(openplatform + '/api/openplatform/', FLAGS_READ, function(err, response, code) {
 
 		OPENPLATFORM.debug && console.log('OPENPLATFORM.getInfo("{0}") -->'.format(openplatform), code, err, response);
@@ -180,6 +193,9 @@ OPENPLATFORM.notify = function(openplatform, iduser, model, callback) {
 
 	if (typeof(openplatform) === 'object')
 		openplatform = openplatform.url;
+
+	if (typeof(iduser) === 'object')
+		iduser = iduser.id;
 
 	HEADERS['x-openplatform-user'] = iduser;
 
@@ -208,6 +224,9 @@ OPENPLATFORM.serviceworker = function(openplatform, iduser, event, data, callbac
 
 	if (typeof(openplatform) === 'object')
 		openplatform = openplatform.url;
+
+	if (typeof(iduser) === 'object')
+		iduser = iduser.id;
 
 	HEADERS['x-openplatform-user'] = iduser;
 
