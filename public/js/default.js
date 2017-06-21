@@ -126,7 +126,7 @@ $(window).on('message', function(e) {
 
 		case 'warning':
 		case 'success':
-			SETTER('message', data.type, data.body);
+			SETTER('message', data.type, (data.body.icon ? '<i class="fa {0} icon"></i>'.format(data.body.icon) : '') + data.body.body);
 			break;
 
 		case 'play':

@@ -225,6 +225,7 @@ label span { vertical-align: middle; }
 .ui-message > div { display: table-cell; vertical-align: middle; text-align: center; color: black; padding: 15px; }
 .ui-message-body { padding: 30px 25px 20px; position: relative; display: inline-block; border-radius: 4px; max-width: 600px; text-align: left; transform: scale(1.5); transition: 0.3s all; box-shadow: 0 5px 20px rgba(0,0,0,0.3); background-color: white; }
 .ui-message-success .icon { color: #8CC152; }
+.ui-message-warning .icon { color: #BE3A48; }
 .ui-message .icon { display: block; margin-bottom: 10px; text-align: center; font-size: 80px; }
 .ui-message-info { background-color: white; color: black; border: 1px solid #E0E0E0; min-width: 300px; }
 .ui-message button { display: block; min-width: 100px; margin: 20px auto 0; cursor: pointer; outline: 0; background-color: #E0E0E0; border: 0; border-radius: 4px; color: gray; padding: 0 20px; height: 40px; font-weight: bold; }

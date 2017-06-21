@@ -58,12 +58,18 @@ OPENPLATFORM.loading = function(visible) {
 	return OPENPLATFORM.send('loading', visible);
 };
 
-OPENPLATFORM.warning = function(message) {
-	return OPENPLATFORM.send('warning', message);
+OPENPLATFORM.warning = function(message, icon) {
+	var data = {};
+	data.body = message;
+	data.icon = icon;
+	return OPENPLATFORM.send('warning', data);
 };
 
 OPENPLATFORM.success = function(message) {
-	return OPENPLATFORM.send('success', message);
+	var data = {};
+	data.body = message;
+	data.icon = icon;
+	return OPENPLATFORM.send('success', data);
 };
 
 OPENPLATFORM.play = function(url) {
