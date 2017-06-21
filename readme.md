@@ -272,6 +272,7 @@ x-openplatform-secret: app-secret (if any)
 ### Server-Side communication between the OpenPlatform and the Application
 
 - online for Total.js applications [serverside.js](https://github.com/totaljs/openplatform/blob/master/public/v1/serverside.js) module
+- CDN for server-side module <https://cdn.totaljs.com/openplatform/serverside.js>
 
 The library contains following methods:
 
@@ -325,6 +326,7 @@ openplatform.debug     : false
 ### Client-Side communication between the OpenPlatform and the Application
 
 - client-side has to use [clientside.js](https://github.com/totaljs/openplatform/blob/master/public/v1/clientside.js) library
+- CDN for client-side library <https://cdn.totaljs.com/openplatform/clientside.js>
 
 The library contains following methods:
 
