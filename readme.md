@@ -165,6 +165,10 @@ __Response__:
     "online": true,
     "blocked": false,
     "group": "Developers",
+    "department": "IT department",
+    "place": "Slovakia",
+    "company": "Freelancer",
+    "reference": "1PETERSIRKA",
     "superadmin": true,
     "notifications": true,
     "dateupdated": "2016-06-17T19:08:32.328Z",
@@ -276,10 +280,10 @@ The library contains following methods:
 console.log(typeof(OPENPLATFORM));
 
 // Get list of all registered applications
-OPENPLATFORM.getApplications(openplatform, iduser, callback(err, response));
+OPENPLATFORM.getApplications(openplatform, user, callback(err, response));
 
 // Get list of all registered users
-OPENPLATFORM.getUsers(openplatform, iduser, callback(err, response));
+OPENPLATFORM.getUsers(openplatform, user, callback(err, response));
 
 // Get info about OpenPlatform
 OPENPLATFORM.getInfo(openplatform, callback(err, response));
@@ -290,10 +294,18 @@ data.body = 'Message';
 data.type = 0; // 0: info (default), 1: success, 2: alert
 data.url = 'https://www.totaljs.com' // optional
 
-OPENPLATFORM.notify(openplatform, iduser, data, callback(err, response));
+OPENPLATFORM.notify(openplatform, user, data, callback(err, response));
 
 // Send data via ServiceWorker
 OPENPLATFORM.serviceworker(openplatform, iduser, eventName, data, callback(err, response));
+
+// Usage in controller:
+function some_action_in_controller() {
+    var user = this.user;
+    OPENPLATFORM.notify(user.openplatform, user, ...);
+    // OR:
+    // OPENPLATFORM.notify(user.openplatform.url, user.id, callback(err, response));
+}
 ```
 
 __IMPORTANT__ `config` has to contain:
