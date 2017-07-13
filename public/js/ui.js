@@ -814,7 +814,7 @@ COMPONENT('form', function() {
 		self.release(false);
 
 		var el = self.find('input[type="text"],select,textarea');
-		el.length && el.eq(0).focus();
+		!isMOBILE && el.length && el.eq(0).focus();
 
 		window.$$form_level++;
 		self.css('z-index', window.$$form_level * 10);
@@ -2141,8 +2141,7 @@ COMPONENT('widgets', function() {
 				if (charts[item.id])
 					charts[item.id].destroy();
 				else
-					item.element.html('<div style="padding:10px"><canvas width="{0}" height="{1}"></canvas></div>'.format(widget.size === 1 ? 380 : widget.size === 2 ? 580 : 780, widget.size === 1 ? 234 : widget.size === 2 ? 154 : 194));
-
+					item.element.html('<div style="padding:10px"><canvas width="{0}" height="{1}"></canvas></div>'.format(widget.size === 1 ? 380 : widget.size === 2 ? 580 : 780, widget.size === 1 ? 226 : widget.size === 2 ? 146 : 186));
 				charts[item.id] = new Chart(item.element.find('canvas').get(0), response);
 				return;
 			}

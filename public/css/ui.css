@@ -32,12 +32,12 @@ button { outline: 0; }
 .badge-pink { background-color: #D770AD; color: white; }
 .badge-silver { background-color: #E0E0E0; color: gray; }
 
-.ui-form-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow-y: scroll; transform-style: preserve-3d; }
-.ui-form-container-padding { padding: 0 30px;}
+.ui-form-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow-y: scroll; transform-style: preserve-3d; overflow-scrolling: touch; -webkit-overflow-scrolling: touch; }
+.ui-form-container-padding { padding: 0 30px; }
 .ui-form { background-color: white; margin: 0 auto 30px; border-radius: 4px; box-shadow: 0 0 20px #D0D0D0; transform: translate(0, -500px); transition: all 0.2s; opacity: 0; }
 .ui-form-animate { transform: skewX(0deg); opacity: 1; }
 .ui-form-animate-click { transform: skewX(-5deg); }
-.ui-form-padding { padding: 0 30px; }
+.ui-form-padding { padding: 0 20px; }
 .ui-form-title { padding: 15px 20px; font-size: 16px; user-select: none; color: #AAB2BD; background-color: #F8F8F8; font-family: 'Source Sans Pro'; border-bottom: 1px solid #F0F0F0; }
 .ui-form-title .fa-times { float: right; cursor: pointer; font-size: 18px; margin-top: 4px; }
 .ui-form-title .fa-times:hover { color: black; }
@@ -150,6 +150,7 @@ button { outline: 0; }
     .ui-form-buttons button[name="submit"] { width: 100%; margin-bottom: 10px; display: block; margin-right: 0; }
     .ui-form-buttons button[name="cancel"] { width: 100%; }
     .ui-form-buttons .inline { display: block; }
+    .ui-form-container-padding { padding: 0 15px; }
 }
 
 .ui-textbox { border: 2px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }

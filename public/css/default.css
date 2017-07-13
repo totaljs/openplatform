@@ -100,17 +100,17 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 .help .fa { margin-right: 5px; }
 .help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
 
-.applications { line-height: 15px; }
+.applications { line-height: 15px; margin: 0 0 0 -20px; }
 .applications span { display: block; font-size: 11px; color: gray; }
 .applications .kill { position: absolute; cursor: pointer; font-size: 14px; width: 25px; height: 25px; padding: 0; margin: 0 0 0 10px; transform: scale(1); transition: all 0.2s; background-color: #ED5565; color: white; border: 0; border-radius: 4px; display: none; }
 .applications .kill:hover { opacity: 0.8; }
 .applications img { border-radius: 4px 4px 0 0; }
-.applications > div > div { padding: 0 10px 10px; }
+.applications > div > div { padding: 0 0 20px 20px; }
 .applications .name { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-size: 11px; text-align: center; background-color: white; padding: 5px 5px; border-radius: 0 0 4px 4px; border-top: 1px solid #E0E0E0; }
 .applications .fa-circle { font-size: 11px; display: inline; margin-right: 5px; color: #6DBC41; }
 .applications .running .kill { display: block; }
 
-.ui-app { width: 140px; position: relative; display: inline-block; margin: 0 3px 10px; cursor: pointer; transition: all 0.2s; }
+.ui-app { width: 128px; position: relative; display: inline-block; cursor: pointer; transition: all 0.2s; }
 .ui-app:hover { opacity: 0.8; }
 
 .applications .offline { cursor: not-allowed; opacity: 0.8; color: #A0A0A0; border-radius: 4px; }
@@ -195,20 +195,22 @@ section.fade { border-bottom: 0; background: linear-gradient(white, #F0F0F0); }
 .container-empty { height: 30px; }
 
 @media(max-width: 1200px) {
-	.ui-app { width: 112px; }
+	.ui-app { width: 106px; }
 }
 
 @media(max-width: 992px) {
-	.ui-app { width: 134px; }
+	.ui-app { width: 123px; }
 }
 
 @media(max-width: 768px) {
-	.ui-app { width: 110px; }
+	.ui-app { width: 33%; }
 	.menu { display: none; width: 100%; float: none; margin-top: 40px; position: absolute; z-index: 5; background-color: white; box-shadow: 0 5px 5px rgba(0,0,0,0.1); }
 	.menu a { display: block; width: 100%; border: 0; border-top: 1px solid #F0F0F0; }
 	.menu-visible { display: block; }
+	.container-padding { padding-top: 20px; }
 	.container-empty { height: 20px; }
 	section { margin-bottom: 20px; }
 	.widgets { margin-bottom: 5px; }
 	.ui-process-toolbar .close { width: 50px; }
+	.plrxs { padding-left: 0 !important; padding.right: 0 !important; }
 }

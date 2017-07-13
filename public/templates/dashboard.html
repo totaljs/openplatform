@@ -15,6 +15,7 @@
 			<div data-jc="visible" data-jc-path="dashboard.applications" data-if="value.length" class="hidden">
 				<div data-jc="applications" data-jc-path="dashboard.applications" data-run="dashboard.current"></div>
 			</div>
+			<br /><br />
 		</div>
 	</div>
 </div>
@@ -70,6 +71,10 @@
 
 				dashboard.canwidgets = true;
 			}
+
+			response.push.apply(response, response);
+			response.push.apply(response, response);
+			response.push.apply(response, response);
 
 			SET('dashboard.applications', response);
 			NOTIFY('dashboard.canwidgets');
