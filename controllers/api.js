@@ -1,141 +1,124 @@
-// Public API for applications
+const SKIP = { password: true, search: true };
+
 exports.install = function() {
-	F.route('/api/serviceworker/', json_serviceworker, ['#authorize', 'post', '*Service'], 128);
-	F.route('/api/notifications/', json_notifications, ['#authorize', 'post', '*Notification']);
-	F.route('/api/applications/',  json_applications,  ['#authorize']);
-	F.route('/api/users/',         json_users,         ['#authorize']);
-	F.route('/session/',           json_session);      // Uses `controller.query.token`
-	F.route('/openplatform/',      json_info);         // Doesn't need authorize, it's a public data
+
+	GROUP(['authorize'], function() {
+		// Internal
+		ROUTE('/api/apps/',          ['*App --> save',    'post']);
+		ROUTE('/api/apps/{id}/',     ['*App --> remove',  'delete']);
+		ROUTE('/api/apps/meta/',     ['*Meta --> exec',    'post']);
+		ROUTE('/api/users/',         ['*User --> save',    'post']);
+		ROUTE('/api/users/{id}/',    ['*User --> remove',  'delete']);
+		ROUTE('/api/users/rename/',  ['*UserRename --> exec',  'post']);
+		ROUTE('/api/users/notify/',  ['*UserNotify --> exec',  'post']);
+		ROUTE('/api/users/apps/',    ['*UserApps --> exec',  'post']);
+		ROUTE('/api/profile/',       ['*Profile --> save', 'post']);
+
+		ROUTE('/api/apps/{id}/',     json_apps_meta);
+		ROUTE('/api/apps/',          json_apps_query);
+		ROUTE('/api/users/',         json_users_query);
+		ROUTE('/api/meta/',          json_meta_query);
+
+		ROUTE('/api/account/',       ['*Account --> read']);
+		ROUTE('/api/account/',       ['*Account --> save', 'post']);
+
+		ROUTE('/api/settings/',      ['*Settings --> read']);
+		ROUTE('/api/settings/',      ['*Settings --> save', 'post']);
+		ROUTE('/api/settings/smtp/', ['*SettingsSMTP --> exec', 'post', 10000]);
+
+		ROUTE('/api/upload/photo/',  json_upload_photo, ['upload', 'post'], 512);
+	});
+
+	// External
+	ROUTE('/api/verify/',        json_verify, ['cors']);
+	ROUTE('/api/notify/',        ['*Notification --> save', 'post', 'cors']);
+	ROUTE('/api/login/',         ['*Login --> exec', 'post', 'unauthorize']);
+	ROUTE('/api/password/',      ['*Password --> exec', 'post', 'unauthorize']);
 };
 
-// Middleware for API (a security element)
-F.middleware('authorize', function(req, res, next, options, controller) {
-
-	var idapp = req.headers['x-openplatform-id'] || '';
-	var iduser = req.headers['x-openplatform-user'] || '';
-
-	if (!idapp || !iduser) {
-		next = null;
-		controller.invalid(400).push('error-invalid-headers');
-		return false;
-	}
-
-	var app = APPLICATIONS.findItem('id', idapp);
-
-	if (!app) {
-		next = null;
-		controller.invalid(400).push('error-application-notfound');
-		return false;
-	}
-
-	if (app.origin && app.origin.length && app.origin.indexOf(req.ip) === -1) {
-		next = null;
-		controller.invalid(400).push('error-application-origin');
-		return false;
-	}
-
-	if (app.secret && app.secret !== req.headers['x-openplatform-secret']) {
-		next = null;
-		controller.invalid(400).push('error-application-secret');
-		return false;
-	}
-
-	var type = req.split[1];
-	if (type !== 'openplatform' && !app[type]) {
-		next = null;
-		controller.invalid(400).push('error-application-permissions');
-		return false;
-	}
-
-	var user = USERS.findItem('id', iduser);
-	if (!user) {
-		next = null;
-		controller.invalid().push('error-user-notfound');
-		return false;
-	}
-
-	if (!user.applications[app.internal]) {
-		next = null;
-		self.invalid(400).push('error-user-application');
-		return false;
-	}
-
-	req.user = user;
-	controller.app = app;
-	next();
-});
-
-// Sends data to other applications
-function json_serviceworker() {
+function json_verify() {
 	var self = this;
-	self.$save(self, self.callback());
+	var arr = self.query.accesstoken.split('-');
+
+	// 0 - app accesstoken
+	// 1 - app id
+	// 2 - user accesstoken
+	// 3 - user id
+
+	var app = F.global.apps.findItem('accesstoken', arr[0]);
+	if (!app || app.id !== arr[1]) {
+		self.invalid().push('error-invalid-accesstoken');
+		return;
+	}
+
+	if (app.origin) {
+		if (!app.origin[self.ip] && app.hostname !== self.ip) {
+			self.invalid().push('error-invalid-origin');
+			return;
+		}
+	} else if (app.hostname !== self.ip) {
+		self.invalid().push('error-invalid-origin');
+		return;
+	}
+
+	var user = F.global.users.findItem('accesstoken', arr[2]);
+	if (!user || user.id !== arr[3] || user.inactive) {
+		self.json(null);
+		return;
+	}
+
+	self.json(OP.meta(app, user));
 }
 
-// Creates a notification
-function json_notifications() {
+function json_apps_query() {
 	var self = this;
-	self.$save(self, self.callback());
+	if (self.user.sa)
+		self.json(F.global.apps);
+	else
+		self.invalid().push('error-permissions');
 }
 
-// Returns all registered applications
-function json_applications() {
+function json_users_query() {
 	var self = this;
-	var arr = [];
+	if (self.user.sa)
+		self.json(F.global.users, false, (k, v) => SKIP[k] ? undefined : v);
+	else
+		self.invalid().push('error-permissions');
+}
 
-	for (var i = 0, length = APPLICATIONS.length; i < length; i++) {
-		var item = APPLICATIONS[i];
-		if (self.user.applications[item.internal])
-			arr.push(item.export());
+function json_meta_query() {
+	this.json(F.global.meta, false);
+}
+
+function json_apps_meta(id) {
+	var item = F.global.apps.findItem('id', id);
+	if (item)
+		this.json(OP.meta(item, this.user));
+	else
+		this.invalid().push('error-app-404');
+}
+
+function json_upload_photo() {
+	var self = this;
+
+	if (!self.user.sa) {
+		self.invalid().push('error-permissions');
+		return;
 	}
 
-	self.json(arr);
-}
+	var file = self.files[0];
 
-// Returns all users
-function json_users() {
-	var self = this;
-	var arr = [];
+	if (!file.isImage()) {
+		self.invalid().push('error-filetype');
+		return;
+	}
 
-	for (var i = 0, length = USERS.length; i < length; i++)
-		arr.push(USERS[i].export(self.app));
+	var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
 
-	self.json(arr);
-}
-
-// Returns information about this OpenPlatform (name, version, author, URL)
-function json_info() {
-	this.json(OPENPLATFORM.info());
-}
-
-// Returns user's profile information according to the session header
-function json_session() {
-
-	var self = this;
-	var idapp = self.req.headers['x-openplatform-id'] || '';
-	if (!idapp)
-		return self.invalid(400).push('error-invalid-headers');
-
-	var token = self.query.token || '';
-	var arr = token.split('~');
-	if (arr.length !== 4)
-		return self.invalid(400).push('error-invalid-token');
-
-	var user = USERS.findItem('internal', arr[1].parseInt());
-	if (!user || !user.online || user.session !== arr[0])
-		return self.invalid(400).push('error-invalid-token');
-
-	var app = APPLICATIONS.findItem('internal', arr[2].parseInt());
-	if (!app || !user.applications[app.internal] || user.signature(app) !== token)
-		return self.invalid(400).push('error-invalid-token');
-
-	if (app.origin && app.origin.length && app.origin.indexOf(self.req.ip) === -1)
-		return self.invalid(400).push('error-application-origin');
-
-	if (app.secret && app.secret !== self.req.headers['x-openplatform-secret'])
-		return self.invalid(400).push('error-application-secret');
-
-	var output = user.export(app);
-	output.config = app.config;
-	output.openplatform = OPENPLATFORM.info();
-	self.json(output);
+	file.image().make(function(filter) {
+		filter.resizeAlign(100, 100, 'top', 'white');
+		filter.quality(90);
+		filter.output('jpg');
+		filter.save(F.path.public('photos/' + id), (err) => self.callback()(err, SUCCESS(true, id)));
+	});
 }

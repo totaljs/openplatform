@@ -1,28 +1,33 @@
-// A simple authorization delegate
+var DDOS = {};
+
 F.onAuthorize = function(req, res, flags, next) {
 
-	var cookie = req.cookie(CONFIG('cookie'));
+	var cookie = req.cookie(F.config.cookie);
+
 	if (!cookie)
 		return next(false);
 
-	var user = F.decrypt(cookie);
-	if (!user || user.expire < F.datetime.getTime())
+	var key = (req.ip + (req.headers['user-agent'] || '')).substring(0, 50);
+	if (DDOS[key] > 5)
 		return next(false);
 
-	var session = USERS.findItem('id', user.id);
-	if (!session || session.blocked || session.resetcounter !== user.resetcounter)
-		return next(false);
+	cookie = F.decrypt(cookie);
 
-	session.datelogged = F.datetime;
-	session.online = true;
-	next(true, session);
+	if (!cookie) {
+		if (DDOS[key])
+			DDOS[key]++;
+		else
+			DDOS[key] = 1;
+		return next(false);
+	}
+
+	var user = F.global.users.findItem('id', cookie.id);
+	user.datelogged = F.datetime;
+	user.online = true;
+	next(true, user);
 };
 
-// Sets online=false fo all users each 5 minute
-ON('service', function(interval) {
-	if (interval % 5 !== 0)
-		return;
-	OPENPLATFORM.users.save();
-	for (var i = 0, length = USERS.length; i < length; i++)
-		USERS[i].online = false;
+F.on('service', function(counter) {
+	if (counter % 5 === 0)
+		DDOS = {};
 });

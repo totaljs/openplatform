@@ -1,0 +1,8 @@
+
+    ✔ `user.accesstoken` + `app.accesstoken` bude na overenie iframe profilu, aby sa nevedel len tak užívateľ dotazovať, musí vždy poslať accesstoken do hlavného okna @done (17-09-01 22:21)
+    ✔ po vymazaní/blokovaní užívateľa by malo užívateľa odhlásiť @done (17-09-01 22:21)
+    ✔ po vymazaní/blokovaní appky by malo appku vypnúť a aj skryť zo zoznamu @done (17-09-01 22:21)
+    ✔ po spustení appky je potrebné aby server overil dostupnť, že vráti presne to čo má appka vidieť @done (17-08-31 23:14)
+    ✔ pri mobilnej verzii a zobrazenej appky by malo zmiznúť meno s fotkou @done (17-09-01 22:21)
+    ✔ dopracovať notifikácie @done (17-09-01 22:21)
+    ☐ dopracovať zvuky

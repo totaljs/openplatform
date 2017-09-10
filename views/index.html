@@ -1,131 +1,152 @@
 @{layout('')}
+@{title(config.name)}
 
 <!DOCTYPE html>
 <html>
 <head>
-	<title>@{config.name}</title>
 	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=11" />
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<meta name="robots" content="noindex, nofollow" />
-	<link rel="apple-touch-icon" href="/img/system.png" type="image/png" />
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700" />
+	<meta name="robots" content="all,follow" />
 	<link rel="stylesheet" href="//cdn.totaljs.com/spa.min.css" />
-	<script src="https://cdn.totaljs.com/spa.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
-	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
+	<!--<script src="//cdn.totaljs.com/spa.min.js"></script>-->
+	@{import('meta', 'head', 'default.css', 'spa.min.js', 'default.js', 'favicon.ico')}
+	<script>var user = EMPTYOBJECT</script>
 </head>
-<body data-jc="exec,binder">
+<body data-jc="exec,binder,modificator">
 
-	<div data-jc="message" data-button="@(Close)"></div>
-	<div data-jc="confirm"></div>
-	<div data-jc="audio" data-jc-path="user.volume"></div>
 	<div data-jc="loading" class="ui-loading"></div>
-	<div id="success"><span class="fa fa-check-circle"></span></div>
+	<div data-jc="contextmenu"></div>
+	<div data-jc="confirm"></div>
+	<div data-jc="notify"></div>
+	<div data-jc="contextmenu"></div>
+	<div data-jc="websocket" data-jc-config="url:/"></div>
+	<div data-jc="calendar"></div>
+	<div data-jc="audio" data-jc-path="user.volume"></div>
 
 	<header>
-		<div class="logo"><img src="/img/logo.svg" border="0" alt="@{config.name}" /></div>
-		<img src="/img/empty.png" class="user-photo" />
-		<div class="usermenu">
-			<a href="/logoff/"><i class="fa fa-power-off"></i></a>
-		</div>
-		<a href="/account/" class="user jR">@{user.alias}</a>
-		<nav class="menu">
-			<a href="/" class="jR">@(Dashboard)</a>
-			<a href="/account/" class="jR">@(My account)</a>
-			@{if user.superadmin}
-			<a href="/settings/applications/" class="jR">@(Applications)</a>
-			<a href="/settings/users/" class="jR">@(Users)</a>
-			<a href="/settings/" class="jR"><i class="fa fa-cogs"></i>@(Settings)</a>
-			@{fi}
+
+		<nav>
+			<button class="exec" data-exec="home"><i class="fa fa-dashboard"></i></button>
 		</nav>
+		<nav data-jc="repeater" data-jc-path="dashboard.apps">
+			<script type="text/html">
+				<i class="fa fa-times exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
+				<button title="{{ internal.title }}" class="exec" data-exec="Dashboard/open" data-id="{{ id }}"><img src="{{ internal.icon }}" onerror="onImageError(this)" alt="{{ internal.title }}" /></button>
+			</script>
+		</nav>
+
+		<div class="user exec" data-exec="mainmenu">
+			<div class="hidden-xs">
+				<b class="singleline" data-b="user.name" data-b-html="value"></b>
+				<div class="singleline" data-b="user.position" data-b-html="value"></div>
+			</div>
+			<img src="/img/face.jpg" data-b="user.photo" data-b-src="Tangular.helpers.photo(value)" onerror="onImageError(this)" />
+		</div>
+		<div class="user-notifications exec" data-path="common.notifications" data-value="!common.notifications">
+			<span data-b="user.countnotifications" data-b-visible="value > 0" data-b-html="value > 99 ? 99 : value" class="hidden">0</span>
+			<i class="fa fa-bell-o" data-b="common.notifications" data-b-class="value ? '+fa-bell -fa-bell-o' : '+fa-bell-o -fa-bell'"></i>
+		</div>
 	</header>
 
-	<div data-jc="page" data-jc-path="common.page" data-if="dashboard" class="hidden" data-template="/templates/dashboard.html"></div>
-	<div data-jc="page" data-jc-path="common.page" data-if="account" class="hidden" data-template="/templates/account.html" data-reload="account_refresh"></div>
+	<div data-jc="notificationspanel" data-jc-path="common.notifications" class="hidden" data-b="common.notifications" data-b-visible="value === true">
+		<div class="ui-npanel-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
+		<script type="text/html">
+			<div class="ui-npanel-message{{ if type === 1 }} ui-npanel-success{{ else if type === 2 }} ui-npanel-error{{ fi }}">
+				<div class="ui-npanel-date"><i class="fa fa-clock-o"></i>{{ datecreated | format('yyyy-MM-dd HH:mm') }}</div>
+				<div class="ui-npanel-title">{{ if icon }}<img src="{{ icon }}" width="16" onerror="onImageError(this)" /><b>{{ fi }}{{ title }}</b></div>
+				<div class="ui-npanel-padding">
+					<div class="ui-npanel-body">{{ body }}</div>
+					{{ if url }}
+					<button data-url="{{ url }}" data-id="{{ idapp }}" class="exec" data-exec="Dashboard/navigate">@(Show)</button>
+					{{ fi }}
+				</div>
+			</div>
+		</script>
+	</div>
 
-	@{if user.superadmin}
-	<div data-jc="page" data-jc-path="common.page" data-if="applications" class="hidden" data-template="/templates/applications.html"></div>
-	<div data-jc="page" data-jc-path="common.page" data-if="users" class="hidden" data-template="/templates/users.html"></div>
-	<div data-jc="page" data-jc-path="common.page" data-if="settings" class="hidden" data-template="/templates/settings.html" data-reload="settings_refresh"></div>
-	@{fi}
+	<div class="scrollable">
+		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:dashboard;template:/pages/dashboard.html"></div>
+		@{if user.sa}
+		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:users;template:/pages/users.html"></div>
+		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:apps;template:/pages/apps.html"></div>
+		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:settings;template:/pages/settings.html"></div>
+		@{fi}
+		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:account;template:/pages/account.html;reload:Account/reload"></div>
+	</div>
 
-	<div id="bottom"></div>
+	@{import('routes.js')}
 
 	<script>
+		function mainmenu(el) {
+			var items = [];
 
-		Chart.defaults.global.legend.display = false;
+			items.push({ name: '<b>@(Dashboard)</b>', icon: 'dashboard', value: '/' });
 
-		var common = {};
-		common.datetime = new Date();
-		common.name = '@{config.name}';
-		common.url = '@{config.url}';
-		common.version = '@{config.version}';
-		common.language = '@{language}';
-		common.languages = '@{config.languages}'.split(';');
-		common.forms = {};
-		common.page = '';
-		common.form = '';
-		common.isfocused = true;
-
-		$(window).on('focus blur', function(e) {
-			common.isfocused = e.type === 'focus';
-		});
-
-		var user = JSON.parse('@{json(user.readonly())}');
-		$('.user-photo').attr('src', user.photo);
-
-		// Routing
-		ROUTE('/', function() {
-			SET('common.page', 'dashboard');
-		});
-
-		ROUTE('/settings/applications/', function() {
-			SET('common.page', 'applications');
-		});
-
-		ROUTE('/settings/users/', function() {
-			SET('common.page', 'users');
-		});
-
-		ROUTE('/settings/', function() {
-			SET('common.page', 'settings');
-		});
-
-		ROUTE('/account/', function() {
-			SET('common.page', 'account');
-		});
-
-		// Important: this helper is here for localization
-		// The JavaScript below contains bad code because the code contains Total.js localization elements (but it works when)
-		Tangular.register('time', function(value) {
-			var diff = Date.now() - value.parseDate().getTime();
-			var minutes = ((diff / 1000) / 60) >> 0;
-
-			if (minutes < 60) {
-				if (minutes < 3)
-					return '@(now)';
-				return @(minutes + ' minutes ago');
+			if (user.sa) {
+ 				items.push({ name: '@(Users)', icon: 'users', value: '/users/' });
+				items.push({ name: '@(Applications)', icon: 'th', value: '/apps/' });
+				items.push({ name: '@(Settings)', icon: 'cog', value: '/settings/' });
 			}
 
-			var hours = (minutes / 60) >> 0;
-			if (hours < 24)
-				return @(hours + ' ' + Tangular.helpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
+			items.push({ name: '@(My account)', icon: 'user', value: '/account/' });
+			items.push({ name: '<b>@(Sign out)</b>', icon: 'power-off', value: '/logoff/' });
 
-			var days = (hours / 24) >> 0;
-			if (days < 30)
-				return @(days + ' ' + Tangular.helpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
+			FIND('contextmenu').show('right', el, items, function(item) {
+				switch (item.value) {
+					case '/logoff/':
+						COOKIES.set('@{'%cookie'}', '', '-1 day');
+						location.href = item.value;
+						break;
+					default:
+						REDIRECT(item.value);
+						break;
+				}
+			}, -20, 10);
+		}
 
-			var months = (days / 29) >> 0;
-			if (months < 12)
-				return @(months + ' ' + Tangular.helpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
+		WATCH('common.notifications', function(path, value) {
+			value && refresh_notifications();
+		});
 
-			var years = (month / 12) >> 0;
-			return @(years + ' ' + Tangular.helpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
+		function refresh_notifications() {
+			user.countnotifications && SETTER('websocket', 'send', { TYPE: 'notifications' });
+			user.countnotifications = 0;
+		}
+
+		ON('message', function(message) {
+			switch (message.TYPE) {
+				case 'open':
+					message.body.internal = user.apps.findItem('id', message.body.id);
+					dashboard.apps.push(message.body);
+					SET('dashboard.current', message.body);
+					break;
+				case 'logoff':
+					COOKIES.set('@{'%cookie'}', '', '-1 day');
+					location.href = '/';
+					break;
+				case 'profile':
+					message.body.apps.quicksort('title');
+					SET('user', message.body);
+					EXEC('Dashboard/sync');
+					break;
+				case 'notifications':
+					var arr = PARSE(message.body);
+					arr && arr.length && SETTER('notificationspanel', 'append', arr);
+					break;
+				case 'notify':
+					SET('user.countnotifications', message.body);
+					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/beep.mp3');
+					common.notifications && refresh_notifications();
+					break;
+			}
+		});
+
+		ON('online', function(is) {
+			SETTER('loading', is ? 'hide' : 'show');
 		});
 	</script>
-
 
 </body>
 </html>

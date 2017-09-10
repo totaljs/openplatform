@@ -1,0 +1,279 @@
+<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:user;submit:userform_submit;title:@(User's details);width:960" data-jc-controller="Users">
+	<div class="padding">
+		<div class="row">
+			<div class="col-md-3">
+				<br />
+				<div data-jc="photoupload" data-jc-path="users.form.photo" data-jc-config="url:/api/upload/photo/"></div>
+				<br />
+				<div class="help center"><i class="fa fa-camera"></i>@(Photo is created according to the email address.)</div>
+				<hr />
+				<div data-jc="template" data-jc-path="users.form" data-jc-config="properties:datecreated,dateupdated,datelogged,online">
+					<script type="text/html">
+						{{ if datelogged }}
+						<div class="keyvalue">
+							<div class="key">@(Logged)</div>
+							<div class="value">{{ if online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ datelogged | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+						{{ if datecreated }}
+						<div class="keyvalue">
+							<div class="key">@(Created)</div>
+							<div class="value">{{ datecreated | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+						{{ if dateupdated }}
+						<div class="keyvalue">
+							<div class="key">@(Updated)</div>
+							<div class="value">{{ dateupdated | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+						{{ if datepassword }}
+						<div class="keyvalue">
+							<div class="key">@(Password changed)</div>
+							<div class="value">{{ datepassword | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
+					</script>
+				</div>
+			</div>
+			<div class="col-md-9 form-border">
+				<div class="padding npb nplr-xs">
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.firstname" data-jc-config="maxlength:50;required:true">@(First name)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.lastname" data-jc-config="maxlength:50;required:true">@(Last name)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.email" data-jc-config="icon2:envelope;maxlength:120;required:true;type:email" data-jc-value="'@'">@(Email address)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.phone" data-jc-config="icon2:phone;maxlength:30;type:phone">@(Phone number)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="row">
+								<div class="col-md-6 m">
+									<div data-jc="dropdown" data-jc-path="users.form.language" data-jc-config="empty:;icon:language;datasource:common.meta.languages">@(Language)</div>
+								</div>
+								<div class="col-md-6 m">
+									<div data-jc="dropdown" data-jc-path="users.form.gender" data-jc-config="items:@(male)|male,@(female)|female">@(Gender)</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.reference" data-jc-config="align:center">@(Custom reference)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3 m">
+							<div data-jc="textbox" data-jc-path="users.form.datebirth" data-jc-config="placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
+						</div>
+						<div class="col-md-3 m">
+							<div data-jc="textbox" data-jc-path="users.form.datestart" data-jc-config="placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
+						</div>
+						<div class="col-md-3 m">
+							<div data-jc="textbox" data-jc-path="users.form.dateend" data-jc-config="placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
+						</div>
+					</div>
+					<hr />
+					<div data-jc="textbox" data-jc-path="users.form.accesstoken" data-jc-config="maxlength:50;required:true" class="b">@(Access Token)</div>
+					<div class="help"><a href="javascript:void(0)" class="exec" data-exec="userform_generatetoken">@(Generate token)</a></div>
+					<hr />
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.group" data-jc-config="empty:;datasource:common.meta.groups;value:name">@(Select existing group)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.group" data-jc-config="maxlength:60">@(Group)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.department" data-jc-config="empty:;datasource:common.meta.departments;value:name">@(Select existing department)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.department" data-jc-config="maxlength:60">@(Department)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.place" data-jc-config="empty:;datasource:common.meta.places;value:name">@(Select existing place)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.place" data-jc-config="maxlength:60">@(Place)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.position" data-jc-config="empty:;datasource:common.meta.positions;value:name">@(Select existing position)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.position" data-jc-config="maxlength:60">@(Position)</div>
+						</div>
+					</div>
+					<hr />
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.company" data-jc-config="empty:;datasource:common.meta.companies;value:name">@(Select existing company)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.company" data-jc-config="maxlength:60">@(Company)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="dropdown" data-jc-path="users.form.idsupervisor" data-jc-config="empty:;datasource:%userssupervisors;empty:">@(Select supervisor)</div>
+						</div>
+					</div>
+					<hr />
+					<div class="row">
+						<div class="col-md-6">
+							<div class="mt10 b red" data-jc="checkbox" data-jc-path="users.form.blocked">@(User is blocked)</div>
+							<div class="red" data-jc="checkbox" data-jc-path="users.form.inactive">@(User is inactive)</div>
+							<div data-jc="checkbox" data-jc-path="users.form.customer">@(User is customer)</div>
+							<div data-jc="checkbox" data-jc-path="users.form.sa">@(User is <b>administrator</b>)</div>
+							<div data-jc="checkbox" data-jc-path="users.form.welcome">@(Send welcome email)</div>
+						</div>
+						<div class="col-md-6">
+							<div class="mt10" data-jc="checkbox" data-jc-path="users.form.sounds">@(Enable sounds)</div>
+							<div data-jc="checkbox" data-jc-path="users.form.notifications">@(Enable notifications)</div>
+							<div data-jc="checkbox" data-jc-path="users.form.notificationsemail">@(Enable email notifications)</div>
+							<div data-jc="checkbox" data-jc-path="users.form.notificationsphone">@(Enable phone notifications)</div>
+						</div>
+					</div>
+					<br />
+					<div data-jc="range" data-jc-path="users.form.volume" data-jc-config="icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
+					<div class="row fs11 silver">
+						<div class="col-xs-6">
+							@(Low)
+						</div>
+						<div class="col-xs-6 right">
+							@(High)
+						</div>
+					</div>
+					<hr />
+					<div class="help" style="margin-top:30px"><i class="fa fa-info-circle"></i>@(User can change the password if is logged.)</div>
+					<br />
+					<div class="row">
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.login" data-jc-config="icon2:user;maxlength:120;required:true">@(Login name)</div>
+							<div class="help"><i class="fa fa-envelope"></i>@(Login name can be an email address.)</div>
+						</div>
+						<div class="col-md-6 m">
+							<div data-jc="textbox" data-jc-path="users.form.password" data-jc-config="icon2:lock;maxlength:30;required:true">@(Password)</div>
+							<div class="help"><a href="javascript:void(0)" class="exec" data-exec="userform_generatepassword">@(Generate password)</a></div>
+						</div>
+					</div>
+					<hr />
+					<h2><i class="fa fa-sitemap"></i>@(Custom global roles)</h2>
+					<div data-jc="textboxlist" data-jc-path="users.form.roles" data-jc-config="placeholder:@(Type a global role and press enter)"></div>
+					<br />
+					<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
+					<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
+					<br />
+					<div data-jc="app-managment" data-jc-path="users.form.apps" class="mt10" data-jc-config="datasource:apps.response">
+						<script type="text/html">
+							<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
+								<div class="userapp-header">
+									<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
+									<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" onerror="onImageError(this)" alt="{{ title }}" /></div>
+									<b>{{ title }}</b>
+									<div class="fs11">v{{ version }}</div>
+								</div>
+								{{ if roles && roles.length }}
+								<div class="userapp-roles">
+									{{ foreach m in roles }}
+										<div><label><input type="checkbox" value="{{ m }}" />{{ m }}</label></div>
+									{{ end }}
+								</div>
+								{{ fi }}
+								<div class="userapp-settings">
+									<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ id }}" placeholder="@(Custom settings for the application)" />
+								</div>
+							</div>
+						</script>
+					</div>
+					<div data-jc="error" data-jc-path="users.form.response"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="ui-form-buttons">
+		<div class="row">
+			<div class="col-md-9 col-md-offset-3">
+				<div class="padding npt npb">
+					<div data-jc="validation" data-jc-path="users.form" class="inline">
+						<button name="submit">@(SAVE)</button>
+					</div>
+					<button name="cancel">@(Cancel)</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+function userform_generatepassword() {
+	SET('users.form.password', GUID(10));
+}
+
+function userform_generatetoken() {
+	SET('users.form.accesstoken', GUID(40));
+}
+
+function userform_submit(component) {
+
+	SETTER('loading', 'show');
+
+	var settings = {};
+
+	// Collects app settings
+	component.find('.userapp-settings-input').each(function() {
+		if (this.value)
+			settings[this.getAttribute('data-id')] = this.value;
+	});
+
+	var opt = {};
+
+	// Check roles
+	Object.keys(users.form.apps).forEach(function(key) {
+		var obj = users.form.apps[key];
+		var app = apps.response.findItem('id', key);
+		if (app) {
+			opt[key] = { roles: obj.roles.remove(function(role) {
+				return app.roles.indexOf(role) === -1;
+			}), settings: settings[key] };
+		}
+	});
+
+	var data = CLONE(users.form);
+	data.apps = opt;
+
+	AJAX('POST /api/users/', data, function(response) {
+
+		SETTER('loading', 'hide', 1000);
+		SET('users.form.response', response);
+
+		if (response.success) {
+			SETTER('notify', 'append', '@(User profile has been saved successfully.)');
+			EXEC('success');
+			EXEC('Users/refresh');
+			component.hide();
+		}
+	});
+}
+
+WATCH('users.form.company', function(path, value) {
+	SET('%userssupervisors', users.response.findAll(function(item) {
+		if (value && item.company !== value)
+			return false;
+		return item.name !== users.form.name;
+	}));
+}, true);
+</script>

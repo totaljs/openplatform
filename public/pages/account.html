@@ -1,0 +1,79 @@
+<div data-jc-controller="Account">
+	<br />
+	<br />
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<div class="panel">
+					<label><i class="fa fa-user"></i>@(My account)</label>
+					<div class="bg-smoke">
+						<br />
+						<br />
+						<div data-jc="photoupload" data-jc-path="account.photo" data-jc-config="url:/api/upload/photo/" class="m"></div>
+						<br />
+					</div>
+					<div class="padding">
+						<div data-jc="textbox" data-jc-path="account.email" data-jc-config="type:email;required:true" class="m">@(Email address)</div>
+						<div data-jc="textbox" data-jc-path="account.phone" class="m">@(Phone number)</div>
+						<div data-jc="checkbox" data-jc-path="account.sounds">@(Enable sounds)</div>
+						<div data-jc="checkbox" data-jc-path="account.notifications">@(Enable notifications)</div>
+						<div data-jc="checkbox" data-jc-path="account.notificationsemail">@(Enable email notifications)</div>
+						<div data-jc="checkbox" data-jc-path="account.notificationsphone">@(Enable phone notifications)</div>
+						<div data-jc="checkbox" data-jc-path="account.changepassword" class="b red">@(Change login credentials)</div>
+					</div>
+					<div data-b="account.changepassword" data-b-visible="value === true" class="hidden bg-smoke">
+						<div class="padding">
+							<div data-jc="textbox" data-jc-path="account.login" data-jc-config="type:login;maxlength:30;required:true" class="m">@(Login name)</div>
+							<div data-jc="textbox" data-jc-path="account.password" data-jc-config="maxlength:30;required:true">@(Login password)</div>
+							<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
+						</div>
+					</div>
+					<hr class="nmt" />
+					<div class="padding">
+						<div data-jc="range" data-jc-path="account.volume" data-jc-config="icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
+						<div class="row fs11 silver m">
+							<div class="col-xs-6">
+								@(Low)
+							</div>
+							<div class="col-xs-6 right">
+								@(High)
+							</div>
+						</div>
+					</div>
+					<hr class="nmt nmb" />
+					<div class="success hidden" data-b="account.response" data-b-visible="value && value.success === true"><i class="fa fa-check-circle"></i>@(Account has been updated successfully.)</div>
+					<div class="padding">
+						<div data-jc="error" data-jc-path="account.response" class="hidde m"></div>
+						<div data-jc="validation" data-jc-path="account">
+							<button name="submit" class="button exec" data-exec="Account/submit" disabled="disabled">@(Submit)</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br />
+	<br />
+</div>
+
+<script>
+
+	CONTROLLER('Account', function(self) {
+		self.scope = 'account';
+
+		self.reload = function() {
+			AJAX('GET /api/account/', function(response) {
+				SET('account', response, true);
+				MAIN.parseQuery().password && SET('account.changepassword', true);
+			});
+		};
+
+		self.submit = function() {
+			RESET('account.*', true);
+			AJAX('POST /api/account/', self.get(), 'account.response');
+		};
+
+		self.reload();
+	});
+
+</script>

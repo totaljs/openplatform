@@ -1,0 +1,20 @@
+@{layout('~mails/layout')}
+
+<div style="font-size:20px;color:black">@(Dear) <b>@{model.firstname}</b></div>
+<br />
+<div style="color:black">@(Welcome to <b>OpenPlatform</b>. Please sign-in to your account via the link below and then change your password.)</div>
+<br />
+<div style="margin-bottom:10px;line-height:18px;border-bottom:1px solid #F0F0F0;padding-bottom:5px">
+	<div style="font-weight:bold;text-transform:uppercase;color:black">@(Dashboard)</div>
+	<div style="color:#A0A0A0"><a href="@{'%url'}" style="color:#A0A0A0;text-decoration:none">@{'%url'}</div>
+</div>
+<div style="margin-bottom:10px;line-height:18px;border-bottom:1px solid #F0F0F0;padding-bottom:5px">
+	<div style="font-weight:bold;text-transform:uppercase;color:black">@(Login name)</div>
+	<div style="color:#A0A0A0">@{model.login}</div>
+</div>
+<div style="margin-bottom:10px;line-height:18px;border-bottom:1px solid #F0F0F0;padding-bottom:5px">
+	<div style="font-weight:bold;text-transform:uppercase;color:black">@(Password)</div>
+	<div style="color:#A0A0A0">************</div>
+</div>
+<div style="color:#DA4453;margin-top:10px"><b>@(Please click on the link below:)</b></div>
+<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="@{'%url'}/?token=@{model.token}">@{'%url'}/?token=@{model.token}</a></div>

@@ -3,104 +3,590 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>@{config.name}</title>
+	<title>@{config.name} v@{config.version}</title>
 	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=11" />
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<meta name="robots" content="noindex, nofollow" />
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,700" />
-	<link rel="stylesheet" href="https://cdn.totaljs.com/spa.min.css" />
-	<script src="https://cdn.totaljs.com/spa.min.js"></script>
-	@{import('meta', 'head', 'login.css', 'login.js', 'favicon.ico')}
+	<meta name="robots" content="all,follow" />
+	@{head}
+	<link rel="stylesheet" href="//cdn.totaljs.com/spa.min.css" />
+	<script src="//cdn.totaljs.com/spa.min.js"></script>
+	<style type="text/css">
+		/*auto*/
+		html,body { overflow: hidden; height: 100%; }
+		body { background-color: #E6E9ED; }
+		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -300px 0 0 -140px; background-color: white; box-shadow: 0 5px 10px rgba(0,0,0,0.1); border-radius: 4px; transition: all 0.5s; transform: scale(1.5); }
+		.padding { padding: 20px; }
+		.panelshow { transform: scale(1); }
+
+		h1 { color: black; margin: 0; padding: 30px 0 20px; font-family: Arial; text-align: center; background-color: #F8F8F8; background: repeating-linear-gradient(45deg,#F0F0F0,#F0F0F0 10px,#F9F9F9 10px,#F9F9F9 20px); border-radius: 4px 4px 0 0; }
+		h1 .fa { margin-right: 10px; }
+		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: silver; }
+		input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { background-color: #F0F0F0; cursor: not-allowed; color: silver; }
+		.ui-textbox { border: 1px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
+		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: black; width: 100%; background-color: white; }
+		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #E0E0E0; width: 30px; color: silver; }
+		.ui-textbox .fa-times { color: red; cursor: pointer; }
+		.ui-textbox-label { margin-bottom: 5px; font-size: 12px; color: #656D78; text-align: left; }
+		.ui-textbox-label .fa { margin-right: 5px; }
+		.ui-textbox-label-required:before { color: red; content: '***'; margin-right: 5px; }
+		.ui-textbox-invalid { border-color: #E1A1A1 !important; background-color: #FFF3F3 !important; }
+		.ui-textbox-invalid input { background-color: #FFF3F3 !important; }
+		.ui-textbox .fa-caret-up, .ui-textbox .fa-caret-down { display: block; line-height: 9px; cursor: pointer; }
+		.ui-textbox .fa-calendar { cursor: pointer; }
+		.ui-textbox-helper { margin-top: 8px; font-size: 11px; color: red; text-align: left; display: none; }
+		.ui-textbox-helper-show { display: block; }
+		.ui-textbox-container.ui-disabled .ui-textbox { background-color: #F0F0F0; cursor: not-allowed; }
+		.ui-textbox-container.ui-disabled .ui-textbox input { background-color: #F0F0F0; }
+		.ui-error { margin: 0 0 15px; padding: 0; list-style-type: none; padding: 10px 0; color: #BE3A48; font-family: Arial; font-size: 14px }
+		.ui-error .fa { width: 16px; }
+		.fs12 { font-size: 12px; }
+
+		.hidden { display: none; }
+		.m { margin-bottom: 15px; }
+
+		.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
+		.success .fa { margin-right: 8px; }
+
+		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
+		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
+		button:disabled { background-color: #F0F0F0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+		button .fa { margin-right: 5px; }
+		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 20px 0 0 0; }
+
+		@media(max-width: 768px) {
+			.panel { margin-top: -200px; }
+		}
+
+	</style>
 </head>
-<body>
+<body data-jc="binder,exec">
 
-	<div data-jc="message" data-button="@(Close)"></div>
-	<div data-jc="confirm"></div>
-	<div data-jc="loading" class="hidden"></div>
+	<div class="panel">
+		<h1><i class="fa fa-lock"></i>@{config.name}</h1>
+		<div data-b="password.response" data-b-visible="value && value.success === true" class="success hidden">@(We sent you email with instructions for resetting of your password.)</div>
+		<div class="padding">
 
-	<div class="center-container">
-		<div class="center-body">
-			<div class="form">
-				<div style="line-height:0">
-					<div class="logo">
-						<svg width="80px" height="80px" viewBox="0 0 200 200" version="1.1" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M74.819,0l-74.819,43.266l0,86.532l74.819,43.265l75.181,-43.265l0,-86.532l-75.181,-43.266ZM74.318,54.683l27.682,15.924l0,32.049l-27.682,16.025l-27.818,-16.025l0,-32.049l27.818,-15.924Z" style="fill:#17A0CB;fill-rule:nonzero;"/><path d="M37.049,21.598l-37.049,21.552l0,86.532l37.103,21.578l22.147,-38.642l0,0.046l-29.934,0l14.953,-26.248l-14.953,-26.252l29.934,0l0,0.103l-22.201,-38.669Z" style="fill:#4FC1E9;fill-rule:nonzero;"/><path d="M33.633,63.164l12.697,23.005l-12.697,23.495l26.936,0l13.49,-23.453l-13.49,-23.047l-26.936,0Z" style="fill:#4FC1E9;fill-rule:nonzero;"/></svg>
-						<h1><b>@{config.name}</b> v@{config.version}</h1>
-					</div>
-					<svg style="width:100%" viewBox="0 0 1170 30" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h1170s-441.424 30-578.518 30c-137.094 0-591.482-30-591.482-30z" fill="#F0F0F0"/></svg>
+			<div data-b="common.type" data-b-visible="value !== 'password'">
+				<div class="m" data-jc="textbox" data-jc-path="form.name" data-jc-config="icon2:user;required:true;autofocus:true;autofill:true" data-jc-id="formname">@(Login name)</div>
+				<div class="m" data-jc="textbox" data-jc-path="form.password" data-jc-config="icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
+				<div data-jc="error" data-jc-path="form.response"></div>
+				<div class="m fs12">
+					<div><a href="#password" class="exec" data-exec="toggletype">@(I forgot my password)</a></div>
 				</div>
-
-				<div data-jc="visible" data-jc-path="password.response" data-if="value && value.success" class="success hidden">
-					<i class="fa fa-check-circle"></i>@(We sent you an email with instructions for resetting password.)
+				<div data-jc="validation" data-jc-path="form">
+					<button name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
 				</div>
-
-				<div class="padding signin" data-jc="visible" data-jc-path="common.form" data-if="value === 'signin'">
-					<div data-jc="textbox" data-jc-path="signin.login" data-required="true" data-jc-value="''">@(Login)</div>
-					<br />
-					<div data-jc="textbox" data-jc-path="signin.password" data-jc-type="password" data-required="true" data-jc-value="''">@(Password)</div>
-					<br />
-					<ul class="links">
-						<li><span class="fa fa-lock"></span> <a href="javascript:void(0)" data-jc="click" data-jc-path="common.form" data-value="password">@(I can't access my account)</a></li>
-						<li><span class="fa fa-question-circle"></span> <a href="javascript:void(0)">@(Help)</a></li>
-					</ul>
-					<div data-jc="error" data-jc-path="signin.response"></div>
-					<div data-jc="validation" data-jc-path="signin">
-						<button class="ui-button" disabled="disabled" data-jc="click" data-jc-path="doLogin" data-enter=".signin" style="margin-top:8px;width:100%">@(SIGN IN)</button>
-					</div>
-				</div>
-
-				<div class="padding hidden password" data-jc="visible" data-jc-path="common.form" data-if="value === 'password'">
-					<div data-jc="textbox" data-jc-path="password.login" data-required="true" data-jc-value="''">@(Login)</div>
-					<br />
-					<ul class="links">
-						<li><span class="fa fa-lock"></span> <a href="javascript:void(0)" data-jc="click" data-jc-path="common.form" data-value="signin">@(I know my access into the account)</a></li>
-						<li><span class="fa fa-question-circle"></span> <a href="javascript:void(0)">@(Help)</a></li>
-					</ul>
-					<div data-jc="error" data-jc-path="password.response"></div>
-					<div data-jc="validation" data-jc-path="password">
-						<button class="ui-button" disabled="disabled" data-jc="click" data-jc-path="doPassword" data-enter=".password" style="margin-top:8px;width:100%">@(SIGN IN)</button>
-					</div>
-				</div>
-
 			</div>
+
+			<div data-b="common.type" data-b-visible="value === 'password'">
+				<div class="m" data-jc="textbox" data-jc-path="password.name" data-jc-config="icon2:user;required:true;autofill:true" data-jc-id="passwordname">@(Login name)</div>
+				<div data-jc="error" data-jc-path="password.response"></div>
+				<div class="m fs12">
+					<div><a href="#password" class="exec" data-exec="toggletype">@(Back to sign-in)</a></div>
+				</div>
+				<div data-jc="validation" data-jc-path="password">
+					<button name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset password)</button>
+				</div>
+			</div>
+
+			<footer>
+				<div>All rights reserved &copy; 2017</div>
+				<a href="https://www.totaljs.com" target="_blank">www.totaljs.com</a>
+			</footer>
 		</div>
 	</div>
 
 	<script>
-	var signin = {};
-	var common = { form: 'signin' };
+	var common = {};
 
-	function doLogin() {
-		if (BLOCKED('login', 3000))
-			return;
-		RESET('signin.*');
-		SETTER('loading', 'show');
-		AJAX('POST /internal/login/', signin, function(response) {
-			SETTER('loading', 'hide', 1000);
-			SET('signin.response', response);
-			if (response.success)
-				location.href = '/';
-		});
-	}
+	COMPONENT('validation', function(self, config) {
 
-	function doPassword() {
-		if (BLOCKED('login', 3000))
-			return;
-		RESET('password.*');
-		SETTER('loading', 'show');
-		AJAX('POST /internal/password/', password, function(response) {
-			SETTER('loading', 'hide', 1000);
-			SET('password.response', response);
-			response.success && SET('common.form', 'signin');
-		});
-	}
+		var path, elements = null;
+		var def = 'button[name="submit"]';
+
+		self.readonly();
+
+		self.make = function() {
+			elements = self.find(config.selector || def);
+			path = self.path.replace(/\.\*$/, '');
+			setTimeout(function() {
+				self.watch(self.path, self.state, true);
+			}, 50);
+		};
+
+		self.configure = function(key, value, init) {
+			if (init)
+				return;
+			switch (key) {
+				case 'selector':
+					elements = self.find(value || def);
+					break;
+			}
+		};
+
+		self.state = function() {
+			var disabled = MAIN.disabled(path);
+			if (!disabled && config.if)
+				disabled = !EVALUATE(self.path, config.if);
+			elements.prop('disabled', disabled);
+		};
+	});
+
+	COMPONENT('textbox', function(self, config) {
+
+		var input, container, content = null;
+
+		self.validate = function(value) {
+
+			if (!config.required || config.disabled)
+				return true;
+
+			if (self.type === 'date')
+				return value instanceof Date && !isNaN(value.getTime());
+
+			if (value == null)
+				value = '';
+			else
+				value = value.toString();
+
+			EMIT('reflow', self.name);
+
+			switch (self.type) {
+				case 'email':
+					return value.isEmail();
+				case 'url':
+					return value.isURL();
+				case 'currency':
+				case 'number':
+					return value > 0;
+			}
+
+			return config.validation ? self.evaluate(value, config.validation, true) ? true : false : value.length > 0;
+		};
+
+		self.make = function() {
+
+			content = self.html();
+
+			self.type = config.type;
+			self.format = config.format;
+
+			self.event('click', '.fa-calendar', function(e) {
+				if (config.disabled)
+					return;
+				if (config.type === 'date') {
+					e.preventDefault();
+					window.$calendar && window.$calendar.toggle(self.element, self.find('input').val(), function(date) {
+						self.set(date);
+					});
+				}
+			});
+
+			self.event('click', '.fa-caret-up,.fa-caret-down', function() {
+				if (config.disabled)
+					return;
+				if (config.increment) {
+					var el = $(this);
+					var inc = el.hasClass('fa-caret-up') ? 1 : -1;
+					self.change(true);
+					self.inc(inc);
+				}
+			});
+
+			self.event('click', '.ui-textbox-control-icon', function() {
+				if (config.disabled)
+					return;
+				if (self.type === 'search') {
+					self.$stateremoved = false;
+					$(this).rclass('fa-times').aclass('fa-search');
+					self.set('');
+				}
+			});
+
+			self.redraw();
+		};
+
+		self.redraw = function() {
+
+			var attrs = [];
+			var builder = [];
+			var tmp;
+
+			if (config.type === 'password')
+				tmp = 'password';
+			else
+				tmp = 'text';
+
+			self.tclass('ui-disabled', config.disabled === true);
+			self.type = config.type;
+			attrs.attr('type', tmp);
+			config.placeholder && attrs.attr('placeholder', config.placeholder);
+			config.maxlength && attrs.attr('maxlength', config.maxlength);
+			config.keypress != null && attrs.attr('data-jc-keypress', config.keypress);
+			config.delay && attrs.attr('data-jc-keypress-delay', config.delay);
+			config.disabled && attrs.attr('disabled');
+			config.error && attrs.attr('error');
+			attrs.attr('data-jc-bind', '');
+
+			config.autofill && attrs.attr('name', self.path.replace(/\./g, '_'));
+			config.align && attrs.attr('class', 'ui-' + config.align);
+			config.autofocus && attrs.attr('autofocus');
+
+			builder.push('<input {0} />'.format(attrs.join(' ')));
+
+			var icon = config.icon;
+			var icon2 = config.icon2;
+
+			if (!icon2 && self.type === 'date')
+				icon2 = 'calendar';
+			else if (self.type === 'search') {
+				icon2 = 'search ui-textbox-control-icon';
+				self.setter2 = function(value) {
+					if (self.$stateremoved && !value)
+						return;
+					self.$stateremoved = value ? false : true;
+					self.find('.ui-textbox-control-icon').tclass('fa-times', value ? true : false).tclass('fa-search', value ? false : true);
+				};
+			}
+
+			icon2 && builder.push('<div><span class="fa fa-{0}"></span></div>'.format(icon2));
+			config.increment && !icon2 && builder.push('<div><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
+
+			if (config.label)
+				content = config.label;
+
+			if (content.length) {
+				var html = builder.join('');
+				builder = [];
+				builder.push('<div class="ui-textbox-label{0}">'.format(config.required ? ' ui-textbox-label-required' : ''));
+				icon && builder.push('<span class="fa fa-{0}"></span> '.format(icon));
+				builder.push(content);
+				builder.push(':</div><div class="ui-textbox">{0}</div>'.format(html));
+				config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
+				self.html(builder.join(''));
+				self.aclass('ui-textbox-container');
+				input = self.find('input');
+				container = self.find('.ui-textbox');
+			} else {
+				config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
+				self.aclass('ui-textbox ui-textbox-container');
+				self.html(builder.join(''));
+				input = self.find('input');
+				container = self.element;
+			}
+		};
+
+		self.configure = function(key, value, init) {
+
+			if (init)
+				return;
+
+			var redraw = false;
+
+			switch (key) {
+				case 'disabled':
+					self.tclass('ui-disabled', value);
+					self.find('input').prop('disabled', value);
+					break;
+				case 'format':
+					self.format = value;
+					self.refresh();
+					break;
+				case 'required':
+					self.noValid(!value);
+					!value && self.state(1, 1);
+					self.find('.ui-textbox-label').tclass('ui-textbox-label-required', value);
+					break;
+				case 'placeholder':
+					input.prop('placeholder', value || '');
+					break;
+				case 'maxlength':
+					input.prop('maxlength', value || 1000);
+					break;
+				case 'autofill':
+					input.prop('name', value ? self.path.replace(/\./g, '_') : '');
+					break;
+				case 'label':
+					content = value;
+					redraw = true;
+					break;
+				case 'type':
+					self.type = value;
+					if (value === 'password')
+						value = 'password';
+					else
+						self.type = 'text';
+					redraw = true;
+					break;
+				case 'align':
+					input.rclass(input.attr('class')).aclass('ui-' + value || 'left');
+					break;
+				case 'autofocus':
+					input.focus();
+					break;
+				case 'icon':
+				case 'icon2':
+				case 'increment':
+					redraw = true;
+					break;
+			}
+
+			redraw && setTimeout2('redraw.' + self.id, function() {
+				self.redraw();
+				self.refresh();
+			}, 100);
+		};
+
+		self.state = function(type) {
+			if (!type)
+				return;
+			var invalid = config.required ? self.isInvalid() : false;
+			if (invalid === self.$oldstate)
+				return;
+			self.$oldstate = invalid;
+			container.tclass('ui-textbox-invalid', invalid);
+			config.error && self.find('.ui-box-helper').tclass('ui-box-helper-show', invalid);
+		};
+	});
+
+	COMPONENT('error', function(self, config) {
+
+		self.readonly();
+
+		self.make = function() {
+			self.aclass('ui-error hidden');
+		};
+
+		self.setter = function(value) {
+
+			if (!(value instanceof Array) || !value.length) {
+				self.tclass('hidden', true);
+				return;
+			}
+
+			var builder = [];
+			for (var i = 0, length = value.length; i < length; i++)
+				builder.push('<div><span class="fa {1}"></span>{0}</div>'.format(value[i].error, 'fa-' + (config.icon || 'times-circle')));
+
+			self.html(builder.join(''));
+			self.tclass('hidden', false);
+		};
+	});
+
+	COMPONENT('binder', function(self) {
+
+		var keys, keys_unique;
+
+		self.readonly();
+		self.blind();
+
+		self.make = function() {
+			self.watch('*', self.autobind);
+			self.scan();
+
+			self.on('component', function() {
+				setTimeout2(self.id, self.scan, 200);
+			});
+
+			self.on('destroy', function() {
+				setTimeout2(self.id, self.scan, 200);
+			});
+		};
+
+		self.autobind = function(path) {
+			var mapper = keys[path];
+
+			if (!mapper)
+				return;
+
+			var template = {};
+
+			for (var i = 0, length = mapper.length; i < length; i++) {
+				var item = mapper[i];
+				var value = GET(item.path);
+				var element = item.selector ? item.element.find(item.selector) : item.element;
+				template.value = value;
+				item.classes && classes(element, item.classes(value));
+
+				var is = true;
+
+				if (item.visible) {
+					is = item.visible(value) ? true : false;
+					element.tclass('hidden', !is);
+				}
+
+				if (is) {
+					item.html && element.html(item.Ta ? item.html(template) : item.html(value));
+					item.disable && element.prop('disabled', item.disable(value));
+					item.src && element.attr('src', item.src(value));
+				}
+			}
+		};
+
+		function classes(element, val) {
+			var add = '';
+			var rem = '';
+			val.split(' ').forEach(function(item) {
+				switch (item.substring(0, 1)) {
+					case '+':
+						add += (add ? ' ' : '') + item.substring(1);
+						break;
+					case '-':
+						rem += (rem ? ' ' : '') + item.substring(1);
+						break;
+					default:
+						add += (add ? ' ' : '') + item;
+						break;
+				}
+			});
+			rem && element.rclass(rem);
+			add && element.aclass(add);
+		}
+
+		function decode(val) {
+			return val.replace(/\&\#39;/g, '\'');
+		}
+
+		self.prepare = function(code) {
+			return code.indexOf('=>') === -1 ? FN('value=>' + decode(code)) : FN(decode(code));
+		};
+
+		self.scan = function() {
+			keys = {};
+			keys_unique = {};
+			self.find('[data-b]').each(function() {
+
+				var el = $(this);
+				var path = el.attrd('b').replace('%', 'jctmp.');
+				var arr = path.split('.');
+				var p = '';
+
+				var classes = el.attrd('b-class');
+				var html = el.attrd('b-html');
+				var visible = el.attrd('b-visible');
+				var disable = el.attrd('b-disable');
+				var selector = el.attrd('b-selector');
+				var src = el.attrd('b-src');
+				var obj = el.data('data-b');
+
+				keys_unique[path] = true;
+
+				if (!obj) {
+					obj = {};
+					obj.path = path;
+					obj.element = el;
+					obj.classes = classes ? self.prepare(classes) : undefined;
+					obj.visible = visible ? self.prepare(visible) : undefined;
+					obj.disable = disable ? self.prepare(disable) : undefined;
+					obj.selector = selector ? selector : null;
+					obj.src = src ? self.prepare(src) : undefined;
+
+					if (el.attr('data-b-template') === 'true') {
+						var tmp = el.find('script[type="text/html"]');
+						var str = '';
+
+						if (tmp.length)
+							str = tmp.html();
+						else
+							str = el.html();
+
+						if (str.indexOf('{{') !== -1) {
+							obj.html = Tangular.compile(str);
+							obj.Ta = true;
+							tmp.length && tmp.remove();
+						}
+					} else
+						obj.html = html ? self.prepare(html) : undefined;
+
+					el.data('data-b', obj);
+				}
+
+				for (var i = 0, length = arr.length; i < length; i++) {
+					p += (p ? '.' : '') + arr[i];
+					if (keys[p])
+						keys[p].push(obj);
+					else
+						keys[p] = [obj];
+				}
+			});
+
+			Object.keys(keys_unique).forEach(function(key) {
+				self.autobind(key, GET(key));
+			});
+
+			return self;
+		};
+	});
+
+	COMPONENT('exec', function(self, config) {
+		self.readonly();
+		self.blind();
+		self.make = function() {
+			self.event('click', config.selector || '.exec', function(e) {
+				var el = $(this);
+				var attr = el.attr('data-exec');
+				var path = el.attr('data-path');
+				attr && EXEC(attr, el, e);
+				path && SET(path, new Function('return ' + el.attr('data-value'))());
+			});
+		};
+	});
 
 	setTimeout(function() {
-		$('.form').addClass('form-visible');
-	}, 500);
-	</script>
+		$('.panel').aclass('panelshow');
+	}, 200);
 
+	function toggletype() {
+		if (common.type === 'password') {
+			SET('common.type', '');
+			SET('password.response', null);
+			setTimeout(function() {
+				FIND('#formname').find('input').focus();
+			}, 200);
+		} else {
+			SET('common.type', 'password');
+			setTimeout(function() {
+				FIND('#passwordname').find('input').focus();
+			}, 200);
+		}
+	}
+
+	$(document).on('keyup', 'input', function(e) {
+		e.which === 13 && $('button').trigger('click');
+	});
+
+	$(document).on('click', 'button', function() {
+
+		if (common.type === 'password')	{
+			if (!CAN('password.*'))
+				return;
+		} else {
+			if (!CAN('form.*'))
+				return;
+		}
+
+		if (BLOCKED('managerlogin', 2000))
+			return;
+
+		RESET('password.*');
+		RESET('form.*');
+
+		if (common.type === 'password')	{
+			AJAX('POST /api/password/', password, function(response) {
+				SET('password.response', response);
+				response.success && SET('password.name', '', true);
+			});
+		} else {
+			AJAX('POST /api/login/', form, function(response) {
+				SET('form.response', response);
+				response.success && location.reload(true);
+			});
+		}
+	});
+
+	</script>
 
 </body>
 </html>

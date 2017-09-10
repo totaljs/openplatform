@@ -1,0 +1,112 @@
+<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:userapps;submit:userappsform_submit;title:@(Apps permissions);width:800" data-jc-controller="Users">
+	<div class="padding npb">
+		<div data-jc="dropdown" data-jc-path="users.userapps.type" data-jc-config="required:true;items:,@(Extend)|extend,@(Set)|set,@(Remove)|remove" class="m">@(Operation)</div>
+		<br />
+		<div class="caption"><i class="fa fa-filter"></i>@(FILTER)</div>
+
+		<div class="row">
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="users.userapps.company" data-jc-config="value:name;datasource:common.meta.companies;empty:">@(Company)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="users.userapps.group" data-jc-config="value:name;datasource:common.meta.groups;empty:">@(Group)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="users.userapps.position" data-jc-config="value:name;datasource:common.meta.positions;empty:">@(Position)</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="users.userapps.department" data-jc-config="value:name;datasource:common.meta.departments;empty:">@(Department)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="users.userapps.place" data-jc-config="value:name;datasource:common.meta.places;empty:">@(Place)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="users.userapps.customer" data-jc-config="items:,@(yes)|true,@(no)|false">@(Customer)</div>
+			</div>
+		</div>
+		<!--
+		<div class="row">
+			<div class="col-md-4 m">
+				<div data-jc="dropdown" data-jc-path="users.userapps.gender" data-jc-config="items:,@(men)|male,@(women)|female">@(Gender)</div>
+			</div>
+		</div>
+		-->
+	</div>
+	<hr />
+	<div class="padding npt">
+		<div data-jc="app-managment" data-jc-path="users.userapps.apps" class="mt10" data-jc-config="datasource:apps.response">
+			<script type="text/html">
+				<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
+					<div class="userapp-header">
+						<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
+						<div class="userapp-icon"><img src="{{ icon }}" class="img-rounded" width="30" border="0" onerror="onImageError(this)" alt="{{ title }}" /></div>
+						<b>{{ title }}</b>
+						<div class="fs11">v{{ version }}</div>
+					</div>
+					{{ if roles && roles.length }}
+					<div class="userapp-roles">
+						{{ foreach m in roles }}
+							<div><label><input type="checkbox" value="{{ m }}" />{{ m }}</label></div>
+						{{ end }}
+					</div>
+					{{ fi }}
+					<div class="userapp-settings">
+						<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ id }}" placeholder="@(Custom settings for the application)" />
+					</div>
+				</div>
+			</script>
+		</div>
+	</div>
+	<div class="ui-form-buttons">
+		<div data-jc="validation" data-jc-path="users.userapps">
+			<button name="submit" style="width:100%">@(UPDATE)</button>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	function userappsform_submit(component) {
+
+		var settings = {};
+
+		// Collects app settings
+		component.find('.userapp-settings-input').each(function() {
+			if (this.value)
+				settings[this.getAttribute('data-id')] = this.value;
+		});
+
+		var opt = {};
+
+		// Check roles
+		Object.keys(users.userapps.apps).forEach(function(key) {
+			var obj = users.userapps.apps[key];
+			var app = apps.response.findItem('id', key);
+			if (app) {
+				opt[key] = { roles: obj.roles.remove(function(role) {
+					return app.roles.indexOf(role) === -1;
+				}), settings: settings[key] };
+			}
+		});
+
+		var data = CLONE(users.userapps);
+		data.apps = opt;
+
+		SETTER('loading', 'show');
+		AJAX('POST /api/users/apps/', data, function(response) {
+
+			SETTER('loading', 'hide', 1000);
+			SET('users.userapps.response', response);
+
+			if (response.success) {
+				SETTER('notify', 'append', '@(Done, all users ({0}x) have been updated.)'.format(response.value));
+				EXEC('success');
+				EXEC('Users/refresh');
+				component.hide();
+			}
+		});
+	}
+
+</script>
