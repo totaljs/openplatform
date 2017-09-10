@@ -4,14 +4,10 @@
 
 [![MIT License][license-image]][license-url]
 
-- install latest Node.js platform
-- download the source code
-- execute `$ npm install`
-- execute `$ node debug.js`
-- first login: `admin` / `admin`
 - [__Documentation__](https://wiki.totaljs.com/openplatform/01-welcome/)
+- [__Website__](https://www.totaljs.com/openplatform/)
 
----
+OpenPlatform is a simple enterprise-ready platform for running, integrating and managing multiple web applications.
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: license.txt
