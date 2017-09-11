@@ -113,6 +113,7 @@
 		builder.push('<i title="@(Allow to read applications)" class="fa approle fa-th {0}"></i>'.format(t.allowreadapps ? 'green' : 'silver'));
 		builder.push('<i title="@(Allow to use notifications)" class="fa approle fa-bell {0}"></i>'.format(t.allownotifications ? 'green' : 'silver'));
 		builder.push('<i title="@(Is responsive?)" class="fa approle fa-tablet {0}"></i>'.format(t.responsive ? 'green' : 'silver'));
+		builder.push('<i title="@(Server-side verification)" class="fa approle fa-lock {0}" style="font-size:16px"></i>'.format(t.serververify ? 'green' : 'silver'));
 		return builder.join('');
 	});
 
