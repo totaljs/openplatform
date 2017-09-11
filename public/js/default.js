@@ -19,7 +19,7 @@ ON('resize', function() {
 	$('.ui-process-iframe').css('height', h - 50);
 	$('.fullheight').each(function() {
 		var el = $(this);
-		el.css('height', h - (el.offset().top + 10));
+		el.css('height', h - (el.offset().top + 20));
 	});
 });
 

@@ -60,7 +60,7 @@ OP.profile = function(user) {
 
 	for (var i = 0, length = F.global.apps.length; i < length; i++) {
 		var app = F.global.apps[i];
-		!app.blocked && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications });
+		!app.blocked && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive });
 	}
 
 	return meta;

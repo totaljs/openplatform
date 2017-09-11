@@ -4,7 +4,7 @@
 		<div class="fullheight centered-container">
 			<div data-jc="repeater" data-jc-path="user.apps" class="centered">
 				<script type="text/html">
-					<div class="app{{ if !online }} app-offline{{ fi }}" data-id="{{ id }}">
+					<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}">
 						<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 						<i class="appclose fa fa-times hidden exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
 						<div><img src="{{ icon }}" alt="{{ title }}" onerror="onImageError(this)" /></div>
@@ -31,7 +31,7 @@
 	$(document).on('click', '.app', function() {
 		var el = $(this);
 
-		if (el.hclass('app-offline'))
+		if (el.hclass('app-offline') || el.hclass('app-disabled'))
 			return;
 
 		var id = el.attr('data-id');
@@ -117,6 +117,10 @@
 				el.length && el.trigger('click');
 			}
 		}
-
 	});
+
+	Tangular.register('responsive', function(value) {
+		return isMOBILE ? (value === true ? '' : ' app-disabled') : '';
+	});
+
 </script>
