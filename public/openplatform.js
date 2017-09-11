@@ -1,6 +1,6 @@
 var OPENPLATFORM = {};
 
-OPENPLATFORM.version = '1.0.0';
+OPENPLATFORM.version = '2.0.0';
 OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
