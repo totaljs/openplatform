@@ -125,6 +125,7 @@ OPENPLATFORM.send = function(type, body, callback) {
 	data.type = type;
 	data.body = body || null;
 	data.sender = true;
+	data.origin = location.origin;
 
 	if (!top) {
 		callback && callback(new Error('The application is not runned in the openplatform scope.'));
