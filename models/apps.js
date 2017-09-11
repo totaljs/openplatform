@@ -24,6 +24,7 @@ NEWSCHEMA('App').make(function(schema) {
 	schema.define('allowreadapps', Number);         // 0: disabled, 1: basic info, 2: all info
 	schema.define('allowreadprofile', Number);      // 0: disabled, 1: basic info, 2: all info
 	schema.define('allowreadmeta', Boolean);
+	schema.define('serververify', Boolean);         // Enables server-side verification only
 	schema.define('responsive', Boolean);
 	schema.define('blocked', Boolean);
 
@@ -154,6 +155,7 @@ function sync(item, model, meta) {
 		item.blocked = model.blocked;
 		item.settings = model.settings;
 		item.accesstoken = model.accesstoken;
+		item.serververify = model.serververify;
 	}
 
 	item.linker = model.linker;

@@ -69,6 +69,7 @@ function realtime() {
 
 			// Open app
 			case 'open':
+
 				if (client.user.apps[message.id]) {
 					var app = F.global.apps.findItem('id', message.id);
 					WSOPEN.body = OP.meta(app, client.user);
@@ -83,8 +84,8 @@ function realtime() {
 						db.counter.hit('all');
 						db.counter.hit(message.id);
 					}
-
 				}
+
 				break;
 
 			case 'notifications':

@@ -1,4 +1,4 @@
-const SKIP = { password: true, search: true };
+const SKIP = { password: true, search: true, verifytoken: true };
 
 exports.install = function() {
 
@@ -44,14 +44,16 @@ function json_verify() {
 	// 1 - app id
 	// 2 - user accesstoken
 	// 3 - user id
+	// 4 - verification token
 
 	var app = F.global.apps.findItem('accesstoken', arr[0]);
+
 	if (!app || app.id !== arr[1]) {
 		self.invalid().push('error-invalid-accesstoken');
 		return;
 	}
 
-	if (app.origin && app.origin.length) {
+	if (app.origin) {
 		if (!app.origin[self.ip] && app.hostname !== self.ip) {
 			self.invalid().push('error-invalid-origin');
 			return;
@@ -62,12 +64,17 @@ function json_verify() {
 	}
 
 	var user = F.global.users.findItem('accesstoken', arr[2]);
-	if (!user || user.id !== arr[3] || user.inactive) {
-		self.json(null);
+	if (!user || user.id !== arr[3] || user.verifytoken !== arr[4]) {
+		self.invalid().push('error-invalid-accesstoken');
 		return;
 	}
 
-	self.json(OP.meta(app, user));
+	if (user.inactive || user.blocked) {
+		self.invalid().push('error-accessible');
+		return;
+	}
+
+	self.json(OP.meta(app, user, true));
 }
 
 function json_apps_query() {

@@ -84,7 +84,7 @@
 		};
 
 		self.create = function() {
-			SET('users.form', { password: GUID(10), accesstoken: GUID(40), apps: {}, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, volume: 50, gender: 'male', welcome: true }, true);
+			SET('users.form', { password: GUID(10), verifytoken: true, accesstoken: GUID(40), apps: {}, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, volume: 50, gender: 'male', welcome: true }, true);
 			DEFAULT('users.form.*');
 			SET('common.form', 'user');
 		};

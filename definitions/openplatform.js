@@ -67,15 +67,21 @@ OP.profile = function(user) {
 };
 
 // Output see the app only
-OP.meta = function(app, user) {
+OP.meta = function(app, user, serverside) {
 
 	if (!user.apps || !user.apps[app.id])
 		return null;
 
-	var meta = { datetime: F.datetime, ip: user.ip, accesstoken: app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id, url: app.frame, settings: app.settings, id: app.id };
+	var meta = { datetime: F.datetime, ip: user.ip, accesstoken: app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: app.frame, settings: app.settings, id: app.id };
 
 	meta.verify = F.config.url + '/api/verify/?accesstoken=' + meta.accesstoken;
 	meta.openplatform = F.config.url;
+
+	if (app.serververify && !serverside) {
+		meta.serverside = true;
+		return meta;
+	} else
+		meta.serverside = false;
 
 	if (app.allowreadmeta)
 		meta.meta = F.global.meta;
@@ -156,7 +162,6 @@ function readuser(user, type, app) {
 	if (type > 2 && (!user.apps || !user.apps[app.id]) || user.inactive)
 		return;
 
-	var token = app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
 	var obj = {};
 
 	obj.id = user.id;
@@ -193,7 +198,7 @@ function readuser(user, type, app) {
 	obj.sounds = user.sounds;
 
 	if (obj.notifications)
-		obj.notify = F.config.url + '/api/notify/?accesstoken=' + token;
+		obj.notify = F.config.url + '/api/notify/?accesstoken=' + app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
 
 	switch (type) {
 		case 2:

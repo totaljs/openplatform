@@ -32,6 +32,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('sa', Boolean);
 	schema.define('inactive', Boolean);
 	schema.define('sounds', Boolean);
+	schema.define('verifytoken', Boolean);
 	schema.define('datebirth', Date);
 	schema.define('datestart', Date);
 	schema.define('dateend', Date);
@@ -98,11 +99,15 @@ NEWSCHEMA('User').make(function(schema) {
 			item.notificationsphone = model.notificationsphone;
 			item.notificationsemail = model.notificationsemail;
 
+			if (model.verifytoken)
+				item.verifytoken = U.GUID(15);
+
 		} else {
 			item = model;
 			item.id = UID();
 			item.datecreated = F.datetime;
 			item.password = item.password.sha256();
+			item.verifytoken = U.GUID(15);
 			F.global.users.push(item);
 		}
 
