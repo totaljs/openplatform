@@ -2320,6 +2320,7 @@ COMPONENT('processes', function(self, config) {
 		iframe.element.aclass('hidden');
 		self.minimize();
 		location.hash = '';
+		$('.appclose[data-id="{0}"]'.format(id)).aclass('hidden');
 
 		// Timeout for iframe cleaning scripts
 		setTimeout(function() {

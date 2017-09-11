@@ -12,6 +12,6 @@ mail-address-copy               :
 
 allow-custom-titles             : true
 
-url                             : https://openplatform.totaljs.com
+url                             : http://127.0.0.1:8000
 languages       (Array)         : ['en']
 cookie                          : __opu

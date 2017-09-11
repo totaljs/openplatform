@@ -182,7 +182,7 @@ function readuser(user, type, app) {
 	obj.name = user.name;
 	obj.notifications = user.notifications;
 	obj.online = user.online;
-	obj.photo = F.config.url + '/' + user.photo;
+	obj.photo = F.config.url + '/photos/' + user.photo;
 	obj.place = user.place;
 	obj.placelinker = user.placelinker;
 	obj.position = user.position;

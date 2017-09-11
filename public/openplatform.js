@@ -18,7 +18,7 @@ OPENPLATFORM.init = function(callback) {
 		};
 
 	if (!OPENPLATFORM.is) {
-		callback(false);
+		callback(new Error('OpenPlatform isn\'t detected.'));
 		return;
 	}
 
