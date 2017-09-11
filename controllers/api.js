@@ -51,7 +51,7 @@ function json_verify() {
 		return;
 	}
 
-	if (app.origin) {
+	if (app.origin && app.origin.length) {
 		if (!app.origin[self.ip] && app.hostname !== self.ip) {
 			self.invalid().push('error-invalid-origin');
 			return;
