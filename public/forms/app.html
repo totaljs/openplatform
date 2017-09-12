@@ -14,12 +14,18 @@
 						</script>
 					</div>
 					<br />
-					<div data-jc="template" data-jc-path="apps.form" data-jc-config="properties:daterefreshed,online">
+					<div data-jc="template" data-jc-path="apps.form" data-jc-config="properties:daterefreshed,online,hostname">
 						<script type="text/html">
 							{{ if daterefreshed }}
 							<div class="keyvalue">
 								<div class="key">@(Refreshed)</div>
 								<div class="value">{{ if online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ daterefreshed | format('@(yyyy-MM-dd HH:mm)') }}</div>
+							</div>
+							{{ fi }}
+							{{ if hostname }}
+							<div class="keyvalue">
+								<div class="key">@(IP address)</div>
+								<div class="value">{{ hostname }}</div>
 							</div>
 							{{ fi }}
 						</script>
