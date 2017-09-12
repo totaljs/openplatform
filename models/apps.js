@@ -14,6 +14,7 @@ NEWSCHEMA('Meta').make(function(schema) {
 
 NEWSCHEMA('App').make(function(schema) {
 
+	schema.define('id', 'UID');
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(30)', true);
 	schema.define('settings', String);
@@ -36,7 +37,7 @@ NEWSCHEMA('App').make(function(schema) {
 		}
 
 		var model = $.model.$clean();
-		var item = F.global.apps.findItem('url', model.url);
+		var item = F.global.apps.findItem('id', model.id);
 
 		model.search = (model.name + ' ' + model.title).toSearch();
 		model.linker = model.title.slug();
