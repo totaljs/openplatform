@@ -68,7 +68,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 			var ip = $.controller.ip;
 			if (app.origin) {
-				if (!app.origin[ip] && app.hostname !== ip) {
+				if (!app.origin[ip] && app.hostname !== ip && (!$.controller.user || $.controller.user.id !== arr[3])) {
 					$.error.push('error-invalid-origin');
 					$.callback();
 					return;
