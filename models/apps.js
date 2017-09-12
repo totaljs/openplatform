@@ -118,7 +118,8 @@ NEWSCHEMA('App').make(function(schema) {
 				if (err || !response.url) {
 					item.online = false;
 				} else {
-					item.hostname = output.hostname;
+
+					item.hostname = output.hostname.replace(/\:\d+/, '');
 					item.online = true;
 					item.version = response.version;
 					item.name = response.name;
