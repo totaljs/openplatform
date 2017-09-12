@@ -25,7 +25,6 @@ NEWSCHEMA('Settings').make(function(schema) {
 			model.url = model.url.substring(0, model.url.length - 1);
 
 		F.config.url = model.url;
-		F.config.author = model.author;
 		F.config.email = model.email;
 		F.config['mail-smtp'] = model.smtp;
 		F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
