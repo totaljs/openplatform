@@ -2,7 +2,7 @@
 
 # OpenPlatform v2.0.0
 
-[![MIT License][license-image]][license-url]
+[![Professional Support](https://www.totaljs.com/img/badge-support.svg)](https://www.totaljs.com/support/) [![Chat with contributors](https://www.totaljs.com/img/badge-chat.svg)](https://messenger.totaljs.com) [![MIT License][license-image]][license-url]
 
 - [__Documentation__](https://wiki.totaljs.com/openplatform/01-welcome/)
 - [__Website__](https://www.totaljs.com/openplatform/)
