@@ -85,6 +85,7 @@
 
 function appform_generatetoken() {
 	SET('apps.form.accesstoken', GUID(30));
+	CHANGE('apps.form.accesstoken', true);
 }
 
 function appform_submit(component) {

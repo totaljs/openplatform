@@ -112,6 +112,10 @@ OPENPLATFORM.notify = function(type, body, url) {
 	return OPENPLATFORM.send('notify', { type: type, body: body, url: url || '', datecreated: new Date() });
 };
 
+OPENPLATFORM.email = function(subject, body) {
+	return OPENPLATFORM.send('email', { subject: subject, body: body, datecreated: new Date() });
+};
+
 OPENPLATFORM.send = function(type, body, callback) {
 
 	if (typeof(body) === 'function') {
@@ -128,7 +132,7 @@ OPENPLATFORM.send = function(type, body, callback) {
 	data.origin = location.origin;
 
 	if (!top) {
-		callback && callback(new Error('The application is not runned in the openplatform scope.'));
+		callback && callback(new Error('The application is not running in the OpenPlatform scope.'));
 		return;
 	}
 
@@ -142,8 +146,7 @@ OPENPLATFORM.send = function(type, body, callback) {
 };
 
 OPENPLATFORM.on = function(name, callback) {
-	if (!OPENPLATFORM.events[name])
-		OPENPLATFORM.events[name] = [];
+	!OPENPLATFORM.events[name] && (OPENPLATFORM.events[name] = []);
 	OPENPLATFORM.events[name].push(callback);
 	return OPENPLATFORM;
 };

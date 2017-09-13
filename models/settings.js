@@ -4,12 +4,14 @@ NEWSCHEMA('Settings').make(function(schema) {
 
 	schema.define('url', 'String(500)', true);
 	schema.define('email', 'Email', true);
+	schema.define('accesstoken', 'String(50)', true);
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
 
 	schema.setGet(function($) {
 		var model = $.model;
 		var options = F.config['mail-smtp-options'];
+		model.accesstoken = F.config.accesstoken;
 		model.url = F.config.url;
 		model.email = F.config.email;
 		model.smtp = F.config['mail-smtp'];
@@ -28,6 +30,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 		F.config.email = model.email;
 		F.config['mail-smtp'] = model.smtp;
 		F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
+		F.config.accesstoken = model.accesstoken;
 
 		Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(model.$clean()), NOOP);
 		$.callback(SUCCESS(true));
@@ -41,6 +44,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 				F.config.url = model.url;
 				F.config.author = model.author;
 				F.config.email = model.email;
+				F.config.accesstoken = model.accesstoken;
 				F.config['mail-smtp'] = model.smtp;
 				F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
 			}

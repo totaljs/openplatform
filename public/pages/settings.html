@@ -9,6 +9,8 @@
 					<div class="padding">
 						<div data-jc="textbox" data-jc-path="settings.url" data-jc-config="required:true" class="m">@(URL address)</div>
 						<div data-jc="textbox" data-jc-path="settings.email" data-jc-config="type:email;required:true" class="m">@(Support email)</div>
+						<div data-jc="textbox" data-jc-path="settings.accesstoken" data-jc-config="maxlength:50;required:true">@(Access token for service account)</div>
+						<div class="help"><a href="javascript:void(0)" class="exec" data-exec="settings_generatetoken">@(Generate token)</a></div>
 					</div>
 					<div class="padding bg-smoke">
 						<h2><i class="fa fa-envelope color"></i>@(SMTP settings)</h2>
@@ -92,5 +94,9 @@
 			fa.aclass(e.classes);
 	});
 
-</script>
+	function settings_generatetoken() {
+		SET('settings.accesstoken', GUID(40));
+		CHANGE('settings.accesstoken', true);
+	}
 
+</script>

@@ -17,7 +17,7 @@ NEWSCHEMA('Password').make(function(schema) {
 				model.login = user.login;
 				model.token = F.encrypt({ id: user.id, date: F.datetime, type: 'password' }, 'token');
 				model.email = user.email;
-				F.mail(model.email, '@(Password recovery)', '/mails/password', model, '');
+				F.mail(model.email, '@(Password recovery)', '/mails/password', model, user.language);
 			}
 		} else
 			$.error.push('error-credentials');

@@ -119,7 +119,7 @@ NEWSCHEMA('User').make(function(schema) {
 
 		if ($.model.welcome && !model.blocked && !model.inactive) {
 			$.model.token = F.encrypt({ id: item.id, date: F.datetime, type: 'welcome' }, 'token');
-			F.mail(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, '');
+			F.mail(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, item.language);
 		}
 
 		$WORKFLOW('User', 'refresh');

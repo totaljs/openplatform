@@ -222,10 +222,12 @@
 
 function userform_generatepassword() {
 	SET('users.form.password', GUID(10));
+	CHANGE('users.form.password', true);
 }
 
 function userform_generatetoken() {
 	SET('users.form.accesstoken', GUID(40));
+	CHANGE('users.form.accesstoken', true);
 }
 
 function userform_submit(component) {
