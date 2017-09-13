@@ -10,11 +10,6 @@ NEWSCHEMA('User').make(function(schema) {
 
 	schema.setSave(function($) {
 
-		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
-		}
-
 		var model = $.model;
 		var user = F.global.users.findItem('id', $.controller.user.id);
 

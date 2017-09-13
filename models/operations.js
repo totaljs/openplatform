@@ -12,6 +12,11 @@ NEWSCHEMA('UserApps').make(function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
+		if (!$.controller.user.sa) {
+			$.error.push('error-permissions');
+			return $.callback();
+		}
+
 		var model = $.model;
 		var users = F.global.users;
 		var count = 0;
@@ -95,6 +100,11 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
+		if (!$.controller.user.sa) {
+			$.error.push('error-permissions');
+			return $.callback();
+		}
+
 		var model = $.model;
 		var users = F.global.users;
 		var count = 0;
@@ -146,6 +156,11 @@ NEWSCHEMA('UserRename').make(function(schema) {
 	schema.define('newname', 'String(50)');
 
 	schema.addWorkflow('exec', function($) {
+
+		if (!$.controller.user.sa) {
+			$.error.push('error-permissions');
+			return $.callback();
+		}
 
 		var model = $.model;
 		var users = F.global.users;

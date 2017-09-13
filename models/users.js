@@ -102,6 +102,8 @@ NEWSCHEMA('User').make(function(schema) {
 			if (model.verifytoken)
 				item.verifytoken = U.GUID(15);
 
+			LOGGER('users', 'update: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
+
 		} else {
 			item = model;
 			item.id = UID();
@@ -109,6 +111,8 @@ NEWSCHEMA('User').make(function(schema) {
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
 			F.global.users.push(item);
+
+			LOGGER('users', 'create: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
 		}
 
 		item.grouplinker = item.group.slug();
@@ -146,6 +150,7 @@ NEWSCHEMA('User').make(function(schema) {
 				user.idsupervisor = '';
 		}
 
+		LOGGER('users', 'remove: ' + id, '@' + $.controller.user.name, $.controller.ip);
 		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
 		OP.save(); // Save changes
 		EMIT('users.refresh', id, true);

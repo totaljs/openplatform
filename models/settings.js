@@ -9,6 +9,12 @@ NEWSCHEMA('Settings').make(function(schema) {
 	schema.define('smtpsettings', 'JSON');
 
 	schema.setGet(function($) {
+
+		if (!$.controller.user.sa) {
+			$.error.push('error-permissions');
+			return $.callback();
+		}
+
 		var model = $.model;
 		var options = F.config['mail-smtp-options'];
 		model.accesstoken = F.config.accesstoken;
@@ -20,6 +26,11 @@ NEWSCHEMA('Settings').make(function(schema) {
 	});
 
 	schema.setSave(function($) {
+
+		if (!$.controller.user.sa) {
+			$.error.push('error-permissions');
+			return $.callback();
+		}
 
 		var model = $.model;
 
@@ -34,6 +45,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 
 		Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(model.$clean()), NOOP);
 		$.callback(SUCCESS(true));
+		LOGGER('settings', 'update: ' + JSON.stringify(model.$clean()), '@' + $.controller.user.name, $.controller.ip);
 	});
 
 	schema.addWorkflow('init', function($) {
@@ -60,6 +72,11 @@ NEWSCHEMA('SettingsSMTP').make(function(schema) {
 	schema.define('smtpsettings', 'JSON');
 
 	schema.addWorkflow('exec', function($) {
+
+		if (!$.controller.user.sa) {
+			$.error.push('error-permissions');
+			return $.callback();
+		}
 
 		var model = $.model;
 		var options = model.smtpsettings.parseJSON();

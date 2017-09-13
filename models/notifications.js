@@ -115,9 +115,16 @@ NEWSCHEMA('Notification').make(function(schema) {
 		else
 			user.countnotifications = 1;
 
+		user.datenotified = F.datetime;
+
 		OP.saveState(2);
 		EMIT('users.notify', user);
 		$.callback(SUCCESS(true));
+
+		// Stats
+		var db = NOSQL('users');
+		db.counter.hit('all');
+		db.counter.hit(user.id);
 	});
 
 });

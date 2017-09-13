@@ -1,6 +1,5 @@
 NEWSCHEMA('Meta').make(function(schema) {
 	schema.define('url', 'Url', true);
-
 	schema.addWorkflow('exec', function($) {
 		RESTBuilder.make(function(builder) {
 			builder.url($.model.url);
@@ -47,7 +46,13 @@ NEWSCHEMA('App').make(function(schema) {
 			item.id = U.GUID(20);
 			item.datecreated = F.datetime;
 			F.global.apps.push(item);
+
+			LOGGER('apps', 'create: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
+
 		} else {
+
+			LOGGER('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
+
 			model.dateupdated = F.datetime;
 			sync(item, model, true);
 		}
@@ -71,6 +76,7 @@ NEWSCHEMA('App').make(function(schema) {
 			delete item.apps[id];
 		});
 
+		LOGGER('apps', 'remove: ' + id, '@' + $.controller.user.name, $.controller.ip);
 		OP.save(); // Save changes
 		EMIT('apps.refresh', id, true);
 		$.callback(SUCCESS(true));

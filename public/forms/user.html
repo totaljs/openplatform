@@ -33,6 +33,12 @@
 							<div class="value">{{ datepassword | format('@(yyyy-MM-dd HH:mm)') }}</div>
 						</div>
 						{{ fi }}
+						{{ if datenotified }}
+						<div class="keyvalue">
+							<div class="key">@(Last notification)</div>
+							<div class="value">{{ datenotified | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+						{{ fi }}
 					</script>
 				</div>
 			</div>

@@ -7,8 +7,12 @@ F.onAuthorize = function(req, res, flags, next) {
 
 	// Acccess Token
 	if (req.headers.token) {
-		if (DDOS[key] > 5)
+
+		if (DDOS[key] > 5) {
+			LOGGER('protection', key);
 			return next(false);
+		}
+
 		if (req.headers.token === F.accesstoken)
 			return next(true, SERVICEACCOUNT);
 		if (DDOS[key])
@@ -22,26 +26,58 @@ F.onAuthorize = function(req, res, flags, next) {
 	if (!cookie)
 		return next(false);
 
-	if (DDOS[key] > 5)
-		return next(false);
-
-	cookie = F.decrypt(cookie);
-
-	if (!cookie) {
-		if (DDOS[key])
-			DDOS[key]++;
-		else
-			DDOS[key] = 1;
+	if (DDOS[key] > 5) {
+		LOGGER('protection', key);
 		return next(false);
 	}
 
-	var user = F.global.users.findItem('id', cookie.id);
-	user.datelogged = F.datetime;
-	user.online = true;
-	next(true, user);
+	cookie = F.decrypt(cookie);
+
+	if (cookie) {
+		var user = F.global.users.findItem('id', cookie.id);
+		user.datelogged = F.datetime;
+		user.online = true;
+		next(true, user);
+		return;
+	}
+
+	if (DDOS[key])
+		DDOS[key]++;
+	else
+		DDOS[key] = 1;
+
+	return next(false);
 };
 
 F.on('service', function(counter) {
+
 	if (counter % 5 === 0)
 		DDOS = {};
+
+	// Notifications: each 1 hour
+	if (counter % 60 !== 0)
+		return;
+
+	var messages = [];
+
+	for (var i = 0, length = F.global.users.length; i < length; i++) {
+
+		var user = F.global.users[i];
+		if (user.inactive || user.blocked || !user.notificationsemail || !user.countnotifications)
+			continue;
+
+		if (user.datenotifiedemail && user.datenotifiedemail.add('12 hour') > F.datetime)
+			continue;
+
+		user.datenotifiedemail = F.datetime;
+		var message = F.mail(user.email, '@(Unread notifications)', '/mails/notifications', user, user.language);
+		message.manually();
+		messages.push(message);
+		LOGGER('email', user.id + ': ' + user.name + '(' + user.email + '): ' + user.countnotifications + 'x');
+	}
+
+	if (messages.length) {
+		OP.saveState(2);
+		Mail.send2(messages, F.error());
+	}
 });
