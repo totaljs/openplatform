@@ -36,6 +36,9 @@ NEWSCHEMA('App').make(function(schema) {
 		}
 
 		var model = $.model.$clean();
+
+		console.log(model);
+
 		var item = F.global.apps.findItem('id', model.id);
 
 		model.search = (model.name + ' ' + model.title).toSearch();
@@ -43,7 +46,7 @@ NEWSCHEMA('App').make(function(schema) {
 
 		if (item == null) {
 			item = model;
-			item.id = U.GUID(20);
+			item.id = UID();
 			item.datecreated = F.datetime;
 			F.global.apps.push(item);
 
