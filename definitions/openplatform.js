@@ -81,7 +81,7 @@ OP.meta = function(app, user, serverside) {
 		meta.serverside = true;
 		return meta;
 	} else
-		meta.serverside = false;
+		meta.serverside = serverside === true;
 
 	if (app.allowreadmeta)
 		meta.meta = F.global.meta;
