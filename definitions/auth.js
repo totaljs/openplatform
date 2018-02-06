@@ -35,9 +35,12 @@ F.onAuthorize = function(req, res, flags, next) {
 
 	if (cookie) {
 		var user = F.global.users.findItem('id', cookie.id);
-		user.datelogged = F.datetime;
-		user.online = true;
-		next(true, user);
+		if (user) {
+			user.datelogged = F.datetime;
+			user.online = true;
+			next(true, user);
+		} else
+			next(false);
 		return;
 	}
 
