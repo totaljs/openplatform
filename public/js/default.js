@@ -99,7 +99,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'message':
-			SETTER('notify', data.body.body, data.body.type);
+			SETTER('snackbar', data.body.type || 'success', data.body.body);
 			break;
 
 		case 'play':

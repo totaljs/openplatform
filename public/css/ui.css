@@ -12,39 +12,44 @@ button { outline: 0; }
 .ui-checkbox.ui-disabled div { background-color: #F0F0F0 !important; border-color: #E0E0E0 !important; color: gray !important; }
 
 .ui-dropdown-values { position: relative; display: block; height: 26px; text-align: left; }
-.ui-dropdown { border: 1px solid #E0E0E0; padding: 0 10px; border-radius: 2px; outline: 0; height: 32px; overflow: hidden; float: left; width: 100%; background-color: white; position: relative; }
-.ui-dropdown select { width: 120%; outline: 0; border: 0; height: 24px; background-color: white; font-size: 14px; float: left; cursor: pointer; padding: 0; margin: 3px 0 0 -3px; color: black; appearance: none; -moz-appearance: none; -webkit-appearance: none; }
-.ui-dropdown .fa { position: absolute; right: 8px; top: 8px; }
-.ui-dropdown-label { margin-bottom: 5px; font-size: 12px; color: gray;  }
+.ui-dropdown-values { position: relative; display: block; height: 32px; text-align: left; }
+.ui-dropdown { border: 1px solid #E0E0E0; padding: 0 5px 0 10px; border-radius: 2px; outline: 0; height: 32px; overflow: hidden; float: left; width: 100%; background-color: white; position: relative; }
+.ui-dropdown:after { border-left: 1px solid #E0E0E0; width: 1px; position: absolute; height: 30px; content: ' '; margin-left: -23px; }
+.ui-dropdown select { width: 100%; outline: 0; border: 0; height: 24px; background: white url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNDA4IDEwODhxMCAyNi0xOSA0NWwtNDQ4IDQ0OHEtMTkgMTktNDUgMTl0LTQ1LTE5bC00NDgtNDQ4cS0xOS0xOS0xOS00NXQxOS00NSA0NS0xOWg4OTZxMjYgMCA0NSAxOXQxOSA0NXptMC0zODRxMCAyNi0xOSA0NXQtNDUgMTloLTg5NnEtMjYgMC00NS0xOXQtMTktNDUgMTktNDVsNDQ4LTQ0OHExOS0xOSA0NS0xOXQ0NSAxOWw0NDggNDQ4cTE5IDE5IDE5IDQ1eiIgZmlsbD0iIzAwMCIvPjwvc3ZnPg==) no-repeat 100% 50%; background-size: 14px; font-size: 14px; float: left; cursor: pointer; padding: 0; margin: 3px 0 0 -4px; color: black; -webkit-appearance: none; }
+.ui-dropdown-label { margin-bottom: 5px; font-size: 12px; }
 .ui-dropdown-label .fa { width: 14px; }
+.ui-dropdown-label-required { font-weight: bold; }
 .ui-dropdown-label-required:before { color: red; content: '***'; margin-right: 5px; }
 .ui-dropdown-invalid { border-color: #E1A1A1 !important; background-color: #FFF3F3 !important; }
 .ui-dropdown-invalid select { background-color: #FFF3F3 !important; }
+.ui-dropdown-invalid:after { border-left-color: #E1A1A1 !important; }
 .ui-disabled select { background-color: #F0F0F0; cursor: not-allowed; color: #A0A0A0; }
 .ui-disabled .ui-dropdown { background-color: #F0F0F0; cursor: not-allowed; }
 .ui-disabled .ui-dropdown .fa { color: #A0A0A0; }
 
 input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: silver; }
 input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { background-color: #F0F0F0; cursor: not-allowed; color: silver; }
-.ui-textbox { border: 1px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
-.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: black; width: 100%; background-color: white; }
-.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #E0E0E0; width: 30px; color: silver; }
+.ui-textbox { height: 32px; border: 1px solid #E0E0E0; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
+.ui-textbox-input { display: table-cell; padding: 8px 2px 0 5px; }
+.ui-textbox-input input { font: normal 14px Arial; border: 0; outline: 0; color: black; width: 100%; background-color: white; margin: 0; padding: 0; appearance: none; border-radius: 0; vertical-align: top; }
+.ui-textbox-control { position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #E0E0E0; width: 32px; color: black; }
 .ui-textbox .fa-times { color: red; cursor: pointer; }
-.ui-textbox-label { margin-bottom: 5px; font-size: 12px; text-align: left; color: gray; }
+.ui-textbox-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
 .ui-textbox-label .fa { margin-right: 5px; }
+.ui-textbox-label-required { font-weight: bold; }
 .ui-textbox-label-required:before { color: red; content: '***'; margin-right: 5px; }
 .ui-textbox-invalid { border-color: #E1A1A1 !important; background-color: #FFF3F3 !important; }
 .ui-textbox-invalid input { background-color: #FFF3F3 !important; }
+.ui-textbox-invalid .ui-textbox-control { border-color: #E1A1A1 !important; }
 .ui-textbox .fa-caret-up, .ui-textbox .fa-caret-down { display: block; line-height: 9px; cursor: pointer; }
 .ui-textbox .fa-calendar { cursor: pointer; }
 .ui-textbox-helper { margin-top: 8px; font-size: 11px; color: red; text-align: left; display: none; }
 .ui-textbox-helper-show { display: block; }
+.ui-textbox-container.ui-disabled .ui-textbox { background-color: #F0F0F0; cursor: not-allowed; }
+.ui-textbox-container.ui-disabled .ui-textbox input { background-color: #F0F0F0; }
 
 .ui-right { text-align: right; }
 .ui-center { text-align: center; }
-
-.ui-textbox-container.ui-disabled .ui-textbox { background-color: #F0F0F0; cursor: not-allowed; }
-.ui-textbox-container.ui-disabled .ui-textbox input { background-color: #F0F0F0; }
 
 .ui-error { margin: 0; list-style-type: none; border-left-width: 0; border-right-width: 0; padding: 10px 0 0; color: #BE3A48; font-family: Arial; font-size: 12px; }
 .ui-error .fa { width: 16px; }
@@ -57,7 +62,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-form-animate-click { transform: skewX(-5deg); }
 .ui-form-padding { padding: 0 30px; }
 .ui-form-title { padding: 18px 20px; font-size: 16px; user-select: none; color: #AAB2BD; background-color: #F8F8F8; border-bottom: 1px solid #F0F0F0; }
-.ui-form-title .ui-form-button-close { float: right; cursor: pointer; font-size: 18px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; }
+.ui-form-title .ui-form-button-close { float: right; cursor: pointer; font-size: 18px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; width: 20px; padding: 0; }
 .ui-form-title .ui-form-button-close:hover { transform: scale(1.2) rotate(-90deg); }
 .ui-form-title > span { font-weight: bold; }
 .ui-form-title > .fa { margin-right: 7px; }
@@ -76,12 +81,16 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-confirm-body { padding: 30px; position: relative; display: inline-block; border-radius: 4px; max-width: 600px; text-align: left; transform: scale(0.5); transition: 0.3s all; color: gray; border: 1px solid #E0E0E0; background-color: white; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
 .ui-confirm-message { border-bottom: 1px solid #F0F0F0; padding: 0 0 20px 0; margin-bottom: 20px; }
 .ui-confirm button { font-size: 12px; position: relative; display: inline-block; cursor: pointer; outline: 0; background-color: #E0E0E0; border: 0; border-radius: 4px; color: gray; padding: 0 20px; height: 30px; font-weight: normal; margin: 0 10px 0 0; }
-.ui-confirm button:hover { background-color: #E5E5E5; }
-.ui-confirm button[data-index="0"] { color: #303030; font-weight: bold; border-color: #D0D0D0; font-weight: bold; }
+.ui-confirm button .fa { margin-right: 5px; }
+.ui-confirm button:hover { opacity: 0.9; }
+.ui-confirm button[data-index="0"] { color: white; font-weight: bold; font-weight: bold; background-color: #EC2C28; }
 .ui-confirm-visible { opacity: 1; }
 .ui-confirm-visible .ui-confirm-body { -webkit-transform: scale(1); transform: scale(1); }
 .ui-confirm-click { transform: scale(1.07) !important; }
-.hidden { display: none; }
+
+@media(max-width: 767px) {
+	.ui-confirm button { display: block; margin: 10px 0 0; display: block; width: 100%; }
+}
 
 @media(max-width: 767px) {
 	.ui-confirm button { display: block; margin: 10px 0 0; display: block; width: 100%; }
@@ -103,41 +112,50 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
   }
 }
 
-.ui-grid { overflow: hidden; border: 1px solid #E0E0E0; }
-.ui-grid-scroller { overflow-x: hidden; overflow-y: auto; overflow-scrolling: touch; -webkit-overflow-scrolling: touch; }
+.ui-grid { overflow: hidden; border: 1px solid #F0F0F0; box-shadow: 0 2px 20px rgba(0,0,0,0.05); position: relative; }
+.ui-grid-scroller { overflow-x: hidden; overflow-y: auto; overflow-scrolling: touch; background-color: white; margin-top: 65px; }
 .ui-grid table { width: 100%; table-layout: fixed; }
-.ui-grid .wrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; padding: 5px 10px; font-size: 12px; }
+.ui-grid .wrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; padding: 3px 10px 0; }
 .ui-grid-empty { height: 0 !important; }
 .ui-grid-empty td { height: 0 !important; }
-.ui-grid-noscroll { overflow: hidden !important; }
+.ui-grid .emptyfill { display: none; }
+.ui-grid-header { position: absolute; z-index: 2; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+.ui-grid-header tr > th:first-child { border-radius: 4px 0 0 0; }
+.ui-grid-header tr > th:last-child { border-radius: 0 4px 0 0; }
+.ui-grid-noscroll .ui-grid-scroller { overflow: hidden !important; }
+.ui-grid-noscroll .emptyfill { display: table-row; }
 .ui-grid td, .ui-grid th { overflow: hidden; cursor: default; border-left: 1px solid #E0E0E0; }
 .ui-grid th .fa { margin-right: 5px; font-size: 11px; }
-.ui-grid td { height: 32px; }
+.ui-grid td { height: 30px; font-size: 12px; vertical-align: middle; }
 .ui-grid td:first-child, .ui-grid th:first-child { border-left: 0; }
-.ui-grid tbody tr:nth-child(odd) { background-color: #F9F9F9; }
-.ui-grid tbody tr { border-top: 1px solid #E0E0E0; }
+.ui-grid tbody tr { border-top: 1px solid #E0E0E0; background-color: white; }
+.ui-grid tbody tr:nth-child(odd) { background-color: #FDFDFD; }
 .ui-grid tbody tr:first-child { border-top: 0; }
-.ui-grid th input { width: 100%; font-size: 10px; color: black; outline: 0; border: 0; background-color: transparent; padding: 0 5px; margin: 0; text-align: center; }
+.ui-grid th input[type="text"] { width: 100%; font-size: 10px; color: black; outline: 0; border: 0; background-color: transparent; padding: 0 5px; margin: 0; text-align: center; }
 .ui-grid-row:hover { background-color: #FFF9D1 !important; }
-.ui-grid-columnname { border-bottom: 1px solid #E0E0E0; height: 34px; background: linear-gradient(white,#F0F0F0); }
+.ui-grid-columnname { border-bottom: 1px solid #E0E0E0; height: 40px; background: linear-gradient(white,#F8F8F8); }
 .ui-grid-columnsort { cursor: pointer !important; }
 .ui-grid-columnfilter { background-color: white; padding: 0 5px; height: 24px; border-bottom: 1px solid #D0D0D0; }
-.ui-grid-selected { background-color: #FFE180 !important; }
+.ui-grid-selected { background-color: #FBF0CA !important; }
 .ui-grid-columnfilterempty { cursor: not-allowed !important; background: repeating-linear-gradient(45deg,#FFFFFF,#FFFFFF 10px,#F9F9F9 10px,#F9F9F9 20px); }
-.ui-grid-meta { float: right; font-size: 14px; margin: 23px 0 0 0; font-weight: bold; }
-.ui-grid-pages { margin: 23px 0 0 15px; float: left; font-size: 14px; }
-.ui-grid-pagination { margin: 15px 0 0 0; float: left; }
-.ui-grid-pagination button { width: 35px; height: 35px; text-align: center; background-color: white; border: 1px solid #E0E0E0; outline: 0; vertical-align: top; font-size: 14px; }
+.ui-grid-meta { float: right; font-size: 12px; margin: 22px 0 0 0; font-weight: bold; }
+.ui-grid-pages { margin: 22px 0 0 15px; float: left; font-size: 12px; }
+.ui-grid-pagination { margin: 15px 0 0 0; float: left; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.ui-grid-pagination button { width: 30px; height: 30px; text-align: center; background-color: white; border: 1px solid #E0E0E0; outline: 0; vertical-align: top; font-size: 14px; border-radius: 0; padding: 0; }
 .ui-grid-pagination button:first-child { border-radius: 3px 0 0 3px; border-right: 0; }
 .ui-grid-pagination button:last-child { border-radius: 0 3px 3px 0; border-left: 0; }
 .ui-grid-pagination button:hover { background-color: #F0F0F0 }
-.ui-grid-pagination .page { width: 50px; position: relative; display: inline-block; height: 35px; background-color: white; vertical-align: top; border: 1px solid #E0E0E0; border-left: 0; border-right: 0; padding: 7px 0 0 0; }
-.ui-grid-pagination .page input { width: 100%; text-align: center; border: 0; background-color: white; outline: 0; font-size: 14px; font-weight: bold; }
+.ui-grid-pagination .page { width: 50px; position: relative; display: inline-block; height: 30px; background-color: white; vertical-align: top; border: 1px solid #E0E0E0; border-left: 0; border-right: 0; padding: 4px 0 0 0; }
+.ui-grid-pagination .page input { width: 100%; text-align: center; border: 0; background-color: white; outline: 0; font-size: 12px; font-weight: bold; }
 .ui-grid-pagination button:disabled { color: silver; cursor: not-allowed; background-color: white; }
-.ui-grid-container { margin: 10px 0 20px; }
-
+.ui-grid-container {}
+.ui-grid-noscroll .ui-grid-scrollbar { display: none; }
 .ui-grid-row button { border: 0; background-color: white; color: black; border: 1px solid #E0E0E0; margin: 0 3px; border-radius: 3px; height: 18px; width: 18px; font-size: 11px; padding: 0; text-align: center; }
 .ui-grid-row button:hover { background-color: #E0E0E0; }
+.ui-grid-row button.btn-remove { background-color: #FF6068; color: white; }
+.ui-grid-checked { background-color: #FFFCE8 !important; }
+
+.left input[type="text"] { text-align: left !important; }
 
 .badge { font-size: 9px; padding: 0 6px; border-radius: 4px; background-color: #F0F0F0; line-height: 12px; vertical-align: middle; margin-top: -2px; position: relative; display: inline-block; }
 .badge-blue { background-color: #4CC1E9; color: white; }
@@ -153,7 +171,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .center { text-align: center; }
 .right { text-align: right; }
 
-.ui-inlineform-container { position: absolute; width: 100%; }
+.ui-inlineform-container { position: absolute; width: 100%; z-index: 10; }
 .ui-inlineform { background-color: white; border-radius: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transform: translate(0, 10px); transition: all 0.2s; opacity: 0; border: 1px solid #E0E0E0; border-top: 0; }
 .ui-inlineform-animate { transform: skewX(0deg); opacity: 1; }
 .ui-inlineform .padding { padding: 15px; }
@@ -191,20 +209,21 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-photoupload img { margin-left: auto; margin-right: auto; border-radius: 100px; border: 2px solid #E0E0E0; }
 
 .ui-dropdowncheckbox-container { display: block; text-align: left; position: relative; font-size:14px; }
-.ui-dropdowncheckbox { border: 1px solid #E0E0E0; padding: 0 10px; border-radius: 2px; outline: 0; overflow: hidden; width: 100%; background-color: white; height: 30px; cursor: pointer; }
-.ui-dropdowncheckbox div { padding: 4px 0 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: black; }
-.ui-dropdowncheckbox .fa { float: right; width: 20px; text-align: right; margin: 6px 0 0 0; }
+.ui-dropdowncheckbox { border: 1px solid #E0E0E0; padding: 0 10px; border-radius: 2px; outline: 0; overflow: hidden; width: 100%; background-color: white; height: 32px; cursor: pointer; }
+.ui-dropdowncheckbox div { padding: 5px 0 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: black; }
+.ui-dropdowncheckbox .fa { float: right; width: 22px; text-align: right; margin: 0; padding: 8px 2px 8px 0; border-left: 1px solid #E0E0E0; color: black; }
 .ui-dropdowncheckbox-label .fa { width: 14px; }
 .ui-dropdowncheckbox-label { margin-bottom: 5px; font-size: 12px; color: gray; }
 .ui-dropdowncheckbox-required:before { color: red; content: '***'; margin-right: 5px; }
 .ui-dropdowncheckbox-values { position: absolute; width: 100%; z-index: 2; background-color: white; border: 1px solid #E0E0E0; padding: 5px 10px; border-radius: 0 0 3px 3px; line-height: 18px; margin-top: -1px; box-shadow: 0 3px 5px rgba(0,0,0,0.08); overflow: auto; max-height: 250px; font-size: 12px; }
 .ui-dropdowncheckbox-item { cursor: pointer; padding-bottom: 2px; }
-.ui-dropdowncheckbox-item span { cursor: pointer; vertical-align: middle; }
-.ui-dropdowncheckbox-item div { position: relative; display: inline-block; width: 16px; height: 16px; border: 2px solid #E0E0E0; margin-right: 6px; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 3px; }
+.ui-dropdowncheckbox-item span { cursor: pointer; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; margin-left: 20px; }
+.ui-dropdowncheckbox-item div { float: left; width: 16px; height: 16px; border: 2px solid #E0E0E0; margin: 1px 6px 0 0; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 3px; }
 .ui-dropdowncheckbox-item .fa { display: none; }
 .ui-dropdowncheckbox-checked div { background-color: #017CCA; border-color: #017CCA; }
 .ui-dropdowncheckbox-checked .fa { display: block !important; }
 .ui-dropdowncheckbox-invalid { border: 1px solid #E1A1A1 !important; background-color: #FFF3F3 !important; }
+.ui-dropdowncheckbox-invalid .fa { border-left-color: #E1A1A1 !important; }
 .ui-dropdowncheckbox-values-empty { text-align: center; padding: 10px 0; color: #A0A0A0; }
 
 .ui-disabled .ui-dropdowncheckbox-selected { color: #A0A0A0; cursor: not-allowed; }
@@ -259,23 +278,42 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-range input[type=range]:focus::-ms-fill-lower { background: #E0E0E0; }
 .ui-range input[type=range]:focus::-ms-fill-upper { background: #E0E0E0; }
 
-.ui-calendar { font-size: 12px; position: absolute; background-color: white; width: 250px; height: 270px; border: 1px solid #E0E0E0; left: 100px; top: 100px; padding: 10px; border-radius: 2px; z-index: 100; color: gray; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
-.ui-calendar table { width: 100%; margin-bottom: 10px; }
-.ui-calendar table td { padding: 5px 0; text-align: center; vertical-align: middle; }
-.ui-calendar table th { padding: 8px 0 5px; text-align: center; width: 14%; border-top: 1px solid #E0E0E0; vertical-align: middle; }
-.ui-calendar-disabled { color: silver; }
+.ui-calendar { font-size: 12px; position: absolute; background-color: white; max-width: 250px; width: 100%; border: 1px solid #E0E0E0; left: 100px; top: 100px; border-radius: 2px; z-index: 100; color: gray; box-shadow: 0 5px 25px rgba(0,0,0,0.1); opacity: 0; transform: scale(0.6); transition: all 0.2s; }
+.ui-calendar-visible { transform: scale(1); opacity: 1; }
+.ui-calendar-table { padding: 10px; }
+.ui-calendar table { width: 100%; margin: 0; table-layout: fixed; }
+.ui-calendar table td { text-align: center; vertical-align: middle; font-size: 11px; color: #505050; }
+.ui-calendar table td div { margin: 2px; padding: 5px 0; border-radius: 4px; }
+.ui-calendar table th { padding: 8px 0 5px; text-align: center; width: 14%; vertical-align: middle; font-weight: bold; font-size: 12px; color: black; }
+.ui-calendar-disabled { color: silver !important; cursor: pointer; }
 .ui-calendar-day {}
-.ui-calendar-day-today { background-color: #F0F0F0; }
-.ui-calendar-selected { background-color: #F8F7DA; font-weight: bold; }
-.ui-calendar-day:hover { background-color: #F8F7DA; cursor: pointer; }
+.ui-calendar-day-today div { background-color: #F0F0F0; font-weight: bold; }
+.ui-calendar-selected div { background-color: #F8F7DA; font-weight: bold; }
+.ui-calendar-day:hover div { background-color: #F8F7DA; cursor: pointer; }
 .ui-calendar button { background-color: white; border: 0; outline: 0; border: 1px solid #D0D0D0; border-radius: 3px; width: 24px; height: 21px; font-size: 11px; line-height: 0; text-align: center; padding: 0; vertical-align: middle; cursor: pointer; }
-.ui-calendar-header { height: 30px; }
-.ui-calendar-header-info { text-align: center; width: 168px; float: left; font-size: 14px; margin: 2px 0 0 10px; font-weight: bold; }
-.ui-calendar-header-prev { float: left; }
-.ui-calendar-header-next { float: right; }
+.ui-calendar button:hover { background-color: #F0F0F0; }
+.ui-calendar-header { height: 40px; border-bottom: 1px solid #E0E0E0; padding: 0 10px 0; }
+.ui-calendar-header-info { text-align: center; width: 168px; float: left; font-size: 14px; margin: 8px 0 0 7px; font-weight: bold; color: black; }
+.ui-calendar-header-prev { float: left; margin-top: 9px; }
+.ui-calendar-header-next { float: right; margin-top: 9px; }
+.ui-calendar-today { padding: 8px 10px; border-top: 1px solid #E0E0E0; background-color: #F0F0F0; }
+.ui-calendar-today .fa { margin-right: 6px; }
+.ui-calendar-header select { background-color: white; border: 1px solid #E0E0E0; height: 23px; outline: 0; cursor: pointer; appearance: none; padding: 0 10px; border-radius: 3px; }
+.ui-calendar-today a:first-child { float: right; color: #B7292E; font-weight: bold; }
 
 .ui-loading { position: fixed; width: 100%; height: 100%; background-color: rgba(255,255,255,0.8); left: 0; top: 0; z-index: 1000; }
 .ui-loading div { animation: loading 333ms alternate infinite cubic-bezier(0.2,0,0.5,1); width: 50px; height: 50px; background-color: black; position: absolute; left: 50%; top: 50%; border-radius: 100px; margin: -25px 0 0 -25px; }
+
+.ui-snackbar { position: fixed; bottom: 0; left: 0; width: 100%; transition: all 0.3s; transform: translate(0,70px); font-size: 14px; z-index: 1000;}
+.ui-snackbar > div { margin: 0 auto; width: 80%; background-color: #303030; border-radius: 3px 3px 0 0; box-shadow: 0 -15px 25px rgba(0,0,0,0.08); }
+.ui-snackbar-dismiss { float: right; width: 100px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; text-align: center; text-decoration: none; color: #f44336; padding: 16px 0 0 0; text-transform: uppercase; background-color: #202020; border-radius: 0 3px 0 0; height: 50px; }
+.ui-snackbar-dismiss:hover { background-color: #505050; text-decoration: none; }
+.ui-snackbar-body { margin-right: 100px; padding: 15px; color: white; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.ui-snackbar-body .fa { margin-right: 5px; }
+.ui-snackbar-visible { transform: translate(0, 0); }
+.ui-snackbar-icon { float: left; font-size: 20px; border-right: 1px solid #505050; margin-right: 10px !important; padding: 0 10px 0 0; }
+.ui-snackbar-icon.fa-times-circle { color: red; }
+.ui-snackbar-icon.fa-check-circle { color: #60CD4F; }
 
 @keyframes loading {
   to {

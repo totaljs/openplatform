@@ -54,7 +54,7 @@
 			SET('users.usernotify.response', response);
 
 			if (response.success) {
-				SETTER('notify', 'append', '@(Done, all users ({0}x) have been notified.)'.format(response.value));
+				SETTER('snackbar', 'success', '@(Done, all users ({0}x) have been notified.)'.format(response.value));
 				EXEC('success');
 				component.hide();
 			}

@@ -270,7 +270,7 @@ function userform_submit(component) {
 		SET('users.form.response', response);
 
 		if (response.success) {
-			SETTER('notify', 'append', '@(User profile has been saved successfully.)');
+			SETTER('snackbar', 'success', '@(User profile has been saved successfully.)');
 			EXEC('success');
 			EXEC('Users/refresh');
 			component.hide();

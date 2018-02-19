@@ -94,7 +94,7 @@ function appform_submit(component) {
 		SETTER('loading', 'hide', 1000);
 		SET('apps.form.response', response);
 		if (response.success) {
-			SETTER('notify', 'append', '@(Application has been saved successfully.)');
+			SETTER('snackbar', 'success', '@(Application has been saved successfully.)');
 			EXEC('Apps/refresh');
 			EXEC('Users/refresh');
 			component.hide();

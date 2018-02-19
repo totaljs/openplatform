@@ -101,7 +101,7 @@
 			SET('users.userapps.response', response);
 
 			if (response.success) {
-				SETTER('notify', 'append', '@(Done, all users ({0}x) have been updated.)'.format(response.value));
+				SETTER('snackbar', 'success', '@(Done, all users ({0}x) have been updated.)'.format(response.value));
 				EXEC('success');
 				EXEC('Users/refresh');
 				component.hide();

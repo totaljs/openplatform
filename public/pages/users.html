@@ -98,7 +98,7 @@
 				AJAX('DELETE /api/users/{0}/'.format(obj.id), function(response) {
 					SETTER('loading', 'hide', 1000);
 					if (response.success) {
-						SETTER('notify', 'append', '@(User has been removed successfully.)');
+						SETTER('snackbar', 'success', '@(User has been removed successfully.)');
 						self.refresh();
 					}
 				});

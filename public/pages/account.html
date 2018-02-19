@@ -19,7 +19,7 @@
 						<div data-jc="checkbox" data-jc-path="account.notifications">@(Enable notifications)</div>
 						<div data-jc="checkbox" data-jc-path="account.notificationsemail">@(Enable email notifications)</div>
 						<div data-jc="checkbox" data-jc-path="account.notificationsphone">@(Enable phone notifications)</div>
-						<div data-jc="checkbox" data-jc-path="account.changepassword" class="b red">@(Change login credentials)</div>
+						<div data-jc="checkbox" data-jc-path="account.changepassword" class="b red">@(Change credentials)</div>
 					</div>
 					<div data-b="account.changepassword" data-b-visible="value === true" class="hidden bg-smoke">
 						<div class="padding">
@@ -45,7 +45,7 @@
 					<div class="padding">
 						<div data-jc="error" data-jc-path="account.response" class="hidde m"></div>
 						<div data-jc="validation" data-jc-path="account">
-							<button name="submit" class="button exec" data-exec="Account/submit" disabled="disabled">@(Submit)</button>
+							<button name="submit" class="button exec b" data-exec="Account/submit" disabled="disabled">@(Save)</button>
 						</div>
 					</div>
 				</div>

@@ -18,7 +18,7 @@ COMPONENT('checkbox', function(self, config) {
 				self.tclass('ui-disabled', value);
 				break;
 			case 'checkicon':
-				self.find('i').rclass().aclass('fa fa-' + value);
+				self.find('i').rclass2('fa-').aclass('fa-' + value);
 				break;
 		}
 	};
@@ -26,6 +26,7 @@ COMPONENT('checkbox', function(self, config) {
 	self.make = function() {
 		self.aclass('ui-checkbox');
 		self.html('<div><i class="fa fa-{2}"></i></div><span{1}>{0}</span>'.format(config.label || self.html(), config.required ? ' class="ui-checkbox-label-required"' : '', config.checkicon || 'check'));
+		config.disabled && self.aclass('ui-disabled');
 		self.event('click', function() {
 			if (config.disabled)
 				return;
@@ -35,13 +36,13 @@ COMPONENT('checkbox', function(self, config) {
 	};
 
 	self.setter = function(value) {
-		self.toggle('ui-checkbox-checked', value ? true : false);
+		self.tclass('ui-checkbox-checked', !!value);
 	};
 });
 
 COMPONENT('dropdown', function(self, config) {
 
-	var select, container, condition, content, datasource = null;
+	var select, container, condition, content = null;
 	var render = '';
 
 	self.validate = function(value) {
@@ -94,7 +95,7 @@ COMPONENT('dropdown', function(self, config) {
 
 				self.bind('', items);
 				break;
-			case 'condition':
+			case 'if':
 				condition = value ? FN(value) : null;
 				break;
 			case 'required':
@@ -102,8 +103,7 @@ COMPONENT('dropdown', function(self, config) {
 				self.state(1, 1);
 				break;
 			case 'datasource':
-				datasource && self.unwatch(value, self.bind);
-				self.watch(value, self.bind, true);
+				self.datasource(value, self.bind);
 				break;
 			case 'label':
 				content = value;
@@ -136,10 +136,8 @@ COMPONENT('dropdown', function(self, config) {
 
 		for (var i = 0, length = arr.length; i < length; i++) {
 			var item = arr[i];
-
 			if (condition && !condition(item))
 				continue;
-
 			if (item.length)
 				builder.push(template.format(item, value === item ? ' selected="selected"' : '', item));
 			else
@@ -151,7 +149,7 @@ COMPONENT('dropdown', function(self, config) {
 	};
 
 	self.redraw = function() {
-		var html = '<div class="ui-dropdown"><span class="fa fa-sort"></span><select data-jc-bind="">{0}</select></div>'.format(render);
+		var html = '<div class="ui-dropdown"><select data-jc-bind="">{0}</select></div>'.format(render);
 		var builder = [];
 		var label = content || config.label;
 		if (label) {
@@ -167,11 +165,11 @@ COMPONENT('dropdown', function(self, config) {
 	};
 
 	self.make = function() {
-		config.condition && self.reconfigure('condition:' + config.condition);
 		self.type = config.type;
 		content = self.html();
 		self.aclass('ui-dropdown-container');
 		self.redraw();
+		config.if && (condition = FN(config.if));
 		config.items && self.reconfigure({ items: config.items });
 		config.datasource && self.reconfigure('datasource:' + config.datasource);
 	};
@@ -206,6 +204,9 @@ COMPONENT('textbox', function(self, config) {
 
 		EMIT('reflow', self.name);
 
+		if (config.minlength && value.length < config.minlength)
+			return false;
+
 		switch (self.type) {
 			case 'email':
 				return value.isEmail();
@@ -216,7 +217,7 @@ COMPONENT('textbox', function(self, config) {
 				return value > 0;
 		}
 
-		return config.validation ? self.evaluate(value, config.validation, true) ? true : false : value.length > 0;
+		return config.validation ? !!self.evaluate(value, config.validation, true) : value.length > 0;
 	};
 
 	self.make = function() {
@@ -255,7 +256,12 @@ COMPONENT('textbox', function(self, config) {
 				self.$stateremoved = false;
 				$(this).rclass('fa-times').aclass('fa-search');
 				self.set('');
-			}
+			} else if (config.icon2click)
+				EXEC(config.icon2click, self);
+		});
+
+		self.event('focus', 'input', function() {
+			config.autocomplete && EXEC(config.autocomplete, self);
 		});
 
 		self.redraw();
@@ -265,12 +271,16 @@ COMPONENT('textbox', function(self, config) {
 
 		var attrs = [];
 		var builder = [];
-		var tmp;
+		var tmp = 'text';
 
-		if (config.type === 'password')
-			tmp = 'password';
-		else
-			tmp = 'text';
+		switch (config.type) {
+			case 'password':
+				tmp = config.type;
+				break;
+			case 'number':
+				isMOBILE && (tmp = 'tel');
+				break;
+		}
 
 		self.tclass('ui-disabled', config.disabled === true);
 		self.type = config.type;
@@ -285,9 +295,9 @@ COMPONENT('textbox', function(self, config) {
 
 		config.autofill && attrs.attr('name', self.path.replace(/\./g, '_'));
 		config.align && attrs.attr('class', 'ui-' + config.align);
-		config.autofocus && attrs.attr('autofocus');
+		!isMOBILE && config.autofocus && attrs.attr('autofocus');
 
-		builder.push('<input {0} />'.format(attrs.join(' ')));
+		builder.push('<div class="ui-textbox-input"><input {0} /></div>'.format(attrs.join(' ')));
 
 		var icon = config.icon;
 		var icon2 = config.icon2;
@@ -295,17 +305,17 @@ COMPONENT('textbox', function(self, config) {
 		if (!icon2 && self.type === 'date')
 			icon2 = 'calendar';
 		else if (self.type === 'search') {
-			icon2 = 'search ui-textbox-control-icon';
+			icon2 = 'search';
 			self.setter2 = function(value) {
 				if (self.$stateremoved && !value)
 					return;
-				self.$stateremoved = value ? false : true;
-				self.find('.ui-textbox-control-icon').tclass('fa-times', value ? true : false).tclass('fa-search', value ? false : true);
+				self.$stateremoved = !value;
+				self.find('.ui-textbox-control-icon').tclass('fa-times', !!value).tclass('fa-search', !value);
 			};
 		}
 
-		icon2 && builder.push('<div><span class="fa fa-{0}"></span></div>'.format(icon2));
-		config.increment && !icon2 && builder.push('<div><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
+		icon2 && builder.push('<div class="ui-textbox-control"><span class="fa fa-{0} ui-textbox-control-icon"></span></div>'.format(icon2));
+		config.increment && !icon2 && builder.push('<div class="ui-textbox-control"><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
 
 		if (config.label)
 			content = config.label;
@@ -393,9 +403,7 @@ COMPONENT('textbox', function(self, config) {
 	};
 
 	self.formatter(function(path, value) {
-		if (config.type === 'date')
-			return value ? value.format(config.format || 'yyyy-MM-dd') : value;
-		return value;
+		return config.type === 'date' ? (value ? value.format(config.format || 'yyyy-MM-dd') : value) : value;
 	});
 
 	self.state = function(type) {
@@ -406,9 +414,10 @@ COMPONENT('textbox', function(self, config) {
 			return;
 		self.$oldstate = invalid;
 		container.tclass('ui-textbox-invalid', invalid);
-		config.error && self.find('.ui-box-helper').tclass('ui-box-helper-show', invalid);
+		config.error && self.find('.ui-textbox-helper').tclass('ui-textbox-helper-show', invalid);
 	};
 });
+
 
 COMPONENT('binder', function(self) {
 
@@ -421,18 +430,18 @@ COMPONENT('binder', function(self) {
 		self.watch('*', self.autobind);
 		self.scan();
 
-		self.on('component', function() {
+		var fn = function() {
 			setTimeout2(self.id, self.scan, 200);
-		});
+		};
 
-		self.on('destroy', function() {
-			setTimeout2(self.id, self.scan, 200);
-		});
+		self.on('import', fn);
+		self.on('component', fn);
+		self.on('destroy', fn);
 	};
 
 	self.autobind = function(path) {
-		var mapper = keys[path];
 
+		var mapper = keys[path];
 		if (!mapper)
 			return;
 
@@ -442,13 +451,14 @@ COMPONENT('binder', function(self) {
 			var item = mapper[i];
 			var value = GET(item.path);
 			var element = item.selector ? item.element.find(item.selector) : item.element;
+
 			template.value = value;
 			item.classes && classes(element, item.classes(value));
 
 			var is = true;
 
 			if (item.visible) {
-				is = item.visible(value) ? true : false;
+				is = !!item.visible(value);
 				element.tclass('hidden', !is);
 			}
 
@@ -456,6 +466,8 @@ COMPONENT('binder', function(self) {
 				item.html && element.html(item.Ta ? item.html(template) : item.html(value));
 				item.disable && element.prop('disabled', item.disable(value));
 				item.src && element.attr('src', item.src(value));
+				item.href && element.attr('href', item.href(value));
+				item.exec && EXEC(item.exec, element);
 			}
 		}
 	};
@@ -463,7 +475,10 @@ COMPONENT('binder', function(self) {
 	function classes(element, val) {
 		var add = '';
 		var rem = '';
-		val.split(' ').forEach(function(item) {
+		var classes = val.split(' ');
+
+		for (var i = 0; i < classes.length; i++) {
+			var item = classes[i];
 			switch (item.substring(0, 1)) {
 				case '+':
 					add += (add ? ' ' : '') + item.substring(1);
@@ -475,13 +490,13 @@ COMPONENT('binder', function(self) {
 					add += (add ? ' ' : '') + item;
 					break;
 			}
-		});
+		}
 		rem && element.rclass(rem);
 		add && element.aclass(add);
 	}
 
 	function decode(val) {
-		return val.replace(/\&\#39;/g, '\'');
+		return val.replace(/&#39;/g, '\'');
 	}
 
 	self.prepare = function(code) {
@@ -489,12 +504,28 @@ COMPONENT('binder', function(self) {
 	};
 
 	self.scan = function() {
+
 		keys = {};
 		keys_unique = {};
+
+		var keys_news = {};
+
 		self.find('[data-b]').each(function() {
 
 			var el = $(this);
 			var path = el.attrd('b').replace('%', 'jctmp.');
+
+			if (path.indexOf('?') !== -1) {
+				var scope = el.closest('[data-jc-scope]');
+				if (scope) {
+					var data = scope.get(0).$scopedata;
+					if (data == null)
+						return;
+					path = path.replace(/\?/g, data.path);
+				} else
+					return;
+			}
+
 			var arr = path.split('.');
 			var p = '';
 
@@ -504,6 +535,8 @@ COMPONENT('binder', function(self) {
 			var disable = el.attrd('b-disable');
 			var selector = el.attrd('b-selector');
 			var src = el.attrd('b-src');
+			var href = el.attrd('b-href');
+			var exec = el.attrd('b-exec');
 			var obj = el.data('data-b');
 
 			keys_unique[path] = true;
@@ -517,8 +550,10 @@ COMPONENT('binder', function(self) {
 				obj.disable = disable ? self.prepare(disable) : undefined;
 				obj.selector = selector ? selector : null;
 				obj.src = src ? self.prepare(src) : undefined;
+				obj.href = href ? self.prepare(href) : undefined;
+				obj.exec = exec;
 
-				if (el.attr('data-b-template') === 'true') {
+				if (el.attrd('b-template') === 'true') {
 					var tmp = el.find('script[type="text/html"]');
 					var str = '';
 
@@ -536,6 +571,7 @@ COMPONENT('binder', function(self) {
 					obj.html = html ? self.prepare(html) : undefined;
 
 				el.data('data-b', obj);
+				keys_news[path] = true;
 			}
 
 			for (var i = 0, length = arr.length; i < length; i++) {
@@ -547,9 +583,9 @@ COMPONENT('binder', function(self) {
 			}
 		});
 
-		Object.keys(keys_unique).forEach(function(key) {
-			self.autobind(key, GET(key));
-		});
+		var nk = Object.keys(keys_news);
+		for (var i = 0; i < nk.length; i++)
+			self.autobind(nk[i]);
 
 		return self;
 	};
@@ -561,10 +597,32 @@ COMPONENT('exec', function(self, config) {
 	self.make = function() {
 		self.event('click', config.selector || '.exec', function(e) {
 			var el = $(this);
-			var attr = el.attr('data-exec');
-			var path = el.attr('data-path');
+
+			var attr = el.attrd('exec');
+			var path = el.attrd('path');
+			var href = el.attrd('href');
+
+			if (el.attrd('prevent') === 'true') {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+
 			attr && EXEC(attr, el, e);
-			path && SET(path, new Function('return ' + el.attr('data-value'))());
+			href && NAV.redirect(href);
+
+			if (path) {
+				var val = el.attrd('value');
+				if (val == null) {
+					var a = new Function('return ' + el.attrd('value-a'))();
+					var b = new Function('return ' + el.attrd('value-b'))();
+					var v = GET(path);
+					if (v === a)
+						SET(path, b, true);
+					else
+						SET(path, a, true);
+				} else
+					SET(path, new Function('return ' + val)(), true);
+			}
 		});
 	};
 });
@@ -641,10 +699,11 @@ COMPONENT('page', function(self, config) {
 	};
 });
 
-COMPONENT('validation', function(self, config) {
+COMPONENT('validation', 'delay:100;flags:visible', function(self, config) {
 
 	var path, elements = null;
 	var def = 'button[name="submit"]';
+	var flags = null;
 
 	self.readonly();
 
@@ -657,24 +716,33 @@ COMPONENT('validation', function(self, config) {
 	};
 
 	self.configure = function(key, value, init) {
-		if (init)
-			return;
 		switch (key) {
 			case 'selector':
-				elements = self.find(value || def);
+				if (!init)
+					elements = self.find(value || def);
+				break;
+			case 'flags':
+				if (value) {
+					flags = value.split(',');
+					for (var i = 0; i < flags.length; i++)
+						flags[i] = '@' + flags[i];
+				} else
+					flags = null;
 				break;
 		}
 	};
 
 	self.state = function() {
-		var disabled = MAIN.disabled(path);
-		if (!disabled && config.if)
-			disabled = !EVALUATE(self.path, config.if);
-		elements.prop('disabled', disabled);
+		setTimeout2(self.id, function() {
+			var disabled = DISABLED(path, flags);
+			if (!disabled && config.if)
+				disabled = !EVALUATE(self.path, config.if);
+			elements.prop('disabled', disabled);
+		}, config.delay);
 	};
 });
 
-COMPONENT('websocket', 'reconnect:2000', function(self, config) {
+COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 
 	var ws, url;
 	var queue = [];
@@ -684,8 +752,8 @@ COMPONENT('websocket', 'reconnect:2000', function(self, config) {
 	self.readonly();
 
 	self.make = function() {
-		url = config.url || '';
-		if (!url.match(/^(ws|wss)\:\/\//))
+		url = (config.url || '').env(true);
+		if (!url.match(/^(ws|wss):\/\//))
 			url = (location.protocol.length === 6 ? 'wss' : 'ws') + '://' + location.host + (url.substring(0, 1) !== '/' ? '/' : '') + url;
 		setTimeout(self.connect, 500);
 		self.destroy = self.close;
@@ -753,7 +821,7 @@ COMPONENT('websocket', 'reconnect:2000', function(self, config) {
 	self.connect = function() {
 		ws && self.close();
 		setTimeout2(self.id, function() {
-			ws = new WebSocket(url);
+			ws = new WebSocket(url.env(true));
 			ws.onopen = onOpen;
 			ws.onclose = onClose;
 			ws.onmessage = onMessage;
@@ -769,11 +837,12 @@ COMPONENT('form', function(self, config) {
 	var csspos = {};
 
 	if (!W.$$form) {
+
 		W.$$form_level = W.$$form_level || 1;
 		W.$$form = true;
+
 		$(document).on('click', '.ui-form-button-close', function() {
 			SET($(this).attr('data-path'), '');
-			W.$$form_level--;
 		});
 
 		$(window).on('resize', function() {
@@ -840,11 +909,11 @@ COMPONENT('form', function(self, config) {
 		header = self.virtualize({ title: '.ui-form-title > span', icon: '.ui-form-title > i' });
 
 		self.event('scroll', function() {
+			EMIT('scroll', self.name);
 			EMIT('reflow', self.name);
 		});
 
 		self.find('button').on('click', function() {
-			W.$$form_level--;
 			switch (this.name) {
 				case 'submit':
 					self.submit(self.hide);
@@ -856,7 +925,9 @@ COMPONENT('form', function(self, config) {
 		});
 
 		config.enter && self.event('keydown', 'input', function(e) {
-			e.which === 13 && !self.find('button[name="submit"]').get(0).disabled && self.submit(self.hide);
+			e.which === 13 && !self.find('button[name="submit"]').get(0).disabled && setTimeout(function() {
+				self.submit(self.hide);
+			}, 800);
 		});
 	};
 
@@ -880,41 +951,48 @@ COMPONENT('form', function(self, config) {
 	self.setter = function(value) {
 
 		setTimeout2('noscroll', function() {
-			$('html').tclass('noscroll', $('.ui-form-container').not('.hidden').length ? true : false);
+			$('html').tclass('noscroll', !!$('.ui-form-container').not('.hidden').length);
 		}, 50);
 
 		var isHidden = value !== config.if;
 
-		self.toggle('hidden', isHidden);
+		if (self.hclass('hidden') === isHidden)
+			return;
 
 		setTimeout2('formreflow', function() {
 			EMIT('reflow', self.name);
 		}, 10);
 
 		if (isHidden) {
+			self.aclass('hidden');
 			self.release(true);
 			self.find('.ui-form').rclass('ui-form-animate');
+			W.$$form_level--;
 			return;
-		}
-
-		self.resize();
-		self.release(false);
-
-		config.reload && EXEC(config.reload, self);
-
-		if (!isMOBILE && config.autofocus) {
-			var el = self.find(config.autofocus === true ? 'input[type="text"],select,textarea' : config.autofocus);
-			el.length && el.eq(0).focus();
 		}
 
 		if (W.$$form_level < 1)
 			W.$$form_level = 1;
 
 		W.$$form_level++;
+
 		self.css('z-index', W.$$form_level * 10);
 		self.element.scrollTop(0);
+		self.rclass('hidden');
+
+		self.resize();
+		self.release(false);
+
+		config.reload && EXEC(config.reload, self);
+		config.default && DEFAULT(config.default, true);
+
+		if (!isMOBILE && config.autofocus) {
+			var el = self.find(config.autofocus === true ? 'input[type="text"],select,textarea' : config.autofocus);
+			el.length && el.eq(0).focus();
+		}
 
 		setTimeout(function() {
+			self.element.scrollTop(0);
 			self.find('.ui-form').aclass('ui-form-animate');
 		}, 300);
 
@@ -937,7 +1015,7 @@ COMPONENT('confirm', function(self) {
 		self.aclass('ui-confirm hidden');
 
 		self.event('click', 'button', function() {
-			self.hide($(this).attr('data-index').parseInt());
+			self.hide($(this).attrd('index').parseInt());
 		});
 
 		self.event('click', function(e) {
@@ -962,14 +1040,21 @@ COMPONENT('confirm', function(self) {
 		});
 	};
 
-	self.confirm = function(message, buttons, fn) {
+	self.show = self.confirm = function(message, buttons, fn) {
 		self.callback = fn;
 
 		var builder = [];
 
-		buttons.forEach(function(item, index) {
-			builder.push('<button data-index="{1}">{0}</button>'.format(item, index));
-		});
+		for (var i = 0; i < buttons.length; i++) {
+			var item = buttons[i];
+			var icon = item.match(/"[a-z0-9-]+"/);
+			if (icon) {
+				item = item.replace(icon, '').trim();
+				icon = '<i class="fa fa-{0}"></i>'.format(icon.toString().replace(/"/g, ''));
+			} else
+				icon = '';
+			builder.push('<button data-index="{1}">{2}{0}</button>'.format(item, i, icon));
+		}
 
 		self.content('ui-confirm-warning', '<div class="ui-confirm-message">{0}</div>{1}'.format(message.replace(/\n/g, '<br />'), builder.join('')));
 	};
@@ -977,18 +1062,20 @@ COMPONENT('confirm', function(self) {
 	self.hide = function(index) {
 		self.callback && self.callback(index);
 		self.rclass('ui-confirm-visible');
+		visible = false;
 		setTimeout2(self.id, function() {
-			visible = false;
+			$('html').rclass('noscrollconfirm');
 			self.aclass('hidden');
 		}, 1000);
 	};
 
 	self.content = function(cls, text) {
+		$('html').aclass('noscrollconfirm');
 		!is && self.html('<div><div class="ui-confirm-body"></div></div>');
 		self.find('.ui-confirm-body').empty().append(text);
 		self.rclass('hidden');
+		visible = true;
 		setTimeout2(self.id, function() {
-			visible = true;
 			self.aclass('ui-confirm-visible');
 		}, 5);
 	};
@@ -1021,31 +1108,30 @@ COMPONENT('loading', function(self) {
 	};
 });
 
-COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;boolean:true|on|yes;pluralizepages:# pages,# page,# pages,# pages;pluralizeitems:# items,# item,# items,# items;pagination:false', function(self, config) {
+COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering values ...;boolean:true|on|yes;pluralizepages:# pages,# page,# pages,# pages;pluralizeitems:# items,# item,# items,# items;pagination:false;rowheight:30', function(self, config) {
 
 	var tbody, thead, tbodyhead, container, pagination;
 	var options = { columns: {}, items: [], indexer: 0, filter: {} };
 	var isFilter = false;
-	var ppages, pitems, cache, eheight;
+	var ppages, pitems, cache, eheight, wheight, scroll, filtercache, filled = false;
 
-	self.template = Tangular.compile('<td data-index="{{ index }}"{{ if $.class }} class="{{ $.class }}"{{ fi }}><div class="wrap{{ if align }} {{ align }}{{ fi }}"{{ if background }} style="background-color:{{ background }}"{{ fi }}>{{ value | raw }}</div></td>');
+	self.template = Tangular.compile('<td data-index="{{ index }}"{{ if $.cls }} class="{{ $.cls }}"{{ fi }}><div class="wrap{{ if align }} {{ align }}{{ fi }}"{{ if background }} style="background-color:{{ background }}"{{ fi }}>{{ value | raw }}</div></td>');
 	self.options = options;
 	self.readonly();
 
 	self.make = function() {
 
 		var meta = self.find('script').html();
-		self.aclass('ui-grid-container');
-		self.html('<div class="ui-grid"><table class="ui-grid-header"><thead></thead></table><div class="ui-grid-scroller"><table class="ui-grid-data"><thead></thead><tbody></tbody></table></div></div>' + (config.pagination ? '<div class="ui-grid-footer"><div class="ui-grid-meta"></div><div class="ui-grid-pagination"><button class="ui-grid-button" name="first"><i class="fa fa-angle-double-left"></i></button><button class="ui-grid-button" name="prev"><i class="fa fa-angle-left"></i></button><div class="page"><input type="text" maxlength="5" class="ui-grid-input" /></div><button class="ui-grid-button" name="next"><i class="fa fa-angle-right"></i></button><button class="ui-grid-button" name="last"><i class="fa fa-angle-double-right"></i></button></div><div class="ui-grid-pages"></div></div></div>' : ''));
+		self.aclass('ui-grid-container' + (config.autosize ? '' : ' hidden'));
+		self.html('<div class="ui-grid"><table class="ui-grid-header"><thead></thead></table><div class="ui-grid-scroller"><table class="ui-grid-data"><thead></thead><tbody></tbody></table></div></div>' + (config.pagination ? '<div class="ui-grid-footer hidden"><div class="ui-grid-meta"></div><div class="ui-grid-pagination"><button class="ui-grid-button" name="first"><i class="fa fa-angle-double-left"></i></button><button class="ui-grid-button" name="prev"><i class="fa fa-angle-left"></i></button><div class="page"><input type="text" maxlength="5" class="ui-grid-input" /></div><button class="ui-grid-button" name="next"><i class="fa fa-angle-right"></i></button><button class="ui-grid-button" name="last"><i class="fa fa-angle-double-right"></i></button></div><div class="ui-grid-pages"></div></div></div>' : ''));
 
 		var body = self.find('.ui-grid-data');
 		tbody = $(body.find('tbody').get(0));
 		tbodyhead = $(body.find('thead').get(0));
 		thead = $(self.find('.ui-grid-header').find('thead').get(0));
 		container = $(self.find('.ui-grid-scroller').get(0));
-		pagination = config.pagination ? VIRTUALIZE(self.find('.ui-grid-footer'), { page: 'input', first: 'button[name="first"]', last: 'button[name="last"]', prev: 'button[name="prev"]', next: 'button[name="next"]', meta: '.meta', pages: '.pages' }) : null;
+		pagination = config.pagination ? VIRTUALIZE(self.find('.ui-grid-footer'), { page: 'input', first: 'button[name="first"]', last: 'button[name="last"]', prev: 'button[name="prev"]', next: 'button[name="next"]', meta: '.ui-grid-meta', pages: '.ui-grid-pages' }) : null;
 		meta && self.meta(meta);
-		config.init && EXEC(config.init);
 
 		self.event('click', '.ui-grid-columnsort', function() {
 			var obj = {};
@@ -1060,25 +1146,34 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 				options.filter[this.name] = this.value;
 			else
 				delete options.filter[this.name];
-			el.tclass('ui-grid-selected', this.value ? true : false);
+			el.tclass('ui-grid-selected', !!this.value);
+			scroll = true;
 			self.filter();
+		});
+
+		self.event('change', 'input', function() {
+			this.type === 'checkbox' && config.checked && EXEC(config.checked, this, self);
 		});
 
 		self.event('click', '.ui-grid-button', function() {
 			switch (this.name) {
 				case 'first':
+					scroll = true;
 					cache.page = 1;
 					self.operation('pagination');
 					break;
 				case 'last':
+					scroll = true;
 					cache.page = cache.pages;
 					self.operation('pagination');
 					break;
 				case 'prev':
+					scroll = true;
 					cache.page -= 1;
 					self.operation('pagination');
 					break;
 				case 'next':
+					scroll = true;
 					cache.page += 1;
 					self.operation('pagination');
 					break;
@@ -1089,11 +1184,27 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 			var page = (+this.value) >> 0;
 			if (isNaN(page) || page < 0 || page > cache.pages || page === cache.page)
 				return;
+			scroll = true;
 			cache.page = page;
 			self.operation('pagination');
 		});
 
+		tbody.on('click', 'button', function() {
+			var btn = $(this);
+			var tr = btn.closest('tr');
+			config.button && EXEC(config.button, btn, options.items[+tr.attrd('index')], self);
+		});
+
 		self.on('resize', self.resize);
+		config.init && EXEC(config.init);
+		wheight = $(window).height();
+	};
+
+	self.checked = function(value) {
+		if (typeof(value) === 'boolean')
+			self.find('input[type="checkbox"]').prop('checked', value);
+		else
+			return tbody.find('input:checked');
 	};
 
 	self.meta = function(html) {
@@ -1111,6 +1222,10 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 
 		for (var i = 0; i < options.columns.length; i++) {
 			var column = options.columns[i];
+
+			if (typeof(column.header) === 'string' && column.header.indexOf('{{') !== -1)
+				column.header = Tangular.compile(column.header);
+
 			if (typeof(column.template) === 'string')
 				column.template = column.template.indexOf('{{') === -1 ? new Function('a', 'b', 'return \'' + column.template + '\'') : Tangular.compile(column.template);
 		}
@@ -1129,6 +1244,15 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 		}
 	};
 
+	self.cls = function(d) {
+		var a = [];
+		for (var i = 1; i < arguments.length; i++) {
+			var cls = arguments[i];
+			cls && a.push(cls);
+		}
+		return a.length ? ((d ? ' ' : '') + a.join(' ')) : '';
+	};
+
 	self.rebuild = function(init) {
 
 		var data = ['<tr class="ui-grid-empty">'];
@@ -1137,24 +1261,40 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 
 		var size = 0;
 		var columns = options.columns;
+		var scrollbar = SCROLLBARWIDTH();
 
 		for (var i = 0, length = columns.length; i < length; i++) {
 			var col = columns[i];
-			size += col.size || 1;
+
+			if (typeof(col.size) !== 'string')
+				size += col.size || 1;
+
 			col.sorting = null;
+
 			if (typeof(col.render) === 'string')
 				col.render = FN(col.render);
+
+			if (typeof(col.header) === 'string')
+				col.header = FN(col.header);
+
+			col.cls = self.cls(0, col.classtd, col.class);
 		}
 
 		for (var i = 0, length = columns.length; i < length; i++) {
 			var col = columns[i];
-			var width = (((col.size || 1) / size) * 100).floor(2);
-			data.push('<td style="width:{0}%" data-index="{1}" class="{2}"></td>'.format(width, i, col.class ? ' ' + col.class : ''));
-			header.push('<th class="ui-grid-columnname{3}{5}" style="width:{0}%;text-align:center" data-index="{1}" title="{6}" data-name="{4}"><div class="wrap"><i class="fa hidden"></i>{2}</div></th>'.format(width, i, col.text || col.name, col.class ? ' ' + col.class : '', col.name, col.sort === false ? '' : ' ui-grid-columnsort', col.title || col.text || col.name));
+			var width = typeof(col.size) === 'string' ? col.size : ((((col.size || 1) / size) * 100).floor(2) + '%');
+
+			data.push('<td style="width:{0}" data-index="{1}" class="{2}"></td>'.format(width, i, self.cls(0, col.classtd, col.class)));
+			header.push('<th class="ui-grid-columnname{3}{5}" style="width:{0};text-align:center" data-index="{1}" title="{6}" data-name="{4}"><div class="wrap"><i class="fa hidden ui-grid-fa"></i>{2}</div></th>'.format(width, i, col.header ? col.header(col) : (col.text || col.name), self.cls(1, col.classth, col.class), col.name, col.sort === false ? '' : ' ui-grid-columnsort', col.title || col.text || col.name));
 			if (col.filter === false)
-				filter.push('<th class="ui-grid-columnfilterempty ui-grid-columnfilter{1}" style="width:{0}%">&nbsp;</th>'.format(width, col.class ? ' ' + col.class : ''));
+				filter.push('<th class="ui-grid-columnfilterempty ui-grid-columnfilter{1}" style="width:{0}">&nbsp;</th>'.format(width, self.cls(1, col.classfilter, col.class)));
 			else
-				filter.push('<th class="ui-grid-columnfilter{4}" style="width:{0}%"><input type="text" placeholder="{3}" name="{2}" autocomplete="off" class="ui-grid-filter" /></th>'.format(width, i, col.name, col.filter || config.filterlabel, col.class ? ' ' + col.class : ''));
+				filter.push('<th class="ui-grid-columnfilter{4}" style="width:{0}"><input type="text" placeholder="{3}" name="{2}" autocomplete="off" class="ui-grid-filter" /></th>'.format(width, i, col.name, col.filter || config.filterlabel, self.cls(1, col.classfilter, col.class)));
+		}
+
+		if (scrollbar) {
+			header.push('<th class="ui-grid-columnname ui-grid-scrollbar" style="width:{0}px"></th>'.format(scrollbar));
+			filter.push('<th class="ui-grid-columnfilterempty ui-grid-scrollbar ui-grid-columnfilter{1}" style="width:{0}px">&nbsp;</th>'.format(scrollbar, self.cls(1, col.classtd, col.class)));
 		}
 
 		tbodyhead.html(data.join('') + '</tr>');
@@ -1164,49 +1304,69 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 		options.filter = {};
 	};
 
-	self.fill = function(count) {
+	self.fill = function() {
 
-		if (config.autosize === false)
+		if (config.autosize === false || filled)
 			return;
 
+		filled = true;
 		tbody.find('.emptyfill').remove();
 		var builder = ['<tr class="emptyfill">'];
 
 		var cols = options.columns;
 		for (var i = 0, length = cols.length; i < length; i++) {
-			if (!cols[i].hidden)
-				builder.push('<td{0}>'.format(cols[i].class ? (' class="' + cols[i].class + '"') : '') + (i ? '' : '<div class="wrap">&nbsp;</div>') + '</td>');
+			var col = cols[i];
+			if (!col.hidden) {
+				var cls = self.cls(0, col.classtd, col.class);
+				builder.push('<td{0}>'.format(cls ? (' class="' + cls + '"') : '') + (i ? '' : '<div class="wrap">&nbsp;</div>') + '</td>');
+			}
 		}
 
 		builder.push('</tr>');
 		builder = builder.join('');
 		var buffer = [];
-		for (var i = 0; i < count; i++)
+		for (var i = 0; i < config.fillcount; i++)
 			buffer.push(builder);
 		tbody.append(buffer.join(''));
 	};
 
-	self.resize = function() {
+	self.resize = function(delay) {
 
-		if (config.autosize === false)
+		if (config.autosize === false) {
+			self.hclass('hidden') && self.rclass('hidden');
 			return;
+		}
 
-		var value = options.items;
-		var parent = self.parent();
-		var height = parent.height() - (config.padding || 0);
+		setTimeout2(self.id + '.resize', function() {
 
-		if (height === eheight)
-			return;
+			var parent = self.parent().height();
+			if (parent < wheight / 3)
+				return;
 
-		container.height(height - (config.pagination ? 124 : 74));
-		eheight = height;
+			var value = options.items;
+			var height = parent - (config.padding || 0) - (config.pagination ? 105 : 74);
 
-		var count = (height / 32) >> 0;
-		if (count > value.length) {
-			self.fill((count + 1) - value.length);
-			container.aclass('ui-grid-noscroll');
-		} else
-			container.rclass('ui-grid-noscroll');
+			if (height === eheight)
+				return;
+
+			container.height(height);
+			eheight = height;
+
+			var cls = 'ui-grid-noscroll';
+			var count = (height / config.rowheight) >> 0;
+			if (count > value.length) {
+				self.fill(config.fillcount);
+				self.aclass(cls);
+			} else
+				self.rclass(cls);
+
+			pagination && pagination.rclass('hidden');
+			eheight && self.rclass('hidden');
+		}, typeof(delay) === 'number' ? delay : 50);
+	};
+
+	self.limit = function() {
+		return Math.ceil(container.height() / config.rowheight);
 	};
 
 	self.filter = function() {
@@ -1216,7 +1376,9 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 	};
 
 	self.operation = function(type) {
-		config.exec && EXEC(config.exec, type, isFilter ? options.filter : null, options.lastsort ? options.lastsort : null, cache.page);
+		if (type === 'filter')
+			cache.page = 1;
+		config.exec && EXEC(config.exec, type, isFilter ? options.filter : null, options.lastsort ? options.lastsort : null, cache.page, self);
 	};
 
 	self.sort = function(data) {
@@ -1224,7 +1386,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 		options.lastsortelement && options.lastsortelement.rclass('fa-caret-down fa-caret-up').aclass('hidden');
 
 		if (data.column.sorting === 'desc') {
-			options.lastsortelement.find('.fa').rclass('fa-caret-down fa-caret-up').aclass('hidden');
+			options.lastsortelement.find('.ui-grid-fa').rclass('fa-caret-down fa-caret-up').aclass('hidden');
 			options.lastsortelement = null;
 			options.lastsort = null;
 			data.column.sorting = null;
@@ -1236,14 +1398,13 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 
 		} else if (data.column) {
 			data.column.sorting = data.column.sorting === 'asc' ? 'desc' : 'asc';
-			options.lastsortelement = thead.find('th[data-name="{0}"]'.format(data.column.name)).find('.fa').rclass('hidden').tclass('fa-caret-down', data.column.sorting === 'asc').tclass('fa-caret-up', data.column.sorting === 'desc');
+			options.lastsortelement = thead.find('th[data-name="{0}"]'.format(data.column.name)).find('.ui-grid-fa').rclass('hidden').tclass('fa-caret-down', data.column.sorting === 'asc').tclass('fa-caret-up', data.column.sorting === 'desc');
 			options.lastsort = data.column;
 
 			var name = data.column.name;
 			var sort = data.column.sorting;
 
-
-			!config.external && options.lastsort && options.items.quicksort(name, sort === 'asc');
+			!config.external && options.lastsort && options.items.quicksort(name, sort !== 'asc');
 			self.operation('sort');
 			self.redraw();
 		}
@@ -1252,7 +1413,6 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 	self.can = function(row) {
 
 		var keys = Object.keys(options.filter);
-		var cache = {};
 
 		for (var i = 0; i < keys.length; i++) {
 
@@ -1260,12 +1420,17 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 			var val = row[column];
 			var filter = options.filter[column];
 			var type = typeof(val);
-			var val2 = cache[column];
+			var val2 = filtercache[column];
+
+			if (val instanceof Array) {
+				val = val.join(' ');
+				type = 'string';
+			}
 
 			if (type === 'number') {
 
 				if (val2 == null)
-					val2 = cache[column] = self.parseNumber(filter);
+					val2 = filtercache[column] = self.parseNumber(filter);
 
 				if (val2.length === 1 && val !== val2[0])
 					return false;
@@ -1276,7 +1441,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 			} else if (type === 'string') {
 
 				if (val2 == null) {
-					val2 = cache[column] = filter.split(/\/\|\\|\,/).trim();
+					val2 = filtercache[column] = filter.split(/\/\|\\|,/).trim();
 					for (var j = 0; j < val2.length; j++)
 						val2[j] = val2[j].toSearch();
 				}
@@ -1296,7 +1461,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 
 			} else if (type === 'boolean') {
 				if (val2 == null)
-					val2 = cache[column] = config.boolean.indexOf(filter.replace(/\s/g, '')) !== -1;
+					val2 = filtercache[column] = config.boolean.indexOf(filter.replace(/\s/g, '')) !== -1;
 				if (val2 !== val)
 					return false;
 			} else if (val instanceof Date) {
@@ -1305,25 +1470,39 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 				val.setMinutes(0);
 
 				if (val2 == null) {
-					val2 = filter.trim().split(/\/|\||\\|\,/).trim();
-					var arr = cache[column] = [];
+
+					val2 = filter.trim().replace(/\s-\s/, '/').split(/\/|\||\\|,/).trim();
+					var arr = filtercache[column] = [];
+
 					for (var j = 0; j < val2.length; j++) {
 						var dt = val2[j].trim();
 						var a = self.parseDate(dt);
 						if (a instanceof Array) {
-							arr.push(a[0]);
-							if (j === val2.length - 1) {
-								arr.push(a[1]);
-								break;
+							if (val2.length === 2) {
+								arr.push(j ? a[1] : a[0]);
+							} else {
+								arr.push(a[0]);
+								if (j === val2.length - 1) {
+									arr.push(a[1]);
+									break;
+								}
 							}
 						} else
 							arr.push(a);
 					}
+
+					if (val2.length === 2 && arr.length === 2) {
+						arr[1].setHours(23);
+						arr[1].setMinutes(59);
+						arr[1].setSeconds(59);
+					}
+
 					val2 = arr;
 				}
 
 				if (val2.length === 1 && val.format('yyyyMMdd') !== val2[0].format('yyyyMMdd'))
 					return false;
+
 				if (val < val2[0] || val > val2[1])
 					return false;
 			} else
@@ -1341,7 +1520,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 				return dt > DATETIME ? [DATETIME, dt] : [dt, DATETIME];
 			}
 			if (val.length === 4)
-				return [new Date(+val, 1, 1), new Date(+val + 1, 1, 1)];
+				return [new Date(+val, 0, 1), new Date(+val + 1, 0	, 1)];
 		} else if (val.indexOf('.', index + 1) === -1) {
 			var a = val.split('.');
 			return new Date(DATETIME.getFullYear(), +a[1] - 1, +a[0]);
@@ -1356,7 +1535,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 
 	self.parseNumber = function(val) {
 		var arr = [];
-		var num = val.replace(/\s/g, '').replace(/\,/g, '.').split(/\/|\||\\/).trim();
+		var num = val.replace(/\s-\s/, '/').replace(/\s/g, '').replace(/,/g, '.').split(/\/|\|\s-\s|\\/).trim();
 
 		for (var i = 0, length = num.length; i < length; i++) {
 			var n = num[i];
@@ -1399,12 +1578,13 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 			builder.push('</tr>');
 		}
 
-		tbody.html(builder.join(''));
+		tbody.find('.ui-grid-row').remove();
+		tbody.prepend(builder.join(''));
 		container.rclass('noscroll');
-
+		scroll && container.prop('scrollTop', 0);
+		scroll = false;
 		eheight = 0;
-		self.resize();
-		setTimeout(self.resize, 500);
+		self.resize(0);
 	};
 
 	self.setter = function(value) {
@@ -1416,7 +1596,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 		// value.count
 
 		if (!value) {
-			tbody.empty();
+			tbody.find('.ui-grid-row').remove();
 			self.resize();
 			return;
 		}
@@ -1437,6 +1617,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 			options.items = value.items;
 		} else {
 			options.items = [];
+			filtercache = {};
 			for (var i = 0, length = value.items.length; i < length; i++) {
 				if (isFilter && !self.can(value.items[i]))
 					continue;
@@ -1446,6 +1627,7 @@ COMPONENT('grid', 'filter:true;external:false;filterlabel:Filtering values ...;b
 		}
 
 		self.redraw();
+		config.checked && EXEC(config.checked, null, self);
 	};
 });
 
@@ -1849,7 +2031,7 @@ COMPONENT('template', function(self) {
 	};
 });
 
-COMPONENT('dropdowncheckbox', 'checkicon:check', function(self, config) {
+COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;limit:0;selectedtext:{0} selected', function(self, config) {
 
 	var data = [], render = '';
 	var container, values, content, datasource = null;
@@ -1898,10 +2080,8 @@ COMPONENT('dropdowncheckbox', 'checkicon:check', function(self, config) {
 				break;
 
 			case 'datasource':
-				var was = datasource;
-				was && self.unwatch(datasource, self.bind);
-				self.watch(value, self.bind, true);
-				was && self.refresh();
+				self.datasource(value, self.bind);
+				datasource && self.refresh();
 				datasource = value;
 				break;
 
@@ -1999,22 +2179,30 @@ COMPONENT('dropdowncheckbox', 'checkicon:check', function(self, config) {
 			var index = arr.indexOf(value);
 
 			if (is) {
+				if (config.limit && arr.length === config.limit)
+					return;
 				index === -1 && arr.push(value);
 			} else {
 				index !== -1 && arr.splice(index, 1);
 			}
 
-			self.reset(true);
-			self.set(arr, undefined, 2);
+			self.set(arr);
+			self.change(true);
 		});
 	};
 
 	self.bind = function(path, value) {
 		var clsempty = 'ui-dropdowncheckbox-values-empty';
-		prepared = true;
 
-		if (!value) {
-			container.aclass(clsempty).html(config.empty);
+		if (value !== undefined)
+			prepared = true;
+
+		if (!value || !value.length) {
+			var h = config.empty || '&nbsp;';
+			if (h === self.old)
+				return;
+			container.aclass(clsempty).html(h);
+			self.old = h;
 			return;
 		}
 
@@ -2031,10 +2219,18 @@ COMPONENT('dropdowncheckbox', 'checkicon:check', function(self, config) {
 			data.push(item);
 		}
 
+		var h = HASH(render);
+		if (h === self.old)
+			return;
+
+		self.old = h;
+
 		if (render)
 			container.rclass(clsempty).html(render);
 		else
 			container.aclass(clsempty).html(config.empty);
+
+		self.refresh();
 	};
 
 	self.setter = function(value) {
@@ -2043,10 +2239,11 @@ COMPONENT('dropdowncheckbox', 'checkicon:check', function(self, config) {
 			return;
 
 		var label = '';
+		var count = value == null || !value.length ? undefined : value.length;
 
-		if (value && value.length) {
+		if (value && count) {
 			var remove = [];
-			for (var i = 0, length = value.length; i < length; i++) {
+			for (var i = 0; i < count; i++) {
 				var selected = value[i];
 				var index = 0;
 				var is = false;
@@ -2062,7 +2259,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check', function(self, config) {
 				!is && remove.push(selected);
 			}
 
-			if (config.cleaner !== false) {
+			if (config.cleaner !== false && value) {
 				var refresh = false;
 				while (true) {
 					var item = remove.shift();
@@ -2087,16 +2284,20 @@ COMPONENT('dropdowncheckbox', 'checkicon:check', function(self, config) {
 			el.tclass('ui-dropdowncheckbox-checked', checked);
 		});
 
-		if (!label && value) {
+		if (!label && value && config.cleaner !== false) {
 			// invalid data
 			// it updates model without notification
 			self.rewrite([]);
 		}
 
 		if (!label && config.placeholder) {
-			values.removeAttr('title', '');
+			values.rattr('title', '');
 			values.html('<span>{0}</span>'.format(config.placeholder));
 		} else {
+			if (count == data.length && config.alltext !== 'null' && config.alltext)
+				label = config.alltext;
+			else if (config.visible && count > config.visible)
+				label = config.selectedtext.format(count, data.length);
 			values.attr('title', label);
 			values.html(label);
 		}
@@ -2695,7 +2896,7 @@ COMPONENT('range', function(self, config) {
 	};
 });
 
-COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
+COMPONENT('calendar', 'today:Set today;firstday:0;close:Close;yearselect:true;monthselect:true;yearfrom:-70 years;yearto:5 years', function(self, config) {
 
 	var skip = false;
 	var skipDay = false;
@@ -2704,6 +2905,8 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 	self.days = EMPTYARRAY;
 	self.months = EMPTYARRAY;
 	self.months_short = EMPTYARRAY;
+	self.years_from;
+	self.years_to;
 
 	self.configure = function(key, value) {
 		switch (key) {
@@ -2712,6 +2915,12 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 					self.days = value;
 				else
 					self.days = value.split(',').trim();
+
+				for (var i = 0; i < DAYS.length; i++) {
+					DAYS[i] = self.days[i];
+					self.days[i] = DAYS[i].substring(0, 2).toUpperCase();
+				}
+
 				break;
 
 			case 'months':
@@ -2724,10 +2933,25 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 
 				for (var i = 0, length = self.months.length; i < length; i++) {
 					var m = self.months[i];
+					MONTHS[i] = m;
 					if (m.length > 4)
 						m = m.substring(0, 3) + '.';
 					self.months_short.push(m);
 				}
+				break;
+
+			case 'yearfrom':
+				if (value.indexOf('current') !== -1)
+					self.years_from = parseInt(new Date().format('yyyy'));
+				else
+					self.years_from = parseInt(new Date().add(value).format('yyyy'));
+				break;
+
+			case 'yearto':
+				if (value.indexOf('current') !== -1)
+					self.years_to = parseInt(new Date().format('yyyy'));
+				else
+					self.years_to = parseInt(new Date().add(value).format('yyyy'));
 				break;
 		}
 	};
@@ -2748,13 +2972,13 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		return (32 - new Date(y, m, 32).getDate());
 	}
 
-	function calculate(year, month, selected) {
+	self.calculate = function(year, month, selected) {
 
 		var d = new Date(year, month, 1);
 		var output = { header: [], days: [], month: month, year: year };
 		var firstDay = config.firstday;
 		var firstCount = 0;
-		var fromd = d.getDay() - firstDay;
+		var frm = d.getDay() - firstDay;
 		var today = new Date();
 		var ty = today.getFullYear();
 		var tm = today.getMonth();
@@ -2764,8 +2988,8 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		var sd = selected ? selected.getDate() : -1;
 		var days = getMonthDays(d);
 
-		if (fromd < 0)
-			fromd = 7 + fromd;
+		if (frm < 0)
+			frm = 7 + frm;
 
 		while (firstCount++ < 7) {
 			output.header.push({ index: firstDay, name: self.days[firstDay] });
@@ -2777,13 +3001,14 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		var index = 0;
 		var indexEmpty = 0;
 		var count = 0;
-		var prev = getMonthDays(new Date(year, month - 1, 1)) - fromd;
+		var prev = getMonthDays(new Date(year, month - 1, 1)) - frm;
+		var cur;
 
-		for (var i = 0; i < days + fromd; i++) {
+		for (var i = 0; i < days + frm; i++) {
 
 			var obj = { isToday: false, isSelected: false, isEmpty: false, isFuture: false, number: 0, index: ++count };
 
-			if (i >= fromd) {
+			if (i >= frm) {
 				obj.number = ++index;
 				obj.isSelected = sy === year && sm === month && sd === index;
 				obj.isToday = ty === year && tm === month && td === index;
@@ -2800,19 +3025,35 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 				indexEmpty++;
 				obj.number = prev + indexEmpty;
 				obj.isEmpty = true;
+				cur = d.add('-' + indexEmpty + ' days');
 			}
 
+			if (!obj.isEmpty)
+				cur = d.add(i + ' days');
+
+			obj.month = cur.getMonth();
+			obj.year = cur.getFullYear();
+			obj.date = cur;
 			output.days.push(obj);
 		}
 
 		indexEmpty = 0;
-		for (var i = count; i < 42; i++)
-			output.days.push({ isToday: false, isSelected: false, isEmpty: true, isFuture: false, number: ++indexEmpty, index: ++count });
+
+		for (var i = count; i < 42; i++) {
+			var cur = d.add(i + ' days');
+			var obj = { isToday: false, isSelected: false, isEmpty: true, isFuture: true, number: ++indexEmpty, index: ++count };
+			obj.month = cur.getMonth();
+			obj.year = cur.getFullYear();
+			obj.date = cur;
+			output.days.push(obj);
+		}
+
 		return output;
-	}
+	};
 
 	self.hide = function() {
 		self.aclass('hidden');
+		self.rclass('ui-calendar-visible');
 		visible = false;
 		return self;
 	};
@@ -2848,6 +3089,7 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		self.click = callback;
 		self.date(value);
 		visible = true;
+		self.aclass('ui-calendar-visible', 50);
 		return self;
 	};
 
@@ -2866,7 +3108,7 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		!config.months && (conf.months = MONTHS);
 		self.reconfigure(conf);
 
-		self.event('click', '.ui-calendar-today', function() {
+		self.event('click', '.ui-calendar-today-a', function() {
 			var dt = new Date();
 			self.hide();
 			self.click && self.click(dt);
@@ -2875,11 +3117,41 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		self.event('click', '.ui-calendar-day', function() {
 			var arr = this.getAttribute('data-date').split('-');
 			var dt = new Date(parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2]));
-			self.find('.ui-calendar-selected').removeClass('ui-calendar-selected');
-			$(this).addClass('ui-calendar-selected');
-			skip = true;
+			self.find('.ui-calendar-selected').rclass('ui-calendar-selected');
+			var el = $(this).aclass('ui-calendar-selected');
+			skip = !el.hclass('ui-calendar-disabled');
 			self.hide();
 			self.click && self.click(dt);
+		});
+
+		self.event('click', '.ui-calendar-header', function(e) {
+			e.stopPropagation();
+		});
+
+		self.event('change', '.ui-calendar-year', function(e) {
+
+			clearTimeout2('calendarhide');
+			e.preventDefault();
+			e.stopPropagation();
+
+			var arr = this.getAttribute('data-date').split('-');
+			var dt = new Date(parseInt(arr[0]), parseInt(arr[1]), 1);
+			dt.setFullYear(this.value);
+			skipDay = true;
+			self.date(dt);
+		});
+
+		self.event('change', '.ui-calendar-month', function(e){
+
+			clearTimeout2('calendarhide');
+			e.preventDefault();
+			e.stopPropagation();
+
+			var arr = this.getAttribute('data-date').split('-');
+			var dt = new Date(parseInt(arr[0]), parseInt(arr[1]), 1);
+			dt.setMonth(this.value);
+			skipDay = true;
+			self.date(dt);
 		});
 
 		self.event('click', 'button', function(e) {
@@ -2897,11 +3169,16 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 					dt.setMonth(dt.getMonth() + 1);
 					break;
 			}
+
+			var current_year = dt.getFullYear();
+			if (current_year < self.years_from || current_year > self.years_to)
+				return;
+
 			skipDay = true;
 			self.date(dt);
 		});
 
-		$(document.body).on('scroll click', function() {
+		$(window).on('scroll click', function() {
 			visible && setTimeout2('calendarhide', function() {
 				EXEC('$calendar.hide');
 			}, 20);
@@ -2916,11 +3193,15 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 
 	self.date = function(value) {
 
+		var clssel = 'ui-calendar-selected';
+
 		if (typeof(value) === 'string')
 			value = value.parseDate();
 
-		if (!value || isNaN(value.getTime()))
+		if (!value || isNaN(value.getTime())) {
+			self.find('.' + clssel).rclass(clssel);
 			value = DATETIME;
+		}
 
 		var empty = !value;
 
@@ -2935,9 +3216,9 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		}
 
 		if (!value)
-			value = new Date();
+			value = DATETIME = new Date();
 
-		var output = calculate(value.getFullYear(), value.getMonth(), value);
+		var output = self.calculate(value.getFullYear(), value.getMonth(), value);
 		var builder = [];
 
 		for (var i = 0; i < 42; i++) {
@@ -2951,14 +3232,12 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 
 			var cls = [];
 
-			if (item.isEmpty)
-				cls.push('ui-calendar-disabled');
-			else
-				cls.push('ui-calendar-day');
+			item.isEmpty && cls.push('ui-calendar-disabled');
+			cls.push('ui-calendar-day');
 
-			!empty && item.isSelected && cls.push('ui-calendar-selected');
+			!empty && item.isSelected && cls.push(clssel);
 			item.isToday && cls.push('ui-calendar-day-today');
-			builder.push('<td class="{0}" data-date="{1}-{2}-{3}">{3}</td>'.format(cls.join(' '), output.year, output.month, item.number));
+			builder.push('<td class="{0}" data-date="{1}-{2}-{3}"><div>{3}</div></td>'.format(cls.join(' '), item.year, item.month, item.number));
 		}
 
 		builder.push('</tr>');
@@ -2967,7 +3246,25 @@ COMPONENT('calendar', 'today:Set today;firstday:0', function(self, config) {
 		for (var i = 0; i < 7; i++)
 			header.push('<th>{0}</th>'.format(output.header[i].name));
 
-		self.html('<div class="ui-calendar-header"><button class="ui-calendar-header-prev" name="prev" data-date="{0}-{1}"><span class="fa fa-chevron-left"></span></button><div class="ui-calendar-header-info">{2} {3}</div><button class="ui-calendar-header-next" name="next" data-date="{0}-{1}"><span class="fa fa-chevron-right"></span></button></div><table cellpadding="0" cellspacing="0" border="0"><thead>{4}</thead><tbody>{5}</tbody></table>'.format(output.year, output.month, self.months[value.getMonth()], value.getFullYear(), header.join(''), builder.join('')) + (config.today ? '<div><a href="javascript:void(0)" class="ui-calendar-today">' + config.today + '</a></div>' : ''));
+		var years = value.getFullYear();
+		if (config.yearselect) {
+			years = '';
+			var current_year = value.getFullYear();
+			for (var i = self.years_from; i <= self.years_to; i++)
+				years += '<option value="{0}" {1}>{0}</option>'.format(i, i === current_year ? 'selected' : '');
+			years = '<select data-date="{0}-{1}" class="ui-calendar-year">{2}</select>'.format(output.year, output.month, years);
+		}
+
+		var months = self.months[value.getMonth()];
+		if (config.monthselect) {
+			months = '';
+			var current_month = value.getMonth();
+			for (var i = 0, l = self.months.length; i < l; i++)
+				months += '<option value="{0}" {2}>{1}</option>'.format(i, self.months[i], i === current_month ? 'selected' : '');
+			months = '<select data-date="{0}-{1}" class="ui-calendar-month">{2}</select>'.format(output.year, output.month, months);
+		}
+
+		self.html('<div class="ui-calendar-header"><button class="ui-calendar-header-prev" name="prev" data-date="{0}-{1}"><span class="fa fa-arrow-left"></span></button><div class="ui-calendar-header-info">{2} {3}</div><button class="ui-calendar-header-next" name="next" data-date="{0}-{1}"><span class="fa fa-arrow-right"></span></button></div><div class="ui-calendar-table"><table cellpadding="0" cellspacing="0" border="0"><thead>{4}</thead><tbody>{5}</tbody></table></div>'.format(output.year, output.month, months, years, header.join(''), builder.join('')) + (config.today ? '<div class="ui-calendar-today"><a href="javascript:void(0)">{0}</a><a href="javascript:void(0)" class="ui-calendar-today-a"><i class="fa fa-calendar"></i>{1}</a></div>'.format(config.close, config.today) : ''));
 	};
 });
 
@@ -3074,6 +3371,7 @@ COMPONENT('audio', function(self) {
 
 COMPONENT('modificator', function(self) {
 
+	var reg_search = /\+|\s/;
 	var keys, keys_unique;
 	var db = {};
 
@@ -3081,21 +3379,23 @@ COMPONENT('modificator', function(self) {
 	self.blind();
 
 	self.make = function() {
+
 		self.watch('*', self.autobind);
 		self.scan();
 
-		self.on('component', function() {
+		var fn = function() {
 			setTimeout2(self.id, self.scan, 200);
-		});
+		};
 
-		self.on('destroy', function() {
-			setTimeout2(self.id, self.scan, 200);
-		});
+		self.on('import', fn);
+		self.on('component', fn);
+		self.on('destroy', fn);
 
 		$(document).on('click', '.modify', function() {
 			var el = $(this);
 			self.click(el.attrd('m'), el.attrd('m-schema'));
 		});
+
 	};
 
 	self.autobind = function(path, value, type) {
@@ -3169,12 +3469,34 @@ COMPONENT('modificator', function(self) {
 	self.scan = function() {
 		keys = {};
 		keys_unique = {};
+
+		var keys_news = {};
+
 		self.find('[data-m]').each(function() {
 
 			var el = $(this);
 			var path = (el.attrd('m') || '').replace('%', 'jctmp.');
-			var arr = path.split('.');
 			var p = '';
+			var schema = '';
+
+			if (reg_search.test(path)) {
+				var arr = path.replace(/\s+\+\s+/, '+').split(reg_search);
+				path = arr[0];
+				schema = arr[1];
+			}
+
+			if (path.indexOf('?') !== -1) {
+				var scope = el.closest('[data-jc-scope]');
+				if (scope) {
+					var data = scope.get(0).$scopedata;
+					if (data == null)
+						return;
+					path = path.replace(/\?/g, data.path);
+				} else
+					return;
+			}
+
+			arr = path.split('.');
 
 			var obj = el.data('data-m');
 			keys_unique[path] = true;
@@ -3182,12 +3504,13 @@ COMPONENT('modificator', function(self) {
 			if (!obj) {
 				obj = {};
 				obj.path = path;
-				obj.schema = el.attrd('m-schema');
+				obj.schema = schema || el.attrd('m-schema');
 				obj.selector = el.attrd('m-selector');
 				obj.element = el;
 				obj.event = { type: 'init' };
 				obj.init = false;
 				el.data('data-m', obj);
+				keys_news[path] = true;
 				if (db[obj.schema]) {
 					obj.init = true;
 					db[obj.schema](GET(obj.path), obj.selector ? obj.element.find(obj.selector) : obj.element, obj.event);
@@ -3203,9 +3526,9 @@ COMPONENT('modificator', function(self) {
 			}
 		});
 
-		Object.keys(keys_unique).forEach(function(key) {
-			self.autobind(key, GET(key));
-		});
+		var nk = Object.keys(keys_news);
+		for (var i = 0; i < nk.length; i++)
+			self.autobind(nk[i]);
 
 		return self;
 	};
@@ -3290,5 +3613,62 @@ COMPONENT('app-managment', function(self, config) {
 			// HACK
 			el.find('.userapp-settings-input').val(users.form && users.form.apps && users.form.apps[id] ? users.form.apps[id].settings || '' : '');
 		});
+	};
+});
+
+COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
+
+	var virtual = null;
+	var show = true;
+	var callback;
+
+	self.readonly();
+	self.blind();
+	self.make = function() {
+		self.aclass('ui-snackbar hidden');
+		self.append('<div><a href="javasc' + 'ript:void(0)" class="ui-snackbar-dismiss"></a><div class="ui-snackbar-body"></div></div>');
+		virtual = self.virtualize({ body: '.ui-snackbar-body', button: '.ui-snackbar-dismiss' });
+		self.event('click', '.ui-snackbar-dismiss', function() {
+			self.hide();
+			callback && callback();
+		});
+	};
+
+	self.hide = function() {
+		self.rclass('ui-snackbar-visible');
+		setTimeout(function() {
+			self.aclass('hidden');
+		}, 1000);
+		show = true;
+	};
+
+	self.success = function(message, button, close) {
+		self.show('<i class="fa fa-check-circle ui-snackbar-icon"></i>' + message, button, close);
+	};
+
+	self.warning = function(message, button, close) {
+		self.show('<i class="fa fa-times-circle ui-snackbar-icon"></i>' + message, button, close);
+	};
+
+	self.show = function(message, button, close) {
+
+		if (typeof(button) === 'function') {
+			close = button;
+			button = null;
+		}
+
+		callback = close;
+		virtual.body.html(message);
+		virtual.button.html(button || config.button);
+
+		if (show) {
+			self.rclass('hidden');
+			setTimeout(function() {
+				self.aclass('ui-snackbar-visible');
+			}, 50);
+		}
+
+		setTimeout2(self.id, self.hide, config.timeout + 50);
+		show = false;
 	};
 });

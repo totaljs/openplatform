@@ -1,4 +1,4 @@
-NAVIGATION.middleware('user', function(next) {
+MIDDLEWARE('user', function(next) {
 	WAIT(function() {
 		return window.user !== EMPTYOBJECT;
 	}, next);
