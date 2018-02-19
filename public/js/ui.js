@@ -1095,14 +1095,14 @@ COMPONENT('loading', function(self) {
 
 	self.show = function() {
 		clearTimeout(pointer);
-		self.rclass('hidden');
+		self.rclass('hidden').aclass('ui-loading-opacity', 100);
 		return self;
 	};
 
 	self.hide = function(timeout) {
 		clearTimeout(pointer);
 		pointer = setTimeout(function() {
-			self.aclass('hidden');
+			self.rclass('ui-loading-opacity').aclass('hidden', 100);
 		}, timeout || 1);
 		return self;
 	};
