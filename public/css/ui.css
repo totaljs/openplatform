@@ -11,7 +11,6 @@ button { outline: 0; }
 .ui-checkbox-checked .fa { display: block !important; }
 .ui-checkbox.ui-disabled div { background-color: #F0F0F0 !important; border-color: #E0E0E0 !important; color: gray !important; }
 
-.ui-dropdown-values { position: relative; display: block; height: 26px; text-align: left; }
 .ui-dropdown-values { position: relative; display: block; height: 32px; text-align: left; }
 .ui-dropdown { border: 1px solid #E0E0E0; padding: 0 5px 0 10px; border-radius: 2px; outline: 0; height: 32px; overflow: hidden; float: left; width: 100%; background-color: white; position: relative; }
 .ui-dropdown:after { border-left: 1px solid #E0E0E0; width: 1px; position: absolute; height: 30px; content: ' '; margin-left: -23px; }
