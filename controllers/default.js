@@ -15,9 +15,9 @@ exports.install = function() {
 
 	ROUTE('/*', login, ['unauthorize']);
 
-	F.localize('/pages/*.html', ['compress']);
-	F.localize('/forms/*.html', ['compress']);
-	F.redirect('/logoff/', '/');
+	LOCALIZE('/pages/*.html');
+	LOCALIZE('/forms/*.html');
+	REDIRECT('/logoff/', '/');
 };
 
 function login() {
