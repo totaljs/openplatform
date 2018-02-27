@@ -1,4 +1,5 @@
 const SKIP = { password: true, search: true, verifytoken: true };
+const Fs = require('fs');
 
 exports.install = function() {
 
@@ -26,7 +27,7 @@ exports.install = function() {
 		ROUTE('/api/settings/',      ['*Settings --> save', 'post']);
 		ROUTE('/api/settings/smtp/', ['*SettingsSMTP --> exec', 'post', 10000]);
 
-		ROUTE('/api/upload/photo/',  json_upload_photo, ['upload', 'post'], 512);
+		ROUTE('/api/upload/photo/',  json_upload_photo, ['post'], 1024 * 2);
 	});
 
 	// External
@@ -107,25 +108,9 @@ function json_apps_meta(id) {
 
 function json_upload_photo() {
 	var self = this;
-
-	if (!self.user.sa) {
+	if (self.user.sa) {
+		var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
+		self.body.file.base64ToFile(F.path.public('photos/' + id), () => self.json(id));
+	} else
 		self.invalid().push('error-permissions');
-		return;
-	}
-
-	var file = self.files[0];
-
-	if (!file.isImage()) {
-		self.invalid().push('error-filetype');
-		return;
-	}
-
-	var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-
-	file.image().make(function(filter) {
-		filter.resizeAlign(100, 100, 'top', 'white');
-		filter.quality(90);
-		filter.output('jpg');
-		filter.save(F.path.public('photos/' + id), (err) => self.callback()(err, SUCCESS(true, id)));
-	});
 }

@@ -196,8 +196,10 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-contextmenu-items > div:last-child { border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
 
 .img-application { border-radius: 25px; }
-.ui-photoupload { cursor: pointer; }
-.ui-photoupload img { margin-left: auto; margin-right: auto; border-radius: 100px; border: 2px solid #E0E0E0; }
+
+.ui-preview-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
+.ui-preview-label .fa { margin-right: 5px; }
+.ui-preview img { margin-left: auto; margin-right: auto; border-radius: 100px; border: 2px solid #E0E0E0; cursor: pointer; }
 
 .ui-dropdowncheckbox-container { display: block; text-align: left; position: relative; font-size:14px; }
 .ui-dropdowncheckbox { border: 1px solid #E0E0E0; padding: 0 10px; border-radius: 2px; outline: 0; overflow: hidden; width: 100%; background-color: white; height: 32px; cursor: pointer; }
