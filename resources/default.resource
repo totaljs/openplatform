@@ -1,5 +1,5 @@
 error-invalid-url          : Invalid OpenPlatform URL.
-error-user-404             : User not found.
+error-users-404            : User not found.
 error-permissions          : You do not have required permissions.
 error-invalid-accesstoken  : Invalid access token.
 error-credentials          : Invalid credentials.
