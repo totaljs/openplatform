@@ -165,3 +165,4 @@ h2 .fa { margin-right: 10px; }
 .buttons button .fa { font-size: 25px; display: block; }
 .buttons button:hover { background-color: #E0E0E0; }
 
+.accountphoto img { max-width: 150px; }

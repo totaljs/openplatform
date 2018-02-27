@@ -1,5 +1,4 @@
 const SKIP = { password: true, search: true, verifytoken: true };
-const Fs = require('fs');
 
 exports.install = function() {
 
@@ -108,9 +107,6 @@ function json_apps_meta(id) {
 
 function json_upload_photo() {
 	var self = this;
-	if (self.user.sa) {
-		var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-		self.body.file.base64ToFile(F.path.public('photos/' + id), () => self.json(id));
-	} else
-		self.invalid().push('error-permissions');
+	var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
+	self.body.file.base64ToFile(F.path.public('photos/' + id), () => self.json(id));
 }
