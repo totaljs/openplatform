@@ -125,9 +125,12 @@ NEWSCHEMA('User').make(function(schema) {
 			F.mail(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, item.language);
 		}
 
-		$WORKFLOW('User', 'refresh');
+		setTimeout2('users', function() {
+			$WORKFLOW('User', 'refresh');
+			OP.save();
+		}, 1000);
+
 		EMIT('users.refresh', item);
-		OP.save();
 		$.success();
 	});
 
@@ -151,7 +154,12 @@ NEWSCHEMA('User').make(function(schema) {
 
 		LOGGER('users', 'remove: ' + id, '@' + $.controller.user.name, $.controller.ip);
 		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
-		OP.save(); // Save changes
+
+		setTimeout2('users', function() {
+			$WORKFLOW('User', 'refresh');
+			OP.save();
+		}, 1000);
+
 		EMIT('users.refresh', id, true);
 		$.success();
 	});
