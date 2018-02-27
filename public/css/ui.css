@@ -60,19 +60,19 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-form-animate { transform: skewX(0deg); opacity: 1; }
 .ui-form-animate-click { transform: skewX(-5deg); }
 .ui-form-padding { padding: 0 30px; }
-.ui-form-title { padding: 18px 20px; font-size: 16px; user-select: none; color: #AAB2BD; background-color: #F8F8F8; border-bottom: 1px solid #F0F0F0; }
-.ui-form-title .ui-form-button-close { float: right; cursor: pointer; font-size: 18px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; width: 20px; padding: 0; }
+.ui-form-title { padding: 18px 20px; font-size: 16px; user-select: none; color: black; background-color: #F8F8F8; border-bottom: 1px solid #F0F0F0; }
+.ui-form-title .ui-form-button-close { float: right; cursor: pointer; font-size: 18px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; padding: 0; width: auto; }
 .ui-form-title .ui-form-button-close:hover { transform: scale(1.2) rotate(-90deg); }
 .ui-form-title > span { font-weight: bold; }
 .ui-form-title > .fa { margin-right: 7px; }
-.ui-form-buttons { padding: 20px; border-top: 5px solid #F0F0F0; background-color: #F8F8F8; }
+.ui-form-buttons { padding: 20px; border-top: 5px solid #F0F0F0; background-color: #F8F8F8; text-align: right; }
 .ui-form-buttons button { border: 2px solid #E0E0E0; background-color: white; border-radius: 4px; height: 45px; padding: 0 15px; color: black; margin: 0; cursor: pointer; font-family: Arial; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; }
 .ui-form-buttons button .fa { width: 16px; }
 .ui-form-buttons button:hover { border-color: silver; }
 .ui-form-buttons button:active { background-color: #D0D0D0; }
 .ui-form-buttons button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
-.ui-form-buttons button[name="submit"] { width: 220px; margin-right: 15px; font-weight: bold; }
-.ui-form-buttons button[name="cancel"] { color: gray; }
+.ui-form-buttons button[name="submit"] { width: 220px; font-weight: bold; }
+.ui-form-buttons button[name="cancel"] { color: gray; margin-right: 15px; }
 .ui-form-buttons label { float: right; margin: 12px 0 0 0; font-size: 11px; }
 
 .ui-confirm { background-color: rgba(255,255,255,0.9); position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 100; width: 100%; display: table; height: 100%; transition: 0.5s all; opacity: 0; }
@@ -103,7 +103,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-loading div { background: url(/img/loading.svg) no-repeat 50% 50%; width: 100px; height: 100px; background-size: 30px 30px; position: absolute; left: 80%; top: 80%; }
 .ui-loading-opacity { opacity: 100; }
 
-.ui-grid { overflow: hidden; border: 1px solid #F0F0F0; box-shadow: 0 2px 20px rgba(0,0,0,0.05); position: relative; }
+.ui-grid { overflow: hidden; border: 1px solid #D9D9D9; box-shadow: 0 2px 10px rgba(0,0,0,0.03); position: relative; }
 .ui-grid-scroller { overflow-x: hidden; overflow-y: auto; overflow-scrolling: touch; background-color: white; margin-top: 65px; }
 .ui-grid table { width: 100%; table-layout: fixed; }
 .ui-grid .wrap { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; padding: 3px 10px 0; }
@@ -111,8 +111,8 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-grid-empty td { height: 0 !important; }
 .ui-grid .emptyfill { display: none; }
 .ui-grid-header { position: absolute; z-index: 2; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
-.ui-grid-header tr > th:first-child { border-radius: 4px 0 0 0; }
-.ui-grid-header tr > th:last-child { border-radius: 0 4px 0 0; }
+.ui-grid-header tr > th:first-child { border-radius: 3px 0 0 0; }
+.ui-grid-header tr > th:last-child { border-radius: 0 3px 0 0; }
 .ui-grid-noscroll .ui-grid-scroller { overflow: hidden !important; }
 .ui-grid-noscroll .emptyfill { display: table-row; }
 .ui-grid td, .ui-grid th { overflow: hidden; cursor: default; border-left: 1px solid #E0E0E0; }
@@ -163,12 +163,12 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .right { text-align: right; }
 
 .ui-inlineform-container { position: absolute; width: 100%; z-index: 10; }
-.ui-inlineform { background-color: white; border-radius: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transform: translate(0, 10px); transition: all 0.2s; opacity: 0; border: 1px solid #E0E0E0; border-top: 0; }
+.ui-inlineform { background-color: white; border-radius: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transform: translate(0, 10px); transition: all 0.2s; opacity: 0; border: 1px solid #E0E0E0; }
 .ui-inlineform-animate { transform: skewX(0deg); opacity: 1; }
 .ui-inlineform .padding { padding: 15px; }
 .ui-inlineform-arrow { position: absolute; color: white; font-size: 25px; margin-top: -17px; }
-.ui-inlineform-title { padding: 10px 15px; font-size: 12px; user-select: none; color: black; background-color: white; border-bottom: 1px solid #F0F0F0; }
-.ui-inlineform-title .ui-inlineform-close { float: right; cursor: pointer; font-size: 14px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: #DD2925; }
+.ui-inlineform-title { padding: 10px 15px; font-size: 12px; user-select: none; color: black; background-color: white; border-bottom: 1px solid #F0F0F0; border-radius: 3px 3px 0 0; }
+.ui-inlineform-title .ui-inlineform-close { float: right; cursor: pointer; font-size: 14px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; padding: 0; height: auto; width: auto; color: #DD2925; }
 .ui-inlineform-title .ui-inlineform-close:hover { transform: scale(1.2) rotate(-90deg); }
 .ui-inlineform-title > span { font-weight: bold; }
 .ui-inlineform-title > .fa { margin-right: 7px; }
@@ -183,15 +183,15 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-inlineform-buttons div { position: relative; display: inline-block; vertical-align: middle; }
 .ui-inlineform-buttons label { float: right; margin: 12px 0 0 0; font-size: 11px; }
 
-.ui-contextmenu { position: absolute; opacity: 0; transition: 0.25s transform cubic-bezier(0.23, 1, 0.32, 1); left: -100; top: -100; z-index: 20; width: 240px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); transform: translate(0px,20px); background-color: white; border-radius: 4px; }
+.ui-contextmenu { position: absolute; opacity: 0; transition: 0.25s transform cubic-bezier(0.23, 1, 0.32, 1); left: -100; top: -100; z-index: 20; width: 240px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); transform: translate(0px,20px); background-color: #303030; border-radius: 4px; }
 .ui-contextmenu .selected { font-weight: bold; }
 .ui-contextmenu .selected * { color: #1484FC !important; }
-.ui-contextmenu-arrow { position: absolute; font-size: 30px; top: -20px; color: white; left: 107px; }
+.ui-contextmenu-arrow { position: absolute; font-size: 30px; top: -20px; color: #303030; left: 107px; }
 .ui-contextmenu-visible { opacity: 1; transform: translate(0px,0px); }
-.ui-contextmenu-items > div { border-top: 1px solid #F0F0F0; font-size: 14px; height: 38px; background-color: white; cursor: pointer; }
-.ui-contextmenu-items > div:hover { background: linear-gradient(white,#F8F8F8); }
+.ui-contextmenu-items > div { border-top: 1px solid #404040; font-size: 14px; height: 38px; background-color: transparent; cursor: pointer; }
+.ui-contextmenu-items > div:hover { background-color: #101010; }
 .ui-contextmenu-items i { float: left; width: 40px; text-align: center; padding: 11px 0 3px; font-size: 16px; color: #A0A0A0; }
-.ui-contextmenu-items span { float: left; color: black; width: 180px; margin: 10px 0 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; height: 20px; }
+.ui-contextmenu-items span { float: left; color: white; width: 180px; margin: 10px 0 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; height: 20px; }
 .ui-contextmenu-items > div:first-child { border-width: 0; border-top-left-radius: 4px; border-top-right-radius: 4px; }
 .ui-contextmenu-items > div:last-child { border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
 

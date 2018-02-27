@@ -22,6 +22,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('login', 'String(30)');
 	schema.define('password', 'String(30)');
 	schema.define('roles', '[String]');
+	schema.define('groups', '[String]');
 	schema.define('blocked', Boolean);
 	schema.define('customer', Boolean);
 	schema.define('welcome', Boolean);
@@ -32,7 +33,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('sa', Boolean);
 	schema.define('inactive', Boolean);
 	schema.define('sounds', Boolean);
-	schema.define('verifytoken', Boolean);
+	schema.define('rebuildtoken', Boolean);
 	schema.define('datebirth', Date);
 	schema.define('datestart', Date);
 	schema.define('dateend', Date);
@@ -40,7 +41,7 @@ NEWSCHEMA('User').make(function(schema) {
 
 	schema.setSave(function($) {
 
-		if (!$.controller.user.sa) {
+		if ($.user && !$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}
@@ -80,6 +81,7 @@ NEWSCHEMA('User').make(function(schema) {
 			item.gender = model.gender;
 			item.department = model.department;
 			item.group = model.group;
+			item.groups = model.groups;
 			item.language = model.language;
 			item.place = model.place;
 			item.position = model.position;
@@ -98,10 +100,13 @@ NEWSCHEMA('User').make(function(schema) {
 			item.notificationsphone = model.notificationsphone;
 			item.notificationsemail = model.notificationsemail;
 
-			if (model.verifytoken)
+			if (!item.apps)
+				item.apps = {};
+
+			if (model.rebuildtoken)
 				item.verifytoken = U.GUID(15);
 
-			LOGGER('users', 'update: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
+			LOGGER('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 
 		} else {
 			item = model;
@@ -111,7 +116,7 @@ NEWSCHEMA('User').make(function(schema) {
 			item.verifytoken = U.GUID(15);
 			F.global.users.push(item);
 
-			LOGGER('users', 'create: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
+			LOGGER('users', 'create: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 		}
 
 		item.grouplinker = item.group.slug();
@@ -136,12 +141,12 @@ NEWSCHEMA('User').make(function(schema) {
 
 	schema.setRemove(function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}
 
-		var id = $.controller.id;
+		var id = $.id;
 
 		F.global.users = F.global.users.remove('id', id);
 
@@ -152,7 +157,7 @@ NEWSCHEMA('User').make(function(schema) {
 				user.idsupervisor = '';
 		}
 
-		LOGGER('users', 'remove: ' + id, '@' + $.controller.user.name, $.controller.ip);
+		LOGGER('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
 
 		setTimeout2('users', function() {

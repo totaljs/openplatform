@@ -15,6 +15,7 @@ F.onAuthorize = function(req, res, flags, next) {
 
 		if (req.headers.token === F.accesstoken)
 			return next(true, SERVICEACCOUNT);
+
 		if (DDOS[key])
 			DDOS[key]++;
 		else

@@ -43,9 +43,7 @@ function realtime() {
 
 	WS = self;
 
-	self.autodestroy(function() {
-		WS = null;
-	});
+	self.autodestroy(() => WS = null);
 
 	self.on('open', function(client) {
 

@@ -10,7 +10,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 
 	schema.setGet(function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}
@@ -27,7 +27,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 
 	schema.setSave(function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.error.push('error-permissions');
 			return $.callback();
 		}
@@ -45,7 +45,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 
 		Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(model.$clean()), NOOP);
 		$.success();
-		LOGGER('settings', 'update: ' + JSON.stringify(model.$clean()), '@' + $.controller.user.name, $.controller.ip);
+		LOGGER('settings', 'update: ' + JSON.stringify(model.$clean()), '@' + $.user.name, $.ip);
 	});
 
 	schema.addWorkflow('init', function($) {
@@ -73,7 +73,7 @@ NEWSCHEMA('SettingsSMTP').make(function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}

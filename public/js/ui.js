@@ -418,7 +418,6 @@ COMPONENT('textbox', function(self, config) {
 	};
 });
 
-
 COMPONENT('binder', function(self) {
 
 	var keys, keys_unique;

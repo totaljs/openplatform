@@ -1,3 +1,4 @@
+
 NEWSCHEMA('UserApps').make(function(schema) {
 
 	schema.define('type', ['extend', 'set', 'remove'], true);
@@ -12,7 +13,7 @@ NEWSCHEMA('UserApps').make(function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}
@@ -100,7 +101,7 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}
@@ -139,7 +140,7 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 			var obj = CREATE('Notification');
 			obj.body = model.body;
 			obj.type = model.subtype;
-			$.controller.query.user = item.id;
+			$.query.user = item.id;
 			obj.$controller($.controller);
 			obj.$save(next);
 		}, () => $.success(true, count));
@@ -155,7 +156,7 @@ NEWSCHEMA('UserRename').make(function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}

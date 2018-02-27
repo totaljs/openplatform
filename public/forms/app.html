@@ -1,4 +1,4 @@
-<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:app;submit:appform_submit;title:@(Apps's details);width:920" data-jc-controller="Apps">
+<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:app;submit:appform_submit;title:@(App / Details);width:920" data-jc-controller="Apps">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-3">
@@ -71,10 +71,10 @@
 		<div class="row">
 			<div class="col-md-9 col-md-offset-3">
 				<div class="padding npt npb">
+					<button name="cancel">@(Cancel)</button>
 					<div data-jc="validation" data-jc-path="apps.form" class="inline" data-jc-config="if:value && value.data && value.data.name">
 						<button name="submit">@(SAVE)</button>
 					</div>
-					<button name="cancel">@(Cancel)</button>
 				</div>
 			</div>
 		</div>

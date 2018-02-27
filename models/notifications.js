@@ -8,7 +8,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 	schema.setQuery(function($) {
 
-		var user = $.controller.user;
+		var user = $.user;
 
 		if (!user.countnotifications) {
 			$.callback(null);
@@ -38,21 +38,21 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 		var user, app;
 
-		if ($.controller.user && $.controller.user.sa && !$.controller.query.accesstoken) {
+		if ($.user && $.user.sa && !$.query.accesstoken) {
 
 			// Super Admin notifications
 
-			var user = F.global.users.findItem('id', $.controller.query.user);
+			var user = F.global.users.findItem('id', $.query.user);
 			if (!user) {
 				$.success();
 				return;
 			}
 
-			$.model.title = $.controller.user.name;
+			$.model.title = $.user.name;
 
 		} else {
 
-			var arr = ($.controller.query.accesstoken || '').split('-');
+			var arr = ($.query.accesstoken || '').split('-');
 
 			// 0 - app accesstoken
 			// 1 - app id
@@ -60,14 +60,14 @@ NEWSCHEMA('Notification').make(function(schema) {
 			// 3 - user id
 
 			var app = F.global.apps.findItem('accesstoken', arr[0]);
-			if (!app || app.id !== arr[1] || !$.controller.user) {
+			if (!app || app.id !== arr[1] || !$.user) {
 				$.invalid('error-invalid-accesstoken');
 				return;
 			}
 
-			var ip = $.controller.ip;
+			var ip = $.ip;
 			if (app.origin) {
-				if (!app.origin[ip] && app.hostname !== ip && (!$.controller.user || $.controller.user.id !== arr[3])) {
+				if (!app.origin[ip] && app.hostname !== ip && (!$.user || $.user.id !== arr[3])) {
 					$.invalid('error-invalid-origin');
 					return;
 				}
@@ -100,7 +100,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 			model.idapp = app.id;
 
 		model.datecreated = F.datetime;
-		model.ip = $.controller.ip;
+		model.ip = $.ip;
 
 		Fs.appendFile(F.path.databases('notifications_' + user.id + '.json'), JSON.stringify(model) + ',', NOOP);
 

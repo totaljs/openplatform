@@ -30,15 +30,12 @@ NEWSCHEMA('App').make(function(schema) {
 
 	schema.setSave(function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}
 
 		var model = $.model.$clean();
-
-		console.log(model);
-
 		var item = F.global.apps.findItem('id', model.id);
 
 		model.search = (model.name + ' ' + model.title).toSearch();
@@ -50,11 +47,11 @@ NEWSCHEMA('App').make(function(schema) {
 			item.datecreated = F.datetime;
 			F.global.apps.push(item);
 
-			LOGGER('apps', 'create: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
+			LOGGER('apps', 'create: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
 
 		} else {
 
-			LOGGER('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.controller.user.name, $.controller.ip);
+			LOGGER('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
 
 			model.dateupdated = F.datetime;
 			sync(item, model, true);
@@ -67,19 +64,19 @@ NEWSCHEMA('App').make(function(schema) {
 
 	schema.setRemove(function($) {
 
-		if (!$.controller.user.sa) {
+		if (!$.user.sa) {
 			$.invalid('error-permissions');
 			return;
 		}
 
-		var id = $.controller.id;
+		var id = $.id;
 
 		F.global.apps = F.global.apps.remove('id', id);
 		F.global.users.forEach(function(item) {
 			delete item.apps[id];
 		});
 
-		LOGGER('apps', 'remove: ' + id, '@' + $.controller.user.name, $.controller.ip);
+		LOGGER('apps', 'remove: ' + id, '@' + $.user.name, $.ip);
 		OP.save(); // Save changes
 		EMIT('apps.refresh', id, true);
 		$.success();
@@ -111,6 +108,7 @@ NEWSCHEMA('App').make(function(schema) {
 				$.model.frame = response.url;
 				$.model.email = response.email;
 				$.model.roles = response.roles;
+				$.model.groups = response.groups;
 				$.model.custom = response.custom;
 				$.model.online = true;
 				$.model.daterefreshed = F.datetime;
@@ -129,7 +127,7 @@ NEWSCHEMA('App').make(function(schema) {
 					item.online = false;
 				} else {
 
-					item.hostname = output.hostname.replace(/\:\d+/, '');
+					item.hostname = output.hostname.replace(/:\d+/, '');
 					item.online = true;
 					item.version = response.version;
 					item.name = response.name;
@@ -139,6 +137,7 @@ NEWSCHEMA('App').make(function(schema) {
 					item.frame = response.url;
 					item.email = response.email;
 					item.roles = response.roles;
+					item.groups = response.groups;
 
 					if (response.origin && response.origin.length) {
 						item.origin = {};
@@ -185,6 +184,7 @@ function sync(item, model, meta) {
 	item.frame = model.frame;
 	item.email = model.email;
 	item.roles = model.roles;
+	item.groups = model.groups;
 	item.version = model.version;
 	item.custom = model.custom;
 	item.online = model.online === true;

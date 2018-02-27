@@ -180,6 +180,7 @@ function readuser(user, type, app) {
 	obj.firstname = user.firstname;
 	obj.gender = user.gender;
 	obj.globalroles = user.roles;
+	obj.globalgroups = user.groups;
 	obj.group = user.group;
 	obj.grouplinker = user.grouplinker;
 	obj.language = user.language;

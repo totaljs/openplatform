@@ -11,7 +11,7 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.setSave(function($) {
 
 		var model = $.model;
-		var user = F.global.users.findItem('id', $.controller.user.id);
+		var user = F.global.users.findItem('id', $.user.id);
 
 		if (user) {
 			user.photo = model.photo;

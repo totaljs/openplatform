@@ -3,7 +3,7 @@
 html,body { height: 100%; overflow: hidden; }
 body { height: 100%; overflow: hidden; background-color: #F0F0F0; }
 
-header { height: 50px; background: white linear-gradient(white,#F8F8F8); border-bottom: 1px solid #E0E0E0; box-shadow: 0 0 10px rgba(0,0,0,0.1); position: fixed; z-index: 15; width: 100%; top: 0; }
+header { height: 50px; background: white linear-gradient(white,#F8F8F8); border-bottom: 1px solid #E0E0E0; box-shadow: 0 0 10px rgba(0,0,0,0.05); position: fixed; z-index: 15; width: 100%; top: 0; }
 header nav { float: left; border-right: 1px solid #E0E0E0; }
 header nav:first-child { border-right: 0; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 49px; height: 49px; border-left: 1px solid #E0E0E0; cursor: pointer; vertical-align: top; }
@@ -88,6 +88,8 @@ h2 .fa { margin-right: 10px; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
 .toolbar button .fa { margin-right: 5px; }
 .toolbar button:hover { background-color: white; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
+.toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #E0E0E0; box-shadow: none; }
+.toolbar button:disabled .fa { color: silver; }
 .toolbar button.right { float: right; margin-left: 5px; margin-right: 0; }
 .toolbar > span { margin: 2px 6px 0; border-left: 1px solid #D0D0D0; height: 20px; padding: 0 2px 0 0; vertical-align: middle; display: inline-block; position: relative; }
 .toolbar .selected { background-color: #FFE7A1 !important; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }

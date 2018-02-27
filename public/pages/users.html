@@ -7,18 +7,21 @@
 			<button class="b exec" data-exec="Users/showFilter"><i class="fa fa-filter"></i>@(Filtering)</button>
 			<span></span>
 			<button class="exec" data-exec="Users/showOptions"><i class="fa fa-cogs"></i>@(Options)</button>
+			<span></span>
+			<button class="exec" data-exec="Users/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
 		</nav>
 		<div class="fullheight">
-			<div data-jc="grid" data-jc-path="users.grid" data-jc-config="pagination:false;padding:10">
+			<div data-jc="grid" data-jc-path="users.grid" data-jc-config="pagination:false;padding:10;checked:Users/checkbox;button:Users/operation">
 				<script type="text/plain">
 					[
+						{ name: 'id', text: '', template: '<input type="checkbox" value="{{ id }}" />', size: '42px', header: '<input type="checkbox" value="{{ id }}" />', filter: false, sort: false, title: '@(Options)', align: 'center' },
 						{ name: 'name', text: '@(Name)', size: 2, template: '{{ if inactive }}<span class="badge badge-silver mr5">@(inactive)</span>{{ else }}<i class="fa fa-circle mr5 {{ if online }}green{{ else }}red{{ fi }}"></i>{{ fi }}{{ name }}{{ if blocked }} <span class="badge badge-red">@(blocked)</span>{{ fi }}{{ if sa }} <span class="badge badge-green">@(superadmin)</span>{{ fi }}' },
 						{ name: 'company', text: '@(Company)', size: 1, template: '<i class="fa fa-building-o mr5"></i>{{ company }}', class: 'hidden-xs' },
 						{ name: 'group', text: '@(Group)', size: 1, class: 'hidden-xs' },
 						{ name: 'position', text: '@(Position)', size: 1, template: '<i class="fa fa-address-card mr5"></i>{{ position }}', class: 'hidden-xs' },
 						{ name: 'place', text: '@(Place)', size: 1, class: 'hidden-xs' },
 						{ name: 'datecreated', text: '@(Created)', size: 1, format: '@(yyyy-MM-dd)', align: 'center', class: 'visible-lg' },
-						{ name: '@(Options)', filter: false, align: 'center', sort: false, size: 0.7, template: '<button class="exec" data-exec="Users/update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button class="exec" data-exec="Users/remove" title="@(Remove)"><i class="fa fa-times"></i></button>' }
+						{ name: '@(Options)', filter: false, align: 'center', sort: false, size: 0.7, template: '<button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button name="remove" title="@(Remove)"><i class="fa fa-times"></i></button>' }
 					]
 				</script>
 			</div>
@@ -70,6 +73,9 @@
 	users.grid.page = 1;
 
 	CONTROLLER('Users', function(self) {
+
+		var toolbar = self.virtualize({ btnChecked: '.toolbar button[name="checked"]' });
+
 		self.scope = 'users';
 
 		self.refresh = function() {
@@ -84,25 +90,9 @@
 		};
 
 		self.create = function() {
-			SET('users.form', { password: GUID(10), verifytoken: true, accesstoken: GUID(40), apps: {}, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, volume: 50, gender: 'male', welcome: true }, true);
+			SET('users.form', { password: GUID(10), rebuildtoken: true, accesstoken: GUID(40), apps: {}, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, volume: 50, gender: 'male', welcome: true }, true);
 			DEFAULT('users.form.*');
 			SET('common.form', 'user');
-		};
-
-		self.remove = function(el) {
-			var obj = self.get().grid.items[+el.closest('tr').attr('data-index')];
-			SETTER('confirm', 'confirm', '@(Are you sure you want to remove selected user?)', ['@(Yes)', '@(Cancel)'], function(index) {
-				if (index)
-					return;
-				SETTER('loading', 'show');
-				AJAX('DELETE /api/users/{0}/'.format(obj.id), function(response) {
-					SETTER('loading', 'hide', 1000);
-					if (response.success) {
-						SETTER('snackbar', 'success', '@(User has been removed successfully.)');
-						self.refresh();
-					}
-				});
-			});
 		};
 
 		self.showFilter = function(el) {
@@ -113,12 +103,28 @@
 			SETTER('#usersoptions', 'toggle', el);
 		};
 
-		self.update = function(el) {
-			var obj = self.get().grid.items[+el.closest('tr').attr('data-index')];
-			if (obj) {
-				obj.password = '*************';
-				SET('users.form', CLONE(obj), true);
-				SET('common.form', 'user');
+		self.operation = function(btn, row, grid) {
+			var name = btn.prop('name');
+			switch (name) {
+				case 'remove':
+					SETTER('confirm', 'confirm', '@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(index) {
+						if (index)
+							return;
+						SETTER('loading', 'show');
+						AJAX('DELETE /api/users/{0}/'.format(row.id), function(response) {
+							SETTER('loading', 'hide', 1000);
+							if (response.success) {
+								SETTER('snackbar', 'success', '@(User has been removed successfully.)');
+								self.refresh();
+							}
+						});
+					});
+					break;
+				case 'update':
+					row.password = '*************';
+					SET('users.form', CLONE(row), true);
+					SET('common.form', 'user');
+					break;
 			}
 		};
 
@@ -171,6 +177,37 @@
 				self.set('grid.items', arr);
 			}, 500, 10);
 		});
+
+		self.checkbox = function(el, grid) {
+			el && !el.value && grid.checked(el.checked);
+			var count = grid.checked().length;
+			toolbar.btnChecked.disable(count === 0);
+		};
+
+		self.checked = function(el) {
+			var items = [];
+			items.push({ id: 'remove', name: '@(Remove users)', icon: 'trash' });
+			SETTER('contextmenu', 'show', 'center', el, items, function(item) {
+				switch (item.id) {
+					case 'remove':
+						SETTER('confirm', 'show', '@(Are you sure you want to remove all selected users?)', ['"trash"@(Remove)', '@(No)'], function(index) {
+							if (index)
+								return;
+							var arr = FIND('.{0}.grid'.format(self.scope)).checked().toArray();
+							SETTER('loading', 'show', 'trash-o');
+							arr.waitFor(function(el, next, index) {
+								SET('common.progress', (index / arr.length) * 100);
+								AJAX('DELETE /api/users/{0}/'.format(el.value), next);
+							}, function() {
+								self.refresh();
+								SETTER('loading', 'hide', 1000);
+								SETTER('snackbar', 'success', '@(Users have been removed successfully.)');
+							});
+						});
+						break;
+				}
+			}, 0, 5);
+		};
 
 		self.refresh();
 	});

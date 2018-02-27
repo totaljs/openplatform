@@ -1,4 +1,4 @@
-<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:user;submit:userform_submit;title:@(User's details);width:960" data-jc-controller="Users">
+<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:user;submit:userform_submit;title:@(User / Details);width:960" data-jc-controller="Users">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-3">
@@ -9,6 +9,12 @@
 				<hr />
 				<div data-jc="template" data-jc-path="users.form" data-jc-config="properties:datecreated,dateupdated,datelogged,online">
 					<script type="text/html">
+						{{ if id }}
+						<div class="keyvalue">
+							<div class="key">@(ID)</div>
+							<div class="value">{{ id }}</div>
+						</div>
+						{{ fi }}
 						{{ if datelogged }}
 						<div class="keyvalue">
 							<div class="key">@(Logged)</div>
@@ -150,7 +156,7 @@
 							<div data-jc="checkbox" data-jc-path="users.form.notifications">@(Enable notifications)</div>
 							<div data-jc="checkbox" data-jc-path="users.form.notificationsemail">@(Enable email notifications)</div>
 							<div data-jc="checkbox" data-jc-path="users.form.notificationsphone">@(Enable phone notifications)</div>
-							<div data-jc="checkbox" data-jc-path="users.form.verifytoken">@(Re-build verification token)</div>
+							<div data-jc="checkbox" data-jc-path="users.form.rebuildtoken">@(Re-build verification token)</div>
 						</div>
 					</div>
 					<br />
@@ -179,7 +185,10 @@
 					<hr />
 					<h2><i class="fa fa-sitemap"></i>@(Custom global roles)</h2>
 					<div data-jc="textboxlist" data-jc-path="users.form.roles" data-jc-config="placeholder:@(Type a global role and press enter)"></div>
-					<br />
+					<hr />
+					<h2><i class="fa fa-sitemap"></i>@(Custom global groups)</h2>
+					<div data-jc="textboxlist" data-jc-path="users.form.groups" data-jc-config="placeholder:@(Type a group name and press enter)"></div>
+					<hr />
 					<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
 					<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
 					<br />
@@ -214,10 +223,10 @@
 		<div class="row">
 			<div class="col-md-9 col-md-offset-3">
 				<div class="padding npt npb">
+					<button name="cancel">@(Cancel)</button>
 					<div data-jc="validation" data-jc-path="users.form" class="inline">
 						<button name="submit">@(SAVE)</button>
 					</div>
-					<button name="cancel">@(Cancel)</button>
 				</div>
 			</div>
 		</div>
