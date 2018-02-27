@@ -44,7 +44,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 			var user = F.global.users.findItem('id', $.controller.query.user);
 			if (!user) {
-				$.callback(SUCCESS(true));
+				$.success();
 				return;
 			}
 
@@ -61,40 +61,34 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 			var app = F.global.apps.findItem('accesstoken', arr[0]);
 			if (!app || app.id !== arr[1] || !$.controller.user) {
-				$.error.push('error-invalid-accesstoken');
-				$.callback();
+				$.invalid('error-invalid-accesstoken');
 				return;
 			}
 
 			var ip = $.controller.ip;
 			if (app.origin) {
 				if (!app.origin[ip] && app.hostname !== ip && (!$.controller.user || $.controller.user.id !== arr[3])) {
-					$.error.push('error-invalid-origin');
-					$.callback();
+					$.invalid('error-invalid-origin');
 					return;
 				}
 			} else if (app.hostname !== ip) {
-				$.error.push('error-invalid-origin');
-				$.callback();
+				$.invalid('error-invalid-origin');
 				return;
 			}
 
 			if (!app.allownotifications) {
-				$.error.push('error-permissions');
-				$.callback();
+				$.invalid('error-permissions');
 				return;
 			}
 
 			var user = F.global.users.findItem('accesstoken', arr[2]);
 			if (!user || user.id !== arr[3]) {
-				$.error.push('error-invalid-accesstoken');
-				$.callback();
+				$.invalid('error-invalid-accesstoken');
 				return;
 			}
 
 			if (!user.notifications || user.blocked || user.inactive) {
-				$.error.push('error-permissions');
-				$.callback();
+				$.invalid('error-permissions');
 				return;
 			}
 		}
@@ -119,7 +113,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 		OP.saveState(2);
 		EMIT('users.notify', user);
-		$.callback(SUCCESS(true));
+		$.success();
 
 		// Stats
 		var db = NOSQL('users');

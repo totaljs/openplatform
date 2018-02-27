@@ -25,7 +25,7 @@ NEWSCHEMA('User').make(function(schema) {
 			OP.saveState(2);
 		}
 
-		$.callback(SUCCESS(true));
+		$.success();
 	});
 
 });

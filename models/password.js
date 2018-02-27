@@ -21,6 +21,6 @@ NEWSCHEMA('Password').make(function(schema) {
 			}
 		} else
 			$.error.push('error-credentials');
-		$.callback(SUCCESS(true));
+		$.success();
 	});
 });

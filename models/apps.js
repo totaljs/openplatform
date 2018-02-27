@@ -5,7 +5,7 @@ NEWSCHEMA('Meta').make(function(schema) {
 			builder.url($.model.url);
 			builder.exec(function(err, response) {
 				err && $.error.push(err);
-				$.callback(SUCCESS(true, response));
+				$.success(true, response);
 			});
 		});
 	});
@@ -31,8 +31,8 @@ NEWSCHEMA('App').make(function(schema) {
 	schema.setSave(function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var model = $.model.$clean();
@@ -62,14 +62,14 @@ NEWSCHEMA('App').make(function(schema) {
 
 		OP.save(); // Save changes
 		EMIT('apps.refresh', item);
-		$.callback(SUCCESS(true));
+		$.success();
 	});
 
 	schema.setRemove(function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var id = $.controller.id;
@@ -82,7 +82,7 @@ NEWSCHEMA('App').make(function(schema) {
 		LOGGER('apps', 'remove: ' + id, '@' + $.controller.user.name, $.controller.ip);
 		OP.save(); // Save changes
 		EMIT('apps.refresh', id, true);
-		$.callback(SUCCESS(true));
+		$.success();
 	});
 
 	schema.addWorkflow('refresh', function($) {
@@ -115,7 +115,7 @@ NEWSCHEMA('App').make(function(schema) {
 				$.model.online = true;
 				$.model.daterefreshed = F.datetime;
 
-				$.callback(SUCCESS(true));
+				$.success();
 			});
 		});
 	});
@@ -155,7 +155,7 @@ NEWSCHEMA('App').make(function(schema) {
 		}, function() {
 			EMIT('apps.refresh');
 			OP.saveState(1);
-			$.callback(SUCCESS(true));
+			$.success();
 		});
 	});
 });

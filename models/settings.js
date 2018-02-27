@@ -11,8 +11,8 @@ NEWSCHEMA('Settings').make(function(schema) {
 	schema.setGet(function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var model = $.model;
@@ -44,7 +44,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 		F.config.accesstoken = model.accesstoken;
 
 		Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(model.$clean()), NOOP);
-		$.callback(SUCCESS(true));
+		$.success();
 		LOGGER('settings', 'update: ' + JSON.stringify(model.$clean()), '@' + $.controller.user.name, $.controller.ip);
 	});
 
@@ -61,7 +61,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 				F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
 			}
 
-			$.callback(SUCCESS(true));
+			$.success();
 		});
 	});
 });
@@ -74,8 +74,8 @@ NEWSCHEMA('SettingsSMTP').make(function(schema) {
 	schema.addWorkflow('exec', function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var model = $.model;
@@ -88,7 +88,7 @@ NEWSCHEMA('SettingsSMTP').make(function(schema) {
 				$.error.replace('@', err.toString());
 			}
 
-			$.callback(SUCCESS(true));
+			$.success();
 		});
 	});
 });

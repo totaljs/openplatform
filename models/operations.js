@@ -13,8 +13,8 @@ NEWSCHEMA('UserApps').make(function(schema) {
 	schema.addWorkflow('exec', function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var model = $.model;
@@ -81,7 +81,7 @@ NEWSCHEMA('UserApps').make(function(schema) {
 
 		}
 
-		$.callback(SUCCESS(true, count));
+		$.success(true, count);
 	});
 });
 
@@ -101,8 +101,8 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 	schema.addWorkflow('exec', function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var model = $.model;
@@ -142,9 +142,7 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 			$.controller.query.user = item.id;
 			obj.$controller($.controller);
 			obj.$save(next);
-		}, function() {
-			$.callback(SUCCESS(true, count));
-		});
+		}, () => $.success(true, count));
 	});
 
 });
@@ -158,8 +156,8 @@ NEWSCHEMA('UserRename').make(function(schema) {
 	schema.addWorkflow('exec', function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var model = $.model;
@@ -197,7 +195,7 @@ NEWSCHEMA('UserRename').make(function(schema) {
 			OP.saveState(2);
 		}
 
-		$.callback(SUCCESS(true, count));
+		$.success(true, count);
 	});
 
 });

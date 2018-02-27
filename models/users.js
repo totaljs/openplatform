@@ -41,8 +41,8 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.setSave(function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var model = $.model.$clean();
@@ -58,8 +58,7 @@ NEWSCHEMA('User').make(function(schema) {
 			item = F.global.users.findItem('id', model.id);
 
 			if (item == null) {
-				$.error.push('error-user-404');
-				$.callback();
+				$.invalid('error-users-404');
 				return;
 			}
 
@@ -129,14 +128,14 @@ NEWSCHEMA('User').make(function(schema) {
 		$WORKFLOW('User', 'refresh');
 		EMIT('users.refresh', item);
 		OP.save();
-		$.callback(SUCCESS(true));
+		$.success();
 	});
 
 	schema.setRemove(function($) {
 
 		if (!$.controller.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.invalid('error-permissions');
+			return;
 		}
 
 		var id = $.controller.id;
@@ -154,7 +153,7 @@ NEWSCHEMA('User').make(function(schema) {
 		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
 		OP.save(); // Save changes
 		EMIT('users.refresh', id, true);
-		$.callback(SUCCESS(true));
+		$.success();
 	});
 
 	schema.addWorkflow('refresh', function($) {

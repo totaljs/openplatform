@@ -47,7 +47,7 @@ NEWSCHEMA('Account').make(function(schema) {
 
 		EMIT('users.refresh', user);
 		OP.saveState(2);
-		$.callback(SUCCESS(true));
+		$.success();
 	});
 
 });
