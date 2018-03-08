@@ -4,14 +4,14 @@ exports.install = function() {
 
 	GROUP(['authorize'], function() {
 		// Internal
-		ROUTE('/api/apps/',          ['*App --> save',    'post']);
-		ROUTE('/api/apps/{id}/',     ['*App --> remove',  'delete']);
-		ROUTE('/api/apps/meta/',     ['*Meta --> exec',    'post']);
-		ROUTE('/api/users/',         ['*User --> save',    'post']);
-		ROUTE('/api/users/{id}/',    ['*User --> remove',  'delete']);
-		ROUTE('/api/users/rename/',  ['*UserRename --> exec',  'post']);
-		ROUTE('/api/users/notify/',  ['*UserNotify --> exec',  'post']);
-		ROUTE('/api/users/apps/',    ['*UserApps --> exec',  'post']);
+		ROUTE('/api/apps/',          ['*App --> save', 'post']);
+		ROUTE('/api/apps/{id}/',     ['*App --> remove', 'delete']);
+		ROUTE('/api/apps/meta/',     ['*Meta --> exec', 'post']);
+		ROUTE('/api/users/',         ['*User --> save', 'post']);
+		ROUTE('/api/users/{id}/',    ['*User --> remove', 'delete']);
+		ROUTE('/api/users/rename/',  ['*UserRename --> exec', 'post']);
+		ROUTE('/api/users/notify/',  ['*UserNotify --> exec', 'post']);
+		ROUTE('/api/users/apps/',    ['*UserApps --> exec', 'post']);
 		ROUTE('/api/profile/',       ['*Profile --> save', 'post']);
 
 		ROUTE('/api/apps/{id}/',     json_apps_meta);
