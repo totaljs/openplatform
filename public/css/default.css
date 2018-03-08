@@ -137,11 +137,11 @@ h2 .fa { margin-right: 10px; }
 .ui-npanel { position: fixed; width: 300px; top: 50px; right: 0; background: rgba(255,255,255,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 15; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #DBE1E9; overflow-scrolling: touch; }
 .ui-npanel .fa { margin-right: 3px; }
 .ui-npanel-clear { margin: 15px 0 0 20px; font-size: 11px; cursor: pointer; }
-.ui-npanel-message { margin: 20px; padding: 0; background-color: white; border-radius: 4px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s; }
+.ui-npanel-message { margin: 20px; padding: 0; background-color: white; border-radius: 3px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s; border: 1px solid #D5D5D5; }
 .ui-npanel-error { border: 2px solid #D33634; }
 .ui-npanel-success { border: 2px solid #8CC152; }
 .ui-npanel-date { float: right; font-size: 10px; color: #A0A0A0; margin: 7px 10px 0 0; }
-.ui-npanel-title img { border: 1px solid #E0E0E0; border-radius: 4px; margin-right: 5px; vertical-align: middle; }
+.ui-npanel-title img { border: 1px solid #E0E0E0; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
 .ui-npanel-title { font-size: 13px; border-bottom: 1px solid #E0E0E0; padding: 5px 10px; }
 .ui-npanel-padding { padding: 0 10px 10px; }
 .ui-npanel-body { line-height: 14px; font-size: 12px; margin-top: 10px; color: gray; }
