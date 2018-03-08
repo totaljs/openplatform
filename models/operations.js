@@ -1,4 +1,3 @@
-
 NEWSCHEMA('UserApps').make(function(schema) {
 
 	schema.define('type', ['extend', 'set', 'remove'], true);
@@ -22,6 +21,7 @@ NEWSCHEMA('UserApps').make(function(schema) {
 		var users = F.global.users;
 		var count = 0;
 		var keys = Object.keys(model.apps);
+		var updated = [];
 
 		for (var i = 0, length = users.length; i < length; i++) {
 			var user = users[i];
@@ -48,6 +48,7 @@ NEWSCHEMA('UserApps').make(function(schema) {
 			if (model.type === 'set') {
 				count++;
 				user.apps = CLONE(model.apps);
+				updated.push(user);
 				continue;
 			}
 
@@ -61,6 +62,7 @@ NEWSCHEMA('UserApps').make(function(schema) {
 					!user.apps[key] && (user.apps[key] = { roles: [] });
 					permissions.forEach(permission => user.apps[key].push(permission));
 					user.apps[key].settings = app.settings;
+					updated.push(user);
 					count++;
 					return;
 				}
@@ -76,13 +78,20 @@ NEWSCHEMA('UserApps').make(function(schema) {
 						if (users.apps[key])
 							user.apps[key].roles = user.apps[key].roles.remove(permission);
 					});
-				} else
+				} else {
 					delete user.apps[key];
+					updated.push(user);
+				}
 			});
-
 		}
 
 		$.success(true, count);
+
+		updated.wait(function(id, next) {
+			EMIT('users.refresh', id);
+			setImmediate(next);
+		});
+
 	});
 });
 
