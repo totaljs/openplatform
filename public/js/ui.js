@@ -690,6 +690,7 @@ COMPONENT('page', function(self, config) {
 
 			setTimeout(function() {
 				self.tclass('hidden', !is);
+				self.release(!is);
 				EMIT('resize');
 			}, 200);
 
@@ -2608,8 +2609,6 @@ COMPONENT('processes', function(self, config) {
 			return;
 		}
 
-		SETTER('loading', 'show');
-
 		var index = iframes.findIndex('id', id);
 		if (index === -1)
 			return self;
@@ -2628,7 +2627,6 @@ COMPONENT('processes', function(self, config) {
 			iframe.iframe.remove();
 			iframe.element.off();
 			iframe.element.remove();
-			SETTER('loading', 'hide', 200);
 		}, 1000);
 
 		var apps = GET(config.datasource);
@@ -2678,7 +2676,7 @@ COMPONENT('processes', function(self, config) {
 			return;
 		}
 
-		SETTER('loading', 'show');
+		// SETTER('loading', 'show');
 
 		iframe = {};
 		self.append(self.template(value, iframe));
@@ -2704,7 +2702,7 @@ COMPONENT('processes', function(self, config) {
 			iframe.element.rclass('ui-process-animation');
 		}, 500);
 
-		SETTER('loading', 'hide', 1000);
+		// SETTER('loading', 'hide', 1000);
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
 	};
@@ -2728,6 +2726,8 @@ COMPONENT('notificationspanel', function() {
 		container = self.find('.ui-npanel-container');
 		button = self.find('.ui-npanel-clear');
 
+		$(window).on('resize', self.resize);
+
 		self.event('click', '.ui-npanel-message', function() {
 			count--;
 			var el = $(this);
@@ -2747,6 +2747,12 @@ COMPONENT('notificationspanel', function() {
 			container.empty();
 			self.set(false);
 		});
+
+		setTimeout(self.resize, 500);
+	};
+
+	self.resize = function() {
+		self.css('height', $(window).height() - self.element.css('top').parseInt());
 	};
 
 	self.append = function(value) {
