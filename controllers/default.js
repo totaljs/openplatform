@@ -1,7 +1,7 @@
 const WSOPEN = { TYPE: 'open', body: null };
 const WSPROFILE =  { TYPE: 'profile', body: null };
 const WSNOTIFICATIONS = { TYPE: 'notifications', body: null };
-const WSNOTIFY = { TYPE: 'notify', body: 0 };
+const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
 const WSLOGOFF = { TYPE: 'logoff' };
 
 var WS;
@@ -76,6 +76,7 @@ function realtime() {
 
 					if (WSOPEN.body) {
 						client.send(WSOPEN);
+						client.user.apps[message.id].countnotifications = 0;
 
 						// Stats
 						var db = NOSQL('apps');
@@ -129,9 +130,11 @@ ON('users.refresh', function(user, removed) {
 	});
 });
 
-ON('users.notify', function(user) {
+ON('users.notify', function(user, app) {
 	if (WS) {
-		WSNOTIFY.body = user.countnotifications;
+		WSNOTIFY.body.count = user.countnotifications;
+		WSNOTIFY.body.app.id = app;
+		WSNOTIFY.body.app.count = app ? user.apps[app].countnotifications : 0;
 		WS.send(WSNOTIFY);
 	}
 });

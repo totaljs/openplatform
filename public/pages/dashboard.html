@@ -5,6 +5,7 @@
 			<div data-jc="repeater" data-jc-path="user.apps" class="centered">
 				<script type="text/html">
 					<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}">
+						<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
 						<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 						<i class="appclose fa fa-times hidden exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
 						<div><img src="{{ icon }}" alt="{{ title }}" onerror="onImageError(this)" /></div>
@@ -50,6 +51,10 @@
 		self.scope = 'dashboard';
 
 		self.open = function(el) {
+
+			if (common.page !== 'dashboard')
+				SET('common.page', 'dashboard');
+
 			var item = dashboard.apps.findItem('id', el.attrd('id'));
 			self.get('current') !== item &&	self.set('current', item);
 		};

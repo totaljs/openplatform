@@ -28,6 +28,7 @@ OP.saveState = function(type) {
 
 OP.load = function(callback) {
 	$WORKFLOW('Settings', 'init', function() {
+
 		Fs.readFile(F.path.databases('users.json'), function(err, response) {
 			F.global.users = response ? response.toString('utf8').parseJSON(true) : [];
 			Fs.readFile(F.path.databases('apps.json'), function(err, response) {
@@ -60,7 +61,7 @@ OP.profile = function(user) {
 
 	for (var i = 0, length = F.global.apps.length; i < length; i++) {
 		var app = F.global.apps[i];
-		!app.blocked && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive });
+		!app.blocked && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications });
 	}
 
 	return meta;

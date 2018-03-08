@@ -103,7 +103,7 @@ NEWSCHEMA('User').make(function(schema) {
 			if (!item.apps)
 				item.apps = {};
 
-			if (model.rebuildtoken)
+			if (model.rebuildtoken || !item.verifytoken)
 				item.verifytoken = U.GUID(15);
 
 			LOGGER('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
@@ -135,7 +135,11 @@ NEWSCHEMA('User').make(function(schema) {
 			OP.save();
 		}, 1000);
 
-		EMIT('users.refresh', item);
+		if (item.blocked || item.inactive)
+			EMIT('users.refresh', item.id, true);
+		else
+			EMIT('users.refresh', item);
+
 		$.success();
 	});
 

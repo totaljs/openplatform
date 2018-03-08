@@ -123,6 +123,7 @@
 					message.body.internal = user.apps.findItem('id', message.body.id);
 					dashboard.apps.push(message.body);
 					SET('dashboard.current', message.body);
+					$('.appunread[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
 					break;
 				case 'logoff':
 					COOKIES.set('@{'%cookie'}', '', '-1 day');
@@ -134,11 +135,14 @@
 					EXEC('Dashboard/sync');
 					break;
 				case 'notifications':
+					// take max. 50
 					var arr = PARSE(message.body);
-					arr && arr.length && SETTER('notificationspanel', 'append', arr);
+					arr && arr.length && SETTER('notificationspanel', 'append', arr.take(50));
 					break;
 				case 'notify':
-					SET('user.countnotifications', message.body);
+					var tmp = message.body;
+					SET('user.countnotifications', tmp.count);
+					tmp.app.id && $('.appunread[data-id="{0}"]'.format(tmp.app.id)).html(tmp.app.count).tclass('hidden', !tmp.app.count);
 					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/beep.mp3');
 					common.notifications && refresh_notifications();
 					break;

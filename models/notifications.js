@@ -21,7 +21,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 			user.countnotifications = 0;
 			OP.saveState(2);
 
-			EMIT('users.notify', user);
+			EMIT('users.notify', user, '');
 
 			if (err) {
 				$.callback(null);
@@ -33,6 +33,8 @@ NEWSCHEMA('Notification').make(function(schema) {
 			Fs.unlink(filename, NOOP);
 		});
 	});
+
+	var apps = null;
 
 	schema.setSave(function($) {
 
@@ -82,6 +84,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 			}
 
 			var user = F.global.users.findItem('accesstoken', arr[2]);
+
 			if (!user || user.id !== arr[3]) {
 				$.invalid('error-invalid-accesstoken');
 				return;
@@ -102,7 +105,21 @@ NEWSCHEMA('Notification').make(function(schema) {
 		model.datecreated = F.datetime;
 		model.ip = $.ip;
 
-		Fs.appendFile(F.path.databases('notifications_' + user.id + '.json'), JSON.stringify(model) + ',', NOOP);
+		apps = user.apps;
+
+		var can = true;
+
+		if (app && user.apps[app.id]) {
+			var ua = user.apps[app.id];
+			if (ua.countnotifications)
+				ua.countnotifications++;
+			else
+				ua.countnotifications = 1;
+			if (ua.countnotifications > 15)
+				can = false;
+		}
+
+		can && Fs.appendFile(F.path.databases('notifications_' + user.id + '.json'), JSON.stringify(model) + ',', NOOP);
 
 		if (user.countnotifications)
 			user.countnotifications++;
@@ -112,13 +129,19 @@ NEWSCHEMA('Notification').make(function(schema) {
 		user.datenotified = F.datetime;
 
 		OP.saveState(2);
-		EMIT('users.notify', user);
+		EMIT('users.notify', user, app ? app.id : '');
 		$.success();
 
 		// Stats
 		var db = NOSQL('users');
 		db.counter.hit('all');
 		db.counter.hit(user.id);
+
+		if (app) {
+			db = NOSQL('apps');
+			db.counter.hit('all');
+			db.counter.hit(app.id);
+		}
 	});
 
 });
