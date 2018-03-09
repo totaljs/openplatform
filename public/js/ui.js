@@ -2600,6 +2600,11 @@ COMPONENT('processes', function(self, config) {
 		self.message(iframe, 'maximize');
 	};
 
+	self.reload = function(id) {
+		var iframe = self.findProcess(id);
+		self.message(iframe, 'reload');
+	};
+
 	self.kill = function(id) {
 
 		if (id === undefined) {
@@ -2695,8 +2700,15 @@ COMPONENT('processes', function(self, config) {
 		location.hash = value.internal.linker;
 
 		setTimeout(function() {
-			iframe.iframe.attr('src', makeurl(value.url, value.accesstoken));
-		}, 1500);
+			var url = value.url;
+			if (value.href) {
+				if (value.href.substring(0, 1) === '/')
+					url = (url + value.href.substring(1));
+				else if (value.href.indexOf(url) !== -1)
+					url = value.href;
+			}
+			iframe.iframe.attr('src', makeurl(url, value.accesstoken));
+		}, 2500);
 
 		setTimeout(function() {
 			iframe.element.rclass('ui-process-animation');

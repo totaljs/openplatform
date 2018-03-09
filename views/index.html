@@ -35,7 +35,7 @@
 		<nav data-jc="repeater" data-jc-path="dashboard.apps">
 			<script type="text/html">
 				<i class="fa fa-times exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
-				<button title="{{ internal.title }}" class="exec" data-exec="Dashboard/open" data-id="{{ id }}"><img src="{{ internal.icon }}" onerror="onImageError(this)" alt="{{ internal.title }}" /></button>
+				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><img src="{{ internal.icon }}" onerror="onImageError(this)" alt="{{ internal.title }}" /></button>
 			</script>
 		</nav>
 
@@ -152,6 +152,16 @@
 		ON('online', function(is) {
 			SETTER('loading', is ? 'hide' : 'show');
 		});
+
+		$(document).on('dblclick', '.appprocess', function() {
+			if (user.sa) {
+				var id = $(this).attrd('id');
+				setTimeout(function() {
+					SETTER('processes', 'reload', id);
+				}, 500);
+			}
+		});
+
 	</script>
 
 </body>

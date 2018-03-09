@@ -34,8 +34,6 @@ NEWSCHEMA('Notification').make(function(schema) {
 		});
 	});
 
-	var apps = null;
-
 	schema.setSave(function($) {
 
 		var user, app;
@@ -104,8 +102,6 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 		model.datecreated = F.datetime;
 		model.ip = $.ip;
-
-		apps = user.apps;
 
 		var can = true;
 

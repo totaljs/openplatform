@@ -172,6 +172,11 @@ window.addEventListener('message', function(e) {
 		if (data.sender)
 			return;
 
+		if (data.type === 'reload') {
+			location.reload(true);
+			return;
+		}
+
 		if (data.type === 'redirect') {
 			location.href = data.body;
 			return;
