@@ -56,17 +56,17 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .noscroll { overflow: hidden; }
 .ui-form-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow-y: scroll; transform-style: preserve-3d; overflow-scrolling: touch; }
 .ui-form-container-padding { padding: 0 30px;}
-.ui-form { background-color: white; margin: 0 auto 30px; border-radius: 4px; box-shadow: 0 0 20px #D0D0D0; transform: translate(0, -500px); transition: all 0.2s; opacity: 0; }
+.ui-form { background-color: white; margin: 0 auto 30px; border-radius: 0 0 3px 3px; box-shadow: 0 0 20px #D0D0D0; transform: translate(0, -500px); transition: all 0.2s; opacity: 0; }
 .ui-form-animate { transform: skewX(0deg); opacity: 1; }
 .ui-form-animate-click { transform: skewX(-5deg); }
 .ui-form-padding { padding: 0 30px; }
-.ui-form-title { padding: 18px 20px; font-size: 16px; user-select: none; color: black; background-color: #F8F8F8; border-bottom: 1px solid #F0F0F0; }
+.ui-form-title { padding: 15px 20px; font-size: 16px; user-select: none; color: black; border-bottom: 1px solid #F0F0F0; }
 .ui-form-title .ui-form-button-close { float: right; cursor: pointer; font-size: 18px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; padding: 0; width: auto; }
 .ui-form-title .ui-form-button-close:hover { transform: scale(1.2) rotate(-90deg); }
 .ui-form-title > span { font-weight: bold; }
 .ui-form-title > .fa { margin-right: 7px; }
-.ui-form-buttons { padding: 20px; border-top: 5px solid #F0F0F0; background-color: #F8F8F8; text-align: right; }
-.ui-form-buttons button { border: 2px solid #E0E0E0; background-color: white; border-radius: 4px; height: 45px; padding: 0 15px; color: black; margin: 0; cursor: pointer; font-family: Arial; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; }
+.ui-form-buttons { padding: 20px; border-top: 3px solid #F0F0F0; background: linear-gradient(#F8F8F8,white); text-align: right; border-radius: 0 0 3px 3px; }
+.ui-form-buttons button { border: 1px solid #E0E0E0; background-color: white; border-radius: 3px; height: 45px; padding: 0 15px; color: black; margin: 0; cursor: pointer; font-family: Arial; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s;}
 .ui-form-buttons button .fa { width: 16px; }
 .ui-form-buttons button:hover { border-color: silver; }
 .ui-form-buttons button:active { background-color: #D0D0D0; }
@@ -74,6 +74,8 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-form-buttons button[name="submit"] { width: 220px; font-weight: bold; }
 .ui-form-buttons button[name="cancel"] { color: gray; margin-right: 15px; }
 .ui-form-buttons label { float: right; margin: 12px 0 0 0; font-size: 11px; }
+
+.ui-form-buttons .inline { float: right; }
 
 .ui-confirm { background-color: rgba(255,255,255,0.9); position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 100; width: 100%; display: table; height: 100%; transition: 0.5s all; opacity: 0; }
 .ui-confirm > div { display: table-cell; vertical-align: middle; text-align: center; color: white; padding: 15px; }
@@ -95,7 +97,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 	.ui-confirm button { display: block; margin: 10px 0 0; display: block; width: 100%; }
 	.ui-form-buttons button { width: 100%; }
 	.ui-form-buttons button[name="submit"] { margin: 0 0 10px; width: 100%; }
-	.ui-form-buttons button[name="cancel"] { height: 30px; font-size: 12px; }
+	.ui-form-buttons button[name="cancel"] { height: 30px; font-size: 12px; margin-bottom: 10px; }
 	.ui-form-buttons .inline { width: 100%; display: block; }
 }
 
@@ -199,7 +201,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 
 .ui-preview-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
 .ui-preview-label .fa { margin-right: 5px; }
-.ui-preview img { margin-left: auto; margin-right: auto; border-radius: 100px; border: 2px solid #E0E0E0; cursor: pointer; }
+.ui-preview img { margin-left: auto; margin-right: auto; border-radius: 100%; border: 2px solid #E0E0E0; cursor: pointer; }
 
 .ui-dropdowncheckbox-container { display: block; text-align: left; position: relative; font-size:14px; }
 .ui-dropdowncheckbox { border: 1px solid #E0E0E0; padding: 0 10px; border-radius: 2px; outline: 0; overflow: hidden; width: 100%; background-color: white; height: 32px; cursor: pointer; }
