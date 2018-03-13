@@ -31,11 +31,13 @@ exports.install = function() {
 	});
 
 	// External
-	ROUTE('/api/verify/',        json_verify, ['cors']);
-	ROUTE('/api/notify/',        ['*Notification --> save', 'post', 'cors']);
+	ROUTE('/api/verify/',        json_verify);
+	ROUTE('/api/notify/',        ['*Notification --> save', 'post']);
 	ROUTE('/api/login/',         ['*Login --> exec', 'post', 'unauthorize']);
 	ROUTE('/api/password/',      ['*Password --> exec', 'post', 'unauthorize']);
 	ROUTE('/api/online/{id}/',   json_online);
+
+	CORS('/api/*', ['get', 'post']);
 };
 
 function json_verify() {
