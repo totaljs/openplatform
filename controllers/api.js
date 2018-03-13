@@ -122,7 +122,7 @@ function json_online(id) {
 		ONLINE.datelogged = user.datelogged;
 	} else {
 		ONLINE.online = false;
-		ONLINE.datelogged = F.datetime;
+		ONLINE.datelogged = null;
 	}
 	this.json(ONLINE);
 }
