@@ -31,8 +31,16 @@ OP.load = function(callback) {
 
 		Fs.readFile(F.path.databases('users.json'), function(err, response) {
 			F.global.users = response ? response.toString('utf8').parseJSON(true) : [];
+
+			for (var i = 0, length = F.global.users.length; i < length; i++)
+				F.global.users[i].online = false;
+
 			Fs.readFile(F.path.databases('apps.json'), function(err, response) {
 				F.global.apps = response ? response.toString('utf8').parseJSON(true) : [];
+
+				for (var i = 0, length = F.global.apps.length; i < length; i++)
+					F.global.apps[i].online = false;
+
 				F.global.apps.length && $WORKFLOW('App', 'state');
 				callback && callback();
 			});
