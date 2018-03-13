@@ -1,4 +1,5 @@
 const SKIP = { password: true, search: true, verifytoken: true };
+const ONLINE = { online: true, datelogged: null };
 
 exports.install = function() {
 
@@ -34,6 +35,7 @@ exports.install = function() {
 	ROUTE('/api/notify/',        ['*Notification --> save', 'post', 'cors']);
 	ROUTE('/api/login/',         ['*Login --> exec', 'post', 'unauthorize']);
 	ROUTE('/api/password/',      ['*Password --> exec', 'post', 'unauthorize']);
+	ROUTE('/api/online/{id}/',   json_online);
 };
 
 function json_verify() {
@@ -109,4 +111,16 @@ function json_upload_photo() {
 	var self = this;
 	var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
 	self.body.file.base64ToFile(F.path.public('photos/' + id), () => self.json(id));
+}
+
+function json_online(id) {
+	var user = F.global.users.findItem('id', id);
+	if (user) {
+		ONLINE.online = user.online;
+		ONLINE.datelogged = user.datelogged;
+	} else {
+		ONLINE.online = false;
+		ONLINE.datelogged = F.datetime;
+	}
+	this.json(ONLINE);
 }
