@@ -16,7 +16,7 @@
 						{ name: 'title', text: 'Title', size: 2, template: '<i class="fa fa-circle mr5 {{ if online }}green{{ else }}red{{ fi }}"></i>{{ title }}{{ if blocked }} <span class="badge badge-red">@(blocked)</span>{{ fi }}' },
 						{ name: 'roles', text: 'Roles', size: 1, sort: false, filter: false, template: '{{ | approles }}', align: 'center', class: 'hidden-xs' },
 						{ name: 'datecreated', text: 'Created', size: 1, format: 'yyyy-MM-dd', align: 'center', class: 'visible-lg' },
-						{ name: '@(Options)', filter: false, align: 'center', sort: false, size: 0.7, template: '<button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button name="remove" title="@(Remove)"><i class="fa fa-times"></i></button>' }
+						{ name: '@(Options)', filter: false, align: 'center', sort: false, size: '80px', template: '<button name="update" title="@(Edit)"><i class="fa fa-pencil"></i></button><button name="remove" title="@(Remove)"><i class="fa fa-times"></i></button>' }
 					]
 				</script>
 			</div>

@@ -1,9 +1,9 @@
 /*auto*/
 
 html,body { height: 100%; overflow: hidden; }
-body { height: 100%; overflow: hidden; background-color: #E6E9ED; }
+body { height: 100%; overflow: hidden; background: linear-gradient(#E6E9ED,#F8F8F8); }
 
-header { height: 50px; background: white linear-gradient(white,#F8F8F8); border-bottom: 1px solid #DBE1E9; position: fixed; z-index: 15; width: 100%; top: 0; }
+header { height: 50px; background: white linear-gradient(white,#F8F8F8); border-bottom: 1px solid #DBE1E9; position: fixed; z-index: 15; width: 100%; top: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.02); }
 header nav { float: left; border-right: 1px solid #E0E0E0; }
 header nav:first-child { border-right: 0; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 49px; height: 49px; border-left: 1px solid #E0E0E0; cursor: pointer; vertical-align: top; }
@@ -18,6 +18,9 @@ h1 b { font-weight: 700; }
 h2 { font-weight: 400; margin: 0 0 12px 0; padding: 0; color: black; font-size: 20px; }
 h2 b { font-weight: 700; }
 h2 .fa { margin-right: 10px; }
+
+h3 { font-weight: 700; margin: 0 0 5px 0; padding: 0; color: black; font-size: 16px; }
+h3 .fa { margin-right: 5px; }
 
 .bg-smoke { background-color: #F8F8F8; }
 
@@ -149,8 +152,8 @@ h2 .fa { margin-right: 10px; }
 .ui-npanel button:hover { background-color: #F0F0F0; }
 .ui-npanel-remove { transform: scale(0.5); opacity: 0; }
 
-.panel { background-color: white; border-radius: 4px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
-.panel > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; }
+.panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
+.panel > label { display: block; padding: 15px 20px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: black; font-weight: bold; }
 .panel > label .fa { margin-right: 5px; }
 
 .button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
