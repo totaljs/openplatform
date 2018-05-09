@@ -57,8 +57,11 @@ NEWSCHEMA('App').make(function(schema) {
 			sync(item, model, true);
 		}
 
-		OP.save(); // Save changes
-		EMIT('apps.refresh', item);
+		state(item, function() {
+			OP.save(); // Save changes
+			EMIT('apps.refresh', item);
+		});
+
 		$.success();
 	});
 
@@ -119,45 +122,46 @@ NEWSCHEMA('App').make(function(schema) {
 	});
 
 	schema.addWorkflow('state', function($) {
-		F.global.apps.wait(function(item, next) {
-			var builder = new RESTBuilder(item.url);
-			builder.exec(function(err, response, output) {
-
-				if (err || !response.url) {
-					item.online = false;
-				} else {
-
-					item.hostname = output.hostname.replace(/:\d+/, '');
-					item.online = true;
-					item.version = response.version;
-					item.name = response.name;
-					item.description = response.description;
-					item.author = response.author;
-					item.icon = response.icon;
-					item.frame = response.url;
-					item.email = response.email;
-					item.roles = response.roles;
-					item.groups = response.groups;
-
-					if (response.origin && response.origin.length) {
-						item.origin = {};
-						for (var i = 0; i < response.origin.length; i++)
-							item.origin[response.origin[i]] = true;
-					} else
-						item.origin = null;
-				}
-
-				item.daterefreshed = F.datetime;
-				next();
-			});
-
-		}, function() {
+		F.global.apps.wait(state, function() {
 			EMIT('apps.refresh');
 			OP.saveState(1);
 			$.success();
 		});
 	});
 });
+
+function state(item, next) {
+	var builder = new RESTBuilder(item.url);
+	builder.exec(function(err, response, output) {
+
+		if (err || !response.url) {
+			item.online = false;
+		} else {
+
+			item.hostname = output.hostname.replace(/:\d+/, '');
+			item.online = true;
+			item.version = response.version;
+			item.name = response.name;
+			item.description = response.description;
+			item.author = response.author;
+			item.icon = response.icon;
+			item.frame = response.url;
+			item.email = response.email;
+			item.roles = response.roles;
+			item.groups = response.groups;
+
+			if (response.origin && response.origin.length) {
+				item.origin = {};
+				for (var i = 0; i < response.origin.length; i++)
+					item.origin[response.origin[i]] = true;
+			} else
+				item.origin = null;
+		}
+
+		item.daterefreshed = F.datetime;
+		next();
+	});
+}
 
 function sync(item, model, meta) {
 
