@@ -13,7 +13,7 @@
 	<meta name="robots" content="all,follow" />
 	@{head}
 	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@14.css" />
-	<script src="//cdn.componentator.com/spa.min@14.js"></script>
+	<script src="//cdn.componentator.com/spa.min@15.js"></script>
 	<style type="text/css">
 		/*auto*/
 		html,body { overflow: hidden; height: 100%; }
@@ -63,38 +63,38 @@
 
 	</style>
 </head>
-<body data-jc="binder,exec">
+<body data-jc="exec">
 
 	<div class="panel">
 		<h1><i class="fa fa-lock"></i>@{config.name}</h1>
-		<div data-b="password.response" data-b-visible="value && value.success === true" class="success hidden">@(We sent you email with instructions for resetting of your password.)</div>
+		<div data-bind="password.response__show:value && value.success === true" class="success hidden">@(We sent you email with instructions for resetting of your password.)</div>
 		<div class="padding">
 
-			<div data-b="common.type" data-b-visible="value !== 'password'">
-				<div class="m" data-jc="textbox" data-jc-path="form.name" data-jc-config="icon2:user;required:true;autofocus:true;autofill:true" data-jc-id="formname">@(Login name)</div>
-				<div class="m" data-jc="textbox" data-jc-path="form.password" data-jc-config="icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
-				<div data-jc="error" data-jc-path="form.response"></div>
+			<div data-bind="common.type__show:value !== 'password'">
+				<div class="m" data-jc="textbox__form.name__icon2:user;required:true;autofocus:true;autofill:true" data-jc-id="formname">@(Login name)</div>
+				<div class="m" data-jc="textbox__form.password__icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
+				<div data-jc="error__form.response"></div>
 				<div class="m fs12">
 					<div><a href="#password" class="exec" data-exec="toggletype">@(I forgot my password)</a></div>
 				</div>
-				<div data-jc="validation" data-jc-path="form">
+				<div data-jc="validation__form">
 					<button name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
 				</div>
 			</div>
 
-			<div data-b="common.type" data-b-visible="value === 'password'">
-				<div class="m" data-jc="textbox" data-jc-path="password.name" data-jc-config="icon2:user;required:true;autofill:true" data-jc-id="passwordname">@(Login name)</div>
-				<div data-jc="error" data-jc-path="password.response"></div>
+			<div data-bind="common.type__show:value === 'password'">
+				<div class="m" data-jc="textbox__password.name__icon2:user;required:true;autofill:true" data-jc-id="passwordname">@(Login name)</div>
+				<div data-jc="error__password.response"></div>
 				<div class="m fs12">
 					<div><a href="#password" class="exec" data-exec="toggletype">@(Back to sign-in)</a></div>
 				</div>
-				<div data-jc="validation" data-jc-path="password">
+				<div data-jc="validation__password">
 					<button name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset password)</button>
 				</div>
 			</div>
 
 			<footer>
-				<div>All rights reserved &copy; 2017</div>
+				<div>All rights reserved &copy; 2017-2018</div>
 				<a href="https://www.totaljs.com" target="_blank">www.totaljs.com</a>
 			</footer>
 		</div>
@@ -129,7 +129,7 @@
 		};
 
 		self.state = function() {
-			var disabled = MAIN.disabled(path);
+			var disabled = DISABLED(path);
 			if (!disabled && config.if)
 				disabled = !EVALUATE(self.path, config.if);
 			elements.prop('disabled', disabled);
@@ -374,151 +374,6 @@
 
 			self.html(builder.join(''));
 			self.tclass('hidden', false);
-		};
-	});
-
-	COMPONENT('binder', function(self) {
-
-		var keys, keys_unique;
-
-		self.readonly();
-		self.blind();
-
-		self.make = function() {
-			self.watch('*', self.autobind);
-			self.scan();
-
-			self.on('component', function() {
-				setTimeout2(self.id, self.scan, 200);
-			});
-
-			self.on('destroy', function() {
-				setTimeout2(self.id, self.scan, 200);
-			});
-		};
-
-		self.autobind = function(path) {
-			var mapper = keys[path];
-
-			if (!mapper)
-				return;
-
-			var template = {};
-
-			for (var i = 0, length = mapper.length; i < length; i++) {
-				var item = mapper[i];
-				var value = GET(item.path);
-				var element = item.selector ? item.element.find(item.selector) : item.element;
-				template.value = value;
-				item.classes && classes(element, item.classes(value));
-
-				var is = true;
-
-				if (item.visible) {
-					is = item.visible(value) ? true : false;
-					element.tclass('hidden', !is);
-				}
-
-				if (is) {
-					item.html && element.html(item.Ta ? item.html(template) : item.html(value));
-					item.disable && element.prop('disabled', item.disable(value));
-					item.src && element.attr('src', item.src(value));
-				}
-			}
-		};
-
-		function classes(element, val) {
-			var add = '';
-			var rem = '';
-			val.split(' ').forEach(function(item) {
-				switch (item.substring(0, 1)) {
-					case '+':
-						add += (add ? ' ' : '') + item.substring(1);
-						break;
-					case '-':
-						rem += (rem ? ' ' : '') + item.substring(1);
-						break;
-					default:
-						add += (add ? ' ' : '') + item;
-						break;
-				}
-			});
-			rem && element.rclass(rem);
-			add && element.aclass(add);
-		}
-
-		function decode(val) {
-			return val.replace(/\&\#39;/g, '\'');
-		}
-
-		self.prepare = function(code) {
-			return code.indexOf('=>') === -1 ? FN('value=>' + decode(code)) : FN(decode(code));
-		};
-
-		self.scan = function() {
-			keys = {};
-			keys_unique = {};
-			self.find('[data-b]').each(function() {
-
-				var el = $(this);
-				var path = el.attrd('b').replace('%', 'jctmp.');
-				var arr = path.split('.');
-				var p = '';
-
-				var classes = el.attrd('b-class');
-				var html = el.attrd('b-html');
-				var visible = el.attrd('b-visible');
-				var disable = el.attrd('b-disable');
-				var selector = el.attrd('b-selector');
-				var src = el.attrd('b-src');
-				var obj = el.data('data-b');
-
-				keys_unique[path] = true;
-
-				if (!obj) {
-					obj = {};
-					obj.path = path;
-					obj.element = el;
-					obj.classes = classes ? self.prepare(classes) : undefined;
-					obj.visible = visible ? self.prepare(visible) : undefined;
-					obj.disable = disable ? self.prepare(disable) : undefined;
-					obj.selector = selector ? selector : null;
-					obj.src = src ? self.prepare(src) : undefined;
-
-					if (el.attr('data-b-template') === 'true') {
-						var tmp = el.find('script[type="text/html"]');
-						var str = '';
-
-						if (tmp.length)
-							str = tmp.html();
-						else
-							str = el.html();
-
-						if (str.indexOf('{{') !== -1) {
-							obj.html = Tangular.compile(str);
-							obj.Ta = true;
-							tmp.length && tmp.remove();
-						}
-					} else
-						obj.html = html ? self.prepare(html) : undefined;
-
-					el.data('data-b', obj);
-				}
-
-				for (var i = 0, length = arr.length; i < length; i++) {
-					p += (p ? '.' : '') + arr[i];
-					if (keys[p])
-						keys[p].push(obj);
-					else
-						keys[p] = [obj];
-				}
-			});
-
-			Object.keys(keys_unique).forEach(function(key) {
-				self.autobind(key, GET(key));
-			});
-
-			return self;
 		};
 	});
 

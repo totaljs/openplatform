@@ -418,178 +418,6 @@ COMPONENT('textbox', function(self, config) {
 	};
 });
 
-COMPONENT('binder', function(self) {
-
-	var keys, keys_unique;
-
-	self.readonly();
-	self.blind();
-
-	self.make = function() {
-		self.watch('*', self.autobind);
-		self.scan();
-
-		var fn = function() {
-			setTimeout2(self.id, self.scan, 200);
-		};
-
-		self.on('import', fn);
-		self.on('component', fn);
-		self.on('destroy', fn);
-	};
-
-	self.autobind = function(path) {
-
-		var mapper = keys[path];
-		if (!mapper)
-			return;
-
-		var template = {};
-
-		for (var i = 0, length = mapper.length; i < length; i++) {
-			var item = mapper[i];
-			var value = GET(item.path);
-			var element = item.selector ? item.element.find(item.selector) : item.element;
-
-			template.value = value;
-			item.classes && classes(element, item.classes(value));
-
-			var is = true;
-
-			if (item.visible) {
-				is = !!item.visible(value);
-				element.tclass('hidden', !is);
-			}
-
-			if (is) {
-				item.html && element.html(item.Ta ? item.html(template) : item.html(value));
-				item.disable && element.prop('disabled', item.disable(value));
-				item.src && element.attr('src', item.src(value));
-				item.href && element.attr('href', item.href(value));
-				item.exec && EXEC(item.exec, element);
-			}
-		}
-	};
-
-	function classes(element, val) {
-		var add = '';
-		var rem = '';
-		var classes = val.split(' ');
-
-		for (var i = 0; i < classes.length; i++) {
-			var item = classes[i];
-			switch (item.substring(0, 1)) {
-				case '+':
-					add += (add ? ' ' : '') + item.substring(1);
-					break;
-				case '-':
-					rem += (rem ? ' ' : '') + item.substring(1);
-					break;
-				default:
-					add += (add ? ' ' : '') + item;
-					break;
-			}
-		}
-		rem && element.rclass(rem);
-		add && element.aclass(add);
-	}
-
-	function decode(val) {
-		return val.replace(/&#39;/g, '\'');
-	}
-
-	self.prepare = function(code) {
-		return code.indexOf('=>') === -1 ? FN('value=>' + decode(code)) : FN(decode(code));
-	};
-
-	self.scan = function() {
-
-		keys = {};
-		keys_unique = {};
-
-		var keys_news = {};
-
-		self.find('[data-b]').each(function() {
-
-			var el = $(this);
-			var path = el.attrd('b').replace('%', 'jctmp.');
-
-			if (path.indexOf('?') !== -1) {
-				var scope = el.closest('[data-jc-scope]');
-				if (scope) {
-					var data = scope.get(0).$scopedata;
-					if (data == null)
-						return;
-					path = path.replace(/\?/g, data.path);
-				} else
-					return;
-			}
-
-			var arr = path.split('.');
-			var p = '';
-
-			var classes = el.attrd('b-class');
-			var html = el.attrd('b-html');
-			var visible = el.attrd('b-visible');
-			var disable = el.attrd('b-disable');
-			var selector = el.attrd('b-selector');
-			var src = el.attrd('b-src');
-			var href = el.attrd('b-href');
-			var exec = el.attrd('b-exec');
-			var obj = el.data('data-b');
-
-			keys_unique[path] = true;
-
-			if (!obj) {
-				obj = {};
-				obj.path = path;
-				obj.element = el;
-				obj.classes = classes ? self.prepare(classes) : undefined;
-				obj.visible = visible ? self.prepare(visible) : undefined;
-				obj.disable = disable ? self.prepare(disable) : undefined;
-				obj.selector = selector ? selector : null;
-				obj.src = src ? self.prepare(src) : undefined;
-				obj.href = href ? self.prepare(href) : undefined;
-				obj.exec = exec;
-
-				if (el.attrd('b-template') === 'true') {
-					var tmp = el.find('script[type="text/html"]');
-					var str = '';
-
-					if (tmp.length)
-						str = tmp.html();
-					else
-						str = el.html();
-
-					if (str.indexOf('{{') !== -1) {
-						obj.html = Tangular.compile(str);
-						obj.Ta = true;
-						tmp.length && tmp.remove();
-					}
-				} else
-					obj.html = html ? self.prepare(html) : undefined;
-
-				el.data('data-b', obj);
-				keys_news[path] = true;
-			}
-
-			for (var i = 0, length = arr.length; i < length; i++) {
-				p += (p ? '.' : '') + arr[i];
-				if (keys[p])
-					keys[p].push(obj);
-				else
-					keys[p] = [obj];
-			}
-		});
-
-		var nk = Object.keys(keys_news);
-		for (var i = 0; i < nk.length; i++)
-			self.autobind(nk[i]);
-
-		return self;
-	};
-});
-
 COMPONENT('exec', function(self, config) {
 	self.readonly();
 	self.blind();
@@ -833,7 +661,6 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 COMPONENT('form', function(self, config) {
 
 	var W = window;
-	var header = null;
 	var csspos = {};
 
 	if (!W.$$form) {
@@ -842,10 +669,10 @@ COMPONENT('form', function(self, config) {
 		W.$$form = true;
 
 		$(document).on('click', '.ui-form-button-close', function() {
-			SET($(this).attr('data-path'), '');
+			SET($(this).attrd('path'), '');
 		});
 
-		$(window).on('resize', function() {
+		$(W).on('resize', function() {
 			SETTER('form', 'resize');
 		});
 
@@ -879,6 +706,11 @@ COMPONENT('form', function(self, config) {
 		self.set('');
 	};
 
+	self.icon = function(value) {
+		var el = this.rclass2('fa');
+		value.icon && el.aclass('fa fa-' + value.icon);
+	};
+
 	self.resize = function() {
 		if (!config.center || self.hclass('hidden'))
 			return;
@@ -892,21 +724,11 @@ COMPONENT('form', function(self, config) {
 
 	self.make = function() {
 
-		var icon;
-
-		if (config.icon)
-			icon = '<i class="fa fa-{0}"></i>'.format(config.icon);
-		else
-			icon = '<i></i>';
-
-		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}px"><div class="ui-form-title"><button class="ui-form-button-close" data-path="{2}"><i class="fa fa-times"></i></button>{4}<span>{3}</span></div></div></div>'.format(self._id, config.width || 800, self.path, config.title, icon));
-
-		var el = $('#' + self._id);
-		el.find('.ui-form').get(0).appendChild(self.element.get(0));
+		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}px"><div data-bind="@config__html span:value.title__change .ui-form-icon:@icon" class="ui-form-title"><button class="ui-form-button-close{3}" data-path="{2}"><i class="fa fa-times"></i></button><i class="ui-form-icon"></i><span></span></div></div></div>'.format(self.ID, config.width || 800, self.path, config.closebutton == false ? ' hidden' : ''));
+		var el = $('#' + self.ID);
+		el.find('.ui-form')[0].appendChild(self.dom);
 		self.rclass('hidden');
 		self.replace(el);
-
-		header = self.virtualize({ title: '.ui-form-title > span', icon: '.ui-form-title > i' });
 
 		self.event('scroll', function() {
 			EMIT('scroll', self.name);
@@ -925,8 +747,8 @@ COMPONENT('form', function(self, config) {
 		});
 
 		config.enter && self.event('keydown', 'input', function(e) {
-			e.which === 13 && !self.find('button[name="submit"]').get(0).disabled && setTimeout(function() {
-				self.submit(self.hide);
+			e.which === 13 && !self.find('button[name="submit"]')[0].disabled && setTimeout(function() {
+				self.submit(self);
 			}, 800);
 		});
 	};
@@ -935,23 +757,19 @@ COMPONENT('form', function(self, config) {
 		if (init)
 			return;
 		switch (key) {
-			case 'icon':
-				header.icon.rclass(header.icon.attr('class'));
-				value && header.icon.aclass('fa fa-' + value);
-				break;
-			case 'title':
-				header.title.html(value);
-				break;
 			case 'width':
 				value !== prev && self.find('.ui-form').css('max-width', value + 'px');
+				break;
+			case 'closebutton':
+				self.find('.ui-form-button-close').tclass(value !== true);
 				break;
 		}
 	};
 
 	self.setter = function(value) {
 
-		setTimeout2('noscroll', function() {
-			$('html').tclass('noscroll', !!$('.ui-form-container').not('.hidden').length);
+		setTimeout2('ui-form-noscroll', function() {
+			$('html').tclass('ui-form-noscroll', !!$('.ui-form-container').not('.hidden').length);
 		}, 50);
 
 		var isHidden = value !== config.if;
@@ -988,7 +806,7 @@ COMPONENT('form', function(self, config) {
 
 		if (!isMOBILE && config.autofocus) {
 			var el = self.find(config.autofocus === true ? 'input[type="text"],select,textarea' : config.autofocus);
-			el.length && el.eq(0).focus();
+			el.length && el[0].focus();
 		}
 
 		setTimeout(function() {
@@ -997,9 +815,9 @@ COMPONENT('form', function(self, config) {
 		}, 300);
 
 		// Fixes a problem with freezing of scrolling in Chrome
-		setTimeout2(self.id, function() {
+		setTimeout2(self.ID, function() {
 			self.css('z-index', (W.$$form_level * 10) + 1);
-		}, 1000);
+		}, 500);
 	};
 });
 
@@ -1130,7 +948,20 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 		tbodyhead = $(body.find('thead').get(0));
 		thead = $(self.find('.ui-grid-header').find('thead').get(0));
 		container = $(self.find('.ui-grid-scroller').get(0));
-		pagination = config.pagination ? VIRTUALIZE(self.find('.ui-grid-footer'), { page: 'input', first: 'button[name="first"]', last: 'button[name="last"]', prev: 'button[name="prev"]', next: 'button[name="next"]', meta: '.ui-grid-meta', pages: '.ui-grid-pages' }) : null;
+
+		if (config.pagination) {
+			var el = self.find('.ui-grid-footer');
+			pagination = {};
+			pagination.main = el;
+			pagination.page = el.find('input');
+			pagination.first = el.find('button[name="first"]');
+			pagination.last = el.find('button[name="last"]');
+			pagination.prev = el.find('button[name="prev"]');
+			pagination.next = el.find('button[name="next"]');
+			pagination.meta = el.find('.ui-grid-meta');
+			pagination.pages = el.find('.ui-grid-pages');
+		}
+
 		meta && self.meta(meta);
 
 		self.event('click', '.ui-grid-columnsort', function() {
@@ -1197,7 +1028,7 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 
 		self.on('resize', self.resize);
 		config.init && EXEC(config.init);
-		wheight = $(window).height();
+		wheight = WH;
 	};
 
 	self.checked = function(value) {
@@ -1360,7 +1191,7 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 			} else
 				self.rclass(cls);
 
-			pagination && pagination.rclass('hidden');
+			pagination && pagination.main.rclass('hidden');
 			eheight && self.rclass('hidden');
 		}, typeof(delay) === 'number' ? delay : 50);
 	};
@@ -1631,10 +1462,9 @@ COMPONENT('grid', 'filter:true;external:false;fillcount:50;filterlabel:Filtering
 	};
 });
 
-COMPONENT('inlineform', function(self, config) {
+COMPONENT('inlineform', 'icon:circle-o', function(self, config) {
 
 	var W = window;
-	var header = null;
 	var dw = 300;
 
 	if (!W.$$inlineform) {
@@ -1668,23 +1498,19 @@ COMPONENT('inlineform', function(self, config) {
 		self.find('.ui-inlineform').rclass('ui-inlineform-animate');
 	};
 
+	self.icon = function(value) {
+		var el = this.rclass2('fa');
+		value.icon && el.aclass('fa fa-' + value.icon);
+	};
+
 	self.make = function() {
 
-		var icon;
+		$(document.body).append('<div id="{0}" class="hidden ui-inlineform-container" style="max-width:{1}"><div class="ui-inlineform"><i class="fa fa-caret-up ui-inlineform-arrow"></i><div class="ui-inlineform-title" data-bind="@config__html span:value.title__change .ui-inlineform-icon:@icon"><button class="ui-inlineform-close"><i class="fa fa-times"></i></button><i class="ui-inlineform-icon"></i><span></span></div></div></div>'.format(self.ID, (config.width || dw) + 'px', self.path));
 
-		if (config.icon)
-			icon = '<i class="fa fa-{0}"></i>'.format(config.icon);
-		else
-			icon = '<i></i>';
-
-		$(document.body).append('<div id="{0}" class="hidden ui-inlineform-container" style="max-width:{1}"><div class="ui-inlineform"><i class="fa fa-caret-up ui-inlineform-arrow"></i><div class="ui-inlineform-title"><button class="ui-inlineform-close"><i class="fa fa-times"></i></button>{4}<span>{3}</span></div></div></div>'.format(self._id, (config.width || dw) + 'px', self.path, config.title, icon));
-
-		var el = $('#' + self._id);
-		el.find('.ui-inlineform').get(0).appendChild(self.element.get(0));
+		var el = $('#' + self.ID);
+		el.find('.ui-inlineform')[0].appendChild(self.dom);
 		self.rclass('hidden');
 		self.replace(el);
-
-		header = self.virtualize({ title: '.ui-inlineform-title > span', icon: '.ui-inlineform-title > i' });
 
 		self.find('button').on('click', function() {
 			var el = $(this);
@@ -1702,22 +1528,10 @@ COMPONENT('inlineform', function(self, config) {
 		});
 
 		config.enter && self.event('keydown', 'input', function(e) {
-			e.which === 13 && !self.find('button[name="submit"]').get(0).disabled && self.submit(self.hide);
+			e.which === 13 && !self.find('button[name="submit"]')[0].disabled && setTimeout(function() {
+				self.submit(self.hide);
+			}, 800);
 		});
-	};
-
-	self.configure = function(key, value, init) {
-		if (init)
-			return;
-		switch (key) {
-			case 'icon':
-				header.icon.rclass(header.icon.attr('class'));
-				value && header.icon.aclass('fa fa-' + value);
-				break;
-			case 'title':
-				header.title.html(value);
-				break;
-		}
 	};
 
 	self.toggle = function(el, position, offsetX, offsetY) {
@@ -1756,11 +1570,14 @@ COMPONENT('inlineform', function(self, config) {
 			offset.top += offsetY;
 
 		config.reload && EXEC(config.reload, self);
+		config.default && DEFAULT(config.default, true);
 
 		self.find('.ui-inlineform-arrow').css('margin-left', ma);
 		self.css(offset);
+
 		var el = self.find('input[type="text"],select,textarea');
-		!isMOBILE && el.length && el.eq(0).focus();
+		!isMOBILE && el.length && el[0].focus();
+
 		setTimeout(function() {
 			self.find('.ui-inlineform').aclass('ui-inlineform-animate');
 		}, 300);
@@ -3735,7 +3552,6 @@ COMPONENT('app-managment', function(self, config) {
 
 COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 
-	var virtual = null;
 	var show = true;
 	var callback;
 
@@ -3744,7 +3560,6 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 	self.make = function() {
 		self.aclass('ui-snackbar hidden');
 		self.append('<div><a href="javasc' + 'ript:void(0)" class="ui-snackbar-dismiss"></a><div class="ui-snackbar-body"></div></div>');
-		virtual = self.virtualize({ body: '.ui-snackbar-body', button: '.ui-snackbar-dismiss' });
 		self.event('click', '.ui-snackbar-dismiss', function() {
 			self.hide();
 			callback && callback();
@@ -3775,8 +3590,9 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 		}
 
 		callback = close;
-		virtual.body.html(message);
-		virtual.button.html(button || config.button);
+
+		self.find('.ui-snackbar-body').html(message);
+		self.find('.ui-snackbar-dismiss').html(button || config.button);
 
 		if (show) {
 			self.rclass('hidden');
@@ -3785,7 +3601,7 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 			}, 50);
 		}
 
-		setTimeout2(self.id, self.hide, config.timeout + 50);
+		setTimeout2(self.ID, self.hide, config.timeout + 50);
 		show = false;
 	};
 });

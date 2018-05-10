@@ -2,7 +2,7 @@
 	<div class="emptyspace"></div>
 	<div class="container">
 		<div class="fullheight centered-container">
-			<div data-jc="repeater" data-jc-path="user.apps" class="centered">
+			<div data-jc="repeater__user.apps" class="centered">
 				<script type="text/html">
 					<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}">
 						<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
@@ -16,7 +16,7 @@
 			</div>
 		</div>
 	</div>
-	<div data-jc="processes" data-jc-path="dashboard.current" data-jc-config="datasource:dashboard.apps"></div>
+	<div data-jc="processes__dashboard.current__datasource:dashboard.apps"></div>
 </div>
 <br />
 

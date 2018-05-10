@@ -11,7 +11,7 @@
 			<button class="exec" data-exec="Users/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
 		</nav>
 		<div class="fullheight">
-			<div data-jc="grid" data-jc-path="users.grid" data-jc-config="pagination:false;padding:10;checked:Users/checkbox;button:Users/operation">
+			<div data-jc="grid__users.grid__pagination:false;padding:10;checked:Users/checkbox;button:Users/operation">
 				<script type="text/plain">
 					[
 						{ name: 'id', text: '', template: '<input type="checkbox" value="{{ id }}" />', size: '42px', header: '<input type="checkbox" value="{{ id }}" />', filter: false, sort: false, title: '@(Options)', align: 'center' },
@@ -28,7 +28,7 @@
 		</div>
 	</div>
 
-	<div data-jc="inlineform" data-jc-config="width:300;title:@(Filter users)" class="hidden" data-jc-id="usersfilter">
+	<div data-jc="inlineform__null__width:300;title:@(Filter users)" class="hidden" data-jc-id="usersfilter">
 		<div class="padding">
 			<div data-jc="dropdowncheckbox" data-jc-path="users.filter.apps" data-jc-config="datasource:apps.response;value:id;text:title" class="m">Applications</div>
 			<div data-jc="checkbox" data-jc-path="users.filter.online">@(On-line users)</div>
@@ -41,7 +41,7 @@
 		</div>
 	</div>
 
-	<div data-jc="inlineform" data-jc-config="width:260;title:@(Options)" class="hidden" data-jc-id="usersoptions">
+	<div data-jc="inlineform__null__width:260;title:@(Options)" class="hidden" data-jc-id="usersoptions">
 		<div class="padding">
 			<div class="buttons">
 				<div><button class="exec" data-exec="Users/notify"><i class="fa fa-bell"></i>@(Notify)</button></div>
@@ -54,10 +54,10 @@
 		</div>
 	</div>
 
-	<div data-jc="importer" data-jc-path="common.form" data-jc-config="if:value === 'user';url:/forms/user.html"></div>
-	<div data-jc="importer" data-jc-path="common.form" data-jc-config="if:value === 'userrename';url:/forms/user-rename.html"></div>
-	<div data-jc="importer" data-jc-path="common.form" data-jc-config="if:value === 'userapps';url:/forms/user-apps.html"></div>
-	<div data-jc="importer" data-jc-path="common.form" data-jc-config="if:value === 'usernotify';url:/forms/user-notify.html"></div>
+	<div data-jc="importer__common.form__if:value === 'user';url:/forms/user.html"></div>
+	<div data-jc="importer__common.form__if:value === 'userrename';url:/forms/user-rename.html"></div>
+	<div data-jc="importer__common.form__if:value === 'userapps';url:/forms/user-apps.html"></div>
+	<div data-jc="importer__common.form__if:value === 'usernotify';url:/forms/user-notify.html"></div>
 </div>
 
 <script>
@@ -74,7 +74,7 @@
 
 	CONTROLLER('Users', function(self) {
 
-		var toolbar = self.virtualize({ btnChecked: '.toolbar button[name="checked"]' });
+		var toolbar = { btnChecked: self.find('.toolbar button[name="checked"]') };
 
 		self.scope = 'users';
 
@@ -181,7 +181,7 @@
 		self.checkbox = function(el, grid) {
 			el && !el.value && grid.checked(el.checked);
 			var count = grid.checked().length;
-			toolbar.btnChecked.disable(count === 0);
+			toolbar.btnChecked.prop('disabled', count === 0);
 		};
 
 		self.checked = function(el) {

@@ -9,7 +9,7 @@
 			<button class="exec" data-exec="Apps/checked" name="checked" disabled="disabled"><i class="fa fa-check-circle"></i>@(Checked)</button>
 		</nav>
 		<div class="fullheight">
-			<div data-jc="grid" data-jc-path="apps.grid" data-jc-config="pagination:false;padding:10;checked:Apps/checkbox;button:Apps/operation">
+			<div data-jc="grid__apps.grid__pagination:false;padding:10;checked:Apps/checkbox;button:Apps/operation">
 				<script type="text/plain">
 					[
 						{ name: 'id', text: '', template: '<input type="checkbox" value="{{ id }}" />', size: '42px', header: '<input type="checkbox" value="{{ id }}" />', filter: false, sort: false, title: '@(Options)', align: 'center' },
@@ -23,12 +23,12 @@
 		</div>
 	</div>
 
-	<div data-jc="importer" data-jc-path="common.form" data-jc-config="if:value === 'app';url:/forms/app.html"></div>
+	<div data-jc="importer__common.form__if:value === 'app';url:/forms/app.html"></div>
 
-	<div data-jc="inlineform" data-jc-config="width:300;title:@(Filter applications)" class="hidden" data-jc-id="appsfilter">
+	<div data-jc="inlineform__null__width:300;title:@(Filter applications)" class="hidden" data-jc-id="appsfilter">
 		<div class="padding">
-			<div data-jc="checkbox" data-jc-path="apps.filter.offline">@(Offline applications)</div>
-			<div data-jc="checkbox" data-jc-path="apps.filter.blocked">@(Blocked applications)</div>
+			<div data-jc="checkbox__apps.filter.offline">@(Offline applications)</div>
+			<div data-jc="checkbox__apps.filter.blocked">@(Blocked applications)</div>
 		</div>
 		<div class="ui-inlineform-buttons">
 			<button name="cancel" class="w100p">@(Close)</button>
@@ -46,7 +46,7 @@
 
 	CONTROLLER('Apps', function(self) {
 
-		var toolbar = self.virtualize({ btnChecked: '.toolbar button[name="checked"]' });
+		var toolbar = { btnChecked: self.find('.toolbar button[name="checked"]') };
 
 		self.scope = 'apps';
 
@@ -111,7 +111,7 @@
 		self.checkbox = function(el, grid) {
 			el && !el.value && grid.checked(el.checked);
 			var count = grid.checked().length;
-			toolbar.btnChecked.disable(count === 0);
+			toolbar.btnChecked.prop('disabled', count === 0);
 		};
 
 		self.checked = function(el) {

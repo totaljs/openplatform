@@ -12,27 +12,27 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
 	<link rel="stylesheet" href="//cdn.componentator.com/spa.min@14.css" />
-	<script src="//cdn.componentator.com/spa.min@14.js"></script>
+	<script src="//cdn.componentator.com/spa.min@15.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
-<body data-jc="exec,binder,modificator">
+<body data-jc="exec,modificator">
 
 	<div data-jc="loading" class="ui-loading"></div>
 	<div data-jc="contextmenu"></div>
 	<div data-jc="confirm"></div>
 	<div data-jc="snackbar"></div>
 	<div data-jc="contextmenu"></div>
-	<div data-jc="websocket" data-jc-config="url:/"></div>
+	<div data-jc="websocket__null__url:/"></div>
 	<div data-jc="calendar"></div>
-	<div data-jc="audio" data-jc-path="user.volume"></div>
+	<div data-jc="audio__user.volume"></div>
 
 	<header>
 
 		<nav>
 			<button class="exec" data-exec="home"><i class="fa fa-dashboard"></i></button>
 		</nav>
-		<nav data-jc="repeater" data-jc-path="dashboard.apps">
+		<nav data-jc="repeater__dashboard.apps">
 			<script type="text/html">
 				<i class="fa fa-times exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
 				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><img src="{{ internal.icon }}" onerror="onImageError(this)" alt="{{ internal.title }}" /></button>
@@ -40,19 +40,19 @@
 		</nav>
 
 		<div class="user exec" data-exec="mainmenu">
-			<div class="hidden-xs">
-				<b class="singleline" data-b="user.name" data-b-html="value"></b>
-				<div class="singleline" data-b="user.position" data-b-html="value"></div>
+			<div class="hidden-xs" data-bind="user__html b:value.name__html div:value.position">
+				<b class="singleline"></b>
+				<div class="singleline"></div>
 			</div>
-			<img src="/img/face.jpg" data-b="user.photo" data-b-src="Tangular.helpers.photo(value)" onerror="onImageError(this)" />
+			<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
 		</div>
 		<div class="user-notifications exec" data-path="common.notifications" data-value="!common.notifications">
-			<span data-b="user.countnotifications" data-b-visible="value > 0" data-b-html="value > 99 ? 99 : value" class="hidden">0</span>
-			<i class="fa fa-bell-o" data-b="common.notifications" data-b-class="value ? '+fa-bell -fa-bell-o' : '+fa-bell-o -fa-bell'"></i>
+			<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
+			<i class="fa fa-bell-o" data-bind="common.notifications__.fa-bell:!!value__.fa-bell-o:!value"></i>
 		</div>
 	</header>
 
-	<div data-jc="notificationspanel" data-jc-path="common.notifications" class="hidden" data-b="common.notifications" data-b-visible="value === true">
+	<div data-jc="notificationspanel__common.notifications" data-bind="common.notifications__show:value" class="hidden">
 		<div class="ui-npanel-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
 			<div class="ui-npanel-message{{ if type === 1 }} ui-npanel-success{{ else if type === 2 }} ui-npanel-error{{ fi }}">
@@ -69,13 +69,13 @@
 	</div>
 
 	<div class="scrollable">
-		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:dashboard;template:/pages/dashboard.html"></div>
+		<div data-jc="page__common.page__if:dashboard;template:/pages/dashboard.html"></div>
 		@{if user.sa}
-		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:users;template:/pages/users.html"></div>
-		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:apps;template:/pages/apps.html"></div>
-		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:settings;template:/pages/settings.html"></div>
+		<div data-jc="page__common.page__if:users;template:/pages/users.html"></div>
+		<div data-jc="page__common.page__if:apps;template:/pages/apps.html"></div>
+		<div data-jc="page__common.page__if:settings;template:/pages/settings.html"></div>
 		@{fi}
-		<div data-jc="page" data-jc-path="common.page" data-jc-config="if:account;template:/pages/account.html;reload:Account/reload"></div>
+		<div data-jc="page__common.page__if:account;template:/pages/account.html;reload:Account/reload"></div>
 	</div>
 
 	@{import('routes.js')}

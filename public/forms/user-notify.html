@@ -1,28 +1,28 @@
-<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:usernotify;submit:usernotifyform_submit;title:@(Notify users);width:800" data-jc-controller="Users">
+<div data-jc="form__common.form__if:usernotify;submit:usernotifyform_submit;title:@(Notify users);width:800" class="hidden" data-jc-controller="Users">
 	<div class="padding npb">
-		<div data-jc="dropdown" data-jc-path="users.usernotify.subtype" data-jc-config="items:@(Classic information)|0,@(Success)|1,@(Warning)|2;type:number" class="m">@(Type)</div>
+		<div data-jc="dropdown__users.usernotify.subtype__items:@(Classic information)|0,@(Success)|1,@(Warning)|2;type:number" class="m">@(Type)</div>
 		<br />
 		<div class="caption"><i class="fa fa-filter"></i>@(FILTER)</div>
 		<div class="row">
 			<div class="col-md-4 m">
-				<div data-jc="dropdown" data-jc-path="users.usernotify.company" data-jc-config="value:name;datasource:common.meta.companies;empty:">@(Company)</div>
+				<div data-jc="dropdown__users.usernotify.company__value:name;datasource:common.meta.companies;empty:">@(Company)</div>
 			</div>
 			<div class="col-md-4 m">
-				<div data-jc="dropdown" data-jc-path="users.usernotify.group" data-jc-config="value:name;datasource:common.meta.groups;empty:">@(Group)</div>
+				<div data-jc="dropdown__users.usernotify.group__value:name;datasource:common.meta.groups;empty:">@(Group)</div>
 			</div>
 			<div class="col-md-4 m">
-				<div data-jc="dropdown" data-jc-path="users.usernotify.position" data-jc-config="value:name;datasource:common.meta.positions;empty:">@(Position)</div>
+				<div data-jc="dropdown__users.usernotify.position__value:name;datasource:common.meta.positions;empty:">@(Position)</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-4 m">
-				<div data-jc="dropdown" data-jc-path="users.usernotify.department" data-jc-config="value:name;datasource:common.meta.departments;empty:">@(Department)</div>
+				<div data-jc="dropdown__users.usernotify.department__value:name;datasource:common.meta.departments;empty:">@(Department)</div>
 			</div>
 			<div class="col-md-4 m">
-				<div data-jc="dropdown" data-jc-path="users.usernotify.place" data-jc-config="value:name;datasource:common.meta.places;empty:">@(Place)</div>
+				<div data-jc="dropdown__users.usernotify.place__value:name;datasource:common.meta.places;empty:">@(Place)</div>
 			</div>
 			<div class="col-md-4 m">
-				<div data-jc="dropdown" data-jc-path="users.usernotify.customer" data-jc-config="items:,@(yes)|true,@(no)|false">@(Customer)</div>
+				<div data-jc="dropdown__users.usernotify.customer__items:,@(yes)|true,@(no)|false">@(Customer)</div>
 			</div>
 		</div>
 		<!--
@@ -35,10 +35,10 @@
 	</div>
 	<hr />
 	<div class="padding npt">
-		<div data-jc="textbox" data-jc-path="users.usernotify.body" data-jc-config="required:true;icon:envelope-o;placeholder:@(Type a message for notification.)" class="m">@(Message)</div>
+		<div data-jc="textbox__users.usernotify.body__required:true;icon:envelope-o;placeholder:@(Type a message for notification.)" class="m">@(Message)</div>
 	</div>
 	<div class="ui-form-buttons">
-		<div data-jc="validation" data-jc-path="users.usernotify">
+		<div data-jc="validation__users.usernotify">
 			<button name="submit" style="width:100%">@(SEND)</button>
 		</div>
 	</div>

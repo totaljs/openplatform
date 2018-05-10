@@ -1,13 +1,13 @@
-<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:userrename;submit:userrenameform_submit;title:@(Rename fields);width:400" data-jc-controller="Users">
+<div data-jc="form__common.form__if:userrename;submit:userrenameform_submit;title:@(Rename fields);width:400" class="hidden" data-jc-controller="Users">
 	<div class="padding">
-		<div data-jc="dropdown" data-jc-path="users.userrename.type" data-jc-config="required:true;items:,@(Group|group,Company|company,Position|position,Place|place,Department|department,Supervisor|supervisor)">@(Type)</div>
+		<div data-jc="dropdown__users.userrename.type__required:true;items:,@(Group|group,Company|company,Position|position,Place|place,Department|department,Supervisor|supervisor)">@(Type)</div>
 		<br />
-		<div data-jc="dropdown" data-jc-path="users.userrename.oldname" data-jc-config="value:name;empty:" data-jc-id="userrenametype">@(Old name)</div>
+		<div data-jc="dropdown__users.userrename.oldname__value:name;empty:" data-jc-id="userrenametype">@(Old name)</div>
 		<br />
-		<div data-jc="textbox" data-jc-path="users.userrename.newname">@(New name)</div>
+		<div data-jc="textbox__users.userrename.newname">@(New name)</div>
 	</div>
 	<div class="ui-form-buttons">
-		<div data-jc="validation" data-jc-path="users.userrename">
+		<div data-jc="validation__users.userrename">
 			<button name="submit" style="width:100%">@(RENAME)</button>
 		</div>
 	</div>

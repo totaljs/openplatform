@@ -1,11 +1,11 @@
-<div data-jc="form" data-jc-path="common.form" class="hidden" data-jc-config="if:app;submit:appform_submit;title:@(App / Details);width:920" data-jc-controller="Apps">
+<div data-jc="form__common.form__if:app;submit:appform_submit;title:@(App / Details);width:920" class="hidden" data-jc-controller="Apps">
 	<div class="padding">
 		<div class="row">
 			<div class="col-md-3">
 				<div class="padding nplr-xs">
-					<div data-jc="icon" data-jc-path="apps.form.data.icon"></div>
+					<div data-jc="icon__apps.form.data.icon"></div>
 					<br />
-					<div data-b="apps.form.data" data-b-template="true" data-b-visible="value && value.name && value.url">
+					<div data-bind="apps.form.data__template__show:value && value.name && value.url">
 						<script type="text/html">
 							<div class="b">{{ value.name }}</div>
 							<div>v{{ value.version }}</div>
@@ -14,7 +14,7 @@
 						</script>
 					</div>
 					<br />
-					<div data-jc="template" data-jc-path="apps.form" data-jc-config="properties:daterefreshed,online,hostname">
+					<div data-jc="template__apps.form__properties:daterefreshed,online,hostname">
 						<script type="text/html">
 							{{ if daterefreshed }}
 							<div class="keyvalue">
@@ -34,9 +34,9 @@
 			</div>
 			<div class="col-md-9 form-border">
 				<div class="padding nplr-xs">
-					<div data-jc="textbox" data-jc-path="apps.form.url" data-jc-config="delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
-					<div data-jc="error" data-jc-path="apps.form.data" class="ui-error-nm"></div>
-					<div data-jc="template" data-jc-path="apps.form.data">
+					<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
+					<div data-jc="error__apps.form.data" class="ui-error-nm"></div>
+					<div data-jc="template__apps.form.data">
 						<script type="text/html">
 							{{ if description }}
 							<div class="help"><i class="fa fa-info-circle"></i>{{ description }}</div>
@@ -44,25 +44,25 @@
 						</script>
 					</div>
 					<br />
-					<div data-jc="textbox" data-jc-path="apps.form.title" data-jc-config="maxlength:50;required:true" class="m">@(Title)</div>
-					<div data-jc="textbox" data-jc-path="apps.form.settings" data-jc-config="icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
-					<div data-jc="textbox" data-jc-path="apps.form.accesstoken" data-jc-config="maxlength:50;required:true">@(Access token)</div>
+					<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
+					<div data-jc="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
+					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
 					<div class="help"><a href="javascript:void(0)" class="exec" data-exec="appform_generatetoken">@(Generate token)</a></div>
 				</div>
 				<hr />
 				<div class="padding nplr-xs">
 					<h2 class="m"><i class="fa fa-lock"></i>@(Permissions for this application)</h2>
 					<div class="mt10 red b" data-jc="checkbox" data-jc-path="apps.form.blocked">@(Application is blocked)</div>
-					<div data-jc="checkbox" data-jc-path="apps.form.allownotifications">@(Allow push notifications)</div>
-					<div data-jc="checkbox" data-jc-path="apps.form.responsive">@(Allow for mobile devices)</div>
-					<div data-jc="checkbox" data-jc-path="apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta informations)</div>
-					<div data-jc="checkbox" data-jc-path="apps.form.serververify" class="b">@(Enable server-side verification)</div>
+					<div data-jc="checkbox__apps.form.allownotifications">@(Allow push notifications)</div>
+					<div data-jc="checkbox__apps.form.responsive">@(Allow for mobile devices)</div>
+					<div data-jc="checkbox__apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta informations)</div>
+					<div data-jc="checkbox__apps.form.serververify" class="b">@(Enable server-side verification)</div>
 					<br />
-					<div data-jc="dropdown" data-jc-path="apps.form.allowreadprofile" data-jc-config="items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number" data-jc-value="1" class="m">@(Read user profile)</div>
-					<div data-jc="dropdown" data-jc-path="apps.form.allowreadusers" data-jc-config="items:@(Disabled)|0,@(Basic informations)|1,@(Basic informations about users which use this application)|3,@(All informations)|2,@(All informations about users which use this application)|4;type:number" data-jc-value="0" class="m">@(Read list of users)</div>
-					<div data-jc="dropdown" data-jc-path="apps.form.allowreadapps" data-jc-config="items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number" data-jc-value="0" class="m">@(Read list of applications)</div>
+					<div data-jc="dropdown__apps.form.allowreadprofile__items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number__1" class="m">@(Read user profile)</div>
+					<div data-jc="dropdown__apps.form.allowreadusers__items:@(Disabled)|0,@(Basic informations)|1,@(Basic informations about users which use this application)|3,@(All informations)|2,@(All informations about users which use this application)|4;type:number__0" class="m">@(Read list of users)</div>
+					<div data-jc="dropdown__apps.form.allowreadapps__items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number__0" class="m">@(Read list of applications)</div>
 
-					<div data-jc="error" data-jc-path="apps.form.response"></div>
+					<div data-jc="error__apps.form.response"></div>
 				</div>
 			</div>
 		</div>
@@ -72,7 +72,7 @@
 			<div class="col-md-9 col-md-offset-3">
 				<div class="padding npt npb">
 					<button name="cancel">@(Cancel)</button>
-					<div data-jc="validation" data-jc-path="apps.form" class="inline" data-jc-config="if:value && value.data && value.data.name">
+					<div data-jc="validation__apps.form__if:value && value.data && value.data.name" class="inline">
 						<button name="submit">@(SAVE)</button>
 					</div>
 				</div>
@@ -116,8 +116,12 @@ SCOPE('Apps', function(self) {
 		}
 
 		AJAX('POST /api/apps/meta/', { url: value }, function(response) {
-			self.set('form.data', response.value);
-			!self.get('form.title') && self.set('form.title', response.value.name);
+			if (response instanceof Array) {
+				self.set('form.data', null);
+			} else {
+				self.set('form.data', response.value);
+				!self.get('form.title') && self.set('form.title', response.value.name);
+			}
 		});
 	}, true);
 });

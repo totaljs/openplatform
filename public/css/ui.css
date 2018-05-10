@@ -2,6 +2,7 @@
 
 button { outline: 0; }
 .hidden { display: none; }
+.noscroll { overflow: hidden; }
 
 .ui-checkbox { margin-bottom: 5px; line-height: 10px; font-size: 12px; }
 .ui-checkbox span { cursor: pointer; vertical-align: middle; }
@@ -53,7 +54,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-error { margin: 0; list-style-type: none; border-left-width: 0; border-right-width: 0; padding: 10px 0 0; color: #BE3A48; font-family: Arial; font-size: 12px; }
 .ui-error .fa { width: 16px; }
 
-.noscroll { overflow: hidden; }
+.ui-form-noscroll, .ui-form-noscroll body { overflow: hidden; }
 .ui-form-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow-y: scroll; transform-style: preserve-3d; overflow-scrolling: touch; }
 .ui-form-container-padding { padding: 0 30px;}
 .ui-form { background-color: white; margin: 0 auto 30px; border-radius: 0 0 3px 3px; box-shadow: 0 0 20px #D0D0D0; transform: translate(0, -500px); transition: all 0.2s; opacity: 0; }
