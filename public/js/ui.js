@@ -1822,7 +1822,7 @@ COMPONENT('processes', function(self, config) {
 	});
 
 	self.event('mousedown', '.ui-process-header', function(e) {
-		var el = $(this).parent();
+		var el = $(this).closest('.ui-process');
 		self.mdown_move(el, e.offsetX, e.offsetY);
 		e.preventDefault();
 	});
