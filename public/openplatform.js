@@ -29,6 +29,7 @@ OPENPLATFORM.init = function(callback) {
 		var name = arr[i];
 		if (name.substring(0, 13) === 'openplatform=') {
 			var tmp = decodeURIComponent(name.substring(13));
+			OPENPLATFORM.token = name.substring(13);
 			accesstoken = decodeURIComponent(tmp.substring(tmp.indexOf('accesstoken=') + 12));
 			break;
 		}
@@ -234,3 +235,8 @@ window.addEventListener('message', function(e) {
 		});
 	} catch (e) {}
 }, false);
+
+OPENPLATFORM.tokenizator = function(url) {
+	var index = url.indexOf('?');
+	return index === -1 ? (url + ('?openplatform=' + OPENPLATFORM.token)) : (url.substring(0, index + 1) + ('openplatform=' + OPENPLATFORM.token + '&' + url.substring(index + 1)));
+};
