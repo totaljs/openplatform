@@ -1,0 +1,76 @@
+<style>
+	.accountphoto { background-color: #F0F0F0; padding: 15px 0; }
+	.accountphoto img { max-width: 130px; }
+</style>
+
+<div class="row">
+	<div class="scroller">
+
+		<div class="accountphoto">
+			<div data-jc="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+		</div>
+
+		<div class="scroller-padding">
+
+			<div data-jc="textbox__account.email__type:email;required:true" class="m">@(Email address)</div>
+			<div data-jc="textbox__account.phone" class="m">@(Phone number)</div>
+			<div data-jc="checkbox__account.sounds">@(Enable sounds)</div>
+			<div data-jc="checkbox__account.notifications">@(Enable notifications)</div>
+			<div data-jc="checkbox__account.notificationsemail">@(Enable email notifications)</div>
+			<div data-jc="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
+			<div data-jc="checkbox__account.changepassword" class="b red">@(Change credentials)</div>
+
+			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
+				<div class="padding">
+					<div data-jc="textbox__account.login__type:login;maxlength:30;required:true" class="m">@(Login name)</div>
+					<div data-jc="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
+					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
+				</div>
+			</div>
+			<hr class="nmt" />
+			<div data-jc="range__account.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
+			<div class="row fs11 silver m">
+				<div class="col-xs-6">
+					@(Low)
+				</div>
+				<div class="col-xs-6 right">
+					@(High)
+				</div>
+			</div>
+
+			<div data-jc="error__account.response" class="hidde m"></div>
+			<div data-jc="validation__account">
+				<button name="submit" class="button exec b" data-exec="account_submit" disabled="disabled">@(SUBMIT)</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script>
+
+	OPENPLATFORM.init(function(err, meta) {
+
+		if (err) {
+			document.body.innerHTML = '401: unauthorized';
+			window.close();
+			return;
+		}
+
+		account_refresh();
+	});
+
+	function account_refresh() {
+		AJAX('GET /api/account/', 'account');
+	}
+
+	function account_submit() {
+		AJAX('POST /api/account/', account, function(response) {
+			SET('account.response', response);
+			if (response.success) {
+				OPENPLATFORM.message('Your account has been updated successfully.');
+				OPENPLATFORM.close();
+			}
+		});
+	}
+</script>

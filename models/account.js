@@ -12,7 +12,7 @@ NEWSCHEMA('Account').make(function(schema) {
 	schema.define('volume', Number);
 
 	schema.setGet(function($) {
-		var user = $.user;
+		var user = $.controller.user;
 		var data = {};
 		data.email = user.email;
 		data.notifications = user.notifications;
@@ -29,7 +29,7 @@ NEWSCHEMA('Account').make(function(schema) {
 
 	schema.setSave(function($) {
 
-		var user = $.user;
+		var user = $.controller.user;
 		var model = $.model;
 
 		if (model.password && !model.password.startsWith('***'))

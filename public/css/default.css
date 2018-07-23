@@ -1,16 +1,35 @@
 /*auto*/
 
-html,body { height: 100%; overflow: hidden; }
-body { height: 100%; overflow: hidden; background: linear-gradient(#E6E9ED,#F8F8F8); }
+$dock              : #0A53EA;
+$startmenu         : #3065C6;
+$startmenubutton   : #52AA48;
 
-header { height: 50px; background: white linear-gradient(white,#F8F8F8); border-bottom: 1px solid #DBE1E9; position: fixed; z-index: 15; width: 100%; top: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.02); }
-header nav { float: left; border-right: 1px solid #E0E0E0; }
-header nav:first-child { border-right: 0; }
-header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 49px; height: 49px; border-left: 1px solid #E0E0E0; cursor: pointer; vertical-align: top; }
+html,body { height: 100%; overflow: hidden; }
+body { height: 100%; overflow: hidden; background-color: #303030; }
+
+header { height: 45px; background-color: $dock; position: fixed; z-index: 15; width: 100%; bottom: -45px; box-shadow: 0 -5px 10px rgba(0,0,0,0.1); color: #D4DFFF; transition: all 0.3s; }
+header nav { float: left; }
+header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 45px; border-right: 1px solid rgba(0,0,0,0.1); cursor: pointer; vertical-align: top; color: white; }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
-header nav button:hover { background-color: #F0F0F0; }
+header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button .fa { font-size: 20px; }
 header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
+header .datetime { background-color: rgba(255,255,255,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; }
+.header-show { bottom: 0; }
+
+.startmenu { position: fixed; bottom: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 14; border-radius: 0 3px 0 0; box-shadow: 10px -10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, 80px); }
+.startmenu-title { height: 50px; border-bottom: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
+.startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }
+.startmenu-title span { float: left; margin: 14px 0 0 12px; }
+.startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
+.startmenu-apps { padding: 15px 0; margin-right: 200px; overflow: hidden; }
+.startmenu-apps-container { height: 380px; overflow-y: auto; width: 330px; position: absolute; z-index: 1; padding: 5px 0; }
+.startmenu-nav { float: right; width: 200px; padding: 10px 15px; color: white; height: 450px; background-color: rgba(255,255,255,0.1); }
+.startmenu-nav nav button { display: block; color: white; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; }
+.startmenu-nav nav button:hover { text-decoration: none; }
+.startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
+.startmenu-search { padding: 0 10px 10px; }
+.startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
 
 h1 { font-weight: bold; margin: 0 0 15px; padding: 0 0 5px; color: black; font-size: 18px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; border-bottom: 2px solid black; }
 h1 b { font-weight: 700; }
@@ -27,16 +46,18 @@ h3 .fa { margin-right: 5px; }
 .padding { padding: 20px; }
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.user { float: right; cursor: pointer; height: 49px; }
-.user > div { float: left; padding: 10px 20px 0 20px; font-size: 11px; width: 140px; text-align: center; border-left: 1px solid #E0E0E0; height: 49px; }
-.user:hover { background-color: #F0F0F0; }
+.user { float: left; cursor: pointer; width: 60px; height: 45px; border-radius: 0 100px 100px 0; background-color: $startmenubutton; color: rgba(255,255,255,0.5); box-shadow: 10px 0 10px rgba(0,0,0,0.1); margin-right: 20px; user-select: none; padding: 5px 7px 0 0; text-align: center; font-size: 25px; }
+.user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
+.user:hover { opacity: 0.9; color: white; }
 .user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }
-.user img { float: right; height: 49px; width: auto; }
-.user-notifications { float: right; font-size: 25px; padding: 7px 20px 0 0; height: 50px; cursor: pointer; }
-.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: 0 0 0 10px; }
+.user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
+.user.selected { color: white; }
+.user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
+.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; }
 
-.app { padding: 20px 0; width: 200px; height: 220px; position: relative; display: inline-block; border: 1px solid #E0E0E0; background-color: white; text-align: center; border-radius: 3px; cursor: pointer; margin: 20px; transition: all 0.2s; vertical-align: top; }
-.app-offline { border-color: #E0E0E0 !important; background-color: #F8F8F8; cursor: not-allowed; box-shadow: none !important; }
+.app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 10px 0; position: relative; }
+.app-container { background-color: rgba(0,0,0,0.3); border-radius: 2px; cursor: pointer; transition: all 0.2s; height: 45px; color: white; }
+.app-offline { cursor: not-allowed; box-shadow: none !important; }
 .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
 .app-offline .app-version { color: silver; }
 .app-offline img { opacity: 0.4; }
@@ -44,17 +65,23 @@ h3 .fa { margin-right: 5px; }
 .app-disabled .app-name { border-color: #E0E0E0 !important; color: silver; }
 .app-disabled .app-version { color: silver; }
 .app-disabled img { opacity: 0.4; }
-.app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 4px; font-size: 10px; margin: -10px 0 0 10px; }
+.app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; }
 .app > span .fa { margin-right: 5px; }
 .app-offline > span { display: block; }
-.app:hover { border-color: silver; box-shadow: 0 2px 20px rgba(0,0,0,0.05); }
-.app:hover .app-name { border-color: #E0E0E0; }
 .app img { width: 120px; height: 120px; border-radius: 4px; }
-.app-name { margin-top: 15px; font-size: 12px; line-height: 14px; border-top: 1px solid #E0E0E0; padding-top: 15px; }
+.app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
 .app-version { color: #A0A0A0; font-size: 11px; }
-.app .fa-times { position: absolute; right: 15px; top: 15px; color: red; cursor: pointer; font-size: 20px; transition: all 0.3s; }
-.app .fa-times:hover { transform: rotate(-90deg); }
-.appunread { position: absolute; background-color: #D23B3B; color: white; width: 30px; border-radius: 100%; height: 30px; font-size: 14px; padding: 4px 0 0; margin-top: -10px; left: 10px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
+.app .fa-times { position: absolute; right: 20px; top: 13px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
+.app .fa-times:hover { transform: scale(1.1); }
+.appunread { position: absolute; background-color: #D23B3B; color: white; width: 24px; border-radius: 100%; height: 24px; font-size: 12px; padding: 3px 0 0; margin-top: -2px; left: 5px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
+.app .appbadge { position: absolute; margin: 32px 0 0 16px; font-size: 9px; }
+.appbadge .fa { color: #D23B3B; font-size: 9px; }
+
+.appprocess .appbadge { position: absolute; margin: 20px 0 0 5px; font-size: 9px; }
+.appprocess .appbadge .fa { font-size: 9px; }
+
+.app-icon { float: left; width: 40px; font-size: 25px; border-right: 1px solid #3658B0; text-align: center; height: 43px; padding: 3px 0 0 0; }
+.app-meta { margin-left: 50px; padding: 8px 0 0 0; }
 
 .form-border { border-left: 1px solid #F0F0F0; }
 
@@ -62,7 +89,6 @@ h3 .fa { margin-right: 5px; }
 .centered-container { display: table; width: 100%; }
 
 .emptyspace { height: 45px; }
-.scrollable { height: 100%; overflow: auto; overflow-scrolling: touch; margin: 50px 0 0; }
 .fullheight { overflow: hidden; }
 
 .mr5 { margin-right: 5px; }
@@ -82,7 +108,7 @@ h3 .fa { margin-right: 5px; }
 
 .fs11 { font-size: 11px !important; }
 .help { font-size: 11px; color: #A0A0A0; margin-top: 7px; line-height: 13px; }
-.help .fa { margin-right: 5px; }
+.help .fa, .help .fal, .help .far { margin-right: 5px; }
 .help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
 
 .approle { font-size: 14px; text-align: center; width: 34px; border-left: 1px solid #E0E0E0; padding: 3px 0; }
@@ -101,23 +127,6 @@ h3 .fa { margin-right: 5px; }
 .uppercase { text-transform: uppercase; }
 .inline { position: relative; display: inline-block; }
 
-.userapp-container { border-bottom: 1px solid #F0F0F0; margin-bottom: 10px; background-color: white; }
-.userapp-container-disabled img { filter: grayscale(100%); }
-.userapp-container-disabled { color: #A0A0A0; }
-.userapp-container-disabled .userapp-roles { display: none; }
-.userapp-checkbox { float: left; width: 30px; height: 30px; background-color: white; margin-right: 10px; border-radius: 4px; border: 2px solid #F0F0F0; cursor: pointer; color: #A0D468; padding: 3px 0 0 0; text-align: center; font-size: 20px; }
-.userapp-container-disabled .userapp-checkbox .fa { display: none; }
-.userapp-icon { float: left; margin-right: 10px; }
-.userapp-icon img { border: 1px solid #E0E0E0; }
-.userapp-header { height: 40px; line-height: 15px; }
-.userapp-roles { margin-bottom: 10px; line-height: 0; }
-.userapp-roles div { width: 33.3%; position: relative; display: inline-block; background-color: #F0F0F0; padding: 5px 10px; font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-.userapp-roles label { cursor: pointer; }
-.userapp-roles div:nth-child(odd) { background-color: #F8F8F8; }
-.userapp-roles input { margin-right: 5px; }
-.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 6px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; }
-.userapp-settings { margin-bottom: 15px; }
-
 .keyvalue { border-bottom: 1px solid #F0F0F0; padding: 5px 0; margin-bottom: 10px; transition: all 0.3s; }
 .keyvalue:hover { background-color: #F8F8F8; padding-left: 10px; padding-right: 10px; }
 .keyvalue .key { font-size: 11px; font-weight: bold; margin-bottom: 2px; color: black; }
@@ -130,24 +139,47 @@ h3 .fa { margin-right: 5px; }
 .caption { font-size: 14px; margin-bottom: 15px; color: black; text-transform: uppercase; font-weight: bold; }
 .caption .fa { margin-right: 5px; }
 
+.ui-process-header { background-color: $dock; }
+
 @media(max-width: 768px) {
-	.app { width: 140px; margin: 10px; height: 180px; }
-	.app img { width: 80px; height: auto; }
 	.form-border { border-left: 0; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
+	.startmenu { width: 100%; border-radius: 0; top: 0; bottom: 45px; height: auto; }
+	.startmenu-nav { width: 100%; bottom: 0; top: 50px; }
+	.startmenu-apps { margin-right: 0; }
+	.startmenu-apps-container { width: 100%; position: relative; }
+	.app { margin-right: 0; }
+	.app-icon { width: 50px; }
+	.app-meta { margin-left: 60px; }
+	.app-name { font-size: 16px; margin-bottom: 3px; }
+	.startmenu-search .ui-textbox { height: 40px; }
+	.startmenu-search .ui-textbox-input { padding: 11px 4px 0 10px; }
+	.startmenu-search .ui-textbox input { font-size: 16px; }
+	.startmenu-search .ui-textbox-control { width: 40px; }
+	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; }
+	.startmenu-nav nav button { padding: 8px 0; font-size: 18px; }
+	.startmenu-nav .fa { width: 34px; }
 }
 
-.ui-npanel { position: fixed; width: 300px; top: 50px; right: 0; background: rgba(255,255,255,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 15; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #DBE1E9; overflow-scrolling: touch; }
+.ui-npanel { position: fixed; width: 300px; bottom: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 21; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
 .ui-npanel .fa { margin-right: 3px; }
-.ui-npanel-clear { margin: 15px 0 0 20px; font-size: 11px; cursor: pointer; }
-.ui-npanel-message { margin: 20px; padding: 0; background-color: white; border-radius: 3px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s; border: 1px solid #D5D5D5; }
-.ui-npanel-error { border: 2px solid #D33634; }
-.ui-npanel-success { border: 2px solid #8CC152; }
-.ui-npanel-date { float: right; font-size: 10px; color: #A0A0A0; margin: 7px 10px 0 0; }
-.ui-npanel-title img { border: 1px solid #E0E0E0; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
-.ui-npanel-title { font-size: 13px; border-bottom: 1px solid #E0E0E0; padding: 5px 10px; }
+.ui-npanel-clear { margin: 15px 0 0 20px; font-size: 11px; cursor: pointer; color: silver; }
+.ui-npanel-clear:hover { text-decoration: underline; }
+.ui-npanel-message { margin: 20px; padding: 0; background-color: #303030; border-radius: 3px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s; border: 1px solid #252525; color: white; }
+
+.ui-npanel-success { background-color: #68A654; color: white; border-color: #5A9149; }
+.ui-npanel-success .ui-npanel-title  { border-bottom-color: #5A9149; color: white; }
+.ui-npanel-success .ui-npanel-title img { border-bottom-color: #68A654; }
+
+.ui-npanel-error { background-color: #EB3324; color: white; border-color: #C1281E; }
+.ui-npanel-error .ui-npanel-title  { border-bottom-color: #C1281E; color: white; }
+.ui-npanel-error .ui-npanel-title img { border-bottom-color: #C1281E; }
+
+.ui-npanel-date { float: right; font-size: 10px; margin: 7px 10px 0 0; }
+.ui-npanel-title img { border: 1px solid #252525; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
+.ui-npanel-title { font-size: 13px; border-bottom: 1px solid #252525; padding: 5px 10px; }
 .ui-npanel-padding { padding: 0 10px 10px; }
-.ui-npanel-body { line-height: 14px; font-size: 12px; margin-top: 10px; color: gray; }
+.ui-npanel-body { line-height: 14px; font-size: 12px; margin-top: 10px; }
 .ui-npanel button { display: inline-block; position: relative; background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; margin-top: 10px; outline: 0; font-size: 11px; color: black; padding: 2px 10px; }
 .ui-npanel button:hover { background-color: #F0F0F0; }
 .ui-npanel-remove { transform: scale(0.5); opacity: 0; }
@@ -168,5 +200,3 @@ h3 .fa { margin-right: 5px; }
 .buttons button { width: 100%; margin: 0; padding: 0; font-size: 11px; height: 60px; background-color: #F0F0F0; border: 0; border-radius: 4px; overflow: hidden; text-transform: overflow; white-space: nowrap; }
 .buttons button .fa { font-size: 25px; display: block; }
 .buttons button:hover { background-color: #E0E0E0; }
-
-.accountphoto img { max-width: 150px; }

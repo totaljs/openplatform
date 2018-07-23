@@ -1,4 +1,4 @@
-const SERVICEACCOUNT = { id: '0000000000000000000', name: 'Service account', sa: true };
+const SERVICEACCOUNT = { id: '0000000000000000000', name: 'Service Account', sa: true };
 var DDOS = {};
 
 F.onAuthorize = function(req, res, flags, next) {
@@ -6,16 +6,15 @@ F.onAuthorize = function(req, res, flags, next) {
 	var key = (req.ip + (req.headers['user-agent'] || '')).substring(0, 50);
 
 	// Acccess Token
-	if (req.headers.token) {
 
+	var token = req.headers['x-token'];
+	if (token) {
 		if (DDOS[key] > 5) {
 			LOGGER('protection', key);
 			return next(false);
 		}
-
-		if (req.headers.token === F.accesstoken)
+		if (token === F.accesstoken)
 			return next(true, SERVICEACCOUNT);
-
 		if (DDOS[key])
 			DDOS[key]++;
 		else

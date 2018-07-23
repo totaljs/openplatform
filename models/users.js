@@ -3,7 +3,7 @@ const Fs = require('fs');
 NEWSCHEMA('User').make(function(schema) {
 
 	schema.define('id', 'UID');
-	schema.define('idsupervisor', 'UID');
+	schema.define('supervisorid', 'UID');
 	schema.define('photo', 'String(30)');
 	schema.define('name', 'String(40)');
 	schema.define('firstname', 'Capitalize(40)', true);
@@ -13,12 +13,10 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('accesstoken', 'String(50)');
 	schema.define('phone', 'Phone');
 	schema.define('company', 'String(40)');
-	schema.define('department', 'String(40)');
-	schema.define('group', 'String(40)');
+	schema.define('ou', 'String(100)');
 	schema.define('language', 'String(2)');
 	schema.define('reference', 'String(40)');
-	schema.define('place', 'String(40)');
-	schema.define('position', 'String(40)');
+	schema.define('locality', 'String(40)');
 	schema.define('login', 'String(30)');
 	schema.define('password', 'String(30)');
 	schema.define('roles', '[String]');
@@ -35,9 +33,49 @@ NEWSCHEMA('User').make(function(schema) {
 	schema.define('sounds', Boolean);
 	schema.define('rebuildtoken', Boolean);
 	schema.define('datebirth', Date);
-	schema.define('datestart', Date);
+	schema.define('datebeg', Date);
 	schema.define('dateend', Date);
 	schema.define('apps', Object); // { "idapp": { roles: [], options: '' } }
+
+	schema.setQuery(function($) {
+
+		var obj = OP.decodeToken($.query.accesstoken);
+
+		if (!obj) {
+			$.invalid('error-invalid-accesstoken');
+			return;
+		}
+
+		var user = obj.user;
+		var app = obj.app;
+		var ip = $.ip;
+
+		if (app.origin) {
+			if (!app.origin[ip] && app.hostname !== ip) {
+				$.invalid('error-invalid-origin');
+				return;
+			}
+		} else if (app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
+			$.invalid('error-invalid-origin');
+			return;
+		} else if (user.blocked || user.inactive) {
+			$.invalid('error-permissions');
+			return;
+		}
+
+		if (user.apps[app.id]) {
+			var ua = user.apps[app.id];
+			if (ua.countbadges)
+				ua.countbadges++;
+			else
+				ua.countbadges = 1;
+		} else {
+			$.invalid('error-permissions');
+			return;
+		}
+
+		$.callback(OP.users(app, $.query));
+	});
 
 	schema.setSave(function($) {
 
@@ -56,7 +94,7 @@ NEWSCHEMA('User').make(function(schema) {
 		if (model.id) {
 			// update
 
-			item = F.global.users.findItem('id', model.id);
+			item = G.users.findItem('id', model.id);
 
 			if (item == null) {
 				$.invalid('error-users-404');
@@ -66,7 +104,7 @@ NEWSCHEMA('User').make(function(schema) {
 			if (model.password && !model.password.startsWith('***'))
 				item.password = model.password.sha256();
 
-			item.idsupervisor = model.idsupervisor;
+			item.supervisorid = model.supervisorid;
 			item.sa = model.sa;
 			item.search = model.search;
 			item.blocked = model.blocked;
@@ -79,22 +117,20 @@ NEWSCHEMA('User').make(function(schema) {
 			item.accesstoken = model.accesstoken;
 			item.company = model.company;
 			item.gender = model.gender;
-			item.department = model.department;
-			item.group = model.group;
+			item.ou = model.ou;
 			item.groups = model.groups;
 			item.language = model.language;
-			item.place = model.place;
-			item.position = model.position;
+			item.locality = model.locality;
 			item.login = model.login;
 			item.roles = model.roles;
 			item.customer = model.customer;
 			item.notifications = model.notifications;
 			item.sounds = model.sounds;
 			item.apps = model.apps;
-			item.dateupdated = F.datetime;
+			item.dateupdated = NOW;
 			item.volume = model.volume;
 			item.datebirth = model.datebirth;
-			item.datestart = model.datestart;
+			item.datebeg = model.datebeg;
 			item.dateend = model.dateend;
 			item.inactive = model.inactive;
 			item.notificationsphone = model.notificationsphone;
@@ -111,23 +147,31 @@ NEWSCHEMA('User').make(function(schema) {
 		} else {
 			item = model;
 			item.id = UID();
-			item.datecreated = F.datetime;
+			item.datecreated = NOW;
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
-			F.global.users.push(item);
+			G.users.push(item);
 
 			LOGGER('users', 'create: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 		}
 
-		item.grouplinker = item.group.slug();
-		item.departmentlinker = item.department.slug();
+		item.ougroups = {};
+
+		var ou = item.ou.split('/').trim();
+		var oupath = '';
+
+		for (var i = 0; i < ou.length; i++) {
+			oupath += (oupath ? '/' : '') + ou[i];
+			item.ougroups[oupath] = true;
+		}
+
+		item.ou = OP.ou(item.ou);
 		item.companylinker = item.company.slug();
-		item.placelinker = item.place.slug();
-		item.positionlinker = item.position.slug();
+		item.localitylinker = item.locality.slug();
 
 		if ($.model.welcome && !model.blocked && !model.inactive) {
-			$.model.token = F.encrypt({ id: item.id, date: F.datetime, type: 'welcome' }, 'token');
-			F.mail(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, item.language);
+			$.model.token = F.encrypt({ id: item.id, date: NOW, type: 'welcome' }, 'token');
+			MAIL(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, item.language);
 		}
 
 		setTimeout2('users', function() {
@@ -152,13 +196,13 @@ NEWSCHEMA('User').make(function(schema) {
 
 		var id = $.id;
 
-		F.global.users = F.global.users.remove('id', id);
+		G.users = G.users.remove('id', id);
 
 		// Supervisor
-		for (var i = 0, length = F.global.users.length; i < length; i++) {
-			var user = F.global.users[i];
-			if (user.idsupervisor === id)
-				user.idsupervisor = '';
+		for (var i = 0, length = G.users.length; i < length; i++) {
+			var user = G.users[i];
+			if (user.supervisorid === id)
+				user.supervisorid = '';
 		}
 
 		LOGGER('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
@@ -175,44 +219,38 @@ NEWSCHEMA('User').make(function(schema) {
 
 	schema.addWorkflow('refresh', function($) {
 
-		var groups = {};
-		var departments = {};
-		var places = {};
+		var ou = {};
+		var localities = {};
 		var companies = {};
-		var positions = {};
 		var customers = {};
 
-		var toArray = function(obj) {
+		var toArray = function(obj, preparator) {
 			var arr = Object.keys(obj);
 			var output = [];
 			for (var i = 0, length = arr.length; i < length; i++)
-				output.push(obj[arr[i]]);
+				output.push(preparator ? preparator(obj[arr[i]]) : obj[arr[i]]);
 			output.quicksort('name');
 			return output;
 		};
 
-		for (var i = 0, length = F.global.users.length; i < length; i++) {
-			var item = F.global.users[i];
+		for (var i = 0, length = G.users.length; i < length; i++) {
 
-			if (item.group) {
-				if (groups[item.group])
-					groups[item.group].count++;
+			var item = G.users[i];
+			var ougroups = item.ougroups ? Object.keys(item.ougroups) : EMPTYARRAY;
+
+			for (var j = 0; j < ougroups.length; j++) {
+				var oukey = ougroups[j];
+				if (ou[oukey])
+					ou[oukey].count++;
 				else
-					groups[item.group] = { count: 1, id: item.group.slug(), name: item.group };
+					ou[oukey] = { count: 1, name: oukey };
 			}
 
-			if (item.department) {
-				if (departments[item.department])
-					departments[item.department].count++;
+			if (item.locality) {
+				if (localities[item.locality])
+					localities[item.locality].count++;
 				else
-					departments[item.department] = { count: 1, id: item.department.slug(), name: item.department };
-			}
-
-			if (item.place) {
-				if (places[item.place])
-					places[item.place].count++;
-				else
-					places[item.place] = { count: 1, id: item.place.slug(), name: item.place };
+					localities[item.locality] = { count: 1, id: item.locality.slug(), name: item.locality };
 			}
 
 			if (item.company) {
@@ -230,22 +268,18 @@ NEWSCHEMA('User').make(function(schema) {
 					companies[item.company] = { count: 1, id: item.company.slug(), name: item.company };
 			}
 
-			if (item.position) {
-				if (positions[item.position])
-					positions[item.position].count++;
-				else
-					positions[item.position] = { count: 1, id: item.position.slug(), name: item.position };
-			}
 		}
 
-		var meta = F.global.meta = {};
+		var meta = G.meta = {};
 		meta.companies = toArray(companies);
 		meta.customers = toArray(customers);
-		meta.departments = toArray(departments);
-		meta.groups = toArray(groups);
-		meta.places = toArray(places);
-		meta.positions = toArray(positions);
+		meta.localities = toArray(localities);
 		meta.languages = F.config.languages;
+
+		meta.ou = toArray(ou, function(item) {
+			item.name = item.name.replace(/\//g, ' / ');
+			return item;
+		});
 
 		EMIT('users.meta', meta);
 		$.callback(meta);

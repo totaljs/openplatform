@@ -1,16 +1,16 @@
 const Fs = require('fs');
 const OP = global.OP = {};
 
-// F.global.users = [];
-// F.global.apps = [];
-// F.global.meta = { groups: [], places: [], positions: [], companies: [], departments: [] };
+// G.users = [];
+// G.apps = [];
+// G.meta = { groups: [], places: [], positions: [], companies: [], departments: [] };
 
 // Saves stats into the file
 OP.save = function(callback) {
-	F.global.users.quicksort('name');
-	F.global.apps.quicksort('name');
-	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(F.global.users), NOOP);
-	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(F.global.apps), NOOP);
+	G.users.quicksort('name');
+	G.apps.quicksort('name');
+	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), NOOP);
+	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), NOOP);
 	callback && callback();
 };
 
@@ -18,10 +18,10 @@ OP.saveState = function(type) {
 	setTimeout2('OP.saveState.' + (type || 0), function() {
 
 		if (!type || type === 2)
-			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(F.global.users), NOOP);
+			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), NOOP);
 
 		if (!type || type === 1)
-			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(F.global.apps), NOOP);
+			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), NOOP);
 
 	}, 1000, 10);
 };
@@ -30,18 +30,18 @@ OP.load = function(callback) {
 	$WORKFLOW('Settings', 'init', function() {
 
 		Fs.readFile(F.path.databases('users.json'), function(err, response) {
-			F.global.users = response ? response.toString('utf8').parseJSON(true) : [];
+			G.users = response ? response.toString('utf8').parseJSON(true) : [];
 
-			for (var i = 0, length = F.global.users.length; i < length; i++)
-				F.global.users[i].online = false;
+			for (var i = 0, length = G.users.length; i < length; i++)
+				G.users[i].online = false;
 
 			Fs.readFile(F.path.databases('apps.json'), function(err, response) {
-				F.global.apps = response ? response.toString('utf8').parseJSON(true) : [];
+				G.apps = response ? response.toString('utf8').parseJSON(true) : [];
 
-				for (var i = 0, length = F.global.apps.length; i < length; i++)
-					F.global.apps[i].online = false;
+				for (var i = 0, length = G.apps.length; i < length; i++)
+					G.apps[i].online = false;
 
-				F.global.apps.length && $WORKFLOW('App', 'state');
+				G.apps.length && $WORKFLOW('App', 'state');
 				callback && callback();
 			});
 
@@ -57,21 +57,26 @@ OP.profile = function(user) {
 	var meta = {};
 	meta.name = user.name;
 	meta.photo = user.photo;
-	meta.position = user.position;
-	meta.group = user.group;
-	meta.department = user.department;
-	meta.place = user.place;
+	meta.locality = user.locality;
+	meta.ou = user.ou;
 	meta.company = user.company;
 	meta.sa = user.sa;
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
 	meta.sounds = user.sounds;
 
-	for (var i = 0, length = F.global.apps.length; i < length; i++) {
-		var app = F.global.apps[i];
-		!app.blocked && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications });
+	for (var i = 0, length = G.apps.length; i < length; i++) {
+		var app = G.apps[i];
+		!app.blocked && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, resize: app.resize == true });
 	}
 
+	if (user.sa) {
+		meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 600, resize: false });
+		meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 600, resize: false });
+		meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 610, resize: false });
+	}
+
+	meta.apps.push({ id: '_account', icon: 'cog', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 620, resize: false });
 	return meta;
 };
 
@@ -81,7 +86,7 @@ OP.meta = function(app, user, serverside) {
 	if (!user.apps || !user.apps[app.id])
 		return null;
 
-	var meta = { datetime: F.datetime, ip: user.ip, accesstoken: app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: app.frame, settings: app.settings, id: app.id };
+	var meta = { datetime: NOW, ip: user.ip, accesstoken: OP.encodeToken(app, user), url: app.frame, settings: app.settings, id: app.id };
 
 	meta.verify = F.config.url + '/api/verify/?accesstoken=' + meta.accesstoken;
 	meta.openplatform = F.config.url;
@@ -93,7 +98,7 @@ OP.meta = function(app, user, serverside) {
 		meta.serverside = serverside === true;
 
 	if (app.allowreadmeta)
-		meta.meta = F.global.meta;
+		meta.meta = G.meta;
 
 	if (app.allowreadprofile) {
 
@@ -103,27 +108,64 @@ OP.meta = function(app, user, serverside) {
 		var data = user.apps ? user.apps[app.id] : null;
 		if (data) {
 			meta.profile.settings = data.settings;
-			meta.profile.roles = data.roles || EMPTYARRAY;
+			// meta.profile.roles = data.roles || EMPTYARRAY;
 		}
 	}
 
 	if (app.allowreadapps) {
 		meta.apps = [];
-		for (var i = 0, length = F.global.apps.length; i < length; i++) {
-			var item = readapp(F.global.apps[i], app.allowreadapps);
+		for (var i = 0, length = G.apps.length; i < length; i++) {
+			var item = readapp(G.apps[i], app.allowreadapps);
 			item && meta.apps.push(item);
 		}
 	}
 
-	if (app.allowreadusers) {
-		meta.users = [];
-		for (var i = 0, length = F.global.users.length; i < length; i++) {
-			var item = readuser(F.global.users[i], app.allowreadusers, app);
-			item && meta.users.push(item);
-		}
-	}
+	if (app.allowreadusers)
+		meta.users = F.config.url + '/api/users/?accesstoken=' + meta.accesstoken;
 
 	return meta;
+};
+
+OP.encodeToken = function(app, user) {
+	var sign = app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
+	sign += '-' + user.verifytoken + '-' + (sign + F.config.accesstoken).crc32(true);
+	return sign;
+};
+
+OP.decodeToken = function(sign, strict) {
+
+	var arr = sign.split('-');
+
+	if (arr.length !== 6)
+		return null;
+
+	var tmp = (arr[0] + '-' + arr[1] + '-' + arr[2] + '-' + arr[3]);
+	tmp += '-' + arr[4] + '-' + (tmp + F.config.accesstoken).crc32(true);
+
+	if (tmp !== sign)
+		return null;
+
+	// 0 - app accesstoken
+	// 1 - app id
+	// 2 - user accesstoken
+	// 3 - user id
+	// 4 - user verifytoken
+	// 5 - sign
+
+	var obj = {};
+
+	var app = G.apps.findItem('id', arr[1]);
+	if (app == null || app.accesstoken !== arr[0])
+		return null;
+
+	var user = G.users.findItem('id', arr[3]);
+	if (user == null || user.accesstoken !== arr[2] || (strict && user.verifytoken !== arr[4]))
+		return null;
+
+	obj.app = app;
+	obj.user = user;
+
+	return obj;
 };
 
 function readapp(app, type) {
@@ -174,7 +216,7 @@ function readuser(user, type, app) {
 	var obj = {};
 
 	obj.id = user.id;
-	obj.idsupervisor = user.idsupervisor;
+	obj.supervisorid = user.supervisorid;
 	obj.apps = user.apps2;
 	obj.blocked = user.blocked;
 	obj.company = user.company;
@@ -182,30 +224,33 @@ function readuser(user, type, app) {
 	obj.datebirth = user.datebirth;
 	obj.datecreated = user.datecreated;
 	obj.dateend = user.dateend;
-	obj.datestart = user.datestart;
+	obj.datebeg = user.datebeg;
 	obj.dateupdated = user.dateupdated;
-	obj.department = user.department;
-	obj.departmentlinker = user.departmentlinker;
 	obj.firstname = user.firstname;
 	obj.gender = user.gender;
-	obj.globalroles = user.roles;
-	obj.globalgroups = user.groups;
-	obj.group = user.group;
-	obj.grouplinker = user.grouplinker;
 	obj.language = user.language;
 	obj.lastname = user.lastname;
 	obj.name = user.name;
 	obj.notifications = user.notifications;
 	obj.online = user.online;
 	obj.photo = F.config.url + '/photos/' + user.photo;
-	obj.place = user.place;
-	obj.placelinker = user.placelinker;
-	obj.position = user.position;
-	obj.positionlinker = user.positionlinker;
+	obj.ou = user.ou;
+	obj.ougroups = user.ougroups ? Object.keys(user.ougroups) : EMPTYARRAY;
+	obj.locality = user.locality;
+	obj.localitylinker = user.localitylinker;
 	obj.reference = user.reference;
-	obj.roles = user.apps[app.id];
+
+	if (user.roles && user.roles.length) {
+		obj.roles = user.apps[app.id].roles.slice(0);
+		for (var i = 0; i < user.roles.length; i++)
+			obj.roles.push(user.roles[i]);
+	} else
+		obj.roles = user.apps[app.id];
+
+	obj.groups = user.groups;
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;
+	obj.badge = F.config.url + '/api/badges/?accesstoken=' + app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
 
 	if (obj.notifications)
 		obj.notify = F.config.url + '/api/notify/?accesstoken=' + app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
@@ -220,6 +265,22 @@ function readuser(user, type, app) {
 
 	return obj;
 }
+
+OP.users = function(app) {
+	var arr = [];
+	if (app.allowreadusers) {
+		for (var i = 0, length = G.users.length; i < length; i++) {
+			var item = readuser(G.users[i], app.allowreadusers, app);
+			item && arr.push(item);
+		}
+	}
+	return arr;
+};
+
+OP.ou = function(val) {
+	var ou = val.split('/').trim();
+	return ou.join(' / ');
+};
 
 F.helpers.profile = function() {
 	return JSON.stringify(readuser(this.user, 1));

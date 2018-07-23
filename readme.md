@@ -1,6 +1,6 @@
 [![Support](https://www.totaljs.com/img/button-support.png?v=2)](https://www.totaljs.com/support/)
 
-# OpenPlatform v2.0.0
+# OpenPlatform v3.0.0
 
 [![Professional Support](https://www.totaljs.com/img/badge-support.svg)](https://www.totaljs.com/support/) [![Chat with contributors](https://www.totaljs.com/img/badge-chat.svg)](https://messenger.totaljs.com) [![MIT License][license-image]][license-url]
 

@@ -1,0 +1,226 @@
+<style>
+	/*auto*/
+	.apps .name { font-size: 12px; font-weight: bold; }
+	.apps .name b { color: #68A754; }
+	.apps .position { font-size: 11px; }
+	.apps .item { line-height: 12px; font-size: 12px; padding: 5px; cursor: pointer; border-bottom: 1px solid #E0E0E0; }
+	.apps .item .fa-circle { font-size: 8px; }
+	.apps .item:hover { background-color: #2E5ADA; color: white; }
+	.apps .selected { background-color: #2E5ADA; color: white; }
+
+	@media(max-width: 767px) {
+		.apps .item { font-size: 14px; padding: 8px; line-height: 14px; }
+	}
+
+	.userapp-container { border-bottom: 1px solid #F0F0F0; margin-bottom: 10px; background-color: white; }
+	.userapp-container-disabled img { filter: grayscale(100%); }
+	.userapp-container-disabled .userapp-settings { display: none; }
+	.userapp-container-disabled { color: #A0A0A0; }
+	.userapp-container-disabled .userapp-roles { display: none; }
+	.userapp-checkbox { float: left; width: 30px; height: 30px; background-color: white; margin-right: 10px; border-radius: 4px; border: 2px solid #E0E0E0; cursor: pointer; color: #A0D468; padding: 3px 0 0 0; text-align: center; font-size: 20px; }
+	.userapp-container-disabled .userapp-checkbox .fa { display: none; }
+	.userapp-header > .fa { margin-right: 5px; }
+	.userapp-header { height: 40px; line-height: 15px; }
+	.userapp-roles { margin-bottom: 10px; line-height: 0; }
+	.userapp-roles div { width: 33.3%; position: relative; display: inline-block; background-color: #F0F0F0; padding: 5px 10px; font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+	.userapp-roles label { cursor: pointer; }
+	.userapp-roles div:nth-child(odd) { background-color: #F8F8F8; }
+	.userapp-roles input { margin-right: 5px; vertical-align: middle; }
+	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 4px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
+	.userapp-settings { margin-bottom: 15px; }
+</style>
+
+<div class="row">
+	<div class="col-sm-3 np">
+		<div class="panel">
+			<div class="search">
+				<div data-jc="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
+			</div>
+			<div class="scroller" data-margin="30">
+				<div data-jc="search__apps.search__selector:.item">
+					<div data-jc="listmenu__apps.selected__datasource:apps.items;selector:.item;exec:apps_load" class="apps">
+						<script type="text/html">
+							<div class="item" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+						</script>
+					</div>
+				</div>
+			</div>
+			<nav class="toolbar">
+				<button class="exec" data-exec="apps_create" title="@(Add app)"><i class="fa fa-plus"></i></button>
+				<button data-bind="apps.selected__disabled:!value" class="exec" data-exec="apps_remove" title="@(Remove app)"><i class="fa fa-minus"></i></button>
+			</nav>
+		</div>
+	</div>
+	<div class="col-sm-9 np" data-jc="xs__apps.form.id__if:value!=null;exec:resizelayout">
+
+		<nav class="nav visible-xs">
+			<a href="javascript:void(0)" class="exec" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
+		</nav>
+
+		<div class="scroller hidden" data-bind="apps.form.id__show:value != null__exec:formscroll">
+			<div class="scroller-padding">
+				<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
+				<div data-jc="error__apps.form.data" class="ui-error-nm"></div>
+
+				<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-yellow" style="margin-top:10px">
+					<script type="text/html">
+						<div class="padding">
+							<div class="b"><i class="fal fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
+							<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
+							{{ if value.description }}
+								<div class="help" style="margin-top:15px"><i class="fal fa-info-circle"></i>{{ value.description }}</div>
+							{{ fi }}
+						</div>
+					</script>
+				</div>
+				<br />
+				<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
+				<div data-jc="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
+				<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
+				<div class="help"><a href="javascript:void(0)" class="exec" data-exec="apps_generatetoken">@(Generate token)</a></div>
+			</div>
+			<hr class="nmt nmb" />
+			<div class="scroller-padding">
+				<h2 class="m"><i class="fa fa-lock"></i>@(Permissions for this application)</h2>
+				<div class="mt10 red b" data-jc="checkbox" data-jc-path="apps.form.blocked">@(Application is blocked)</div>
+				<div data-jc="checkbox__apps.form.allownotifications">@(Allow push notifications)</div>
+				<div data-jc="checkbox__apps.form.responsive">@(Allow for mobile devices)</div>
+				<div data-jc="checkbox__apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta informations)</div>
+				<div data-jc="checkbox__apps.form.serververify" class="b">@(Enable server-side verification)</div>
+				<br />
+				<div data-jc="dropdown__apps.form.allowreadprofile__items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number__1" class="m">@(Read user profile)</div>
+				<div data-jc="dropdown__apps.form.allowreadusers__items:@(Disabled)|0,@(Basic informations)|1,@(Basic informations about users which use this application)|3,@(All informations)|2,@(All informations about users which use this application)|4;type:number__0" class="m">@(Read list of users)</div>
+				<div data-jc="dropdown__apps.form.allowreadapps__items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number__0" class="m">@(Read list of applications)</div>
+				<div data-jc="error__apps.form.response"></div>
+				<div class="row" data-jc="validation__apps.form">
+					<div class="col-sm-5">
+						<button class="button b exec" name="submit" data-exec="apps_submit" disabled="disabled">@(SUBMIT)</button>
+					</div>
+					<div class="col-sm-3">
+						<a href="javascript:void(0)" class="cancel exec" data-exec="apps_cancel">@(Cancel changes)</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	var apps = {};
+
+	apps.form = {};
+	apps.items = EMPTYARRAY;
+
+	OPENPLATFORM.init(function(err, meta) {
+
+		if (err) {
+			document.body.innerHTML = '401: unauthorized';
+			window.close();
+			return;
+		}
+
+		resizelayout();
+		apps_refresh();
+	});
+
+	OPENPLATFORM.on('maximize', function() {
+		apps_refresh();
+		NOTIFY('apps.selected');
+	});
+
+	function apps_load(item) {
+		OPENPLATFORM.loading(true);
+		var item = apps.items.findItem('id', item.id);
+		item && SET('apps.form', CLONE(item), true);
+		OPENPLATFORM.loading(false, 1000);
+	}
+
+	function apps_refresh() {
+		AJAX('GET /api/internal/apps/', function(response) {
+			response.quicksort('name');
+			SET('apps.items', response);
+		});
+	}
+
+	function formscroll(value, path, el) {
+		if (path === 'apps.form') {
+			setTimeout(function() {
+				el.prop('scrollTop', 0);
+			}, 10);
+		}
+	}
+
+	function apps_cancel() {
+		SET('apps.selected', '');
+		SET('apps.form.id', null);
+	}
+
+	function apps_generatetoken() {
+		SET('apps.form.accesstoken', GUID(30));
+		CHANGE('apps.form.accesstoken', true);
+	}
+
+	function apps_create() {
+		SET('apps.selected', '');
+		SET('apps.form', { id: '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, accesstoken: GUID(30) }, true);
+	}
+
+	function apps_remove() {
+		OPENPLATFORM.confirm('@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(err, button) {
+			if (!button.index) {
+				var id = apps.selected;
+				AJAX('DELETE /api/internal/apps/{0}/'.format(id), function(response) {
+					if (response.success) {
+						OPENPLATFORM.message('@(User has been removed successfully.)');
+						apps.items = apps.items.remove('id', id);
+						apps.form.id === id && apps_cancel();
+						SET('apps.selected', '');
+						NOTIFY('apps.items');
+					}
+				});
+			}
+		});
+	}
+
+	function apps_submit() {
+
+		OPENPLATFORM.loading(true);
+
+		var data = CLONE(apps.form);
+
+		AJAX('POST /api/internal/apps/', data, function(response) {
+			OPENPLATFORM.loading(false);
+			SET('apps.form.response', response);
+			if (response.success) {
+				OPENPLATFORM.message('@(Application has been saved successfully.)');
+				apps_refresh();
+				apps_cancel();
+			}
+		});
+	}
+
+	WATCH('apps.form.url', function(path, value) {
+
+		if (!value) {
+			SET('apps.form.data', null);
+			return;
+		}
+
+		if (!value.isURL()) {
+			SET('apps.form.data', [{ error: '@(URL address is invalid)' }]);
+			return;
+		}
+
+		AJAX('POST /api/internal/apps/meta/', { url: value }, function(response, err) {
+			if (response instanceof Array) {
+				SET('apps.form.data', response);
+			} else {
+				SET('apps.form.data', response.value);
+				!GET('apps.form.title') && SET('apps.form.title', response.value.name);
+			}
+		});
+
+	});
+
+</script>

@@ -1,7 +1,6 @@
-name                            : OpenPlatform
-author                          : You company name
-version                         : 2.0.0
-secret                          : secret-key-for-web
+name                            : OpenPlatform v3
+author                          : Peter Širka
+version                         : 3.0.0
 
 // Mail settings
 mail-smtp                       : smtp.yourwebsite.com

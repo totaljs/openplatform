@@ -149,6 +149,9 @@ function state(item, next) {
 			item.email = response.email;
 			item.roles = response.roles;
 			item.groups = response.groups;
+			item.width = response.width;
+			item.height = response.height;
+			item.resize = response.resize;
 
 			if (response.origin && response.origin.length) {
 				item.origin = {};
@@ -194,6 +197,9 @@ function sync(item, model, meta) {
 	item.online = model.online === true;
 	item.daterefreshed = F.datetime;
 	item.origin = model.origin;
+	item.width = model.width;
+	item.height = model.height;
+	item.resize = model.resize;
 }
 
 ON('service', function(counter) {

@@ -1,11 +1,9 @@
 NEWSCHEMA('UserApps').make(function(schema) {
 
 	schema.define('type', ['extend', 'set', 'remove'], true);
-	schema.define('group', 'String(50)');
-	schema.define('department', 'String(50)');
-	schema.define('place', 'String(50)');
+	schema.define('ou', 'String(200)');
 	schema.define('company', 'String(50)');
-	schema.define('position', 'String(50)');
+	schema.define('locality', 'String(50)');
 	schema.define('gender', ['male', 'female']);
 	schema.define('customer', ['true', 'false']);
 	schema.define('apps', 'Object');
@@ -22,18 +20,13 @@ NEWSCHEMA('UserApps').make(function(schema) {
 		var count = 0;
 		var keys = Object.keys(model.apps);
 		var updated = [];
+		var ou = model.ou ? OP.ou(model.ou) : null;
 
 		for (var i = 0, length = users.length; i < length; i++) {
 			var user = users[i];
-			if (model.group && user.group !== model.group)
-				continue;
-			if (model.department && user.department !== model.department)
-				continue;
-			if (model.place && user.place !== model.place)
+			if (ou && (!user.ougroups || !user.ougroups[ou]))
 				continue;
 			if (model.company && user.company !== model.company)
-				continue;
-			if (model.position && user.position !== model.position)
 				continue;
 			if (model.gender && user.gender !== model.gender)
 				continue;
@@ -96,13 +89,12 @@ NEWSCHEMA('UserApps').make(function(schema) {
 });
 
 NEWSCHEMA('UserNotify').make(function(schema) {
+
 	schema.define('type', ['notification', 'email'], true);
 	schema.define('subtype', Number);
-	schema.define('group', 'String(50)');
-	schema.define('department', 'String(50)');
-	schema.define('place', 'String(50)');
+	schema.define('ou', 'String(200)');
+	schema.define('locality', 'String(50)');
 	schema.define('company', 'String(50)');
-	schema.define('position', 'String(50)');
 	schema.define('subject', 'String(100)');
 	schema.define('gender', ['male', 'female']);
 	schema.define('customer', ['true', 'false']);
@@ -119,18 +111,15 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 		var users = F.global.users;
 		var count = 0;
 		var arr = [];
+		var ou = model.ou ? OP.ou(model.ou) : null;
 
 		for (var i = 0, length = users.length; i < length; i++) {
 			var user = users[i];
-			if (model.group && user.group !== model.group)
+			if (ou && (!user.ougroups || !user.ougroups[ou]))
 				continue;
-			if (model.department && user.department !== model.department)
-				continue;
-			if (model.place && user.place !== model.place)
+			if (model.locality && user.locality !== model.locality)
 				continue;
 			if (model.company && user.company !== model.company)
-				continue;
-			if (model.position && user.position !== model.position)
 				continue;
 			if (model.gender && user.gender !== model.gender)
 				continue;
@@ -145,7 +134,7 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 			count++;
 		}
 
-		arr.waitFor(function(item, next) {
+		arr.wait(function(item, next) {
 			var obj = CREATE('Notification');
 			obj.body = model.body;
 			obj.type = model.subtype;
@@ -159,7 +148,7 @@ NEWSCHEMA('UserNotify').make(function(schema) {
 
 NEWSCHEMA('UserRename').make(function(schema) {
 
-	schema.define('type', ['company', 'group', 'department', 'place', 'position', 'supervisor'], true);
+	schema.define('type', ['company', 'ou', 'locality', 'supervisor'], true);
 	schema.define('oldname', 'String(50)');
 	schema.define('newname', 'String(50)');
 
@@ -174,25 +163,40 @@ NEWSCHEMA('UserRename').make(function(schema) {
 		var users = F.global.users;
 		var count = 0;
 
+		if (model.type === 'ou') {
+			model.oldname = OP.ou(model.oldname);
+			model.newname = OP.ou(model.newname);
+		}
+
 		for (var i = 0, length = users.length; i < length; i++) {
 
 			var user = users[i];
 
 			switch (model.type) {
 				case 'company':
-				case 'group':
-				case 'department':
-				case 'place':
-				case 'position':
+				case 'locality':
 					if (user[model.type] === model.oldname) {
 						user[model.type] = model.newname;
 						user[model.type + 'linker'] = model.newname.slug();
 						count++;
 					}
 					break;
+				case 'ou':
+					if (user.ou === model.oldname) {
+						user.ougroups = {};
+						user.ou = model.newname;
+						var ou = user.ou.split('/').trim();
+						var oupath = '';
+						for (var i = 0; i < ou.length; i++) {
+							oupath += (oupath ? '/' : '') + ou[i];
+							user.ougroups[oupath] = true;
+						}
+						count++;
+					}
+					break;
 				case 'supervisor':
-					if (user.idsupervisor === model.oldname) {
-						user.idsupervisor = model.newname;
+					if (user.supervisorid === model.oldname) {
+						user.supervisorid = model.newname;
 						count++;
 					}
 					break;

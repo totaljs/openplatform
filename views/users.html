@@ -1,0 +1,403 @@
+
+<style>
+	/*auto*/
+	.users .name { font-size: 12px; font-weight: bold; }
+	.users .name b { color: #68A754; }
+	.users .position { font-size: 11px; }
+	.users .item { line-height: 12px; font-size: 12px; padding: 5px; cursor: pointer; border-bottom: 1px solid #E0E0E0; }
+	.users .item .fa-circle { font-size: 8px; }
+	.users .item:hover { background-color: #2E5ADA; color: white; }
+	.users .selected { background-color: #2E5ADA; color: white; }
+
+	@media(max-width: 767px) {
+		.users .item { font-size: 14px; padding: 8px; line-height: 14px; }
+	}
+
+	.userapp-container { border-bottom: 1px solid #F0F0F0; margin-bottom: 10px; background-color: white; }
+	.userapp-container-disabled img { filter: grayscale(100%); }
+	.userapp-container-disabled .userapp-settings { display: none; }
+	.userapp-container-disabled { color: #A0A0A0; }
+	.userapp-container-disabled .userapp-roles { display: none; }
+	.userapp-checkbox { float: left; width: 30px; height: 30px; background-color: white; margin-right: 10px; border-radius: 4px; border: 2px solid #E0E0E0; cursor: pointer; color: #A0D468; padding: 3px 0 0 0; text-align: center; font-size: 20px; }
+	.userapp-container-disabled .userapp-checkbox .fa { display: none; }
+	.userapp-header > .fa { margin-right: 5px; }
+	.userapp-header { height: 40px; line-height: 15px; }
+	.userapp-roles { margin-bottom: 10px; line-height: 0; }
+	.userapp-roles div { width: 33.3%; position: relative; display: inline-block; background-color: #F0F0F0; padding: 5px 10px; font-size: 11px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+	.userapp-roles label { cursor: pointer; }
+	.userapp-roles div:nth-child(odd) { background-color: #F8F8F8; }
+	.userapp-roles input { margin-right: 5px; vertical-align: middle; }
+	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 4px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
+	.userapp-settings { margin-bottom: 15px; }
+</style>
+
+<div class="row">
+	<div class="col-sm-3 np">
+		<div class="panel">
+			<div class="search">
+				<div data-jc="textbox__users.search__type:search;placeholder:@(Search users)"></div>
+			</div>
+			<div class="scroller" data-margin="30">
+				<div data-jc="search__users.search__selector:.item">
+					<div data-jc="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
+						<script type="text/html">
+							<div class="item" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+						</script>
+					</div>
+				</div>
+			</div>
+			<nav class="toolbar">
+				<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
+				<button data-bind="users.selected__disabled:!value" class="exec" data-exec="usersform_remove" title="@(Remove user)"><i class="fa fa-minus"></i></button>
+			</nav>
+		</div>
+	</div>
+	<div class="col-sm-9 np" data-jc="xs__users.form.id__if:value!=null;exec:resizelayout">
+
+		<nav class="nav visible-xs">
+			<a href="javascript:void(0)" class="exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
+		</nav>
+
+		<div class="scroller hidden" data-bind="users.form.id__show:value != null__exec:formscroll">
+			<div data-jc="template__users.form__properties:datecreated,dateupdated,datelogged,online">
+				<script type="text/html">
+					{{ if id }}
+						<div class="scroller-padding bg-smoke">
+							<table class="table table-bordered table-small nmb bg-white">
+								<tbody>
+									<tr>
+										<td>@(ID)</td>
+										<td class="col-xs-6 right">{{ id }}</td>
+									</tr>
+									{{ if datelogged }}
+									<tr>
+										<td>@(Logged)</td>
+										<td class="right">{{ if online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ datelogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
+									</tr>
+									{{ fi }}
+									{{ if datecreated }}
+									<tr>
+										<td>@(Created)</td>
+										<td class="right">{{ datecreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+									</tr>
+									{{ fi }}
+									{{ if dateupdated }}
+									<tr>
+										<td>@(Updated)</td>
+										<td class="right">{{ dateupdated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+									</tr>
+									{{ fi }}
+									{{ if datepassword }}
+									<tr>
+										<td>@(Password changed)</td>
+										<td class="right">{{ datepassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
+									</tr>
+									{{ fi }}
+									{{ if datenotified }}
+									<tr>
+										<td>@(Last notification)</td>
+										<td class="right">{{ datenotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
+									</tr>
+									{{ fi }}
+								</tbody>
+							</table>
+						</div>
+					{{ fi }}
+				</script>
+			</div>
+			<div class="scroller-padding">
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.firstname__maxlength:50;required:true">@(First name)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.lastname__maxlength:50;required:true">@(Last name)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.email__icon2:envelope;maxlength:120;required:true;type:email__'@'">@(Email address)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.phone__icon2:phone;maxlength:30;type:phone">@(Phone number)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4 m">
+						<div data-jc="dropdown__users.form.language__empty:;icon:language;datasource:users.meta.languages">@(Language)</div>
+					</div>
+					<div class="col-sm-4 m">
+						<div data-jc="dropdown__users.form.gender__items:@(male)|male,@(female)|female">@(Gender)</div>
+					</div>
+					<div class="col-sm-4 m">
+						<div data-jc="textbox__users.form.reference__align:center">@(Custom reference)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4 m">
+						<div data-jc="textbox__users.form.datebirth__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
+					</div>
+					<div class="col-sm-4 m">
+						<div data-jc="textbox__users.form.datebeg__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
+					</div>
+					<div class="col-sm-4 m">
+						<div data-jc="textbox__users.form.dateend__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
+					</div>
+				</div>
+			</div>
+			<div class="padding bg-yellow">
+				<div data-jc="textbox__users.form.accesstoken__maxlength:50;required:true" class="b">@(Access Token)</div>
+				<div class="help"><a href="javascript:void(0)" class="exec" data-exec="userform_generatetoken">@(Generate token)</a></div>
+			</div>
+			<div class="scroller-padding">
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data-jc="dropdown__users.form.ou__empty:;datasource:users.meta.ou;value:name">@(Select existing Organization unit)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.ou__maxlength:60">@(Organization unit)</div>
+						<div class="help">@(For example <code>Developers / Node.js</code>)</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data-jc="dropdown__users.form.locality__empty:;datasource:users.meta.localities;value:name">@(Select existing Locality)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.locality__maxlength:60">@(Locality)</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data-jc="dropdown__users.form.company__empty:;datasource:users.meta.companies;value:name">@(Select existing Company)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.company__maxlength:60">@(Company)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data-jc="dropdown__users.form.supervisorid__empty:;datasource:%userssupervisors;empty:">@(Select Supervisor)</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="mt10 b red" data-jc="checkbox__users.form.blocked">@(User is blocked)</div>
+						<div class="red" data-jc="checkbox__users.form.inactive">@(User is inactive)</div>
+						<div data-jc="checkbox__users.form.customer">@(User is customer)</div>
+						<div data-jc="checkbox__users.form.sa">@(User is <b>administrator</b>)</div>
+						<div data-jc="checkbox__users.form.welcome">@(Send welcome email)</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="mt10" data-jc="checkbox__users.form.sounds">@(Enable sounds)</div>
+						<div data-jc="checkbox__users.form.notifications">@(Enable notifications)</div>
+						<div data-jc="checkbox__users.form.notificationsemail">@(Enable email notifications)</div>
+						<div data-jc="checkbox__users.form.notificationsphone">@(Enable phone notifications)</div>
+						<div data-jc="checkbox__users.form.rebuildtoken">@(Re-build verification token)</div>
+					</div>
+				</div>
+				<br />
+				<div data-jc="range__users.form.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
+				<div class="row fs11 silver">
+					<div class="col-xs-6">
+						@(Low)
+					</div>
+					<div class="col-xs-6 right">
+						@(High)
+					</div>
+				</div>
+				<hr />
+				<div class="help" style="margin-top:30px"><i class="fa fa-info-circle"></i>@(User can change the password if is logged.)</div>
+				<br />
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.login__icon2:user;maxlength:120;required:true">@(Login name)</div>
+						<div class="help"><i class="fa fa-envelope"></i>@(Login name can be an email address.)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data-jc="textbox__users.form.password__icon2:lock;maxlength:30;required:true">@(Password)</div>
+						<div class="help"><a href="javascript:void(0)" class="exec" data-exec="userform_generatepassword">@(Generate password)</a></div>
+					</div>
+				</div>
+				<hr />
+				<h2><i class="fa fa-sitemap"></i>@(Custom roles)</h2>
+				<div data-jc="textboxlist__users.form.roles__placeholder:@(Type a global role and press enter)"></div>
+				<hr />
+				<h2><i class="fa fa-sitemap"></i>@(Custom groups)</h2>
+				<div data-jc="textboxlist__users.form.groups__placeholder:@(Type a group name and press enter)"></div>
+				<hr />
+				<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
+				<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
+				<br />
+				<div data-jc="app-managment__users.form.apps__datasource:users.apps" class="m">
+					<script type="text/html">
+						<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
+							<div class="userapp-header">
+								<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
+								<i class="fa fa-{{ icon }}"></i><b>{{ title }}</b>
+								<div class="fs11">v{{ version }}</div>
+							</div>
+							{{ if roles && roles.length }}
+							<div class="userapp-roles">
+								{{ foreach m in roles }}
+									<div><label><input type="checkbox" value="{{ m }}" />{{ m }}</label></div>
+								{{ end }}
+							</div>
+							{{ fi }}
+							<div class="userapp-settings">
+								<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ id }}" placeholder="@(Custom settings for the application)" />
+							</div>
+						</div>
+					</script>
+				</div>
+				<div data-jc="error__users.form.response"></div>
+				<div class="row" data-jc="validation__users.form">
+					<div class="col-sm-5">
+						<button class="button b exec" name="submit" data-exec="userform_submit" disabled="disabled">@(SUBMIT)</button>
+					</div>
+					<div class="col-sm-3">
+						<a href="javascript:void(0)" class="cancel exec" data-exec="userform_cancel">@(Cancel changes)</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	var users = {};
+
+	users.form = {};
+	users.items = EMPTYARRAY;
+
+	OPENPLATFORM.init(function(err, meta) {
+		if (err) {
+			document.body.innerHTML = '401: unauthorized';
+			window.close();
+		} else {
+			resizelayout();
+			userform_refresh();
+		}
+	});
+
+	OPENPLATFORM.on('maximize', function() {
+		userform_refresh();
+		NOTIFY('users.selected');
+	});
+
+	function usersform_load(item) {
+		OPENPLATFORM.loading(true);
+		AJAX('GET /api/internal/users/{0}/'.format(item.id), function(response) {
+			OPENPLATFORM.loading(false, 1000);
+			response.password = '*************';
+			SET('users.form', response, true);
+		});
+	}
+
+	function userform_refresh() {
+		AJAX('GET /api/internal/users/', function(response) {
+			response.quicksort('lastname');
+			SET('users.items', response);
+		});
+		AJAX('GET /api/meta/', 'users.meta');
+		AJAX('GET /api/internal/apps/', 'users.apps');
+	}
+
+	function formscroll(value, path, el) {
+		if (path === 'users.form') {
+			setTimeout(function() {
+				el.prop('scrollTop', 0);
+			}, 10);
+		}
+	}
+
+	function userform_generatepassword() {
+		SET('users.form.password', GUID(10));
+		CHANGE('users.form.password', true);
+	}
+
+	function userform_cancel() {
+		SET('users.selected', '');
+		SET('users.form.id', null);
+	}
+
+	function userform_generatetoken() {
+		SET('users.form.accesstoken', GUID(40));
+		CHANGE('users.form.accesstoken', true);
+	}
+
+	function userform_create() {
+		SET('users.selected', '');
+		SET('users.form', { id: '', accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, value: 80, apps: [] }, true);
+	}
+
+	function usersform_remove() {
+		OPENPLATFORM.confirm('@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(err, button) {
+			if (!button.index) {
+				var id = users.selected;
+				AJAX('DELETE /api/internal/users/{0}/'.format(id), function(response) {
+					if (response.success) {
+						OPENPLATFORM.message('@(User has been removed successfully.)');
+						users.items = users.items.remove('id', id);
+						users.form.id === id && userform_cancel();
+						SET('users.selected', '');
+						NOTIFY('users.items');
+					}
+				});
+			}
+		});
+	}
+
+	WATCH('users.form.company', function(path, value) {
+		SET('%userssupervisors', users.items.findAll(function(item) {
+			return value && item.company !== value ? false : item.id !== users.form.id;
+		}));
+	});
+
+	function userform_submit() {
+
+		OPENPLATFORM.loading(true);
+		var settings = {};
+
+		// Collects app settings
+		$('.userapp-settings-input').each(function() {
+			if (this.value)
+				settings[this.getAttribute('data-id')] = this.value;
+		});
+
+		var opt = {};
+
+		// Check roles
+		Object.keys(users.form.apps).forEach(function(key) {
+			var obj = users.form.apps[key];
+			var app = users.apps.findItem('id', key);
+			if (app) {
+				opt[key] = { roles: obj.roles.remove(function(role) {
+					return app.roles.indexOf(role) === -1;
+				}), settings: settings[key] };
+			}
+		});
+
+		var data = CLONE(users.form);
+		data.apps = opt;
+
+		AJAX('POST /api/internal/users/', data, function(response) {
+			OPENPLATFORM.loading(false);
+			SET('users.form.response', response);
+			if (response.success) {
+				OPENPLATFORM.message('@(User profile has been saved successfully.)');
+				userform_refresh();
+				userform_cancel();
+			}
+		});
+	}
+
+	$('.scroller').on('scroll', function() {
+		window.$calendar && window.$calendar.hide();
+	});
+
+</script>

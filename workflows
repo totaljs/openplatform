@@ -1,8 +1,0 @@
-
-save (App)     : workflow:'refresh' --> save (response)
-save           : save (response)
-remove         : remove (response)
-read           : read (response)
-query          : query (response)
-
-exec           : workflow:'exec' (response)

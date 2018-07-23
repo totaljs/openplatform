@@ -16,6 +16,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 		}
 
 		var filename = F.path.databases('notifications_' + user.id + '.json');
+
 		Fs.readFile(filename, function(err, data) {
 
 			user.countnotifications = 0;
@@ -42,7 +43,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 			// Super Admin notifications
 
-			var user = F.global.users.findItem('id', $.query.user);
+			user = F.global.users.findItem('id', $.query.user);
 			if (!user) {
 				$.success();
 				return;
@@ -52,26 +53,24 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 		} else {
 
-			var arr = ($.query.accesstoken || '').split('-');
+			var obj = OP.decodeToken($.query.accesstoken);
 
-			// 0 - app accesstoken
-			// 1 - app id
-			// 2 - user accesstoken
-			// 3 - user id
-
-			var app = F.global.apps.findItem('accesstoken', arr[0]);
-			if (!app || app.id !== arr[1] || !$.user) {
+			if (!obj) {
 				$.invalid('error-invalid-accesstoken');
 				return;
 			}
 
 			var ip = $.ip;
+
+			app = obj.app;
+			user = obj.user;
+
 			if (app.origin) {
-				if (!app.origin[ip] && app.hostname !== ip && (!$.user || $.user.id !== arr[3])) {
+				if (!app.origin[ip] && app.hostname !== ip) {
 					$.invalid('error-invalid-origin');
 					return;
 				}
-			} else if (app.hostname !== ip) {
+			} else if (app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
 				$.invalid('error-invalid-origin');
 				return;
 			}
@@ -81,15 +80,8 @@ NEWSCHEMA('Notification').make(function(schema) {
 				return;
 			}
 
-			var user = F.global.users.findItem('accesstoken', arr[2]);
-
-			if (!user || user.id !== arr[3]) {
-				$.invalid('error-invalid-accesstoken');
-				return;
-			}
-
 			if (!user.notifications || user.blocked || user.inactive) {
-				$.invalid('error-permissions');
+				$.invalid('error-accessible');
 				return;
 			}
 		}

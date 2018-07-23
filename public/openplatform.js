@@ -1,6 +1,6 @@
 var OPENPLATFORM = {};
 
-OPENPLATFORM.version = '2.0.0';
+OPENPLATFORM.version = '3.0.0';
 OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
@@ -28,7 +28,8 @@ OPENPLATFORM.init = function(callback) {
 	for (var i = 0, length = arr.length; i < length; i++) {
 		var name = arr[i];
 		if (name.substring(0, 13) === 'openplatform=') {
-			accesstoken = decodeURIComponent(name.substring(13));
+			var tmp = decodeURIComponent(name.substring(13));
+			accesstoken = decodeURIComponent(tmp.substring(tmp.indexOf('accesstoken=') + 12));
 			break;
 		}
 	}
@@ -53,8 +54,20 @@ OPENPLATFORM.init = function(callback) {
 	});
 };
 
-OPENPLATFORM.loading = function(visible) {
-	return OPENPLATFORM.send('loading', visible);
+document.addEventListener('click', function() {
+	OPENPLATFORM && OPENPLATFORM.focus();
+});
+
+OPENPLATFORM.loading = function(visible, interval) {
+
+	if (!interval) {
+		OPENPLATFORM.send('loading', visible);
+		return;
+	}
+
+	setTimeout(function(visible) {
+		OPENPLATFORM.send('loading', visible);
+	}, interval, visible);
 };
 
 OPENPLATFORM.message = function(message, type) {
@@ -62,6 +75,20 @@ OPENPLATFORM.message = function(message, type) {
 	data.body = message;
 	data.type = type;
 	return OPENPLATFORM.send('message', data);
+};
+
+OPENPLATFORM.confirm = function(message, buttons, callback) {
+	var data = {};
+	data.body = message;
+	data.buttons = buttons;
+	return OPENPLATFORM.send('confirm', data, callback);
+};
+
+OPENPLATFORM.snackbar = function(message, type) {
+	var data = {};
+	data.body = message;
+	data.type = type;
+	return OPENPLATFORM.send('snackbar', data);
 };
 
 OPENPLATFORM.meta = function(callback) {
@@ -81,6 +108,10 @@ OPENPLATFORM.stop = function(url) {
 	return OPENPLATFORM.send('stop', url);
 };
 
+OPENPLATFORM.focus = function() {
+	return OPENPLATFORM.send('focus');
+};
+
 OPENPLATFORM.maximize = function(url) {
 	return OPENPLATFORM.send('maximize', url);
 };
@@ -97,6 +128,14 @@ OPENPLATFORM.minimize = function() {
 	return OPENPLATFORM.send('minimize');
 };
 
+OPENPLATFORM.badge = function() {
+	return OPENPLATFORM.send('badge');
+};
+
+OPENPLATFORM.log = function(message) {
+	return OPENPLATFORM.send('log', message);
+};
+
 OPENPLATFORM.close = function() {
 	return OPENPLATFORM.send('kill');
 };
@@ -110,6 +149,10 @@ OPENPLATFORM.notify = function(type, body, url) {
 	}
 
 	return OPENPLATFORM.send('notify', { type: type, body: body, url: url || '', datecreated: new Date() });
+};
+
+OPENPLATFORM.share = function(app, type, body, callback) {
+	return OPENPLATFORM.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date() }, callback);
 };
 
 OPENPLATFORM.email = function(subject, body) {

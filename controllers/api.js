@@ -4,58 +4,65 @@ const ONLINE = { online: true, datelogged: null };
 exports.install = function() {
 
 	GROUP(['authorize'], function() {
+
 		// Internal
-		ROUTE('/api/apps/',          ['*App --> save', 'post']);
-		ROUTE('/api/apps/{id}/',     ['*App --> remove', 'delete']);
-		ROUTE('/api/apps/meta/',     ['*Meta --> exec', 'post']);
-		ROUTE('/api/users/',         ['*User --> save', 'post']);
-		ROUTE('/api/users/{id}/',    ['*User --> remove', 'delete']);
-		ROUTE('/api/users/rename/',  ['*UserRename --> exec', 'post']);
-		ROUTE('/api/users/notify/',  ['*UserNotify --> exec', 'post']);
-		ROUTE('/api/users/apps/',    ['*UserApps --> exec', 'post']);
-		ROUTE('/api/profile/',       ['*Profile --> save', 'post']);
+		ROUTE('POST   /api/internal/apps/               *App          --> @refresh @save (response)');
+		ROUTE('DELETE /api/internal/apps/{id}/          *App          --> @remove');
+		ROUTE('POST   /api/internal/apps/meta/          *Meta         --> @exec');
+		ROUTE('POST   /api/internal/users/              *User         --> @save');
+		ROUTE('DELETE /api/internal/users/{id}/         *User         --> @remove');
 
-		ROUTE('/api/apps/{id}/',     json_apps_meta);
-		ROUTE('/api/apps/',          json_apps_query);
-		ROUTE('/api/users/',         json_users_query);
-		ROUTE('/api/meta/',          json_meta_query);
+		ROUTE('POST   /api/internal/users/rename/       *UserRename   --> @exec');
+		ROUTE('POST   /api/internal/users/notify/       *UserNotify   --> @exec');
+		ROUTE('POST   /api/internal/users/apps/         *UserApps     --> @exec');
+		ROUTE('POST   /api/profile/                     *Profile      --> @save');
 
-		ROUTE('/api/account/',       ['*Account --> read']);
-		ROUTE('/api/account/',       ['*Account --> save', 'post']);
+		ROUTE('GET    /api/internal/apps/{id}/',        json_apps_meta);
+		ROUTE('GET    /api/internal/apps/',             json_apps_query);
+		ROUTE('GET    /api/internal/users/{id}/',       json_users_read);
+		ROUTE('GET    /api/internal/users/',            json_users_query);
+		ROUTE('GET    /api/meta/',                      json_meta_query);
 
-		ROUTE('/api/settings/',      ['*Settings --> read']);
-		ROUTE('/api/settings/',      ['*Settings --> save', 'post']);
-		ROUTE('/api/settings/smtp/', ['*SettingsSMTP --> exec', 'post', 10000]);
+		ROUTE('GET    /api/account/                     *Account      --> @read');
+		ROUTE('POST   /api/account/                     *Account      --> @save');
+
+		ROUTE('GET    /api/internal/settings/           *Settings     --> @read');
+		ROUTE('POST   /api/internal/settings/           *Settings     --> @save');
+		ROUTE('POST   /api/internal/settings/smtp/      *SettingsSMTP --> @exec', [10000]);
 
 		ROUTE('/api/upload/photo/',  json_upload_photo, ['post'], 1024 * 2);
+
+	});
+
+	GROUP(['unauthorize'], function() {
+		ROUTE('POST   /api/login/                       *Login        --> @exec');
+		ROUTE('POST   /api/password/                    *Password     --> @exec');
 	});
 
 	// External
-	ROUTE('/api/verify/',        json_verify);
-	ROUTE('/api/notify/',        ['*Notification --> save', 'post']);
-	ROUTE('/api/login/',         ['*Login --> exec', 'post', 'unauthorize']);
-	ROUTE('/api/password/',      ['*Password --> exec', 'post', 'unauthorize']);
-	ROUTE('/api/online/{id}/',   json_online);
+	ROUTE('GET    /api/verify/',                        json_verify);
+	ROUTE('GET    /verify/',                            json_verify);
+	ROUTE('GET    /api/online/{id}/',                   json_online);
+	ROUTE('GET    /api/users/                           *User         --> @query');
+	ROUTE('GET    /api/badges/                          *Badge        --> @exec');
+	ROUTE('POST   /api/notify/                          *Notification --> @save');
 
-	CORS('/api/*', ['get', 'post']);
+	// CORS
+	CORS();
 };
 
 function json_verify() {
+
 	var self = this;
-	var arr = self.query.accesstoken.split('-');
+	var obj = OP.decodeToken(self.query.accesstoken, true);
 
-	// 0 - app accesstoken
-	// 1 - app id
-	// 2 - user accesstoken
-	// 3 - user id
-	// 4 - verification token
-
-	var app = F.global.apps.findItem('accesstoken', arr[0]);
-
-	if (!app || app.id !== arr[1]) {
+	if (!obj) {
 		self.invalid().push('error-invalid-accesstoken');
 		return;
 	}
+
+	var app = obj.app;
+	var user = obj.user;
 
 	if (app.origin) {
 		if (!app.origin[self.ip] && app.hostname !== self.ip) {
@@ -65,15 +72,7 @@ function json_verify() {
 	} else if (app.hostname !== self.ip) {
 		self.invalid().push('error-invalid-origin');
 		return;
-	}
-
-	var user = F.global.users.findItem('accesstoken', arr[2]);
-	if (!user || user.id !== arr[3] || user.verifytoken !== arr[4]) {
-		self.invalid().push('error-invalid-accesstoken');
-		return;
-	}
-
-	if (user.inactive || user.blocked) {
+	} else if (user.inactive || user.blocked) {
 		self.invalid().push('error-accessible');
 		return;
 	}
@@ -84,25 +83,39 @@ function json_verify() {
 function json_apps_query() {
 	var self = this;
 	if (self.user.sa)
-		self.json(F.global.apps);
+		self.json(G.apps);
 	else
+		self.invalid().push('error-permissions');
+}
+
+function json_users_read(id) {
+	var self = this;
+	if (self.user.sa) {
+		var user = G.users.findItem('id', id);
+		if (user)
+			self.json(user, false, (k, v) => SKIP[k] ? undefined : v);
+		else
+			self.json(null);
+	} else
 		self.invalid().push('error-permissions');
 }
 
 function json_users_query() {
 	var self = this;
+	var ALLOW = { id: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1 };
+
 	if (self.user.sa)
-		self.json(F.global.users, false, (k, v) => SKIP[k] ? undefined : v);
+		self.json(G.users, false, (k, v) => k >= 0 || ALLOW[k] ? v : undefined);
 	else
 		self.invalid().push('error-permissions');
 }
 
 function json_meta_query() {
-	this.json(F.global.meta, false);
+	this.json(G.meta, false);
 }
 
 function json_apps_meta(id) {
-	var item = F.global.apps.findItem('id', id);
+	var item = G.apps.findItem('id', id);
 	if (item)
 		this.json(OP.meta(item, this.user));
 	else
@@ -116,7 +129,7 @@ function json_upload_photo() {
 }
 
 function json_online(id) {
-	var user = F.global.users.findItem('id', id);
+	var user = G.users.findItem('id', id);
 	if (user) {
 		ONLINE.online = user.online;
 		ONLINE.datelogged = user.datelogged;
