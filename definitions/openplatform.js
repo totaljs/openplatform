@@ -135,7 +135,6 @@ OP.encodeToken = function(app, user) {
 OP.decodeToken = function(sign, strict) {
 
 	var arr = sign.split('-');
-
 	if (arr.length !== 6)
 		return null;
 
@@ -153,7 +152,6 @@ OP.decodeToken = function(sign, strict) {
 	// 5 - sign
 
 	var obj = {};
-
 	var app = G.apps.findItem('id', arr[1]);
 	if (app == null || app.accesstoken !== arr[0])
 		return null;
@@ -250,10 +248,10 @@ function readuser(user, type, app) {
 	obj.groups = user.groups;
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;
-	obj.badge = F.config.url + '/api/badges/?accesstoken=' + app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
+	obj.badge = F.config.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
 
 	if (obj.notifications)
-		obj.notify = F.config.url + '/api/notify/?accesstoken=' + app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
+		obj.notify = F.config.url + '/api/notify/?accesstoken=' + OP.encodeToken(app, user);
 
 	switch (type) {
 		case 2:

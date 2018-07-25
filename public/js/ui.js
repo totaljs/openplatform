@@ -1924,6 +1924,9 @@ COMPONENT('processes', function(self, config) {
 
 			resize.el.css({ width: w, height: h });
 			resize.iframe.css({ height: h - resize.padding });
+			setTimeout2(self.ID + 'resize', function() {
+				self.notifyresize(resize.el.attrd('id'));
+			}, 100, 5);
 			e.preventDefault();
 		}
 	};
@@ -2071,6 +2074,20 @@ COMPONENT('processes', function(self, config) {
 		self.message(iframe, 'maximize');
 	};
 
+	self.sendnotifydata = function(iframe, data) {
+
+		if (typeof(iframe) === 'string') {
+			iframe = self.findProcess(iframe);
+			if (!iframe)
+				return false;
+		}
+
+		location.hash = iframe.meta.internal.linker;
+		iframe.element.rclass('hidden');
+		self.focus(iframe.id);
+		self.message(iframe, 'notify', data);
+	};
+
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
 		self.message(iframe, 'reload');
@@ -2181,6 +2198,16 @@ COMPONENT('processes', function(self, config) {
 
 		iframe.element = $('.ui-process[data-id="{0}"]'.format(value.id));
 		iframe.iframe = iframe.element.find('iframe');
+
+		iframe.iframe[0].$loaded = 0;
+		value.internal.notifydata && iframe.iframe.on('load', function() {
+			if (this.$loaded === 1) {
+				setTimeout(function() {
+					self.sendnotifydata(iframe, value.internal.notifydata);
+				}, 1000);
+			}
+			this.$loaded++;
+		});
 
 		var margin = iframe.element.find('.ui-process-header').height();
 

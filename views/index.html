@@ -56,8 +56,8 @@
 				<div class="ui-npanel-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-npanel-padding">
 					<div class="ui-npanel-body">{{ body }}</div>
-					{{ if url }}
-					<button data-url="{{ url }}" data-id="{{ idapp }}" class="exec" data-exec="Dashboard/navigate">@(Show)</button>
+					{{ if data }}
+					<button data-data="{{ data | encodedata }}" data-id="{{ idapp }}" class="exec" data-exec="Dashboard/navigate">@(Show)</button>
 					{{ fi }}
 				</div>
 			</div>
@@ -272,13 +272,7 @@
 			self.navigate = function(el) {
 
 				var id = el.attrd('id');
-				var url = el.attrd('url');
-
-				if (!id) {
-					// super admin?
-					url && window.open(url);
-					return;
-				}
+				var data = decodeURIComponent(el.attrd('data'));
 
 				var app = user.apps.findItem('id', id);
 				if (!app)
@@ -286,11 +280,12 @@
 
 				var iframe = dashboard.apps.findItem('id', app.id);
 				if (iframe) {
-					iframe.href = url;
-					SETTER('processes', 'maximize', app.id);
+					SETTER('processes', 'sendnotifydata', app.id, data);
+					self.message(iframe, 'maximize');
 				} else {
 					WSOPEN.id = app.id;
-					WSOPEN.href = url;
+					WSOPEN.href = app.url;
+					app.notifydata = data;
 					SETTER('websocket', 'send', WSOPEN);
 				}
 			};

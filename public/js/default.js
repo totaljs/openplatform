@@ -48,6 +48,10 @@ function onImageError(image) {
 	return true;
 }
 
+Tangular.register('encodedata', function(value) {
+	return encodeURIComponent(value || '');
+});
+
 Tangular.register('photo', function(value) {
 	return value ? ('/photos/' + value) : '/img/face.jpg';
 });

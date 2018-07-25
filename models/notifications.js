@@ -4,7 +4,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 	schema.define('type', Number);
 	schema.define('body', 'String(1000)', true);
-	schema.define('url', 'String(1000)');
+	schema.define('data', 'String(1000)');
 
 	schema.setQuery(function($) {
 
@@ -54,7 +54,6 @@ NEWSCHEMA('Notification').make(function(schema) {
 		} else {
 
 			var obj = OP.decodeToken($.query.accesstoken);
-
 			if (!obj) {
 				$.invalid('error-invalid-accesstoken');
 				return;
@@ -107,7 +106,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 				can = false;
 		}
 
-		can && Fs.appendFile(F.path.databases('notifications_' + user.id + '.json'), JSON.stringify(model) + ',', NOOP);
+		can && Fs.appendFile(F.path.databases('notifications_{0}.json'.format(user.id)), JSON.stringify(model) + ',', NOOP);
 
 		if (user.countnotifications)
 			user.countnotifications++;
