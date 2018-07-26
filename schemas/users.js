@@ -136,9 +136,6 @@ NEWSCHEMA('User').make(function(schema) {
 			item.notificationsphone = model.notificationsphone;
 			item.notificationsemail = model.notificationsemail;
 
-			if (!item.apps)
-				item.apps = {};
-
 			if (model.rebuildtoken || !item.verifytoken)
 				item.verifytoken = U.GUID(15);
 
@@ -160,6 +157,9 @@ NEWSCHEMA('User').make(function(schema) {
 			G.users.push(item);
 			LOGGER('users', 'create: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 		}
+
+		if (!item.apps)
+			item.apps = {};
 
 		item.ougroups = {};
 
