@@ -141,15 +141,15 @@ OPENPLATFORM.close = function() {
 	return OPENPLATFORM.send('kill');
 };
 
-OPENPLATFORM.notify = function(type, body, url) {
+OPENPLATFORM.notify = function(type, body, data) {
 
 	if (typeof(type) === 'string') {
-		url = body;
+		data = body;
 		body = type;
 		type = 0;
 	}
 
-	return OPENPLATFORM.send('notify', { type: type, body: body, url: url || '', datecreated: new Date() });
+	return OPENPLATFORM.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
 };
 
 OPENPLATFORM.share = function(app, type, body, callback) {
