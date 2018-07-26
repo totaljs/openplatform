@@ -41,7 +41,7 @@
 				<div data-jc="search__users.search__selector:.item">
 					<div data-jc="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
 						<script type="text/html">
-							<div class="item" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+							<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
 						</script>
 					</div>
 				</div>
@@ -341,7 +341,6 @@
 				var id = users.selected;
 				AJAX('DELETE /api/internal/users/{0}/'.format(id), function(response) {
 					if (response.success) {
-						OPENPLATFORM.message('@(User has been removed successfully.)');
 						users.items = users.items.remove('id', id);
 						users.form.id === id && userform_cancel();
 						SET('users.selected', '');
@@ -372,7 +371,7 @@
 		var opt = {};
 
 		// Check roles
-		Object.keys(users.form.apps).forEach(function(key) {
+		users.form.apps && Object.keys(users.form.apps).forEach(function(key) {
 			var obj = users.form.apps[key];
 			var app = users.apps.findItem('id', key);
 			if (app) {
@@ -389,7 +388,6 @@
 			OPENPLATFORM.loading(false);
 			SET('users.form.response', response);
 			if (response.success) {
-				OPENPLATFORM.message('@(User profile has been saved successfully.)');
 				userform_refresh();
 				userform_cancel();
 			}

@@ -40,7 +40,7 @@
 				<div data-jc="search__apps.search__selector:.item">
 					<div data-jc="listmenu__apps.selected__datasource:apps.items;selector:.item;exec:apps_load" class="apps">
 						<script type="text/html">
-							<div class="item" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+							<div class="item{{ if blocked }} inactive{{ fi }}" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
 						</script>
 					</div>
 				</div>
@@ -172,7 +172,6 @@
 				var id = apps.selected;
 				AJAX('DELETE /api/internal/apps/{0}/'.format(id), function(response) {
 					if (response.success) {
-						OPENPLATFORM.message('@(User has been removed successfully.)');
 						apps.items = apps.items.remove('id', id);
 						apps.form.id === id && apps_cancel();
 						SET('apps.selected', '');
@@ -193,7 +192,6 @@
 			OPENPLATFORM.loading(false);
 			SET('apps.form.response', response);
 			if (response.success) {
-				OPENPLATFORM.message('@(Application has been saved successfully.)');
 				apps_refresh();
 				apps_cancel();
 			}
