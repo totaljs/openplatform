@@ -1824,7 +1824,7 @@ COMPONENT('processes', function(self, config) {
 	self.event('mousedown', '.ui-process-header', function(e) {
 		var t = $(this);
 		var el = t.closest('.ui-process');
-		self.mdown_move(el, e.offsetX, e.offsetY);
+		self.mdown_move(el, e.offsetX, e.offsetY + (e.target === t[0] ? 0 : e.offsetY));
 		e.preventDefault();
 	});
 

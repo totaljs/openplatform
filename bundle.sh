@@ -6,6 +6,7 @@ cp -a ../definitions/ definitions
 cp -a ../databases/ databases
 cp -a ../models/ models
 cp -a ../public/ public
+cp -a ../resources/ resources
 cp -a ../views/ views
 cp ../workflows workflows
 mv controllers/api.js controllers/op-api.js

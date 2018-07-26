@@ -1,7 +1,7 @@
 const SERVICEACCOUNT = { id: '0000000000000000000', name: 'Service Account', sa: true };
 var DDOS = {};
 
-F.onAuthorize = function(req, res, flags, next) {
+AUTH(function(req, res, flags, next) {
 
 	var key = (req.ip + (req.headers['user-agent'] || '')).substring(0, 50);
 
@@ -50,9 +50,9 @@ F.onAuthorize = function(req, res, flags, next) {
 		DDOS[key] = 1;
 
 	return next(false);
-};
+});
 
-F.on('service', function(counter) {
+ON('service', function(counter) {
 
 	if (counter % 5 === 0)
 		DDOS = {};
