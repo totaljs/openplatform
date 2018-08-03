@@ -298,12 +298,15 @@
 		});
 	}
 
-	function userform_refresh() {
+	function userform_refresh(delay) {
 		AJAX('GET /api/internal/users/', function(response) {
 			response.quicksort('lastname');
 			SET('users.items', response);
 		});
-		AJAX('GET /api/meta/', 'users.meta');
+
+		setTimeout(function() {
+			AJAX('GET /api/meta/', 'users.meta');
+		}, delay || 0);
 		AJAX('GET /api/internal/apps/', 'users.apps');
 	}
 
@@ -388,7 +391,7 @@
 			OPENPLATFORM.loading(false);
 			SET('users.form.response', response);
 			if (response.success) {
-				userform_refresh();
+				userform_refresh(2000);
 				userform_cancel();
 			}
 		});

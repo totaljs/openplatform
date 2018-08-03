@@ -139,8 +139,8 @@ NEWSCHEMA('User').make(function(schema) {
 			if (model.rebuildtoken || !item.verifytoken)
 				item.verifytoken = U.GUID(15);
 
-			if (!model.accesstoken)
-				model.accesstoken = U.GUID(40);
+			if (!item.accesstoken)
+				item.accesstoken = U.GUID(40);
 
 			LOGGER('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 
@@ -151,8 +151,8 @@ NEWSCHEMA('User').make(function(schema) {
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
 
-			if (!model.accesstoken)
-				model.accesstoken = U.GUID(40);
+			if (!item.accesstoken)
+				item.accesstoken = U.GUID(40);
 
 			G.users.push(item);
 			LOGGER('users', 'create: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
