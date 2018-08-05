@@ -74,6 +74,10 @@ $(window).on('message', function(e) {
 
 	switch (data.type) {
 
+		case 'screenshot':
+			console.log(data.body);
+			break;
+
 		case 'verify':
 		case 'meta':
 			if (app && navigator.userAgent === data.body.ua) {
@@ -109,6 +113,15 @@ $(window).on('message', function(e) {
 				err = 'Application is not running (102)';
 			var iframe = processes.findProcess(app.id);
 			data.callback && processes.message(iframe, 'share', null, data.callback, err);
+			break;
+
+		case 'progress':
+			if (app) {
+				var p = data.body || 0;
+				if (p >= 100 || p < 0)
+					p = 0;
+				$('.ap' + app.id).find('span').animate({ width: p + '%' }, 100);
+			}
 			break;
 
 		case 'maximize':

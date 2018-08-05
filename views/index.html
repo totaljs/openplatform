@@ -37,7 +37,7 @@
 
 		<nav data-jc="repeater__dashboard.apps">
 			<script type="text/html">
-				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i></button>
+				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span></span></span></button>
 			</script>
 		</nav>
 
@@ -169,6 +169,7 @@
 			switch (message.TYPE) {
 				case 'open':
 					message.body.internal = user.apps.findItem('id', message.body.id);
+					message.body.progress = 0;
 					dashboard.apps.push(message.body);
 					SET('dashboard.current', message.body);
 					$('.appunread[data-id="{0}"]'.format(message.body.id)).aclass('hidden');

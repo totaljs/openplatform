@@ -5,6 +5,35 @@ OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
 
+OPENPLATFORM.screenshot = function() {
+
+	if (!OPENPLATFORM.$screenshot) {
+		var scr = document.createElement('script');
+		scr.type = 'text/javascript';
+		scr.src = '//html2canvas.hertzen.com/dist/html2canvas.min.js';
+		document.body.append(scr);
+		OPENPLATFORM.$screenshot = 1;
+	}
+
+	var make = function() {
+		html2canvas(document.body).then(function(canvas) {
+			OPENPLATFORM.send('screenshot', canvas.toDataURL('image/jpeg', 0.85));
+		});
+	};
+
+	var interval = setInterval(function() {
+		if (window.html2canvas) {
+			clearInterval(interval);
+			make();
+		}
+	}, 1000);
+
+};
+
+OPENPLATFORM.progress = function(p) {
+	return OPENPLATFORM.send('progress', p);
+};
+
 OPENPLATFORM.init = function(callback) {
 
 	if (!callback)
@@ -218,6 +247,11 @@ window.addEventListener('message', function(e) {
 
 		if (data.type === 'reload') {
 			location.reload(true);
+			return;
+		}
+
+		if (data.type === 'screenshot') {
+			OPENPLATFORM.screenshot();
 			return;
 		}
 

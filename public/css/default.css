@@ -77,8 +77,15 @@ h3 .fa { margin-right: 5px; }
 .app .appbadge { position: absolute; margin: 32px 0 0 16px; font-size: 9px; }
 .appbadge .fa { color: #D23B3B; font-size: 9px; }
 
+.appprocess { position: relative; }
 .appprocess .appbadge { position: absolute; margin: 20px 0 0 5px; font-size: 9px; }
 .appprocess .appbadge .fa { font-size: 9px; }
+
+.appprogress { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 3px; padding: 0; }
+.appprocess .appprogress { bottom: 5px; top: auto; padding: 0 8px; }
+
+.appprogress span { height: 3px; background-color: white; display: block; border-radius: 3px; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
+
 
 .app-icon { float: left; width: 40px; font-size: 25px; border-right: 1px solid #3658B0; text-align: center; height: 43px; padding: 3px 0 0 0; }
 .app-meta { margin-left: 50px; padding: 8px 0 0 0; }
