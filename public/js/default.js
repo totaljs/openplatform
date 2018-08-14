@@ -120,7 +120,17 @@ $(window).on('message', function(e) {
 				var p = data.body || 0;
 				if (p >= 100 || p < 0)
 					p = 0;
-				$('.ap' + app.id).find('span').animate({ width: p + '%' }, 100);
+				if (app.progress === p)
+					return;
+				var appwindow = $('.ap' + app.id);
+				appwindow.find('span').animate({ width: p + '%' }, 100);
+				appwindow = appwindow.parent();
+				var icon = appwindow.find('> div > .fa').rclass2('fa-');
+				if (p)
+					!app.progress && icon.aclass('fa-spinner fa-pulse');
+				else
+					icon.aclass('fa-' + app.internal.icon);
+				app.progress = p;
 			}
 			break;
 
