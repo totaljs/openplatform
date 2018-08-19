@@ -2119,6 +2119,7 @@ COMPONENT('processes', function(self, config) {
 
 		location.hash = '';
 		$('.appclose[data-id="{0}"]'.format(id)).aclass('hidden');
+		$('.app[data-id="{0}"]'.format(id)).rclass('app-running');
 
 		closing[id] = true;
 
@@ -2269,6 +2270,7 @@ COMPONENT('processes', function(self, config) {
 		// SETTER('loading', 'hide', 1000);
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
+		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');
 	};
 });
 

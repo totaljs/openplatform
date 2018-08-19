@@ -1,5 +1,4 @@
 var WSLOGMESSAGE = {};
-
 var common = {};
 
 common.page = '';
