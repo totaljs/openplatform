@@ -246,7 +246,10 @@ window.addEventListener('message', function(e) {
 			return;
 
 		if (data.type === 'reload') {
-			location.reload(true);
+			if (location.href.indexOf('openplatform=') === -1)
+				location.href = OPENPLATFORM.tokenizator(location.href);
+			else
+				location.reload(true);
 			return;
 		}
 

@@ -79,6 +79,7 @@ $(window).on('message', function(e) {
 
 		case 'verify':
 		case 'meta':
+
 			if (app && navigator.userAgent === data.body.ua) {
 				var iframe = processes.findProcess(app.id);
 				var meta = CLONE(iframe.meta);
