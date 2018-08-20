@@ -18,6 +18,8 @@
 </head>
 <body data-jc="exec" class="noscroll">
 
+	<div data-jc="shortcuts"></div>
+	<div data-jc="LAZY features__null__placeholder:@(What are you looking for?)"></div>
 	<div data-jc="LAZY contextmenu"></div>
 	<div data-jc="LAZY confirm"></div>
 	<div data-jc="LAZY snackbar"></div>
@@ -341,6 +343,33 @@
 			};
 
 		});
+
+		SETTER(true, 'shortcuts', 'register', 'F1', function() {
+			var items = [];
+
+			for (var i = 0; i < user.apps.length; i++) {
+				var app = user.apps[i];
+				items.push({ TYPE: 'app', id: app.id, name: app.name, icon: app.icon });
+			}
+
+			items.push({ name: '@(Reset windows)', icon: 'window-restore', TYPE: 'reset' });
+			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
+
+			SETTER('features', 'show', items, function(item) {
+				switch (item.TYPE) {
+					case 'app':
+						internalapp($('.app[data-id="{0}"],.internal[data-id="{0}"]'.format(item.id)));
+						break;
+					case 'logoff':
+						internallogoff();
+						break;
+					case 'reset':
+						internalreset();
+						break;
+				}
+			}, true);
+
+		}, true);
 
 	</script>
 

@@ -167,6 +167,7 @@ h3 .fa { margin-right: 5px; }
 	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; }
 	.startmenu-nav nav button { padding: 8px 0; font-size: 18px; }
 	.startmenu-nav .fa { width: 34px; }
+	.app .appbadge { position: absolute; margin: 27px 0 0 22px; }
 }
 
 .ui-npanel { position: fixed; width: 300px; bottom: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 21; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
