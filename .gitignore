@@ -1,5 +1,5 @@
 tmp/
 logs/
-tmp/merge-css-default.css
+databases/
 debug.pid
 sftp-config.json
