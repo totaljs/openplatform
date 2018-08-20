@@ -22,6 +22,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 		model.email = F.config.email;
 		model.smtp = F.config['mail-smtp'];
 		model.smtpsettings = typeof(options) === 'string' ? options : JSON.stringify(options);
+		OP.id = F.config.url.crc32(true);
 		$.callback();
 	});
 
@@ -42,6 +43,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 		F.config['mail-smtp'] = model.smtp;
 		F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
 		F.config.accesstoken = model.accesstoken;
+		OP.id = F.config.url.crc32(true);
 
 		Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(model.$clean()), NOOP);
 		$.success();
@@ -59,6 +61,7 @@ NEWSCHEMA('Settings').make(function(schema) {
 				F.config.accesstoken = model.accesstoken;
 				F.config['mail-smtp'] = model.smtp;
 				F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
+				OP.id = F.config.url.crc32(true);
 			}
 
 			$.success();

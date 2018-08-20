@@ -38,7 +38,7 @@ OPENPLATFORM.init = function(callback) {
 
 	if (!callback)
 		callback = function(is) {
-			if (is === true)
+			if (is == null)
 				return;
 			document.body.innerHTML = '401: Unauthorized';
 			setTimeout(function() {
