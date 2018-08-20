@@ -134,6 +134,13 @@ $(window).on('message', function(e) {
 			}
 			break;
 
+		case 'menu':
+			if (app) {
+				var iframe = processes.findProcess(app.id);
+				iframe && processes.message(iframe, 'menu', null);
+			}
+			break;
+
 		case 'maximize':
 			app && processes.maximize(app.id);
 			break;
@@ -185,7 +192,7 @@ $(window).on('message', function(e) {
 		case 'badge':
 			if (!app || !app.internal.notifications)
 				return;
-			AJAX('GEt /api/badges/?accesstoken=' + app.accesstoken, NOOP);
+			AJAX('GET /api/badges/?accesstoken=' + app.accesstoken, NOOP);
 			break;
 
 		case 'notify':

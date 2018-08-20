@@ -24,10 +24,11 @@ header .datetime { background-color: rgba(255,255,255,0.15); height: 45px; float
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
 .startmenu-apps { padding: 15px 0; margin-right: 200px; overflow: hidden; }
 .startmenu-apps-container { height: 380px; overflow-y: auto; width: 330px; position: absolute; z-index: 1; padding: 5px 0; }
-.startmenu-nav { float: right; width: 200px; padding: 10px 15px; color: white; height: 450px; background-color: rgba(255,255,255,0.1); }
+.startmenu-nav { float: right; width: 200px; color: white; height: 450px; background-color: $startmenu; }
 .startmenu-nav nav button { display: block; color: white; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; }
 .startmenu-nav nav button:hover { text-decoration: none; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
+.startmenu-nav > div { height: 100%; background-color: rgba(255,255,255,0.1); padding: 10px 15px; }
 .startmenu-search { padding: 0 10px 10px; }
 .startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
 

@@ -1768,7 +1768,7 @@ COMPONENT('processes', function(self, config) {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading hidden loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading hidden loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
 	self.readonly();
 
 	self.make = function() {
@@ -1793,10 +1793,14 @@ COMPONENT('processes', function(self, config) {
 		return el.width() + 'x' + el.height() + 'x' + off.left + 'x' + off.top;
 	};
 
-	self.event('mousedown touchstart', '.ui-process-button', function(e) {
+	self.event('mousedown touchstart', '.ui-process-button,.ui-process-mainmenu', function(e) {
 		var el = $(this).closest('.ui-process');
 		var id = el.attrd('id');
 		switch (this.name) {
+			case 'menu':
+				var iframe = iframes.findItem('id', id);
+				self.message(iframe, 'menu');
+				break;
 			case 'screenshot':
 				var iframe = iframes.findItem('id', id);
 				self.message(iframe, 'screenshot');
@@ -1934,6 +1938,32 @@ COMPONENT('processes', function(self, config) {
 			}, 100, 5);
 			e.preventDefault();
 		}
+	};
+
+	self.resetsize = function() {
+		for (var i = 0; i < iframes.length; i++) {
+			var iframe = iframes[i];
+			var internal = iframe.meta.internal;
+			var opt = { width: internal.width, height: internal.height };
+
+			var ol = iframe.element.css('left').parseInt();
+			var ot = +iframe.element.css('top').parseInt();
+
+			if (ol <= 0)
+				opt.left = '20px';
+			else if (ol + internal.width + 20 >= WW)
+				opt.left = (WW - internal.width - 20) + 'px';
+
+			if (ot <= 0)
+				opt.top = '20px';
+			else if (ot + internal.height >= WH)
+				opt.top = (WH - internal.height - 80) + 'px';
+
+			iframe.element.css(opt);
+			iframe.iframe.css({ height: internal.height - resize.padding });
+			self.notifyresize(iframe.id);
+		}
+
 	};
 
 	self.resize_maximize = function(id, align) {
