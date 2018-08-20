@@ -3565,8 +3565,7 @@ COMPONENT('shortcuts', function(self) {
 				if (num)
 					builder.push('e.which===' + num);
 				else
-					builder.push('e.key===\'{0}\''.format(item));
-
+					builder.push('e.keyCode==={0}'.format(item.toUpperCase().charCodeAt(0)));
 			});
 
 			items.push({ shortcut: alias.join('+'), fn: new Function('e', 'return ' + builder.join('&&')), callback: callback, prevent: prevent });

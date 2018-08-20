@@ -371,6 +371,18 @@
 
 		}, true);
 
+		SETTER(true, 'shortcuts', 'register', 'alt+w,cmd+w,alt+F3', function(e) {
+
+			if (dashboard.current) {
+				SETTER('processes', 'kill', dashboard.current.id);
+				dashboard.current = null;
+			} else if (dashboard.apps.length)
+				SETTER('processes', 'kill', dashboard.apps[0].id);
+
+			e.preventDefault();
+			e.stopPropagation();
+		}, true);
+
 	</script>
 
 </body>
