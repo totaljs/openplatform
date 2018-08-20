@@ -1852,10 +1852,10 @@ COMPONENT('processes', function(self, config) {
 	});
 
 	self.focus = function(id) {
+		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 		if (oldfocus === id)
 			return;
 		oldfocus = id;
-		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 		self.find('.ui-process-focus').rclass('ui-process-focus');
 		self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus');
 	};

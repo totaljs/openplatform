@@ -260,7 +260,8 @@
 				if (common.page !== 'dashboard')
 					SET('common.page', 'dashboard');
 				self.hidemenu();
-				SETTER('processes', 'maximize', el.attrd('id'));
+				var id = el.attrd('id');
+				SETTER('processes', 'maximize', id);
 			};
 
 			self.close = function(el, e) {
