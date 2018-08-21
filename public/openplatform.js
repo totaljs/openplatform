@@ -4,6 +4,14 @@ OPENPLATFORM.version = '3.0.0';
 OPENPLATFORM.callbacks = {};
 OPENPLATFORM.events = {};
 OPENPLATFORM.is = top !== window;
+OPENPLATFORM.pending = [];
+OPENPLATFORM.interval = setInterval(function() {
+	if (OPENPLATFORM.ready) {
+		clearInterval(OPENPLATFORM.interval);
+		OPENPLATFORM.pending.forEach(OPENPLATFORM.$process);
+		return;
+	}
+}, 500);
 
 OPENPLATFORM.screenshot = function() {
 
@@ -36,10 +44,14 @@ OPENPLATFORM.progress = function(p) {
 
 OPENPLATFORM.init = function(callback) {
 
+	OPENPLATFORM.ready = false;
+
 	if (!callback)
 		callback = function(is) {
-			if (is === true)
+			if (is == null) {
+				OPENPLATFORM.ready = true;
 				return;
+			}
 			document.body.innerHTML = '401: Unauthorized';
 			setTimeout(function() {
 				window.close();
@@ -71,11 +83,12 @@ OPENPLATFORM.init = function(callback) {
 	var timeout = setTimeout(function() {
 		timeout = null;
 		callback('timeout');
-	}, 1500);
+	}, 2000);
 
 	OPENPLATFORM.send('verify', data, function(err, response) {
 		if (timeout) {
 			clearTimeout(timeout);
+			OPENPLATFORM.ready = !err;
 			callback(null, response, setTimeout(function() {
 				response.href && (location.href = response.href);
 			}, 100));
@@ -224,49 +237,59 @@ OPENPLATFORM.on = function(name, callback) {
 	return OPENPLATFORM;
 };
 
+OPENPLATFORM.$process = function(data) {
+	if (data.callback) {
+		var callback = OPENPLATFORM.callbacks[data.callback];
+		if (callback) {
+			if (data.sender)
+				data.error = new Error('The application is not running in the OpenPlatform scope.');
+			callback(data.error, data.body || {});
+			delete OPENPLATFORM.callbacks[data.callback];
+		}
+		return;
+	}
+
+	if (data.sender)
+		return;
+
+	if (data.type === 'reload') {
+		if (location.href.indexOf('openplatform=') === -1)
+			location.href = OPENPLATFORM.tokenizator(location.href);
+		else
+			location.reload(true);
+		return;
+	}
+
+	if (data.type === 'screenshot') {
+		OPENPLATFORM.screenshot();
+		return;
+	}
+
+	if (data.type === 'redirect') {
+		location.href = data.body;
+		return;
+	}
+
+	if (data.type === 'kill')
+		data.type = 'close';
+
+	var events = OPENPLATFORM.events[data.type];
+	events && events.forEach(function(e) {
+		e(data.body || {});
+	});
+};
+
 window.addEventListener('message', function(e) {
 	try {
 		var data = JSON.parse(e.data);
-
 		if (!data.openplatform)
 			return;
 
-		if (data.callback) {
-			var callback = OPENPLATFORM.callbacks[data.callback];
-			if (callback) {
-				if (data.sender)
-					data.error = new Error('The application is not running in the OpenPlatform scope.');
-				callback(data.error, data.body || {});
-				delete OPENPLATFORM.callbacks[data.callback];
-			}
-			return;
-		}
+		if (!OPENPLATFORM.ready && data.type !== 'verify')
+			OPENPLATFORM.pending.push(data);
+		else
+			OPENPLATFORM.$process(data);
 
-		if (data.sender)
-			return;
-
-		if (data.type === 'reload') {
-			location.reload(true);
-			return;
-		}
-
-		if (data.type === 'screenshot') {
-			OPENPLATFORM.screenshot();
-			return;
-		}
-
-		if (data.type === 'redirect') {
-			location.href = data.body;
-			return;
-		}
-
-		if (data.type === 'kill')
-			data.type = 'close';
-
-		var events = OPENPLATFORM.events[data.type];
-		events && events.forEach(function(e) {
-			e(data.body || {});
-		});
 	} catch (e) {}
 }, false);
 

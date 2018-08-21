@@ -18,6 +18,8 @@
 </head>
 <body data-jc="exec" class="noscroll">
 
+	<div data-jc="shortcuts"></div>
+	<div data-jc="LAZY features__null__placeholder:@(What are you looking for?)"></div>
 	<div data-jc="LAZY contextmenu"></div>
 	<div data-jc="LAZY confirm"></div>
 	<div data-jc="LAZY snackbar"></div>
@@ -57,7 +59,7 @@
 				<div class="ui-npanel-padding">
 					<div class="ui-npanel-body">{{ body }}</div>
 					{{ if data }}
-					<button data-data="{{ data | encodedata }}" data-id="{{ idapp }}" class="exec" data-exec="Dashboard/navigate">@(Show)</button>
+					<button data-data="{{ data | encodedata }}" data-id="{{ idapp }}" class="exec" data-exec="Dashboard/navigate">@(Open app)</button>
 					{{ fi }}
 				</div>
 			</div>
@@ -75,16 +77,18 @@
 			<span data-bind="user.name__html:value"></span>
 		</div>
 		<div class="startmenu-nav" data-jc="xs__common.startmenuapps__if:!value">
-			<nav>
-				@{if user.sa}
-				<button class="exec internal" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
-				<button class="exec internal" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
-				<button class="exec internal" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
-				@{fi}
-				<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-cog"></i>@(My account)</button>
-				<!-- <button class="exec" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button> -->
-				<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off"></i>@(Sign out)</button>
-			</nav>
+			<div>
+				<nav>
+					@{if user.sa}
+					<button class="exec internal" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
+					@{fi}
+					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-cog"></i>@(My account)</button>
+					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
+					<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off"></i>@(Sign out)</button>
+				</nav>
+			</div>
 		</div>
 		<div class="startmenu-apps">
 			<div class="startmenu-search">
@@ -159,6 +163,11 @@
 				SETTER('websocket', 'send', WSOPEN);
 
 			common.startmenu && SET('common.startmenu', false);
+		}
+
+		function internalreset() {
+			common.startmenu && SET('common.startmenu', false);
+			SETTER('processes', 'resetsize');
 		}
 
 		function internallogoff() {
@@ -260,7 +269,8 @@
 				if (common.page !== 'dashboard')
 					SET('common.page', 'dashboard');
 				self.hidemenu();
-				SETTER('processes', 'maximize', el.attrd('id'));
+				var id = el.attrd('id');
+				SETTER('processes', 'maximize', id);
 			};
 
 			self.close = function(el, e) {
@@ -333,6 +343,45 @@
 			};
 
 		});
+
+		SETTER(true, 'shortcuts', 'register', 'F1', function() {
+			var items = [];
+
+			for (var i = 0; i < user.apps.length; i++) {
+				var app = user.apps[i];
+				items.push({ TYPE: 'app', id: app.id, name: app.name, icon: app.icon });
+			}
+
+			items.push({ name: '@(Reset windows)', icon: 'window-restore', TYPE: 'reset' });
+			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
+
+			SETTER('features', 'show', items, function(item) {
+				switch (item.TYPE) {
+					case 'app':
+						internalapp($('.app[data-id="{0}"],.internal[data-id="{0}"]'.format(item.id)));
+						break;
+					case 'logoff':
+						internallogoff();
+						break;
+					case 'reset':
+						internalreset();
+						break;
+				}
+			}, true);
+
+		}, true);
+
+		SETTER(true, 'shortcuts', 'register', 'alt+w,cmd+w,alt+F3', function(e) {
+
+			if (dashboard.current) {
+				SETTER('processes', 'kill', dashboard.current.id);
+				dashboard.current = null;
+			} else if (dashboard.apps.length)
+				SETTER('processes', 'kill', dashboard.apps[0].id);
+
+			e.preventDefault();
+			e.stopPropagation();
+		}, true);
 
 	</script>
 

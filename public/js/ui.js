@@ -1768,7 +1768,7 @@ COMPONENT('processes', function(self, config) {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading hidden loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading hidden loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
 	self.readonly();
 
 	self.make = function() {
@@ -1793,10 +1793,14 @@ COMPONENT('processes', function(self, config) {
 		return el.width() + 'x' + el.height() + 'x' + off.left + 'x' + off.top;
 	};
 
-	self.event('mousedown touchstart', '.ui-process-button', function(e) {
+	self.event('mousedown touchstart', '.ui-process-button,.ui-process-mainmenu', function(e) {
 		var el = $(this).closest('.ui-process');
 		var id = el.attrd('id');
 		switch (this.name) {
+			case 'menu':
+				var iframe = iframes.findItem('id', id);
+				self.message(iframe, 'menu');
+				break;
 			case 'screenshot':
 				var iframe = iframes.findItem('id', id);
 				self.message(iframe, 'screenshot');
@@ -1852,10 +1856,10 @@ COMPONENT('processes', function(self, config) {
 	});
 
 	self.focus = function(id) {
+		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 		if (oldfocus === id)
 			return;
 		oldfocus = id;
-		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 		self.find('.ui-process-focus').rclass('ui-process-focus');
 		self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus');
 	};
@@ -1934,6 +1938,32 @@ COMPONENT('processes', function(self, config) {
 			}, 100, 5);
 			e.preventDefault();
 		}
+	};
+
+	self.resetsize = function() {
+		for (var i = 0; i < iframes.length; i++) {
+			var iframe = iframes[i];
+			var internal = iframe.meta.internal;
+			var opt = { width: internal.width, height: internal.height };
+
+			var ol = iframe.element.css('left').parseInt();
+			var ot = +iframe.element.css('top').parseInt();
+
+			if (ol <= 0)
+				opt.left = '20px';
+			else if (ol + internal.width + 20 >= WW)
+				opt.left = (WW - internal.width - 20) + 'px';
+
+			if (ot <= 0)
+				opt.top = '20px';
+			else if (ot + internal.height >= WH)
+				opt.top = (WH - internal.height - 80) + 'px';
+
+			iframe.element.css(opt);
+			iframe.iframe.css({ height: internal.height - resize.padding });
+			self.notifyresize(iframe.id);
+		}
+
 	};
 
 	self.resize_maximize = function(id, align) {
@@ -2119,6 +2149,7 @@ COMPONENT('processes', function(self, config) {
 
 		location.hash = '';
 		$('.appclose[data-id="{0}"]'.format(id)).aclass('hidden');
+		$('.app[data-id="{0}"]'.format(id)).rclass('app-running');
 
 		closing[id] = true;
 
@@ -2269,6 +2300,7 @@ COMPONENT('processes', function(self, config) {
 		// SETTER('loading', 'hide', 1000);
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
+		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');
 	};
 });
 
@@ -3423,5 +3455,356 @@ COMPONENT('listmenu', 'class:selected;selector:a;property:id;click:true', functi
 			old && old.rclass(config.class);
 			index !== -1 && (old = self.find(config.selector).eq(index).aclass(config.class));
 		}
+	};
+});
+
+COMPONENT('shortcuts', function(self) {
+
+	var items = [];
+	var length = 0;
+
+	self.singleton();
+	self.readonly();
+	self.blind();
+
+	self.make = function() {
+		$(window).on('keydown', function(e) {
+			if (length && !e.isPropagationStopped()) {
+				for (var i = 0; i < length; i++) {
+					var o = items[i];
+					if (o.fn(e)) {
+						if (o.prevent) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
+						setTimeout(function(o, e) {
+							o.callback(e);
+						}, 100, o, e);
+					}
+				}
+			}
+		});
+	};
+
+	self.exec = function(shortcut) {
+		var item = items.findItem('shortcut', shortcut.toLowerCase().replace(/\s/g, ''));
+		item && item.callback(EMPTYOBJECT);
+	};
+
+	self.register = function(shortcut, callback, prevent) {
+		shortcut.split(',').trim().forEach(function(shortcut) {
+			var builder = [];
+			var alias = [];
+			shortcut.split('+').trim().forEach(function(item) {
+				var lower = item.toLowerCase();
+				alias.push(lower);
+				switch (lower) {
+					case 'ctrl':
+					case 'alt':
+					case 'shift':
+						builder.push('e.{0}Key'.format(lower));
+						return;
+					case 'win':
+					case 'meta':
+					case 'cmd':
+						builder.push('e.metaKey');
+						return;
+					case 'ins':
+						builder.push('e.keyCode===45');
+						return;
+					case 'space':
+						builder.push('e.keyCode===32');
+						return;
+					case 'tab':
+						builder.push('e.keyCode===9');
+						return;
+					case 'esc':
+						builder.push('e.keyCode===27');
+						return;
+					case 'enter':
+						builder.push('e.keyCode===13');
+						return;
+					case 'backspace':
+					case 'del':
+					case 'delete':
+						builder.push('(e.keyCode===8||e.keyCode===127)');
+						return;
+					case 'up':
+						builder.push('e.keyCode===38');
+						return;
+					case 'down':
+						builder.push('e.keyCode===40');
+						return;
+					case 'right':
+						builder.push('e.keyCode===39');
+						return;
+					case 'left':
+						builder.push('e.keyCode===37');
+						return;
+					case 'f1':
+					case 'f2':
+					case 'f3':
+					case 'f4':
+					case 'f5':
+					case 'f6':
+					case 'f7':
+					case 'f8':
+					case 'f9':
+					case 'f10':
+					case 'f11':
+					case 'f12':
+						var a = item.toUpperCase();
+						builder.push('e.key===\'{0}\''.format(a));
+						return;
+					case 'capslock':
+						builder.push('e.which===20');
+						return;
+				}
+
+				var num = item.parseInt();
+				if (num)
+					builder.push('e.which===' + num);
+				else
+					builder.push('e.keyCode==={0}'.format(item.toUpperCase().charCodeAt(0)));
+			});
+
+			items.push({ shortcut: alias.join('+'), fn: new Function('e', 'return ' + builder.join('&&')), callback: callback, prevent: prevent });
+			length = items.length;
+		});
+		return self;
+	};
+});
+
+COMPONENT('features', 'height:37', function(self, config) {
+
+	var container, timeout, input, search, scroller = null;
+	var is = false, results = false, selectedindex = 0, resultscount = 0;
+
+	self.oldsearch = '';
+	self.items = null;
+	self.template = Tangular.compile('<li data-search="{{ $.search }}" data-index="{{ $.index }}"{{ if selected }} class="selected"{{ fi }}>{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ name | raw }}</li>');
+	self.callback = null;
+	self.readonly();
+	self.singleton();
+
+	self.configure = function(key, value, init) {
+		if (init)
+			return;
+		switch (key) {
+			case 'placeholder':
+				self.find('input').prop('placeholder', value);
+				break;
+		}
+	};
+
+	self.make = function() {
+
+		self.aclass('ui-features-layer hidden');
+		self.append('<div class="ui-features"><div class="ui-features-search"><span><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="ui-features-search-input" /></div></div><div class="ui-features-container"><ul></ul></div></div>'.format(config.placeholder));
+
+		container = self.find('ul');
+		input = self.find('input');
+		search = self.find('.ui-features');
+		scroller = self.find('.ui-features-container');
+
+		self.event('touchstart mousedown', 'li[data-index]', function(e) {
+			self.callback && self.callback(self.items[+this.getAttribute('data-index')]);
+			self.hide();
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		$(document).on('touchstart mousedown', function(e) {
+			is && !$(e.target).hclass('ui-features-search-input') && self.hide(0);
+		});
+
+		$(window).on('resize', function() {
+			is && self.hide(0);
+		});
+
+		self.event('keydown', 'input', function(e) {
+			var o = false;
+			switch (e.which) {
+				case 27:
+					o = true;
+					self.hide();
+					break;
+				case 13:
+					o = true;
+					var sel = self.find('li.selected');
+					if (sel.length && self.callback)
+						self.callback(self.items[+sel.attr('data-index')]);
+					self.hide();
+					break;
+				case 38: // up
+					o = true;
+					selectedindex--;
+					if (selectedindex < 0)
+						selectedindex = 0;
+					else
+						self.move();
+					break;
+				case 40: // down
+					o = true;
+					selectedindex++ ;
+					if (selectedindex >= resultscount)
+						selectedindex = resultscount;
+					else
+						self.move();
+					break;
+			}
+
+			if (o && results) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		});
+
+		self.event('keyup', 'input', function() {
+			setTimeout2(self.id, self.search, 100, null, this.value);
+		});
+	};
+
+	self.search = function(value) {
+
+		if (!value) {
+			if (self.oldsearch === value)
+				return;
+			self.oldsearch = value;
+			selectedindex = 0;
+			results = true;
+			resultscount = self.items.length;
+			container.find('li').rclass('hidden selected');
+			self.move();
+			return;
+		}
+
+		if (self.oldsearch === value)
+			return;
+
+		self.oldsearch = value;
+		value = value.toSearch().split(' ');
+		results = false;
+		resultscount = 0;
+		selectedindex = 0;
+
+		container.find('li').each(function() {
+			var el = $(this);
+			var val = el.attr('data-search');
+			var h = false;
+
+			for (var i = 0; i < value.length; i++) {
+				if (val.indexOf(value[i]) === -1) {
+					h = true;
+					break;
+				}
+			}
+
+			if (!h) {
+				results = true;
+				resultscount++;
+			}
+
+			el.tclass('hidden', h);
+			el.rclass('selected');
+		});
+		self.move();
+	};
+
+	self.move = function() {
+		var counter = 0;
+		var h = scroller.css('max-height').parseInt();
+
+		container.find('li').each(function() {
+			var el = $(this);
+			if (el.hclass('hidden'))
+				return;
+			var is = selectedindex === counter;
+			el.tclass('selected', is);
+			if (is) {
+				var t = (config.height * counter) - config.height;
+				if ((t + config.height * 5) > h)
+					scroller.scrollTop(t);
+				else
+					scroller.scrollTop(0);
+			}
+			counter++;
+		});
+	};
+
+	self.show = function(items, callback) {
+
+		if (is) {
+			clearTimeout(timeout);
+			self.hide(0);
+			return;
+		}
+
+		var type = typeof(items);
+		var item;
+
+		if (type === 'string')
+			items = self.get(items);
+
+		if (!items) {
+			self.hide(0);
+			return;
+		}
+
+		self.items = items;
+		self.callback = callback;
+		results = true;
+		resultscount = self.items.length;
+
+		input.val('');
+
+		var builder = [];
+		var indexer = {};
+
+		for (var i = 0, length = items.length; i < length; i++) {
+			item = items[i];
+			indexer.index = i;
+			indexer.search = (item.name + ' ' + (item.keywords || '')).trim().toSearch();
+			!item.value && (item.value = item.name);
+			builder.push(self.template(item, indexer));
+		}
+
+		container.html(builder);
+
+		var W = $(window);
+		var top = ((W.height() / 2) - (search.height() / 2)) - scroller.css('max-height').parseInt();
+		var options = { top: top, left: (W.width() / 2) - (search.width() / 2) };
+
+		search.css(options);
+		self.move();
+
+		if (is)
+			return;
+
+		self.rclass('hidden');
+
+		setTimeout(function() {
+			self.aclass('ui-features-visible');
+		}, 100);
+
+		!isMOBILE && setTimeout(function() {
+			input.focus();
+		}, 500);
+
+		is = true;
+		$('html,body').aclass('ui-features-noscroll');
+	};
+
+	self.hide = function(sleep) {
+		if (!is)
+			return;
+		clearTimeout(timeout);
+		timeout = setTimeout(function() {
+			self.aclass('hidden').rclass('ui-features-visible');
+			self.callback = null;
+			self.target = null;
+			is = false;
+			$('html,body').rclass('ui-features-noscroll');
+		}, sleep ? sleep : 100);
 	};
 });

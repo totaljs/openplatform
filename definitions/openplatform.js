@@ -55,6 +55,7 @@ OP.load = function(callback) {
 OP.profile = function(user) {
 
 	var meta = {};
+	meta.openplatformid = OP.id;
 	meta.name = user.name;
 	meta.photo = user.photo;
 	meta.locality = user.locality;
@@ -90,6 +91,7 @@ OP.meta = function(app, user, serverside) {
 
 	meta.verify = F.config.url + '/api/verify/?accesstoken=' + meta.accesstoken;
 	meta.openplatform = F.config.url;
+	meta.openplatformid = OP.id;
 
 	if (app.serververify && !serverside) {
 		meta.serverside = true;
