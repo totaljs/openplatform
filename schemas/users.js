@@ -63,13 +63,7 @@ NEWSCHEMA('User').make(function(schema) {
 			return;
 		}
 
-		if (user.apps[app.id]) {
-			var ua = user.apps[app.id];
-			if (ua.countbadges)
-				ua.countbadges++;
-			else
-				ua.countbadges = 1;
-		} else {
+		if (!user.apps[app.id]) {
 			$.invalid('error-permissions');
 			return;
 		}

@@ -104,10 +104,7 @@
 							<b class="appbadge{{ if !countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b>
 							<div class="app-container">
 								<div class="app-icon"><i class="fa fa-{{ icon }}"></i></div>
-								<div class="app-meta">
-									<div class="app-name">{{ title }}</div>
-									<div class="app-version">{{ if version }}v{{ version }}{{ else }}Internal{{ fi }}</div>
-								</div>
+								<div class="app-meta">{{ title }}</div>
 							</div>
 						</div>
 					</script>
@@ -115,6 +112,8 @@
 			</div>
 		</div>
 	</div>
+
+	<div data-jc="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 
 	<script>
 

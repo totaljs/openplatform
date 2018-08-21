@@ -13,7 +13,7 @@ NEWSCHEMA('Badge').make(function(schema) {
 
 		var ip = $.ip;
 		if (app.origin) {
-			if (!app.origin[ip] && app.hostname !== ip) {
+			if (!app.origin[ip] && app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
 				$.invalid('error-invalid-origin');
 				return;
 			}

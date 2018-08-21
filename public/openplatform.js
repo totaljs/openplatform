@@ -260,7 +260,7 @@ OPENPLATFORM.$process = function(data) {
 		return;
 	}
 
-	if (data.type === 'screenshot') {
+	if (data.type === 'screenshotmake') {
 		OPENPLATFORM.screenshot();
 		return;
 	}

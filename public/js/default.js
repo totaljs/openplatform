@@ -74,7 +74,9 @@ $(window).on('message', function(e) {
 	switch (data.type) {
 
 		case 'screenshot':
-			console.log(data.body);
+			SET('screenshot.data', data.body);
+			screenshot.app = app ? app.internal : null;
+			SET('common.form', 'screenshot');
 			break;
 
 		case 'verify':
