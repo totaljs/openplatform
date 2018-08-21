@@ -64,6 +64,11 @@ function json_verify() {
 	var app = obj.app;
 	var user = obj.user;
 
+	if (!user.online) {
+		self.invalid().push('error-offline');
+		return;
+	}
+
 	if (app.origin) {
 		if (!app.origin[self.ip] && app.hostname !== self.ip) {
 			self.invalid().push('error-invalid-origin');
