@@ -14,3 +14,4 @@ allow-custom-titles             : true
 url                             : http://127.0.0.1:8000
 languages       (Array)         : ['en']
 cookie                          : __opu
+cookie-expiration               : 1 month
