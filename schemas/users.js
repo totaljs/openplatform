@@ -229,6 +229,8 @@ NEWSCHEMA('User').make(function(schema) {
 		var localities = {};
 		var companies = {};
 		var customers = {};
+		var groups = {};
+		var roles = {};
 
 		var toArray = function(obj, preparator) {
 			var arr = Object.keys(obj);
@@ -252,6 +254,22 @@ NEWSCHEMA('User').make(function(schema) {
 					ou[oukey] = { count: 1, name: oukey };
 			}
 
+			for (var j = 0; j < item.groups.length; j++) {
+				var g = item.groups[j];
+				if (groups[g])
+					groups[g].count++;
+				else
+					groups[g] = { count: 1, id: g.slug(), name: g };
+			}
+
+			for (var j = 0; j < item.roles.length; j++) {
+				var r = item.roles[j];
+				if (roles[r])
+					roles[r].count++;
+				else
+					roles[r] = { count: 1, id: r.slug(), name: r };
+			}
+
 			if (item.locality) {
 				if (localities[item.locality])
 					localities[item.locality].count++;
@@ -273,13 +291,14 @@ NEWSCHEMA('User').make(function(schema) {
 				else
 					companies[item.company] = { count: 1, id: item.company.slug(), name: item.company };
 			}
-
 		}
 
 		var meta = G.meta = {};
 		meta.companies = toArray(companies);
 		meta.customers = toArray(customers);
 		meta.localities = toArray(localities);
+		meta.groups = toArray(groups);
+		meta.roles = toArray(roles);
 		meta.languages = F.config.languages;
 
 		meta.ou = toArray(ou, function(item) {
