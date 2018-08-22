@@ -16,7 +16,7 @@ NEWSCHEMA('Login').make(function(schema) {
 				var cookie = {};
 				cookie.id = user.id;
 				cookie.date = F.datetime;
-				$.controller.cookie(F.config.cookie, F.encrypt(cookie), '1 month');
+				$.controller.cookie(F.config.cookie, F.encrypt(cookie), F.config['cookie-expiration'] || '1 month');
 			}
 		} else
 			$.error.push('error-credentials');

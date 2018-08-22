@@ -1768,7 +1768,7 @@ COMPONENT('processes', function(self, config) {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading hidden loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="screenshot" class="ui-process-button ui-process-screenshot"><i class="fa fa-camera"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading hidden loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
 	self.readonly();
 
 	self.make = function() {
@@ -1802,8 +1802,9 @@ COMPONENT('processes', function(self, config) {
 				self.message(iframe, 'menu');
 				break;
 			case 'screenshot':
+				SETTER('loading', 'show')('loading', 'hide', 2000);
 				var iframe = iframes.findItem('id', id);
-				self.message(iframe, 'screenshot');
+				self.message(iframe, 'screenshotmake');
 				break;
 			case 'maximize':
 				self.resize_maximize(id);
@@ -2042,6 +2043,21 @@ COMPONENT('processes', function(self, config) {
 
 		item.element.find('iframe').get(0).contentWindow.postMessage(JSON.stringify(data), '*');
 		return true;
+	};
+
+	self.message2 = function(id, type, message, callbackid, error) {
+		var proc = self.findProcess(id);
+		if (proc) {
+			var data = {};
+			data.openplatform = true;
+			data.type = type;
+			data.body = message;
+			if (error)
+				data.error = error.toString();
+			if (callbackid)
+				data.callback = callbackid;
+			proc.element.find('iframe').get(0).contentWindow.postMessage(JSON.stringify(data), '*');
+		}
 	};
 
 	self.findProcess = function(id) {

@@ -1,0 +1,76 @@
+<style>
+	.screenshot-apps { margin: 0; padding: 0; border: 1px solid #D0D0D0; border-radius: 3px; }
+	.screenshot-apps li { list-style-type: none; padding: 0; margin: 0; border-top: 1px solid #D0D0D0; cursor: pointer; height: 44px; }
+	.screenshot-apps li:first-child { border-top: 0; border-top-left-radius: 3px; border-top-right-radius: 3px; }
+	.screenshot-apps li:last-child { border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; }
+	.screenshot-apps li i { float: left; width: 50px; padding: 10px 0 0; font-size: 24px; text-align: center; border-right: 1px solid #D0D0D0; height: 44px; color: #3065C6; }
+	.screenshot-apps li:hover { background-color: #F0F0F0; }
+	.screenshot-apps li span { display: block; margin-left: 70px; padding: 10px 0 0 0; font-size: 16px; }
+	.screenshot-apps .selected { background-color: #F0F0F0; }
+</style>
+
+<div data-jc="form__common.form__if:screenshot;width:500;title:@(Screenshot);submit:screenshot/submit;reload:screenshot/reload" class="hidden">
+	<div class="padding">
+		<div class="row">
+			<div class="col-sm-3 m">
+				<div style="max-height:200px;border:1px solid #E0E0E0;overflow:hidden;padding:5px">
+					<img data-bind="screenshot.data__src:value" class="img-responsive" border="0" />
+				</div>
+			</div>
+			<div class="col-sm-9 m">
+				<h3>@(Where to send it?)</h3>
+				<div>@(Please choose an app from the below list where to send the screenshot.)</div>
+			</div>
+		</div>
+		<ul data-bind="screenshot.apps__template" class="screenshot-apps">
+			<script type="text/html">
+				{{ foreach m in value }}
+					<li class="exec{{ if m.selected }} selected{{ fi }}" data-exec="screenshot/select" data-id="{{ m.id }}">
+						<i class="fa fa-{{ m.icon }}"></i>
+						<span>{{ m.name }}</span>
+					</li>
+				{{ end }}
+			</script>
+		</ul>
+	</div>
+	<div class="ui-form-buttons">
+		<button name="submit" style="width:100%" disabled data-bind="screenshot.selected__disable:!value">@(SEND)</button>
+	</div>
+</div>
+
+<script>
+
+	CACHEPATH('screenshot.selected', '1 month', true);
+
+	PLUGIN('screenshot', function(exports) {
+
+		exports.reload = function() {
+			var apps = [];
+			var is = false;
+			for (var i = 0; i < dashboard.apps.length; i++) {
+				var item = dashboard.apps[i];
+				var sel = screenshot.selected && screenshot.selected === item.id;
+				if (!is && sel)
+					is = true;
+				apps.push({ name: item.internal.title, icon: item.internal.icon, id: item.id, selected: sel });
+			}
+			SET('screenshot.apps', apps);
+			screenshot.selected && !is && SET('screenshot.selected', '');
+		};
+
+		exports.select = function(el) {
+			var cls = 'selected';
+			el.parent().find('.' + cls).rclass(cls);
+			el.aclass(cls);
+			SET('screenshot.' + cls, el.attrd('id'));
+		};
+
+		exports.submit = function(com) {
+			var data = {};
+			data.data = screenshot.data;
+			data.app = screenshot.app;
+			SETTER('processes', 'message2', screenshot.selected, 'screenshot', data);
+			com.hide();
+		};
+	});
+</script>
