@@ -253,7 +253,7 @@ NEWSCHEMA('User').make(function(schema) {
 				if (groups[g])
 					groups[g].count++;
 				else
-					groups[g] = { count: 1, id: g.slug(), name: g };
+					groups[g] = { count: 1, id: g, name: g };
 			}
 
 			for (var j = 0; j < item.roles.length; j++) {
@@ -261,7 +261,7 @@ NEWSCHEMA('User').make(function(schema) {
 				if (roles[r])
 					roles[r].count++;
 				else
-					roles[r] = { count: 1, id: r.slug(), name: r };
+					roles[r] = { count: 1, id: r, name: r };
 			}
 
 			if (item.locality) {
