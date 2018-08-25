@@ -23,7 +23,19 @@ exports.install = function() {
 
 	LOCALIZE('/pages/*.html');
 	LOCALIZE('/forms/*.html');
+
+	FILE('/manifest.json', manifest);
 };
+
+function manifest(req, res) {
+	var meta = {};
+	meta.name = F.config.name;
+	meta.short_name = F.config.name;
+	meta.icons = [{ src: '/icon.png', size: '500x500', type: 'image/png' }];
+	meta.start_url = '/';
+	meta.display = 'standalone';
+	res.json(meta);
+}
 
 function login() {
 	var self = this;
