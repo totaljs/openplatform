@@ -337,7 +337,7 @@
 			self.init = function() {
 				self.init = null;
 				var running = CACHE('running');
-				if (running) {
+				if (running && running.length) {
 					running.wait(function(id, next) {
 						var app = user.apps.findItem('id', id);
 						if (app) {
