@@ -140,6 +140,10 @@
 			TOGGLE('common.startmenu');
 		}
 
+		WATCH('dashboard.apps', function() {
+			EXEC('Dashboard/saveState');
+		});
+
 		WATCH('common.notifications', function(path, value) {
 			value && refresh_notifications();
 		});
@@ -183,7 +187,6 @@
 					$('.appunread[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
 					$('.appbadge[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
 					SETTER('processes', 'emitevent', 'app.open', message.body.id);
-					EXEC('Dashboard/saveState');
 					break;
 				case 'logoff':
 					COOKIES.set('@{'%cookie'}', '', '-1 day');
@@ -277,9 +280,6 @@
 				e.preventDefault();
 				self.hidemenu();
 				SETTER('processes', 'kill', el.attrd('id'));
-				setTimeout2('d.state', function() {
-					EXEC('Dashboard/saveState');
-				}, 1000);
 			};
 
 			self.navigate = function(el) {
