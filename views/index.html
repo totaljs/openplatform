@@ -97,7 +97,7 @@
 			<div data-jc="search__common.startmenusearch__selector:.app" class="startmenu-apps-container">
 				<div data-jc="repeater__user.apps__if:!value.internal">
 					<script type="text/html">
-						<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
+						<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}" draggable="true">
 							<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 							<i class="appclose fa fa-times hidden exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
 							<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
@@ -183,6 +183,7 @@
 					$('.appunread[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
 					$('.appbadge[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
 					SETTER('processes', 'emitevent', 'app.open', message.body.id);
+					EXEC('Dashboard/saveState');
 					break;
 				case 'logoff':
 					COOKIES.set('@{'%cookie'}', '', '-1 day');
@@ -236,7 +237,6 @@
 
 		dashboard.current = null;
 		dashboard.apps = [];
-		dashboard.hashapp = location.hash.substring(1);
 
 		$(document).on('click', '.app', function() {
 			var el = $(this);
@@ -277,6 +277,9 @@
 				e.preventDefault();
 				self.hidemenu();
 				SETTER('processes', 'kill', el.attrd('id'));
+				setTimeout2('d.state', function() {
+					EXEC('Dashboard/saveState');
+				}, 1000);
 			};
 
 			self.navigate = function(el) {
@@ -323,22 +326,30 @@
 				is && UPDATE('dashboard.apps');
 			};
 
+			self.saveState = function() {
+				CACHE('running', dashboard.apps.map(FN('n => n.id')), '1 year');
+			};
+
 			self.init = function() {
 				self.init = null;
-				var is = false;
-				if (dashboard.hashapp) {
-					var app = user.apps.findItem('linker', dashboard.hashapp);
-					if (app) {
-						var el = $('.app[data-id="{0}"]'.format(app.id));
-						if (!el.length)
-							el = $('.internal[data-id="{0}"]'.format(app.id));
-						if (el.length) {
-							internalapp(el);
-							is = true;
+				var running = CACHE('running');
+				if (running) {
+					running.wait(function(id, next) {
+						var app = user.apps.findItem('id', id);
+						if (app) {
+							var el = $('.app[data-id="{0}"]'.format(app.id));
+							if (!el.length)
+								el = $('.internal[data-id="{0}"]'.format(app.id));
+							if (el.length) {
+								internalapp(el);
+								setTimeout(next, 800);
+								return;
+							}
 						}
-					}
-				}
-				!is && SET('common.startmenu', true, 500);
+						next();
+					});
+				} else
+					SET('common.startmenu', true, 500);
 			};
 
 		});

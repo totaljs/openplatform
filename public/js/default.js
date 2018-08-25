@@ -79,6 +79,20 @@ $(window).on('message', function(e) {
 			SET('common.form', 'screenshot');
 			break;
 
+		case 'launched':
+			if (app) {
+
+				var apps = [];
+				for (var i = 0; i < dashboard.apps.length; i++) {
+					var da = dashboard.apps[i].internal;
+					apps.push({ id: da.id, icon: da.icon, name: da.name, title: da.title, version: da.version });
+				}
+
+				var iframe = processes.findProcess(app.id);
+				iframe && processes.message(iframe, 'launched', apps, data.callback);
+			}
+			break;
+
 		case 'verify':
 		case 'meta':
 
@@ -108,13 +122,20 @@ $(window).on('message', function(e) {
 		case 'share':
 
 			var err = '';
-			var target = dashboard.apps.findItem('id', data.body.app);
+			var target = user.apps.findItem('id', data.body.app);
 			if (!target)
 				err = 'Application not found (101)';
 			else if (!target.running)
 				err = 'Application is not running (102)';
-			var iframe = processes.findProcess(app.id);
-			data.callback && processes.message(iframe, 'share', null, data.callback, err);
+
+			if (err) {
+				SETTER('message', 'warning', err);
+				return;
+			}
+
+			var iframe = processes.findProcess(target.id);
+			data.body.app = app.id;
+			iframe && processes.message(iframe, 'share', data.body);
 			break;
 
 		case 'progress':

@@ -656,7 +656,13 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 		return self;
 	};
 
-	function onClose() {
+	function onClose(e) {
+
+		if (e.code === 4001) {
+			location.reload(true);
+			return;
+		}
+
 		self.close(true);
 		setTimeout(self.connect, config.reconnect);
 	}
@@ -2119,7 +2125,6 @@ COMPONENT('processes', function(self, config) {
 				return false;
 		}
 
-		location.hash = iframe.meta.internal.linker;
 		iframe.element.rclass('hidden');
 		self.focus(iframe.id);
 		self.message(iframe, 'maximize');
@@ -2133,7 +2138,6 @@ COMPONENT('processes', function(self, config) {
 				return false;
 		}
 
-		location.hash = iframe.meta.internal.linker;
 		iframe.element.rclass('hidden');
 		self.focus(iframe.id);
 		self.message(iframe, 'notify', data);
@@ -2163,7 +2167,6 @@ COMPONENT('processes', function(self, config) {
 
 		self.minimize(id, false);
 
-		location.hash = '';
 		$('.appclose[data-id="{0}"]'.format(id)).aclass('hidden');
 		$('.app[data-id="{0}"]'.format(id)).rclass('app-running');
 
@@ -2205,10 +2208,8 @@ COMPONENT('processes', function(self, config) {
 
 	self.setter = function(value) {
 
-		if (!value) {
-			location.hash = '';
+		if (!value)
 			return;
-		}
 
 		if (closing[value.id]) {
 			SETTER('loading', 'show');
@@ -2295,7 +2296,6 @@ COMPONENT('processes', function(self, config) {
 
 		iframe.dateopen = new Date();
 		iframes.push(iframe);
-		location.hash = value.internal.linker;
 
 		setTimeout(function() {
 			var url = value.url;

@@ -59,7 +59,7 @@ function realtime() {
 	self.on('open', function(client) {
 
 		if (client.user.blocked) {
-			client.close();
+			client.close('blocked');
 			return;
 		}
 

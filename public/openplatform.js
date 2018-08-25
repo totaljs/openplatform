@@ -38,6 +38,10 @@ OPENPLATFORM.screenshot = function() {
 
 };
 
+OPENPLATFORM.launched = function(callback) {
+	OPENPLATFORM.send('launched', null, callback);
+};
+
 OPENPLATFORM.progress = function(p) {
 	return OPENPLATFORM.send('progress', p);
 };
@@ -194,8 +198,8 @@ OPENPLATFORM.notify = function(type, body, data) {
 	return OPENPLATFORM.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
 };
 
-OPENPLATFORM.share = function(app, type, body, callback) {
-	return OPENPLATFORM.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date() }, callback);
+OPENPLATFORM.share = function(app, type, body) {
+	return OPENPLATFORM.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date() });
 };
 
 OPENPLATFORM.email = function(subject, body) {
@@ -238,6 +242,7 @@ OPENPLATFORM.on = function(name, callback) {
 };
 
 OPENPLATFORM.$process = function(data) {
+
 	if (data.callback) {
 		var callback = OPENPLATFORM.callbacks[data.callback];
 		if (callback) {
@@ -272,6 +277,13 @@ OPENPLATFORM.$process = function(data) {
 
 	if (data.type === 'kill')
 		data.type = 'close';
+
+
+	if (data.type === 'share') {
+		data.body.share = function(type, body) {
+			OPENPLATFORM.share(this.app, type, body);
+		};
+	}
 
 	var events = OPENPLATFORM.events[data.type];
 	events && events.forEach(function(e) {
