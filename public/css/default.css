@@ -15,7 +15,7 @@ header nav button img { width: 25px; height: 25px; border-radius: 3px; }
 header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button .fa { font-size: 20px; }
 header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
-header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; }
+header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; }
 .header-show { bottom: 0; }
 
 .startmenu { position: fixed; bottom: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 14; border-radius: 0 3px 0 0; box-shadow: 10px -10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, 80px); }
@@ -56,7 +56,7 @@ h3 .fa { margin-right: 5px; }
 .user.selected { color: white; }
 .user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
 .user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; }
-.user-notifications .fa { color: white; }
+.user-notifications .fa { color: yellow; }
 
 .app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 10px 0; position: relative; }
 .app-container { border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; cursor: pointer; transition: all 0.2s; height: 38px; color: white; }
