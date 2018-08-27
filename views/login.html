@@ -17,24 +17,27 @@
 	<style type="text/css">
 		/*auto*/
 		html,body { overflow: hidden; height: 100%; }
-		body { background-color: #E6E9ED; }
-		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -300px 0 0 -140px; background-color: white; box-shadow: 0 5px 10px rgba(0,0,0,0.1); border-radius: 4px; transition: all 0.5s; transform: scale(1.5); }
+		body { background-color: #303030; color: #D0D0D0; }
+
+		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -300px 0 0 -140px; background-color: #252525; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 2px solid #202020; }
 		.padding { padding: 20px; }
 		.panelshow { transform: scale(1); }
-
-		h1 { color: black; margin: 0; padding: 30px 0 20px; font-family: Arial; text-align: center; background-color: #F8F8F8; background: repeating-linear-gradient(45deg,#F0F0F0,#F0F0F0 10px,#F9F9F9 10px,#F9F9F9 20px); border-radius: 4px 4px 0 0; }
+		a { color: white; }
+		h1 { color: black; margin: 0; padding: 20px 0; font-family: Arial; text-align: center; font-size: 16px; border-bottom: 1px solid #101010; color: white }
 		h1 .fa { margin-right: 10px; }
 		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: silver; }
 		input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { background-color: #F0F0F0; cursor: not-allowed; color: silver; }
-		.ui-textbox { border: 1px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
-		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: black; width: 100%; background-color: white; }
-		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #E0E0E0; width: 30px; color: silver; }
+		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus { background-color: #181818 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #181818 inset !important; -webkit-text-fill-color: white !important; }
+		.ui-textbox { border: 1px solid #101010; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: #181818; display: table; }
+		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: white; width: 100%; background-color: #181818; }
+		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #101010; width: 30px; color: gray; }
 		.ui-textbox .fa-times { color: red; cursor: pointer; }
-		.ui-textbox-label { margin-bottom: 5px; font-size: 12px; color: #656D78; text-align: left; }
+		.ui-textbox-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
 		.ui-textbox-label .fa { margin-right: 5px; }
 		.ui-textbox-label-required:before { color: red; content: '***'; margin-right: 5px; }
-		.ui-textbox-invalid { border-color: #E1A1A1 !important; background-color: #FFF3F3 !important; }
-		.ui-textbox-invalid input { background-color: #FFF3F3 !important; }
+		.ui-textbox-invalid { border-color: #96322C !important; background-color: #96322C !important; }
+		.ui-textbox-invalid input { background-color: #96322C !important; }
+		.ui-textbox-invalid div { border-color: #871C15; color: white; }
 		.ui-textbox .fa-caret-up, .ui-textbox .fa-caret-down { display: block; line-height: 9px; cursor: pointer; }
 		.ui-textbox .fa-calendar { cursor: pointer; }
 		.ui-textbox-helper { margin-top: 8px; font-size: 11px; color: red; text-align: left; display: none; }
@@ -53,12 +56,12 @@
 
 		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
 		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
-		button:disabled { background-color: #F0F0F0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+		button:disabled { background-color: #101010; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
 		button .fa { margin-right: 5px; }
 		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 20px 0 0 0; }
 
 		@media(max-width: 768px) {
-			.panel { margin-top: -200px; }
+			.panel { margin: 20px; left: 0; position: relative; top: 50%; margin-top: -200px; width: auto; max-width: 1000px; }
 		}
 
 	</style>
