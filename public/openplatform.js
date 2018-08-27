@@ -219,7 +219,7 @@ OPENPLATFORM.send = function(type, body, callback) {
 	data.type = type;
 	data.body = body || null;
 	data.sender = true;
-	data.origin = location.origin;
+	data.origin = location.protocol + '//' + location.hostname;
 
 	if (!top) {
 		callback && callback(new Error('The application is not running in the OpenPlatform scope.'));
@@ -294,6 +294,7 @@ OPENPLATFORM.$process = function(data) {
 window.addEventListener('message', function(e) {
 	try {
 		var data = JSON.parse(e.data);
+
 		if (!data.openplatform)
 			return;
 

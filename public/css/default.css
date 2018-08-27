@@ -1,20 +1,21 @@
 /*auto*/
 
 $dock              : #0A53EA;
-$startmenu         : #3065C6;
+$startmenu         : #404040;
 $startmenubutton   : #52AA48;
 
 html,body { height: 100%; overflow: hidden; }
 body { height: 100%; overflow: hidden; background-color: #303030; }
 
-header { height: 45px; background-color: $dock; position: fixed; z-index: 15; width: 100%; bottom: -45px; box-shadow: 0 -5px 10px rgba(0,0,0,0.1); color: #D4DFFF; transition: all 0.3s; }
+header { height: 45px; border-top:1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 15; width: 100%; bottom: -45px; color: #909090; transition: all 0.3s; }
 header nav { float: left; }
-header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 45px; border-right: 1px solid rgba(0,0,0,0.1); cursor: pointer; vertical-align: top; color: white; }
+header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 45px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; }
+header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
 header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button .fa { font-size: 20px; }
 header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
-header .datetime { background-color: rgba(255,255,255,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; }
+header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; }
 .header-show { bottom: 0; }
 
 .startmenu { position: fixed; bottom: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 14; border-radius: 0 3px 0 0; box-shadow: 10px -10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, 80px); }
@@ -28,7 +29,7 @@ header .datetime { background-color: rgba(255,255,255,0.15); height: 45px; float
 .startmenu-nav nav button { display: block; color: white; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; }
 .startmenu-nav nav button:hover { text-decoration: none; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
-.startmenu-nav > div { height: 100%; background-color: rgba(255,255,255,0.1); padding: 10px 15px; }
+.startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
 .startmenu-search { padding: 0 10px 10px; }
 .startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
 
@@ -47,7 +48,7 @@ h3 .fa { margin-right: 5px; }
 .padding { padding: 20px; }
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.user { float: left; cursor: pointer; width: 60px; height: 45px; border-radius: 0 100px 100px 0; background-color: $startmenubutton; color: rgba(255,255,255,0.5); box-shadow: 10px 0 10px rgba(0,0,0,0.1); margin-right: 20px; user-select: none; padding: 5px 7px 0 0; text-align: center; font-size: 25px; }
+.user { float: left; cursor: pointer; width: 28px; height: 28px; border-radius: 2px; background-color: #0A53EA; color: rgba(255,255,255,0.5); margin: 7px 10px 0 10px; user-select: none; padding: 4px 0 0 0; text-align: center; font-size: 16px; }
 .user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
 .user:hover { opacity: 0.9; color: white; }
 .user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }
@@ -55,6 +56,7 @@ h3 .fa { margin-right: 5px; }
 .user.selected { color: white; }
 .user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
 .user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; }
+.user-notifications .fa { color: white; }
 
 .app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 10px 0; position: relative; }
 .app-container { border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; cursor: pointer; transition: all 0.2s; height: 38px; color: white; }

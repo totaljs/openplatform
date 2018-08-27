@@ -33,12 +33,6 @@ ON('ready', function() {
 	EMIT('resize');
 });
 
-function home() {
-	SET('common.startmenu', false);
-	SETTER('processes', 'minimize');
-	REDIRECT('/');
-}
-
 AJAX('GET /api/meta/', 'common.meta');
 
 function onImageError(image) {
@@ -66,6 +60,7 @@ $(window).on('message', function(e) {
 		return;
 
 	var app = dashboard.apps.findItem('accesstoken', data.accesstoken);
+
 	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))
 		return;
 
