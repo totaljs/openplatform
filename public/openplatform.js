@@ -16,10 +16,21 @@ OPENPLATFORM.interval = setInterval(function() {
 OPENPLATFORM.screenshot = function() {
 
 	if (!OPENPLATFORM.$screenshot) {
-		var scr = document.createElement('script');
+
+		var scr;
+
+		// IE 11
+		if (!window.Promise) {
+			scr = document.createElement('script');
+			scr.type = 'text/javascript';
+			scr.src = '//cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js';
+			document.body.appendChild(scr);
+		}
+
+		scr = document.createElement('script');
 		scr.type = 'text/javascript';
 		scr.src = '//html2canvas.hertzen.com/dist/html2canvas.min.js';
-		document.body.append(scr);
+		document.body.appendChild(scr);
 		OPENPLATFORM.$screenshot = 1;
 	}
 
