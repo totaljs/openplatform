@@ -5,7 +5,7 @@ $startmenu         : #404040;
 $startmenubutton   : #52AA48;
 
 html,body { height: 100%; overflow: hidden; }
-body { height: 100%; overflow: hidden; background-color: #303030; }
+body { height: 100%; overflow: hidden; background-color: #303030; background-size: 40%; }
 
 header { height: 45px; border-top:1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 15; width: 100%; bottom: -45px; color: #909090; transition: all 0.3s; }
 header nav { float: left; }
