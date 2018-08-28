@@ -80,7 +80,7 @@ $(window).on('message', function(e) {
 				var apps = [];
 				for (var i = 0; i < dashboard.apps.length; i++) {
 					var da = dashboard.apps[i].internal;
-					apps.push({ id: da.id, icon: da.icon, name: da.name, title: da.title, version: da.version });
+					apps.push({ id: da.id, icon: da.icon, name: da.name, title: da.title, version: da.version, type: da.type });
 				}
 
 				var iframe = processes.findProcess(app.id);

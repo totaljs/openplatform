@@ -107,6 +107,7 @@ NEWSCHEMA('App').make(function(schema) {
 				$.model.name = response.name;
 				$.model.description = response.description;
 				$.model.author = response.author;
+				$.model.type = response.type;
 				$.model.icon = response.icon;
 				$.model.frame = response.url;
 				$.model.email = response.email;
@@ -152,6 +153,7 @@ function state(item, next) {
 			item.width = response.width;
 			item.height = response.height;
 			item.resize = response.resize;
+			item.type = response.type;
 
 			if (response.origin && response.origin.length) {
 				item.origin = {};
