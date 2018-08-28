@@ -195,7 +195,7 @@ $(window).on('message', function(e) {
 
 		case 'play':
 		case 'stop':
-			SETTER('audio', data.type, data.body);
+			user.sounds && SETTER('audio', data.type, data.body);
 			break;
 
 		case 'badge':

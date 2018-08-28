@@ -68,6 +68,7 @@ OP.profile = function(user) {
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
 	meta.sounds = user.sounds;
+	meta.volume = user.volume;
 
 	for (var i = 0, length = G.apps.length; i < length; i++) {
 		var app = G.apps[i];
@@ -257,6 +258,7 @@ function readuser(user, type, app) {
 	obj.groups = user.groups;
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;
+	obj.volume = user.volume;
 	obj.badge = F.config.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
 
 	if (obj.notifications)

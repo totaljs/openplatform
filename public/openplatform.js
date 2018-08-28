@@ -159,6 +159,11 @@ OPENPLATFORM.meta = function(callback) {
 };
 
 OPENPLATFORM.play = function(url) {
+	if (!(/^(http|https):\/\//).test(url)) {
+		if (url.substring(0, 1) !== '/')
+			url = '/' + url;
+		url = location.protocol + '//' + location.hostname + url;
+	}
 	return OPENPLATFORM.send('play', url);
 };
 
