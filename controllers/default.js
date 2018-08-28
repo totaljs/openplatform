@@ -77,12 +77,17 @@ function realtime() {
 
 		client.id = client.user.id;
 		client.user.online = true;
+		client.user.countsessions++;
 		WSPROFILE.body = OP.profile(client.user);
 		client.send(WSPROFILE);
 	});
 
 	self.on('close', function(client) {
-		client.user.online = false;
+		client.user.countsessions--;
+		if (client.user.countsessions <= 0) {
+			client.user.online = false;
+			client.user.countsessions = 0;
+		}
 	});
 
 	self.on('message', function(client, message) {

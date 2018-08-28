@@ -1658,7 +1658,6 @@ COMPONENT('notify', 'timeout:3000', function(self, config) {
 		var obj = self.items[id];
 		if (!obj)
 			return;
-
 		delete self.items[id];
 		var item = self.find('div[data-id="{0}"]'.format(id));
 		item.aclass('ui-notify-hide');
@@ -1769,12 +1768,13 @@ COMPONENT('processes', function(self, config) {
 	var oldfocus;
 	var oldpos = {};
 	var defsize = {};
+	var appminimized = {};
 
 	self.hidemenu = function() {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="screenshot" class="ui-process-button ui-process-screenshot"><i class="fa fa-camera"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.name }}</div><nav><button name="screenshot" class="ui-process-button ui-process-screenshot"><i class="fa fa-camera"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div><div class="ui-process-iframe-container"><div class="ui-process-loading loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div></div>');
 	self.readonly();
 
 	self.make = function() {
@@ -1868,7 +1868,10 @@ COMPONENT('processes', function(self, config) {
 			return;
 		oldfocus = id;
 		self.find('.ui-process-focus').rclass('ui-process-focus');
-		self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus');
+		self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').rclass('hidden').rclass('ui-process-hidden');
+		setTimeout2(self.ID + 'focus', function() {
+			oldfocus = null;
+		}, 1000);
 	};
 
 	self.event('mousedown', '.ui-process-resize', function(e) {
@@ -2162,8 +2165,13 @@ COMPONENT('processes', function(self, config) {
 			return self;
 
 		var iframe = iframes[index];
+
+		if (!iframe.meta.internal.loaded)
+			return;
+
 		iframes.splice(index, 1);
 		iframe.element.aclass('hidden');
+		iframe.meta.internal.loaded = false;
 
 		self.minimize(id, false);
 
@@ -2206,20 +2214,50 @@ COMPONENT('processes', function(self, config) {
 			return url.substring(0, index + 1) + 'openplatform=' + accesstoken + '&' + url.substring(index + 1);
 	}
 
+	self.wait = function(app, callback) {
+
+		if (typeof(app) === 'string') {
+			// id
+			app = user.apps.findItem('id', app);
+			if (!app) {
+				callback(null);
+				return;
+			}
+		}
+
+		if (app.running) {
+			var iframe = self.findProcess(app.id);
+			if (iframe) {
+				callback(iframe);
+			} else {
+				setTimeout(function() {
+					self.wait(app, callback);
+				}, 500);
+			}
+		} else {
+			// RUN APP
+			// MINIMIZED
+			appminimized[app.id] = true;
+			$('.app[data-id="{0}"]'.format(app.id)).trigger('click');
+			WAIT(function() {
+				return app.loaded;
+			}, function() {
+				self.wait(app, callback);
+			});
+		}
+	};
+
 	self.setter = function(value) {
 
 		if (!value)
 			return;
 
 		if (closing[value.id]) {
-			SETTER('loading', 'show');
 			setTimeout(function(value) {
 				self.setter(value);
 			}, 1000, value);
 			return;
 		}
-
-		SETTER('loading', 'hide', 500);
 
 		var item = GET(config.datasource).findItem('id', value.id);
 		if (!item) {
@@ -2237,16 +2275,18 @@ COMPONENT('processes', function(self, config) {
 			return;
 		}
 
-		// SETTER('loading', 'show');
-
 		iframe = {};
 		iframe.mobile = WIDTH() === 'xs';
+		iframe.id = value.id;
 		iframe.width = value.internal.width;
+		iframe.hidden = appminimized[iframe.id];
 		self.append(self.template(value, iframe));
+
+		if (appminimized[iframe.id])
+			delete appminimized[iframe.id];
 
 		value.internal.running = true;
 		item.running = true;
-		iframe.id = value.id;
 		iframe.meta = value;
 
 		iframe.element = $('.ui-process[data-id="{0}"]'.format(value.id));
@@ -2256,8 +2296,9 @@ COMPONENT('processes', function(self, config) {
 		iframe.iframe.on('load', function() {
 			if (this.$loaded === 1) {
 				iframe.element.find('.ui-process-loading').aclass('hidden', 1000);
-				value.internal.notifydata && setTimeout(function() {
-					self.sendnotifydata(iframe, value.internal.notifydata);
+				setTimeout(function() {
+					value.internal.notifydata && self.sendnotifydata(iframe, value.internal.notifydata);
+					value.internal.loaded = true;
 				}, 1000);
 			}
 			this.$loaded++;
@@ -2311,10 +2352,10 @@ COMPONENT('processes', function(self, config) {
 
 		setTimeout(function() {
 			iframe.element.rclass('ui-process-animation');
-			self.focus(iframe.id);
+			if (!iframe.hidden)
+				self.focus(iframe.id);
 		}, 500);
 
-		// SETTER('loading', 'hide', 1000);
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
 		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');

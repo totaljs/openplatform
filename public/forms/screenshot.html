@@ -3,9 +3,10 @@
 	.screenshot-apps li { list-style-type: none; padding: 0; margin: 0; border-top: 1px solid #D0D0D0; cursor: pointer; height: 44px; }
 	.screenshot-apps li:first-child { border-top: 0; border-top-left-radius: 3px; border-top-right-radius: 3px; }
 	.screenshot-apps li:last-child { border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; }
-	.screenshot-apps li i { float: left; width: 50px; padding: 10px 0 0; font-size: 24px; text-align: center; border-right: 1px solid #D0D0D0; height: 44px; color: #3065C6; }
+	.screenshot-apps li > i { float: left; width: 50px; padding: 10px 0 0; font-size: 24px; text-align: center; border-right: 1px solid #D0D0D0; height: 44px; color: #3065C6; }
 	.screenshot-apps li:hover { background-color: #F0F0F0; }
 	.screenshot-apps li span { display: block; margin-left: 70px; padding: 10px 0 0 0; font-size: 16px; }
+	.screenshot-apps li span .fa { font-size: 11px; vertical-align: middle; margin: -2px 0 0 8px; position: relative; display: inline-block; }
 	.screenshot-apps .selected { background-color: #F0F0F0; }
 </style>
 
@@ -27,7 +28,7 @@
 				{{ foreach m in value }}
 					<li class="exec{{ if m.selected }} selected{{ fi }}" data-exec="screenshot/select" data-id="{{ m.id }}">
 						<i class="fa fa-{{ m.icon }}"></i>
-						<span>{{ m.name }}</span>
+						<span>{{ m.name }}{{ if m.running }}<i class="fa fa-circle green"></i>{{ fi }}</span>
 					</li>
 				{{ end }}
 			</script>
@@ -47,12 +48,14 @@
 		exports.reload = function() {
 			var apps = [];
 			var is = false;
-			for (var i = 0; i < dashboard.apps.length; i++) {
-				var item = dashboard.apps[i];
+			for (var i = 0; i < user.apps.length; i++) {
+				var item = user.apps[i];
+				if (item.internal)
+					continue;
 				var sel = screenshot.selected && screenshot.selected === item.id;
 				if (!is && sel)
 					is = true;
-				apps.push({ name: item.internal.title, icon: item.internal.icon, id: item.id, selected: sel });
+				apps.push({ name: item.title, icon: item.icon, id: item.id, selected: sel, running: item.running });
 			}
 			SET('screenshot.apps', apps);
 			screenshot.selected && !is && SET('screenshot.selected', '');
@@ -69,8 +72,12 @@
 			var data = {};
 			data.data = screenshot.data;
 			data.app = screenshot.app;
-			SETTER('processes', 'message2', screenshot.selected, 'screenshot', data);
 			com.hide();
+			SETTER('loading', 'show');
+			SETTER('processes', 'wait', screenshot.selected, function() {
+				SETTER('processes', 'message2', screenshot.selected, 'screenshot', data);
+				SETTER('loading', 'hide', 1000);
+			});
 		};
 	});
 </script>

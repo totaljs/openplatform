@@ -115,22 +115,13 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'share':
-
-			var err = '';
 			var target = user.apps.findItem('id', data.body.app);
-			if (!target)
-				err = 'Application not found (101)';
-			else if (!target.running)
-				err = 'Application is not running (102)';
-
-			if (err) {
-				SETTER('message', 'warning', err);
-				return;
+			if (target) {
+				processes.wait(target, function(iframe) {
+					data.body.app = app.id;
+					processes.message(iframe, 'share', data.body);
+				});
 			}
-
-			var iframe = processes.findProcess(target.id);
-			data.body.app = app.id;
-			iframe && processes.message(iframe, 'share', data.body);
 			break;
 
 		case 'progress':

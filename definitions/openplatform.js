@@ -32,8 +32,11 @@ OP.load = function(callback) {
 		Fs.readFile(F.path.databases('users.json'), function(err, response) {
 			G.users = response ? response.toString('utf8').parseJSON(true) : [];
 
-			for (var i = 0, length = G.users.length; i < length; i++)
-				G.users[i].online = false;
+			for (var i = 0, length = G.users.length; i < length; i++) {
+				var u = G.users[i];
+				u.online = false;
+				u.countsessions = 0;
+			}
 
 			Fs.readFile(F.path.databases('apps.json'), function(err, response) {
 				G.apps = response ? response.toString('utf8').parseJSON(true) : [];
