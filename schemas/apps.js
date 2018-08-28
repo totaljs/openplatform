@@ -48,6 +48,7 @@ NEWSCHEMA('App').make(function(schema) {
 			F.global.apps.push(item);
 
 			LOGGER('apps', 'create: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
+			G.apps.quicksort('title');
 
 		} else {
 

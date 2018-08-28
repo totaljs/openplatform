@@ -44,6 +44,7 @@ OP.load = function(callback) {
 				for (var i = 0, length = G.apps.length; i < length; i++)
 					G.apps[i].online = false;
 
+				G.apps.quicksort('title');
 				G.apps.length && $WORKFLOW('App', 'state');
 				callback && callback();
 			});
