@@ -243,6 +243,9 @@ function readuser(user, type, app) {
 	obj.locality = user.locality;
 	obj.localitylinker = user.localitylinker;
 	obj.reference = user.reference;
+	obj.countnotifications = user.countnotifications;
+	obj.countbadges = user.countbadges;
+	obj.countsessions = user.countsessions;
 
 	if (user.roles && user.roles.length) {
 		obj.roles = user.apps[app.id].roles.slice(0);
