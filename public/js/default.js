@@ -92,8 +92,13 @@ $(window).on('message', function(e) {
 		case 'meta':
 
 			if (app && navigator.userAgent === data.body.ua) {
+
 				var iframe = processes.findProcess(app.id);
 				var meta = CLONE(iframe.meta);
+
+				if (meta.verify.indexOf(app.accesstoken) === -1 || iframe.iframe.attr('src').indexOf(iframe.meta.url) === -1)
+					return;
+
 				meta.internal = undefined;
 				meta.index = undefined;
 				meta.running = undefined;

@@ -1,3 +1,5 @@
+const COOKIEOPTIONS = { secure: true };
+
 NEWSCHEMA('Login').make(function(schema) {
 
 	schema.define('name', 'String(50)', true);
@@ -16,7 +18,7 @@ NEWSCHEMA('Login').make(function(schema) {
 				var cookie = {};
 				cookie.id = user.id;
 				cookie.date = F.datetime;
-				$.controller.cookie(F.config.cookie, F.encrypt(cookie), F.config['cookie-expiration'] || '1 month');
+				$.controller.cookie(F.config.cookie, F.encrypt(cookie), F.config['cookie-expiration'] || '1 month', COOKIEOPTIONS);
 			}
 		} else
 			$.error.push('error-credentials');

@@ -75,6 +75,7 @@ OPENPLATFORM.init = function(callback) {
 
 	if (!OPENPLATFORM.is) {
 		callback(new Error('OpenPlatform isn\'t detected.'));
+		document.body.innerHTML = '401: Unauthorized';
 		return;
 	}
 
@@ -98,6 +99,7 @@ OPENPLATFORM.init = function(callback) {
 	var timeout = setTimeout(function() {
 		timeout = null;
 		callback('timeout');
+		document.body.innerHTML = '401: Unauthorized';
 	}, 2000);
 
 	OPENPLATFORM.send('verify', data, function(err, response) {
