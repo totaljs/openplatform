@@ -204,15 +204,11 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'badge':
-			if (!app || !app.internal.notifications)
-				return;
-			AJAX('GET /api/badges/?accesstoken=' + app.accesstoken, NOOP);
+			app && AJAX('GET /api/badges/?' + app.profile.badge.substring(app.profile.badge.indexOf('accesstoken=')), NOOP);
 			break;
 
 		case 'notify':
-			if (!app || !app.internal.notifications)
-				return;
-			AJAX('POST /api/notify/?accesstoken=' + app.accesstoken, data.body, NOOP);
+			app && app.internal.notifications && AJAX('POST /api/notify/?' + app.profile.notify.substring(app.profile.notify.indexOf('accesstoken=')), data.body, NOOP);
 			break;
 
 		case 'minimize':

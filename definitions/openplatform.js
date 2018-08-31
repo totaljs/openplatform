@@ -133,43 +133,70 @@ OP.meta = function(app, user, serverside) {
 	return meta;
 };
 
-OP.encodeToken = function(app, user) {
-	var sign = app.accesstoken + '-' + app.id + '-' + user.accesstoken + '-' + user.id;
-	sign += '-' + user.verifytoken + '-' + (sign + F.config.accesstoken).crc32(true);
-	return sign;
+// Notifications + badges
+OP.encodeToken2 = function(app, user) {
+	var sign = app.id + '-' + user.id + '-' + (user.accesstoken + app.accesstoken).crc32(true);
+	return sign + '-' + (sign + F.config.accesstoken).crc32(true);
 };
 
-OP.decodeToken = function(sign, strict) {
+OP.decodeToken2 = function(sign) {
 
 	var arr = sign.split('-');
-	if (arr.length !== 6)
+	if (arr.length !== 4)
 		return null;
 
-	var tmp = (arr[0] + '-' + arr[1] + '-' + arr[2] + '-' + arr[3]);
-	tmp += '-' + arr[4] + '-' + (tmp + F.config.accesstoken).crc32(true);
-
-	if (tmp !== sign)
+	var tmp = (arr[0] + '-' + arr[1] + '-' + arr[2] + F.config.accesstoken).crc32(true) + '';
+	if (tmp !== arr[3])
 		return null;
-
-	// 0 - app accesstoken
-	// 1 - app id
-	// 2 - user accesstoken
-	// 3 - user id
-	// 4 - user verifytoken
-	// 5 - sign
 
 	var obj = {};
-	var app = G.apps.findItem('id', arr[1]);
-	if (app == null || app.accesstoken !== arr[0])
+	var app = G.apps.findItem('id', arr[0]);
+	if (app == null)
 		return null;
 
-	var user = G.users.findItem('id', arr[3]);
-	if (user == null || user.accesstoken !== arr[2] || (strict && user.verifytoken !== arr[4]))
+	var user = G.users.findItem('id', arr[1]);
+	if (user == null)
+		return null;
+
+	var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '';
+	if (tmp !== arr[2])
 		return null;
 
 	obj.app = app;
 	obj.user = user;
+	return obj;
+};
 
+// Auth token
+OP.encodeToken = function(app, user) {
+	var sign = app.id + '-' + user.id;
+	sign += '-' + ((user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + F.config.accesstoken).crc32(true));
+	return sign.encrypt(F.config.accesstoken.substring(0, 20));
+};
+
+OP.decodeToken = function(sign) {
+
+	sign = sign.decrypt(F.config.accesstoken.substring(0, 20));
+	var arr = sign.split('-');
+
+	if (arr.length !== 3)
+		return null;
+
+	var obj = {};
+	var app = G.apps.findItem('id', arr[0]);
+	if (app == null)
+		return null;
+
+	var user = G.users.findItem('id', arr[1]);
+	if (user == null)
+		return null;
+
+	var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + F.config.accesstoken).crc32(true);
+	if (tmp !== arr[2])
+		return null;
+
+	obj.app = app;
+	obj.user = user;
 	return obj;
 };
 
@@ -260,10 +287,10 @@ function readuser(user, type, app) {
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;
 	obj.volume = user.volume;
-	obj.badge = F.config.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
+	obj.badge = F.config.url + '/api/badges/?accesstoken=' + OP.encodeToken2(app, user);
 
 	if (obj.notifications)
-		obj.notify = F.config.url + '/api/notify/?accesstoken=' + OP.encodeToken(app, user);
+		obj.notify = F.config.url + '/api/notify/?accesstoken=' + OP.encodeToken2(app, user);
 
 	switch (type) {
 		case 2:
