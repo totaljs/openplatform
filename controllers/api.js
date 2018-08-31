@@ -54,7 +54,7 @@ exports.install = function() {
 function json_verify() {
 
 	var self = this;
-	var obj = OP.decodeToken(self.query.accesstoken);
+	var obj = OP.decodeAuthToken(self.query.accesstoken);
 
 	if (!obj) {
 		self.invalid().push('error-invalid-accesstoken');

@@ -39,7 +39,7 @@ NEWSCHEMA('User').make(function(schema) {
 
 	schema.setQuery(function($) {
 
-		var obj = OP.decodeToken($.query.accesstoken);
+		var obj = OP.decodeAuthToken($.query.accesstoken);
 
 		if (!obj) {
 			$.invalid('error-invalid-accesstoken');

@@ -92,7 +92,7 @@ OP.meta = function(app, user, serverside) {
 	if (!user.apps || !user.apps[app.id])
 		return null;
 
-	var meta = { datetime: NOW, ip: user.ip, accesstoken: OP.encodeToken(app, user), url: app.frame, settings: app.settings, id: app.id };
+	var meta = { datetime: NOW, ip: user.ip, accesstoken: OP.encodeAuthToken(app, user), url: app.frame, settings: app.settings, id: app.id };
 
 	meta.verify = F.config.url + '/api/verify/?accesstoken=' + meta.accesstoken;
 	meta.openplatform = F.config.url;
@@ -134,12 +134,12 @@ OP.meta = function(app, user, serverside) {
 };
 
 // Notifications + badges
-OP.encodeToken2 = function(app, user) {
+OP.encodeToken = function(app, user) {
 	var sign = app.id + '-' + user.id + '-' + (user.accesstoken + app.accesstoken).crc32(true);
 	return sign + '-' + (sign + F.config.accesstoken).crc32(true);
 };
 
-OP.decodeToken2 = function(sign) {
+OP.decodeToken = function(sign) {
 
 	var arr = sign.split('-');
 	if (arr.length !== 4)
@@ -168,13 +168,13 @@ OP.decodeToken2 = function(sign) {
 };
 
 // Auth token
-OP.encodeToken = function(app, user) {
+OP.encodeAuthToken = function(app, user) {
 	var sign = app.id + '-' + user.id;
 	sign += '-' + ((user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + F.config.accesstoken).crc32(true));
 	return sign.encrypt(F.config.accesstoken.substring(0, 20));
 };
 
-OP.decodeToken = function(sign) {
+OP.decodeAuthToken = function(sign) {
 
 	sign = sign.decrypt(F.config.accesstoken.substring(0, 20));
 	var arr = sign.split('-');
@@ -287,10 +287,10 @@ function readuser(user, type, app) {
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;
 	obj.volume = user.volume;
-	obj.badge = F.config.url + '/api/badges/?accesstoken=' + OP.encodeToken2(app, user);
+	obj.badge = F.config.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
 
 	if (obj.notifications)
-		obj.notify = F.config.url + '/api/notify/?accesstoken=' + OP.encodeToken2(app, user);
+		obj.notify = F.config.url + '/api/notify/?accesstoken=' + OP.encodeToken(app, user);
 
 	switch (type) {
 		case 2:
