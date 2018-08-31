@@ -2295,11 +2295,11 @@ COMPONENT('processes', function(self, config) {
 		iframe.iframe[0].$loaded = 0;
 		iframe.iframe.on('load', function() {
 			if (this.$loaded === 1) {
-				iframe.element.find('.ui-process-loading').aclass('hidden', 1000);
 				setTimeout(function() {
+					iframe.element.find('.ui-process-loading').aclass('hidden');
 					value.internal.notifydata && self.sendnotifydata(iframe, value.internal.notifydata);
 					value.internal.loaded = true;
-				}, 1000);
+				}, 1500);
 			}
 			this.$loaded++;
 		});
