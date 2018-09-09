@@ -113,15 +113,13 @@
 	apps.items = EMPTYARRAY;
 
 	OPENPLATFORM.init(function(err, meta) {
-
 		if (err) {
 			document.body.innerHTML = '401: unauthorized';
 			window.close();
-			return;
+		} else {
+			resizelayout();
+			apps_refresh();
 		}
-
-		resizelayout();
-		apps_refresh();
 	});
 
 	OPENPLATFORM.on('maximize', function() {

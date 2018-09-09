@@ -32,14 +32,11 @@
 <script>
 
 	OPENPLATFORM.init(function(err, meta) {
-
 		if (err) {
 			document.body.innerHTML = '401: unauthorized';
 			window.close();
-			return;
-		}
-
-		settings_refresh();
+		} else
+			settings_refresh();
 	});
 
 	function settings_generatetoken() {

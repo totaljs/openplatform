@@ -50,14 +50,11 @@
 <script>
 
 	OPENPLATFORM.init(function(err, meta) {
-
 		if (err) {
 			document.body.innerHTML = '401: unauthorized';
 			window.close();
-			return;
-		}
-
-		account_refresh();
+		} else
+			account_refresh();
 	});
 
 	function account_refresh() {

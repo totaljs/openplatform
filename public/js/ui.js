@@ -635,7 +635,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 
 		sending = true;
 		var async = queue.splice(0, 3);
-		async.waitFor(function(item, next) {
+		async.wait(function(item, next) {
 			ws.send(item);
 			setTimeout(next, 5);
 		}, function() {
@@ -2533,7 +2533,7 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 			self.tclass(cempty, arr.length === 0);
 
 			skip = true;
-			self.set(self.path, arr, 2);
+			self.set(arr, 2);
 			self.change(true);
 		});
 
@@ -2581,7 +2581,7 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 			});
 
 			skip = true;
-			self.set(self.path, arr, 2);
+			self.set(arr, 2);
 			self.change(true);
 		});
 	};
@@ -3370,7 +3370,7 @@ COMPONENT('search', 'class:hidden;delay:200;attribute:data-search', function(sel
 			var hide = [];
 			var show = [];
 
-			elements.toArray().waitFor(function(item, next) {
+			elements.toArray().wait(function(item, next) {
 				var el = $(item);
 				var val = (el.attr(config.attribute) || '').toSearch();
 				if (val.indexOf(search) === -1)
