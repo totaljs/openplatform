@@ -2,7 +2,7 @@ NEWSCHEMA('Badge').make(function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
-		var obj = OP.decodeToken($.query.accesstoken);
+		var obj = $.query.accesstoken ? OP.decodeToken($.query.accesstoken) : null;
 		if (!obj) {
 			$.invalid('error-invalid-accesstoken');
 			return;

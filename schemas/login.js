@@ -1,4 +1,4 @@
-const COOKIEOPTIONS = { secure: true };
+const COOKIEOPTIONS = { httponly: true, security: 'lax' };
 
 NEWSCHEMA('Login').make(function(schema) {
 

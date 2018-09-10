@@ -53,7 +53,7 @@ NEWSCHEMA('Notification').make(function(schema) {
 
 		} else {
 
-			var obj = OP.decodeToken($.query.accesstoken);
+			var obj = $.query.accesstoken ? OP.decodeToken($.query.accesstoken) : null;
 			if (!obj) {
 				$.invalid('error-invalid-accesstoken');
 				return;

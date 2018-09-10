@@ -6,7 +6,6 @@ AUTH(function(req, res, flags, next) {
 	var key = (req.ip + (req.headers['user-agent'] || '')).substring(0, 50);
 
 	// Acccess Token
-
 	var token = req.headers['x-token'];
 	if (token) {
 		if (DDOS[key] > 5) {

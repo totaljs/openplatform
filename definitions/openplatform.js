@@ -177,6 +177,10 @@ OP.encodeAuthToken = function(app, user) {
 OP.decodeAuthToken = function(sign) {
 
 	sign = sign.decrypt(F.config.accesstoken.substring(0, 20));
+
+	if (!sign)
+		return null;
+
 	var arr = sign.split('-');
 
 	if (arr.length !== 3)
