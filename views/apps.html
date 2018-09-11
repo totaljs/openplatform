@@ -65,10 +65,10 @@
 				<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-yellow" style="margin-top:10px">
 					<script type="text/html">
 						<div class="padding">
-							<div class="b"><i class="fal fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
+							<div class="b"><i class="fa fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
 							<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
 							{{ if value.description }}
-								<div class="help" style="margin-top:15px"><i class="fal fa-info-circle"></i>{{ value.description }}</div>
+								<div class="help" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
 							{{ fi }}
 						</div>
 					</script>
