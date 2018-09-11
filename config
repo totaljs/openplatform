@@ -16,4 +16,4 @@ languages       (Array)         : ['en']
 cookie                          : __opu
 cookie-expiration               : 1 month
 
-cdn                             : //cdn.componentator.com/
+cdn                             : //cdn.componentator.com
