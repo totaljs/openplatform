@@ -120,12 +120,14 @@ document.addEventListener('click', function() {
 
 OPENPLATFORM.loading = function(visible, interval) {
 
+	OPENPLATFORM.$loading && clearTimeout(OPENPLATFORM.$loading);
+
 	if (!interval) {
 		OPENPLATFORM.send('loading', visible);
 		return;
 	}
 
-	setTimeout(function(visible) {
+	OPENPLATFORM.$loading = setTimeout(function(visible) {
 		OPENPLATFORM.send('loading', visible);
 	}, interval, visible);
 };
