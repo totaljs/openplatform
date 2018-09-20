@@ -33,8 +33,8 @@ AUTH(function(req, res, flags, next) {
 	cookie = F.decrypt(cookie);
 
 	if (cookie) {
-		var user = F.global.users.findItem('id', cookie.id);
-		if (user) {
+		var user = G.findItem('id', cookie.id);
+		if (user && !user.inactive && !user.blocked) {
 			user.datelogged = F.datetime;
 			user.online = true;
 			next(true, user);
@@ -62,9 +62,9 @@ ON('service', function(counter) {
 
 	var messages = [];
 
-	for (var i = 0, length = F.global.users.length; i < length; i++) {
+	for (var i = 0, length = G.length; i < length; i++) {
 
-		var user = F.global.users[i];
+		var user = G[i];
 		if (user.inactive || user.blocked || !user.notificationsemail || !user.countnotifications)
 			continue;
 

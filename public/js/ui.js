@@ -659,6 +659,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 	function onClose(e) {
 
 		if (e.code === 4001) {
+			COOKIES.rem('@{config.cookie}');
 			location.reload(true);
 			return;
 		}
