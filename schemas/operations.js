@@ -1,4 +1,4 @@
-NEWSCHEMA('UserApps').make(function(schema) {
+NEWSCHEMA('UserApps', function(schema) {
 
 	schema.define('type', ['extend', 'set', 'remove'], true);
 	schema.define('ou', 'String(200)');

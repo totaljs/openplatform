@@ -1,4 +1,4 @@
-NEWSCHEMA('Badge').make(function(schema) {
+NEWSCHEMA('Badge', function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 

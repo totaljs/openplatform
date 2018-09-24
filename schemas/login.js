@@ -1,6 +1,6 @@
 const COOKIEOPTIONS = { httponly: true, security: 'lax' };
 
-NEWSCHEMA('Login').make(function(schema) {
+NEWSCHEMA('Login', function(schema) {
 
 	schema.define('name', 'String(50)', true);
 	schema.define('password', 'String(50)', true);

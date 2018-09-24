@@ -65,7 +65,7 @@ ON('service', function(counter) {
 	for (var i = 0, length = F.global.users.length; i < length; i++) {
 
 		var user = F.global.users[i];
-		if (user.inactive || user.blocked || !user.notificationsemail || !user.countnotifications)
+		if (!user || user.inactive || user.blocked || !user.notificationsemail || !user.countnotifications)
 			continue;
 
 		if (user.datenotifiedemail && user.datenotifiedemail.add('12 hour') > F.datetime)

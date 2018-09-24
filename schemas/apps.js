@@ -1,4 +1,4 @@
-NEWSCHEMA('Meta').make(function(schema) {
+NEWSCHEMA('Meta', function(schema) {
 	schema.define('url', 'Url', true);
 	schema.addWorkflow('exec', function($) {
 		RESTBuilder.make(function(builder) {
@@ -11,7 +11,7 @@ NEWSCHEMA('Meta').make(function(schema) {
 	});
 });
 
-NEWSCHEMA('App').make(function(schema) {
+NEWSCHEMA('App', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('url', 'Url', true);

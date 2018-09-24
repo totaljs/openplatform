@@ -1,6 +1,6 @@
 const Fs = require('fs');
 
-NEWSCHEMA('User').make(function(schema) {
+NEWSCHEMA('User', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
@@ -296,7 +296,7 @@ NEWSCHEMA('User').make(function(schema) {
 		meta.languages = F.config.languages;
 
 		meta.ou = toArray(ou, function(item) {
-			item.name = item.name.replace(/\//g, ' / ');
+			item.id = item.name = item.name.replace(/\//g, ' / ');
 			return item;
 		});
 

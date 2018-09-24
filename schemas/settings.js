@@ -1,6 +1,6 @@
 const Fs = require('fs');
 
-NEWSCHEMA('Settings').make(function(schema) {
+NEWSCHEMA('Settings', function(schema) {
 
 	schema.define('url', 'String(500)', true);
 	schema.define('email', 'Email', true);

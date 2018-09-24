@@ -1,4 +1,4 @@
-NEWSCHEMA('User').make(function(schema) {
+NEWSCHEMA('User', function(schema) {
 
 	schema.define('email', 'Email', true);
 	schema.define('phone', 'Phone', true);

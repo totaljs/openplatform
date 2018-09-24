@@ -3,7 +3,6 @@ const OP = global.OP = {};
 
 // G.users = [];
 // G.apps = [];
-// G.meta = { groups: [], places: [], positions: [], companies: [], departments: [] };
 
 // Saves stats into the file
 OP.save = function(callback) {
@@ -276,17 +275,21 @@ function readuser(user, type, app) {
 	obj.locality = user.locality;
 	obj.localitylinker = user.localitylinker;
 	obj.reference = user.reference;
-	obj.countnotifications = user.countnotifications;
-	obj.countbadges = user.countbadges;
-	obj.countsessions = user.countsessions;
+	obj.countnotifications = user.countnotifications || 0;
+	obj.countbadges = user.countbadges || 0;
+	obj.countsessions = user.countsessions || 0;
+
+	var appdata = user.apps[app.id];
 
 	if (user.roles && user.roles.length) {
-		obj.roles = user.apps[app.id].roles.slice(0);
+		obj.roles = appdata.roles.slice(0);
 		for (var i = 0; i < user.roles.length; i++)
 			obj.roles.push(user.roles[i]);
 	} else
-		obj.roles = user.apps[app.id];
+		obj.roles = appdata.roles;
 
+	// obj.appcountbadges = appdata.countbadges || 0;
+	// obj.appcountnotifications = appdata.countnotifications || 0;
 	obj.groups = user.groups;
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;

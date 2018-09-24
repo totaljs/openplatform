@@ -1,6 +1,6 @@
 const Fs = require('fs');
 
-NEWSCHEMA('Notification').make(function(schema) {
+NEWSCHEMA('Notification', function(schema) {
 
 	schema.define('type', Number);
 	schema.define('body', 'String(1000)', true);

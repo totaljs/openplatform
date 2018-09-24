@@ -1,4 +1,4 @@
-NEWSCHEMA('Password').make(function(schema) {
+NEWSCHEMA('Password', function(schema) {
 
 	schema.define('name', 'String(50)', true);
 
