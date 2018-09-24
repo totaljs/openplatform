@@ -15,7 +15,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('company', 'String(40)');
 	schema.define('ou', 'String(100)');
 	schema.define('language', 'String(2)');
-	schema.define('reference', 'String(40)');
+	schema.define('reference', 'String(70)');
 	schema.define('locality', 'String(40)');
 	schema.define('login', 'String(30)');
 	schema.define('password', 'String(30)');
