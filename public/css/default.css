@@ -69,7 +69,7 @@ h3 .fa { margin-right: 5px; }
 .app-disabled .app-name { border-color: #E0E0E0 !important; color: silver; }
 .app-disabled .app-version { color: silver; }
 .app-disabled img { opacity: 0.4; }
-.app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 13px; }
+.app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 10px; }
 .app > span .fa { margin-right: 5px; }
 .app-offline > span { display: block; }
 .app img { width: 120px; height: 120px; border-radius: 4px; }
