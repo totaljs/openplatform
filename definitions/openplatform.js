@@ -282,11 +282,11 @@ function readuser(user, type, app) {
 	var appdata = user.apps[app.id];
 
 	if (user.roles && user.roles.length) {
-		obj.roles = appdata.roles.slice(0);
+		obj.roles = appdata ? appdata.roles.slice(0) : EMPTYARRAY;
 		for (var i = 0; i < user.roles.length; i++)
 			obj.roles.push(user.roles[i]);
 	} else
-		obj.roles = appdata.roles;
+		obj.roles = appdata ? appdata.roles : EMPTYARRAY;
 
 	// obj.appcountbadges = appdata.countbadges || 0;
 	// obj.appcountnotifications = appdata.countnotifications || 0;
