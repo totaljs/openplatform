@@ -1890,6 +1890,8 @@ COMPONENT('processes', function(self, config) {
 		move.el = el;
 		move.x = x;
 		move.y = y;
+		move.w = el.width();
+		move.h = el.height() + 45;
 		self.find('.ui-process-focus').rclass('ui-process-focus');
 		el.aclass('ui-process-focus');
 		self.hidemenu();
@@ -1928,8 +1930,25 @@ COMPONENT('processes', function(self, config) {
 	};
 
 	self.mmove = function(x, y, e) {
+
 		if (move.is) {
-			move.el.css({ left: x - move.x, top: y - move.y });
+
+			x = x - move.x;
+			y = y - move.y;
+
+			if (x < 0)
+				x = 0;
+
+			if (y < 0)
+				y = 0;
+
+			if (x + move.w > WW)
+				x = WW - move.w;
+
+			if (y + move.h > WH)
+				y = WH - move.h;
+
+			move.el.css({ left: x, top: y });
 			e.preventDefault();
 		} else if (resize.is) {
 
@@ -2167,8 +2186,8 @@ COMPONENT('processes', function(self, config) {
 
 		var iframe = iframes[index];
 
-		if (!iframe.meta.internal.loaded)
-			return;
+		// if (!iframe.meta.internal.loaded)
+		// 	return;
 
 		iframes.splice(index, 1);
 		iframe.element.aclass('hidden');
