@@ -98,7 +98,11 @@ OP.meta = function(app, user, serverside) {
 	meta.openplatformid = OP.id;
 
 	if (app.serververify && !serverside) {
+		var tmp = readuser(user, app.allowreadprofile, app);
 		meta.serverside = true;
+		meta.profile = {};
+		meta.profile.badge = tmp.badge;
+		meta.profile.notify = tmp.notify;
 		return meta;
 	} else
 		meta.serverside = serverside === true;
