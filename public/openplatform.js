@@ -1,4 +1,4 @@
-var OPENPLATFORM = {};
+var OP = OPENPLATFORM = {};
 
 OPENPLATFORM.version = '3.0.0';
 OPENPLATFORM.callbacks = {};
