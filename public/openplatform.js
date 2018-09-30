@@ -132,6 +132,14 @@ OPENPLATFORM.loading = function(visible, interval) {
 	}, interval, visible);
 };
 
+OPENPLATFORM.success = function(message) {
+	return OPENPLATFORM.message(message);
+};
+
+OPENPLATFORM.warning = function(message) {
+	return OPENPLATFORM.message(message, 'warning');
+};
+
 OPENPLATFORM.message = function(message, type) {
 	var data = {};
 	data.body = message;
