@@ -151,7 +151,9 @@ OPENPLATFORM.confirm = function(message, buttons, callback) {
 	var data = {};
 	data.body = message;
 	data.buttons = buttons;
-	return OPENPLATFORM.send('confirm', data, callback);
+	return OPENPLATFORM.send('confirm', data, function(err, button) {
+		callback(button ? button.index : -1);
+	});
 };
 
 OPENPLATFORM.snackbar = function(message, type) {
