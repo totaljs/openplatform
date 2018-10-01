@@ -1,0 +1,13 @@
+{
+	"name": "OpenPlatform",
+	"short_name": "OpenPlatform",
+	"icons": [
+		{
+			"src": "/icon.png",
+			"sizes": "500x500",
+			"type": "image/png"
+		}
+	],
+	"start_url": "/",
+	"display": "standalone"
+}
