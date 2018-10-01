@@ -18,6 +18,9 @@ header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: poi
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; }
 .header-show { bottom: 0; }
 
+.username { position: absolute; right: 20px; top: 20px; color: #707070; font-size: 12px; }
+.username i { margin-right: 5px; }
+
 .startmenu { position: fixed; bottom: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 14; border-radius: 0 3px 0 0; box-shadow: 10px -10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, 80px); }
 .startmenu-title { height: 50px; border-bottom: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }

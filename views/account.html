@@ -49,7 +49,7 @@
 
 <script>
 
-	OPENPLATFORM.init(function(err, meta) {
+	OP.init(function(err, meta) {
 		if (err) {
 			document.body.innerHTML = '401: unauthorized';
 			window.close();
@@ -65,8 +65,8 @@
 		AJAX('POST /api/account/', account, function(response) {
 			SET('account.response', response);
 			if (response.success) {
-				OPENPLATFORM.message('Your account has been updated successfully.');
-				OPENPLATFORM.close();
+				OP.message('Your account has been updated successfully.');
+				OP.close();
 			}
 		});
 	}

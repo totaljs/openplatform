@@ -274,7 +274,7 @@
 	users.form = {};
 	users.items = EMPTYARRAY;
 
-	OPENPLATFORM.init(function(err, meta) {
+	OP.init(function(err, meta) {
 		if (err) {
 			document.body.innerHTML = '401: unauthorized';
 			window.close();
@@ -284,15 +284,15 @@
 		}
 	});
 
-	OPENPLATFORM.on('maximize', function() {
+	OP.on('maximize', function() {
 		userform_refresh();
 		NOTIFY('users.selected');
 	});
 
 	function usersform_load(item) {
-		OPENPLATFORM.loading(true);
+		OP.loading(true);
 		AJAX('GET /api/internal/users/{0}/'.format(item.id), function(response) {
-			OPENPLATFORM.loading(false, 1000);
+			OP.loading(false, 1000);
 			response.password = '*************';
 			SET('users.form', response, true);
 		});
@@ -339,8 +339,8 @@
 	}
 
 	function usersform_remove() {
-		OPENPLATFORM.confirm('@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(err, button) {
-			if (!button.index) {
+		OP.confirm('@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(index) {
+			if (!index) {
 				var id = users.selected;
 				AJAX('DELETE /api/internal/users/{0}/'.format(id), function(response) {
 					if (response.success) {
@@ -362,7 +362,7 @@
 
 	function userform_submit() {
 
-		OPENPLATFORM.loading(true);
+		OP.loading(true);
 		var settings = {};
 
 		// Collects app settings
@@ -388,7 +388,7 @@
 		data.apps = opt;
 
 		AJAX('POST /api/internal/users/', data, function(response) {
-			OPENPLATFORM.loading(false);
+			OP.loading(false);
 			SET('users.form.response', response);
 			if (response.success) {
 				userform_refresh(2000);

@@ -112,7 +112,7 @@
 	apps.form = {};
 	apps.items = EMPTYARRAY;
 
-	OPENPLATFORM.init(function(err, meta) {
+	OP.init(function(err, meta) {
 		if (err) {
 			document.body.innerHTML = '401: unauthorized';
 			window.close();
@@ -122,16 +122,16 @@
 		}
 	});
 
-	OPENPLATFORM.on('maximize', function() {
+	OP.on('maximize', function() {
 		apps_refresh();
 		NOTIFY('apps.selected');
 	});
 
 	function apps_load(item) {
-		OPENPLATFORM.loading(true);
+		OP.loading(true);
 		var item = apps.items.findItem('id', item.id);
 		item && SET('apps.form', CLONE(item), true);
-		OPENPLATFORM.loading(false, 1000);
+		OP.loading(false, 1000);
 	}
 
 	function apps_refresh() {
@@ -165,8 +165,8 @@
 	}
 
 	function apps_remove() {
-		OPENPLATFORM.confirm('@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(err, button) {
-			if (!button.index) {
+		OP.confirm('@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(index) {
+			if (!index) {
 				var id = apps.selected;
 				AJAX('DELETE /api/internal/apps/{0}/'.format(id), function(response) {
 					if (response.success) {
@@ -182,12 +182,12 @@
 
 	function apps_submit() {
 
-		OPENPLATFORM.loading(true);
+		OP.loading(true);
 
 		var data = CLONE(apps.form);
 
 		AJAX('POST /api/internal/apps/', data, function(response) {
-			OPENPLATFORM.loading(false);
+			OP.loading(false);
 			SET('apps.form.response', response);
 			if (response.success) {
 				apps_refresh();
