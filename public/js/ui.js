@@ -3464,7 +3464,11 @@ COMPONENT('message', function(self, config) {
 	};
 
 	self.content = function(cls, text, icon, button) {
-		!is && self.html('<div><div class="ui-message-body"><div class="text"></div><hr /><button>' + (button || config.button || 'Close') + '</button></div></div>');
+		var btn = (button || config.button || 'Close');
+		if (is)
+			self.find('button').html(btn);
+		else
+			self.html('<div><div class="ui-message-body"><div class="text"></div><hr /><button>' + btn + '</button></div></div>');
 		timer && clearTimeout(timer);
 		visible = true;
 		is = true;
