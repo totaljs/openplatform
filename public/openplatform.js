@@ -132,18 +132,19 @@ OPENPLATFORM.loading = function(visible, interval) {
 	}, interval, visible);
 };
 
-OPENPLATFORM.success = function(message) {
-	return OPENPLATFORM.message(message);
+OPENPLATFORM.success = function(message, button) {
+	return OPENPLATFORM.message(message, 'success', button);
 };
 
-OPENPLATFORM.warning = function(message) {
-	return OPENPLATFORM.message(message, 'warning');
+OPENPLATFORM.warning = function(message, button) {
+	return OPENPLATFORM.message(message, 'warning', button);
 };
 
-OPENPLATFORM.message = function(message, type) {
+OPENPLATFORM.message = function(message, type, button) {
 	var data = {};
 	data.body = message;
 	data.type = type;
+	data.button = button;
 	return OPENPLATFORM.send('message', data);
 };
 

@@ -3433,16 +3433,16 @@ COMPONENT('message', function(self, config) {
 		});
 	};
 
-	self.warning = function(message, icon, fn) {
+	self.warning = function(message, icon, fn, button) {
 		if (typeof(icon) === 'function') {
 			fn = icon;
 			icon = undefined;
 		}
 		self.callback = fn;
-		self.content('ui-message-warning', message, icon || 'fa-warning');
+		self.content('ui-message-warning', message, icon || 'fa-warning', button);
 	};
 
-	self.success = function(message, icon, fn) {
+	self.success = function(message, icon, fn, button) {
 
 		if (typeof(icon) === 'function') {
 			fn = icon;
@@ -3450,7 +3450,7 @@ COMPONENT('message', function(self, config) {
 		}
 
 		self.callback = fn;
-		self.content('ui-message-success', message, icon || 'fa-check-circle');
+		self.content('ui-message-success', message, icon || 'fa-check-circle', button);
 	};
 
 	self.hide = function() {
@@ -3463,8 +3463,8 @@ COMPONENT('message', function(self, config) {
 		}, 1000);
 	};
 
-	self.content = function(cls, text) {
-		!is && self.html('<div><div class="ui-message-body"><div class="text"></div><hr /><button>' + (config.button || 'Close') + '</button></div></div>');
+	self.content = function(cls, text, icon, button) {
+		!is && self.html('<div><div class="ui-message-body"><div class="text"></div><hr /><button>' + (button || config.button || 'Close') + '</button></div></div>');
 		timer && clearTimeout(timer);
 		visible = true;
 		is = true;
