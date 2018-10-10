@@ -7,7 +7,8 @@
 	.screenshot-apps li:hover { background-color: #F0F0F0; }
 	.screenshot-apps li span { display: block; margin-left: 70px; padding: 10px 0 0 0; font-size: 16px; }
 	.screenshot-apps li span .fa { font-size: 11px; vertical-align: middle; margin: -2px 0 0 8px; position: relative; display: inline-block; }
-	.screenshot-apps .selected { background-color: #F0F0F0; }
+	.screenshot-apps .selected { background-color: #015bca !important; color: white; }
+	.screenshot-apps .selected i { color: white; }
 </style>
 
 <div data-jc="form__common.form__if:screenshot;width:500;title:@(Screenshot);submit:screenshot/submit;reload:screenshot/reload" class="hidden">
@@ -50,7 +51,7 @@
 			var is = false;
 			for (var i = 0; i < user.apps.length; i++) {
 				var item = user.apps[i];
-				if (item.internal)
+				if (item.internal || !item.screenshots)
 					continue;
 				var sel = screenshot.selected && screenshot.selected === item.id;
 				if (!is && sel)

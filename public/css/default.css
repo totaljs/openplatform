@@ -7,7 +7,7 @@ $startmenubutton   : #52AA48;
 html,body { height: 100%; overflow: hidden; }
 body { height: 100%; overflow: hidden; background-color: #303030; background-size: 40%; }
 
-header { height: 45px; border-top:1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 15; width: 100%; bottom: -45px; color: #909090; transition: all 0.3s; }
+header { height: 45px; border-top: 1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 35; width: 100%; bottom: -45px; color: #909090; transition: all 0.3s; }
 header nav { float: left; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 45px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; }
 header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
@@ -21,7 +21,7 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: righ
 .username { position: absolute; right: 20px; top: 20px; color: #707070; font-size: 12px; }
 .username i { margin-right: 5px; }
 
-.startmenu { position: fixed; bottom: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 14; border-radius: 0 3px 0 0; box-shadow: 10px -10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, 80px); }
+.startmenu { position: fixed; bottom: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 3px 0 0; box-shadow: 10px -10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, 80px); }
 .startmenu-title { height: 50px; border-bottom: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }
 .startmenu-title span { float: left; margin: 14px 0 0 12px; }
@@ -81,12 +81,12 @@ h3 .fa { margin-right: 5px; }
 .app .fa-times { position: absolute; right: 20px; top: 10px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
 .app .fa-times:hover { opacity: 0.8; }
 .appunread { position: absolute; background-color: #D23B3B; color: white; width: 24px; border-radius: 100%; height: 24px; font-size: 12px; padding: 3px 0 0; margin-top: -2px; left: 5px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
-.app .appbadge { position: absolute; margin: 20px 0 0 18px; }
-.appbadge .fa { color: red; font-size: 6px; }
+.app .appbadge { position: absolute; margin: 27px 0 0 18px; font-size: 7px; }
+.appbadge .fa { color: red; font-size: 7px; }
 
 .appprocess { position: relative; }
-.appprocess .appbadge { position: absolute; margin: 22px 0 0 7px; font-size: 6px; }
-.appprocess .appbadge .fa { font-size: 6px; }
+.appprocess .appbadge { position: absolute; margin: 20px 0 0 7px; font-size: 7px; }
+.appprocess .appbadge .fa { font-size: 7px; }
 
 .appprogress { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 3px; padding: 0; }
 .appprocess .appprogress { bottom: 5px; top: auto; padding: 0 8px; }

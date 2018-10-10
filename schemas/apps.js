@@ -155,6 +155,7 @@ function state(item, next) {
 			item.height = response.height;
 			item.resize = response.resize;
 			item.type = response.type;
+			item.screenshots = response.allowscreenshots === true;
 
 			if (response.origin && response.origin.length) {
 				item.origin = {};
@@ -191,6 +192,7 @@ function sync(item, model, meta) {
 	item.description = model.description;
 	item.author = model.author;
 	item.icon = model.icon;
+	item.screenshot = model.allowscreenshots === true;
 	item.frame = model.frame;
 	item.email = model.email;
 	item.roles = model.roles;

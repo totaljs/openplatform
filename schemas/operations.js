@@ -4,8 +4,11 @@ NEWSCHEMA('UserApps', function(schema) {
 	schema.define('ou', 'String(200)');
 	schema.define('company', 'String(50)');
 	schema.define('locality', 'String(50)');
+	schema.define('group', 'String(50)');
+	schema.define('role', 'String(50)');
 	schema.define('gender', ['male', 'female']);
-	schema.define('customer', ['true', 'false']);
+	schema.define('customer', Boolean);
+	schema.define('sa', Boolean);
 	schema.define('apps', 'Object');
 
 	schema.addWorkflow('exec', function($) {
@@ -28,16 +31,16 @@ NEWSCHEMA('UserApps', function(schema) {
 				continue;
 			if (model.company && user.company !== model.company)
 				continue;
+			if (model.group && user.groups.indexOf(model.group) === -1)
+				continue;
+			if (model.role && user.roles.indexOf(model.role) === -1)
+				continue;
 			if (model.gender && user.gender !== model.gender)
 				continue;
-			if (model.customer === 'true') {
-				if (!user.customer)
-					continue;
-			} else if (model.customer === 'false') {
-				if (user.customer)
-					continue;
-			}
-
+			if (model.customer && !user.customer)
+				continue;
+			if (model.sa && !user.sa)
+				continue;
 			if (model.type === 'set') {
 				count++;
 				user.apps = CLONE(model.apps);
@@ -53,7 +56,7 @@ NEWSCHEMA('UserApps', function(schema) {
 				// Extends
 				if (model.type === 'extend') {
 					!user.apps[key] && (user.apps[key] = { roles: [] });
-					permissions.forEach(permission => user.apps[key].push(permission));
+					permissions.forEach(permission => user.apps[key].roles.push(permission));
 					user.apps[key].settings = app.settings;
 					updated.push(user);
 					count++;

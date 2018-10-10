@@ -1,21 +1,32 @@
-var OP = OPENPLATFORM = {};
+var OP = {};
+var OPENPLATFORM = OP;
 
-OPENPLATFORM.version = '3.0.0';
-OPENPLATFORM.callbacks = {};
-OPENPLATFORM.events = {};
-OPENPLATFORM.is = top !== window;
-OPENPLATFORM.pending = [];
-OPENPLATFORM.interval = setInterval(function() {
-	if (OPENPLATFORM.ready) {
-		clearInterval(OPENPLATFORM.interval);
-		OPENPLATFORM.pending.forEach(OPENPLATFORM.$process);
-		return;
+OP.version = '3.0.0';
+OP.callbacks = {};
+OP.events = {};
+OP.is = top !== window;
+OP.pending = [];
+OP.interval = setInterval(function() {
+	if (OP.ready) {
+		clearInterval(OP.interval);
+		OP.pending.forEach(OP.$process);
 	}
 }, 500);
 
-OPENPLATFORM.screenshot = function() {
+document.onkeydown = function(e) {
+	if (e.keyCode === 116) {
+		e.returnValue = false;
+		e.keyCode = 0;
+		if (location.href.indexOf('openplatform=') === -1)
+			location.href = OP.tokenizator(location.href);
+		else
+			location.reload(true);
+	}
+};
 
-	if (!OPENPLATFORM.$screenshot) {
+OP.screenshot = function(cdn) {
+
+	if (!OP.$screenshot) {
 
 		var scr;
 
@@ -23,20 +34,22 @@ OPENPLATFORM.screenshot = function() {
 		if (!window.Promise) {
 			scr = document.createElement('script');
 			scr.type = 'text/javascript';
-			scr.src = '//cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js';
+			scr.src = (cdn || '//cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0') + '/polyfill.min.js';
 			document.body.appendChild(scr);
 		}
 
 		scr = document.createElement('script');
 		scr.type = 'text/javascript';
-		scr.src = '//html2canvas.hertzen.com/dist/html2canvas.min.js';
+		scr.src = (cdn || '//html2canvas.hertzen.com/dist') + '/html2canvas.min.js';
 		document.body.appendChild(scr);
-		OPENPLATFORM.$screenshot = 1;
+		OP.$screenshot = 1;
 	}
 
 	var make = function() {
+		OP.loading(true);
 		html2canvas(document.body).then(function(canvas) {
-			OPENPLATFORM.send('screenshot', canvas.toDataURL('image/jpeg', 0.85));
+			OP.send('screenshot', canvas.toDataURL('image/jpeg', 0.85));
+			OP.loading(false);
 		});
 	};
 
@@ -49,22 +62,22 @@ OPENPLATFORM.screenshot = function() {
 
 };
 
-OPENPLATFORM.launched = function(callback) {
-	OPENPLATFORM.send('launched', null, callback);
+OP.launched = function(callback) {
+	OP.send('launched', null, callback);
 };
 
-OPENPLATFORM.progress = function(p) {
-	return OPENPLATFORM.send('progress', p);
+OP.progress = function(p) {
+	return OP.send('progress', p);
 };
 
-OPENPLATFORM.init = function(callback) {
+OP.init = function(callback) {
 
-	OPENPLATFORM.ready = false;
+	OP.ready = false;
 
 	if (!callback)
 		callback = function(is) {
 			if (is == null) {
-				OPENPLATFORM.ready = true;
+				OP.ready = true;
 				return;
 			}
 			document.body.innerHTML = '401: Unauthorized';
@@ -73,7 +86,7 @@ OPENPLATFORM.init = function(callback) {
 			}, 2000);
 		};
 
-	if (!OPENPLATFORM.is) {
+	if (!OP.is) {
 		callback(new Error('OpenPlatform isn\'t detected.'));
 		document.body.innerHTML = '401: Unauthorized';
 		return;
@@ -86,7 +99,7 @@ OPENPLATFORM.init = function(callback) {
 		var name = arr[i];
 		if (name.substring(0, 13) === 'openplatform=') {
 			var tmp = decodeURIComponent(name.substring(13));
-			OPENPLATFORM.token = name.substring(13);
+			OP.token = name.substring(13);
 			accesstoken = decodeURIComponent(tmp.substring(tmp.indexOf('accesstoken=') + 12));
 			break;
 		}
@@ -94,7 +107,7 @@ OPENPLATFORM.init = function(callback) {
 
 	var data = {};
 	data.ua = navigator.userAgent;
-	OPENPLATFORM.accesstoken = accesstoken;
+	OP.accesstoken = accesstoken;
 
 	var timeout = setTimeout(function() {
 		timeout = null;
@@ -102,10 +115,10 @@ OPENPLATFORM.init = function(callback) {
 		document.body.innerHTML = '401: Unauthorized';
 	}, 2000);
 
-	OPENPLATFORM.send('verify', data, function(err, response) {
+	OP.send('verify', data, function(err, response) {
 		if (timeout) {
 			clearTimeout(timeout);
-			OPENPLATFORM.ready = !err;
+			OP.ready = !err;
 			callback(null, response, setTimeout(function() {
 				response.href && (location.href = response.href);
 			}, 100));
@@ -115,110 +128,110 @@ OPENPLATFORM.init = function(callback) {
 };
 
 document.addEventListener('click', function() {
-	OPENPLATFORM && OPENPLATFORM.focus();
+	OP && OP.focus();
 });
 
-OPENPLATFORM.loading = function(visible, interval) {
+OP.loading = function(visible, interval) {
 
-	OPENPLATFORM.$loading && clearTimeout(OPENPLATFORM.$loading);
+	OP.$loading && clearTimeout(OP.$loading);
 
 	if (!interval) {
-		OPENPLATFORM.send('loading', visible);
+		OP.send('loading', visible);
 		return;
 	}
 
-	OPENPLATFORM.$loading = setTimeout(function(visible) {
-		OPENPLATFORM.send('loading', visible);
+	OP.$loading = setTimeout(function(visible) {
+		OP.send('loading', visible);
 	}, interval, visible);
 };
 
-OPENPLATFORM.success = function(message, button) {
-	return OPENPLATFORM.message(message, 'success', button);
+OP.success = function(message, button) {
+	return OP.message(message, 'success', button);
 };
 
-OPENPLATFORM.warning = function(message, button) {
-	return OPENPLATFORM.message(message, 'warning', button);
+OP.warning = function(message, button) {
+	return OP.message(message, 'warning', button);
 };
 
-OPENPLATFORM.message = function(message, type, button) {
+OP.message = function(message, type, button) {
 	var data = {};
 	data.body = message;
 	data.type = type;
 	data.button = button;
-	return OPENPLATFORM.send('message', data);
+	return OP.send('message', data);
 };
 
-OPENPLATFORM.confirm = function(message, buttons, callback) {
+OP.confirm = function(message, buttons, callback) {
 	var data = {};
 	data.body = message;
 	data.buttons = buttons;
-	return OPENPLATFORM.send('confirm', data, function(err, button) {
+	return OP.send('confirm', data, function(err, button) {
 		callback(button ? button.index : -1);
 	});
 };
 
-OPENPLATFORM.snackbar = function(message, type) {
+OP.snackbar = function(message, type) {
 	var data = {};
 	data.body = message;
 	data.type = type;
-	return OPENPLATFORM.send('snackbar', data);
+	return OP.send('snackbar', data);
 };
 
-OPENPLATFORM.meta = function(callback) {
+OP.meta = function(callback) {
 	var data = {};
 	data.ua = navigator.userAgent;
-	data.accesstoken = OPENPLATFORM.accesstoken;
-	OPENPLATFORM.send('meta', data, function(err, response) {
+	data.accesstoken = OP.accesstoken;
+	OP.send('meta', data, function(err, response) {
 		callback(err, response);
 	});
 };
 
-OPENPLATFORM.play = function(url) {
+OP.play = function(url) {
 	if (!(/^(http|https):\/\//).test(url)) {
 		if (url.substring(0, 1) !== '/')
 			url = '/' + url;
 		url = location.protocol + '//' + location.hostname + url;
 	}
-	return OPENPLATFORM.send('play', url);
+	return OP.send('play', url);
 };
 
-OPENPLATFORM.stop = function(url) {
-	return OPENPLATFORM.send('stop', url);
+OP.stop = function(url) {
+	return OP.send('stop', url);
 };
 
-OPENPLATFORM.focus = function() {
-	return OPENPLATFORM.send('focus');
+OP.focus = function() {
+	return OP.send('focus');
 };
 
-OPENPLATFORM.maximize = function(url) {
-	return OPENPLATFORM.send('maximize', url);
+OP.maximize = function(url) {
+	return OP.send('maximize', url);
 };
 
-OPENPLATFORM.restart = function() {
-	return OPENPLATFORM.send('restart', location.href);
+OP.restart = function() {
+	return OP.send('restart', location.href);
 };
 
-OPENPLATFORM.open = function(id, data) {
-	return OPENPLATFORM.send('open', { id: id, data: data });
+OP.open = function(id, data) {
+	return OP.send('open', { id: id, data: data });
 };
 
-OPENPLATFORM.minimize = function() {
-	return OPENPLATFORM.send('minimize');
+OP.minimize = function() {
+	return OP.send('minimize');
 };
 
-OPENPLATFORM.badge = function() {
-	return OPENPLATFORM.send('badge');
+OP.badge = function() {
+	return OP.send('badge');
 };
 
-OPENPLATFORM.log = function(message) {
-	return OPENPLATFORM.send('log', message);
+OP.log = function(message) {
+	return OP.send('log', message);
 };
 
-OPENPLATFORM.close = function() {
-	return OPENPLATFORM.send('kill');
+OP.close = function() {
+	return OP.send('kill');
 };
 
-OPENPLATFORM.notify = function(type, body, data) {
+OP.notify = function(type, body, data) {
 
 	if (typeof(type) === 'string') {
 		data = body;
@@ -226,18 +239,18 @@ OPENPLATFORM.notify = function(type, body, data) {
 		type = 0;
 	}
 
-	return OPENPLATFORM.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
+	return OP.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
 };
 
-OPENPLATFORM.share = function(app, type, body) {
-	return OPENPLATFORM.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date() });
+OP.share = function(app, type, body) {
+	return OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date() });
 };
 
-OPENPLATFORM.email = function(subject, body) {
-	return OPENPLATFORM.send('email', { subject: subject, body: body, datecreated: new Date() });
+OP.email = function(subject, body) {
+	return OP.send('email', { subject: subject, body: body, datecreated: new Date() });
 };
 
-OPENPLATFORM.send = function(type, body, callback) {
+OP.send = function(type, body, callback) {
 
 	if (typeof(body) === 'function') {
 		callback = body;
@@ -246,7 +259,7 @@ OPENPLATFORM.send = function(type, body, callback) {
 
 	var data = {};
 	data.openplatform = true;
-	data.accesstoken = OPENPLATFORM.accesstoken;
+	data.accesstoken = OP.accesstoken;
 	data.type = type;
 	data.body = body || null;
 	data.sender = true;
@@ -259,28 +272,28 @@ OPENPLATFORM.send = function(type, body, callback) {
 
 	if (callback) {
 		data.callback = (Math.random() * 1000000).toString(32).replace(/\./g, '');
-		OPENPLATFORM.callbacks[data.callback] = callback;
+		OP.callbacks[data.callback] = callback;
 	}
 
 	top.postMessage(JSON.stringify(data), '*');
-	return OPENPLATFORM;
+	return OP;
 };
 
-OPENPLATFORM.on = function(name, callback) {
-	!OPENPLATFORM.events[name] && (OPENPLATFORM.events[name] = []);
-	OPENPLATFORM.events[name].push(callback);
-	return OPENPLATFORM;
+OP.on = function(name, callback) {
+	!OP.events[name] && (OP.events[name] = []);
+	OP.events[name].push(callback);
+	return OP;
 };
 
-OPENPLATFORM.$process = function(data) {
+OP.$process = function(data) {
 
 	if (data.callback) {
-		var callback = OPENPLATFORM.callbacks[data.callback];
+		var callback = OP.callbacks[data.callback];
 		if (callback) {
 			if (data.sender)
 				data.error = new Error('The application is not running in the OpenPlatform scope.');
 			callback(data.error, data.body || {});
-			delete OPENPLATFORM.callbacks[data.callback];
+			delete OP.callbacks[data.callback];
 		}
 		return;
 	}
@@ -290,14 +303,14 @@ OPENPLATFORM.$process = function(data) {
 
 	if (data.type === 'reload') {
 		if (location.href.indexOf('openplatform=') === -1)
-			location.href = OPENPLATFORM.tokenizator(location.href);
+			location.href = OP.tokenizator(location.href);
 		else
 			location.reload(true);
 		return;
 	}
 
 	if (data.type === 'screenshotmake') {
-		OPENPLATFORM.screenshot();
+		OP.screenshot(data.body);
 		return;
 	}
 
@@ -312,11 +325,11 @@ OPENPLATFORM.$process = function(data) {
 
 	if (data.type === 'share') {
 		data.body.share = function(type, body) {
-			OPENPLATFORM.share(this.app, type, body);
+			OP.share(this.app, type, body);
 		};
 	}
 
-	var events = OPENPLATFORM.events[data.type];
+	var events = OP.events[data.type];
 	events && events.forEach(function(e) {
 		e(data.body || {});
 	});
@@ -329,15 +342,15 @@ window.addEventListener('message', function(e) {
 		if (!data.openplatform)
 			return;
 
-		if (!OPENPLATFORM.ready && data.type !== 'verify')
-			OPENPLATFORM.pending.push(data);
+		if (!OP.ready && data.type !== 'verify')
+			OP.pending.push(data);
 		else
-			OPENPLATFORM.$process(data);
+			OP.$process(data);
 
 	} catch (e) {}
 }, false);
 
-OPENPLATFORM.tokenizator = function(url) {
+OP.tokenizator = function(url) {
 	var index = url.indexOf('?');
-	return index === -1 ? (url + ('?openplatform=' + OPENPLATFORM.token)) : (url.substring(0, index + 1) + ('openplatform=' + OPENPLATFORM.token + '&' + url.substring(index + 1)));
+	return index === -1 ? (url + ('?openplatform=' + OP.token)) : (url.substring(0, index + 1) + ('openplatform=' + OP.token + '&' + url.substring(index + 1)));
 };

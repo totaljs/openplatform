@@ -834,7 +834,7 @@ COMPONENT('form', function(self, config) {
 
 		W.$$form_level++;
 
-		self.css('z-index', W.$$form_level * 10);
+		self.css('z-index', (W.$$form_level * 10) + 30);
 		self.element.scrollTop(0);
 		self.rclass('hidden');
 
@@ -856,7 +856,7 @@ COMPONENT('form', function(self, config) {
 
 		// Fixes a problem with freezing of scrolling in Chrome
 		setTimeout2(self.ID, function() {
-			self.css('z-index', (W.$$form_level * 10) + 1);
+			self.css('z-index', (W.$$form_level * 10) + 31);
 		}, 500);
 	};
 });
@@ -1421,7 +1421,7 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 
 	self.redraw = function() {
 
-		var html = '<div class="ui-dropdowncheckbox"><span class="fa fa-sort"></span><div class="ui-dropdowncheckbox-selected"></div></div><div class="ui-dropdowncheckbox-values hidden">{0}</div>'.format(render);
+		var html = '<div class="ui-dropdowncheckbox"><span class="fa fa-caret-down"></span><div class="ui-dropdowncheckbox-selected"></div></div><div class="ui-dropdowncheckbox-values hidden">{0}</div>'.format(render);
 		if (content.length)
 			self.html('<div class="ui-dropdowncheckbox-label{0}">{1}{2}:</div>'.format(config.required ? ' ui-dropdowncheckbox-required' : '', config.icon ? ('<i class="fa fa-' + config.icon + '"></i>') : '', content) + html);
 		else
@@ -1770,6 +1770,7 @@ COMPONENT('processes', function(self, config) {
 	var oldpos = {};
 	var defsize = {};
 	var appminimized = {};
+	var order = [];
 
 	self.hidemenu = function() {
 		common.startmenu && TOGGLE('common.startmenu');
@@ -1811,7 +1812,7 @@ COMPONENT('processes', function(self, config) {
 			case 'screenshot':
 				SETTER('loading', 'show')('loading', 'hide', 2000);
 				var iframe = iframes.findItem('id', id);
-				self.message(iframe, 'screenshotmake');
+				self.message(iframe, 'screenshotmake', common.cdn);
 				break;
 			case 'maximize':
 				self.resize_maximize(id);
@@ -1867,12 +1868,15 @@ COMPONENT('processes', function(self, config) {
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 		if (oldfocus === id)
 			return;
+		order = order.remove(id);
+		order.push(id);
 		oldfocus = id;
 		self.find('.ui-process-focus').rclass('ui-process-focus');
 		self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').rclass('hidden').rclass('ui-process-hidden');
 		setTimeout2(self.ID + 'focus', function() {
 			oldfocus = null;
 		}, 1000);
+		self.reorder();
 	};
 
 	self.event('mousedown', '.ui-process-resize', function(e) {
@@ -2171,6 +2175,14 @@ COMPONENT('processes', function(self, config) {
 		self.message(iframe, 'reload');
 	};
 
+	self.reorder = function() {
+		for (var i = 0; i < iframes.length; i++) {
+			var iframe = iframes[i];
+			var index = order.indexOf(iframe.id);
+			iframe.element.rclass2('ui-process-priority-').aclass('ui-process-priority-' + (index + 1));
+		}
+	};
+
 	self.kill = function(id) {
 
 		if (id === undefined) {
@@ -2186,6 +2198,8 @@ COMPONENT('processes', function(self, config) {
 
 		var iframe = iframes[index];
 
+		order = order.remove(id);
+
 		// if (!iframe.meta.internal.loaded)
 		// 	return;
 
@@ -2193,6 +2207,7 @@ COMPONENT('processes', function(self, config) {
 		iframe.element.aclass('hidden');
 		iframe.meta.internal.loaded = false;
 
+		self.reorder();
 		self.minimize(id, false);
 
 		$('.appclose[data-id="{0}"]'.format(id)).aclass('hidden');
@@ -2332,6 +2347,14 @@ COMPONENT('processes', function(self, config) {
 			iframe.element.css({ width: w, height: h, left: 0, top: 0 });
 			iframe.iframe.css({ height: h - margin });
 		} else {
+
+			if (value.id === '_apps' || value.id === '_users') {
+				if (value.internal.height > WH - 150)
+					value.internal.height = WH - 150;
+				else if (WH > 800)
+					value.internal.height = 750;
+			}
+
 			var hash = value.internal.width + 'x' + value.internal.height + 'x' + value.internal.resize;
 			var def = appdefs[value.id];
 			if (def && def.hash === hash) {
@@ -3319,6 +3342,7 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 
 	var show = true;
 	var callback;
+	var ti;
 
 	self.readonly();
 	self.blind();
@@ -3333,7 +3357,8 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 
 	self.hide = function() {
 		self.rclass('ui-snackbar-visible');
-		setTimeout(function() {
+		clearTimeout(ti);
+		ti = setTimeout(function() {
 			self.aclass('hidden');
 		}, 1000);
 		show = true;
@@ -3361,7 +3386,8 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 
 		if (show) {
 			self.rclass('hidden');
-			setTimeout(function() {
+			clearTimeout(ti);
+			ti = setTimeout(function() {
 				self.aclass('ui-snackbar-visible');
 			}, 50);
 		}
@@ -3888,5 +3914,131 @@ COMPONENT('features', 'height:37', function(self, config) {
 			is = false;
 			$('html,body').rclass('ui-features-noscroll');
 		}, sleep ? sleep : 100);
+	};
+});
+
+COMPONENT('panel', 'width:350;icon:circle-o', function(self, config) {
+
+	var W = window;
+
+	if (!W.$$panel) {
+
+		W.$$panel_level = W.$$panel_level || 1;
+		W.$$panel = true;
+
+		$(document).on('click touchend', '.ui-panel-button-close,.ui-panel-container', function(e) {
+			var target = $(e.target);
+			var curr = $(this);
+			var main = target.hclass('ui-panel-container');
+			if (curr.hclass('ui-panel-button-close') || main) {
+				var parent = target.closest('.ui-panel-container');
+				var com = parent.component();
+				if (!main || com.config.bgclose) {
+					com.hide();
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			}
+		});
+
+		$(W).on('resize', function() {
+			SETTER('panel', 'resize');
+		});
+	}
+
+	self.readonly();
+
+	self.hide = function() {
+		self.set('');
+	};
+
+	self.resize = function() {
+		var el = self.element.find('.ui-panel-body');
+		el.height(WH - (isMOBILE ? 0 : self.find('.ui-panel-header').height()));
+	};
+
+	self.icon = function(value) {
+		var el = this.rclass2('fa');
+		value.icon && el.aclass('fa fa-' + value.icon);
+	};
+
+	self.make = function() {
+		$(document.body).append('<div id="{0}" class="hidden ui-panel-container{3}"><div class="ui-panel" style="max-width:{1}px"><div data-bind="@config__change .ui-panel-icon:@icon__html span:value.title" class="ui-panel-title"><button class="ui-panel-button-close{2}"><i class="fa fa-times"></i></button><i class="ui-panel-icon"></i><span></span></div><div class="ui-panel-header"></div><div class="ui-panel-body"></div></div>'.format(self.ID, config.width, config.closebutton == false ? ' hidden' : '', config.bg ? '' : ' ui-panel-inline'));
+		var el = $('#' + self.ID);
+		el.find('.ui-panel-body')[0].appendChild(self.dom);
+		self.rclass('hidden');
+		self.replace(el);
+		self.find('button').on('click', function() {
+			switch (this.name) {
+				case 'cancel':
+					self.hide();
+					break;
+			}
+		});
+	};
+
+	self.configure = function(key, value, init) {
+		if (!init) {
+			switch (key) {
+				case 'closebutton':
+					self.find('.ui-panel-button-close').tclass(value !== true);
+					break;
+			}
+		}
+	};
+
+	self.setter = function(value) {
+
+		setTimeout2('ui-panel-noscroll', function() {
+			$('html').tclass('ui-panel-noscroll', !!$('.ui-panel-container').not('.hidden').length);
+		}, 50);
+
+		var isHidden = value !== config.if;
+
+		if (self.hclass('hidden') === isHidden)
+			return;
+
+		setTimeout2('panelreflow', function() {
+			EMIT('reflow', self.name);
+		}, 10);
+
+		if (isHidden) {
+			self.aclass('hidden');
+			self.release(true);
+			self.find('.ui-panel').rclass('ui-panel-animate');
+			W.$$panel_level--;
+			return;
+		}
+
+		if (W.$$panel_level < 1)
+			W.$$panel_level = 1;
+
+		W.$$panel_level++;
+
+		var container = self.element.find('.ui-panel-body');
+
+		self.css('z-index', W.$$panel_level * 10);
+		container.scrollTop(0);
+		self.rclass('hidden');
+		self.release(false);
+		setTimeout(self.resize, 100);
+
+		config.reload && EXEC(config.reload, self);
+		config.default && DEFAULT(config.default, true);
+
+		if (!isMOBILE && config.autofocus) {
+			var el = self.find(config.autofocus === true ? 'input[type="text"],select,textarea' : config.autofocus);
+			el.length && el[0].focus();
+		}
+
+		setTimeout(function() {
+			container.scrollTop(0);
+			self.find('.ui-panel').aclass('ui-panel-animate');
+		}, 300);
+
+		// Fixes a problem with freezing of scrolling in Chrome
+		setTimeout2(self.id, function() {
+			self.css('z-index', (W.$$panel_level * 10) + 1);
+		}, 1000);
 	};
 });
