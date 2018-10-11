@@ -170,11 +170,12 @@ OP.confirm = function(message, buttons, callback) {
 	});
 };
 
-OP.snackbar = function(message, type) {
+OP.snackbar = function(message, type, button) {
 	var data = {};
 	data.body = message;
 	data.type = type;
-	return OP.send('snackbar', data);
+	data.button = button;
+	return OP.send('snackbar', data, button);
 };
 
 OP.meta = function(callback) {

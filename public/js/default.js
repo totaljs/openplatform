@@ -184,7 +184,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'snackbar':
-			SETTER('snackbar', data.body.type || 'success', data.body.body);
+			SETTER('snackbar', data.body.type || 'success', data.body.body, data.body.button);
 			break;
 
 		case 'message':
