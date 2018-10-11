@@ -2078,7 +2078,7 @@ COMPONENT('processes', function(self, config) {
 		if (callbackid)
 			data.callback = callbackid;
 
-		item.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
+		item && item.element && item.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
 		return true;
 	};
 
