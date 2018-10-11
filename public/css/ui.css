@@ -186,7 +186,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-process .visible { left: 0; right: 0; bottom: 0; top: 0; border-radius: 0; opacity: 0.8; }
 .ui-process-animation { opacity: 0; transform: scale(0.5); }
 .ui-process-header { height: 36px; border-radius: 3px 3px 0 0; color: white; cursor: default; position: relative; }
-.ui-process-mainmenu { float: left; background-color: rgba(0,0,0,0.4); border: 0; height: 35px; width: 35px; margin: 0; text-align: center; padding: 0; font-size: 18px; }
+.ui-process-mainmenu { float: left; background-color: rgba(0,0,0,0.4); border: 0; height: 35px; width: 49px; margin: 0; text-align: center; padding: 0; font-size: 18px; }
 .ui-process-header div { float: left; margin: 11px 0 0 10px; font-size: 14px; line-height: 0; }
 .ui-process-header div .fal, .ui-process-header div .fa { margin-right: 5px; }
 .ui-process-header nav { float: right; margin: 7px 8px 0 0; }
@@ -336,4 +336,13 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 
 @media(max-width: 768px) {
 	.ui-snackbar > div { width: 100%; border: 0; border-radius: 0; }
+	.ui-process iframe { border-top-width: 1; border-bottom: 0; }
+	.ui-process-iframe-container { overflow: hidden; line-height: 0; }
+	.ui-process-header { height: 45px; }
+	.ui-process-header nav button { height: 30px; width: 30px; font-size: 18px; }
+	.ui-process-mainmenu { height: 45px; }
+	.ui-process-header div { margin-top: 23px; }
+	.ui-process-header div i { display: none; }
+	.ui-process-header nav { margin-top: 7px; }
+	.ui-process-screenshot { margin-top: 1px; }
 }

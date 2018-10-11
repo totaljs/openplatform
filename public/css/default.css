@@ -7,7 +7,7 @@ $startmenubutton   : #52AA48;
 html,body { height: 100%; overflow: hidden; }
 body { height: 100%; overflow: hidden; background-color: #303030; background-size: 40%; }
 
-header { height: 45px; border-top: 1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 35; width: 100%; bottom: -45px; color: #909090; transition: all 0.3s; }
+header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 35; width: 100%; top: -45px; color: #909090; transition: all 0.3s; }
 header nav { float: left; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 45px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; }
 header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
@@ -16,20 +16,20 @@ header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button .fa { font-size: 20px; }
 header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; }
-.header-show { bottom: 0; }
+.header-show { top: 0; }
 
-.username { position: absolute; right: 20px; top: 20px; color: #707070; font-size: 12px; }
+.username { position: absolute; right: 20px; bottom: 20px; color: #707070; font-size: 12px; }
 .username i { margin-right: 5px; }
 
-.startmenu { position: fixed; bottom: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 3px 0 0; box-shadow: 10px -10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, 80px); }
-.startmenu-title { height: 50px; border-bottom: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
+.startmenu { position: fixed; top: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, -80px); }
+.startmenu-title { height: 50px; border-top: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }
 .startmenu-title span { float: left; margin: 14px 0 0 12px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
 .startmenu-apps { padding: 15px 0; margin-right: 200px; overflow: hidden; }
 .startmenu-apps-container { height: 380px; overflow-y: auto; width: 330px; position: absolute; z-index: 1; padding: 5px 0; }
-.startmenu-nav { float: right; width: 200px; color: white; height: 450px; background-color: $startmenu; }
-.startmenu-nav nav button { display: block; color: white; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; }
+.startmenu-nav { float: right; width: 200px; height: 450px; background-color: $startmenu; border-left: 1px solid rgba(0,0,0,0.1); }
+.startmenu-nav nav button { display: block; color: white; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
@@ -157,10 +157,10 @@ h3 .fa { margin-right: 5px; }
 @media(max-width: 768px) {
 	.form-border { border-left: 0; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
-	.startmenu { width: 100%; border-radius: 0; top: 0; bottom: 45px; height: auto; }
-	.startmenu-nav { width: 100%; bottom: 0; top: 50px; }
+	.startmenu { width: 100%; border-radius: 0; top: 45px; height: auto; }
+	.startmenu-nav { width: 100%; bottom: 50px; }
 	.startmenu-apps { margin-right: 0; }
-	.startmenu-apps-container { width: 100%; position: relative; }
+	.startmenu-apps-container { width: 100%; position: relative; height: 200px; }
 	.app { margin-right: 0; }
 	.app-icon { width: 50px; }
 	.app-meta { margin-left: 60px; }
@@ -175,7 +175,7 @@ h3 .fa { margin-right: 5px; }
 	.app .appbadge { position: absolute; margin: 27px 0 0 22px; }
 }
 
-.ui-npanel { position: fixed; width: 300px; bottom: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 21; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
+.ui-npanel { position: fixed; width: 300px; top: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 33; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
 .ui-npanel .fa { margin-right: 3px; }
 .ui-npanel-clear { margin: 15px 0 0 20px; font-size: 11px; cursor: pointer; color: silver; }
 .ui-npanel-clear:hover { text-decoration: underline; }

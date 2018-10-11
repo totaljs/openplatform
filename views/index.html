@@ -77,22 +77,17 @@
 	</div>
 
 	<div class="startmenu hidden" data-bind="common.startmenu__exec:togglemenu">
-		<div class="startmenu-title">
-			<button class="exec" data-path="common.startmenuapps" data-value="!value"><i class="fa fa-ellipsis-h"></i></button>
-			<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
-			<span data-bind="user.name__html:value"></span>
-		</div>
 		<div class="startmenu-nav" data-jc="xs__common.startmenuapps__if:!value">
 			<div>
 				<nav>
 					@{if user.sa}
-					<button class="exec internal" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
-					<button class="exec internal" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
-					<button class="exec internal" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
+					<button class="exec internal b" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
+					<button class="exec internal b" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
+					<button class="exec internal b" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
 					@{fi}
-					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-cog"></i>@(My account)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
-					<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off"></i>@(Sign out)</button>
+					<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off red"></i>@(Sign out)</button>
 				</nav>
 			</div>
 		</div>
@@ -117,6 +112,12 @@
 				</div>
 			</div>
 		</div>
+		<div class="clearfix"></div>
+		<div class="startmenu-title">
+			<button class="exec" data-path="common.startmenuapps" data-value="!value"><i class="fa fa-ellipsis-h"></i></button>
+			<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
+			<span data-bind="user.name__html:value"></span>
+		</div>
 	</div>
 
 	<div data-jc="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
@@ -140,7 +141,7 @@
 			}
 		}
 
-		$('body').on('click', function(e) {
+		$('body').on('click touchstart', function(e) {
 			e.target.nodeName === 'BODY' && common.startmenu && TOGGLE('common.startmenu');
 		});
 
