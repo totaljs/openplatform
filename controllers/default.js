@@ -4,6 +4,7 @@ const WSNOTIFICATIONS = { TYPE: 'notifications', body: null };
 const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
 const WSLOGOFF = { TYPE: 'logoff' };
 const WSID = [''];
+const COOKIES = { security: 1, httponly: true };
 
 var WS;
 
@@ -46,7 +47,7 @@ function login() {
 			var cookie = {};
 			cookie.id = data.id;
 			cookie.date = F.datetime;
-			self.cookie(F.config.cookie, F.encrypt(cookie), '1 month');
+			self.cookie(F.config.cookie, F.encrypt(cookie), '1 month', COOKIES);
 			self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
 			return;
 		}

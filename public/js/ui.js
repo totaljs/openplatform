@@ -2353,6 +2353,8 @@ COMPONENT('processes', function(self, config) {
 					value.internal.height = WH - 150;
 				else if (WH > 800)
 					value.internal.height = 750;
+				else if (value.internal.height > WH - 80)
+					value.internal.height = WH - 80;
 			}
 
 			var hash = value.internal.width + 'x' + value.internal.height + 'x' + value.internal.resize;
