@@ -404,7 +404,8 @@
 		}, true);
 
 		SETTER(true, 'shortcuts', 'register', 'alt+r,F5', function(e) {
-			dashboard.current && SETTER('processes', 'reload', dashboard.current.id);
+			var id = $('.ui-process-focus').attrd('id');
+			id && SETTER('processes', 'reload', id);
 			e.preventDefault();
 			e.stopPropagation();
 		}, true);
