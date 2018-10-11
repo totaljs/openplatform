@@ -999,7 +999,7 @@ COMPONENT('contextmenu', function(self) {
 
 		if (is) {
 			clearTimeout(timeout);
-			var obj = target instanceof jQuery ? target.get(0) : target;
+			var obj = target instanceof jQuery ? target[0] : target;
 			if (self.target === obj) {
 				self.hide(0);
 				return;
@@ -1045,7 +1045,7 @@ COMPONENT('contextmenu', function(self) {
 		}
 
 		self.items = items;
-		self.target = target.get(0);
+		self.target = target[0];
 		var offset = target.offset();
 
 		container.html(builder);
@@ -2078,7 +2078,7 @@ COMPONENT('processes', function(self, config) {
 		if (callbackid)
 			data.callback = callbackid;
 
-		item.element.find('iframe').get(0).contentWindow.postMessage(JSON.stringify(data), '*');
+		item.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
 		return true;
 	};
 
@@ -2093,7 +2093,7 @@ COMPONENT('processes', function(self, config) {
 				data.error = error.toString();
 			if (callbackid)
 				data.callback = callbackid;
-			proc.element.find('iframe').get(0).contentWindow.postMessage(JSON.stringify(data), '*');
+			proc.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
 		}
 	};
 
@@ -2936,10 +2936,10 @@ COMPONENT('calendar', 'today:Set today;firstday:0;close:Close;yearselect:true;mo
 	};
 
 	self.toggle = function(el, value, callback, offset) {
-		if (self.older === el.get(0)) {
+		if (self.older === el[0]) {
 			!self.hclass('hidden') && self.hide();
 		} else {
-			self.older = el.get(0);
+			self.older = el[0];
 			self.show(el, value, callback, offset);
 		}
 		return self;
