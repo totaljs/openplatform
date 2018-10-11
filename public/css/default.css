@@ -21,7 +21,7 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: righ
 .username { position: absolute; right: 20px; bottom: 20px; color: #707070; font-size: 12px; }
 .username i { margin-right: 5px; }
 
-.startmenu { position: fixed; top: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.2s; opacity: 0; transform: translate(0px, -80px); }
+.startmenu { position: fixed; top: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.15s; opacity: 0; transform: translate(0px, -200px); }
 .startmenu-title { height: 50px; border-top: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }
 .startmenu-title span { float: left; margin: 14px 0 0 12px; }
@@ -59,7 +59,7 @@ h3 .fa { margin-right: 5px; }
 .user.selected { color: white; }
 .user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
 .user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; }
-.user-notifications .fa { color: yellow; }
+.user-notifications .fa { color: #1253e7; }
 
 .app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 10px 0; position: relative; }
 .app-container { border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; cursor: pointer; transition: all 0.2s; height: 38px; color: white; }

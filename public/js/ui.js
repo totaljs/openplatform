@@ -73,7 +73,7 @@ COMPONENT('time', function(self) {
 		self.bindtime = function() {
 			var dt = new Date();
 			time.html(dt.format('HH:mm'));
-			date.html(dt.format('dd. MMMM yyyy'));
+			date.html(dt.format('dd MMMM yyyy').toLowerCase());
 		};
 
 		setInterval(self.bindtime, 30000);
