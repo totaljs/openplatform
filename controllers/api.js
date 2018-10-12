@@ -44,8 +44,10 @@ exports.install = function() {
 	ROUTE('GET    /verify/',                            json_verify);
 	ROUTE('GET    /api/online/{id}/',                   json_online);
 	ROUTE('GET    /api/users/                           *User         --> @query');
+	ROUTE('GET    /api/apps/                            *App          --> @query');
 	ROUTE('GET    /api/badges/                          *Badge        --> @exec');
 	ROUTE('POST   /api/notify/                          *Notification --> @save');
+
 
 	// CORS
 	CORS();

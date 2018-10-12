@@ -28,6 +28,40 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('responsive', Boolean);
 	schema.define('blocked', Boolean);
 
+	schema.setQuery(function($) {
+
+		var obj = $.query.accesstoken ? OP.decodeAuthToken($.query.accesstoken) : null;
+
+		if (!obj) {
+			$.invalid('error-invalid-accesstoken');
+			return;
+		}
+
+		var user = obj.user;
+		var app = obj.app;
+		var ip = $.ip;
+
+		if (app.origin) {
+			if (!app.origin[ip] && app.hostname !== ip) {
+				$.invalid('error-invalid-origin');
+				return;
+			}
+		} else if (app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
+			$.invalid('error-invalid-origin');
+			return;
+		} else if (user.blocked || user.inactive) {
+			$.invalid('error-permissions');
+			return;
+		}
+
+		if (!user.apps[app.id]) {
+			$.invalid('error-permissions');
+			return;
+		}
+
+		$.callback(OP.apps(app, $.query));
+	});
+
 	schema.setSave(function($) {
 
 		if (!$.user.sa) {

@@ -122,13 +122,8 @@ OP.meta = function(app, user, serverside) {
 		}
 	}
 
-	if (app.allowreadapps) {
-		meta.apps = [];
-		for (var i = 0, length = G.apps.length; i < length; i++) {
-			var item = readapp(G.apps[i], app.allowreadapps);
-			item && meta.apps.push(item);
-		}
-	}
+	if (app.allowreadapps)
+		meta.apps = F.config.url + '/api/apps/?accesstoken=' + meta.accesstoken;
 
 	if (app.allowreadusers)
 		meta.users = F.config.url + '/api/users/?accesstoken=' + meta.accesstoken;
@@ -319,6 +314,17 @@ OP.users = function(app) {
 	if (app.allowreadusers) {
 		for (var i = 0, length = G.users.length; i < length; i++) {
 			var item = readuser(G.users[i], app.allowreadusers, app);
+			item && arr.push(item);
+		}
+	}
+	return arr;
+};
+
+OP.apps = function(app) {
+	var arr = [];
+	if (app.allowreadapps) {
+		for (var i = 0, length = G.users.length; i < length; i++) {
+			var item = readapp(G.apps[i], app.allowreadapps);
 			item && arr.push(item);
 		}
 	}

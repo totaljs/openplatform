@@ -114,7 +114,14 @@
 								<hr />
 								<div class="b fs11" style="margin-bottom:5px">@(Supported roles:)</div>
 								{{ foreach m in value.roles }}
-									<span class="badge badge-silver mr5">{{ m }}</span>
+									<span class="badge badge-blue mr5">{{ m }}</span>
+								{{ end }}
+							{{ fi }}
+							{{ if value.origin && value.origin.length }}
+								<hr />
+								<div class="b fs11" style="margin-bottom:5px">@(Supported origin:)</div>
+								{{ foreach m in value.origin }}
+									<span class="badge badge-red mr5">{{ m }}</span>
 								{{ end }}
 							{{ fi }}
 						</div>
