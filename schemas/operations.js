@@ -82,6 +82,7 @@ NEWSCHEMA('UserApps', function(schema) {
 		}
 
 		$.success(true, count);
+		count && OP.saveState(2);
 
 		updated.wait(function(id, next) {
 			EMIT('users.refresh', id);
