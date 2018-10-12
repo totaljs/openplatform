@@ -18,10 +18,16 @@ NEWSCHEMA('Login', function(schema) {
 				var cookie = {};
 				cookie.id = user.id;
 				cookie.date = F.datetime;
+
+				// Updates token
+				user.verifytoken = U.GUID(15);
+
+				// Creates auth cookie
 				$.controller.cookie(F.config.cookie, F.encrypt(cookie), F.config['cookie-expiration'] || '1 month', COOKIEOPTIONS);
 			}
 		} else
 			$.error.push('error-credentials');
+
 		$.success();
 	});
 

@@ -57,7 +57,7 @@ ON('service', function(counter) {
 		DDOS = {};
 
 	// Notifications: each 1 hour
-	if (counter % 60 !== 0)
+	if (counter % 60 !== 0 || !F.config['mail-smtp'])
 		return;
 
 	var messages = [];
@@ -72,7 +72,7 @@ ON('service', function(counter) {
 			continue;
 
 		user.datenotifiedemail = F.datetime;
-		var message = F.mail(user.email, '@(Unread notifications)', '/mails/notifications', user, user.language);
+		var message = MAIL(user.email, '@(Unread notifications)', '/mails/notifications', user, user.language);
 		message.manually();
 		messages.push(message);
 		LOGGER('email', user.id + ': ' + user.name + '(' + user.email + '): ' + user.countnotifications + 'x');
