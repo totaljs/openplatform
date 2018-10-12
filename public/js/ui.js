@@ -2018,7 +2018,7 @@ COMPONENT('processes', function(self, config) {
 			el.css({ width: +a[0], height: +a[1], left: +a[2], top: +a[3] });
 			el.attrd('cache', '');
 		} else {
-			var w = size.w, h = size.h, l = 0, t = 0;
+			var w = size.w, h = size.h, l = 0, t = $('header').height();
 			switch (align) {
 				case 1:
 				case 2:
