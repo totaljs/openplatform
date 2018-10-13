@@ -27,7 +27,7 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: righ
 .startmenu-title span { float: left; margin: 14px 0 0 12px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
 .startmenu-apps { padding: 15px 0; margin-right: 200px; overflow: hidden; }
-.startmenu-apps-container { height: 380px; overflow-y: auto; width: 330px; position: absolute; z-index: 1; padding: 5px 0; }
+.startmenu-apps-container { height: 380px; overflow-y: auto; width: 330px; position: absolute; z-index: 1; padding: 5px 0; overflow-scrolling: touch; }
 .startmenu-nav { float: right; width: 200px; height: 450px; background-color: $startmenu; border-left: 1px solid rgba(0,0,0,0.1); }
 .startmenu-nav nav button { display: block; color: white; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; }
