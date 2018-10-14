@@ -154,7 +154,7 @@ h3 .fa { margin-right: 5px; }
 
 .ui-process-header { background-color: $dock; }
 
-@media(max-width: 768px) {
+@media(max-width: 700px) {
 	.form-border { border-left: 0; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
 	.startmenu { width: 100%; border-radius: 0; top: 45px; height: auto; }

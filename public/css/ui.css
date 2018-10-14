@@ -163,7 +163,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-notify-message { margin: 1px 0 0 60px; line-height: 16px; height: 60px; display: table-cell; width: 100%; vertical-align: middle; padding: 0 10px; text-shadow: 1px 1px 1px rgba(0,0,0,0.1); text-align: center; }
 .ui-notify-hide { opacity: 0; margin-top: -50px; }
 
-@media(max-width: 767px) {
+@media(max-width: 700px) {
 	.ui-notify-container { width: 100%; left: 0; margin: 0; bottom: 20px; }
 	.ui-notify { margin-left: auto; margin-right: auto; width: 90%; }
 }
@@ -222,7 +222,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-process-focus { z-index: 31; }
 .ui-process-focus .ui-process-header div { font-weight: bold; }
 
-@media(max-width: 767px) {
+@media(max-width: 700px) {
 	.ui-confirm button { display: block; margin: 10px 0 0; display: block; width: 100%; }
 	.ui-form-buttons button { width: 100%; }
 	.ui-form-buttons button[name="submit"] { margin: 0 0 10px; width: 100%; }
@@ -334,7 +334,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 .ui-panel-title > span { font-weight: bold; max-width: 70%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; display: inline-block; vertical-align: middle; padding: 18px 0 0 0; }
 .ui-panel-title > .fa { margin: 22px 7px 0 0; float: left; }
 
-@media(max-width: 768px) {
+@media(max-width: 700px) {
 	.ui-snackbar > div { width: 100%; border: 0; border-radius: 0; }
 	.ui-process iframe { border-top-width: 1; border-bottom: 0; }
 	.ui-process-iframe-container { overflow: hidden; line-height: 0; }
