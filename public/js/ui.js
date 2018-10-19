@@ -2245,7 +2245,7 @@ COMPONENT('processes', function(self, config) {
 
 	function makeurl(url, accesstoken) {
 
-		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
+		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
 		var index = url.indexOf('?');
 		if (index === -1)
