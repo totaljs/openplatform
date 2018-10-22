@@ -1949,11 +1949,11 @@ COMPONENT('processes', function(self, config) {
 			if (y < 45)
 				y = 45;
 
-			if (x + move.w > WW)
-				x = WW - move.w;
+			if (x + 250 > WW)
+				x = WW - 250;
 
-			if (y + move.h > WH)
-				y = WH - move.h;
+			if (y + 250 > WH)
+				y = WH - 250;
 
 			move.el.css({ left: x, top: y });
 			e.preventDefault();
