@@ -58,8 +58,9 @@ h3 .fa { margin-right: 5px; }
 .user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
 .user.selected { color: white; }
 .user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
-.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; }
-.user-notifications .fa { color: #1253e7; }
+.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
+.user-notifications .fa { color: white; }
+.user-notifications .far { color: #606060; }
 
 .app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 10px 0; position: relative; }
 .app-container { border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; cursor: pointer; transition: all 0.2s; height: 38px; color: white; }

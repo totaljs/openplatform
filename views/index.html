@@ -26,7 +26,7 @@
 	<div data-jc="LAZY features__null__placeholder:@(What are you looking for?)"></div>
 	<div data-jc="LAZY contextmenu"></div>
 	<div data-jc="LAZY confirm"></div>
-	<div data-jc="LAZY snackbar"></div>
+	<div data-jc="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
 	<div data-jc="LAZY contextmenu"></div>
 	<div data-jc="LAZY calendar"></div>
 	<div data-jc="LAZY audio__user.volume"></div>
@@ -220,8 +220,9 @@
 					if (tmp.app.id) {
 						$('.appunread[data-id="{0}"]'.format(tmp.app.id)).html(tmp.app.count).tclass('hidden', !tmp.app.count);
 						$('.appbadge[data-id="{0}"]'.format(tmp.app.id)).tclass('hidden', !tmp.app.badges);
+						tmp.app.badges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
 					}
-					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/beep.mp3');
+					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
 					common.notifications && refresh_notifications();
 					break;
 			}

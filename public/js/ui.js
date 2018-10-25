@@ -1949,11 +1949,11 @@ COMPONENT('processes', function(self, config) {
 			if (y < 45)
 				y = 45;
 
-			if (x + move.w > WW)
-				x = WW - move.w;
+			if (x + 250 > WW)
+				x = WW - 250;
 
-			if (y + move.h > WH)
-				y = WH - move.h;
+			if (y + 250 > WH)
+				y = WH - 250;
 
 			move.el.css({ left: x, top: y });
 			e.preventDefault();
@@ -2245,7 +2245,7 @@ COMPONENT('processes', function(self, config) {
 
 	function makeurl(url, accesstoken) {
 
-		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
+		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
 		var index = url.indexOf('?');
 		if (index === -1)
@@ -3345,17 +3345,17 @@ COMPONENT('app-managment', function(self, config) {
 	};
 });
 
-COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
+COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 
 	var show = true;
 	var callback;
-	var ti;
 
 	self.readonly();
 	self.blind();
+
 	self.make = function() {
 		self.aclass('ui-snackbar hidden');
-		self.append('<div><a href="javasc' + 'ript:void(0)" class="ui-snackbar-dismiss"></a><div class="ui-snackbar-body"></div></div>');
+		self.append('<div><span class="ui-snackbar-dismiss"></span><span class="ui-snackbar-icon"></span><div class="ui-snackbar-body"></div></div>');
 		self.event('click', '.ui-snackbar-dismiss', function() {
 			self.hide();
 			callback && callback();
@@ -3363,23 +3363,27 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 	};
 
 	self.hide = function() {
+		clearTimeout2(self.ID);
 		self.rclass('ui-snackbar-visible');
-		clearTimeout(ti);
-		ti = setTimeout(function() {
+		setTimeout(function() {
 			self.aclass('hidden');
 		}, 1000);
 		show = true;
 	};
 
+	self.waiting = function(message, button, close) {
+		self.show(message, button, close, 'fa-spinner fa-pulse');
+	};
+
 	self.success = function(message, button, close) {
-		self.show('<i class="fa fa-check-circle ui-snackbar-icon"></i>' + message, button, close);
+		self.show(message, button, close, 'fa-check-circle');
 	};
 
 	self.warning = function(message, button, close) {
-		self.show('<i class="fa fa-times-circle ui-snackbar-icon"></i>' + message, button, close);
+		self.show(message, button, close, 'fa-times-circle');
 	};
 
-	self.show = function(message, button, close) {
+	self.show = function(message, button, close, icon) {
 
 		if (typeof(button) === 'function') {
 			close = button;
@@ -3388,17 +3392,18 @@ COMPONENT('snackbar', 'timeout:3000;button:Dismiss', function(self, config) {
 
 		callback = close;
 
-		self.find('.ui-snackbar-body').html(message);
+		self.find('.ui-snackbar-icon').html('<i class="fa {0}"></i>'.format(icon || 'fa-info-circle'));
+		self.find('.ui-snackbar-body').html(message).attr('title', message);
 		self.find('.ui-snackbar-dismiss').html(button || config.button);
 
 		if (show) {
 			self.rclass('hidden');
-			clearTimeout(ti);
-			ti = setTimeout(function() {
+			setTimeout(function() {
 				self.aclass('ui-snackbar-visible');
 			}, 50);
 		}
 
+		clearTimeout2(self.ID);
 		setTimeout2(self.ID, self.hide, config.timeout + 50);
 		show = false;
 	};
