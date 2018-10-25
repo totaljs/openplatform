@@ -8,8 +8,8 @@ const OP = global.OP = {};
 OP.save = function(callback) {
 	G.users.quicksort('name');
 	G.apps.quicksort('name');
-	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), NOOP);
-	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), NOOP);
+	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
+	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
 	callback && callback();
 };
 
@@ -17,10 +17,10 @@ OP.saveState = function(type) {
 	setTimeout2('OP.saveState.' + (type || 0), function() {
 
 		if (!type || type === 2)
-			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), NOOP);
+			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
 
 		if (!type || type === 1)
-			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), NOOP);
+			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
 
 	}, 1000, 10);
 };
