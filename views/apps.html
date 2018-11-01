@@ -293,7 +293,6 @@
 			} else {
 
 				var val = response.value;
-
 				SET('apps.form.data', val);
 
 				MODIFY('apps.form', function(cur) {
@@ -301,7 +300,7 @@
 						cur.allowreadapps = val.allowreadapps || 0;
 						cur.allowreadusers = val.allowreadusers || 0;
 						cur.allowreadmeta = val.allowreadmeta || 1;
-						cur.allowreadprofile = val.allowreadprofile || 1;
+						cur.allowreadprofile = val.allowreadprofile === true ? 1 : (val.allowreadprofile || 1);
 						cur.serververify = val.serverside === true;
 					}
 					!cur.title && (cur.title = val.name);

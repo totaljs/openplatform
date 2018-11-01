@@ -212,6 +212,7 @@ function sync(item, model, meta) {
 		item.secret = model.secret;
 		item.allowreadapps = model.allowreadapps;
 		item.allowreadusers = model.allowreadusers;
+		item.allowreadprofile = model.allowreadprofile;
 		item.allownotifications = model.allownotifications;
 		item.responsive = model.responsive;
 		item.blocked = model.blocked;
@@ -226,7 +227,7 @@ function sync(item, model, meta) {
 	item.description = model.description;
 	item.author = model.author;
 	item.icon = model.icon;
-	item.screenshot = model.allowscreenshots === true;
+	item.screenshots = model.allowscreenshots === true;
 	item.frame = model.frame;
 	item.email = model.email;
 	item.roles = model.roles;
