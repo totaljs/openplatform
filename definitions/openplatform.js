@@ -8,7 +8,9 @@ const OP = global.OP = {};
 OP.save = function(callback) {
 	G.users.quicksort('name');
 	G.apps.quicksort('name');
+	EMIT('users.backup', G.users);
 	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
+	EMIT('apps.backup', G.apps);
 	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
 	callback && callback();
 };
@@ -16,11 +18,15 @@ OP.save = function(callback) {
 OP.saveState = function(type) {
 	setTimeout2('OP.saveState.' + (type || 0), function() {
 
-		if (!type || type === 2)
+		if (!type || type === 2) {
+			EMIT('users.backup', G.users);
 			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
+		}
 
-		if (!type || type === 1)
+		if (!type || type === 1) {
+			EMIT('apps.backup', G.apps);
 			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
+		}
 
 	}, 1000, 10);
 };
@@ -309,7 +315,7 @@ function readuser(user, type, app) {
 	return obj;
 }
 
-OP.users = function(app) {
+OP.users = function(app, query) {
 	var arr = [];
 	if (app.allowreadusers) {
 		for (var i = 0, length = G.users.length; i < length; i++) {
@@ -320,7 +326,7 @@ OP.users = function(app) {
 	return arr;
 };
 
-OP.apps = function(app) {
+OP.apps = function(app, query) {
 	var arr = [];
 	if (app.allowreadapps) {
 		for (var i = 0, length = G.users.length; i < length; i++) {

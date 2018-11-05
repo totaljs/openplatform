@@ -45,6 +45,7 @@ NEWSCHEMA('Account', function(schema) {
 		user.volume = model.volume;
 		user.login = model.login;
 
+		EMIT('users.update', user, 'account');
 		EMIT('users.refresh', user);
 		OP.saveState(2);
 		$.success();

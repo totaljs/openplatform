@@ -174,7 +174,7 @@ ON('apps.refresh', function() {
 ON('users.refresh', function(user, removed) {
 	WS && WS.all(function(client) {
 		if (removed || client.user.blocked || client.user.inactive) {
-			if (client.id === user) {
+			if (client.id === user.id) {
 				client.send(WSLOGOFF);
 				setTimeout(() => client.close(), 100);
 			}

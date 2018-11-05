@@ -71,11 +71,14 @@ NEWSCHEMA('App', function(schema) {
 
 		var model = $.model.$clean();
 		var item = F.global.apps.findItem('id', model.id);
+		var newbie = false;
 
 		model.search = (model.name + ' ' + model.title).toSearch();
 		model.linker = model.title.slug();
 
 		if (item == null) {
+
+			newbie = true;
 			item = model;
 			item.id = UID();
 			item.datecreated = F.datetime;
@@ -94,6 +97,7 @@ NEWSCHEMA('App', function(schema) {
 
 		state(item, function() {
 			OP.save(); // Save changes
+			EMIT('apps.' + (newbie ? 'create' : 'update'), item);
 			EMIT('apps.refresh', item);
 		});
 
@@ -109,14 +113,18 @@ NEWSCHEMA('App', function(schema) {
 
 		var id = $.id;
 
-		F.global.apps = F.global.apps.remove('id', id);
-		F.global.users.forEach(function(item) {
-			delete item.apps[id];
-		});
+		var app = F.global.apps.findItem('id', id);
+		if (app) {
+			F.global.apps = F.global.apps.remove('id', id);
+			F.global.users.forEach(function(item) {
+				delete item.apps[id];
+			});
+			LOGGER('apps', 'remove: ' + id, '@' + $.user.name, $.ip);
+			OP.save(); // Save changes
+			EMIT('apps.remove', app);
+			EMIT('apps.refresh', app, true);
+		}
 
-		LOGGER('apps', 'remove: ' + id, '@' + $.user.name, $.ip);
-		OP.save(); // Save changes
-		EMIT('apps.refresh', id, true);
 		$.success();
 	});
 
@@ -151,7 +159,6 @@ NEWSCHEMA('App', function(schema) {
 				$.model.custom = response.custom;
 				$.model.online = true;
 				$.model.daterefreshed = F.datetime;
-
 				$.success();
 			});
 		});
@@ -200,6 +207,7 @@ function state(item, next) {
 		}
 
 		item.daterefreshed = F.datetime;
+		EMIT('apps.sync', item);
 		next();
 	});
 }

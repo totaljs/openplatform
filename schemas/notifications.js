@@ -22,7 +22,7 @@ NEWSCHEMA('Notification', function(schema) {
 			user.countnotifications = 0;
 			OP.saveState(2);
 
-			EMIT('users.notify', user, '');
+			EMIT('users.notify', user, '', true);
 
 			if (err) {
 				$.callback(null);
@@ -116,7 +116,7 @@ NEWSCHEMA('Notification', function(schema) {
 		user.datenotified = F.datetime;
 
 		OP.saveState(2);
-		EMIT('users.notify', user, app ? app.id : '');
+		EMIT('users.notify', user, app);
 		$.success();
 
 		// Stats

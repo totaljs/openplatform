@@ -79,6 +79,7 @@ NEWSCHEMA('User', function(schema) {
 		}
 
 		var model = $.model.$clean();
+		var newbie = false;
 		var item;
 
 		model.welcome = undefined;
@@ -137,6 +138,7 @@ NEWSCHEMA('User', function(schema) {
 				item.accesstoken = U.GUID(40);
 
 			LOGGER('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+			newbie = true;
 
 		} else {
 			item = model;
@@ -179,11 +181,8 @@ NEWSCHEMA('User', function(schema) {
 			OP.save();
 		}, 1000);
 
-		if (item.blocked || item.inactive)
-			EMIT('users.refresh', item.id, true);
-		else
-			EMIT('users.refresh', item);
-
+		EMIT('users.' + (newbie ? 'create' : 'update'), item);
+		EMIT('users.refresh', item, item.blocked || item.inactive ? true : undefined);
 		$.success();
 	});
 
@@ -195,25 +194,31 @@ NEWSCHEMA('User', function(schema) {
 		}
 
 		var id = $.id;
+		var user = G.users.remove.findItem('id', id);
 
-		G.users = G.users.remove('id', id);
+		if (user) {
 
-		// Supervisor
-		for (var i = 0, length = G.users.length; i < length; i++) {
-			var user = G.users[i];
-			if (user.supervisorid === id)
-				user.supervisorid = '';
+			G.users = G.users.remove('id', id);
+
+			// Supervisor
+			for (var i = 0, length = G.users.length; i < length; i++) {
+				var user = G.users[i];
+				if (user.supervisorid === id)
+					user.supervisorid = '';
+			}
+
+			LOGGER('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+			Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
+
+			setTimeout2('users', function() {
+				$WORKFLOW('User', 'refresh');
+				OP.save();
+			}, 1000);
+
+			EMIT('users.remove', user);
+			EMIT('users.refresh', user, true);
 		}
 
-		LOGGER('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
-		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
-
-		setTimeout2('users', function() {
-			$WORKFLOW('User', 'refresh');
-			OP.save();
-		}, 1000);
-
-		EMIT('users.refresh', id, true);
 		$.success();
 	});
 

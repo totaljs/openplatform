@@ -35,6 +35,8 @@ NEWSCHEMA('Settings', function(schema) {
 
 		var model = $.model;
 
+		EMIT('settings.update', model);
+
 		if (model.url.endsWith('/'))
 			model.url = model.url.substring(0, model.url.length - 1);
 
@@ -43,6 +45,7 @@ NEWSCHEMA('Settings', function(schema) {
 		F.config['mail-smtp'] = model.smtp;
 		F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
 		F.config.accesstoken = model.accesstoken;
+
 		OP.id = F.config.url.crc32(true);
 
 		Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(model.$clean()), NOOP);

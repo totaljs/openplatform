@@ -38,7 +38,7 @@ NEWSCHEMA('Badge', function(schema) {
 			return;
 		}
 
-		EMIT('users.notify', obj.user, app.id);
+		EMIT('users.badge', obj.user, app);
 		$.success();
 	});
 
