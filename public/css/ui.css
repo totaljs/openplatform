@@ -181,7 +181,7 @@ input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { 
 
 .ui-process { position: fixed; left: 100px; top: 120px; width: 800px; height: 500px; z-index: 10; overflow: hidden; box-shadow: 0 5px 30px rgba(0,0,0,0.2); opacity: 1; transition: transform 0.3s, opacity 0.3s; transform: scale(1); }
 .ui-process-iframe-container { background-color: white; position: relative; }
-.ui-process iframe { width: 100%; height: 100%; overflow: auto; overflow-scrolling: touch; background-color: white; margin: 0; padding: 0; line-height: 0; border: 1px solid #E0E0E0; border-top: 0; }
+.ui-process iframe { width: 100%; height: 100%; overflow: auto; overflow-scrolling: touch; background-color: white; margin: 0; padding: 0; line-height: 0; border: 0; }
 .ui-process-loading { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; background-color: rgba(255,255,255,0.9); background-size: 80px 80px; user-select: none; }
 .ui-process .visible { left: 0; right: 0; bottom: 0; top: 0; border-radius: 0; opacity: 0.8; }
 .ui-process-animation { opacity: 0; transform: scale(0.5); }
