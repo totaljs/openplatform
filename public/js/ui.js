@@ -18,6 +18,8 @@ COMPONENT('xs', function(self, config) {
 
 COMPONENT('checkbox', function(self, config) {
 
+	self.nocompile();
+
 	self.validate = function(value) {
 		return (config.disabled || !config.required) ? true : (value === true || value === 'true' || value === 'on');
 	};
@@ -62,6 +64,7 @@ COMPONENT('time', function(self) {
 
 	self.readonly();
 	self.blind();
+	self.nocompile();
 
 	self.make = function() {
 
@@ -86,6 +89,7 @@ COMPONENT('dropdown', function(self, config) {
 	var select, container, condition, content = null;
 	var render = '';
 
+	self.nocompile();
 	self.validate = function(value) {
 
 		if (!config.required || config.disabled)
@@ -229,6 +233,8 @@ COMPONENT('dropdown', function(self, config) {
 COMPONENT('textbox', function(self, config) {
 
 	var input, container, content = null;
+
+	self.nocompile();
 
 	self.validate = function(value) {
 
@@ -492,6 +498,7 @@ COMPONENT('exec', function(self, config) {
 COMPONENT('error', function(self, config) {
 
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-error hidden');
@@ -611,6 +618,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 
 	self.online = false;
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		url = (config.url || '').env(true);
@@ -867,6 +875,7 @@ COMPONENT('confirm', function(self) {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 
@@ -945,6 +954,7 @@ COMPONENT('loading', function(self) {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-loading');
@@ -973,6 +983,7 @@ COMPONENT('contextmenu', function(self) {
 	self.template = Tangular.compile('<div data-index="{{ index }}"{{ if selected }} class="selected"{{ fi }}><i class="fa {{ icon }}"></i><span>{{ name | raw }}</span></div>');
 	self.singleton();
 	self.readonly();
+	self.nocompile();
 	self.callback = null;
 	self.items = EMPTYARRAY;
 
@@ -1136,6 +1147,7 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 	var empty, img, canvas, name, content = null;
 
 	self.readonly();
+	self.nocompile();
 
 	self.configure = function(key, value, init) {
 
@@ -1298,6 +1310,7 @@ COMPONENT('template', function(self) {
 	var properties = null;
 
 	self.readonly();
+	self.nocompile();
 
 	self.configure = function(key, value) {
 		if (key === 'properties')
@@ -1350,6 +1363,8 @@ COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;li
 
 	!W.$dropdowncheckboxtemplate && (W.$dropdowncheckboxtemplate = Tangular.compile('<div class="ui-dropdowncheckbox-item" data-index="{{ index }}"><div><i class="fa fa-{{ $.checkicon }}"></i></div><span>{{ text }}</span></div>'));
 	var template = W.$dropdowncheckboxtemplate;
+
+	self.nocompile();
 
 	self.validate = function(value) {
 		return config.disabled || !config.required ? true : value && value.length > 0;
@@ -1641,6 +1656,8 @@ COMPONENT('notify', 'timeout:3000', function(self, config) {
 
 	self.singleton();
 	self.readonly();
+	self.nocompile();
+
 	self.template = Tangular.compile('<div class="ui-notify ui-notify-{{ type }}" data-id="{{ id }}"><div class="ui-notify-icon"><i class="fa {{ icon }}"></i></div><div class="ui-notify-message">{{ message }}</div>');
 	self.items = {};
 
@@ -1781,6 +1798,7 @@ COMPONENT('processes', function(self, config) {
 
 	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
+	self.nocompile();
 
 	self.make = function() {
 		self.append('<div class="ui-process-clone hidden"></div>');
@@ -2420,6 +2438,7 @@ COMPONENT('notificationspanel', function() {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		var scr = self.find('script');
@@ -2492,6 +2511,7 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 
 	self.setter = null;
 	self.getter = null;
+	self.nocompile();
 
 	self.template = Tangular.compile('<div class="ui-textboxlist-item"><div><i class="fa fa-times"></i></div><div><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder }}"{{ if disabled}} disabled="disabled"{{ fi }} value="{{ value }}" /></div></div>');
 
@@ -2704,6 +2724,8 @@ COMPONENT('range', function(self, config) {
 
 	var content = '';
 
+	self.nocompile();
+
 	self.validate = function(value) {
 		return !config.required || config.disabled ? true : value != 0;
 	};
@@ -2783,6 +2805,7 @@ COMPONENT('calendar', 'today:Set today;firstday:0;close:Close;yearselect:true;mo
 	self.months_short = EMPTYARRAY;
 	self.years_from;
 	self.years_to;
+	self.nocompile();
 
 	self.configure = function(key, value) {
 		switch (key) {
@@ -3170,6 +3193,7 @@ COMPONENT('audio', function(self) {
 	self.items = [];
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		var audio = document.createElement('audio');
@@ -3265,6 +3289,7 @@ COMPONENT('audio', function(self) {
 
 COMPONENT('app-managment', function(self, config) {
 
+	self.nocompile();
 	self.make = function() {
 		var el = self.find('script');
 		self.template = Tangular.compile(el.html());
@@ -3352,6 +3377,7 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 
 	self.readonly();
 	self.blind();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-snackbar hidden');
@@ -3458,6 +3484,7 @@ COMPONENT('message', function(self, config) {
 
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-message hidden');
@@ -3523,6 +3550,8 @@ COMPONENT('listmenu', 'class:selected;selector:a;property:id;click:true', functi
 
 	var old, oldvalue;
 
+	self.nocompile();
+
 	self.make = function() {
 		var scr = self.find('script');
 		self.template = Tangular.compile(scr.html());
@@ -3586,6 +3615,7 @@ COMPONENT('shortcuts', function(self) {
 	self.singleton();
 	self.readonly();
 	self.blind();
+	self.nocompile();
 
 	self.make = function() {
 		$(window).on('keydown', function(e) {
@@ -3706,6 +3736,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 	self.callback = null;
 	self.readonly();
 	self.singleton();
+	self.nocompile();
 
 	self.configure = function(key, value, init) {
 		if (init)
