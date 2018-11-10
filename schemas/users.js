@@ -194,7 +194,7 @@ NEWSCHEMA('User', function(schema) {
 		}
 
 		var id = $.id;
-		var user = G.users.remove.findItem('id', id);
+		var user = G.users.findItem('id', id);
 
 		if (user) {
 
