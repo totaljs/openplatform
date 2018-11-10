@@ -202,9 +202,9 @@ NEWSCHEMA('User', function(schema) {
 
 			// Supervisor
 			for (var i = 0, length = G.users.length; i < length; i++) {
-				var user = G.users[i];
-				if (user.supervisorid === id)
-					user.supervisorid = '';
+				var tmp = G.users[i];
+				if (tmp.supervisorid === id)
+					tmp.supervisorid = '';
 			}
 
 			LOGGER('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
