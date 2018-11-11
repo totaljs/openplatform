@@ -86,7 +86,7 @@ NEWSCHEMA('Notification', function(schema) {
 		}
 
 		var model = $.model.$clean();
-		model.iduser = user.id;
+		model.userid = user.id;
 
 		if (app)
 			model.idapp = app.id;

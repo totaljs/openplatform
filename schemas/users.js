@@ -4,6 +4,7 @@ NEWSCHEMA('User', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
+	schema.define('delegateid', 'UID');
 	schema.define('photo', 'String(30)');
 	schema.define('name', 'String(40)');
 	schema.define('firstname', 'Capitalize(40)', true);
