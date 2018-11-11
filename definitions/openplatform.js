@@ -323,7 +323,7 @@ OP.users = function(app, query) {
 			item && arr.push(item);
 		}
 	}
-	return arr;
+	return { items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length };
 };
 
 OP.apps = function(app, query) {
@@ -334,7 +334,7 @@ OP.apps = function(app, query) {
 			item && arr.push(item);
 		}
 	}
-	return arr;
+	return { items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length };
 };
 
 OP.ou = function(val) {
