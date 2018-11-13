@@ -1,7 +1,8 @@
+const Fs = require('fs');
+
 NEWSCHEMA('Account', function(schema) {
 
 	schema.define('email', 'Email', true);
-	schema.define('login', 'String(30)', true);
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
@@ -10,6 +11,8 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('photo', 'String(50)');
 	schema.define('sounds', Boolean);
 	schema.define('volume', Number);
+	schema.define('colorscheme', 'Lower(7)');
+	schema.define('background', 'String(150)');
 
 	schema.setGet(function($) {
 		var user = $.controller.user;
@@ -22,7 +25,8 @@ NEWSCHEMA('Account', function(schema) {
 		data.photo = user.photo;
 		data.sounds = user.sounds;
 		data.volume = user.volume;
-		data.login = user.login;
+		data.colorscheme = user.colorscheme;
+		data.background = user.background;
 		data.password = '*********';
 		$.callback(data);
 	});
@@ -31,6 +35,21 @@ NEWSCHEMA('Account', function(schema) {
 
 		var user = $.controller.user;
 		var model = $.model;
+		var path;
+
+		// Removing older background
+		if (user.background && model.background !== user.background) {
+			path = 'backgrounds/' + user.background;
+			Fs.unlink(F.path.public(path), NOOP);
+			F.touch('/' + path);
+		}
+
+		// Removing older photo
+		if (user.photo && model.photo !== user.photo) {
+			path = 'photos/' + user.photo;
+			Fs.unlink(F.path.public(path), NOOP);
+			F.touch('/' + path);
+		}
 
 		if (model.password && !model.password.startsWith('***'))
 			user.password = model.password.sha256();
@@ -43,7 +62,8 @@ NEWSCHEMA('Account', function(schema) {
 		user.photo = model.photo;
 		user.sounds = model.sounds;
 		user.volume = model.volume;
-		user.login = model.login;
+		user.colorscheme = model.colorscheme;
+		user.background = model.background;
 
 		EMIT('users.update', user, 'account');
 		EMIT('users.refresh', user);

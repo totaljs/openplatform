@@ -14,15 +14,24 @@
 
 			<div data-jc="textbox__account.email__type:email;required:true" class="m">@(Email address)</div>
 			<div data-jc="textbox__account.phone" class="m">@(Phone number)</div>
+
+			<div data-jc="colorselector__account.colorscheme__null" class="m"></div>
+
+			<div style="font-size:12px">
+				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
+				<div data-jc="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+			</div>
+			<div class="clearfix"></div>
+			<hr style="margin-top:8px" />
+
 			<div data-jc="checkbox__account.sounds">@(Enable sounds)</div>
 			<div data-jc="checkbox__account.notifications">@(Enable notifications)</div>
 			<div data-jc="checkbox__account.notificationsemail">@(Enable email notifications)</div>
 			<div data-jc="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
-			<div data-jc="checkbox__account.changepassword" class="b red">@(Change credentials)</div>
+			<div data-jc="checkbox__account.changepassword" class="b red">@(Change password)</div>
 
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<div class="padding">
-					<div data-jc="textbox__account.login__type:login;maxlength:30;required:true" class="m">@(Login name)</div>
 					<div data-jc="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
 					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
 				</div>
@@ -65,7 +74,7 @@
 		AJAX('POST /api/account/', account, function(response) {
 			SET('account.response', response);
 			if (response.success) {
-				OP.message('Your account has been updated successfully.');
+				OP.success('Your account has been updated successfully.');
 				OP.close();
 			}
 		});

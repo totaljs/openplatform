@@ -5,7 +5,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
 	schema.define('delegateid', 'UID');
-	schema.define('photo', 'String(30)');
+	schema.define('photo', 'String(150)');
 	schema.define('name', 'String(40)');
 	schema.define('firstname', 'Capitalize(40)', true);
 	schema.define('lastname', 'Capitalize(40)', true);
@@ -18,10 +18,12 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('language', 'String(2)');
 	schema.define('reference', 'String(70)');
 	schema.define('locality', 'String(40)');
-	schema.define('login', 'String(30)');
+	schema.define('login', 'String(120)');
 	schema.define('password', 'String(30)');
 	schema.define('roles', '[String]');
 	schema.define('groups', '[String]');
+	schema.define('colorscheme', 'Lower(7)');
+	schema.define('background', 'String(150)');
 	schema.define('blocked', Boolean);
 	schema.define('customer', Boolean);
 	schema.define('welcome', Boolean);

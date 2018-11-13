@@ -37,6 +37,10 @@ AUTH(function(req, res, flags, next) {
 		if (user && !user.inactive && !user.blocked) {
 			user.datelogged = F.datetime;
 			user.online = true;
+
+			if (user.language && user.language !== 'en')
+				req.$language = user.language;
+
 			next(true, user);
 		} else
 			next(false);

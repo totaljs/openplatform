@@ -1892,6 +1892,7 @@ COMPONENT('processes', function(self, config) {
 		order = order.remove(id);
 		order.push(id);
 		oldfocus = id;
+		SET('common.focused', id);
 		self.find('.ui-process-focus').rclass('ui-process-focus');
 		self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').rclass('hidden').rclass('ui-process-hidden');
 		setTimeout2(self.ID + 'focus', function() {
@@ -1907,7 +1908,8 @@ COMPONENT('processes', function(self, config) {
 	});
 
 	self.mdown_move = function(el, x, y) {
-		var iframe = iframes.findItem('id', el.attrd('id'));
+		var id = el.attrd('id');
+		var iframe = iframes.findItem('id', id);
 		if (iframe.mobile)
 			return false;
 		clone.rclass('hidden');
@@ -1919,6 +1921,7 @@ COMPONENT('processes', function(self, config) {
 		move.h = el.height();
 		self.find('.ui-process-focus').rclass('ui-process-focus');
 		el.aclass('ui-process-focus');
+		SET('common.focused', id);
 		self.hidemenu();
 	};
 
@@ -1961,8 +1964,8 @@ COMPONENT('processes', function(self, config) {
 			x = x - move.x;
 			y = y - move.y;
 
-			if (x < 0)
-				x = 0;
+			if (x < -(move.w - 250))
+				x = -(move.w - 250);
 
 			if (y < 45)
 				y = 45;
@@ -2229,6 +2232,9 @@ COMPONENT('processes', function(self, config) {
 		iframes.splice(index, 1);
 		iframe.element.aclass('hidden');
 		iframe.meta.internal.loaded = false;
+
+		if (common.focused === id)
+			SET('common.focused', null);
 
 		self.reorder();
 		self.minimize(id, false);
@@ -4083,5 +4089,190 @@ COMPONENT('panel', 'width:350;icon:circle-o', function(self, config) {
 		setTimeout2(self.id, function() {
 			self.css('z-index', (W.$$panel_level * 10) + 1);
 		}, 1000);
+	};
+});
+
+COMPONENT('colorselector', 'colors:#000000,#0a53ea,#00a8ff,#16a085,#27ae60,#8e44ad,#d770ad,#f39c12,#d35400,#c0392b;empty:true', function(self, config) {
+
+	var selected, list, content, colors = null;
+
+	self.nocompile && self.nocompile();
+
+	self.validate = function(value) {
+		return config.disabled || !config.required ? true : colors.indexOf(value) === -1;
+	};
+
+	self.configure = function(key, value, init) {
+		if (init)
+			return;
+		var redraw = false;
+		switch (key) {
+			case 'required':
+				self.find('.ui-colorselector-label').tclas('.ui-colorselector-required', value);
+				break;
+			case 'disabled':
+				self.tclass('ui-disabled', value);
+				break;
+			case 'colors':
+				colors = value.split(',').trim();
+				break;
+			case 'label':
+			case 'icon':
+				redraw = true;
+				break;
+		}
+
+		redraw && setTimeout2('redraw.' + self.id, function() {
+			self.redraw();
+			self.refresh();
+		}, 100);
+	};
+
+	self.redraw = function() {
+		var builder = [];
+		var label = config.label || content;
+		label && builder.push('<div class="ui-colorselector-label{1}">{2}{0}</div>'.format(label, config.required ? ' ui-colorselector-required' : '', config.icon ? '<i class="fa fa-{0}"></i>'.format(config.icon) : ''));
+		builder.push('<ul class="ui-colorselector">');
+
+		for (var i = 0, length = colors.length; i < length; i++) {
+			var color = colors[i];
+			color && builder.push('<li data-index="{0}" style="background-color:{1}"></li>'.format(i, color));
+		}
+
+		builder.push('</ul>');
+		self.html(builder.join(''));
+		self.tclass('ui-disabled', config.disabled);
+		list = self.find('li');
+	};
+
+	self.make = function() {
+		colors = config.colors.split(',').trim();
+		self.redraw();
+		self.event('click', 'li', function() {
+			if (config.disabled)
+				return;
+			var color = colors[+this.getAttribute('data-index')];
+			if (!config.required && color === self.get())
+				color = '';
+			self.change(true);
+			self.set(color);
+		});
+	};
+
+	self.setter = function(value) {
+		var index = colors.indexOf(value);
+		selected && selected.rclass('selected');
+		if (index !== -1) {
+			selected = list.eq(index);
+			selected.aclass('selected');
+		}
+	};
+});
+
+COMPONENT('singleupload', 'title:{{ name }};url:/api/upload/', function(self, config) {
+
+	var id = self.name + self._id;
+	var input = null;
+
+	self.readonly();
+	self.nocompile && self.nocompile();
+
+	self.configure = function(key, value, init) {
+		switch (key) {
+			case 'disabled':
+				!init && self.tclass('ui-disabled', value);
+				break;
+			case 'accept':
+				if (init)
+					return;
+				var el = $('#' + id);
+				if (value)
+					el.prop('accept', value);
+				else
+					el.removeProp('accept');
+				break;
+			case 'title':
+				config.title = Tangular.compile(value);
+				break;
+			case 'remap':
+				config.remap = value ? FN(value) : null;
+				break;
+		}
+	};
+
+	self.make = function() {
+
+		if (!config.label)
+			config.label = self.html();
+
+		self.aclass('ui-singleupload');
+
+		config.disabled && self.aclass('ui-disabled');
+		$(document.body).append('<input type="file" id="{0}" class="hidden"{1} />'.format(id, config.accept ? ' accept="{0}"'.format(config.accept) : ''));
+		input = $('#' + id);
+
+		self.html('<i class="fa fa-times"></i><span>{0}</span>'.format(config.label));
+
+		self.event('click', 'span', function() {
+			!config.disabled && input.click();
+		});
+
+		self.event('click', '.fa-times', function() {
+			if (!config.disabled) {
+				self.set(null);
+				self.change();
+			}
+		});
+
+		input.on('change', function(evt) {
+			!config.disabled && self.upload(evt.target.files);
+			this.value = '';
+		});
+	};
+
+	self.setter = function(value) {
+		self.tclass('ui-singleupload-is', !!value);
+		var span = self.find('span');
+		var val = value ? config.title(value) : config.label;
+		if (span.html() !== val)
+			span.html(val);
+	};
+
+	self.upload = function(files) {
+
+		var data = new FormData();
+		var el = this;
+
+		for (var i = 0, length = files.length; i < length; i++) {
+
+			var filename = files[i].name;
+			var index = filename.lastIndexOf('/');
+
+			if (index === -1)
+				index = filename.lastIndexOf('\\');
+
+			if (index !== -1)
+				filename = filename.substring(index + 1);
+
+			data.append('file' + i, files[i], filename);
+		}
+
+		SETTER('loading', 'show');
+		UPLOAD(config.url, data, function(response, err) {
+
+			el.value = '';
+			SETTER('loading', 'hide', 500);
+
+			if (err) {
+				SETTER('snackbar', 'warning', err.toString());
+			} else {
+				self.change();
+				self.set(config.remap ? config.remap(response) : response);
+			}
+		});
+	};
+
+	self.destroy = function() {
+		input.off().remove();
 	};
 });

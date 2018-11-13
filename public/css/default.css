@@ -5,14 +5,15 @@ $startmenu         : #404040;
 $startmenubutton   : #52AA48;
 
 html,body { height: 100%; overflow: hidden; }
-body { height: 100%; overflow: hidden; background-color: #303030; background-size: 40%; }
+body { height: 100%; overflow: hidden; background-color: #303030; background-size: cover; }
 
-header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 35; width: 100%; top: -45px; color: #909090; transition: all 0.3s; }
+header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background-color: #292929; position: fixed; z-index: 35; width: 100%; top: -45px; color: #909090; transition: all 0.3s; box-shadow: 0 5px 5px rgba(0,0,0,0.15); }
 header nav { float: left; }
-header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 45px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; }
+header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 44px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
 header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
 header nav button:hover { background-color: rgba(0,0,0,0.1); }
+header nav button.focused { background-color: #313131; }
 header nav button .fa { font-size: 20px; }
 header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; }

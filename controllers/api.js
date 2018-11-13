@@ -31,6 +31,7 @@ exports.install = function() {
 		ROUTE('POST   /api/internal/settings/smtp/      *SettingsSMTP --> @exec', [10000]);
 
 		ROUTE('/api/upload/photo/',  json_upload_photo, ['post'], 1024 * 2);
+		ROUTE('/api/upload/background/',  json_upload_background, ['post', 'upload'], 1024 * 5);
 
 	});
 
@@ -133,6 +134,17 @@ function json_upload_photo() {
 	var self = this;
 	var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
 	self.body.file.base64ToFile(F.path.public('photos/' + id), () => self.json(id));
+}
+
+function json_upload_background() {
+	var self = this;
+	var file = self.files[0];
+
+	if (file.isImage()) {
+		var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
+		file.move(F.path.public('backgrounds/' + id), () => self.json(id));
+	} else
+		self.invalid('error-file-type');
 }
 
 function json_online(id) {

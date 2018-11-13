@@ -16,6 +16,9 @@
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@16.css" />
+	@{if user && (user.background || F.config.background)}
+	<style>body{background:url(/backgrounds/@{user.background || F.config.background}) 50% 50%}</style>
+	@{fi}
 	<script src="@{'%cdn'}/spa.min@16.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
@@ -203,11 +206,13 @@
 					location.href = '/';
 					break;
 				case 'profile':
+					var is = user !== EMPTYOBJECT;
 					message.body.apps.quicksort('title');
 					SET('user', message.body);
 					EXEC('Dashboard/sync');
 					EXEC('Dashboard/init');
 					SET('common.startmenusearch', '');
+					CSS('.ui-process-header,.user{background-color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
 					break;
 				case 'notifications':
 					// take max. 50
@@ -218,7 +223,7 @@
 					var tmp = message.body;
 					SET('user.countnotifications', tmp.count);
 					if (tmp.app.id) {
-						$('.appunread[data-id="{0}"]'.format(tmp.app.id)).html(tmp.app.count).tclass('hidden', !tmp.app.count);
+						dashboard.apps.findItem('id', tmp.app.id) == null && $('.appunread[data-id="{0}"]'.format(tmp.app.id)).html(tmp.app.count).tclass('hidden', !tmp.app.count);
 						$('.appbadge[data-id="{0}"]'.format(tmp.app.id)).tclass('hidden', !tmp.app.badges);
 						tmp.app.badges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
 					}
@@ -411,7 +416,15 @@
 			e.stopPropagation();
 		}, true);
 
+		WATCH('common.focused', function(path, id) {
+			var nav = $('header').find('nav');
+			nav.find('button.focused').rclass('focused');
+			nav.find('button[data-id="{0}"]'.format(id)).aclass('focused');
+		});
+
 	</script>
+
+	@{components('openplatform')}
 
 </body>
 </html>

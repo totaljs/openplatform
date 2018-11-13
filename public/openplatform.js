@@ -146,11 +146,11 @@ OP.loading = function(visible, interval) {
 };
 
 OP.success = function(message, button) {
-	return OP.message(message, 'success', button);
+	return OP.snackbar(message, 'success', button);
 };
 
 OP.warning = function(message, button) {
-	return OP.message(message, 'warning', button);
+	return OP.snackbar(message, 'warning', button);
 };
 
 OP.message = function(message, type, button) {

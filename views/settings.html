@@ -10,7 +10,14 @@
 				</div>
 			</div>
 			<div data-jc="textbox__settings.accesstoken__maxlength:50;required:true">@(Access token for service account)</div>
-			<div class="help"><a href="javascript:void(0)" class="exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</a></div>
+			<div class="help m"><a href="javascript:void(0)" class="exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</a></div>
+			<div data-jc="colorselector__settings.colorscheme__null__'#0a53ea'" class="m"></div>
+
+			<div style="font-size:12px">
+				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
+				<div data-jc="singleupload__settings.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+			</div>
+			<div class="clearfix"></div>
 		</div>
 		<div class="scroller-padding bg-smoke">
 			<h2>@(SMTP settings)</h2>
@@ -52,7 +59,7 @@
 		AJAX('POST /api/internal/settings/', settings, function(response) {
 			SET('settings.response', response);
 			if (response.success) {
-				OPENPLATFORM.message('Settings have been updated successfully.');
+				OPENPLATFORM.success('Settings have been updated successfully.');
 				OPENPLATFORM.close();
 			}
 		});
@@ -65,7 +72,7 @@
 			OPENPLATFORM.loading(false, 1000);
 			if (response.success) {
 				SET('%smtpsettings', null, 3000);
-				OPENPLATFORM.message('SMTP server is working correctly.');
+				OPENPLATFORM.success('SMTP server is working correctly.');
 			}
 		});
 	}

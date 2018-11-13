@@ -10,3 +10,4 @@ error-invalid-origin       : Your IP address is not in whitelist.
 error-accessible           : User account is not accessible.
 error-notifications        : User has a lot of unread notifications.
 error-offline              : User is offline
+error-file-type            : Invalid file type.

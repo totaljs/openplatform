@@ -4,6 +4,8 @@ NEWSCHEMA('Settings', function(schema) {
 
 	schema.define('url', 'String(500)', true);
 	schema.define('email', 'Email', true);
+	schema.define('colorscheme', 'Lower(7)');
+	schema.define('background', 'String(150)');
 	schema.define('accesstoken', 'String(50)', true);
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
@@ -19,6 +21,8 @@ NEWSCHEMA('Settings', function(schema) {
 		var options = F.config['mail-smtp-options'];
 		model.accesstoken = F.config.accesstoken;
 		model.url = F.config.url;
+		model.colorscheme = F.config.colorscheme;
+		model.background = F.config.background;
 		model.email = F.config.email;
 		model.smtp = F.config['mail-smtp'];
 		model.smtpsettings = typeof(options) === 'string' ? options : JSON.stringify(options);
@@ -40,8 +44,17 @@ NEWSCHEMA('Settings', function(schema) {
 		if (model.url.endsWith('/'))
 			model.url = model.url.substring(0, model.url.length - 1);
 
+		// Removing older background
+		if (F.config.background && model.background !== F.config.background) {
+			var path = 'backgrounds/' + F.config.background;
+			Fs.unlink(F.path.public(path), NOOP);
+			F.touch('/' + path);
+		}
+
 		F.config.url = model.url;
 		F.config.email = model.email;
+		F.config.colorscheme = model.colorscheme;
+		F.config.background = model.background;
 		F.config['mail-smtp'] = model.smtp;
 		F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
 		F.config.accesstoken = model.accesstoken;
@@ -62,6 +75,8 @@ NEWSCHEMA('Settings', function(schema) {
 				F.config.author = model.author;
 				F.config.email = model.email;
 				F.config.accesstoken = model.accesstoken;
+				F.config.colorscheme = model.colorscheme;
+				F.config.background = model.background;
 				F.config['mail-smtp'] = model.smtp;
 				F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
 				OP.id = F.config.url.crc32(true);
