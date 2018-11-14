@@ -132,8 +132,10 @@ function json_apps_meta(id) {
 
 function json_upload_photo() {
 	var self = this;
-	var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-	self.body.file.base64ToFile(F.path.public('photos/' + id), () => self.json(id));
+	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
+	var path = F.path.public('photos');
+	F.path.mkdir(path);
+	self.body.file.base64ToFile(path + id, () => self.json(id));
 }
 
 function json_upload_background() {
@@ -141,8 +143,10 @@ function json_upload_background() {
 	var file = self.files[0];
 
 	if (file.isImage()) {
-		var id = F.datetime.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
-		file.move(F.path.public('backgrounds/' + id), () => self.json(id));
+		var path = F.path.public('backgrounds');
+		F.path.mkdir(path);
+		var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
+		file.move(path + id, () => self.json(id));
 	} else
 		self.invalid('error-file-type');
 }
