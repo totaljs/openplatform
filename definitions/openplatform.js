@@ -259,7 +259,6 @@ function readuser(user, type, app) {
 		return;
 
 	var obj = {};
-
 	obj.id = user.id;
 	obj.supervisorid = user.supervisorid;
 	obj.apps = user.apps2;
