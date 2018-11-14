@@ -47,6 +47,7 @@ function login() {
 			var cookie = {};
 			cookie.id = data.id;
 			cookie.date = F.datetime;
+			cookie.ua = (self.req.headers['user-agent'] || '').substring(0, 20);
 			self.cookie(F.config.cookie, F.encrypt(cookie), '1 month', COOKIES);
 			self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
 			return;
@@ -77,18 +78,26 @@ function realtime() {
 		}
 
 		client.id = client.user.id;
-		client.user.online = true;
-		client.user.countsessions++;
-		WSPROFILE.body = OP.profile(client.user);
-		client.send(WSPROFILE);
+		// client.user.online = true;
+		// client.user.countsessions++;
+
+		FUNC.users.online(client.user, true, function() {
+			OP.profile(client.user, function(err, profile) {
+				WSPROFILE.body = profile;
+				client.send(WSPROFILE);
+			});
+		});
 	});
 
 	self.on('close', function(client) {
-		client.user.countsessions--;
-		if (client.user.countsessions <= 0) {
-			client.user.online = false;
-			client.user.countsessions = 0;
-		}
+
+		FUNC.users.online(client.user, false);
+
+		// client.user.countsessions--;
+		// if (client.user.countsessions <= 0) {
+		// 	client.user.online = false;
+		// 	client.user.countsessions = 0;
+		// }
 	});
 
 	self.on('message', function(client, message) {
@@ -117,24 +126,27 @@ function realtime() {
 				}
 
 				if (client.user.apps[message.id]) {
-					var app = F.global.apps.findItem('id', message.id);
-					WSOPEN.body = OP.meta(app, client.user);
-					WSOPEN.body.ip = client.ip;
-					WSOPEN.body.href = message.href;
 
-					LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
+					FUNC.apps.get(message.id, function(err, app) {
 
-					if (WSOPEN.body) {
+						WSOPEN.body = OP.meta(app, client.user);
+						WSOPEN.body.ip = client.ip;
+						WSOPEN.body.href = message.href;
 
-						client.send(WSOPEN);
-						client.user.apps[message.id].countnotifications = 0;
-						client.user.apps[message.id].countbadges = 0;
+						LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
 
-						// Stats
-						var db = NOSQL('apps');
-						db.counter.hit('all');
-						db.counter.hit(message.id);
-					}
+						if (WSOPEN.body) {
+
+							client.send(WSOPEN);
+							client.user.apps[message.id].countnotifications = 0;
+							client.user.apps[message.id].countbadges = 0;
+
+							// Stats
+							var db = NOSQL('apps');
+							db.counter.hit('all');
+							db.counter.hit(message.id);
+						}
+					});
 				}
 
 				break;
@@ -166,8 +178,10 @@ function realtime() {
 
 ON('apps.refresh', function() {
 	WS && WS.all(function(client) {
-		WSPROFILE.body = OP.profile(client.user);
-		client.send(WSPROFILE);
+		OP.profile(client.user, function(err, profile) {
+			WSPROFILE.body = profile;
+			client.send(WSPROFILE);
+		});
 	});
 });
 
@@ -179,8 +193,10 @@ ON('users.refresh', function(user, removed) {
 				setTimeout(() => client.close(), 100);
 			}
 		} else if (client.id === user.id) {
-			WSPROFILE.body = OP.profile(client.user);
-			client.send(WSPROFILE);
+			OP.profile(client.user, function(err, profile) {
+				WSPROFILE.body = profile;
+				client.send(WSPROFILE);
+			});
 		}
 	});
 });

@@ -8,20 +8,24 @@ AUTH(function(req, res, flags, next) {
 	// Acccess Token
 	var token = req.headers['x-token'];
 	if (token) {
+
 		if (DDOS[key] > 5) {
 			LOGGER('protection', key);
 			return next(false);
 		}
-		if (token === F.accesstoken)
+
+		if (token === CONF.accesstoken)
 			return next(true, SERVICEACCOUNT);
+
 		if (DDOS[key])
 			DDOS[key]++;
 		else
 			DDOS[key] = 1;
+
 		return next(false);
 	}
 
-	var cookie = req.cookie(F.config.cookie);
+	var cookie = req.cookie(CONF.cookie);
 	if (!cookie)
 		return next(false);
 
@@ -33,26 +37,40 @@ AUTH(function(req, res, flags, next) {
 	cookie = F.decrypt(cookie);
 
 	if (cookie) {
-		var user = G.users.findItem('id', cookie.id);
-		if (user && !user.inactive && !user.blocked) {
-			user.datelogged = F.datetime;
-			user.online = true;
 
-			if (user.language && user.language !== 'en')
-				req.$language = user.language;
+		var sessionkey = 'user' + cookie.id;
 
-			next(true, user);
-		} else
-			next(false);
-		return;
+		// Checks session
+		FUNC.sessions.get(sessionkey, function(err, user) {
+
+			if (user) {
+				next((user.inactive || user.blocked) ? false : true, user);
+				return;
+			}
+
+			// Reads a user from DB
+			FUNC.users.get(cookie.id, function(err, user) {
+				if (user && !user.inactive && !user.blocked) {
+					user.datelogged = NOW;
+					user.online = true;
+					if (user.language && user.language !== 'en')
+						req.$language = user.language;
+					FUNC.users.set(sessionkey, user, '5 minutes');
+					next(true, user);
+				} else
+					next(false);
+			});
+		});
+
+	} else {
+
+		if (DDOS[key])
+			DDOS[key]++;
+		else
+			DDOS[key] = 1;
+
+		next(false);
 	}
-
-	if (DDOS[key])
-		DDOS[key]++;
-	else
-		DDOS[key] = 1;
-
-	return next(false);
 });
 
 ON('service', function(counter) {
@@ -64,31 +82,49 @@ ON('service', function(counter) {
 	if (counter % 60 !== 0)
 		return;
 
-	var messages = [];
+	// Locks this operation
+	FUNC.sessions.lock('notifications', function() {
 
-	for (var i = 0, length = G.users.length; i < length; i++) {
+		// Streams all users
+		FUNC.users.stream(50, function(users, next) {
 
-		var user = F.global.users[i];
-		if (!user || user.inactive || user.blocked || !user.notificationsemail || !user.countnotifications)
-			continue;
+			var changed = [];
+			var messages = [];
 
-		if (user.datenotifiedemail && user.datenotifiedemail.add('12 hour') > F.datetime)
-			continue;
+			for (var i = 0, length = users.length; i < length; i++) {
 
-		user.datenotifiedemail = F.datetime;
+				var user = users[i];
+				if (!user || user.inactive || user.blocked || !user.notificationsemail || !user.countnotifications)
+					continue;
 
-		if (F.config['mail-smtp']) {
-			var message = MAIL(user.email, '@(Unread notifications)', '/mails/notifications', user, user.language);
-			message.manually();
-			messages.push(message);
-			LOGGER('email', user.id + ': ' + user.name + '(' + user.email + '): ' + user.countnotifications + 'x');
-		}
+				if (user.datenotifiedemail && user.datenotifiedemail.add('12 hours') > NOW)
+					continue;
 
-		EMIT('users.unread', user);
-	}
+				user.datenotifiedemail = NOW;
 
-	if (messages.length) {
-		OP.saveState(2);
-		Mail.send2(messages, F.error());
-	}
+				if (CONF.mail_smtp) {
+					var message = MAIL(user.email, '@(Unread notifications)', '/mails/notifications', user, user.language);
+					message.manually();
+					messages.push(message);
+					LOGGER('email', user.id + ': ' + user.name + '(' + user.email + '): ' + user.countnotifications + 'x');
+				}
+
+				changed.push(user);
+				FUNC.emit('unread', user.id);
+			}
+
+			if (messages.length) {
+
+				FUNC.users.set(changed, ['datenotifiedemail']);
+
+				Mail.send2(messages, function(err) {
+					err && FUNC.error('notifications', err);
+					next();
+				});
+			}
+
+			next();
+
+		}, () => FUNC.sessions.unlock('notifications'));
+	});
 });

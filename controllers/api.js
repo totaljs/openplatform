@@ -30,9 +30,8 @@ exports.install = function() {
 		ROUTE('POST   /api/internal/settings/           *Settings     --> @save');
 		ROUTE('POST   /api/internal/settings/smtp/      *SettingsSMTP --> @exec', [10000]);
 
-		ROUTE('/api/upload/photo/',  json_upload_photo, ['post'], 1024 * 2);
-		ROUTE('/api/upload/background/',  json_upload_background, ['post', 'upload'], 1024 * 5);
-
+		ROUTE('/api/upload/photo/',                     json_upload_photo, ['post'], 1024 * 2);
+		ROUTE('/api/upload/background/',                json_upload_background, ['post', 'upload'], 1024 * 5);
 	});
 
 	GROUP(['unauthorize'], function() {
@@ -49,73 +48,77 @@ exports.install = function() {
 	ROUTE('GET    /api/badges/                          *Badge        --> @exec');
 	ROUTE('POST   /api/notify/                          *Notification --> @save');
 
-
 	// CORS
 	CORS();
 };
 
 function json_verify() {
-
 	var self = this;
-	var obj = self.query.accesstoken ? OP.decodeAuthToken(self.query.accesstoken) : null;
+	OP.decodeAuthToken(self.query.accesstoken, function(err, obj) {
 
-	if (!obj) {
-		self.invalid().push('error-invalid-accesstoken');
-		return;
-	}
-
-	var app = obj.app;
-	var user = obj.user;
-
-	if (!user.online) {
-		self.invalid().push('error-offline');
-		return;
-	}
-
-	if (app.origin) {
-		if (!app.origin[self.ip] && app.hostname !== self.ip) {
-			self.invalid().push('error-invalid-origin');
+		if (!obj) {
+			self.invalid('error-invalid-accesstoken');
 			return;
 		}
-	} else if (app.hostname !== self.ip) {
-		self.invalid().push('error-invalid-origin');
-		return;
-	} else if (user.inactive || user.blocked) {
-		self.invalid().push('error-accessible');
-		return;
-	}
 
-	self.json(OP.meta(app, user, true));
+		var app = obj.app;
+		var user = obj.user;
+
+		if (!user.online) {
+			self.invalid('error-offline');
+			return;
+		}
+
+		if (app.origin) {
+			if (!app.origin[self.ip] && app.hostname !== self.ip) {
+				self.invalid('error-invalid-origin');
+				return;
+			}
+		} else if (app.hostname !== self.ip) {
+			self.invalid('error-invalid-origin');
+			return;
+		} else if (user.inactive || user.blocked) {
+			self.invalid('error-accessible');
+			return;
+		}
+
+		self.json(OP.meta(app, user, true));
+	});
 }
 
 function json_apps_query() {
 	var self = this;
-	if (self.user.sa)
-		self.json(G.apps);
-	else
-		self.invalid().push('error-permissions');
+	if (self.user.sa) {
+		FUNC.apps.query(self.query, self.callback());
+	} else
+		self.invalid('error-permissions');
 }
 
 function json_users_read(id) {
 	var self = this;
 	if (self.user.sa) {
-		var user = G.users.findItem('id', id);
-		if (user)
-			self.json(user, false, (k, v) => SKIP[k] ? undefined : v);
-		else
-			self.json(null);
+		FUNC.users.get(id, function(err, user) {
+			if (user)
+				self.json(user, false, (k, v) => SKIP[k] ? undefined : v);
+			else
+				self.json(null);
+		});
 	} else
-		self.invalid().push('error-permissions');
+		self.invalid('error-permissions');
 }
 
 function json_users_query() {
 	var self = this;
 	var ALLOW = { id: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1 };
-
-	if (self.user.sa)
-		self.json(G.users, false, (k, v) => k >= 0 || ALLOW[k] ? v : undefined);
-	else
-		self.invalid().push('error-permissions');
+	if (self.user.sa) {
+		FUNC.users.query(self.query, function(err, users) {
+			if (users)
+				self.json(users, false, (k, v) => k >= 0 || ALLOW[k] ? v : undefined);
+			else
+				self.invalid(err);
+		});
+	} else
+		self.invalid('error-permissions');
 }
 
 function json_meta_query() {
@@ -123,11 +126,13 @@ function json_meta_query() {
 }
 
 function json_apps_meta(id) {
-	var item = G.apps.findItem('id', id);
-	if (item)
-		this.json(OP.meta(item, this.user));
-	else
-		this.invalid().push('error-app-404');
+	var self = this;
+	FUNC.apps.get(id, function(err, app) {
+		if (app)
+			self.json(OP.meta(app, self.user));
+		else
+			self.invalid('error-app-404');
+	});
 }
 
 function json_upload_photo() {
@@ -141,7 +146,6 @@ function json_upload_photo() {
 function json_upload_background() {
 	var self = this;
 	var file = self.files[0];
-
 	if (file.isImage()) {
 		var path = F.path.public('backgrounds');
 		F.path.mkdir(path);
@@ -152,13 +156,15 @@ function json_upload_background() {
 }
 
 function json_online(id) {
-	var user = G.users.findItem('id', id);
-	if (user) {
-		ONLINE.online = user.online;
-		ONLINE.datelogged = user.datelogged;
-	} else {
-		ONLINE.online = false;
-		ONLINE.datelogged = null;
-	}
-	this.json(ONLINE);
+	var self = this;
+	FUNC.users.get(id, function(err, user) {
+		if (user) {
+			ONLINE.online = user.online;
+			ONLINE.datelogged = user.datelogged;
+		} else {
+			ONLINE.online = false;
+			ONLINE.datelogged = null;
+		}
+		self.json(ONLINE);
+	});
 }

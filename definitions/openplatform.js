@@ -3,7 +3,9 @@ const OP = global.OP = {};
 
 // G.users = [];
 // G.apps = [];
+// G.meta;
 
+// Internal
 // Saves stats into the file
 OP.save = function(callback) {
 	G.users.quicksort('name');
@@ -61,7 +63,7 @@ OP.load = function(callback) {
 };
 
 // Return user profile object
-OP.profile = function(user) {
+OP.profile = function(user, callback) {
 
 	var meta = {};
 	meta.openplatformid = OP.id;
@@ -78,19 +80,31 @@ OP.profile = function(user) {
 	meta.colorscheme = user.colorscheme || F.config.colorscheme;
 	meta.background = user.background || F.config.background;
 
-	for (var i = 0, length = G.apps.length; i < length; i++) {
-		var app = G.apps[i];
-		!app.blocked && user.apps && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type });
-	}
+	var id = Object.keys(user.apps);
 
-	if (user.sa) {
-		meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false });
-		meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false });
-		meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 690, resize: false });
-	}
+	FUNC.apps.query({ id: id }, function(err, apps) {
 
-	meta.apps.push({ id: '_account', icon: 'cog', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 720, resize: false });
-	return meta;
+		if (err) {
+			FUNC.error('OP.profile', err);
+			callback(err, meta);
+			return;
+		}
+
+		for (var i = 0, length = apps.items.length; i < length; i++) {
+			var app = apps.items[i];
+			if (!app.blocked && user.apps && user.apps[app.id])
+				meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type });
+		}
+
+		if (user.sa) {
+			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false });
+			meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false });
+			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 690, resize: false });
+		}
+
+		meta.apps.push({ id: '_account', icon: 'cog', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 720, resize: false });
+		callback(null, meta);
+	});
 };
 
 // Output see the app only
@@ -182,34 +196,46 @@ OP.encodeAuthToken = function(app, user) {
 	return sign.encrypt(F.config.accesstoken.substring(0, 20));
 };
 
-OP.decodeAuthToken = function(sign) {
+OP.decodeAuthToken = function(sign, callback) {
+
+	if (!sign) {
+		callback(null, null);
+		return;
+	}
 
 	sign = sign.decrypt(F.config.accesstoken.substring(0, 20));
 
-	if (!sign)
-		return null;
+	if (!sign) {
+		callback(null, null);
+		return;
+	}
 
 	var arr = sign.split('-');
 
 	if (arr.length !== 3)
 		return null;
 
-	var obj = {};
-	var app = G.apps.findItem('id', arr[0]);
-	if (app == null)
-		return null;
+	FUNC.apps.get(arr[0], function(err, app) {
 
-	var user = G.users.findItem('id', arr[1]);
-	if (user == null)
-		return null;
+		if (err || !app) {
+			callback(err, null);
+			return;
+		}
 
-	var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + F.config.accesstoken).crc32(true);
-	if (tmp !== arr[2])
-		return null;
+		FUNC.users.get(arr[1], function(err, user) {
 
-	obj.app = app;
-	obj.user = user;
-	return obj;
+			if (err || !user) {
+				callback(err, null);
+				return;
+			}
+
+			var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + F.config.accesstoken).crc32(true);
+			if (tmp !== arr[2])
+				callback(null, null);
+			else
+				callback(null, { user: user, app: app });
+		});
+	});
 };
 
 function readapp(app, type) {
@@ -320,7 +346,7 @@ function readuser(user, type, app) {
 	return obj;
 }
 
-OP.users = function(app, query) {
+OP.users = function(app, query, callback) {
 	var arr = [];
 	if (app.allowreadusers) {
 		for (var i = 0, length = G.users.length; i < length; i++) {
@@ -328,10 +354,10 @@ OP.users = function(app, query) {
 			item && arr.push(item);
 		}
 	}
-	return { items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length };
+	callback({ items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length });
 };
 
-OP.apps = function(app, query) {
+OP.apps = function(app, query, callback) {
 	var arr = [];
 	if (app.allowreadapps) {
 		for (var i = 0, length = G.users.length; i < length; i++) {
@@ -339,7 +365,7 @@ OP.apps = function(app, query) {
 			item && arr.push(item);
 		}
 	}
-	return { items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length };
+	callback({ items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length });
 };
 
 OP.ou = function(val) {
