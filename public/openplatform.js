@@ -355,3 +355,10 @@ OP.tokenizator = function(url) {
 	var index = url.indexOf('?');
 	return index === -1 ? (url + ('?openplatform=' + OP.token)) : (url.substring(0, index + 1) + ('openplatform=' + OP.token + '&' + url.substring(index + 1)));
 };
+
+if (window.history) {
+	history.pushState(null, null, location.href);
+	window.onpopstate = function () {
+		history.go(1);
+	};
+}
