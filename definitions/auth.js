@@ -87,7 +87,7 @@ ON('service', function(counter) {
 	FUNC.sessions.lock('notifications', '10 minutes', function() {
 
 		// Streams all users
-		FUNC.users.stream(50, function(users, next) {
+		FUNC.users.stream({ limit: 50 }, function(users, next) {
 
 			var changed = [];
 			var messages = [];

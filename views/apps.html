@@ -229,7 +229,7 @@
 				var id = apps.selected;
 				AJAX('DELETE /api/internal/apps/{0}/'.format(id), function(response) {
 					if (response.success) {
-						apps.items = apps.items.remove('id', id);
+						apps.items.items = apps.items.items.remove('id', id);
 						apps.form.id === id && apps_cancel();
 						SET('apps.selected', '');
 						NOTIFY('apps.items');

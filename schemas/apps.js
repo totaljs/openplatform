@@ -158,7 +158,7 @@ NEWSCHEMA('App', function(schema) {
 
 	schema.addWorkflow('state', function($) {
 		FUNC.sessions.lock('apps.state', '10 minutes', function() {
-			FUNC.apps.stream(50, function(apps, next) {
+			FUNC.apps.stream({ limit: 50 }, function(apps, next) {
 				apps.wait(function(item, next) {
 					state(item, function() {
 						FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'daterefreshed']);

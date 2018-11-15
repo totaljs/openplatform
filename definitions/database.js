@@ -1,5 +1,5 @@
 const Fs = require('fs');
-require('dbms').init('postgres://totalsqlagent:B669fD02452Baa4b@138.201.86.196/openplatform');
+require('dbms').init(CONF.database);
 
 //DBMS.logger();
 
@@ -22,15 +22,22 @@ FUNC.users.set = function(user, fields, callback) {
 	// @callback {Function} Optional
 
 	var db = DBMS();
+	var is = true;
 
 	if (user instanceof Array) {
-		for (var j = 0; i < user.length; j++) {
+		for (var j = 0; j < user.length; j++) {
 			var data = {};
 			for (var i = 0; i < fields.length; i++)
 				data[fields[i]] = user[j][fields[i]];
 			db.modify('tbl_user', data).where('id', user[j].id);
+			is = false;
 		}
-		db.callback(callback);
+
+		if (is) {
+			callback(null);
+			return;
+		}
+
 	} else if (user.id) {
 		if (fields) {
 			var data = {};
@@ -43,6 +50,7 @@ FUNC.users.set = function(user, fields, callback) {
 		user.id = UID();
 		db.insert('tbl_user', user);
 	}
+
 
 	callback && db.callback(err => callback(err, user.id));
 };
@@ -67,8 +75,16 @@ FUNC.users.query = function(filter, callback) {
 };
 
 FUNC.users.rem = function(id, callback) {
-	// @TODO: complete + remove all notifications
-	callback(null);
+	DBMS().read('tbl_user').where('id', id).callback(function(err, response) {
+		if (response) {
+			var db = DBMS();
+			db.remove('tbl_user').where('id', id);
+			db.update('tbl_user', { supervisorid: '' }).where('supervisorid', id);
+			db.update('tbl_user', { delegateid: '' }).where('delegateid', id);
+			db.remove('tbl_notification').where('userid', id);
+		}
+		callback(null, response);
+	});
 };
 
 FUNC.users.login = function(login, password, callback) {
@@ -93,14 +109,24 @@ FUNC.users.password = function(login, callback) {
 	});
 };
 
-FUNC.users.stream = function(limit, fn, callback) {
+FUNC.users.stream = function(query, fn, callback) {
 
 	// Streams all users
 	// fn(users, next);
 	// done: callback()
 
+	if (!query.limit)
+		query.limit = 100;
+
+	if (typeof(query.limit) === 'string')
+		query.limit = +query.limit;
+
 	var streamer = function(index) {
-		DBMS().find('tbl_user').take(limit).skip(limit * index).callback(function(err, response) {
+		var builder = DBMS().find('tbl_user');
+		query.appid && builder.search('apps::text', '"{0}"'.format(query.appid));
+		builder.take(query.limit);
+		builder.skip(query.limit * index);
+		builder.callback(function(err, response) {
 			if (err || !response.length)
 				callback && callback();
 			else
@@ -249,11 +275,22 @@ FUNC.apps.set = function(app, fields, callback) {
 			var data = {};
 			for (var i = 0; i < fields.length; i++)
 				data[fields[i]] = app[fields[i]];
+
+			if (data.roles)
+				data.roles = JSON.stringify(data.roles);
+
 			db.modify('tbl_app', data).where('id', app.id);
-		} else
+		} else {
+
+			if (app.roles)
+				app.roles = JSON.stringify(app.roles);
+
 			db.modify('tbl_app', app).where('id', app.id);
+		}
 	} else {
 		app.id = UID();
+		if (app.roles)
+			app.roles = JSON.stringify(app.roles);
 		db.insert('tbl_app', app);
 	}
 
@@ -261,18 +298,47 @@ FUNC.apps.set = function(app, fields, callback) {
 };
 
 FUNC.apps.rem = function(id, callback) {
-	// @TODO: complete + remove all notifications
-	callback(null);
+	DBMS().read('tbl_app').where('id', id).callback(function(err, response) {
+		if (response) {
+
+			var db = DBMS();
+			db.remove('tbl_app').where('id', id);
+			db.remove('tbl_notification').where('appid', id);
+
+			// Remove app
+			FUNC.users.stream({ limit: 50, appid: id }, function(users, next) {
+				for (var i = 0; i < users.length; i++)
+					delete users[i].apps[id];
+
+				if (users.length)
+					FUNC.users.set(users, ['apps'], next);
+				else
+					next();
+
+			}, () => callback(null, response));
+
+		} else
+			callback(null);
+	});
 };
 
-FUNC.apps.stream = function(limit, fn, callback) {
+FUNC.apps.stream = function(query, fn, callback) {
 
 	// Streams all apps
 	// fn(users, next);
 	// done: callback()
 
+	if (!query.limit)
+		query.limit = 100;
+
+	if (typeof(query.limit) === 'string')
+		query.limit = +query.limit;
+
 	var streamer = function(index) {
-		DBMS().find('tbl_app').take(limit).skip(limit * index).callback(function(err, response) {
+		var builder = DBMS().find('tbl_app');
+		builder.take(query.limit);
+		builder.skip(query.limit * index);
+		builder.callback(function(err, response) {
 			if (err || !response.length)
 				callback && callback();
 			else
