@@ -5,6 +5,18 @@ const SKIP = { localitylinker: 1, companylinker: 1, countsessions: 1 };
 // G.users = [];
 // G.apps = [];
 
+OP.login = function(login, password, callback) {
+	var user = G.users.findItem('login', login);
+	if (user && user.password === password.sha256())
+		callback(null, user);
+	else
+		callback();
+};
+
+OP.logout = function(controller) {
+	controller.redirect('/');
+};
+
 // Saves stats into the file
 OP.save = function(callback) {
 	G.users.quicksort('name');

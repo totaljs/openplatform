@@ -6,30 +6,26 @@ NEWSCHEMA('Login', function(schema) {
 	schema.define('password', 'String(50)', true);
 
 	schema.addWorkflow('exec', function($) {
+		OP.login($.model.name, $.model.password, function(err, user) {
+			if (user) {
+				if (user.blocked) {
+					$.invalid('error-blocked');
+				} else if (user.inactive) {
+					$.invalid('error-inactive');
+				} else {
+					var cookie = {};
+					cookie.id = user.id;
+					cookie.date = F.datetime;
 
-		var password = $.model.password.sha256();
-		var user = F.global.users.findItem(n => n.login === $.model.name && n.password === password);
-		if (user) {
-			if (user.blocked) {
-				$.error.push('error-blocked');
-			} else if (user.inactive) {
-				$.error.push('error-inactive');
-			} else {
-				var cookie = {};
-				cookie.id = user.id;
-				cookie.date = F.datetime;
+					// Updates token
+					user.verifytoken = U.GUID(15);
 
-				// Updates token
-				user.verifytoken = U.GUID(15);
-
-				// Creates auth cookie
-				$.controller.cookie(F.config.cookie, F.encrypt(cookie), F.config['cookie-expiration'] || '1 month', COOKIEOPTIONS);
-			}
-		} else
-			$.error.push('error-credentials');
-
-		$.success();
+					// Creates auth cookie
+					$.controller.cookie(F.config.cookie, F.encrypt(cookie), F.config['cookie-expiration'] || '1 month', COOKIEOPTIONS);
+					$.success();
+				}
+			} else
+				$.invalid('error-credentials');
+		});
 	});
-
-
 });

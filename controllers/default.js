@@ -59,7 +59,7 @@ function login() {
 function logoff() {
 	var self = this;
 	self.cookie(F.config.cookie, '', '-5 days');
-	self.redirect('/');
+	OP.logout(self);
 }
 
 function realtime() {
