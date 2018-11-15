@@ -16,8 +16,8 @@
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@16.css" />
-	@{if user && (user.background || F.config.background)}
-	<style>body{background:url(/backgrounds/@{user.background || F.config.background}) 50% 50%}</style>
+	@{if user && (user.background || CONF.background)}
+	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
 	@{fi}
 	<script src="@{'%cdn'}/spa.min@16.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
