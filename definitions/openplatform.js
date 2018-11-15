@@ -1,37 +1,8 @@
-const Fs = require('fs');
 const OP = global.OP = {};
 
 // G.users = [];
 // G.apps = [];
 // G.meta;
-
-// Internal
-// Saves stats into the file
-OP.save = function(callback) {
-	G.users.quicksort('name');
-	G.apps.quicksort('name');
-	EMIT('users.backup', G.users);
-	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
-	EMIT('apps.backup', G.apps);
-	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
-	callback && callback();
-};
-
-OP.saveState = function(type) {
-	setTimeout2('OP.saveState.' + (type || 0), function() {
-
-		if (!type || type === 2) {
-			EMIT('users.backup', G.users);
-			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
-		}
-
-		if (!type || type === 1) {
-			EMIT('apps.backup', G.apps);
-			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
-		}
-
-	}, 1000, 10);
-};
 
 // Return user profile object
 OP.profile = function(user, callback) {

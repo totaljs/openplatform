@@ -205,7 +205,7 @@ ON('users.refresh', function(userid, removed) {
 	});
 });
 
-ON('users.notify', function(userid, appid) {
+function notify(userid, appid) {
 	if (WS) {
 		var conn = WS.find(userid);
 		conn && FUNC.users.get(userid, function(err, user) {
@@ -218,4 +218,7 @@ ON('users.notify', function(userid, appid) {
 			}
 		});
 	}
-});
+}
+
+ON('users.notify', notify);
+ON('users.badge', notify);

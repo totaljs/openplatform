@@ -28,7 +28,7 @@ FUNC.users.set = function(user, fields, callback) {
 		G.users.push(user);
 	}
 
-	OP.saveState(2);
+	save(2);
 	callback && callback();
 };
 
@@ -75,7 +75,7 @@ FUNC.users.rem = function(id, callback) {
 		}
 
 		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
-		OP.saveState(2);
+		save(2);
 	}
 
 	callback(null, item);
@@ -226,7 +226,7 @@ FUNC.apps.set = function(app, fields, callback) {
 		F.global.apps.push(item);
 	}
 
-	OP.saveState(1);
+	save(1);
 	G.apps.quicksort('title');
 	callback && callback();
 };
@@ -242,7 +242,7 @@ FUNC.apps.rem = function(id, callback) {
 			delete item.apps[id];
 		});
 
-		OP.saveState(1);
+		save(1);
 	}
 
 	callback(null, item);
@@ -260,6 +260,7 @@ FUNC.apps.stream = function(limit, fn, callback) {
 FUNC.apps.query = function(filter, callback) {
 	// filter.take
 	// filter.skip
+	// filter.id {String Array}
 	var obj = {};
 	obj.count = obj.limit = G.apps.length;
 	obj.items = G.apps;
@@ -341,6 +342,7 @@ FUNC.notifications.add = function(data, callback) {
 
 	var filename = F.path.databases('notifications_' + data.userid + '.json');
 	Fs.appendFile(filename, JSON.stringify(data) + ',', NOOP);
+	callback && callback();
 };
 
 FUNC.notifications.rem = function(userid, callback) {
@@ -353,7 +355,7 @@ FUNC.notifications.rem = function(userid, callback) {
 		var keys = Object.keys(user.apps);
 		for (var i = 0; i < keys.length; i++)
 			user.apps[keys[i]].countnotifications = 0;
-		OP.saveState(2);
+		save(2);
 	}
 
 	callback && callback();
@@ -420,3 +422,20 @@ FUNC.error = function(place, err) {
 };
 
 FUNC.logger = LOGGER;
+
+// FileStorage
+function save(type) {
+	setTimeout2('OP.saveState.' + (type || 0), function() {
+
+		if (!type || type === 2) {
+			EMIT('users.backup', G.users);
+			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
+		}
+
+		if (!type || type === 1) {
+			EMIT('apps.backup', G.apps);
+			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
+		}
+
+	}, 1000, 10);
+}

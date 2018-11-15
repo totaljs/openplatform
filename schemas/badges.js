@@ -28,12 +28,14 @@ NEWSCHEMA('Badge', function(schema) {
 
 			if (user.apps[app.id]) {
 				var ua = user.apps[app.id];
+
 				if (ua.countbadges)
 					ua.countbadges++;
 				else
 					ua.countbadges = 1;
+
 				FUNC.users.set(user, ['apps']);
-				FUNC.emit('users.badge', obj.user.id, app.id);
+				FUNC.emit('users.badge', user.id, app.id);
 				$.success();
 			} else
 				$.invalid('error-permissions');
