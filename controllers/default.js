@@ -3,7 +3,6 @@ const WSPROFILE =  { TYPE: 'profile', body: null };
 const WSNOTIFICATIONS = { TYPE: 'notifications', body: null };
 const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
 const WSLOGOFF = { TYPE: 'logoff' };
-const WSID = [''];
 const COOKIES = { security: 1, httponly: true };
 
 var WS;
@@ -30,8 +29,8 @@ exports.install = function() {
 
 function manifest(req, res) {
 	var meta = {};
-	meta.name = F.config.name;
-	meta.short_name = F.config.name;
+	meta.name = CONF.name;
+	meta.short_name = CONF.name;
 	meta.icons = [{ src: '/icon.png', size: '500x500', type: 'image/png' }];
 	meta.start_url = '/';
 	meta.display = 'standalone';
@@ -42,13 +41,13 @@ function login() {
 	var self = this;
 
 	if (self.query.token) {
-		var data = F.decrypt(self.query.token, 'token');
-		if (data && data.date.add('5 days') > F.datetime) {
+		var data = F.decrypt(self.query.token, CONF.secret_password);
+		if (data && data.date.add('2 days') > NOW) {
 			var cookie = {};
 			cookie.id = data.id;
-			cookie.date = F.datetime;
+			cookie.date = NOW;
 			cookie.ua = (self.req.headers['user-agent'] || '').substring(0, 20);
-			self.cookie(F.config.cookie, F.encrypt(cookie), '1 month', COOKIES);
+			self.cookie(CONF.cookie, F.encrypt(cookie), '1 month', COOKIES);
 			self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
 			return;
 		}
@@ -59,8 +58,8 @@ function login() {
 
 function logoff() {
 	var self = this;
-	self.cookie(F.config.cookie, '', '-5 days');
-	self.redirect('/');
+	self.cookie(CONF.cookie, '', '-5 days');
+	FUNC.users.logout(self.user, self);
 }
 
 function realtime() {
@@ -126,25 +125,26 @@ function realtime() {
 				}
 
 				if (client.user.apps[message.id]) {
-
 					FUNC.apps.get(message.id, function(err, app) {
 
-						WSOPEN.body = OP.meta(app, client.user);
-						WSOPEN.body.ip = client.ip;
-						WSOPEN.body.href = message.href;
+						if (app) {
+							WSOPEN.body = OP.meta(app, client.user);
+							WSOPEN.body.ip = client.ip;
+							WSOPEN.body.href = message.href;
 
-						LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
+							LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
 
-						if (WSOPEN.body) {
+							if (WSOPEN.body) {
 
-							client.send(WSOPEN);
-							client.user.apps[message.id].countnotifications = 0;
-							client.user.apps[message.id].countbadges = 0;
+								client.send(WSOPEN);
+								client.user.apps[message.id].countnotifications = 0;
+								client.user.apps[message.id].countbadges = 0;
 
-							// Stats
-							var db = NOSQL('apps');
-							db.counter.hit('all');
-							db.counter.hit(message.id);
+								// Stats
+								var db = NOSQL('apps');
+								db.counter.hit('all');
+								db.counter.hit(message.id);
+							}
 						}
 					});
 				}
@@ -152,7 +152,7 @@ function realtime() {
 				break;
 
 			case 'log':
-				LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(message.appurl, message.appid), message.body);
+				FUNC.logger('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(message.appurl, message.appid), message.body);
 				break;
 
 			case 'notifications':
@@ -167,9 +167,13 @@ function realtime() {
 			// Get user's profile
 			case 'profile':
 				// returns profile's detail
-				WSPROFILE.body = OP.profile(client.user);
-				WSPROFILE.body.ip = client.ip;
-				client.send(WSPROFILE);
+				OP.profile(client.user, function(err, data) {
+					if (data) {
+						WSPROFILE.body = data;
+						WSPROFILE.body.ip = client.ip;
+						client.send(WSPROFILE);
+					}
+				});
 				break;
 		}
 
@@ -185,14 +189,14 @@ ON('apps.refresh', function() {
 	});
 });
 
-ON('users.refresh', function(user, removed) {
+ON('users.refresh', function(userid, removed) {
 	WS && WS.all(function(client) {
 		if (removed || client.user.blocked || client.user.inactive) {
-			if (client.id === user.id) {
+			if (client.id === userid) {
 				client.send(WSLOGOFF);
 				setTimeout(() => client.close(), 100);
 			}
-		} else if (client.id === user.id) {
+		} else if (client.id === userid) {
 			OP.profile(client.user, function(err, profile) {
 				WSPROFILE.body = profile;
 				client.send(WSPROFILE);
@@ -201,13 +205,17 @@ ON('users.refresh', function(user, removed) {
 	});
 });
 
-ON('users.notify', function(user, app) {
+ON('users.notify', function(userid, appid) {
 	if (WS) {
-		WSNOTIFY.body.count = user.countnotifications;
-		WSNOTIFY.body.app.id = app;
-		WSNOTIFY.body.app.count = app ? user.apps[app].countnotifications : 0;
-		WSNOTIFY.body.app.badges = app ? user.apps[app].countbadges : 0;
-		WSID[0] = user.id;
-		WS.send(WSNOTIFY, WSID);
+		var conn = WS.find(userid);
+		conn && FUNC.users.get(userid, function(err, user) {
+			if (user) {
+				WSNOTIFY.body.count = user.countnotifications;
+				WSNOTIFY.body.app.id = appid;
+				WSNOTIFY.body.app.count = appid ? user.apps[appid].countnotifications : 0;
+				WSNOTIFY.body.app.badges = appid ? user.apps[appid].countbadges : 0;
+				conn.send(WSNOTIFY);
+			}
+		});
 	}
 });

@@ -15,60 +15,70 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('background', 'String(150)');
 
 	schema.setGet(function($) {
-		var user = $.controller.user;
-		var data = {};
-		data.email = user.email;
-		data.notifications = user.notifications;
-		data.notificationsemail = user.notificationsemail;
-		data.notificationsphone = user.notificationsphone;
-		data.phone = user.phone;
-		data.photo = user.photo;
-		data.sounds = user.sounds;
-		data.volume = user.volume;
-		data.colorscheme = user.colorscheme;
-		data.background = user.background;
-		data.password = '*********';
-		$.callback(data);
+		FUNC.users.get($.user.id, function(err, user) {
+			var data = {};
+			if (user) {
+				data.email = user.email;
+				data.notifications = user.notifications;
+				data.notificationsemail = user.notificationsemail;
+				data.notificationsphone = user.notificationsphone;
+				data.phone = user.phone;
+				data.photo = user.photo;
+				data.sounds = user.sounds;
+				data.volume = user.volume;
+				data.colorscheme = user.colorscheme;
+				data.background = user.background;
+				data.password = '*********';
+			}
+			$.callback(data);
+		});
 	});
 
 	schema.setSave(function($) {
 
-		var user = $.controller.user;
-		var model = $.model;
+		var model = $.clean();
 		var path;
 
-		// Removing older background
-		if (user.background && model.background !== user.background) {
-			path = 'backgrounds/' + user.background;
-			Fs.unlink(F.path.public(path), NOOP);
-			F.touch('/' + path);
-		}
+		FUNC.users.get($.user.id, function(err, user) {
+			if (user) {
 
-		// Removing older photo
-		if (user.photo && model.photo !== user.photo) {
-			path = 'photos/' + user.photo;
-			Fs.unlink(F.path.public(path), NOOP);
-			F.touch('/' + path);
-		}
+				// Removing older background
+				if (user.background && model.background !== user.background) {
+					path = 'backgrounds/' + user.background;
+					Fs.unlink(F.path.public(path), NOOP);
+					F.touch('/' + path);
+				}
 
-		if (model.password && !model.password.startsWith('***'))
-			user.password = model.password.sha256();
+				// Removing older photo
+				if (user.photo && model.photo !== user.photo) {
+					path = 'photos/' + user.photo;
+					Fs.unlink(F.path.public(path), NOOP);
+					F.touch('/' + path);
+				}
 
-		user.email = model.email;
-		user.notifications = model.notifications;
-		user.notificationsemail = model.notificationsemail;
-		user.notificationsphone = model.notificationsphone;
-		user.phone = model.phone;
-		user.photo = model.photo;
-		user.sounds = model.sounds;
-		user.volume = model.volume;
-		user.colorscheme = model.colorscheme;
-		user.background = model.background;
+				if (model.password && !model.password.startsWith('***'))
+					user.password = model.password.sha256();
 
-		EMIT('users.update', user, 'account');
-		EMIT('users.refresh', user);
-		OP.saveState(2);
-		$.success();
+				user.email = model.email;
+				user.notifications = model.notifications;
+				user.notificationsemail = model.notificationsemail;
+				user.notificationsphone = model.notificationsphone;
+				user.phone = model.phone;
+				user.photo = model.photo;
+				user.sounds = model.sounds;
+				user.volume = model.volume;
+				user.colorscheme = model.colorscheme;
+				user.background = model.background;
+
+				FUNC.users.set(user, Object.keys(model), function() {
+					FUNC.emit('users.update', user.id, 'account');
+					FUNC.emit('users.refresh', user.id);
+					$.success();
+				});
+
+			} else
+				$.invalid('error-users-404');
+		});
 	});
 
 });

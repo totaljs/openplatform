@@ -1,5 +1,6 @@
 const SKIP = { password: true, search: true, verifytoken: true };
 const ONLINE = { online: true, datelogged: null };
+const USERS_LIST_FIELDS = { id: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1, items: 1, count: 1, page: 1, pages: 1, limit: 1 };
 
 exports.install = function() {
 
@@ -109,11 +110,10 @@ function json_users_read(id) {
 
 function json_users_query() {
 	var self = this;
-	var ALLOW = { id: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1 };
 	if (self.user.sa) {
 		FUNC.users.query(self.query, function(err, users) {
 			if (users)
-				self.json(users, false, (k, v) => k >= 0 || ALLOW[k] ? v : undefined);
+				self.json(users, false, (k, v) => k >= 0 || USERS_LIST_FIELDS[k] ? v : undefined);
 			else
 				self.invalid(err);
 		});

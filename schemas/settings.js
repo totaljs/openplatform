@@ -73,7 +73,7 @@ NEWSCHEMA('Settings', function(schema) {
 
 	schema.addWorkflow('init', function($) {
 
-		FUNC.settings.get(function(response) {
+		FUNC.settings.get(function(err, response) {
 
 			if (response) {
 				CONF.url = response.url || '';

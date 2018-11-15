@@ -36,6 +36,8 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: righ
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
 .startmenu-search { padding: 0 10px 10px; }
 .startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
+.startmenu .ui-textbox { border: 0; }
+.startmenu .ui-textbox-input { padding-left: 10px; padding-left: 10px; }
 
 h1 { font-weight: bold; margin: 0 0 15px; padding: 0 0 5px; color: black; font-size: 18px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; border-bottom: 2px solid black; }
 h1 b { font-weight: 700; }
@@ -59,7 +61,7 @@ h3 .fa { margin-right: 5px; }
 .user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
 .user.selected { color: white; }
 .user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
-.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
+.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 2px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
 .user-notifications .fa { color: white; }
 .user-notifications .far { color: #606060; }
 

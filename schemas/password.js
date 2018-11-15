@@ -3,24 +3,31 @@ NEWSCHEMA('Password', function(schema) {
 	schema.define('name', 'String(50)', true);
 
 	schema.addWorkflow('exec', function($) {
-
-		var user = F.global.users.findItem(n => n.login === $.model.name);
-		if (user) {
-			if (user.blocked) {
-				$.error.push('error-blocked');
-			} else if (user.inactive) {
-				$.error.push('error-inactive');
-			} else {
-				var model = {};
-				model.firstname = user.firstname;
-				model.lastname = user.lastname;
-				model.login = user.login;
-				model.token = F.encrypt({ id: user.id, date: F.datetime, type: 'password' }, 'token');
-				model.email = user.email;
-				F.mail(model.email, '@(Password recovery)', '/mails/password', model, user.language);
+		FUNC.users.password($.model.name, function(err, user) {
+			if (err) {
+				$.invalid(err);
+				return;
+			} else if (user) {
+				if (user.blocked) {
+					$.invalid('error-blocked');
+					return;
+				} else if (user.inactive) {
+					$.invalid('error-inactive');
+					return;
+				} else {
+					var model = {};
+					model.firstname = user.firstname;
+					model.lastname = user.lastname;
+					model.login = user.login;
+					model.token = F.encrypt({ id: user.id, date: NOW, type: 'password' }, CONFIG.secret_password);
+					model.email = user.email;
+					MAIL(model.email, '@(Password recovery)', '/mails/password', model, user.language);
+					$.success();
+					return;
+				}
 			}
-		} else
-			$.error.push('error-credentials');
-		$.success();
+			$.invalid('error-credentials');
+		});
 	});
+
 });

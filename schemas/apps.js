@@ -18,7 +18,6 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('title', 'String(30)', true);
 	schema.define('settings', String);
 	schema.define('accesstoken', 'String(50)');
-
 	schema.define('allownotifications', Boolean);
 	schema.define('allowreadusers', Number);        // 0: disabled, 1: basic info (name, photo, online), 2: all info (contact), 3: basic info only users which have this app, 4: all info only users which have this app
 	schema.define('allowreadapps', Number);         // 0: disabled, 1: basic info, 2: all info
@@ -71,38 +70,39 @@ NEWSCHEMA('App', function(schema) {
 		}
 
 		var model = $.model.$clean();
-		var item = F.global.apps.findItem('id', model.id);
-		var newbie = false;
 
 		model.search = (model.name + ' ' + model.title).toSearch();
 		model.linker = model.title.slug();
 
-		if (item == null) {
-
-			newbie = true;
-			item = model;
-			item.id = UID();
-			item.datecreated = F.datetime;
-			F.global.apps.push(item);
-
-			LOGGER('apps', 'create: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
-			G.apps.quicksort('title');
+		if (model.id) {
+			FUNC.apps.get(model.id, function(err, item) {
+				if (item) {
+					FUNC.logger('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
+					model.dateupdated = NOW;
+					sync(item, model, true);
+					state(item, function() {
+						FUNC.apps.set(model, null, function() {
+							FUNC.emit('apps.update', item.id);
+							FUNC.emit('apps.refresh', item.id);
+							$.success();
+						});
+					});
+				} else
+					$.invalid('error-apps-404');
+			});
 
 		} else {
-
-			LOGGER('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
-
-			model.dateupdated = F.datetime;
-			sync(item, model, true);
+			model.id = UID();
+			model.datecreated = NOW;
+			state(model, function() {
+				FUNC.apps.set(model, null, function() {
+					FUNC.emit('apps.create', model.id);
+					FUNC.emit('apps.refresh', model.id);
+					FUNC.logger('apps', 'create: ' + model.id + ' - ' + model.name, '@' + $.user.name, $.ip);
+					$.success();
+				});
+			});
 		}
-
-		state(item, function() {
-			OP.save(); // Save changes
-			EMIT('apps.' + (newbie ? 'create' : 'update'), item);
-			EMIT('apps.refresh', item);
-		});
-
-		$.success();
 	});
 
 	schema.setRemove(function($) {
@@ -113,20 +113,12 @@ NEWSCHEMA('App', function(schema) {
 		}
 
 		var id = $.id;
-
-		var app = F.global.apps.findItem('id', id);
-		if (app) {
-			F.global.apps = F.global.apps.remove('id', id);
-			F.global.users.forEach(function(item) {
-				delete item.apps[id];
-			});
-			LOGGER('apps', 'remove: ' + id, '@' + $.user.name, $.ip);
-			OP.save(); // Save changes
-			EMIT('apps.remove', app);
-			EMIT('apps.refresh', app, true);
-		}
-
-		$.success();
+		FUNC.apps.rem(id, function() {
+			FUNC.logger('apps', 'remove: ' + id, '@' + $.user.name, $.ip);
+			FUNC.emit('apps.remove', id);
+			FUNC.emit('apps.refresh', id, true);
+			$.success();
+		});
 	});
 
 	schema.addWorkflow('refresh', function($) {
@@ -159,17 +151,27 @@ NEWSCHEMA('App', function(schema) {
 				$.model.groups = response.groups;
 				$.model.custom = response.custom;
 				$.model.online = true;
-				$.model.daterefreshed = F.datetime;
+				$.model.daterefreshed = NOW;
 				$.success();
 			});
 		});
 	});
 
 	schema.addWorkflow('state', function($) {
-		F.global.apps.wait(state, function() {
-			EMIT('apps.refresh');
-			OP.saveState(1);
-			$.success();
+		FUNC.sessions.lock('apps.state', '10 minutes', function() {
+			FUNC.apps.stream(50, function(apps, next) {
+				apps.wait(function(item, next) {
+					state(item, function() {
+						FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'daterefreshed']);
+						FUNC.emit('apps.sync', item.id);
+						next();
+					});
+				}, next);
+			}, function() {
+				FUNC.sessions.unlock('apps.state');
+				FUNC.emit('apps.refresh');
+				$.success();
+			});
 		});
 	});
 });
@@ -207,8 +209,7 @@ function state(item, next) {
 				item.origin = null;
 		}
 
-		item.daterefreshed = F.datetime;
-		EMIT('apps.sync', item);
+		item.daterefreshed = NOW;
 		next();
 	});
 }
@@ -244,7 +245,7 @@ function sync(item, model, meta) {
 	item.version = model.version;
 	item.custom = model.custom;
 	item.online = model.online === true;
-	item.daterefreshed = F.datetime;
+	item.daterefreshed = NOW;
 	item.origin = model.origin;
 	item.width = model.width;
 	item.height = model.height;

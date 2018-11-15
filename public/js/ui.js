@@ -2488,8 +2488,8 @@ COMPONENT('notificationspanel', function() {
 		var builder = [];
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i];
-			if (item.idapp) {
-				var app = user.apps.findItem('id', item.idapp);
+			if (item.appid) {
+				var app = user.apps.findItem('id', item.appid);
 				if (app) {
 					item.icon = app.icon;
 					item.title = app.title;

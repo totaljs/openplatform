@@ -38,7 +38,7 @@ AUTH(function(req, res, flags, next) {
 
 	if (cookie) {
 
-		var sessionkey = 'user' + cookie.id;
+		var sessionkey = cookie.id;
 
 		// Checks session
 		FUNC.sessions.get(sessionkey, function(err, user) {
@@ -55,7 +55,8 @@ AUTH(function(req, res, flags, next) {
 					user.online = true;
 					if (user.language && user.language !== 'en')
 						req.$language = user.language;
-					FUNC.users.set(sessionkey, user, '5 minutes');
+					FUNC.sessions.set(sessionkey, user, '10 minutes');
+					FUNC.users.set(user, ['datelogged', 'online']);
 					next(true, user);
 				} else
 					next(false);
@@ -83,7 +84,7 @@ ON('service', function(counter) {
 		return;
 
 	// Locks this operation
-	FUNC.sessions.lock('notifications', function() {
+	FUNC.sessions.lock('notifications', '10 minutes', function() {
 
 		// Streams all users
 		FUNC.users.stream(50, function(users, next) {
