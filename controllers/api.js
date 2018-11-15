@@ -8,7 +8,7 @@ exports.install = function() {
 
 		// Internal
 		ROUTE('POST   /api/internal/apps/               *App          --> @refresh @save (response)');
-		ROUTE('DELETE /api/internal/apps/{id}/          *App          --> @remove');
+		ROUTE('DELETE /api/internal/apps/{id}/          *App          --> @remove', [10000]);
 		ROUTE('POST   /api/internal/apps/meta/          *Meta         --> @exec');
 		ROUTE('POST   /api/internal/users/              *User         --> @save');
 		ROUTE('DELETE /api/internal/users/{id}/         *User         --> @remove');
