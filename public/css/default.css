@@ -36,6 +36,8 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: righ
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
 .startmenu-search { padding: 0 10px 10px; }
 .startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
+.startmenu .ui-textbox { border: 0; }
+.startmenu .ui-textbox-input { padding-left: 10px; padding-left: 10px; }
 
 h1 { font-weight: bold; margin: 0 0 15px; padding: 0 0 5px; color: black; font-size: 18px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; border-bottom: 2px solid black; }
 h1 b { font-weight: 700; }
@@ -59,13 +61,15 @@ h3 .fa { margin-right: 5px; }
 .user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
 .user.selected { color: white; }
 .user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
-.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 3px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
+.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 2px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
 .user-notifications .fa { color: white; }
 .user-notifications .far { color: #606060; }
 
-.app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 10px 0; position: relative; }
-.app-container { border: 1px solid rgba(0,0,0,0.2); border-radius: 2px; cursor: pointer; transition: all 0.2s; height: 38px; color: white; }
+.app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
+.app:first-child .app-container { border-top: 1px solid rgba(0,0,0,0.3); }
+.app-container { border: 1px solid rgba(0,0,0,0.3); cursor: pointer; transition: all 0.2s; height: 32px; color: white; border-top: 0; }
 .app-running .app-container, .app-container:hover { background-color: rgba(0,0,0,0.2); }
+.app-container:hover .app-icon { color: white; }
 .app-offline { cursor: not-allowed; box-shadow: none !important; }
 .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
 .app-offline .app-version { color: silver; }
@@ -80,10 +84,10 @@ h3 .fa { margin-right: 5px; }
 .app img { width: 120px; height: 120px; border-radius: 4px; }
 .app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
 .app-version { color: #A0A0A0; font-size: 11px; }
-.app .fa-times { position: absolute; right: 20px; top: 10px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
+.app .fa-times { position: absolute; right: 20px; top: 6px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
 .app .fa-times:hover { opacity: 0.8; }
 .appunread { position: absolute; background-color: #D23B3B; color: white; width: 24px; border-radius: 100%; height: 24px; font-size: 12px; padding: 3px 0 0; margin-top: -2px; left: 5px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
-.app .appbadge { position: absolute; margin: 27px 0 0 18px; font-size: 7px; }
+.app .appbadge { position: absolute; margin: 12px 0 0 37px; font-size: 7px; }
 .appbadge .fa { color: red; font-size: 7px; }
 
 .appprocess { position: relative; }
@@ -95,8 +99,8 @@ h3 .fa { margin-right: 5px; }
 
 .appprogress span { height: 3px; background-color: yellow; display: block; border-radius: 3px; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
 
-.app-icon { float: left; width: 40px; font-size: 18px; text-align: center; height: 36px; padding: 5px 0 0 0; background-color: rgba(0,0,0,0.2); }
-.app-meta { margin-left: 50px; padding: 6px 0 0 0; font-size: 16px; }
+.app-icon { float: left; width: 40px; font-size: 14px; text-align: center; height: 31px; padding: 5px 0 0 0; background-color: rgba(0,0,0,0.1); color: #A0A0A0; }
+.app-meta { margin-left: 50px; padding: 5px 0 0 0; font-size: 14px; }
 
 .form-border { border-left: 1px solid #F0F0F0; }
 

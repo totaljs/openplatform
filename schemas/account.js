@@ -67,7 +67,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		EMIT('users.update', user, 'account');
 		EMIT('users.refresh', user);
-		OP.saveState(2);
+		OP.save2(2);
 		$.success();
 	});
 

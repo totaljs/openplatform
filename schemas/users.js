@@ -85,9 +85,10 @@ NEWSCHEMA('User', function(schema) {
 		var newbie = false;
 		var item;
 
-		model.welcome = undefined;
-		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).slug();
+		delete model.welcome;
+		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).search();
 		model.name = model.firstname + ' ' + model.lastname;
+		model.linker = model.name.slug();
 
 		if (model.id) {
 			// update
@@ -173,6 +174,7 @@ NEWSCHEMA('User', function(schema) {
 		item.ou = OP.ou(item.ou);
 		item.companylinker = item.company.slug();
 		item.localitylinker = item.locality.slug();
+		delete item.rebuildtoken;
 
 		if ($.model.welcome && !model.blocked && !model.inactive) {
 			$.model.token = F.encrypt({ id: item.id, date: NOW, type: 'welcome' }, 'token');
@@ -181,7 +183,7 @@ NEWSCHEMA('User', function(schema) {
 
 		setTimeout2('users', function() {
 			$WORKFLOW('User', 'refresh');
-			OP.save();
+			OP.save2(2);
 		}, 1000);
 
 		EMIT('users.' + (newbie ? 'create' : 'update'), item);
@@ -215,7 +217,7 @@ NEWSCHEMA('User', function(schema) {
 
 			setTimeout2('users', function() {
 				$WORKFLOW('User', 'refresh');
-				OP.save();
+				OP.save2(2);
 			}, 1000);
 
 			EMIT('users.remove', user);

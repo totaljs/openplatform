@@ -77,7 +77,7 @@
 			</div>
 			<div class="scroller" data-margin="30">
 				<div data-jc="search__apps.search__selector:.item">
-					<div data-jc="listmenu__apps.selected__datasource:apps.items;selector:.item;exec:apps_load" class="apps">
+					<div data-jc="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
 						<script type="text/html">
 							<div class="item{{ if blocked }} inactive{{ fi }}" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
 						</script>
@@ -139,12 +139,12 @@
 				<div class="mt10 red b" data-jc="checkbox" data-jc-path="apps.form.blocked">@(Application is blocked)</div>
 				<div data-jc="checkbox__apps.form.allownotifications">@(Allow push notifications)</div>
 				<div data-jc="checkbox__apps.form.responsive">@(Allow for mobile devices)</div>
-				<div data-jc="checkbox__apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta informations)</div>
+				<div data-jc="checkbox__apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta information)</div>
 				<div data-jc="checkbox__apps.form.serververify" class="b">@(Enable server-side verification)</div>
 				<br />
-				<div data-jc="dropdown__apps.form.allowreadprofile__items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number__1" class="m">@(Read user profile)</div>
-				<div data-jc="dropdown__apps.form.allowreadusers__items:@(Disabled)|0,@(Basic informations)|1,@(Basic informations about users which use this application)|3,@(All informations)|2,@(All informations about users which use this application)|4;type:number__0" class="m">@(Read list of users)</div>
-				<div data-jc="dropdown__apps.form.allowreadapps__items:@(Disabled)|0,@(Basic informations)|1,@(All informations)|2;type:number__0" class="m">@(Read list of applications)</div>
+				<div data-jc="dropdown__apps.form.allowreadprofile__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__1" class="m">@(Read user profile)</div>
+				<div data-jc="dropdown__apps.form.allowreadusers__items:@(Disabled)|0,@(Basic information)|1,@(Basic information about users which use this application)|3,@(All information)|2,@(All information about users which use this application)|4;type:number__0" class="m">@(Read list of users)</div>
+				<div data-jc="dropdown__apps.form.allowreadapps__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__0" class="m">@(Read list of applications)</div>
 				<div data-jc="error__apps.form.response"></div>
 				<div class="row" data-jc="validation__apps.form">
 					<div class="col-sm-5">
@@ -184,14 +184,14 @@
 
 	function apps_load(item) {
 		OP.loading(true);
-		var item = apps.items.findItem('id', item.id);
+		var item = apps.items.items.findItem('id', item.id);
 		item && SET('apps.form', CLONE(item), true);
 		OP.loading(false, 1000);
 	}
 
 	function apps_refresh() {
 		AJAX('GET /api/internal/apps/', function(response) {
-			response.quicksort('name');
+			response.items.quicksort('name');
 			SET('apps.items', response);
 		});
 	}
@@ -229,7 +229,7 @@
 				var id = apps.selected;
 				AJAX('DELETE /api/internal/apps/{0}/'.format(id), function(response) {
 					if (response.success) {
-						apps.items = apps.items.remove('id', id);
+						apps.items.items = apps.items.items.remove('id', id);
 						apps.form.id === id && apps_cancel();
 						SET('apps.selected', '');
 						NOTIFY('apps.items');

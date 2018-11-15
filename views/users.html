@@ -232,7 +232,7 @@
 				<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
 				<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
 				<br />
-				<div data-jc="app-managment__users.form.apps__datasource:users.apps" class="m">
+				<div data-jc="app-managment__users.form.apps__datasource:users.apps.items" class="m">
 					<script type="text/html">
 						<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
 							<div class="userapp-header">
@@ -300,8 +300,8 @@
 
 	function userform_refresh(delay) {
 		AJAX('GET /api/internal/users/', function(response) {
-			response.quicksort('lastname');
-			SET('users.items', response);
+			response.items.quicksort('lastname');
+			SET('users.items', response.items);
 		});
 
 		setTimeout(function() {
@@ -376,7 +376,7 @@
 		// Check roles
 		users.form.apps && Object.keys(users.form.apps).forEach(function(key) {
 			var obj = users.form.apps[key];
-			var app = users.apps.findItem('id', key);
+			var app = users.apps.items.findItem('id', key);
 			if (app) {
 				opt[key] = { roles: obj.roles.remove(function(role) {
 					return app.roles.indexOf(role) === -1;

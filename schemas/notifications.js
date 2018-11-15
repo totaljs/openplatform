@@ -20,7 +20,7 @@ NEWSCHEMA('Notification', function(schema) {
 		Fs.readFile(filename, function(err, data) {
 
 			user.countnotifications = 0;
-			OP.saveState(2);
+			OP.save2(2);
 
 			EMIT('users.notify', user, '', true);
 
@@ -115,7 +115,7 @@ NEWSCHEMA('Notification', function(schema) {
 
 		user.datenotified = F.datetime;
 
-		OP.saveState(2);
+		OP.save2(2);
 		EMIT('users.notify', user, app);
 		$.success();
 

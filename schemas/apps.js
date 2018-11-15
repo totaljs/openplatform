@@ -167,7 +167,7 @@ NEWSCHEMA('App', function(schema) {
 	schema.addWorkflow('state', function($) {
 		F.global.apps.wait(state, function() {
 			EMIT('apps.refresh');
-			OP.saveState(1);
+			OP.save2(1);
 			$.success();
 		});
 	});

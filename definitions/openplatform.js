@@ -1,5 +1,6 @@
 const Fs = require('fs');
 const OP = global.OP = {};
+const SKIP = { localitylinker: 1, companylinker: 1, countsessions: 1 };
 
 // G.users = [];
 // G.apps = [];
@@ -9,18 +10,18 @@ OP.save = function(callback) {
 	G.users.quicksort('name');
 	G.apps.quicksort('name');
 	EMIT('users.backup', G.users);
-	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
+	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users, null, cleaner_user), F.error());
 	EMIT('apps.backup', G.apps);
 	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
 	callback && callback();
 };
 
-OP.saveState = function(type) {
+OP.save2 = function(type) {
 	setTimeout2('OP.saveState.' + (type || 0), function() {
 
 		if (!type || type === 2) {
 			EMIT('users.backup', G.users);
-			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
+			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users, null, cleaner_user), F.error());
 		}
 
 		if (!type || type === 1) {
@@ -30,6 +31,10 @@ OP.saveState = function(type) {
 
 	}, 1000, 10);
 };
+
+function cleaner_user(k) {
+	return k >= 0 || !SKIP[k];
+}
 
 OP.load = function(callback) {
 	$WORKFLOW('Settings', 'init', function() {

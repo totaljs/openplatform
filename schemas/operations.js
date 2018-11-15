@@ -82,7 +82,7 @@ NEWSCHEMA('UserApps', function(schema) {
 		}
 
 		$.success(true, count);
-		count && OP.saveState(2);
+		count && OP.save2(2);
 
 		updated.wait(function(id, next) {
 			EMIT('users.refresh', id);
@@ -210,7 +210,7 @@ NEWSCHEMA('UserRename').make(function(schema) {
 
 		if (count) {
 			$WORKFLOW('User', 'refresh', NOOP);
-			OP.saveState(2);
+			OP.save2(2);
 		}
 
 		$.success(true, count);

@@ -16,8 +16,8 @@
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@16.css" />
-	@{if user && (user.background || F.config.background)}
-	<style>body{background:url(/backgrounds/@{user.background || F.config.background}) 50% 50%}</style>
+	@{if user && (user.background || CONF.background)}
+	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
 	@{fi}
 	<script src="@{'%cdn'}/spa.min@16.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
@@ -68,7 +68,7 @@
 				<div class="ui-npanel-padding">
 					<div class="ui-npanel-body">{{ body }}</div>
 					{{ if data }}
-					<button data-data="{{ data | encodedata }}" data-id="{{ idapp }}" class="exec" data-exec="Dashboard/navigate">@(Open app)</button>
+					<button data-data="{{ data | encodedata }}" data-id="{{ appid }}" class="exec" data-exec="Dashboard/navigate">@(Open app)</button>
 					{{ fi }}
 				</div>
 			</div>
@@ -129,6 +129,7 @@
 
 		// For screenshots
 		common.cdn = '@{'%cdn'}';
+		common.cluster = '@{F.id}';
 
 		function togglemenu(value, path, el) {
 			if (value) {
@@ -216,7 +217,7 @@
 					break;
 				case 'notifications':
 					// take max. 50
-					var arr = PARSE(message.body);
+					var arr = message.body;
 					arr && arr.length && SETTER('notificationspanel', 'append', arr.take(50));
 					break;
 				case 'notify':

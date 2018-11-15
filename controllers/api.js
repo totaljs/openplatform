@@ -1,5 +1,6 @@
 const SKIP = { password: true, search: true, verifytoken: true };
 const ONLINE = { online: true, datelogged: null };
+const USERS_LIST_FIELDS = { id: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1, items: 1, count: 1, page: 1, pages: 1, limit: 1 };
 
 exports.install = function() {
 
@@ -30,8 +31,8 @@ exports.install = function() {
 		ROUTE('POST   /api/internal/settings/           *Settings     --> @save');
 		ROUTE('POST   /api/internal/settings/smtp/      *SettingsSMTP --> @exec', [10000]);
 
-		ROUTE('/api/upload/photo/',  json_upload_photo, ['post'], 1024 * 2);
-		ROUTE('/api/upload/background/',  json_upload_background, ['post', 'upload'], 1024 * 5);
+		ROUTE('/api/upload/photo/',                     json_upload_photo,      ['post'], 1024 * 2);
+		ROUTE('/api/upload/background/',                json_upload_background, ['post', 'upload'], 1024 * 5);
 
 	});
 
@@ -90,9 +91,14 @@ function json_verify() {
 
 function json_apps_query() {
 	var self = this;
-	if (self.user.sa)
-		self.json(G.apps);
-	else
+	if (self.user.sa) {
+		var data = {};
+		data.items = G.apps;
+		data.count = data.limit = data.items.length;
+		data.page = 1;
+		data.pages = 1;
+		self.json(data);
+	} else
 		self.invalid().push('error-permissions');
 }
 
@@ -110,11 +116,14 @@ function json_users_read(id) {
 
 function json_users_query() {
 	var self = this;
-	var ALLOW = { id: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1 };
-
-	if (self.user.sa)
-		self.json(G.users, false, (k, v) => k >= 0 || ALLOW[k] ? v : undefined);
-	else
+	if (self.user.sa) {
+		var data = {};
+		data.items = G.users;
+		data.count = data.limit = data.items.length;
+		data.page = 1;
+		data.pages = 1;
+		self.json(data, false, (k, v) => k >= 0 || USERS_LIST_FIELDS[k] ? v : undefined);
+	} else
 		self.invalid().push('error-permissions');
 }
 

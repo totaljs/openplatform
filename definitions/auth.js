@@ -88,7 +88,7 @@ ON('service', function(counter) {
 	}
 
 	if (messages.length) {
-		OP.saveState(2);
+		OP.save2(2);
 		Mail.send2(messages, F.error());
 	}
 });
