@@ -190,34 +190,72 @@ ON('apps.refresh', function() {
 });
 
 ON('users.refresh', function(userid, removed) {
-	WS && WS.all(function(client) {
-		if (removed || client.user.blocked || client.user.inactive) {
-			if (client.id === userid) {
-				client.send(WSLOGOFF);
-				setTimeout(() => client.close(), 100);
-			}
-		} else if (client.id === userid) {
-			OP.profile(client.user, function(err, profile) {
-				WSPROFILE.body = profile;
-				client.send(WSPROFILE);
-			});
+
+	if (!WS)
+		return;
+
+	var clients;
+
+	WS.all(function(client) {
+		if (client.id === userid) {
+			if (clients)
+				clients.push(client);
+			else
+				clients = [client];
 		}
+	});
+
+	if (!clients || !clients.length)
+		return;
+
+	FUNC.users.get(userid, function(err, user) {
+		user && OP.profile(user, function(err, profile) {
+			for (var i = 0; i < clients.length; i++) {
+				var client = clients[i];
+				if (removed || client.user.blocked || client.user.inactive) {
+					client.send(WSLOGOFF);
+					setTimeout(client => client.close(), 100, client);
+				} else if (client.id === userid) {
+					client.user = user;
+					WSPROFILE.body = profile;
+					client.send(WSPROFILE);
+				}
+			}
+		});
 	});
 });
 
 function notify(userid, appid) {
-	if (WS) {
-		var conn = WS.find(userid);
-		conn && FUNC.users.get(userid, function(err, user) {
-			if (user) {
+
+	if (!WS)
+		return;
+
+	var clients;
+
+	WS.all(function(client) {
+		if (client.id === userid) {
+			if (clients)
+				clients.push(client);
+			else
+				clients = [client];
+		}
+	});
+
+	if (!clients || !clients.length)
+		return;
+
+	FUNC.users.get(userid, function(err, user) {
+		if (user) {
+			for (var i = 0; i < clients.length; i++) {
+				var client = clients[i];
 				WSNOTIFY.body.count = user.countnotifications;
 				WSNOTIFY.body.app.id = appid;
 				WSNOTIFY.body.app.count = appid ? user.apps[appid].countnotifications : 0;
 				WSNOTIFY.body.app.badges = appid ? user.apps[appid].countbadges : 0;
-				conn.send(WSNOTIFY);
+				client.send(WSNOTIFY);
 			}
-		});
-	}
+		}
+	});
 }
 
 ON('users.notify', notify);

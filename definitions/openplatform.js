@@ -24,7 +24,7 @@ OP.profile = function(user, callback) {
 
 	var id = Object.keys(user.apps);
 
-	FUNC.apps.query({ id: id }, function(err, apps) {
+	FUNC.apps.query(id.length ? { id: id } : EMPTYOBJECT, function(err, apps) {
 
 		if (err) {
 			FUNC.error('OP.profile', err);

@@ -102,6 +102,7 @@ NEWSCHEMA('User', function(schema) {
 			item.ou = OP.ou(item.ou);
 			item.companylinker = item.company.slug();
 			item.localitylinker = item.locality.slug();
+			item.linker = item.name.slug();
 
 			if ($.model.welcome && !model.blocked && !model.inactive) {
 				$.model.token = F.encrypt({ id: item.id, date: NOW, type: 'welcome' }, 'token');
@@ -184,12 +185,12 @@ NEWSCHEMA('User', function(schema) {
 
 			prepare(item, $.model);
 
-			FUNC.users.set(item, null, function() {
+			FUNC.users.set(item, null, function(err, id) {
 				FUNC.users.meta();
 				FUNC.emit('users.meta');
-				FUNC.emit('users.create', item.id);
-				FUNC.emit('users.refresh', item.id, item.blocked || item.inactive ? true : undefined);
-				FUNC.logger('users', 'create: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+				FUNC.emit('users.create', id);
+				FUNC.emit('users.refresh', id, item.blocked || item.inactive ? true : undefined);
+				FUNC.logger('users', 'create: ' + id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 				$.success();
 			});
 		}

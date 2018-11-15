@@ -92,13 +92,12 @@ NEWSCHEMA('App', function(schema) {
 			});
 
 		} else {
-			model.id = UID();
 			model.datecreated = NOW;
 			state(model, function() {
-				FUNC.apps.set(model, null, function() {
-					FUNC.emit('apps.create', model.id);
-					FUNC.emit('apps.refresh', model.id);
-					FUNC.logger('apps', 'create: ' + model.id + ' - ' + model.name, '@' + $.user.name, $.ip);
+				FUNC.apps.set(model, null, function(err, id) {
+					FUNC.emit('apps.create', id);
+					FUNC.emit('apps.refresh', id);
+					FUNC.logger('apps', 'create: ' + id + ' - ' + model.name, '@' + $.user.name, $.ip);
 					$.success();
 				});
 			});
