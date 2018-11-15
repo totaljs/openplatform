@@ -26,19 +26,20 @@ NEWSCHEMA('Badge', function(schema) {
 				return;
 			}
 
-			if (user.apps[app.id]) {
+			if (app && user.apps[app.id]) {
 				var ua = user.apps[app.id];
-
 				if (ua.countbadges)
 					ua.countbadges++;
 				else
 					ua.countbadges = 1;
+			}
 
-				FUNC.users.set(user, ['apps']);
-				FUNC.emit('users.badge', user.id, app.id);
-				$.success();
-			} else
-				$.invalid('error-permissions');
+			FUNC.badges.add(user.id, app.id);
+			FUNC.users.set(user, ['countnotifications', 'apps'], () => FUNC.emit('users.notify', user.id, app.id));
+			FUNC.sessions.set(user.id, user, '10 minutes');
+
+			$.success();
+
 		});
 	});
 });

@@ -217,7 +217,7 @@
 					break;
 				case 'notifications':
 					// take max. 50
-					var arr = PARSE(message.body);
+					var arr = message.body;
 					arr && arr.length && SETTER('notificationspanel', 'append', arr.take(50));
 					break;
 				case 'notify':

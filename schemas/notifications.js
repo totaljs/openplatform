@@ -14,7 +14,6 @@ NEWSCHEMA('Notification', function(schema) {
 		}
 
 		FUNC.notifications.get(user.id, function(err, data) {
-
 			// Remove notifications
 			FUNC.notifications.rem(user.id, function() {
 
@@ -31,7 +30,6 @@ NEWSCHEMA('Notification', function(schema) {
 						FUNC.sessions.set(user.id, session);
 					}
 				});
-
 			});
 
 			// Returns notifications data
@@ -99,10 +97,10 @@ NEWSCHEMA('Notification', function(schema) {
 
 			if (can) {
 				FUNC.notifications.add(model);
-				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified']);
+				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified'], () => FUNC.emit('users.notify', user.id, app.id));
+				FUNC.sessions.set(user.id, user, '10 minutes');
 			}
 
-			FUNC.emit('users.notify', user.id, app.id);
 			$.success();
 
 			var db;

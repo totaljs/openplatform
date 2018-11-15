@@ -97,6 +97,7 @@ FUNC.users.login = function(login, password, callback) {
 };
 
 FUNC.users.logout = function(user, controller) {
+	FUNC.sessions.rem(user.id);
 	controller.redirect('/');
 };
 
@@ -420,6 +421,7 @@ FUNC.settings.set = function(data, callback) {
 // ====================================
 
 FUNC.notifications.add = function(data, callback) {
+
 	// data.userid
 	// data.appid
 	// data.type
@@ -429,41 +431,38 @@ FUNC.notifications.add = function(data, callback) {
 	// data.ip
 	// data.datecreated
 
-	var filename = F.path.databases('notifications_' + data.userid + '.json');
-	Fs.appendFile(filename, JSON.stringify(data) + ',', NOOP);
+	data.id = UID();
+	DBMS().insert('tbl_notification', data);
 	callback && callback();
 };
 
 FUNC.notifications.rem = function(userid, callback) {
-	var filename = F.path.databases('notifications_' + userid + '.json');
-	Fs.unlink(filename, NOOP);
 
-	var user = G.users.findItem('id', userid);
-	if (user) {
-		user.countnotifications = 0;
-		var keys = Object.keys(user.apps);
-		for (var i = 0; i < keys.length; i++)
-			user.apps[keys[i]].countnotifications = 0;
-	}
+	var db = DBMS();
 
-	callback && callback();
+	db.remove('tbl_notification').where('userid', userid);
+	db.modify('tbl_user', { countnotifications: 0 }).where('id', userid);
+	db.read('tbl_user').where('id', userid).fields('apps').callback(function(err, user) {
+
+		if (user) {
+
+			var keys = Object.keys(user.apps);
+
+			for (var i = 0; i < keys.length; i++)
+				user.apps[keys[i]].countnotifications = 0;
+
+			if (keys.length)
+				db.modify('tbl_user', user).where('id', userid);
+		}
+
+	});
+
+	db.callback(callback);
 };
 
 FUNC.notifications.get = function(userid, callback) {
-
 	// Reads notifications + remove it
-
-	var filename = F.path.databases('notifications_' + userid + '.json');
-	Fs.readFile(filename, function(err, data) {
-
-		if (err) {
-			callback(err);
-			return;
-		}
-
-		var body = data.toString('utf8');
-		callback(null, '[' + body.substring(0, body.length - 1) + ']');
-	});
+	DBMS().find('tbl_notification').where('userid', userid).callback(callback);
 };
 
 // ====================================
