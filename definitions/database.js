@@ -52,7 +52,8 @@ FUNC.users.query = function(filter, callback) {
 			if (user.apps && user.apps[filter.appid])
 				arr.push(user);
 		}
-	}
+	} else
+		arr = G.users;
 
 	var data = {};
 	data.items = arr;
@@ -274,7 +275,7 @@ FUNC.users.assign = function(model, callback) {
 		setImmediate(next);
 	});
 
-	count && OP.save(2);
+	count && save(2);
 	callback(null, count);
 };
 

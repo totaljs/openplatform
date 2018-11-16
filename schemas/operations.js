@@ -13,7 +13,7 @@ NEWSCHEMA('UserApps', function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 		if ($.user.sa)
-			FUNC.users.assign(model.$clean(), $.done(true));
+			FUNC.users.assign($.model.$clean(), $.done(true));
 		else
 			$.invalid('error-permissions');
 	});
