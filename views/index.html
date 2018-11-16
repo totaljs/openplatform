@@ -188,7 +188,11 @@
 		}
 
 		function internallogoff() {
-			location.href = '/logoff/';
+			SETTER('loading', 'show');
+			SETTER('processes', 'kill');
+			setTimeout(function() {
+				location.href = '/logoff/';
+			}, 1000);
 		}
 
 		ON('message', function(message) {
