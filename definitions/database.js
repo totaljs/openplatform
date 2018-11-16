@@ -1,7 +1,4 @@
 const Fs = require('fs');
-require('dbms').init(CONF.database);
-
-//DBMS.logger();
 
 FUNC.apps = {};
 FUNC.users = {};
@@ -9,133 +6,103 @@ FUNC.sessions = {};
 FUNC.common = {};
 FUNC.settings = {};
 FUNC.notifications = {};
-FUNC.badges = {};
+FUNC.files = {};
 
 // ====================================
 // Users
 // ====================================
 
-FUNC.users.set = function(user, fields, callback) {
+FUNC.users.set = function(user, fields, callback, app) {
 
 	// @user {Object/Object Array}
 	// @fields {String Array} Optional, changed fields
 	// @callback {Function} Optional
-
-	var db = DBMS();
-	var is = true;
+	// @app {Object} Optional, app instance (can contain an app when the count of notifications/badges is updated)
 
 	if (user instanceof Array) {
-		for (var j = 0; j < user.length; j++) {
-			var data = {};
-			for (var i = 0; i < fields.length; i++)
-				data[fields[i]] = user[j][fields[i]];
-			db.modify('tbl_user', data).where('id', user[j].id);
-			is = false;
-		}
-
-		if (is) {
-			callback(null);
-			return;
-		}
-
+		// nothing
 	} else if (user.id) {
-		if (fields) {
-			var data = {};
-			for (var i = 0; i < fields.length; i++)
-				data[fields[i]] = user[fields[i]];
-			db.modify('tbl_user', data).where('id', user.id);
-		} else
-			db.modify('tbl_user', user).where('id', user.id);
+		var item = G.users.findItem('id', user.id);
+		item && U.extend(user, item);
 	} else {
 		user.id = UID();
-		db.insert('tbl_user', user);
+		G.users.push(user);
 	}
 
-
-	callback && db.callback(err => callback(err, user.id));
+	save(2);
+	callback && callback(null, user.id);
 };
 
 FUNC.users.get = function(id, callback) {
 	// Finds a user by ID
-	DBMS().read('tbl_user').where('id', id).callback(callback);
+	callback(null, G.users.findItem('id', id));
 };
 
 FUNC.users.query = function(filter, callback) {
 
-	// filter.page
-	// filter.limit
+	// filter.take
+	// filter.skip
 	// filter.appid
 
-	var db = DBMS();
-	var builder = db.listing('tbl_user');
+	var arr = [];
 
-	filter.appid && builder.search('apps::text', '"{0}"'.format(filter.appid));
-	builder.paginate(filter.page, filter.limit, 100);
-	builder.callback(callback);
+	if (filter.appid) {
+		for (var i = 0; i < G.users.length; i++) {
+			var user = G.users[i];
+			if (user.apps && user.apps[filter.appid])
+				arr.push(user);
+		}
+	}
+
+	var data = {};
+	data.items = arr;
+	data.limit = data.count = data.items.length;
+	data.page = 1;
+	data.pages = 1;
+	callback(null, data);
 };
 
 FUNC.users.rem = function(id, callback) {
-	DBMS().read('tbl_user').where('id', id).callback(function(err, response) {
-		if (response) {
-			var db = DBMS();
-			db.remove('tbl_user').where('id', id);
-			db.update('tbl_user', { supervisorid: '' }).where('supervisorid', id);
-			db.update('tbl_user', { delegateid: '' }).where('delegateid', id);
-			db.remove('tbl_notification').where('userid', id);
+
+	var index = G.users.findIndex('id', id);
+	var item = G.users[index];
+
+	if (index !== -1) {
+
+		G.users = G.users.splice(index, 1);
+
+		for (var i = 0, length = G.users.length; i < length; i++) {
+			var tmp = G.users[i];
+			if (tmp.supervisorid === id)
+				tmp.supervisorid = '';
+			if (tmp.delegateid === id)
+				tmp.delegateid = '';
 		}
-		callback(null, response);
-	});
+
+		// Removes notifications
+		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
+
+		// Backup users
+		save(2);
+	}
+
+	callback(null, item);
 };
 
 FUNC.users.login = function(login, password, callback) {
-	DBMS().read('tbl_user').where('login', login).callback(function(err, response) {
-		if (response && response.password.sha256() === password)
-			callback(null, response);
-		else
-			callback();
-	});
+	var user = G.users.findItem('login', login);
+	if (user == null || password.sha256() !== user.password)
+		callback();
+	else
+		callback(null, user);
 };
 
 FUNC.users.logout = function(user, controller) {
-	FUNC.sessions.rem(user.id);
 	controller.redirect('/');
 };
 
 FUNC.users.password = function(login, callback) {
-	DBMS().read('tbl_user').where('login', login).callback(function(err, response) {
-		if (response)
-			callback(null, response);
-		else
-			callback();
-	});
-};
-
-FUNC.users.stream = function(query, fn, callback) {
-
-	// Streams all users
-	// fn(users, next);
-	// done: callback()
-
-	if (!query.limit)
-		query.limit = 100;
-
-	if (typeof(query.limit) === 'string')
-		query.limit = +query.limit;
-
-	var streamer = function(index) {
-		var builder = DBMS().find('tbl_user');
-		query.appid && builder.search('apps::text', '"{0}"'.format(query.appid));
-		builder.take(query.limit);
-		builder.skip(query.limit * index);
-		builder.callback(function(err, response) {
-			if (err || !response.length)
-				callback && callback();
-			else
-				fn(response, () => streamer(index + 1));
-		});
-	};
-
-	streamer(0);
+	callback(null, G.users.findItem('login', login));
 };
 
 FUNC.users.online = function(user, is, callback) {
@@ -143,119 +110,172 @@ FUNC.users.online = function(user, is, callback) {
 	callback && callback(null);
 };
 
-// Codelist
+// Codelist of from users
 FUNC.users.meta = function(callback) {
 
-	var db = DBMS();
-	db.query('SELECT locality, count(1) FROM tbl_user GROUP BY locality').set('locality');
-	db.query('SELECT company, customer, count(1) FROM tbl_user GROUP BY company, customer').set('company');
-	db.query('SELECT ougroups::text, count(1) FROM tbl_user GROUP BY ougroups::text').set('ougroups');
-	db.query('SELECT groups::text, count(1) FROM tbl_user GROUP BY groups::text').set('groups');
-	db.query('SELECT roles::text, count(1) FROM tbl_user GROUP BY roles::text').set('roles');
+	var ou = {};
+	var localities = {};
+	var companies = {};
+	var customers = {};
+	var groups = {};
+	var roles = {};
 
-	db.callback(function(err, item) {
+	var toArray = function(obj, preparator) {
+		var arr = Object.keys(obj);
+		var output = [];
+		for (var i = 0, length = arr.length; i < length; i++)
+			output.push(preparator ? preparator(obj[arr[i]]) : obj[arr[i]]);
+		output.quicksort('name');
+		return output;
+	};
 
-		var ou = {};
-		var localities = {};
-		var companies = {};
-		var customers = {};
-		var groups = {};
-		var roles = {};
+	for (var i = 0, length = G.users.length; i < length; i++) {
 
-		var toArray = function(obj, preparator) {
-			var arr = Object.keys(obj);
-			var output = [];
-			for (var i = 0, length = arr.length; i < length; i++)
-				output.push(preparator ? preparator(obj[arr[i]]) : obj[arr[i]]);
-			output.quicksort('name');
-			return output;
-		};
+		var item = G.users[i];
 
-		if (item.ougroups && item.ougroups.length) {
-			for (var i = 0; i < item.ougroups.length; i++) {
-				var item_ougroups = item.ougroups[i].ougroups;
-				var ougroups = item_ougroups ? Object.keys(item_ougroups.parseJSON()) : EMPTYARRAY;
-				for (var j = 0; j < ougroups.length; j++) {
-					var oukey = ougroups[j];
-					if (ou[oukey])
-						ou[oukey].count++;
-					else
-						ou[oukey] = { count: 1, name: oukey };
-				}
-			}
+		var ougroups = item.ougroups ? Object.keys(item.ougroups) : EMPTYARRAY;
+
+		for (var j = 0; j < ougroups.length; j++) {
+			var oukey = ougroups[j];
+			if (ou[oukey])
+				ou[oukey].count++;
+			else
+				ou[oukey] = { count: 1, name: oukey };
 		}
 
-		if (item.groups && item.groups.length) {
-			for (var i = 0; i < item.groups.length; i++) {
-				var item_groups = item.groups[i].groups.parseJSON();
-				for (var j = 0; j < item_groups.length; j++) {
-					var g = item_groups[j];
-					if (groups[g])
-						groups[g].count++;
-					else
-						groups[g] = { count: 1, id: g, name: g };
-				}
-			}
-		}
-
-		if (item.roles && item.roles.length) {
-			for (var i = 0; i < item.roles.length; i++) {
-				var item_roles = item.roles[i].roles.parseJSON();
-				for (var j = 0; j < item_roles.length; j++) {
-					var r = item_roles[j];
-					if (roles[r])
-						roles[r].count++;
-					else
-						roles[r] = { count: 1, id: r, name: r };
-				}
-			}
-		}
-
-		if (item.locality && item.locality.length) {
-			for (var i = 0; i < item.locality.length; i++) {
-				var item_locality = item.locality[i].locality;
-				if (localities[item_locality])
-					localities[item_locality].count++;
+		if (item.groups) {
+			for (var j = 0; j < item.groups.length; j++) {
+				var g = item.groups[j];
+				if (groups[g])
+					groups[g].count++;
 				else
-					localities[item_locality] = { count: 1, id: item_locality.slug(), name: item_locality };
+					groups[g] = { count: 1, id: g, name: g };
 			}
 		}
 
-		if (item.company && item.company.length) {
-			for (var i = 0; i < item.company.length; i++) {
-				var item_company = item.company[i];
-				var name_company = item_company.company;
-
-				if (item_company.customer) {
-					if (customers[name_company])
-						customers[name_company].count++;
-					else
-						customers[name_company] = { count: 1, id: name_company.slug(), name: name_company };
-				} else {
-					if (companies[name_company])
-						companies[name_company].count++;
-					else
-						companies[name_company] = { count: 1, id: name_company.slug(), name: name_company };
-				}
+		if (item.roles) {
+			for (var j = 0; j < item.roles.length; j++) {
+				var r = item.roles[j];
+				if (roles[r])
+					roles[r].count++;
+				else
+					roles[r] = { count: 1, id: r, name: r };
 			}
 		}
 
-		// G.meta === important
-		var meta = G.meta = {};
-		meta.companies = toArray(companies);
-		meta.customers = toArray(customers);
-		meta.localities = toArray(localities);
-		meta.groups = toArray(groups);
-		meta.roles = toArray(roles);
-		meta.languages = F.config.languages;
+		if (item.locality) {
+			if (localities[item.locality])
+				localities[item.locality].count++;
+			else
+				localities[item.locality] = { count: 1, id: item.locality.slug(), name: item.locality };
+		}
 
-		meta.ou = toArray(ou, function(item) {
-			item.id = item.name = item.name.replace(/\//g, ' / ');
-			return item;
-		});
+		if (item.company) {
+			if (item.customer) {
+				if (customers[item.company])
+					customers[item.company].count++;
+				else
+					customers[item.company] = { count: 1, id: item.company.slug(), name: item.company };
+			}
+			if (companies[item.company])
+				companies[item.company].count++;
+			else
+				companies[item.company] = { count: 1, id: item.company.slug(), name: item.company };
+		}
+	}
 
-		callback && callback(null, meta);
+	// G.meta === important, is used as a cache
+	var meta = G.meta = {};
+	meta.companies = toArray(companies);
+	meta.customers = toArray(customers);
+	meta.localities = toArray(localities);
+	meta.groups = toArray(groups);
+	meta.roles = toArray(roles);
+	meta.languages = F.config.languages;
+	meta.ou = toArray(ou, function(item) {
+		item.id = item.name = item.name.replace(/\//g, ' / ');
+		return item;
 	});
+
+	callback && callback(null, meta);
+};
+
+// Assigns app according to the model (filter)
+FUNC.users.assign = function(model, callback) {
+
+	// "model.apps" can contain
+	// { "APPID": { roles: [], settings: '' }}
+
+	var users = G.users;
+	var count = 0;
+	var keys = Object.keys(model.apps);
+	var updated = [];
+	var ou = model.ou ? OP.ou(model.ou) : null;
+
+	for (var i = 0, length = users.length; i < length; i++) {
+		var user = users[i];
+		if (ou && (!user.ougroups || !user.ougroups[ou]))
+			continue;
+		if (model.company && user.company !== model.company)
+			continue;
+		if (model.group && user.groups.indexOf(model.group) === -1)
+			continue;
+		if (model.role && user.roles.indexOf(model.role) === -1)
+			continue;
+		if (model.gender && user.gender !== model.gender)
+			continue;
+		if (model.customer && !user.customer)
+			continue;
+		if (model.sa && !user.sa)
+			continue;
+		if (model.type === 'set') {
+			count++;
+			user.apps = CLONE(model.apps);
+			updated.push(user);
+			continue;
+		}
+
+		keys.forEach(function(key) {
+
+			var app = model.apps[key];
+			var permissions = app.roles;
+
+			// Extends
+			if (model.type === 'extend') {
+				!user.apps[key] && (user.apps[key] = { roles: [] });
+				permissions.forEach(permission => user.apps[key].roles.push(permission));
+				user.apps[key].settings = app.settings;
+				updated.push(user);
+				count++;
+				return;
+			}
+
+			// Removes
+			if (model.type !== 'remove')
+				return;
+
+			count++;
+
+			if (permissions.length) {
+				permissions.forEach(function(permission) {
+					if (users.apps[key])
+						user.apps[key].roles = user.apps[key].roles.remove(permission);
+				});
+			} else {
+				delete user.apps[key];
+				updated.push(user);
+			}
+		});
+	}
+
+	updated.wait(function(id, next) {
+		// Notifies user about change
+		FUNC.emit('users.refresh', id);
+		setImmediate(next);
+	});
+
+	count && OP.save(2);
+	callback(null, count);
 };
 
 // ====================================
@@ -264,123 +284,90 @@ FUNC.users.meta = function(callback) {
 
 FUNC.apps.get = function(id, callback) {
 	// Finds a user by ID
-	DBMS().read('tbl_app').where('id', id).callback(callback);
+	callback(null, G.apps.findItem('id', id));
 };
 
 FUNC.apps.set = function(app, fields, callback) {
 
-	var db = DBMS();
-
 	if (app.id) {
-		if (fields) {
-			var data = {};
-			for (var i = 0; i < fields.length; i++)
-				data[fields[i]] = app[fields[i]];
-
-			if (data.roles)
-				data.roles = JSON.stringify(data.roles);
-
-			db.modify('tbl_app', data).where('id', app.id);
-		} else {
-
-			if (app.roles)
-				app.roles = JSON.stringify(app.roles);
-
-			db.modify('tbl_app', app).where('id', app.id);
+		var item = G.apps.findItem('id', app.id);
+		if (item) {
+			U.extend(item, app);
 		}
 	} else {
 		app.id = UID();
-		if (app.roles)
-			app.roles = JSON.stringify(app.roles);
-		db.insert('tbl_app', app);
+		F.global.apps.push(app);
 	}
 
-	callback && db.callback(err => callback(err, app.id));
+	save(1);
+	G.apps.quicksort('title');
+	callback && callback(null, app.id);
 };
 
 FUNC.apps.rem = function(id, callback) {
-	DBMS().read('tbl_app').where('id', id).callback(function(err, response) {
-		if (response) {
+	var item = G.apps.findItem('id', id);
+	if (item) {
 
-			var db = DBMS();
-			db.remove('tbl_app').where('id', id);
-			db.remove('tbl_notification').where('appid', id);
+		G.apps = G.apps.remove('id', id);
 
-			// Remove app
-			FUNC.users.stream({ limit: 50, appid: id }, function(users, next) {
-				for (var i = 0; i < users.length; i++)
-					delete users[i].apps[id];
-
-				if (users.length)
-					FUNC.users.set(users, ['apps'], next);
-				else
-					next();
-
-			}, () => callback(null, response));
-
-		} else
-			callback(null);
-	});
-};
-
-FUNC.apps.stream = function(query, fn, callback) {
-
-	// Streams all apps
-	// fn(users, next);
-	// done: callback()
-
-	if (!query.limit)
-		query.limit = 100;
-
-	if (typeof(query.limit) === 'string')
-		query.limit = +query.limit;
-
-	var streamer = function(index) {
-		var builder = DBMS().find('tbl_app');
-		builder.take(query.limit);
-		builder.skip(query.limit * index);
-		builder.callback(function(err, response) {
-			if (err || !response.length)
-				callback && callback();
-			else
-				fn(response, () => streamer(index + 1));
+		// Remove apps from the all users
+		F.global.users.forEach(function(item) {
+			delete item.apps[id];
 		});
-	};
 
-	streamer(0);
+		save(1);
+	}
+
+	callback(null, item);
 };
 
 FUNC.apps.query = function(filter, callback) {
-	// filter.page
-	// filter.limit
+	// filter.take
+	// filter.skip
 	// filter.id {String Array}
-	var builder = DBMS().listing('tbl_app');
-	filter.id && builder.in('id', filter.id);
-	builder.paginate(filter.page, filter.limit, 100);
-	builder.callback(callback);
+	var obj = {};
+	obj.count = obj.limit = G.apps.length;
+	obj.items = G.apps;
+	obj.page = 1;
+	obj.pages = 1;
+	callback(null, obj);
 };
+
+// Internal service for refreshing meta info of all registered applications
+// This functionality can do some service in special cases
+ON('service', function(counter) {
+
+	if (counter % 3 !== 0)
+		return;
+
+	// Each 3 minutes is executes refreshing
+	refresh_apps();
+});
+
+function refresh_apps() {
+	G.apps.wait(function(app, next) {
+		OP.refresh(app, function(err, item) {
+
+			// item == app (same object)
+
+			// Good to know:
+			// This is not needed because OP uses references in this case
+			// This fields are as info for another storage
+			// FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'daterefreshed']);
+
+			// Important
+			FUNC.emit('apps.sync', item.id);
+
+			// Next app
+			next();
+		});
+
+	}, () => FUNC.emit('apps.refresh'));
+}
 
 // ====================================
 // Sessions
 // ====================================
-
-FUNC.sessions.lock = function(key, expire, callback) {
-
-	if (F.cache.get2(key))
-		return;
-
-	F.cache.set(key, 1, expire);
-
-	// This method locks some operation according to the key
-	// For example: sending notifications
-	callback();
-};
-
-FUNC.sessions.unlock = function(key, callback) {
-	F.cache.remove(key);
-	// This method unlocks some operation according to the key
-	callback && callback();
-};
 
 FUNC.sessions.set = function(key, value, expire, callback) {
 
@@ -407,13 +394,14 @@ FUNC.sessions.rem = function(key, callback) {
 // ====================================
 
 FUNC.settings.get = function(callback) {
-	DBMS().read('tbl_settings').where('id', 'openplatform').callback(function(err, response) {
-		callback(null, response ? response.data : {});
+	Fs.readFile(F.path.databases('settings.json'), function(err, response) {
+		callback(null, response ? response.toString('utf8').parseJSON(true) : {});
 	});
 };
 
 FUNC.settings.set = function(data, callback) {
-	DBMS().modify('tbl_settings', { data: data }).where('id', 'openplatform').callback(callback);
+	Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(data), NOOP);
+	callback && callback(null);
 };
 
 // ====================================
@@ -421,7 +409,6 @@ FUNC.settings.set = function(data, callback) {
 // ====================================
 
 FUNC.notifications.add = function(data, callback) {
-
 	// data.userid
 	// data.appid
 	// data.type
@@ -431,38 +418,76 @@ FUNC.notifications.add = function(data, callback) {
 	// data.ip
 	// data.datecreated
 
-	data.id = UID();
-	DBMS().insert('tbl_notification', data);
+	var filename = F.path.databases('notifications_' + data.userid + '.json');
+	Fs.appendFile(filename, JSON.stringify(data) + ',', NOOP);
 	callback && callback();
 };
 
 FUNC.notifications.rem = function(userid, callback) {
+	var filename = F.path.databases('notifications_' + userid + '.json');
+	Fs.unlink(filename, NOOP);
 
-	var db = DBMS();
+	var user = G.users.findItem('id', userid);
+	if (user) {
+		user.countnotifications = 0;
+		var keys = Object.keys(user.apps);
+		for (var i = 0; i < keys.length; i++)
+			user.apps[keys[i]].countnotifications = 0;
+		save(2);
+	}
 
-	db.remove('tbl_notification').where('userid', userid);
-	db.modify('tbl_user', { countnotifications: 0 }).where('id', userid);
-	db.read('tbl_user').where('id', userid).fields('apps').callback(function(err, user) {
-
-		if (user) {
-
-			var keys = Object.keys(user.apps);
-
-			for (var i = 0; i < keys.length; i++)
-				user.apps[keys[i]].countnotifications = 0;
-
-			if (keys.length)
-				db.modify('tbl_user', user).where('id', userid);
-		}
-
-	});
-
-	db.callback(callback);
+	callback && callback();
 };
 
 FUNC.notifications.get = function(userid, callback) {
+
 	// Reads notifications + remove it
-	DBMS().find('tbl_notification').where('userid', userid).callback(callback);
+
+	var filename = F.path.databases('notifications_' + userid + '.json');
+	Fs.readFile(filename, function(err, data) {
+
+		if (err) {
+			callback(err);
+			return;
+		}
+
+		var body = data.toString('utf8');
+		callback(null, ('[' + body.substring(0, body.length - 1) + ']').parseJSON());
+	});
+};
+
+// ====================================
+// Files
+// ====================================
+
+// "backgrounds" are stored in /public/backgrounds/{id}.ext
+// "photos" are stored in /public/photos/{id}.jpg
+// if you want to use own file handler just create a custom FILE() route
+
+FUNC.files.uploadphoto = function(base64, callback) {
+	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
+	var path = F.path.public('photos');
+	F.path.mkdir(path);
+	base64.base64ToFile(path + id, () => callback(null, id));
+};
+
+FUNC.files.uploadbackground = function(httpfile, callback) {
+	var path = F.path.public('backgrounds');
+	F.path.mkdir(path);
+	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(httpfile.filename);
+	httpfile.move(path + id, () => callback(null, id));
+};
+
+FUNC.files.removephoto = function(id) {
+	var path = 'photos/' + id;
+	Fs.unlink(F.path.public(path), NOOP);
+	F.touch('/' + path);
+};
+
+FUNC.files.removebackground = function(id) {
+	var path = 'backgrounds/' + id;
+	Fs.unlink(F.path.public(path), NOOP);
+	F.touch('/' + path);
 };
 
 // ====================================
@@ -470,11 +495,33 @@ FUNC.notifications.get = function(userid, callback) {
 // ====================================
 
 FUNC.init = function(callback) {
-	FUNC.users.meta(callback);
+	Fs.readFile(F.path.databases('users.json'), function(err, response) {
+		G.users = response ? response.toString('utf8').parseJSON(true) : [];
+
+		for (var i = 0, length = G.users.length; i < length; i++) {
+			var u = G.users[i];
+			u.online = false;
+			u.countsessions = 0;
+		}
+
+		FUNC.users.meta();
+
+		Fs.readFile(F.path.databases('apps.json'), function(err, response) {
+			G.apps = response ? response.toString('utf8').parseJSON(true) : [];
+
+			for (var i = 0, length = G.apps.length; i < length; i++)
+				G.apps[i].online = false;
+
+			G.apps.quicksort('title');
+			G.apps.length && $WORKFLOW('App', 'state');
+
+			callback && callback();
+			refresh_apps();
+		});
+	});
 };
 
 FUNC.emit = function(type, a, b, c, d, e) {
-	F.isCluster && F.cluster.emit(type, a, b, c, d, e);
 	EMIT(type, a, b, c, d, e);
 };
 
@@ -487,3 +534,20 @@ FUNC.error = function(place, err) {
 };
 
 FUNC.logger = LOGGER;
+
+// FileStorage
+function save(type) {
+	setTimeout2('OP.saveState.' + (type || 0), function() {
+
+		if (!type || type === 2) {
+			EMIT('users.backup', G.users);
+			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
+		}
+
+		if (!type || type === 1) {
+			EMIT('apps.backup', G.apps);
+			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
+		}
+
+	}, 1000, 10);
+}

@@ -1,5 +1,3 @@
-const Fs = require('fs');
-
 NEWSCHEMA('Account', function(schema) {
 
 	schema.define('email', 'Email', true);
@@ -37,24 +35,17 @@ NEWSCHEMA('Account', function(schema) {
 	schema.setSave(function($) {
 
 		var model = $.clean();
-		var path;
 
 		FUNC.users.get($.user.id, function(err, user) {
 			if (user) {
 
 				// Removing older background
-				if (user.background && model.background !== user.background) {
-					path = 'backgrounds/' + user.background;
-					Fs.unlink(F.path.public(path), NOOP);
-					F.touch('/' + path);
-				}
+				if (user.background && model.background !== user.background)
+					FUNC.files.removebackground(user.background);
 
 				// Removing older photo
-				if (user.photo && model.photo !== user.photo) {
-					path = 'photos/' + user.photo;
-					Fs.unlink(F.path.public(path), NOOP);
-					F.touch('/' + path);
-				}
+				if (user.photo && model.photo !== user.photo)
+					FUNC.files.removebackground(user.photo);
 
 				if (model.password && !model.password.startsWith('***'))
 					user.password = model.password.sha256();
@@ -69,6 +60,7 @@ NEWSCHEMA('Account', function(schema) {
 				user.volume = model.volume;
 				user.colorscheme = model.colorscheme;
 				user.background = model.background;
+				user.dateupdated = NOW;
 
 				FUNC.users.set(user, Object.keys(model), function() {
 					FUNC.emit('users.update', user.id, 'account');

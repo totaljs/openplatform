@@ -14,6 +14,7 @@ NEWSCHEMA('Notification', function(schema) {
 		}
 
 		FUNC.notifications.get(user.id, function(err, data) {
+
 			// Remove notifications
 			FUNC.notifications.rem(user.id, function() {
 
@@ -32,7 +33,7 @@ NEWSCHEMA('Notification', function(schema) {
 				});
 			});
 
-			// Returns notifications data
+			// Returns notifications
 			$.callback(data);
 		});
 	});
@@ -96,23 +97,18 @@ NEWSCHEMA('Notification', function(schema) {
 			user.datenotified = F.datetime;
 
 			if (can) {
+
+				// Adds notification
 				FUNC.notifications.add(model);
-				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified'], () => FUNC.emit('users.notify', user.id, app.id));
+
+				// Updates profile
+				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified'], () => FUNC.emit('users.notify', user.id, app.id), app);
+
+				// Updates session
 				FUNC.sessions.set(user.id, user, '10 minutes');
 			}
 
 			$.success();
-
-			var db;
-
-			// Stats
-			db = NOSQL('users');
-			db.counter.hit('all');
-			db.counter.hit(user.id);
-
-			db = NOSQL('apps');
-			db.counter.hit('all');
-			db.counter.hit(app.id);
 		});
 	});
 });

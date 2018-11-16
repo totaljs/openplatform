@@ -137,22 +137,23 @@ function json_apps_meta(id) {
 
 function json_upload_photo() {
 	var self = this;
-	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-	var path = F.path.public('photos');
-	F.path.mkdir(path);
-	self.body.file.base64ToFile(path + id, () => self.json(id));
+	FUNC.files.uploadphoto(self.body.file, function(err, id) {
+		if (err)
+			self.invalid(err);
+		else
+			self.json(id);
+	});
 }
 
 function json_upload_background() {
 	var self = this;
 	var file = self.files[0];
-	if (file.isImage()) {
-		var path = F.path.public('backgrounds');
-		F.path.mkdir(path);
-		var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
-		file.move(path + id, () => self.json(id));
-	} else
-		self.invalid('error-file-type');
+	FUNC.files.uploadbackground(file, function(err, id) {
+		if (err)
+			self.invalid(err);
+		else
+			self.json(id);
+	});
 }
 
 function json_online(id) {

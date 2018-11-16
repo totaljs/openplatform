@@ -1,4 +1,7 @@
 const Fs = require('fs');
+require('dbms').init(CONF.database);
+
+//DBMS.logger();
 
 FUNC.apps = {};
 FUNC.users = {};
@@ -18,98 +21,121 @@ FUNC.users.set = function(user, fields, callback) {
 	// @fields {String Array} Optional, changed fields
 	// @callback {Function} Optional
 
+	var db = DBMS();
+	var is = true;
+
 	if (user instanceof Array) {
-		// nothing
-	} else if (user.id) {
-		var item = G.users.findItem('id', user.id);
-		if (item) {
-			U.extend(user, item);
+		for (var j = 0; j < user.length; j++) {
+			var data = {};
+			for (var i = 0; i < fields.length; i++)
+				data[fields[i]] = user[j][fields[i]];
+			db.modify('tbl_user', data).where('id', user[j].id);
+			is = false;
 		}
+
+		if (is) {
+			callback(null);
+			return;
+		}
+
+	} else if (user.id) {
+		if (fields) {
+			var data = {};
+			for (var i = 0; i < fields.length; i++)
+				data[fields[i]] = user[fields[i]];
+			db.modify('tbl_user', data).where('id', user.id);
+		} else
+			db.modify('tbl_user', user).where('id', user.id);
 	} else {
 		user.id = UID();
-		G.users.push(user);
+		db.insert('tbl_user', user);
 	}
 
-	save(2);
-	callback && callback(null, user.id);
+
+	callback && db.callback(err => callback(err, user.id));
 };
 
 FUNC.users.get = function(id, callback) {
 	// Finds a user by ID
-	callback(null, G.users.findItem('id', id));
+	DBMS().read('tbl_user').where('id', id).callback(callback);
 };
 
 FUNC.users.query = function(filter, callback) {
 
-	// filter.take
-	// filter.skip
+	// filter.page
+	// filter.limit
 	// filter.appid
 
-	var arr = [];
+	var db = DBMS();
+	var builder = db.listing('tbl_user');
 
-	if (filter.appid) {
-		for (var i = 0; i < G.users.length; i++) {
-			var user = G.users[i];
-			if (user.apps && user.apps[filter.appid])
-				arr.push(user);
-		}
-	}
-
-	var data = {};
-	data.items = arr;
-	data.limit = data.count = data.items.length;
-	data.page = 1;
-	data.pages = 1;
-	callback(null, data);
+	filter.appid && builder.search('apps::text', '"{0}"'.format(filter.appid));
+	builder.paginate(filter.page, filter.limit, 100);
+	builder.callback(callback);
 };
 
 FUNC.users.rem = function(id, callback) {
-	var item = G.users.findItem('id', id);
-	if (item) {
-
-		G.users = G.users.remove('id', id);
-
-		// Supervisor
-		for (var i = 0, length = G.users.length; i < length; i++) {
-			var tmp = G.users[i];
-			if (tmp.supervisorid === id)
-				tmp.supervisorid = '';
+	DBMS().read('tbl_user').where('id', id).callback(function(err, response) {
+		if (response) {
+			var db = DBMS();
+			db.remove('tbl_user').where('id', id);
+			db.update('tbl_user', { supervisorid: '' }).where('supervisorid', id);
+			db.update('tbl_user', { delegateid: '' }).where('delegateid', id);
+			db.remove('tbl_notification').where('userid', id);
 		}
-
-		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
-		save(2);
-	}
-
-	callback(null, item);
+		callback(null, response);
+	});
 };
 
 FUNC.users.login = function(login, password, callback) {
-
-	var user = G.users.findItem('login', login);
-	if (user == null || password.sha256() !== user.password)
-		callback();
-	else
-		callback(null, user);
+	DBMS().read('tbl_user').where('login', login).callback(function(err, response) {
+		if (response && response.password.sha256() === password)
+			callback(null, response);
+		else
+			callback();
+	});
 };
 
 FUNC.users.logout = function(user, controller) {
+	FUNC.sessions.rem(user.id);
 	controller.redirect('/');
 };
 
 FUNC.users.password = function(login, callback) {
-	var user = G.users.findItem('login', login);
-	callback(null, user);
+	DBMS().read('tbl_user').where('login', login).callback(function(err, response) {
+		if (response)
+			callback(null, response);
+		else
+			callback();
+	});
 };
 
-FUNC.users.stream = function(limit, fn, callback) {
+FUNC.users.stream = function(query, fn, callback) {
 
 	// Streams all users
 	// fn(users, next);
 	// done: callback()
 
-	fn(G.users, function() {
-		callback && callback();
-	});
+	if (!query.limit)
+		query.limit = 100;
+
+	if (typeof(query.limit) === 'string')
+		query.limit = +query.limit;
+
+	var streamer = function(index) {
+		var builder = DBMS().find('tbl_user');
+		query.appid && builder.search('apps::text', '"{0}"'.format(query.appid));
+		builder.take(query.limit);
+		builder.skip(query.limit * index);
+		builder.callback(function(err, response) {
+			if (err || !response.length)
+				callback && callback();
+			else
+				fn(response, () => streamer(index + 1));
+		});
+	};
+
+	streamer(0);
 };
 
 FUNC.users.online = function(user, is, callback) {
@@ -120,92 +146,116 @@ FUNC.users.online = function(user, is, callback) {
 // Codelist
 FUNC.users.meta = function(callback) {
 
-	var ou = {};
-	var localities = {};
-	var companies = {};
-	var customers = {};
-	var groups = {};
-	var roles = {};
+	var db = DBMS();
+	db.query('SELECT locality, count(1) FROM tbl_user GROUP BY locality').set('locality');
+	db.query('SELECT company, customer, count(1) FROM tbl_user GROUP BY company, customer').set('company');
+	db.query('SELECT ougroups::text, count(1) FROM tbl_user GROUP BY ougroups::text').set('ougroups');
+	db.query('SELECT groups::text, count(1) FROM tbl_user GROUP BY groups::text').set('groups');
+	db.query('SELECT roles::text, count(1) FROM tbl_user GROUP BY roles::text').set('roles');
 
-	var toArray = function(obj, preparator) {
-		var arr = Object.keys(obj);
-		var output = [];
-		for (var i = 0, length = arr.length; i < length; i++)
-			output.push(preparator ? preparator(obj[arr[i]]) : obj[arr[i]]);
-		output.quicksort('name');
-		return output;
-	};
+	db.callback(function(err, item) {
 
-	for (var i = 0, length = G.users.length; i < length; i++) {
+		var ou = {};
+		var localities = {};
+		var companies = {};
+		var customers = {};
+		var groups = {};
+		var roles = {};
 
-		var item = G.users[i];
+		var toArray = function(obj, preparator) {
+			var arr = Object.keys(obj);
+			var output = [];
+			for (var i = 0, length = arr.length; i < length; i++)
+				output.push(preparator ? preparator(obj[arr[i]]) : obj[arr[i]]);
+			output.quicksort('name');
+			return output;
+		};
 
-		var ougroups = item.ougroups ? Object.keys(item.ougroups) : EMPTYARRAY;
-
-		for (var j = 0; j < ougroups.length; j++) {
-			var oukey = ougroups[j];
-			if (ou[oukey])
-				ou[oukey].count++;
-			else
-				ou[oukey] = { count: 1, name: oukey };
-		}
-
-		if (item.groups) {
-			for (var j = 0; j < item.groups.length; j++) {
-				var g = item.groups[j];
-				if (groups[g])
-					groups[g].count++;
-				else
-					groups[g] = { count: 1, id: g, name: g };
+		if (item.ougroups && item.ougroups.length) {
+			for (var i = 0; i < item.ougroups.length; i++) {
+				var item_ougroups = item.ougroups[i].ougroups;
+				var ougroups = item_ougroups ? Object.keys(item_ougroups.parseJSON()) : EMPTYARRAY;
+				for (var j = 0; j < ougroups.length; j++) {
+					var oukey = ougroups[j];
+					if (ou[oukey])
+						ou[oukey].count++;
+					else
+						ou[oukey] = { count: 1, name: oukey };
+				}
 			}
 		}
 
-		if (item.roles) {
-			for (var j = 0; j < item.roles.length; j++) {
-				var r = item.roles[j];
-				if (roles[r])
-					roles[r].count++;
-				else
-					roles[r] = { count: 1, id: r, name: r };
+		if (item.groups && item.groups.length) {
+			for (var i = 0; i < item.groups.length; i++) {
+				var item_groups = item.groups[i].groups.parseJSON();
+				for (var j = 0; j < item_groups.length; j++) {
+					var g = item_groups[j];
+					if (groups[g])
+						groups[g].count++;
+					else
+						groups[g] = { count: 1, id: g, name: g };
+				}
 			}
 		}
 
-		if (item.locality) {
-			if (localities[item.locality])
-				localities[item.locality].count++;
-			else
-				localities[item.locality] = { count: 1, id: item.locality.slug(), name: item.locality };
-		}
-
-		if (item.company) {
-			if (item.customer) {
-				if (customers[item.company])
-					customers[item.company].count++;
-				else
-					customers[item.company] = { count: 1, id: item.company.slug(), name: item.company };
+		if (item.roles && item.roles.length) {
+			for (var i = 0; i < item.roles.length; i++) {
+				var item_roles = item.roles[i].roles.parseJSON();
+				for (var j = 0; j < item_roles.length; j++) {
+					var r = item_roles[j];
+					if (roles[r])
+						roles[r].count++;
+					else
+						roles[r] = { count: 1, id: r, name: r };
+				}
 			}
-			if (companies[item.company])
-				companies[item.company].count++;
-			else
-				companies[item.company] = { count: 1, id: item.company.slug(), name: item.company };
 		}
-	}
 
-	// G.meta === important
-	var meta = G.meta = {};
-	meta.companies = toArray(companies);
-	meta.customers = toArray(customers);
-	meta.localities = toArray(localities);
-	meta.groups = toArray(groups);
-	meta.roles = toArray(roles);
-	meta.languages = F.config.languages;
+		if (item.locality && item.locality.length) {
+			for (var i = 0; i < item.locality.length; i++) {
+				var item_locality = item.locality[i].locality;
+				if (localities[item_locality])
+					localities[item_locality].count++;
+				else
+					localities[item_locality] = { count: 1, id: item_locality.slug(), name: item_locality };
+			}
+		}
 
-	meta.ou = toArray(ou, function(item) {
-		item.id = item.name = item.name.replace(/\//g, ' / ');
-		return item;
+		if (item.company && item.company.length) {
+			for (var i = 0; i < item.company.length; i++) {
+				var item_company = item.company[i];
+				var name_company = item_company.company;
+
+				if (item_company.customer) {
+					if (customers[name_company])
+						customers[name_company].count++;
+					else
+						customers[name_company] = { count: 1, id: name_company.slug(), name: name_company };
+				} else {
+					if (companies[name_company])
+						companies[name_company].count++;
+					else
+						companies[name_company] = { count: 1, id: name_company.slug(), name: name_company };
+				}
+			}
+		}
+
+		// G.meta === important
+		var meta = G.meta = {};
+		meta.companies = toArray(companies);
+		meta.customers = toArray(customers);
+		meta.localities = toArray(localities);
+		meta.groups = toArray(groups);
+		meta.roles = toArray(roles);
+		meta.languages = F.config.languages;
+
+		meta.ou = toArray(ou, function(item) {
+			item.id = item.name = item.name.replace(/\//g, ' / ');
+			return item;
+		});
+
+		callback && callback(null, meta);
 	});
-
-	callback && callback(null, meta);
 };
 
 // ====================================
@@ -214,62 +264,100 @@ FUNC.users.meta = function(callback) {
 
 FUNC.apps.get = function(id, callback) {
 	// Finds a user by ID
-	callback(null, G.apps.findItem('id', id));
+	DBMS().read('tbl_app').where('id', id).callback(callback);
 };
 
 FUNC.apps.set = function(app, fields, callback) {
 
+	var db = DBMS();
+
 	if (app.id) {
-		var item = G.apps.findItem('id', app.id);
-		if (item) {
-			U.extend(item, app);
+		if (fields) {
+			var data = {};
+			for (var i = 0; i < fields.length; i++)
+				data[fields[i]] = app[fields[i]];
+
+			if (data.roles)
+				data.roles = JSON.stringify(data.roles);
+
+			db.modify('tbl_app', data).where('id', app.id);
+		} else {
+
+			if (app.roles)
+				app.roles = JSON.stringify(app.roles);
+
+			db.modify('tbl_app', app).where('id', app.id);
 		}
 	} else {
 		app.id = UID();
-		F.global.apps.push(app);
+		if (app.roles)
+			app.roles = JSON.stringify(app.roles);
+		db.insert('tbl_app', app);
 	}
 
-	save(1);
-	G.apps.quicksort('title');
-	callback && callback(null, app.id);
+	callback && db.callback(err => callback(err, app.id));
 };
 
 FUNC.apps.rem = function(id, callback) {
-	var item = G.apps.findItem('id', id);
-	if (item) {
+	DBMS().read('tbl_app').where('id', id).callback(function(err, response) {
+		if (response) {
 
-		G.apps = G.apps.remove('id', id);
+			var db = DBMS();
+			db.remove('tbl_app').where('id', id);
+			db.remove('tbl_notification').where('appid', id);
 
-		// Remove apps from the all users
-		F.global.users.forEach(function(item) {
-			delete item.apps[id];
-		});
+			// Remove app
+			FUNC.users.stream({ limit: 50, appid: id }, function(users, next) {
+				for (var i = 0; i < users.length; i++)
+					delete users[i].apps[id];
 
-		save(1);
-	}
+				if (users.length)
+					FUNC.users.set(users, ['apps'], next);
+				else
+					next();
 
-	callback(null, item);
-};
+			}, () => callback(null, response));
 
-FUNC.apps.stream = function(limit, fn, callback) {
-	// Streams all apps
-	// fn(users, next);
-	// done: callback()
-	fn(G.apps, function() {
-		callback && callback();
+		} else
+			callback(null);
 	});
 };
 
+FUNC.apps.stream = function(query, fn, callback) {
+
+	// Streams all apps
+	// fn(users, next);
+	// done: callback()
+
+	if (!query.limit)
+		query.limit = 100;
+
+	if (typeof(query.limit) === 'string')
+		query.limit = +query.limit;
+
+	var streamer = function(index) {
+		var builder = DBMS().find('tbl_app');
+		builder.take(query.limit);
+		builder.skip(query.limit * index);
+		builder.callback(function(err, response) {
+			if (err || !response.length)
+				callback && callback();
+			else
+				fn(response, () => streamer(index + 1));
+		});
+	};
+
+	streamer(0);
+};
+
 FUNC.apps.query = function(filter, callback) {
-	// filter.take
-	// filter.skip
+	// filter.page
+	// filter.limit
 	// filter.id {String Array}
-	var obj = {};
-	obj.count = obj.limit = G.apps.length;
-	obj.items = G.apps;
-	obj.page = 1;
-	obj.pages = 1;
-	callback(null, obj);
+	var builder = DBMS().listing('tbl_app');
+	filter.id && builder.in('id', filter.id);
+	builder.paginate(filter.page, filter.limit, 100);
+	builder.callback(callback);
 };
 
 // ====================================
@@ -319,14 +407,13 @@ FUNC.sessions.rem = function(key, callback) {
 // ====================================
 
 FUNC.settings.get = function(callback) {
-	Fs.readFile(F.path.databases('settings.json'), function(err, response) {
-		callback(null, response ? response.toString('utf8').parseJSON(true) : {});
+	DBMS().read('tbl_settings').where('id', 'openplatform').callback(function(err, response) {
+		callback(null, response ? response.data : {});
 	});
 };
 
 FUNC.settings.set = function(data, callback) {
-	Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(data), NOOP);
-	callback && callback(null);
+	DBMS().modify('tbl_settings', { data: data }).where('id', 'openplatform').callback(callback);
 };
 
 // ====================================
@@ -334,6 +421,7 @@ FUNC.settings.set = function(data, callback) {
 // ====================================
 
 FUNC.notifications.add = function(data, callback) {
+
 	// data.userid
 	// data.appid
 	// data.type
@@ -343,42 +431,38 @@ FUNC.notifications.add = function(data, callback) {
 	// data.ip
 	// data.datecreated
 
-	var filename = F.path.databases('notifications_' + data.userid + '.json');
-	Fs.appendFile(filename, JSON.stringify(data) + ',', NOOP);
+	data.id = UID();
+	DBMS().insert('tbl_notification', data);
 	callback && callback();
 };
 
 FUNC.notifications.rem = function(userid, callback) {
-	var filename = F.path.databases('notifications_' + userid + '.json');
-	Fs.unlink(filename, NOOP);
 
-	var user = G.users.findItem('id', userid);
-	if (user) {
-		user.countnotifications = 0;
-		var keys = Object.keys(user.apps);
-		for (var i = 0; i < keys.length; i++)
-			user.apps[keys[i]].countnotifications = 0;
-		save(2);
-	}
+	var db = DBMS();
 
-	callback && callback();
+	db.remove('tbl_notification').where('userid', userid);
+	db.modify('tbl_user', { countnotifications: 0 }).where('id', userid);
+	db.read('tbl_user').where('id', userid).fields('apps').callback(function(err, user) {
+
+		if (user) {
+
+			var keys = Object.keys(user.apps);
+
+			for (var i = 0; i < keys.length; i++)
+				user.apps[keys[i]].countnotifications = 0;
+
+			if (keys.length)
+				db.modify('tbl_user', user).where('id', userid);
+		}
+
+	});
+
+	db.callback(callback);
 };
 
 FUNC.notifications.get = function(userid, callback) {
-
 	// Reads notifications + remove it
-
-	var filename = F.path.databases('notifications_' + userid + '.json');
-	Fs.readFile(filename, function(err, data) {
-
-		if (err) {
-			callback(err);
-			return;
-		}
-
-		var body = data.toString('utf8');
-		callback(null, '[' + body.substring(0, body.length - 1) + ']');
-	});
+	DBMS().find('tbl_notification').where('userid', userid).callback(callback);
 };
 
 // ====================================
@@ -386,29 +470,7 @@ FUNC.notifications.get = function(userid, callback) {
 // ====================================
 
 FUNC.init = function(callback) {
-	Fs.readFile(F.path.databases('users.json'), function(err, response) {
-		G.users = response ? response.toString('utf8').parseJSON(true) : [];
-
-		for (var i = 0, length = G.users.length; i < length; i++) {
-			var u = G.users[i];
-			u.online = false;
-			u.countsessions = 0;
-		}
-
-		FUNC.users.meta();
-
-		Fs.readFile(F.path.databases('apps.json'), function(err, response) {
-			G.apps = response ? response.toString('utf8').parseJSON(true) : [];
-
-			for (var i = 0, length = G.apps.length; i < length; i++)
-				G.apps[i].online = false;
-
-			G.apps.quicksort('title');
-			G.apps.length && $WORKFLOW('App', 'state');
-
-			callback && callback();
-		});
-	});
+	FUNC.users.meta(callback);
 };
 
 FUNC.emit = function(type, a, b, c, d, e) {
@@ -425,20 +487,3 @@ FUNC.error = function(place, err) {
 };
 
 FUNC.logger = LOGGER;
-
-// FileStorage
-function save(type) {
-	setTimeout2('OP.saveState.' + (type || 0), function() {
-
-		if (!type || type === 2) {
-			EMIT('users.backup', G.users);
-			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users), F.error());
-		}
-
-		if (!type || type === 1) {
-			EMIT('apps.backup', G.apps);
-			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
-		}
-
-	}, 1000, 10);
-}

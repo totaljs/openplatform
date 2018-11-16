@@ -28,7 +28,6 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('blocked', Boolean);
 
 	schema.setQuery(function($) {
-
 		OP.decodeAuthToken($.query.accesstoken || '', function(err, obj) {
 
 			if (!obj) {
@@ -51,9 +50,7 @@ NEWSCHEMA('App', function(schema) {
 			} else if (user.blocked || user.inactive) {
 				$.invalid('error-permissions');
 				return;
-			}
-
-			if (!user.apps[app.id]) {
+			} else if (!user.apps[app.id]) {
 				$.invalid('error-permissions');
 				return;
 			}
@@ -80,7 +77,7 @@ NEWSCHEMA('App', function(schema) {
 					FUNC.logger('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
 					model.dateupdated = NOW;
 					sync(item, model, true);
-					state(item, function() {
+					OP.refresh(item, function() {
 						FUNC.apps.set(model, null, function() {
 							FUNC.emit('apps.update', item.id);
 							FUNC.emit('apps.refresh', item.id);
@@ -155,63 +152,7 @@ NEWSCHEMA('App', function(schema) {
 			});
 		});
 	});
-
-	schema.addWorkflow('state', function($) {
-		FUNC.sessions.lock('apps.state', '10 minutes', function() {
-			FUNC.apps.stream({ limit: 50 }, function(apps, next) {
-				apps.wait(function(item, next) {
-					state(item, function() {
-						FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'daterefreshed']);
-						FUNC.emit('apps.sync', item.id);
-						next();
-					});
-				}, next);
-			}, function() {
-				FUNC.sessions.unlock('apps.state');
-				FUNC.emit('apps.refresh');
-				$.success();
-			});
-		});
-	});
 });
-
-function state(item, next) {
-	var builder = new RESTBuilder(item.url);
-	builder.exec(function(err, response, output) {
-
-		if (err || !response.url) {
-			item.online = false;
-		} else {
-
-			item.hostname = output.hostname.replace(/:\d+/, '');
-			item.online = true;
-			item.version = response.version;
-			item.name = response.name;
-			item.description = response.description;
-			item.author = response.author;
-			item.icon = response.icon;
-			item.frame = response.url;
-			item.email = response.email;
-			item.roles = response.roles;
-			item.groups = response.groups;
-			item.width = response.width;
-			item.height = response.height;
-			item.resize = response.resize;
-			item.type = response.type;
-			item.screenshots = response.allowscreenshots === true;
-
-			if (response.origin && response.origin.length) {
-				item.origin = {};
-				for (var i = 0; i < response.origin.length; i++)
-					item.origin[response.origin[i]] = true;
-			} else
-				item.origin = null;
-		}
-
-		item.daterefreshed = NOW;
-		next();
-	});
-}
 
 function sync(item, model, meta) {
 

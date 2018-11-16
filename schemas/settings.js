@@ -1,5 +1,3 @@
-const Fs = require('fs');
-
 NEWSCHEMA('Settings', function(schema) {
 
 	schema.define('url', 'String(500)', true);
@@ -49,11 +47,8 @@ NEWSCHEMA('Settings', function(schema) {
 				model.url = model.url.substring(0, model.url.length - 1);
 
 			// Removing older background
-			if (CONF.background && model.background !== CONF.background) {
-				var path = 'backgrounds/' + CONF.background;
-				Fs.unlink(F.path.public(path), NOOP);
-				F.touch('/' + path);
-			}
+			if (CONF.background && model.background !== CONF.background)
+				FUNC.files.removebackgroud(CONF.background);
 
 			CONF.url = model.url;
 			CONF.email = model.email;

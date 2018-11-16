@@ -32,14 +32,19 @@ NEWSCHEMA('Badge', function(schema) {
 					ua.countbadges++;
 				else
 					ua.countbadges = 1;
+
+				// Badges are part of the profile
+				// They don't need own DB
+
+				// Updates profile
+				FUNC.users.set(user, ['countnotifications', 'apps'], () => FUNC.emit('users.badge', user.id, app.id), app);
+
+				// Updates sessions
+				FUNC.sessions.set(user.id, user, '10 minutes');
 			}
 
-			FUNC.badges.add(user.id, app.id);
-			FUNC.users.set(user, ['countnotifications', 'apps'], () => FUNC.emit('users.notify', user.id, app.id));
-			FUNC.sessions.set(user.id, user, '10 minutes');
-
+			// Response
 			$.success();
-
 		});
 	});
 });

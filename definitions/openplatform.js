@@ -1,7 +1,5 @@
 const OP = global.OP = {};
 
-// G.users = [];
-// G.apps = [];
 // G.meta;
 
 // Return user profile object
@@ -56,7 +54,6 @@ OP.meta = function(app, user, serverside) {
 		return null;
 
 	var meta = { datetime: NOW, ip: user.ip, accesstoken: OP.encodeAuthToken(app, user), url: app.frame, settings: app.settings, id: app.id };
-
 	meta.verify = CONF.url + '/api/verify/?accesstoken=' + meta.accesstoken;
 	meta.openplatform = CONF.url;
 	meta.openplatformid = OP.id;
@@ -82,9 +79,8 @@ OP.meta = function(app, user, serverside) {
 
 		// Specific settings for the current user
 		var data = user.apps ? user.apps[app.id] : null;
-		if (data) {
+		if (data)
 			meta.profile.settings = data.settings;
-		}
 	}
 
 	if (app.allowreadapps)
@@ -106,42 +102,26 @@ OP.decodeToken = function(sign, callback) {
 
 	var arr = sign.split('-');
 	if (arr.length !== 4) {
-		callback(null);
+		callback();
 		return;
 	}
 
 	var tmp = (arr[0] + '-' + arr[1] + '-' + arr[2] + CONF.accesstoken).crc32(true) + '';
 	if (tmp !== arr[3]) {
-		callback(null);
+		callback();
 		return;
 	}
 
-	FUNC.apps.get(arr[0], function(err, app) {
-
-		if (app == null) {
-			callback(null, null);
-			return;
-		}
-
-		FUNC.users.get(arr[1], function(err, user) {
-
-			if (user == null) {
-				callback(null, null);
-				return;
-			}
-
+	OP.appuser(arr[0], arr[1], function(app, user) {
+		if (!user || !app) {
+			callback();
+		} else {
 			var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '';
-			if (tmp !== arr[2]) {
-				callback(null, null);
-				return;
-			}
-
-			var obj = {};
-			obj.app = app;
-			obj.user = user;
-			callback(null, obj);
-		});
-
+			if (tmp === arr[2])
+				callback(null, { app: app, user: user });
+			else
+				callback();
+		}
 	});
 };
 
@@ -155,42 +135,33 @@ OP.encodeAuthToken = function(app, user) {
 OP.decodeAuthToken = function(sign, callback) {
 
 	if (!sign) {
-		callback(null, null);
+		callback();
 		return;
 	}
 
 	sign = sign.decrypt(CONF.accesstoken.substring(0, 20));
 
 	if (!sign) {
-		callback(null, null);
+		callback();
 		return;
 	}
 
 	var arr = sign.split('-');
-
 	if (arr.length !== 3)
 		return null;
 
-	FUNC.apps.get(arr[0], function(err, app) {
+	OP.appuser(arr[0], arr[1], function(app, user) {
 
-		if (err || !app) {
-			callback(err, null);
+		if (!app || !user) {
+			callback();
 			return;
 		}
 
-		FUNC.users.get(arr[1], function(err, user) {
-
-			if (err || !user) {
-				callback(err, null);
-				return;
-			}
-
-			var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
-			if (tmp !== arr[2])
-				callback(null, null);
-			else
-				callback(null, { user: user, app: app });
-		});
+		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
+		if (tmp !== arr[2])
+			callback();
+		else
+			callback(null, { user: user, app: app });
 	});
 };
 
@@ -280,8 +251,6 @@ function readuser(user, type, app) {
 	} else
 		obj.roles = appdata ? appdata.roles : EMPTYARRAY;
 
-	// obj.appcountbadges = appdata.countbadges || 0;
-	// obj.appcountnotifications = appdata.countnotifications || 0;
 	obj.groups = user.groups;
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;
@@ -311,18 +280,19 @@ OP.users = function(app, query, callback) {
 			callback(null, users);
 		});
 	} else
-		callback(null, null);
+		callback();
 };
 
 OP.apps = function(app, query, callback) {
-	var arr = [];
 	if (app.allowreadapps) {
-		for (var i = 0, length = G.users.length; i < length; i++) {
-			var item = readapp(G.apps[i], app.allowreadapps);
-			item && arr.push(item);
-		}
-	}
-	callback({ items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length });
+		query.appid = app.id;
+		FUNC.apps.query(query, function(err, apps) {
+			for (var i = 0; i < apps.items.length; i++)
+				apps.items[i] = readapp(apps.items[i], app.allowreadapps, app);
+			callback(null, apps);
+		});
+	} else
+		callback();
 };
 
 OP.ou = function(val) {
@@ -332,6 +302,53 @@ OP.ou = function(val) {
 
 F.helpers.profile = function() {
 	return JSON.stringify(readuser(this.user, 1));
+};
+
+OP.appuser = function(appid, userid, callback) {
+	FUNC.apps.get(appid, function(err, app) {
+		if (app)
+			FUNC.users.get(userid, (err, user) => callback(app, user));
+		else
+			callback();
+	});
+};
+
+OP.refresh = function(app, callback) {
+	var builder = new RESTBuilder(app.url);
+	builder.exec(function(err, response, output) {
+
+		if (err || !response.url) {
+			app.online = false;
+		} else {
+
+			app.hostname = output.hostname.replace(/:\d+/, '');
+			app.online = true;
+			app.version = response.version;
+			app.name = response.name;
+			app.description = response.description;
+			app.author = response.author;
+			app.icon = response.icon;
+			app.frame = response.url;
+			app.email = response.email;
+			app.roles = response.roles;
+			app.groups = response.groups;
+			app.width = response.width;
+			app.height = response.height;
+			app.resize = response.resize;
+			app.type = response.type;
+			app.screenshots = response.allowscreenshots === true;
+
+			if (response.origin && response.origin.length) {
+				app.origin = {};
+				for (var i = 0; i < response.origin.length; i++)
+					app.origin[response.origin[i]] = true;
+			} else
+				app.origin = null;
+		}
+
+		app.daterefreshed = NOW;
+		callback(err, app);
+	});
 };
 
 // Load
