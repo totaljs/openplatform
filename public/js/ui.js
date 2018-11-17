@@ -2065,7 +2065,7 @@ COMPONENT('processes', function(self, config) {
 
 			if (!cache || cache.w !== w || cache.h !== h || cache.left !== l || cache.top !== t) {
 				el.attrd('cache', self.getCache(el));
-				el.css({ width: w, height: h, left: l, top: t });
+				el.css({ width: w - (align === 3 ? 16 : 14), height: h - 16, left: l + (align === 1 ? 4 : 8), top: t + 8 });
 			}
 		}
 

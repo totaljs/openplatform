@@ -127,7 +127,12 @@ OP.init = function(callback) {
 	});
 };
 
+
 document.addEventListener('click', function() {
+	OP && OP.focus();
+});
+
+document.addEventListener('touchstart', function() {
 	OP && OP.focus();
 });
 
