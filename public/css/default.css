@@ -16,25 +16,33 @@ header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button.focused { background-color: #313131; }
 header nav button .fa { font-size: 20px; }
 header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
-header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; }
+header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
 .header-show { top: 0; }
 
-.username { position: absolute; right: 20px; bottom: 20px; color: #707070; font-size: 12px; }
+.username { position: absolute; right: 25px; bottom: 30px; color: rgba(255,255,255,0.3); font-size: 12px; }
 .username i { margin-right: 5px; }
 
 .startmenu { position: fixed; top: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
 .startmenu-title { height: 50px; border-top: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }
-.startmenu-title span { float: left; margin: 14px 0 0 12px; }
+.startmenu-title > span { float: left; margin: 14px 0 0 12px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
-.startmenu-apps { padding: 15px 0; margin-right: 200px; overflow: hidden; }
-.startmenu-apps-container { height: 380px; overflow-y: auto; width: 330px; position: absolute; z-index: 1; padding: 5px 0; overflow-scrolling: touch; }
+.startmenu-apps { padding: 0 0 15px; margin-right: 200px; overflow: hidden; }
+.startmenu-apps-container { height: 386px; overflow-y: auto; width: 330px; padding: 5px 0; overflow-scrolling: touch; }
 .startmenu-nav { float: right; width: 200px; height: 450px; background-color: $startmenu; border-left: 1px solid rgba(0,0,0,0.1); }
 .startmenu-nav nav button { display: block; color: white; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
-.startmenu-search { padding: 0 10px 10px; }
+.startmenu-search { padding: 5px; margin-bottom: 5px; background-color: #383838; }
+.startmenu-version { float: right; font-size: 11px; color: gray; margin: 11px 10px 0 0; text-align: right; font-weight: normal; line-height: 13px; }
+.startmenu-version b { display: block; }
+.startmenu-search .ui-textbox { height: 34px; background-color: #383838; }
+.startmenu-search .ui-textbox-input { padding: 9px 4px 0 10px; }
+.startmenu-search .ui-textbox input { font-size: 16px; background-color: #383838; color: white; }
+.startmenu-search .ui-textbox-control { width: 40px; border-left: 0; color: gray; }
+.startmenu-search input:-webkit-autofill, .startmenu-search input:-webkit-autofill:hover, .startmenu-search input:-webkit-autofill:active, .startmenu-search input:-webkit-autofill:focus { background-color: #303030 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #303030 inset !important; -webkit-text-fill-color: white !important; }
+
 .startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
 .startmenu .ui-textbox { border: 0; }
 .startmenu .ui-textbox-input { padding-left: 10px; padding-left: 10px; }
@@ -60,15 +68,15 @@ h3 .fa { margin-right: 5px; }
 .user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }
 .user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
 .user.selected { color: white; }
-.user-notifications { float: right; font-size: 22px; padding: 7px 20px 0 0; height: 45px; cursor: pointer; }
-.user-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 2px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
-.user-notifications .fa { color: white; }
-.user-notifications .far { color: #606060; }
+
+.button-notifications { float: right; font-size: 22px; padding: 8px 20px 0 0; height: 45px; cursor: pointer; }
+.button-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 2px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
+.button-notifications .fa { color: white; }
+.button-notifications .far { color: #606060; }
 
 .app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
-.app:first-child .app-container { border-top: 1px solid rgba(0,0,0,0.3); }
-.app-container { border: 1px solid rgba(0,0,0,0.3); cursor: pointer; transition: all 0.2s; height: 32px; color: white; border-top: 0; }
-.app-running .app-container, .app-container:hover { background-color: rgba(0,0,0,0.2); }
+.app-container { cursor: pointer; transition: all 0.2s; height: 32px; color: white; background-color: rgba(0,0,0,0.1); margin-bottom: 2px; border-radius: 3px; }
+.app-running .app-container, .app-container:hover { background-color: rgba(0,0,0,0.3); }
 .app-container:hover .app-icon { color: white; }
 .app-offline { cursor: not-allowed; box-shadow: none !important; }
 .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
@@ -160,49 +168,28 @@ h3 .fa { margin-right: 5px; }
 
 .ui-process-header { background-color: $dock; }
 
-@media(max-width: 700px) {
-	.form-border { border-left: 0; }
-	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
-	.startmenu { width: 100%; border-radius: 0; top: 45px; height: auto; }
-	.startmenu-nav { width: 100%; bottom: 50px; }
-	.startmenu-apps { margin-right: 0; }
-	.startmenu-apps-container { width: 100%; position: relative; height: 200px; }
-	.app { margin-right: 0; }
-	.app-icon { width: 50px; }
-	.app-meta { margin-left: 60px; }
-	.app-name { font-size: 16px; margin-bottom: 3px; }
-	.startmenu-search .ui-textbox { height: 40px; }
-	.startmenu-search .ui-textbox-input { padding: 11px 4px 0 10px; }
-	.startmenu-search .ui-textbox input { font-size: 16px; }
-	.startmenu-search .ui-textbox-control { width: 40px; }
-	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; }
-	.startmenu-nav nav button { padding: 8px 0; font-size: 18px; }
-	.startmenu-nav .fa { width: 34px; }
-	.app .appbadge { position: absolute; margin: 27px 0 0 22px; }
-}
+.ui-notifications { position: fixed; width: 300px; top: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 33; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
+.ui-notifications .fa { margin-right: 3px; }
+.ui-notifications-clear { margin: 15px 0 0 20px; font-size: 11px; cursor: pointer; color: silver; }
+.ui-notifications-clear:hover { text-decoration: underline; }
+.ui-notifications-message { margin: 20px; padding: 0; background-color: #303030; border-radius: 3px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s; border: 1px solid #252525; color: white; }
 
-.ui-npanel { position: fixed; width: 300px; top: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: auto; overflow-x: hidden; z-index: 33; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
-.ui-npanel .fa { margin-right: 3px; }
-.ui-npanel-clear { margin: 15px 0 0 20px; font-size: 11px; cursor: pointer; color: silver; }
-.ui-npanel-clear:hover { text-decoration: underline; }
-.ui-npanel-message { margin: 20px; padding: 0; background-color: #303030; border-radius: 3px; font-size: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.03); cursor: pointer; transition: all 0.3s; border: 1px solid #252525; color: white; }
+.ui-notifications-success { background-color: #68A654; color: white; border-color: #5A9149; }
+.ui-notifications-success .ui-notifications-title  { border-bottom-color: #5A9149; color: white; }
+.ui-notifications-success .ui-notifications-title img { border-bottom-color: #68A654; }
 
-.ui-npanel-success { background-color: #68A654; color: white; border-color: #5A9149; }
-.ui-npanel-success .ui-npanel-title  { border-bottom-color: #5A9149; color: white; }
-.ui-npanel-success .ui-npanel-title img { border-bottom-color: #68A654; }
+.ui-notifications-error { background-color: #EB3324; color: white; border-color: #C1281E; }
+.ui-notifications-error .ui-notifications-title  { border-bottom-color: #C1281E; color: white; }
+.ui-notifications-error .ui-notifications-title img { border-bottom-color: #C1281E; }
 
-.ui-npanel-error { background-color: #EB3324; color: white; border-color: #C1281E; }
-.ui-npanel-error .ui-npanel-title  { border-bottom-color: #C1281E; color: white; }
-.ui-npanel-error .ui-npanel-title img { border-bottom-color: #C1281E; }
-
-.ui-npanel-date { float: right; font-size: 10px; margin: 7px 10px 0 0; }
-.ui-npanel-title img { border: 1px solid #252525; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
-.ui-npanel-title { font-size: 13px; border-bottom: 1px solid #252525; padding: 5px 10px; }
-.ui-npanel-padding { padding: 0 10px 10px; }
-.ui-npanel-body { line-height: 14px; font-size: 12px; margin-top: 10px; }
-.ui-npanel button { display: inline-block; position: relative; background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; margin-top: 10px; outline: 0; font-size: 11px; color: black; padding: 2px 10px; }
-.ui-npanel button:hover { background-color: #F0F0F0; }
-.ui-npanel-remove { transform: scale(0.5); opacity: 0; }
+.ui-notifications-date { float: right; font-size: 10px; margin: 7px 10px 0 0; }
+.ui-notifications-title img { border: 1px solid #252525; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
+.ui-notifications-title { font-size: 13px; border-bottom: 1px solid #252525; padding: 5px 10px; }
+.ui-notifications-padding { padding: 0 10px 10px; }
+.ui-notifications-body { line-height: 14px; font-size: 12px; margin-top: 10px; }
+.ui-notifications button { display: inline-block; position: relative; background-color: white; border: 1px solid #E0E0E0; border-radius: 4px; margin-top: 10px; outline: 0; font-size: 11px; color: black; padding: 2px 10px; }
+.ui-notifications button:hover { background-color: #F0F0F0; }
+.ui-notifications-remove { transform: scale(0.5); opacity: 0; }
 
 .panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 15px 20px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: black; font-weight: bold; }
@@ -220,3 +207,26 @@ h3 .fa { margin-right: 5px; }
 .buttons button { width: 100%; margin: 0; padding: 0; font-size: 11px; height: 60px; background-color: #F0F0F0; border: 0; border-radius: 4px; overflow: hidden; text-transform: overflow; white-space: nowrap; }
 .buttons button .fa { font-size: 25px; display: block; }
 .buttons button:hover { background-color: #E0E0E0; }
+
+@media(max-width: 700px) {
+	.ui-notifications { width: auto; left: 0; }
+	.form-border { border-left: 0; }
+	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
+	.startmenu { width: 100%; border-radius: 0; top: 45px; height: auto; }
+	.startmenu-nav { width: 100%; bottom: 50px; }
+	.startmenu-apps { margin-right: 0; }
+	.startmenu-apps-container { width: 100%; position: relative; height: 200px; }
+	.startmenu-version { display: none; }
+	.app { margin-right: 0; }
+	.app-icon { width: 50px; }
+	.app-meta { margin-left: 60px; }
+	.app-name { font-size: 16px; margin-bottom: 3px; }
+	.startmenu-search .ui-textbox { height: 40px; }
+	.startmenu-search .ui-textbox-input { padding: 11px 4px 0 10px; }
+	.startmenu-search .ui-textbox input { font-size: 16px; }
+	.startmenu-search .ui-textbox-control { width: 40px; }
+	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; }
+	.startmenu-nav nav button { padding: 8px 0; font-size: 18px; }
+	.startmenu-nav .fa { width: 34px; }
+	.app .appbadge { position: absolute; margin: 27px 0 0 22px; }
+}

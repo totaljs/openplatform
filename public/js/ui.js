@@ -73,13 +73,21 @@ COMPONENT('time', function(self) {
 		var time = self.find('.ui-datetime-time');
 		var date = self.find('.ui-datetime-date');
 
+		var index = 0;
+
 		self.bindtime = function() {
+			index++;
+
+			if (index > 10000000)
+				index = 0;
+
 			var dt = new Date();
-			time.html(dt.format('HH:mm'));
-			date.html(dt.format('dd MMMM yyyy').toLowerCase());
+			time.html(dt.format('HH{0}mm{0}ss').format(index % 2 ? ':' : ' '));
+			if (index % 15 === 0 || index === 1)
+				date.html(dt.format('dd MMMM yyyy').toLowerCase());
 		};
 
-		setInterval(self.bindtime, 30000);
+		setInterval(self.bindtime, 1000);
 		self.bindtime();
 	};
 });
@@ -2436,7 +2444,7 @@ COMPONENT('processes', function(self, config) {
 	};
 });
 
-COMPONENT('notificationspanel', function() {
+COMPONENT('notifications', function() {
 
 	var self = this;
 	var container, button;
@@ -2448,19 +2456,19 @@ COMPONENT('notificationspanel', function() {
 
 	self.make = function() {
 		var scr = self.find('script');
-		self.aclass('ui-npanel');
+		self.aclass('ui-notifications');
 		self.template = Tangular.compile(scr.html());
 		scr.remove();
-		self.element.append('<div class="ui-npanel-container"></div>');
-		container = self.find('.ui-npanel-container');
-		button = self.find('.ui-npanel-clear');
+		self.element.append('<div class="ui-notifications-container"></div>');
+		container = self.find('.ui-notifications-container');
+		button = self.find('.ui-notifications-clear');
 
 		$(window).on('resize', self.resize);
 
-		self.event('click', '.ui-npanel-message', function() {
+		self.event('click', '.ui-notifications-message', function() {
 			count--;
 			var el = $(this);
-			el.aclass('ui-npanel-remove');
+			el.aclass('ui-notifications-remove');
 			setTimeout(function() {
 				el.remove();
 			}, 300);
@@ -2470,7 +2478,7 @@ COMPONENT('notificationspanel', function() {
 			}
 		});
 
-		self.event('click', '.ui-npanel-clear', function() {
+		self.event('click', '.ui-notifications-clear', function() {
 			count = 0;
 			button.aclass('hidden');
 			container.empty();

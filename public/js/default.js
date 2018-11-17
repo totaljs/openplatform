@@ -33,8 +33,6 @@ ON('ready', function() {
 	EMIT('resize');
 });
 
-AJAX('GET /api/meta/', 'common.meta');
-
 function onImageError(image) {
 	// image.onerror = null;
 	image.src = '/img/empty.png';

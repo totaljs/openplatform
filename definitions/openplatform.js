@@ -1,5 +1,7 @@
 const OP = global.OP = {};
 
+OP.version = 3100;
+
 // G.meta;
 
 // Return user profile object
@@ -7,6 +9,7 @@ OP.profile = function(user, callback) {
 
 	var meta = {};
 	meta.openplatformid = OP.id;
+	meta.version = OP.version;
 	meta.name = user.name;
 	meta.photo = user.photo;
 	meta.locality = user.locality;
