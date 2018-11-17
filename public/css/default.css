@@ -19,7 +19,7 @@ header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: poi
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 8px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
 .header-show { top: 0; }
 
-.username { position: absolute; right: 25px; bottom: 30px; color: rgba(255,255,255,0.3); font-size: 12px; }
+.username { position: absolute; right: 20px; bottom: 15px; color: rgba(255,255,255,0.3); font-size: 12px; }
 .username i { margin-right: 5px; }
 
 .startmenu { position: fixed; top: 45px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
