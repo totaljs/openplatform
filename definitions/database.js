@@ -70,7 +70,7 @@ FUNC.users.rem = function(id, callback) {
 
 	if (index !== -1) {
 
-		G.users = G.users.splice(index, 1);
+		G.users.splice(index, 1);
 
 		for (var i = 0, length = G.users.length; i < length; i++) {
 			var tmp = G.users[i];
@@ -81,7 +81,7 @@ FUNC.users.rem = function(id, callback) {
 		}
 
 		// Removes notifications
-		Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
+		Fs.unlink(F.path.databases('notifications_' + item.id + '.json'), NOOP);
 
 		// Backup users
 		save(2);
