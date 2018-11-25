@@ -87,10 +87,15 @@ NEWSCHEMA('App', function(schema) {
 				} else
 					$.invalid('error-apps-404');
 			});
-
 		} else {
 			model.datecreated = NOW;
-			state(model, function() {
+			OP.refresh(model, function(err) {
+
+				if (err) {
+					$.invalid(err);
+					return;
+				}
+
 				FUNC.apps.set(model, null, function(err, id) {
 					FUNC.emit('apps.create', id);
 					FUNC.emit('apps.refresh', id);
