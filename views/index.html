@@ -19,8 +19,7 @@
 	@{if user && (user.background || CONF.background)}
 	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
 	@{fi}
-	<!--<script src="@{'%cdn'}/spa.min@16.js"></script>-->
-	<script src="https://cdn.totaljs.com/spa.min@16.js"></script>
+	<script src="@{'%cdn'}/spa.min@16.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
