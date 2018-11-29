@@ -181,6 +181,18 @@ $(window).on('message', function(e) {
 			iframe && iframe.element.find('.ui-process-loading').tclass('hidden', data.body !== true);
 			break;
 
+		case 'loading2':
+			var iframe = processes.findProcess(app.id);
+			if (iframe) {
+				var fa = iframe.element.find('.ui-process-header').find('div .fa');
+				var icon = iframe.meta.internal.icon;
+				if (data.body == true)
+					fa.rclass('fa-' + icon).aclass('fa-pulse fa-spinner');
+				else
+					fa.rclass('fa-pulse fa-spinner').aclass('fa-' + icon);
+			}
+			break;
+
 		case 'snackbar':
 			SETTER('snackbar', data.body.type || 'success', data.body.body, data.body.button);
 			break;

@@ -136,6 +136,20 @@ document.addEventListener('touchstart', function() {
 	OP && OP.focus();
 });
 
+OP.loading2 = function(visible, interval) {
+
+	OP.$loading2 && clearTimeout(OP.$loading2);
+
+	if (!interval) {
+		OP.send('loading2', visible);
+		return;
+	}
+
+	OP.$loading2 = setTimeout(function(visible) {
+		OP.send('loading2', visible);
+	}, interval, visible);
+};
+
 OP.loading = function(visible, interval) {
 
 	OP.$loading && clearTimeout(OP.$loading);

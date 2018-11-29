@@ -22,6 +22,7 @@ OP.profile = function(user, callback) {
 	meta.volume = user.volume;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
 	meta.background = user.background || CONF.background;
+	meta.test = CONF.test === true;
 
 	var id = Object.keys(user.apps);
 
@@ -42,10 +43,10 @@ OP.profile = function(user, callback) {
 		if (user.sa) {
 			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false });
 			meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false });
-			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 690, resize: false });
+			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 660, resize: false });
 		}
 
-		meta.apps.push({ id: '_account', icon: 'cog', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 720, resize: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 710, resize: false });
 		callback(null, meta);
 	});
 };

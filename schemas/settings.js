@@ -1,5 +1,6 @@
 NEWSCHEMA('Settings', function(schema) {
 
+	schema.define('name', 'String(100)', true);
 	schema.define('url', 'String(500)', true);
 	schema.define('email', 'Email', true);
 	schema.define('colorscheme', 'Lower(7)');
@@ -7,6 +8,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('accesstoken', 'String(50)', true);
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
+	schema.define('test', Boolean);
 
 	schema.setGet(function($) {
 
@@ -25,6 +27,8 @@ NEWSCHEMA('Settings', function(schema) {
 			model.email = response.email;
 			model.smtp = response.smtp;
 			model.smtpsettings = typeof(options) === 'string' ? options : JSON.stringify(options);
+			model.test = response.test;
+			model.name = response.name;
 			OP.id = response.url.crc32(true);
 			$.callback();
 		});
@@ -33,13 +37,13 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.setSave(function($) {
 
 		if (!$.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.error.invalid('error-permissions');
+			return;
 		}
 
-		var model = model.$clean();
+		var model = $.clean();
 
-		FUNC.settings.save(model, function() {
+		FUNC.settings.set(model, function() {
 
 			FUNC.emit('settings.update', F.id);
 
@@ -50,6 +54,7 @@ NEWSCHEMA('Settings', function(schema) {
 			if (CONF.background && model.background !== CONF.background)
 				FUNC.files.removebackgroud(CONF.background);
 
+			CONF.name = model.name;
 			CONF.url = model.url;
 			CONF.email = model.email;
 			CONF.colorscheme = model.colorscheme;
@@ -57,11 +62,12 @@ NEWSCHEMA('Settings', function(schema) {
 			CONF.mail_smtp = model.smtp;
 			CONF.mail_smtp_options = model.smtpsettings.parseJSON();
 			CONF.accesstoken = model.accesstoken;
+			CONF.test = model.test;
 
 			OP.id = CONF.url.crc32(true);
 
 			$.success();
-			FUNC.logger('settings', 'update: ' + JSON.stringify(model.$clean()), '@' + $.user.name, $.ip);
+			FUNC.logger('settings', 'update: ' + JSON.stringify(model), '@' + $.user.name, $.ip);
 		});
 
 	});
@@ -71,6 +77,7 @@ NEWSCHEMA('Settings', function(schema) {
 		FUNC.settings.get(function(err, response) {
 
 			if (response) {
+				response.name && (CONF.name = response.name);
 				CONF.url = response.url || '';
 				CONF.author = response.author || '';
 				CONF.email = response.email || '';
@@ -79,6 +86,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.background = response.background || '';
 				CONF.mail_smtp = response.smtp || '';
 				CONF.mail_smtp_options = typeof(response.smtpsettings) === 'string' ? response.smtpsettings.parseJSON() : response.smtpsettings;
+				CONF.test = response.test;
 				OP.id = CONF.url.crc32(true);
 			}
 

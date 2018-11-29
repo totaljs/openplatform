@@ -1,16 +1,29 @@
 <div class="row">
-	<div class="scroller">
-		<div class="scroller-padding">
+	<div class="scroller" data-margin="40">
+		<div class="scroller-padding npb">
 			<div class="row">
-				<div class="col-sm-6 m">
-					<div data-jc="textbox__settings.url__required:true">@(URL address)</div>
+				<div class="col-xs-6 m">
+					<div data-jc="textbox__settings.url__required:true" class="m">@(URL address)</div>
+					<div data-jc="checkbox__settings.test">@(This is <b>Test environment</b>)</div>
 				</div>
-				<div class="col-sm-6 m">
+				<div class="col-xs-6 m">
+					<div data-jc="textbox__settings.name__required:true" class="m">@(Openplatform name)</div>
+				</div>
+			</div>
+		</div>
+		<hr class="nmt nmb" />
+		<div class="scroller-padding bg-smoke">
+
+			<div class="row">
+				<div class="col-xs-6 m">
+					<div data-jc="textbox__settings.accesstoken__maxlength:50;required:true">@(Access token for service account)</div>
+					<div class="help"><a href="javascript:void(0)" class="exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</a></div>
+				</div>
+				<div class="col-xs-6 m">
 					<div data-jc="textbox__settings.email__type:email;required:true">@(Support email)</div>
 				</div>
 			</div>
-			<div data-jc="textbox__settings.accesstoken__maxlength:50;required:true">@(Access token for service account)</div>
-			<div class="help m"><a href="javascript:void(0)" class="exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</a></div>
+
 			<div data-jc="colorselector__settings.colorscheme__null__'#0a53ea'" class="m"></div>
 
 			<div style="font-size:12px">
@@ -19,7 +32,7 @@
 			</div>
 			<div class="clearfix"></div>
 		</div>
-		<div class="scroller-padding bg-smoke">
+		<div class="scroller-padding">
 			<h2>@(SMTP settings)</h2>
 			<div data-jc="textbox__settings.smtp__icon:globe;maxlength:50;placeholder:@(e.g. smtp.yourdomain.com)__''" class="m">@(SMTP host)</div>
 			<div data-jc="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
@@ -27,16 +40,16 @@
 			<div data-jc="error__%smtpsettings" class="hidden m"></div>
 			<a href="javascript:void(0)" class="modify exec fs11" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</a>
 		</div>
-		<div class="scroller-padding">
-			<div data-jc="error__settings.response" class="hidden m"></div>
-			<div data-jc="validation__settings">
-				<button name="submit" class="button exec b" data-exec="settings_submit" disabled="disabled">@(SUBMIT)</button>
-			</div>
-		</div>
+		<div data-jc="error__settings.response" class="hidden m"></div>
+	</div>
+	<div class="buttonbar" data-jc="validation__settings">
+		<button name="submit" class="button exec b" data-exec="settings_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
 	</div>
 </div>
 
 <script>
+
+	resizelayout();
 
 	OPENPLATFORM.init(function(err, meta) {
 		if (err) {

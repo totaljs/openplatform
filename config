@@ -2,18 +2,12 @@ name                            : OpenPlatform v3
 author                          : Peter Širka
 version                         : 3.0.0
 
-// Mail settings
-mail-smtp                       : smtp.yourwebsite.com
-mail-smtp-options               : {"secure":false,"port":25,"user":"","password":"","timeout":10000}
-mail-address-from               : your@yourwebsite.com
-mail-address-reply              : your@yourwebsite.com
-mail-address-copy               :
-
-allow-custom-titles             : true
+allow_custom_titles             : true
 
 url                             : http://127.0.0.1:8000
 languages       (Array)         : ['en']
+
 cookie                          : __opu
-cookie-expiration               : 1 month
+cookie_expiration               : 1 month
 
 cdn                             : //cdn.componentator.com

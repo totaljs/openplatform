@@ -1,5 +1,6 @@
 const WSOPEN = { TYPE: 'open', body: null };
 const WSPROFILE =  { TYPE: 'profile', body: null };
+const WSSETTINGS =  { TYPE: 'settings', body: {} };
 const WSNOTIFICATIONS = { TYPE: 'notifications', body: null };
 const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
 const WSLOGOFF = { TYPE: 'logoff' };
@@ -47,7 +48,7 @@ function login() {
 			cookie.id = data.id;
 			cookie.date = NOW;
 			cookie.ua = (self.req.headers['user-agent'] || '').substring(0, 20);
-			self.cookie(CONF.cookie, F.encrypt(cookie), '1 month', COOKIES);
+			self.cookie(CONF.cookie, F.encrypt(cookie), CONF.cookie_expiration, COOKIES);
 			self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
 			return;
 		}
@@ -222,6 +223,21 @@ ON('users.refresh', function(userid, removed) {
 				}
 			}
 		});
+	});
+});
+
+ON('settings.update', function() {
+	WS && FUNC.settings.get(function(err, response) {
+		if (response) {
+			var body = WSSETTINGS.body;
+			body.name = response.name;
+			body.url = response.url;
+			body.email = response.email;
+			body.test = response.test;
+			body.background = response.background;
+			body.colorscheme = response.colorscheme;
+			WS.send(WSSETTINGS);
+		}
 	});
 });
 

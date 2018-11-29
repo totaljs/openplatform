@@ -240,9 +240,9 @@ COMPONENT('dropdown', function(self, config) {
 
 COMPONENT('textbox', function(self, config) {
 
-	var input, container, content = null;
+	var input, content = null;
 
-	self.nocompile();
+	self.nocompile && self.nocompile();
 
 	self.validate = function(value) {
 
@@ -265,6 +265,8 @@ COMPONENT('textbox', function(self, config) {
 		switch (self.type) {
 			case 'email':
 				return value.isEmail();
+			case 'phone':
+				return value.isPhone();
 			case 'url':
 				return value.isURL();
 			case 'currency':
@@ -283,29 +285,26 @@ COMPONENT('textbox', function(self, config) {
 		self.format = config.format;
 
 		self.event('click', '.fa-calendar', function(e) {
-			if (config.disabled)
-				return;
-			if (config.type === 'date') {
+			if (!config.disabled && !config.readonly && config.type === 'date') {
 				e.preventDefault();
 				SETTER('calendar', 'toggle', self.element, self.get(), function(date) {
+					self.change(true);
 					self.set(date);
 				});
 			}
 		});
 
 		self.event('click', '.fa-caret-up,.fa-caret-down', function() {
-			if (config.disabled)
-				return;
-			if (config.increment) {
+			if (!config.disabled && !config.readonly && config.increment) {
 				var el = $(this);
-				var inc = el.hasClass('fa-caret-up') ? 1 : -1;
+				var inc = el.hclass('fa-caret-up') ? 1 : -1;
 				self.change(true);
 				self.inc(inc);
 			}
 		});
 
 		self.event('click', '.ui-textbox-control-icon', function() {
-			if (config.disabled)
+			if (config.disabled || config.readonly)
 				return;
 			if (self.type === 'search') {
 				self.$stateremoved = false;
@@ -316,7 +315,8 @@ COMPONENT('textbox', function(self, config) {
 		});
 
 		self.event('focus', 'input', function() {
-			config.autocomplete && EXEC(config.autocomplete, self);
+			if (!config.disabled && !config.readonly && config.autocomplete)
+				EXEC(config.autocomplete, self);
 		});
 
 		self.redraw();
@@ -333,11 +333,13 @@ COMPONENT('textbox', function(self, config) {
 				tmp = config.type;
 				break;
 			case 'number':
+			case 'phone':
 				isMOBILE && (tmp = 'tel');
 				break;
 		}
 
 		self.tclass('ui-disabled', config.disabled === true);
+		self.tclass('ui-textbox-required', config.required === true);
 		self.type = config.type;
 		attrs.attr('type', tmp);
 		config.placeholder && attrs.attr('placeholder', config.placeholder);
@@ -345,6 +347,7 @@ COMPONENT('textbox', function(self, config) {
 		config.keypress != null && attrs.attr('data-jc-keypress', config.keypress);
 		config.delay && attrs.attr('data-jc-keypress-delay', config.delay);
 		config.disabled && attrs.attr('disabled');
+		config.readonly && attrs.attr('readonly');
 		config.error && attrs.attr('error');
 		attrs.attr('data-jc-bind', '');
 
@@ -378,21 +381,19 @@ COMPONENT('textbox', function(self, config) {
 		if (content.length) {
 			var html = builder.join('');
 			builder = [];
-			builder.push('<div class="ui-textbox-label{0}">'.format(config.required ? ' ui-textbox-label-required' : ''));
-			icon && builder.push('<span class="fa fa-{0}"></span> '.format(icon));
-			builder.push(content);
-			builder.push(':</div><div class="ui-textbox">{0}</div>'.format(html));
+			builder.push('<div class="ui-textbox-label">');
+			icon && builder.push('<i class="fa fa-{0}"></i> '.format(icon));
+			builder.push('<span>' + content + (content.substring(content.length - 1) === '?' ? '' : ':') + '</span>');
+			builder.push('</div><div class="ui-textbox">{0}</div>'.format(html));
 			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
 			self.html(builder.join(''));
 			self.aclass('ui-textbox-container');
 			input = self.find('input');
-			container = self.find('.ui-textbox');
 		} else {
 			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
 			self.aclass('ui-textbox ui-textbox-container');
 			self.html(builder.join(''));
 			input = self.find('input');
-			container = self.element;
 		}
 	};
 
@@ -404,9 +405,13 @@ COMPONENT('textbox', function(self, config) {
 		var redraw = false;
 
 		switch (key) {
+			case 'readonly':
+				self.find('input').prop('readonly', value);
+				break;
 			case 'disabled':
 				self.tclass('ui-disabled', value);
 				self.find('input').prop('disabled', value);
+				self.reset();
 				break;
 			case 'format':
 				self.format = value;
@@ -415,7 +420,7 @@ COMPONENT('textbox', function(self, config) {
 			case 'required':
 				self.noValid(!value);
 				!value && self.state(1, 1);
-				self.find('.ui-textbox-label').tclass('ui-textbox-label-required', value);
+				self.tclass('ui-textbox-required', value === true);
 				break;
 			case 'placeholder':
 				input.prop('placeholder', value || '');
@@ -427,8 +432,11 @@ COMPONENT('textbox', function(self, config) {
 				input.prop('name', value ? self.path.replace(/\./g, '_') : '');
 				break;
 			case 'label':
+				if (content && value)
+					self.find('.ui-textbox-label span').html(value);
+				else
+					redraw = true;
 				content = value;
-				redraw = true;
 				break;
 			case 'type':
 				self.type = value;
@@ -436,7 +444,7 @@ COMPONENT('textbox', function(self, config) {
 					value = 'password';
 				else
 					self.type = 'text';
-				redraw = true;
+				self.find('input').prop('type', self.type);
 				break;
 			case 'align':
 				input.rclass(input.attr('class')).aclass('ui-' + value || 'left');
@@ -445,6 +453,12 @@ COMPONENT('textbox', function(self, config) {
 				input.focus();
 				break;
 			case 'icon':
+				var tmp = self.find('.ui-textbox-label .fa');
+				if (tmp.length)
+					tmp.rclass2('fa-').aclass('fa-' + value);
+				else
+					redraw = true;
+				break;
 			case 'icon2':
 			case 'increment':
 				redraw = true;
@@ -458,7 +472,31 @@ COMPONENT('textbox', function(self, config) {
 	};
 
 	self.formatter(function(path, value) {
+		if (value) {
+			switch (config.type) {
+				case 'lower':
+					value = value.toString().toLowerCase();
+					break;
+				case 'upper':
+					value = value.toString().toUpperCase();
+					break;
+			}
+		}
 		return config.type === 'date' ? (value ? value.format(config.format || 'yyyy-MM-dd') : value) : value;
+	});
+
+	self.parser(function(path, value) {
+		if (value) {
+			switch (config.type) {
+				case 'lower':
+					value = value.toLowerCase();
+					break;
+				case 'upper':
+					value = value.toUpperCase();
+					break;
+			}
+		}
+		return value ? config.spaces === false ? value.replace(/\s/g, '') : value : value;
 	});
 
 	self.state = function(type) {
@@ -468,7 +506,7 @@ COMPONENT('textbox', function(self, config) {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		container.tclass('ui-textbox-invalid', invalid);
+		self.tclass('ui-textbox-invalid', invalid);
 		config.error && self.find('.ui-textbox-helper').tclass('ui-textbox-helper-show', invalid);
 	};
 });

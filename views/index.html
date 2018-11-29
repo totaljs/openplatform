@@ -38,6 +38,7 @@
 	<div data-jc="websocket__null__url:/"></div>
 
 	<div class="username hidden" data-bind="user__html span:value.name__show:value.name"><i class="fa fa-user-circle"></i><span></span></div>
+	<div class="testmode hidden" data-bind="user.test__show__delay:200">TEST</div>
 
 	<header data-bind="user__.header-show:value && value.name">
 		<div class="datetime hidden-xs" data-jc="time"></div>
@@ -222,6 +223,11 @@
 					SET('common.startmenusearch', '');
 					CSS('.ui-process-header,.user{background-color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
 					break;
+				case 'settings':
+					document.title = message.body.name;
+					SET('user.test', message.body.test === true);
+					break;
+
 				case 'notifications':
 					// take max. 50
 					var arr = message.body;

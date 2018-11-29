@@ -57,6 +57,12 @@ h2 .fa { margin-right: 10px; }
 .nav > a:hover { color: gray; text-decoration: none; }
 .nav .right { float: right; }
 
+.buttonbar { background-color: #F0F0F0; height: 40px; }
+.buttonbar .button { height: 40px; border-radius: 0; font-size: 13px; }
+.buttonbar .button i { margin-right: 8px; }
+.buttonbar span.cancel { line-height: 40px; display: inline-block; color: gray; font-size: 13px; cursor: pointer; }
+.buttonbar span.cancel:hover { text-decoration: underline; }
+
 @media(max-width: 767px) {
 	.panel { border-right: 0; }
 	.scroller-padding { padding-right: 20px; }
