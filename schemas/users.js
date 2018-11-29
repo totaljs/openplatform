@@ -2,7 +2,7 @@ NEWSCHEMA('User', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
-	schema.define('delegateid', 'UID');
+	schema.define('deputyid', 'UID');
 	schema.define('photo', 'String(150)');
 	schema.define('name', 'String(40)');
 	schema.define('firstname', 'Capitalize(40)', true);
@@ -123,7 +123,7 @@ NEWSCHEMA('User', function(schema) {
 					item.password = model.password.sha256();
 
 				item.supervisorid = model.supervisorid;
-				item.delegateid = model.delegateid;
+				item.deputyid = model.deputyid;
 				item.sa = model.sa;
 				item.search = model.search;
 				item.blocked = model.blocked;

@@ -15,12 +15,14 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; }
 .mr5 { margin-right: 5px; }
 .mt10 { margin-top: 10px; }
 
-.toolbar { height: 30px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
-.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 28px; height: 29px; padding: 0; margin: 0; text-align: center; }
+.toolbar { height: 40px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
+.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 40px; height: 39px; padding: 0; margin: 0; text-align: center; }
 .toolbar button:hover { background-color: white; }
 .toolbar button:disabled { color: #A0A0A0; cursor: not-allowed; background-color: #F0F0F0; }
 
-.search { padding: 10px 5px; background-color: white; border-bottom: 1px solid #D0D0D0; }
+.search { padding: 5px; background-color: white; border-bottom: 1px solid #D0D0D0; }
+.search .ui-textbox { border: 0; }
+.search .ui-textbox-control { border-left: 0; }
 
 .inactive { color: #A0A0A0; }
 .fs11 { font-size: 11px !important; line-height: 13px; }

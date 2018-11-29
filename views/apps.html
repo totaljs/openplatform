@@ -75,7 +75,7 @@
 			<div class="search">
 				<div data-jc="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
 			</div>
-			<div class="scroller" data-margin="30">
+			<div class="scroller" data-margin="40">
 				<div data-jc="search__apps.search__selector:.item">
 					<div data-jc="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
 						<script type="text/html">
@@ -97,63 +97,61 @@
 			<a href="javascript:void(0)" class="exec" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
 		</nav>
 
-		<div class="scroller hidden" data-bind="apps.form.id__show:value != null__exec:formscroll">
-			<div class="scroller-padding">
-				<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
-				<div data-jc="error__apps.form.data" class="ui-error-nm"></div>
+		<div class="invisible" data-bind="apps.form.id__invisible:!value__exec:formscroll">
+			<div class="scroller" data-margin="40">
+				<div class="scroller-padding">
 
-				<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-yellow" style="margin-top:10px">
-					<script type="text/html">
-						<div class="padding">
-							<div class="b"><i class="fa fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
-							<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
-							{{ if value.description }}
-								<div class="help" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
-							{{ fi }}
-							{{ if value.roles && value.roles.length }}
-								<hr />
-								<div class="b fs11" style="margin-bottom:5px">@(Supported roles:)</div>
-								{{ foreach m in value.roles }}
-									<span class="badge badge-blue mr5">{{ m }}</span>
-								{{ end }}
-							{{ fi }}
-							{{ if value.origin && value.origin.length }}
-								<hr />
-								<div class="b fs11" style="margin-bottom:5px">@(Supported origin:)</div>
-								{{ foreach m in value.origin }}
-									<span class="badge badge-red mr5">{{ m }}</span>
-								{{ end }}
-							{{ fi }}
-						</div>
-					</script>
+					<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
+					<div data-jc="error__apps.form.data" class="ui-error-nm"></div>
+
+					<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-yellow" style="margin-top:10px">
+						<script type="text/html">
+							<div class="padding">
+								<div class="b"><i class="fa fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
+								<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
+								{{ if value.description }}
+									<div class="help" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
+								{{ fi }}
+								{{ if value.roles && value.roles.length }}
+									<hr />
+									<div class="b fs11" style="margin-bottom:5px">@(Supported roles:)</div>
+									{{ foreach m in value.roles }}
+										<span class="badge badge-blue mr5">{{ m }}</span>
+									{{ end }}
+								{{ fi }}
+								{{ if value.origin && value.origin.length }}
+									<hr />
+									<div class="b fs11" style="margin-bottom:5px">@(Supported origin:)</div>
+									{{ foreach m in value.origin }}
+										<span class="badge badge-red mr5">{{ m }}</span>
+									{{ end }}
+								{{ fi }}
+							</div>
+						</script>
+					</div>
+					<br />
+					<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
+					<div data-jc="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
+					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
+					<div class="help"><a href="javascript:void(0)" class="exec" data-exec="apps_generatetoken">@(Generate token)</a></div>
 				</div>
-				<br />
-				<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
-				<div data-jc="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
-				<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
-				<div class="help"><a href="javascript:void(0)" class="exec" data-exec="apps_generatetoken">@(Generate token)</a></div>
+				<hr class="nmt nmb" />
+				<div class="scroller-padding">
+					<h2 class="m"><i class="fa fa-lock"></i>@(Permissions for this application)</h2>
+					<div class="mt10 red b" data-jc="checkbox" data-jc-path="apps.form.blocked">@(Application is blocked)</div>
+					<div data-jc="checkbox__apps.form.allownotifications">@(Allow push notifications)</div>
+					<div data-jc="checkbox__apps.form.responsive">@(Allow for mobile devices)</div>
+					<div data-jc="checkbox__apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta information)</div>
+					<div data-jc="checkbox__apps.form.serververify" class="b">@(Enable server-side verification)</div>
+					<br />
+					<div data-jc="dropdown__apps.form.allowreadprofile__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__1" class="m">@(Read user profile)</div>
+					<div data-jc="dropdown__apps.form.allowreadusers__items:@(Disabled)|0,@(Basic information)|1,@(Basic information about users which use this application)|3,@(All information)|2,@(All information about users which use this application)|4;type:number__0" class="m">@(Read list of users)</div>
+					<div data-jc="dropdown__apps.form.allowreadapps__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__0" class="m">@(Read list of applications)</div>
+					<div data-jc="error__apps.form.response"></div>
+				</div>
 			</div>
-			<hr class="nmt nmb" />
-			<div class="scroller-padding">
-				<h2 class="m"><i class="fa fa-lock"></i>@(Permissions for this application)</h2>
-				<div class="mt10 red b" data-jc="checkbox" data-jc-path="apps.form.blocked">@(Application is blocked)</div>
-				<div data-jc="checkbox__apps.form.allownotifications">@(Allow push notifications)</div>
-				<div data-jc="checkbox__apps.form.responsive">@(Allow for mobile devices)</div>
-				<div data-jc="checkbox__apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta information)</div>
-				<div data-jc="checkbox__apps.form.serververify" class="b">@(Enable server-side verification)</div>
-				<br />
-				<div data-jc="dropdown__apps.form.allowreadprofile__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__1" class="m">@(Read user profile)</div>
-				<div data-jc="dropdown__apps.form.allowreadusers__items:@(Disabled)|0,@(Basic information)|1,@(Basic information about users which use this application)|3,@(All information)|2,@(All information about users which use this application)|4;type:number__0" class="m">@(Read list of users)</div>
-				<div data-jc="dropdown__apps.form.allowreadapps__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__0" class="m">@(Read list of applications)</div>
-				<div data-jc="error__apps.form.response"></div>
-				<div class="row" data-jc="validation__apps.form">
-					<div class="col-sm-5">
-						<button class="button b exec" name="submit" data-exec="apps_submit" disabled="disabled">@(SUBMIT)</button>
-					</div>
-					<div class="col-sm-3">
-						<a href="javascript:void(0)" class="cancel exec" data-exec="apps_cancel">@(Cancel changes)</a>
-					</div>
-				</div>
+			<div class="buttonbar" data-jc="validation__apps.form">
+				<button name="submit" class="button exec b" data-exec="apps_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SUBMIT)</button>
 			</div>
 		</div>
 	</div>
@@ -251,6 +249,7 @@
 			if (response.success) {
 				apps_refresh();
 				apps_cancel();
+				OP.success('@(Done, application has been saved.)');
 			}
 		});
 	}
