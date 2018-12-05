@@ -469,14 +469,14 @@ FUNC.files.uploadphoto = function(base64, callback) {
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
 	var path = F.path.public('photos');
 	F.path.mkdir(path);
-	base64.base64ToFile(path + id, () => callback(null, id));
+	base64.base64ToFile(U.join(path, id), () => callback(null, id));
 };
 
 FUNC.files.uploadbackground = function(httpfile, callback) {
 	var path = F.path.public('backgrounds');
 	F.path.mkdir(path);
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(httpfile.filename);
-	httpfile.move(path + id, () => callback(null, id));
+	httpfile.move(U.join(path, id), () => callback(null, id));
 };
 
 FUNC.files.removephoto = function(id) {

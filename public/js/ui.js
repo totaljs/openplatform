@@ -1320,7 +1320,6 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 				var img = new Image();
 				img.onload = function() {
 					self.resize(img);
-					self.change(true);
 				};
 				img.crossOrigin = 'anonymous';
 				if (orient < 2) {
@@ -1346,8 +1345,8 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 				if (err) {
 					SETTER('snackbar', 'warning', err.toString());
 				} else {
-					self.change(true);
 					self.set(response);
+					self.change(true);
 				}
 			});
 		}
