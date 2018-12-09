@@ -40,8 +40,8 @@ FUNC.users.get = function(id, callback) {
 
 FUNC.users.query = function(filter, callback) {
 
-	// filter.take
-	// filter.skip
+	// filter.page
+	// filter.limit
 	// filter.appid
 
 	var arr = [];
@@ -204,12 +204,10 @@ FUNC.users.meta = function(callback) {
 // Assigns app according to the model (filter)
 FUNC.users.assign = function(model, callback) {
 
-	// "model.apps" can contain
-	// { "APPID": { roles: [], settings: '' }}
+	// { "appid": '', roles: [] }
 
 	var users = G.users;
 	var count = 0;
-	var keys = Object.keys(model.apps);
 	var updated = [];
 	var ou = model.ou ? OP.ou(model.ou) : null;
 
@@ -229,44 +227,12 @@ FUNC.users.assign = function(model, callback) {
 			continue;
 		if (model.sa && !user.sa)
 			continue;
-		if (model.type === 'set') {
-			count++;
-			user.apps = CLONE(model.apps);
-			updated.push(user);
-			continue;
-		}
 
-		keys.forEach(function(key) {
-
-			var app = model.apps[key];
-			var permissions = app.roles;
-
-			// Extends
-			if (model.type === 'extend') {
-				!user.apps[key] && (user.apps[key] = { roles: [] });
-				permissions.forEach(permission => user.apps[key].roles.push(permission));
-				user.apps[key].settings = app.settings;
-				updated.push(user);
-				count++;
-				return;
-			}
-
-			// Removes
-			if (model.type !== 'remove')
-				return;
-
-			count++;
-
-			if (permissions.length) {
-				permissions.forEach(function(permission) {
-					if (users.apps[key])
-						user.apps[key].roles = user.apps[key].roles.remove(permission);
-				});
-			} else {
-				delete user.apps[key];
-				updated.push(user);
-			}
-		});
+		!user.apps[model.appid] && (user.apps[model.appid] = { roles: [] });
+		user.apps[model.appid].roles = model.roles;
+		// user.apps[model.appid].settings = app.settings;
+		updated.push(user);
+		count++;
 	}
 
 	updated.wait(function(id, next) {
@@ -323,8 +289,8 @@ FUNC.apps.rem = function(id, callback) {
 };
 
 FUNC.apps.query = function(filter, callback) {
-	// filter.take
-	// filter.skip
+	// filter.page
+	// filter.limit
 	// filter.id {String Array}
 	var obj = {};
 	obj.count = obj.limit = G.apps.length;

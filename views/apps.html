@@ -261,10 +261,7 @@
 		OP.confirm('@(Are you sure you want to applied the application according to the filter?)', ['@(Yes)', '@(Cancel)'], function(index) {
 			if (!index) {
 				var data = CLONE(assignform);
-				data.apps = {};
-				data.type = 'extend';
-				data.apps[apps.form.id] = { roles: data.roles || EMPTYARRAY, settings: '' };
-				data.roles = undefined;
+				data.appid = apps.form.id;
 				AJAX('POST /api/internal/users/apps/', data, function(response) {
 					OP.success('@(Done, the application has been applied for {0} users.)'.format(response.value));
 				});
