@@ -196,7 +196,3 @@ function sync(item, model, meta) {
 	item.height = model.height;
 	item.resize = model.resize;
 }
-
-ON('service', function(counter) {
-	counter % 2 === 0 && $WORKFLOW('App', 'state', NOOP);
-});

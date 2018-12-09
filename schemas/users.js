@@ -83,7 +83,7 @@ NEWSCHEMA('User', function(schema) {
 		var item;
 
 		model.welcome = undefined;
-		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).slug();
+		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).toSearch();
 		model.name = model.firstname + ' ' + model.lastname;
 
 		var prepare = function(item, model) {
@@ -99,6 +99,7 @@ NEWSCHEMA('User', function(schema) {
 				item.ougroups[oupath] = true;
 			}
 
+			item.ougroups = Object.keys(item.ougroups);
 			item.ou = OP.ou(item.ou);
 			item.companylinker = item.company.slug();
 			item.localitylinker = item.locality.slug();

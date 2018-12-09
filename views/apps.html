@@ -97,7 +97,7 @@
 			<a href="javascript:void(0)" class="exec" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
 		</nav>
 
-		<div class="invisible" data-bind="apps.form.id__invisible:!value__exec:formscroll">
+		<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
 			<div class="scroller" data-margin="40">
 				<div class="scroller-padding">
 
@@ -183,7 +183,10 @@
 	function apps_load(item) {
 		OP.loading(true);
 		var item = apps.items.items.findItem('id', item.id);
-		item && SET('apps.form', CLONE(item), true);
+		if (item) {
+			item.show = true;
+			SET('apps.form', CLONE(item), true);
+		}
 		OP.loading(false, 1000);
 	}
 
@@ -208,7 +211,7 @@
 
 	function apps_cancel() {
 		SET('apps.selected', '');
-		SET('apps.form.id', null);
+		SET('apps.form.show', false);
 	}
 
 	function apps_generatetoken() {
@@ -218,7 +221,7 @@
 
 	function apps_create() {
 		SET('apps.selected', '');
-		SET('apps.form', { id: '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, accesstoken: GUID(30) }, true);
+		SET('apps.form', { show: true, id: '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, accesstoken: GUID(30) }, true);
 	}
 
 	function apps_remove() {
