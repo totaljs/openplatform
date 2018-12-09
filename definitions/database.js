@@ -476,29 +476,52 @@ FUNC.notifications.get = function(userid, callback) {
 
 FUNC.files.uploadphoto = function(base64, callback) {
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-	var path = F.path.public('photos');
-	F.path.mkdir(path);
-	base64.base64ToFile(U.join(path, id), () => callback(null, id));
+	var filename = F.path.temp(id);
+	base64.base64ToFile(filename, function(err) {
+		DBMS().blob('photos').write(Fs.createReadStream(filename), id, function(err, id) {
+			callback(err, id ? (id + '.jpg') : null);
+			Fs.unlink(filename, NOOP);
+		});
+	});
 };
 
 FUNC.files.uploadbackground = function(httpfile, callback) {
-	var path = F.path.public('backgrounds');
-	F.path.mkdir(path);
-	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(httpfile.filename);
-	httpfile.move(U.join(path, id), () => callback(null, id));
+	DBMS().blob('backgrounds').write(httpfile.stream(), httpfile.filename, function(err, id) {
+		callback(err, id ? (id + U.getExtension(httpfile.filename)) : null);
+	});
 };
 
 FUNC.files.removephoto = function(id) {
 	var path = 'photos/' + id;
-	Fs.unlink(F.path.public(path), NOOP);
 	F.touch('/' + path);
+	DBMS().blob('photos').remove(id, NOOP);
 };
 
 FUNC.files.removebackground = function(id) {
 	var path = 'backgrounds/' + id;
-	Fs.unlink(F.path.public(path), NOOP);
 	F.touch('/' + path);
+	DBMS().blob('backgrounds').remove(id, NOOP);
 };
+
+FILE('/photos/*.jpg', function(req, res) {
+	var id = req.split[1].replace('.jpg', '');
+	DBMS().blob('photos').read(id, function(err, stream) {
+		if (err)
+			res.throw404(err);
+		else
+			res.stream('image/jpeg', stream);
+	});
+});
+
+FILE('/backgrounds/*.jpg', function(req, res) {
+	var id = req.split[1].replace('.jpg', '');
+	DBMS().blob('backgrounds').read(id, function(err, stream) {
+		if (err)
+			res.throw404(err);
+		else
+			res.stream('image/jpeg', stream);
+	});
+});
 
 // ====================================
 // Common
