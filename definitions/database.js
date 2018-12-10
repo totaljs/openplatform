@@ -22,9 +22,7 @@ FUNC.users.set = function(user, fields, callback, app) {
 
 	var obj;
 
-	if (user instanceof Array) {
-		// nothing
-	} else if (user.id) {
+	if (user.id) {
 
 		if (fields && fields.length) {
 			obj = {};

@@ -14,14 +14,12 @@ FUNC.files = {};
 
 FUNC.users.set = function(user, fields, callback, app) {
 
-	// @user {Object/Object Array}
+	// @user {Object}
 	// @fields {String Array} Optional, changed fields
 	// @callback {Function} Optional
 	// @app {Object} Optional, app instance (can contain an app when the count of notifications/badges is updated)
 
-	if (user instanceof Array) {
-		// nothing
-	} else if (user.id) {
+	if (user.id) {
 		var item = G.users.findItem('id', user.id);
 		item && U.extend(user, item);
 	} else {
