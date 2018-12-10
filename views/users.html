@@ -35,30 +35,30 @@
 	<div class="col-sm-3 np">
 		<div class="panel">
 			<div class="search">
-				<div data-jc="textbox__users.search__type:search;placeholder:@(Search users)"></div>
+				<div data-jc="textbox__users.filter.q__type:search;placeholder:@(Search users)"></div>
 			</div>
-			<div class="scroller" data-margin="40">
-				<div data-jc="search__users.search__selector:.item">
-					<div data-jc="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
-						<script type="text/html">
-							<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
-						</script>
-					</div>
+			<div class="scroller" data-margin="34">
+				<div data-jc="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
+					<script type="text/html">
+						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+					</script>
 				</div>
 			</div>
 			<nav class="toolbar">
 				<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
 				<button data-bind="users.selected__disabled:!value" class="exec" data-exec="usersform_remove" title="@(Remove user)"><i class="fa fa-minus"></i></button>
+				<button data-bind="users.response__enabled:users_pagination" name="prev" class="exec" data-exec="users_page" title="@(Previous page)"><i class="fa fa-chevron-left"></i></button>
+				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Next page)"><i class="fa fa-chevron-right"></i></button>
+				<span data-bind="users.response__!html:value.page + '/' + value.pages"></span>
 			</nav>
 		</div>
 	</div>
-	<div class="col-sm-9 np" data-jc="xs__users.form.id__if:value!=null;exec:resizelayout">
-
+	<div class="col-sm-9 np" data-jc="xs__users.form.show__if:value!=null;exec:resizelayout">
 		<nav class="nav visible-xs">
 			<a href="javascript:void(0)" class="exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
 		</nav>
-		<div class="invisible" data-bind="users.form.id__invisible:!value__exec:formscroll">
-			<div class="scroller" data-margin="40">
+		<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
+			<div class="scroller" data-margin="34">
 				<div data-jc="template__users.form__properties:datecreated,dateupdated,datelogged,online">
 					<script type="text/html">
 						{{ if id }}
@@ -279,8 +279,8 @@
 <script>
 
 	var users = {};
-
 	users.form = {};
+	users.filter = { page: 1, limit: 100 };
 	users.items = EMPTYARRAY;
 
 	OP.init(function(err, meta) {
@@ -289,7 +289,7 @@
 			window.close();
 		} else {
 			resizelayout();
-			userform_refresh();
+			userform_refresh(true);
 		}
 	});
 
@@ -298,31 +298,42 @@
 		NOTIFY('users.selected');
 	});
 
+	WATCH('users.filter', function(path) {
+		if (path !== 'users.filter.page')
+			users.filter.page = 1;
+		setTimeout2('filter', userform_refresh, 200, null);
+	});
+
 	function usersform_load(item) {
 		OP.loading(true);
 		AJAX('GET /api/internal/users/{0}/'.format(item.id), function(response) {
 			OP.loading(false, 1000);
+			response.show = true;
 			response.password = '*************';
 			SET('users.form', response, true);
 		});
 	}
 
-	function userform_refresh(delay) {
-		AJAX('GET /api/internal/users/', function(response) {
-			response.items.quicksort('lastname');
+	function userform_refresh(meta, delay) {
+		OP.loading2(true);
+		AJAX('GET /api/internal/users/', users.filter, function(response) {
+			OP.loading2(false);
+			SET('users.response', response);
 			SET('users.items', response.items);
 		});
 
-		setTimeout(function() {
-			AJAX('GET /api/meta/', 'users.meta');
-		}, delay || 0);
-		AJAX('GET /api/internal/apps/', 'users.apps');
+		if (meta === true) {
+			setTimeout(function() {
+				AJAX('GET /api/meta/', 'users.meta');
+			}, delay || 0);
+			AJAX('GET /api/internal/apps/', 'users.apps');
+		}
 	}
 
 	function formscroll(value, path, el) {
 		if (path === 'users.form') {
 			setTimeout(function() {
-				el.prop('scrollTop', 0);
+				el.find('.scroller').prop('scrollTop', 0);
 			}, 10);
 		}
 	}
@@ -344,7 +355,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { id: '', accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, value: 80, apps: [] }, true);
+		SET('users.form', { show: true, id: '', accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, value: 80, apps: [] }, true);
 	}
 
 	function usersform_remove() {
@@ -400,7 +411,7 @@
 			OP.loading(false);
 			SET('users.form.response', response);
 			if (response.success) {
-				userform_refresh(2000);
+				userform_refresh(true, 2000);
 				userform_cancel();
 				OP.success('@(Done, user has been saved.)');
 			}
@@ -410,5 +421,13 @@
 	$('.scroller').on('scroll', function() {
 		window.$calendar && window.$calendar.hide();
 	});
+
+	function users_pagination(value, path, el) {
+		return el.attr('name') === 'prev' ? value.pages > 1 && value.page > 1 : value.pages > 1 && value.page < value.pages;
+	}
+
+	function users_page(el) {
+		SET('users.filter.page', el.attr('name') === 'prev' ? (users.filter.page - 1) : (users.filter.page + 1));
+	}
 
 </script>

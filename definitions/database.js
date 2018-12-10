@@ -58,12 +58,16 @@ FUNC.users.get = function(id, callback) {
 };
 
 FUNC.users.query = function(filter, callback) {
-	// filter.page
-	// filter.limit
-	// filter.appid
-
 	var builder = DBMS().listing('users');
 	filter.appid && builder.contains('apps.' + filter.appid);
+	filter.q && builder.search('search', filter.q.toSearch());
+	filter.group && builder.where('groups', filter.group);
+	filter.role && builder.where('roles', filter.role);
+	filter.ou && builder.where('ougroups', filter.ou);
+	filter.locality && builder.where('locality', filter.locality);
+	filter.company && builder.where('company', filter.company);
+	filter.gender && builder.where('gender', filter.gender);
+	filter.customer && builder.where('customer', true);
 	builder.paginate(filter.page, filter.limit, 5000);
 	builder.callback(callback);
 };
@@ -120,7 +124,7 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id.slug(), name: item._id, count: item.count });
+						obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.companies = obj;
@@ -140,7 +144,7 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id.slug(), name: item._id, count: item.count });
+						obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.customers = obj;
@@ -160,7 +164,7 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id.slug(), name: item._id, count: item.count });
+						obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.localities = obj;
@@ -180,7 +184,7 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id.slug(), name: item._id, count: item.count });
+						obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.roles = obj;
@@ -200,7 +204,7 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id.slug(), name: item._id, count: item.count });
+						obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.groups = obj;
@@ -279,7 +283,7 @@ FUNC.users.assign = function(model, callback) {
 
 FUNC.apps.get = function(id, callback) {
 	// Finds a user by ID
-	callback(null, G.apps.findItem('id', id));
+	DBMS().read('apps').where('_id', id).callback(callback);
 };
 
 FUNC.apps.set = function(app, fields, callback) {
@@ -348,36 +352,32 @@ FUNC.apps.query = function(filter, callback) {
 // Internal service for refreshing meta info of all registered applications
 // This functionality can do some service in special cases
 ON('service', function(counter) {
-
-	if (counter % 3 !== 0)
+	if (counter % 10 !== 0)
 		return;
-
-	// Each 3 minutes is executes refreshing
-	refresh_apps();
+	refresh_apps(0);
 });
 
-function refresh_apps() {
-
-	return;
-
-	G.apps.wait(function(app, next) {
-		OP.refresh(app, function(err, item) {
-
-			// item == app (same object)
-
-			// Good to know:
-			// This is not needed because OP uses references in this case
-			// This fields are as info for another storage
-			// FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'daterefreshed']);
-
-			// Important
-			FUNC.emit('apps.sync', item.id);
-
-			// Next app
-			next();
+function refresh_apps(page) {
+	var builder = DBMS().listing('apps');
+	builder.paginate(page, 100);
+	builder.callback(function(err, apps) {
+		apps.items.wait(function(item, next) {
+			OP.refresh(item, function(err, item) {
+				if (item) {
+					FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'daterefreshed'], function() {
+						next();
+						FUNC.emit('apps.sync', item.id);
+					});
+				} else
+					next();
+			});
+		}, function() {
+			if (apps.items.length)
+				refresh_apps(apps.page + 1);
+			else
+				FUNC.emit('apps.refresh');
 		});
-
-	}, () => FUNC.emit('apps.refresh'));
+	});
 }
 
 // ====================================
