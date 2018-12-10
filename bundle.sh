@@ -10,7 +10,10 @@ cp -a ../resources/ resources
 cp -a ../views/ views
 mv controllers/api.js controllers/op-api.js
 mv controllers/default.js controllers/op-default.js
-rm definitions/database-bk.js
+
+# Flat file database
+mv definitions/database-bk.js definitions/database.js
+
 cd definitions
 for f in *.js; do mv "$f" "`echo op-$f`"; done
 
