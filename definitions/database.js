@@ -114,7 +114,7 @@ FUNC.users.meta = function(callback) {
 	// db.users.aggregate([{ $unwind: '$roles' }, { $group: { _id: '$roles', count: { $sum: 1 }}}]);
 	// db.users.aggregate([{ $unwind: '$groups' }, { $group: { _id: '$groups', count: { $sum: 1 }}}]);
 
-	// Customers
+	// Companies
 	db.query('users', function(collection, next) {
 		collection.aggregate([{ $group: { _id: '$company', count: { $sum: 1 }}}], function(err, response) {
 			if (err) {
@@ -134,7 +134,7 @@ FUNC.users.meta = function(callback) {
 		});
 	});
 
-	// Companies
+	// Customers
 	db.query('users', function(collection, next) {
 		collection.aggregate([{ $match: { customer: true }}, { $group: { _id: '$company', count: { $sum: 1 }}}], function(err, response) {
 			if (err) {
