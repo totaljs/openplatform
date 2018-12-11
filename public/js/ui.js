@@ -3689,7 +3689,7 @@ COMPONENT('listmenu', 'class:selected;selector:a;property:id;click:true', functi
 
 	self.rebind = function(path, value) {
 
-		if (!value.length) {
+		if (!value || !value.length) {
 			self.empty();
 			return;
 		}

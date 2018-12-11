@@ -21,6 +21,7 @@ FUNC.users.set = function(user, fields, callback, app) {
 	// @app {Object} Optional, app instance (can contain an app when the count of notifications/badges is updated)
 
 	var obj;
+	var builder;
 
 	if (user.id) {
 
@@ -41,15 +42,15 @@ FUNC.users.set = function(user, fields, callback, app) {
 				obj['+apps.' + app.id + '.countbadges'] = 1;
 		}
 
-		DBMS().modify('users', obj).where('_id', user.id);
+		builder = DBMS().modify('users', obj).where('_id', user.id);
 
 	} else {
 		obj = CLONE(user);
 		obj._id = obj.id = UID();
-		DBMS().insert('users', obj);
+		builder = DBMS().insert('users', obj);
 	}
 
-	callback && callback(null, user.id);
+	callback && builder.callback(() => callback(null, user.id));
 };
 
 FUNC.users.get = function(id, callback) {
@@ -97,6 +98,7 @@ FUNC.users.password = function(login, callback) {
 };
 
 FUNC.users.online = function(user, is, callback) {
+	DBMS().modify('users', { online: is }).where('_id', user.id).first();
 	user.online = is;
 	callback && callback(null);
 };
@@ -106,13 +108,6 @@ FUNC.users.meta = function(callback) {
 
 	var meta = G.meta = {};
 	var db = DBMS();
-
-	// db.users.aggregate([{ $match: { customer: false }}, { $group: { _id: '$company', count: { $sum: 1 }}}]);
-	// db.users.aggregate([{ $match: { customer: true }}, { $group: { _id: '$company', count: { $sum: 1 }}}]);
-	// db.users.aggregate([{ $group: { _id: '$ou', count: { $sum: 1 }}}]);
-	// db.users.aggregate([{ $group: { _id: '$locality', count: { $sum: 1 }}}]);
-	// db.users.aggregate([{ $unwind: '$roles' }, { $group: { _id: '$roles', count: { $sum: 1 }}}]);
-	// db.users.aggregate([{ $unwind: '$groups' }, { $group: { _id: '$groups', count: { $sum: 1 }}}]);
 
 	// Companies
 	db.query('users', function(collection, next) {
@@ -289,6 +284,7 @@ FUNC.apps.get = function(id, callback) {
 FUNC.apps.set = function(app, fields, callback) {
 
 	var obj;
+	var builder;
 
 	if (app.id) {
 
@@ -306,8 +302,7 @@ FUNC.apps.set = function(app, fields, callback) {
 		else
 			obj.origin = null;
 
-		DBMS().modify('apps', obj).where('_id', app.id);
-
+		builder = DBMS().modify('apps', obj).where('_id', app.id);
 	} else {
 		obj = CLONE(app);
 		obj._id = obj.id = UID();
@@ -317,10 +312,10 @@ FUNC.apps.set = function(app, fields, callback) {
 		else
 			obj.origin = null;
 
-		DBMS().insert('apps', obj);
+		builder = DBMS().insert('apps', obj);
 	}
 
-	callback && callback(null, app.id);
+	callback && builder.callback(() => callback(null, app.id));
 };
 
 FUNC.apps.rem = function(id, callback) {
@@ -333,7 +328,7 @@ FUNC.apps.rem = function(id, callback) {
 		var upd = { $unset: {} };
 		filter['apps.' + id] = { '$exists': true };
 		upd.$unset['apps.' + id] = '';
-		collection.updateMany(filter, upd, callback);
+		collection.updateMany(filter, upd, next);
 	});
 };
 
@@ -475,7 +470,7 @@ FUNC.notifications.get = function(userid, callback) {
 FUNC.files.uploadphoto = function(base64, callback) {
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
 	var filename = F.path.temp(id);
-	base64.base64ToFile(filename, function(err) {
+	base64.base64ToFile(filename, function() {
 		DBMS().blob('photos').write(Fs.createReadStream(filename), id, function(err, id) {
 			callback(err, id ? (id + '.jpg') : null);
 			Fs.unlink(filename, NOOP);

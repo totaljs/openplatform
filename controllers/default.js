@@ -90,14 +90,7 @@ function realtime() {
 	});
 
 	self.on('close', function(client) {
-
 		FUNC.users.online(client.user, false);
-
-		// client.user.countsessions--;
-		// if (client.user.countsessions <= 0) {
-		// 	client.user.online = false;
-		// 	client.user.countsessions = 0;
-		// }
 	});
 
 	self.on('message', function(client, message) {
@@ -195,6 +188,48 @@ ON('users.refresh', function(userid, removed) {
 	if (!WS)
 		return;
 
+	if (!userid) {
+
+		// Refresh all connections
+		var processed = new Set();
+
+		WS.all().wait(function(client, next) {
+
+			if (!client || !client.user || processed.has(client.user))
+				return next();
+
+			processed.add(client.user);
+
+			FUNC.users.get(client.user.id, function(err, user) {
+
+				if (err || !user)
+					return next();
+
+				FUNC.sessions.set(user.id, user, '10 minutes');
+				client.user = user;
+
+				OP.profile(user, function(err, profile) {
+
+					if (!client || !client.user)
+						return next();
+
+					if (removed || client.user.blocked || client.user.inactive) {
+						client.send(WSLOGOFF);
+						setTimeout(client => client.close(), 100, client);
+					} else {
+						WSPROFILE.body = profile;
+						client.send(WSPROFILE);
+					}
+
+					next();
+				});
+			});
+
+		});
+
+		return;
+	}
+
 	var clients;
 
 	WS.all(function(client) {
@@ -210,13 +245,18 @@ ON('users.refresh', function(userid, removed) {
 		return;
 
 	FUNC.users.get(userid, function(err, user) {
-		user && OP.profile(user, function(err, profile) {
+
+		if (err || !user)
+			return;
+
+		FUNC.sessions.set(user.id, user, '10 minutes');
+		OP.profile(user, function(err, profile) {
 			for (var i = 0; i < clients.length; i++) {
 				var client = clients[i];
 				if (removed || client.user.blocked || client.user.inactive) {
 					client.send(WSLOGOFF);
 					setTimeout(client => client.close(), 100, client);
-				} else if (client.id === userid) {
+				} else if (client.user.id === userid) {
 					client.user = user;
 					WSPROFILE.body = profile;
 					client.send(WSPROFILE);
