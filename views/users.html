@@ -423,7 +423,7 @@
 	});
 
 	function users_pagination(value, path, el) {
-		return el.attr('name') === 'prev' ? value.pages > 1 && value.page > 1 : value.pages > 1 && value.page < value.pages;
+		return value ? (el.attr('name') === 'prev' ? value.pages > 1 && value.page > 1 : value.pages > 1 && value.page < value.pages) : false;
 	}
 
 	function users_page(el) {

@@ -42,22 +42,77 @@ FUNC.users.query = function(filter, callback) {
 	// filter.limit
 	// filter.appid
 
-	var arr = [];
+	if (filter.q)
+		filter.q = filter.q.toSearch();
 
-	if (filter.appid) {
-		for (var i = 0; i < G.users.length; i++) {
-			var user = G.users[i];
-			if (user.apps && user.apps[filter.appid])
-				arr.push(user);
+	if (!filter.page)
+		filter.page = 1;
+
+	if (!filter.limit)
+		filter.limit = 1000;
+
+	if (typeof(filter.page) === 'string')
+		filter.page = +filter.page;
+
+	if (typeof(filter.limit) === 'string')
+		filter.limit = +filter.limit;
+
+	var arr = [];
+	var take = filter.limit;
+	var skip = (filter.page - 1) * take;
+	var count = 0;
+
+	for (var i = 0; i < G.users.length; i++) {
+		var user = G.users[i];
+
+		if (filter.appid && (!user.apps || !user.apps[filter.appid]))
+			continue;
+
+		if (filter.q && user.search.indexOf(filter.q) === -1)
+			continue;
+
+		if (filter.group && (!user.groups || user.groups.indexOf(filter.group) === -1))
+			continue;
+
+		if (filter.role && (!user.roles || user.roles.indexOf(filter.role) === -1))
+			continue;
+
+		if (filter.ou && (!user.ougroups || user.ougroups.indexOf(filter.ou) === -1))
+			continue;
+
+		if (filter.locality && user.locality !== filter.locality)
+			continue;
+
+		if (filter.company && user.company !== filter.company)
+			continue;
+
+		if (filter.gender && user.gender !== filter.gender)
+			continue;
+
+		if (filter.customer && !user.customer)
+			continue;
+
+		count++;
+
+		if (skip > 0) {
+			skip--;
+			continue;
 		}
-	} else
-		arr = G.users;
+
+		take--;
+
+		if (take <= 0)
+			break;
+
+		arr.push(user);
+	}
 
 	var data = {};
 	data.items = arr;
 	data.limit = data.count = data.items.length;
-	data.page = 1;
-	data.pages = 1;
+	data.page = filter.page;
+	data.pages = Math.ceil(count / filter.limit);
+	data.count = count;
 	callback(null, data);
 };
 
@@ -290,12 +345,55 @@ FUNC.apps.query = function(filter, callback) {
 	// filter.page
 	// filter.limit
 	// filter.id {String Array}
-	var obj = {};
-	obj.count = obj.limit = G.apps.length;
-	obj.items = G.apps;
-	obj.page = 1;
-	obj.pages = 1;
-	callback(null, obj);
+
+	if (filter.q)
+		filter.q = filter.q.toSearch();
+
+	if (!filter.page)
+		filter.page = 1;
+
+	if (!filter.limit)
+		filter.limit = 1000;
+
+	if (typeof(filter.page) === 'string')
+		filter.page = +filter.page;
+
+	if (typeof(filter.limit) === 'string')
+		filter.limit = +filter.limit;
+
+	var arr = [];
+	var take = filter.limit;
+	var skip = (filter.page - 1) * take;
+	var count = 0;
+
+	for (var i = 0; i < G.apps.length; i++) {
+		var app = G.apps[i];
+
+		if (filter.id && filter.id.indexOf(app.id) === -1)
+			continue;
+
+		count++;
+
+		if (skip > 0) {
+			skip--;
+			continue;
+		}
+
+		take--;
+
+		if (take <= 0)
+			break;
+
+		arr.push(app);
+	}
+
+	var data = {};
+	data.items = arr;
+	data.limit = data.count = data.items.length;
+	data.page = filter.page;
+	data.pages = Math.ceil(count / filter.limit);
+	data.count = count;
+	callback(null, data);
 };
 
 // Internal service for refreshing meta info of all registered applications
