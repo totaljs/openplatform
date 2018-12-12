@@ -32,8 +32,10 @@ FUNC.users.set = function(user, fields, callback, app) {
 };
 
 FUNC.users.get = function(id, callback) {
-	// Finds a user by ID
-	callback(null, G.users.findItem('id', id));
+	if (id[0] === '@') // Find by reference
+		callback(null, G.users.findItem('reference', id.substring(1)));
+	else // Finds a user by ID
+		callback(null, G.users.findItem('id', id));
 };
 
 FUNC.users.query = function(filter, callback) {
