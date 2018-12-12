@@ -70,7 +70,9 @@
 	}
 
 	function account_submit() {
-		AJAX('POST /api/account/', account, function(response) {
+		OP.loading(true);
+		AJAX('POST /api/account/', GETR('account'), function(response) {
+			OP.loading(false);
 			SET('account.response', response);
 			if (response.success) {
 				OP.success('Your account has been updated successfully.');

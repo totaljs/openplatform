@@ -69,23 +69,25 @@
 	}
 
 	function settings_submit() {
-		AJAX('POST /api/internal/settings/', settings, function(response) {
+		OP.loading(true);
+		AJAX('POST /api/internal/settings/', GETR('settings'), function(response) {
+			OP.loading(false);
 			SET('settings.response', response);
 			if (response.success) {
-				OPENPLATFORM.success('Settings have been updated successfully.');
-				OPENPLATFORM.close();
+				OP.success('Settings have been updated successfully.');
+				OP.close();
 			}
 		});
 	}
 
 	function settings_verify() {
-		OPENPLATFORM.loading(true);
+		OP.loading(true);
 		AJAX('POST /api/internal/settings/smtp/', settings, function(response) {
 			SET('%smtpsettings', response);
-			OPENPLATFORM.loading(false, 1000);
+			OP.loading(false, 1000);
 			if (response.success) {
 				SET('%smtpsettings', null, 3000);
-				OPENPLATFORM.success('SMTP server is working correctly.');
+				OP.success('SMTP server is working correctly.');
 			}
 		});
 	}
