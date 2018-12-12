@@ -54,8 +54,10 @@ FUNC.users.set = function(user, fields, callback, app) {
 };
 
 FUNC.users.get = function(id, callback) {
-	// Finds a user by ID
-	DBMS().read('users').where('_id', id).callback(callback);
+	if (id[0] === '@') // Find by reference
+		DBMS().read('users').where('reference', id.substring(1)).callback(callback);
+	else // Finds a user by ID
+		DBMS().read('users').where('_id', id).callback(callback);
 };
 
 FUNC.users.query = function(filter, callback) {
@@ -69,6 +71,7 @@ FUNC.users.query = function(filter, callback) {
 	filter.company && builder.where('company', filter.company);
 	filter.gender && builder.where('gender', filter.gender);
 	filter.customer && builder.where('customer', true);
+	filter.reference && builder.where('reference', filter.reference);
 	builder.paginate(filter.page, filter.limit, 5000);
 	builder.callback(callback);
 };

@@ -101,8 +101,6 @@ NEWSCHEMA('User', function(schema) {
 
 			item.ougroups = Object.keys(item.ougroups);
 			item.ou = OP.ou(item.ou);
-			item.companylinker = item.company.slug();
-			item.localitylinker = item.locality.slug();
 			item.linker = item.name.slug();
 
 			if ($.model.welcome && !model.blocked && !model.inactive) {
