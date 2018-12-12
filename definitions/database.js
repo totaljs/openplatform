@@ -483,7 +483,7 @@ FUNC.files.uploadphoto = function(base64, callback) {
 
 FUNC.files.uploadbackground = function(httpfile, callback) {
 	DBMS().blob('backgrounds').write(httpfile.stream(), httpfile.filename, function(err, id) {
-		callback(err, id ? (id + U.getExtension(httpfile.filename)) : null);
+		callback(err, id ? (id + '.' + U.getExtension(httpfile.filename)) : null);
 	});
 };
 
