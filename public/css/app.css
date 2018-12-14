@@ -75,3 +75,11 @@ h2 .fa { margin-right: 10px; }
 	.search .ui-textbox input { font-size: 14px; }
 	.search .ui-textbox-control { width: 34px; }
 }
+
+.ui-appearance { height: 55px; }
+.ui-appearance-label { float: left; padding: 5px 0 0 0; font-size: 12px; width: 250px; }
+.ui-appearance-label i { margin-right: 5px; }
+.ui-appearance-option { background-image: url(../img/appearance.png); border-radius: 3px; border: 2px solid #E0E0E0; width: 80px; height: 55px; float: right; margin-left: 10px; text-align: center; font-size: 11px; padding: 19px 0 0 20px; cursor: pointer; }
+.ui-appearance-selected { border-color: #49a7f8 !important; }
+.ui-appearance-light { background-position: -7px 0; background-size: 175px 51px; }
+.ui-appearance-dark { background-position: 80px 0; background-size: 175px 51px; color: white; }

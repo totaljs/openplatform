@@ -2393,7 +2393,7 @@ COMPONENT('processes', function(self, config) {
 			return url.substring(0, index + 1) + 'openplatform=' + accesstoken + '&' + url.substring(index + 1);
 	}
 
-	self.wait = function(app, callback) {
+	self.wait = function(app, callback, silent) {
 
 		if (typeof(app) === 'string') {
 			// id
@@ -2416,7 +2416,7 @@ COMPONENT('processes', function(self, config) {
 		} else {
 			// RUN APP
 			// MINIMIZED
-			appminimized[app.id] = true;
+			appminimized[app.id] = silent !== false;
 			$('.app[data-id="{0}"]'.format(app.id)).trigger('click');
 			WAIT(function() {
 				return app.loaded;

@@ -123,7 +123,7 @@ $(window).on('message', function(e) {
 				processes.wait(target, function(iframe) {
 					data.body.app = app.id;
 					processes.message(iframe, 'share', data.body);
-				});
+				}, data.body.silent);
 			}
 			break;
 

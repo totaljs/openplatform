@@ -217,11 +217,16 @@
 				case 'profile':
 					var is = user !== EMPTYOBJECT;
 					message.body.apps.quicksort('title');
+					var tmp = user;
 					SET('user', message.body);
 					EXEC('Dashboard/sync');
 					EXEC('Dashboard/init');
 					SET('common.startmenusearch', '');
 					CSS('.ui-process-header,.user{background-color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
+
+					if (is && (tmp.darkmode !== user.darkmode || tmp.colorscheme !== user.colorscheme || tmp.background !== user.background))
+						SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
+
 					break;
 				case 'settings':
 					document.title = message.body.name;

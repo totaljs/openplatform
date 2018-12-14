@@ -262,8 +262,8 @@ OP.notify = function(type, body, data) {
 	return OP.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
 };
 
-OP.share = function(app, type, body) {
-	return OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date() });
+OP.share = function(app, type, body, silent) {
+	return OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date(), silent: silent });
 };
 
 OP.email = function(subject, body) {
@@ -341,7 +341,6 @@ OP.$process = function(data) {
 
 	if (data.type === 'kill')
 		data.type = 'close';
-
 
 	if (data.type === 'share') {
 		data.body.share = function(type, body) {

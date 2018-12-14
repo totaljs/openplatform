@@ -20,6 +20,7 @@ OP.profile = function(user, callback) {
 	meta.countnotifications = user.countnotifications;
 	meta.sounds = user.sounds;
 	meta.volume = user.volume;
+	meta.darkmode = user.darkmode;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
 	meta.background = user.background || CONF.background;
 	meta.test = CONF.test === true;
@@ -47,7 +48,7 @@ OP.profile = function(user, callback) {
 			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 660, resize: false });
 		}
 
-		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 710, resize: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 715, resize: false });
 		callback(null, meta);
 	});
 };
@@ -219,6 +220,7 @@ function readuser(user, type, app) {
 	var obj = {};
 	obj.id = user.id;
 	obj.supervisorid = user.supervisorid;
+	obj.deputyid = user.deputyid;
 	obj.apps = user.apps2;
 	obj.blocked = user.blocked;
 	obj.company = user.company;
@@ -246,6 +248,10 @@ function readuser(user, type, app) {
 	obj.countsessions = user.countsessions || 0;
 	obj.colorscheme = user.colorscheme || CONF.colorscheme;
 	obj.background = user.background || CONF.background;
+	obj.darkmode = user.darkmode;
+
+	if (obj.background)
+		obj.background = CONF.url + '/backgrounds/' + obj.background;
 
 	var appdata = user.apps[app.id];
 

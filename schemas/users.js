@@ -25,6 +25,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('blocked', Boolean);
 	schema.define('customer', Boolean);
 	schema.define('welcome', Boolean);
+	schema.define('darkmode', Boolean);
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
@@ -153,6 +154,7 @@ NEWSCHEMA('User', function(schema) {
 				item.inactive = model.inactive;
 				item.notificationsphone = model.notificationsphone;
 				item.notificationsemail = model.notificationsemail;
+				item.darkmode = model.darkmode;
 
 				if (model.rebuildtoken || !item.verifytoken)
 					item.verifytoken = U.GUID(15);

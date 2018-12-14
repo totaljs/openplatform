@@ -8,6 +8,7 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('phone', 'Phone');
 	schema.define('photo', 'String(50)');
 	schema.define('sounds', Boolean);
+	schema.define('darkmode', Boolean);
 	schema.define('volume', Number);
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('background', 'String(150)');
@@ -22,6 +23,7 @@ NEWSCHEMA('Account', function(schema) {
 				data.notificationsphone = user.notificationsphone;
 				data.phone = user.phone;
 				data.photo = user.photo;
+				data.darkmode = user.darkmode;
 				data.sounds = user.sounds;
 				data.volume = user.volume;
 				data.colorscheme = user.colorscheme;
@@ -55,6 +57,7 @@ NEWSCHEMA('Account', function(schema) {
 				user.notificationsemail = model.notificationsemail;
 				user.notificationsphone = model.notificationsphone;
 				user.phone = model.phone;
+				user.darkmode = model.darkmode;
 				user.photo = model.photo;
 				user.sounds = model.sounds;
 				user.volume = model.volume;
