@@ -1,9 +1,5 @@
 /*auto*/
 
-$dock              : #0A53EA;
-$startmenu         : #404040;
-$startmenubutton   : #52AA48;
-
 html,body { height: 100%; overflow: hidden; }
 body { height: 100%; overflow: hidden; background: #808080 linear-gradient(#899aa4,#e9d0aa); background-size: cover; }
 
@@ -23,14 +19,14 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 50px; float: righ
 .username { position: absolute; right: 20px; bottom: 15px; color: rgba(100,100,100,0.3); font-size: 12px; }
 .username i { margin-right: 5px; }
 
-.startmenu { position: fixed; top: 50px; height: 500px; background-color: $startmenu; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
+.startmenu { position: fixed; top: 50px; height: 500px; background-color: #404040; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
 .startmenu-title { height: 50px; border-top: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }
 .startmenu-title > span { float: left; margin: 14px 0 0 12px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
 .startmenu-apps { padding: 0 0 15px; margin-right: 200px; overflow: hidden; }
 .startmenu-apps-container { height: 386px; overflow-y: auto; width: 330px; padding: 5px 0; overflow-scrolling: touch; }
-.startmenu-nav { float: right; width: 200px; height: 450px; background-color: $startmenu; border-left: 1px solid rgba(0,0,0,0.1); }
+.startmenu-nav { float: right; width: 200px; height: 450px; background-color: #404040; border-left: 1px solid rgba(0,0,0,0.1); }
 .startmenu-nav nav button { display: block; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; }
 .startmenu-nav nav button:last-child { border-bottom: 0; }
