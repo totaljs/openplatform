@@ -33,6 +33,7 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 50px; float: righ
 .startmenu-nav { float: right; width: 200px; height: 450px; background-color: $startmenu; border-left: 1px solid rgba(0,0,0,0.1); }
 .startmenu-nav nav button { display: block; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; }
+.startmenu-nav nav button:last-child { border-bottom: 0; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
 .startmenu-search { padding: 5px; margin-bottom: 5px; background-color: #383838; }
@@ -241,7 +242,7 @@ h3 .fa { margin-right: 5px; }
 	.startmenu { width: 100%; border-radius: 0; top: 50px; height: auto; }
 	.startmenu-nav { width: 100%; bottom: 50px; }
 	.startmenu-apps { margin-right: 0; }
-	.startmenu-apps-container { width: 100%; position: relative; height: 200px; }
+	.startmenu-apps-container { width: 100%; position: relative; height: 210px; }
 	.startmenu-version { display: none; }
 	.app { margin-right: 0; }
 	.app-icon { width: 50px; }
