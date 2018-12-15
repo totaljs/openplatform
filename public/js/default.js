@@ -66,6 +66,21 @@ $(window).on('message', function(e) {
 
 	switch (data.type) {
 
+		case 'install':
+
+			if (user.sa) {
+				var target = user.apps.findItem('id', '_apps');
+				if (target) {
+					internalapp($('.internal[data-id="_apps"]'));
+					processes.wait(target, function(iframe) {
+						data.body.app = app.id;
+						processes.message(iframe, 'share', data.body);
+					}, false);
+				}
+			}
+
+			break;
+
 		case 'screenshot':
 			SET('screenshot.data', data.body);
 			screenshot.app = app ? app.internal : null;
@@ -139,9 +154,9 @@ $(window).on('message', function(e) {
 				appwindow = appwindow.parent();
 				var icon = appwindow.find('> div > .fa');
 				if (p)
-					!app.progress && icon.rclass2('fa-').aclass('fa-spinner fa-pulse');
+					!app.progress && icon.rclass2('fa-').rclass('usercolor').aclass('fa-spinner fa-pulse usercolor');
 				else
-					icon.rclass2('fa-').aclass('fa-' + app.internal.icon);
+					icon.rclass2('fa-').rclass('usercolor').aclass('fa-' + app.internal.icon);
 				app.progress = p;
 			}
 			break;
@@ -187,9 +202,9 @@ $(window).on('message', function(e) {
 				var fa = iframe.element.find('.ui-process-header').find('div .fa');
 				var icon = iframe.meta.internal.icon;
 				if (data.body == true)
-					fa.rclass('fa-' + icon).aclass('fa-pulse fa-spinner');
+					fa.rclass('fa-' + icon).aclass('fa-pulse fa-spinner usercolor');
 				else
-					fa.rclass('fa-pulse fa-spinner').aclass('fa-' + icon);
+					fa.rclass('fa-pulse fa-spinner usercolor').aclass('fa-' + icon);
 			}
 			break;
 

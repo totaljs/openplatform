@@ -1,10 +1,25 @@
 <style>
 	.accountphoto { background-color: #F0F0F0; padding: 15px 0; }
 	.accountphoto img { max-width: 130px; }
+	.ui-appearance { height: 55px; }
+	.ui-appearance-label { float: left; padding: 5px 0 0 0; font-size: 12px; width: 250px; }
+	.ui-appearance-label i { margin-right: 5px; }
+	.ui-appearance-option { background-image: url(../img/appearance.png); border-radius: 3px; border: 2px solid #E0E0E0; width: 80px; height: 55px; float: right; margin-left: 10px; text-align: center; font-size: 11px; padding: 19px 0 0 20px; cursor: pointer; }
+	.ui-appearance-selected { border-color: #49a7f8 !important; }
+	.ui-appearance-light { background-position: -7px 0; background-size: 175px 51px; }
+	.ui-appearance-dark { background-position: 80px 0; background-size: 175px 51px; color: white; }
+	.col-2 { float: left; width: 50%; padding-left: 15px; padding-right: 15px; }
+
+	@media(max-width: 450px) {
+		.col-2 { float: none; display: block; width: 100%; }
+		.ui-appearance-label { float: none; width: 100%; }
+		.ui-appearance-option { float: left; margin: 10px 10px 0 0; }
+		.ui-appearance { height: 110px; }
+	}
 </style>
 
 <div class="row">
-	<div class="scroller" data-margin="34">
+	<div class="scroller" data-margin="40">
 
 		<div class="accountphoto">
 			<div data-jc="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
@@ -13,10 +28,10 @@
 		<div class="scroller-padding">
 
 			<div class="row">
-				<div class="col-xs-6 m">
+				<div class="col-2 m">
 					<div data-jc="textbox__account.email__type:email;required:true">@(Email address)</div>
 				</div>
-				<div class="col-xs-6 m">
+				<div class="col-2 m">
 					<div data-jc="textbox__account.phone">@(Phone number)</div>
 				</div>
 			</div>
@@ -43,11 +58,11 @@
 			<hr style="margin-top:8px" />
 
 			<div class="row">
-				<div class="col-xs-6">
+				<div class="col-2">
 					<div data-jc="checkbox__account.sounds">@(Enable sounds)</div>
 					<div data-jc="checkbox__account.notifications">@(Enable notifications)</div>
 				</div>
-				<div class="col-xs-6">
+				<div class="col-2">
 					<div data-jc="checkbox__account.notificationsemail">@(Enable email notifications)</div>
 					<div data-jc="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
 				</div>

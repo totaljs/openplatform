@@ -2,6 +2,11 @@
 
 html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; }
 
+/*
+.dark, .dark body { background-color: #202020; color: white; }
+.dark .table-bordered>thead>tr>th, .dark .table-bordered>tbody>tr>th, .dark .table-bordered>tfoot>tr>th, .dark .table-bordered>thead>tr>td, .dark .table-bordered>tbody>tr>td, .dark .table-bordered>tfoot>tr>td { border-color: #404040; }
+*/
+
 .panel { background-color: #F0F0F0; border-right: 1px solid #D0D0D0; }
 .np { padding: 0; }
 .padding { padding: 20px; }
@@ -15,8 +20,8 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; }
 .mr5 { margin-right: 5px; }
 .mt10 { margin-top: 10px; }
 
-.toolbar { height: 34px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
-.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 34Px; height: 34Px; padding: 0; margin: 0; text-align: center; float: left; }
+.toolbar { height: 40px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
+.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 34px; height: 40px; padding: 0; margin: 0; text-align: center; float: left; }
 .toolbar button:hover { background-color: white; }
 .toolbar button:disabled { color: #A0A0A0; cursor: not-allowed; background-color: #F0F0F0; }
 .toolbar > span { font-size: 11px; text-align: center; width: 68px; float: left; padding: 8px 0 0; }
@@ -27,6 +32,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; }
 
 .inactive { color: #A0A0A0; }
 .fs11 { font-size: 11px !important; line-height: 13px; }
+.fs12 { font-size: 12px; }
 .help { font-size: 11px; color: #A0A0A0; margin-top: 7px; line-height: 13px; }
 .help .fa, .help .fal, .help .far { margin-right: 5px; }
 .help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
@@ -60,10 +66,10 @@ h2 .fa { margin-right: 10px; }
 .nav > a:hover { color: gray; text-decoration: none; }
 .nav .right { float: right; }
 
-.buttonbar { background-color: #F0F0F0; height: 34px; }
-.buttonbar .button { height: 34px; border-radius: 0; font-size: 12px; }
+.buttonbar { background-color: #F0F0F0; height: 40px; }
+.buttonbar .button { height: 40px; border-radius: 0; font-size: 12px; }
 .buttonbar .button i { margin-right: 8px; }
-.buttonbar span.cancel { line-height: 34px; display: inline-block; color: gray; font-size: 12px; cursor: pointer; }
+.buttonbar span.cancel { line-height: 40px; display: inline-block; color: gray; font-size: 12px; cursor: pointer; }
 .buttonbar span.cancel:hover { text-decoration: underline; }
 
 @media(max-width: 767px) {
@@ -75,11 +81,3 @@ h2 .fa { margin-right: 10px; }
 	.search .ui-textbox input { font-size: 14px; }
 	.search .ui-textbox-control { width: 34px; }
 }
-
-.ui-appearance { height: 55px; }
-.ui-appearance-label { float: left; padding: 5px 0 0 0; font-size: 12px; width: 250px; }
-.ui-appearance-label i { margin-right: 5px; }
-.ui-appearance-option { background-image: url(../img/appearance.png); border-radius: 3px; border: 2px solid #E0E0E0; width: 80px; height: 55px; float: right; margin-left: 10px; text-align: center; font-size: 11px; padding: 19px 0 0 20px; cursor: pointer; }
-.ui-appearance-selected { border-color: #49a7f8 !important; }
-.ui-appearance-light { background-position: -7px 0; background-size: 175px 51px; }
-.ui-appearance-dark { background-position: 80px 0; background-size: 175px 51px; color: white; }

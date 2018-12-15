@@ -23,7 +23,7 @@
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
-<body data-jc="exec" class="noscroll">
+<body data-jc="exec" class="noscroll@{if !user.darkmode} light@{fi}">
 
 	<div data-jc="LAZY features__null__placeholder:@(What are you looking for?)"></div>
 	<div data-jc="LAZY contextmenu"></div>
@@ -38,7 +38,7 @@
 	<div data-jc="websocket__null__url:/"></div>
 
 	<div class="username hidden" data-bind="user__html span:value.name__show:value.name"><i class="fa fa-user-circle"></i><span></span></div>
-	<div class="testmode hidden" data-bind="user.test__show__delay:200">TEST</div>
+	<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
 
 	<header data-bind="user__.header-show:value && value.name">
 		<div class="datetime hidden-xs" data-jc="time"></div>
@@ -49,7 +49,7 @@
 
 		<nav data-jc="repeater__dashboard.apps">
 			<script type="text/html">
-				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span></span></span></button>
+				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span class="userbg"></span></span></button>
 			</script>
 		</nav>
 
@@ -83,9 +83,10 @@
 			<div>
 				<nav>
 					@{if user.sa}
-					<button class="exec internal b" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
-					<button class="exec internal b" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
-					<button class="exec internal b" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_info"><i class="fa fa-question-circle"></i>@(About)</button>
 					@{fi}
 					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
@@ -222,7 +223,9 @@
 					EXEC('Dashboard/sync');
 					EXEC('Dashboard/init');
 					SET('common.startmenusearch', '');
-					CSS('.ui-process-header,.user{background-color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
+					// .ui-process-header,
+					CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
+					$(document.body).tclass('light', !user.darkmode);
 
 					if (is && (tmp.darkmode !== user.darkmode || tmp.colorscheme !== user.colorscheme || tmp.background !== user.background))
 						SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });

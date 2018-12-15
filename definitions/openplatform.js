@@ -39,16 +39,17 @@ OP.profile = function(user, callback) {
 		for (var i = 0, length = apps.items.length; i < length; i++) {
 			var app = apps.items[i];
 			if (!app.blocked && user.apps && user.apps[app.id])
-				meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type });
+				meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false });
 		}
 
 		if (user.sa) {
-			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false });
-			meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false });
-			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 660, resize: false });
+			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false, mobilemenu: false });
+			meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false, mobilemenu: false });
+			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 660, resize: false, mobilemenu: false });
+			meta.apps.push({ id: '_info', icon: 'question-circle', title: 'Info', name: 'Info', online: true, internal: true, linker: '_info', width: 400, height: 275, resize: false, mobilemenu: false });
 		}
 
-		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 715, resize: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 715, resize: false, mobilemenu: false });
 		callback(null, meta);
 	});
 };
@@ -192,6 +193,7 @@ function readapp(app, type) {
 	obj.datecreated = app.datecreated;
 	obj.author = app.author;
 	obj.type = app.type;
+	obj.mobilemenu = app.mobilemenu;
 
 	switch (type) {
 		case 2:

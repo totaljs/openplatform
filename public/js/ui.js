@@ -1909,7 +1909,7 @@ COMPONENT('processes', function(self, config) {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.title }}</div><nav><button name="screenshot" class="ui-process-button ui-process-screenshot"><i class="fa fa-camera"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
+	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div><i class="fa fa-{{ internal.icon }}"></i>{{ internal.title }}</div><nav><button name="screenshot" class="ui-process-button ui-process-screenshot"><i class="fa fa-camera"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
 
 	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading loading"></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
@@ -2082,8 +2082,8 @@ COMPONENT('processes', function(self, config) {
 			if (x < -(move.w - 250))
 				x = -(move.w - 250);
 
-			if (y < 45)
-				y = 45;
+			if (y < 50)
+				y = 50;
 
 			if (x + 250 > WW)
 				x = WW - 250;
@@ -2127,11 +2127,11 @@ COMPONENT('processes', function(self, config) {
 			else if (ol + internal.width + 20 >= WW)
 				opt.left = (WW - internal.width - 20) + 'px';
 
-			if (ot <= 45)
-				opt.top = '45px';
+			if (ot <= 50)
+				opt.top = '50px';
 			else if (ot + internal.height >= WH) {
 				var tmp = (WH - internal.height - 80);
-				opt.top = (tmp < 45 ? 50 : tmp) + 'px';
+				opt.top = (tmp < 50 ? 55 : tmp) + 'px';
 			}
 
 			iframe.element.css(opt);
@@ -2467,7 +2467,6 @@ COMPONENT('processes', function(self, config) {
 		value.internal.running = true;
 		item.running = true;
 		iframe.meta = value;
-
 		iframe.element = $('.ui-process[data-id="{0}"]'.format(value.id));
 		iframe.iframe = iframe.element.find('iframe');
 
@@ -2484,11 +2483,17 @@ COMPONENT('processes', function(self, config) {
 		});
 
 		var margin = iframe.element.find('.ui-process-header').height();
+		var mm = iframe.element.find('.ui-process-mainmenu');
+
+		if (value.mobilemenu === false)
+			mm.remove();
+		else
+			mm.rclass('hidden');
 
 		if (iframe.mobile) {
 			var h = WH - $('header').height();
 			var w = WW;
-			iframe.element.css({ width: w, height: h, left: 0, top: 45 });
+			iframe.element.css({ width: w, height: h, left: 0, top: 50 });
 			iframe.iframe.css({ height: h - margin });
 		} else {
 
@@ -3717,7 +3722,7 @@ COMPONENT('listmenu', 'class:selected;selector:a;property:id;click:true', functi
 
 	self.setter = function(value) {
 		var arr = self.get(config.datasource);
-		if (arr.length) {
+		if (arr && arr.length) {
 			if (value === oldvalue)
 				return;
 			oldvalue = value;

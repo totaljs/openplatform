@@ -37,7 +37,7 @@
 			<div class="search">
 				<div data-jc="textbox__users.filter.q__type:search;placeholder:@(Search users)"></div>
 			</div>
-			<div class="scroller" data-margin="34">
+			<div class="scroller" data-margin="40">
 				<div data-jc="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
 					<script type="text/html">
 						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
@@ -58,7 +58,7 @@
 			<a href="javascript:void(0)" class="exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
 		</nav>
 		<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
-			<div class="scroller" data-margin="34">
+			<div class="scroller" data-margin="40">
 				<div data-jc="template__users.form__properties:datecreated,dateupdated,datelogged,online">
 					<script type="text/html">
 						{{ if id }}

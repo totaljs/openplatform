@@ -25,6 +25,7 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('allowreadmeta', Boolean);
 	schema.define('serververify', Boolean);         // Enables server-side verification only
 	schema.define('responsive', Boolean);
+	schema.define('mobilemenu', Boolean);           // Enables mobile menu
 	schema.define('blocked', Boolean);
 
 	schema.setQuery(function($) {
@@ -174,6 +175,7 @@ function sync(item, model, meta) {
 		item.settings = model.settings;
 		item.accesstoken = model.accesstoken;
 		item.serververify = model.serververify;
+		item.mobilemenu = model.mobilemenu;
 	}
 
 	item.linker = model.linker;

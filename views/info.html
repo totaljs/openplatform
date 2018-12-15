@@ -1,0 +1,35 @@
+<br />
+<table class="table table-bordered table-small">
+	<tr>
+		<td class="bg-smoke" style="width:130px">@(OpenPlatform ID)</td>
+		<td class="right b">@{OP.id}</td>
+	</tr>
+	<tr>
+		<td class="bg-smoke">@(Total.js)</td>
+		<td class="right">@{model.version}</td>
+	</tr>
+	<tr>
+		<td class="bg-smoke">@(Node.js)</td>
+		<td class="right">@{model.node}</td>
+	</tr>
+	<tr>
+		<td class="bg-smoke">@(Platform)</td>
+		<td class="right">@{model.platform}</td>
+	</tr>
+	<tr>
+		<td class="bg-smoke">@(Architecture)</td>
+		<td class="right">@{model.processor}</td>
+	</tr>
+	<tr>
+		<td class="bg-smoke">@(Memory)</td>
+		<td class="right">@{model.memoryUsage} / @{model.memoryTotal} MB</td>
+	</tr>
+	<tr>
+		<td class="bg-smoke">@(Connections)</td>
+		<td class="right">@{model.connections}x</td>
+	</tr>
+	<tr>
+		<td class="bg-smoke">@(Uptime)</td>
+		<td class="right">@{model.uptime} @(minutes)</td>
+	</tr>
+</table>

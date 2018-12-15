@@ -15,6 +15,7 @@ exports.install = function() {
 		ROUTE('GET /users/');
 		ROUTE('GET /apps/');
 		ROUTE('GET /settings/');
+		ROUTE('GET /info/', info);
 		ROUTE('GET /account/');
 		WEBSOCKET('/', realtime, ['json']);
 	});
@@ -103,6 +104,7 @@ function realtime() {
 				switch (message.id) {
 					case '_users':
 					case '_apps':
+					case '_info':
 					case '_settings':
 					case '_account':
 
@@ -110,7 +112,7 @@ function realtime() {
 							return;
 
 						var user = client.user;
-						WSOPEN.body = { datetime: NOW, ip: client.ip, accesstoken: message.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: '/{0}/'.format(message.id.substring(1)), settings: null, id: message.id };
+						WSOPEN.body = { datetime: NOW, ip: client.ip, accesstoken: message.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: '/{0}/'.format(message.id.substring(1)), settings: null, id: message.id, mobilemenu: message.id !== '_account' && message.id !== '_settings' };
 						WSOPEN.body.ip = client.ip;
 						WSOPEN.body.href = '';
 
@@ -316,3 +318,18 @@ function notify(userid, appid) {
 
 ON('users.notify', notify);
 ON('users.badge', notify);
+
+function info() {
+	var memory = process.memoryUsage();
+	var model = {};
+	model.memoryTotal = (memory.heapTotal / 1024 / 1024).floor(2);
+	model.memoryUsage = (memory.heapUsed / 1024 / 1024).floor(2);
+	model.memoryRss = (memory.rss / 1024 / 1024).floor(2);
+	model.node = process.version;
+	model.version = 'v' + F.version_header;
+	model.platform = process.platform;
+	model.processor = process.arch;
+	model.uptime = Math.floor(process.uptime() / 60);
+	model.connections = Object.keys(F.connections).length;
+	this.view('info', model);
+}
