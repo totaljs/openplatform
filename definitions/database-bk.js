@@ -7,6 +7,7 @@ FUNC.common = {};
 FUNC.settings = {};
 FUNC.notifications = {};
 FUNC.files = {};
+FUNC.badges = {};
 
 // ====================================
 // Users
@@ -467,6 +468,20 @@ FUNC.settings.get = function(callback) {
 FUNC.settings.set = function(data, callback) {
 	Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(data), NOOP);
 	callback && callback(null);
+};
+
+// ====================================
+// Badges
+// ====================================
+
+FUNC.badges.rem = function(userid, appid, callback) {
+	var user = G.users.findItem('id', userid);
+	if (user) {
+		if (user.apps[appid])
+			user.apps[appid].countbadges = 0;
+		save(2);
+	}
+	callback && callback();
 };
 
 // ====================================
