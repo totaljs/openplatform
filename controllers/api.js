@@ -16,7 +16,6 @@ exports.install = function() {
 		ROUTE('POST   /api/internal/users/rename/       *UserRename   --> @exec');
 		ROUTE('POST   /api/internal/users/notify/       *UserNotify   --> @exec');
 		ROUTE('POST   /api/internal/users/apps/         *UserApps     --> @exec');
-		ROUTE('POST   /api/profile/                     *Profile      --> @save');
 
 		ROUTE('GET    /api/internal/apps/{id}/',        json_apps_meta);
 		ROUTE('GET    /api/internal/apps/',             json_apps_query);
@@ -26,10 +25,16 @@ exports.install = function() {
 
 		ROUTE('GET    /api/account/                     *Account      --> @read');
 		ROUTE('POST   /api/account/                     *Account      --> @save');
+		ROUTE('GET    /api/notifications/               *Notification --> @query');
 
 		ROUTE('GET    /api/internal/settings/           *Settings     --> @read');
 		ROUTE('POST   /api/internal/settings/           *Settings     --> @save');
 		ROUTE('POST   /api/internal/settings/smtp/      *SettingsSMTP --> @exec', [10000]);
+
+		// Real-time operation
+		ROUTE('GET    /api/profile/                     *Profile      --> @get');
+		ROUTE('GET    /api/profile/{id}/                *App          --> @run');
+		ROUTE('POST   /api/profile/logger/              *Logger       --> @insert');
 
 		ROUTE('/api/upload/photo/',                     json_upload_photo, ['post'], 1024 * 2);
 		ROUTE('/api/upload/background/',                json_upload_background, ['post', 'upload'], 1024 * 5);

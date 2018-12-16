@@ -9,7 +9,7 @@ NEWSCHEMA('Notification', function(schema) {
 		var user = $.user;
 
 		if (!user.countnotifications) {
-			$.callback(null);
+			$.callback(EMPTYARRAY);
 			return;
 		}
 
@@ -18,9 +18,6 @@ NEWSCHEMA('Notification', function(schema) {
 			// Remove notifications
 			FUNC.notifications.rem(user.id, function() {
 
-				// Notifies all clients
-				FUNC.emit('users.notify', user.id, '', true);
-
 				// Update session
 				FUNC.sessions.get(user.id, function(err, session) {
 					if (session) {
@@ -28,7 +25,11 @@ NEWSCHEMA('Notification', function(schema) {
 						var keys = Object.keys(session.apps);
 						for (var i = 0; i < keys.length; i++)
 							session.apps[keys[i]].countnotifications = 0;
-						FUNC.sessions.set(user.id, session);
+
+						FUNC.sessions.set(user.id, session, function() {
+							// Notifies all clients
+							FUNC.emit('users.notify', user.id, '', true);
+						});
 					}
 				});
 			});
@@ -101,11 +102,11 @@ NEWSCHEMA('Notification', function(schema) {
 				// Adds notification
 				FUNC.notifications.add(model);
 
+				// Updates session
+				FUNC.sessions.set(user.id, user);
+
 				// Updates profile
 				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified'], () => FUNC.emit('users.notify', user.id, app.id), app);
-
-				// Updates session
-				FUNC.sessions.set(user.id, user, '10 minutes');
 			}
 
 			$.success();

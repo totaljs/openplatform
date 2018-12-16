@@ -441,7 +441,7 @@ FUNC.sessions.set = function(key, value, expire, callback) {
 		expire = null;
 	}
 
-	F.cache.set(key, value, expire);
+	F.cache.set(key, value, expire || '2 hours');
 	callback && callback(null);
 };
 

@@ -40,7 +40,7 @@ NEWSCHEMA('Badge', function(schema) {
 				FUNC.users.set(user, ['countbadges', 'apps'], () => FUNC.emit('users.badge', user.id, app.id), app);
 
 				// Updates sessions
-				FUNC.sessions.set(user.id, user, '10 minutes');
+				FUNC.sessions.set(user.id, user);
 			}
 
 			// Response

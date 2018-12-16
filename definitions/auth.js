@@ -59,7 +59,7 @@ AUTH(function(req, res, flags, next) {
 						req.$language = user.language;
 
 					// Write session
-					FUNC.sessions.set(sessionkey, user, '10 minutes');
+					FUNC.sessions.set(sessionkey, user);
 
 					// Write info
 					FUNC.users.set(user, ['datelogged', 'online']);

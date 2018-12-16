@@ -158,6 +158,64 @@ NEWSCHEMA('App', function(schema) {
 			});
 		});
 	});
+
+	schema.addWorkflow('run', function($) {
+
+		var user = $.user;
+		var data;
+
+		switch ($.id) {
+			case '_users':
+			case '_apps':
+			case '_info':
+			case '_settings':
+			case '_account':
+
+				if ($.id !== '_account' && !user.sa) {
+					$.invalid('error-permissions');
+					return;
+				}
+
+				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: $.id !== '_account' && $.id !== '_settings' };
+				$.callback(data);
+				return;
+		}
+
+		if (!user.apps[$.id]) {
+			$.invalid('error-apps-404');
+			return;
+		}
+
+		FUNC.apps.get($.id, function(err, app) {
+
+			if (app) {
+				data = OP.meta(app, user);
+				LOGGER('logs', '[{0}]'.format(user.id + ' ' + user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
+
+				if (data) {
+					data.ip = $.ip;
+					data.href = $.query.href;
+
+					$.callback(data);
+
+					user.apps[$.id].countnotifications = 0;
+					user.apps[$.id].countbadges && FUNC.badges.rem(user.id, $.id);
+					user.apps[$.id].countbadges = 0;
+					FUNC.sessions.set(user.id, user);
+
+					// Stats
+					var db = NOSQL('apps');
+					db.counter.hit('all');
+					db.counter.hit($.id);
+
+					return;
+				}
+			}
+
+			$.invalid('error-apps-404');
+		});
+	});
+
 });
 
 function sync(item, model, meta) {

@@ -168,22 +168,19 @@
 		});
 
 		function refresh_notifications() {
-			user.countnotifications && SETTER('websocket', 'send', { TYPE: 'notifications' });
+			user.countnotifications && AJAX('GET /api/notifications/', function(arr) {
+				SETTER('notifications', 'append', arr.take(50));
+			});
 			user.countnotifications = 0;
 		}
 
 		function internalapp(el) {
 			var id = el.attr('data-id');
-
-			WSOPEN.id = id;
-			WSOPEN.href = null;
-
 			var iframe = dashboard.apps.findItem('id', id);
 			if (iframe)
 				SETTER('processes', 'maximize', id);
 			else
-				SETTER('websocket', 'send', WSOPEN);
-
+				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 			common.startmenu && SET('common.startmenu', false);
 		}
 
@@ -202,44 +199,36 @@
 
 		ON('message', function(message) {
 			switch (message.TYPE) {
-				case 'open':
-					message.body.internal = user.apps.findItem('id', message.body.id);
-					message.body.progress = 0;
-					dashboard.apps.push(message.body);
-					SET('dashboard.current', message.body);
-					$('.appunread[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
-					$('.appbadge[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
-					SETTER('processes', 'emitevent', 'app.open', message.body.id);
-					break;
 				case 'logoff':
 					COOKIES.set('@{'%cookie'}', '', '-1 day');
 					location.href = '/';
 					break;
 				case 'profile':
-					var is = user !== EMPTYOBJECT;
-					message.body.apps.quicksort('title');
-					var tmp = user;
-					SET('user', message.body);
-					EXEC('Dashboard/sync');
-					EXEC('Dashboard/init');
-					SET('common.startmenusearch', '');
-					// .ui-process-header,
-					CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
-					$(document.body).tclass('light', !user.darkmode);
+					AJAX('GET /api/profile/', function(profile) {
 
-					if (is && (tmp.darkmode !== user.darkmode || tmp.colorscheme !== user.colorscheme || tmp.background !== user.background))
-						SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
+						if (profile == null) {
+							// refresh (maybe blocked)
+							location.reload(true);
+							return;
+						}
+
+						var is = user !== EMPTYOBJECT;
+						profile.apps.quicksort('title');
+						var tmp = user;
+						SET('user', profile);
+						EXEC('Dashboard/sync');
+						EXEC('Dashboard/init');
+						SET('common.startmenusearch', '');
+						CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
+						$(document.body).tclass('light', !user.darkmode);
+						if (is && (tmp.darkmode !== user.darkmode || tmp.colorscheme !== user.colorscheme || tmp.background !== user.background))
+							SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
+					});
 
 					break;
 				case 'settings':
 					document.title = message.body.name;
 					SET('user.test', message.body.test === true);
-					break;
-
-				case 'notifications':
-					// take max. 50
-					var arr = message.body;
-					arr && arr.length && SETTER('notifications', 'append', arr.take(50));
 					break;
 				case 'notify':
 					var tmp = message.body;
@@ -274,7 +263,6 @@
 		});
 
 		var dashboard = {};
-		var WSOPEN = { TYPE: 'open' };
 
 		dashboard.current = null;
 		dashboard.apps = [];
@@ -286,15 +274,11 @@
 				return;
 
 			var id = el.attr('data-id');
-
-			WSOPEN.id = id;
-			WSOPEN.href = null;
-
 			var iframe = dashboard.apps.findItem('id', id);
 			if (iframe)
 				SETTER('processes', 'maximize', id);
 			else
-				SETTER('websocket', 'send', WSOPEN);
+				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 
 			common.startmenu && SET('common.startmenu', false);
 		});
@@ -333,10 +317,8 @@
 				if (iframe) {
 					SETTER('processes', 'sendnotifydata', app.id, data);
 				} else {
-					WSOPEN.id = app.id;
-					WSOPEN.href = app.url;
 					app.notifydata = data;
-					SETTER('websocket', 'send', WSOPEN);
+					AJAX('GET /api/profile/{0}/'.format(app.id), { href: app.url }, FUNC.open);
 				}
 			};
 

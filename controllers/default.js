@@ -1,7 +1,5 @@
-const WSOPEN = { TYPE: 'open', body: null };
-const WSPROFILE =  { TYPE: 'profile', body: null };
+const WSPROFILE =  { TYPE: 'profile' };
 const WSSETTINGS =  { TYPE: 'settings', body: {} };
-const WSNOTIFICATIONS = { TYPE: 'notifications', body: null };
 const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
 const WSLOGOFF = { TYPE: 'logoff' };
 const COOKIES = { security: 1, httponly: true };
@@ -79,110 +77,17 @@ function realtime() {
 		}
 
 		client.id = client.user.id;
-		// client.user.online = true;
-		// client.user.countsessions++;
-
-		FUNC.users.online(client.user, true, function() {
-			OP.profile(client.user, function(err, profile) {
-				WSPROFILE.body = profile;
-				client.send(WSPROFILE);
-			});
-		});
+		FUNC.users.online(client.user, true);
+		client.send(WSPROFILE);
 	});
 
 	self.on('close', function(client) {
 		FUNC.users.online(client.user, false);
 	});
-
-	self.on('message', function(client, message) {
-
-		switch (message.TYPE) {
-
-			// Open app
-			case 'open':
-
-				switch (message.id) {
-					case '_users':
-					case '_apps':
-					case '_info':
-					case '_settings':
-					case '_account':
-
-						if (message.id !== '_account' && !client.user.sa)
-							return;
-
-						var user = client.user;
-						WSOPEN.body = { datetime: NOW, ip: client.ip, accesstoken: message.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: '/{0}/'.format(message.id.substring(1)), settings: null, id: message.id, mobilemenu: message.id !== '_account' && message.id !== '_settings' };
-						WSOPEN.body.ip = client.ip;
-						WSOPEN.body.href = '';
-
-						client.send(WSOPEN);
-						return;
-				}
-
-				if (client.user.apps[message.id]) {
-					FUNC.apps.get(message.id, function(err, app) {
-
-						if (app) {
-							WSOPEN.body = OP.meta(app, client.user);
-							WSOPEN.body.ip = client.ip;
-							WSOPEN.body.href = message.href;
-
-							LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
-
-							if (WSOPEN.body) {
-
-								client.send(WSOPEN);
-								client.user.apps[message.id].countnotifications = 0;
-								client.user.apps[message.id].countbadges = 0;
-
-								// Stats
-								var db = NOSQL('apps');
-								db.counter.hit('all');
-								db.counter.hit(message.id);
-							}
-						}
-					});
-				}
-
-				break;
-
-			case 'log':
-				FUNC.logger('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(message.appurl, message.appid), message.body);
-				break;
-
-			case 'notifications':
-				$QUERY('Notification', null, function(err, response) {
-					if (response) {
-						WSNOTIFICATIONS.body = response;
-						client.send(WSNOTIFICATIONS);
-					}
-				}, client);
-				break;
-
-			// Get user's profile
-			case 'profile':
-				// returns profile's detail
-				OP.profile(client.user, function(err, data) {
-					if (data) {
-						WSPROFILE.body = data;
-						WSPROFILE.body.ip = client.ip;
-						client.send(WSPROFILE);
-					}
-				});
-				break;
-		}
-
-	});
 }
 
 ON('apps.refresh', function() {
-	WS && WS.all(function(client) {
-		OP.profile(client.user, function(err, profile) {
-			WSPROFILE.body = profile;
-			client.send(WSPROFILE);
-		});
-	});
+	WS && WS.send(WSPROFILE);
 });
 
 ON('users.refresh', function(userid, removed) {
@@ -201,30 +106,14 @@ ON('users.refresh', function(userid, removed) {
 				return next();
 
 			processed.add(client.user);
-
 			FUNC.users.get(client.user.id, function(err, user) {
-
 				if (err || !user)
 					return next();
-
-				FUNC.sessions.set(user.id, user, '10 minutes');
-				client.user = user;
-
-				OP.profile(user, function(err, profile) {
-
-					if (!client || !client.user)
-						return next();
-
-					if (removed || client.user.blocked || client.user.inactive) {
-						client.send(WSLOGOFF);
-						setTimeout(client => client.close(), 100, client);
-					} else {
-						WSPROFILE.body = profile;
-						client.send(WSPROFILE);
-					}
-
-					next();
+				FUNC.sessions.set(user.id, user, function() {
+					client.user = user;
+					client.send(WSPROFILE);
 				});
+				next();
 			});
 
 		});
@@ -247,24 +136,9 @@ ON('users.refresh', function(userid, removed) {
 		return;
 
 	FUNC.users.get(userid, function(err, user) {
-
-		if (err || !user)
-			return;
-
-		FUNC.sessions.set(user.id, user, '10 minutes');
-		OP.profile(user, function(err, profile) {
-			for (var i = 0; i < clients.length; i++) {
-				var client = clients[i];
-				if (removed || client.user.blocked || client.user.inactive) {
-					client.send(WSLOGOFF);
-					setTimeout(client => client.close(), 100, client);
-				} else if (client.user.id === userid) {
-					client.user = user;
-					WSPROFILE.body = profile;
-					client.send(WSPROFILE);
-				}
-			}
-		});
+		user && FUNC.sessions.set(user.id, user);
+		for (var i = 0; i < clients.length; i++)
+			clients[i].send(user ? WSPROFILE : WSLOGOFF);
 	});
 });
 
@@ -283,7 +157,7 @@ ON('settings.update', function() {
 	});
 });
 
-function notify(userid, appid) {
+function notify(userid, appid, clear) {
 
 	if (!WS)
 		return;
@@ -291,7 +165,7 @@ function notify(userid, appid) {
 	var clients;
 
 	WS.all(function(client) {
-		if (client.id === userid) {
+		if (client.user.id === userid) {
 			if (clients)
 				clients.push(client);
 			else
@@ -306,10 +180,10 @@ function notify(userid, appid) {
 		if (user) {
 			for (var i = 0; i < clients.length; i++) {
 				var client = clients[i];
-				WSNOTIFY.body.count = user.countnotifications;
+				WSNOTIFY.body.count = clear ? 0 : user.countnotifications;
 				WSNOTIFY.body.app.id = appid;
-				WSNOTIFY.body.app.count = appid ? user.apps[appid].countnotifications : 0;
-				WSNOTIFY.body.app.badges = appid ? user.apps[appid].countbadges : 0;
+				WSNOTIFY.body.app.count = clear ? 0 : appid ? user.apps[appid].countnotifications : 0;
+				WSNOTIFY.body.app.badges = clear ? 0 : appid ? user.apps[appid].countbadges : 0;
 				client.send(WSNOTIFY);
 			}
 		}
@@ -331,5 +205,6 @@ function info() {
 	model.processor = process.arch;
 	model.uptime = Math.floor(process.uptime() / 60);
 	model.connections = Object.keys(F.connections).length;
+	model.ip = this.ip;
 	this.view('info', model);
 }

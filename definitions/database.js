@@ -8,6 +8,7 @@ FUNC.common = {};
 FUNC.settings = {};
 FUNC.notifications = {};
 FUNC.files = {};
+FUNC.badges = {};
 
 // ====================================
 // Users
@@ -33,13 +34,16 @@ FUNC.users.set = function(user, fields, callback, app) {
 			obj = CLONE(user);
 
 		if (app) {
-			obj.apps = {};
+			delete obj.apps;
+
 			// Is notification or badge?
 			// Performs MongoDB "$inc"
+
 			if (fields.indexOf('countbadges') === -1)
 				obj['+apps.' + app.id + '.countnotifications'] = 1;
 			else
 				obj['+apps.' + app.id + '.countbadges'] = 1;
+
 		}
 
 		builder = DBMS().modify('users', obj).where('_id', user.id);
@@ -389,7 +393,7 @@ FUNC.sessions.set = function(key, value, expire, callback) {
 		expire = null;
 	}
 
-	F.cache.set(key, value, expire);
+	F.cache.set(key, value, expire || '2 hours');
 	callback && callback(null);
 };
 
@@ -419,6 +423,16 @@ FUNC.settings.set = function(data, callback) {
 };
 
 // ====================================
+// Badges
+// ====================================
+
+FUNC.badges.rem = function(userid, appid, callback) {
+	var obj = {};
+	obj['apps.' + appid + '.countbadges'] = 0;
+	DBMS().modify('users', obj).where('_id', userid).first().callback(callback);
+};
+
+// ====================================
 // Notifications
 // ====================================
 
@@ -432,14 +446,13 @@ FUNC.notifications.add = function(data, callback) {
 	// data.ip
 	// data.datecreated
 
-	DBMS().insert('notifications', data);
-	callback && callback();
+	DBMS().insert('notifications', data).callback(callback);
 };
 
 FUNC.notifications.rem = function(userid, callback) {
 	var db = DBMS();
 	db.remove('notifications').where('userid', userid);
-	db.read('users').where('userid', userid).fields('apps').data(function(response) {
+	db.read('users').where('_id', userid).fields('apps').data(function(response) {
 
 		var apps = Object.keys(response.apps);
 		var obj = {};
@@ -453,13 +466,16 @@ FUNC.notifications.rem = function(userid, callback) {
 			}
 		}
 
-		is && DBMS().modify(apps, obj).where('_id', userid);
+		if (is) {
+			obj.countnotifications = 0;
+			DBMS().modify('users', obj).where('_id', userid);
+		}
 	});
 	callback && callback();
 };
 
 FUNC.notifications.get = function(userid, callback) {
-	DBMS().query('notifications').where('userid', userid).callback(callback);
+	DBMS().find('notifications').where('userid', userid).callback(callback);
 };
 
 // ====================================

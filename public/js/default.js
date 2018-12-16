@@ -241,11 +241,11 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'log':
-			WSLOGMESSAGE.TYPE = 'log';
 			WSLOGMESSAGE.appid = app.id;
 			WSLOGMESSAGE.appurl = app.url;
 			WSLOGMESSAGE.body = data.body;
-			SETTER('websocket', 'send', WSLOGMESSAGE);
+			AJAX('POST /api/profile/logger/', WSLOGMESSAGE);
+			// SETTER('websocket', 'send', WSLOGMESSAGE);
 			break;
 
 		case 'open':
@@ -259,3 +259,21 @@ $(window).on('message', function(e) {
 			break;
 	}
 });
+
+FUNC.open = function(data) {
+
+	if (data == null) {
+		// maybe blocked
+		// refresh
+		location.reload(true);
+		return;
+	}
+
+	data.internal = user.apps.findItem('id', data.id);
+	data.progress = 0;
+	dashboard.apps.push(data);
+	SET('dashboard.current', data);
+	$('.appunread[data-id="{0}"]'.format(data.id)).aclass('hidden');
+	$('.appbadge[data-id="{0}"]'.format(data.id)).aclass('hidden');
+	SETTER('processes', 'emitevent', 'app.open', data.id);
+};
