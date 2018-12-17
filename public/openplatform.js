@@ -6,6 +6,7 @@ OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
 OP.pending = [];
+OP.$appearance = 0;
 OP.interval = setInterval(function() {
 	if (OP.ready) {
 		clearInterval(OP.interval);
@@ -22,6 +23,11 @@ document.onkeydown = function(e) {
 		else
 			location.reload(true);
 	}
+};
+
+OP.appearance = function() {
+	OP.$appearance = 1;
+	OP.send('appearance');
 };
 
 OP.screenshot = function(cdn) {
@@ -320,6 +326,30 @@ OP.$process = function(data) {
 
 	if (data.sender)
 		return;
+
+	if (data.type === 'appearance' && OP.$appearance) {
+
+		var head = document.head || document.getElementsByTagName('head')[0];
+		var style = document.createElement('style');
+
+		if (OP.$appearance === 1) {
+			OP.$appearance = 2;
+		} else
+			document.getElementById('opstyle').remove();
+
+		var d = data.body;
+		var b = document.body.classList;
+		b.add(d.darkmode ? 'opdark' : 'oplight');
+		b.add('opbody');
+		b.remove(d.darkmode ? 'oplight' : 'opdark');
+
+		window.OPCOLOR = d.colorscheme;
+		window.OPDARKMODE = d.darkmode;
+
+		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '353535' : 'FFFFFF') + '}.opborder{border-color:' + d.colorscheme + '}.opbg{background-color:' + d.colorscheme + '}.opfg{color:' + d.colorscheme + '}'));
+		style.id = 'opstyle';
+		head.appendChild(style);
+	}
 
 	if (data.type === 'reload') {
 		if (location.href.indexOf('openplatform=') === -1)

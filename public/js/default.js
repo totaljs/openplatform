@@ -87,6 +87,13 @@ $(window).on('message', function(e) {
 			SET('common.form', 'screenshot');
 			break;
 
+		case 'appearance':
+			if (app) {
+				var iframe = processes.findProcess(app.id);
+				iframe && processes.message(iframe, 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme }, data.callback);
+			}
+			break;
+
 		case 'launched':
 			if (app) {
 
