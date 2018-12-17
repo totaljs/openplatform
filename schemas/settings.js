@@ -52,7 +52,7 @@ NEWSCHEMA('Settings', function(schema) {
 
 			// Removing older background
 			if (CONF.background && model.background !== CONF.background)
-				FUNC.files.removebackgroud(CONF.background);
+				FUNC.files.removebackground(CONF.background);
 
 			CONF.name = model.name;
 			CONF.url = model.url;
