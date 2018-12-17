@@ -346,7 +346,7 @@ OP.$process = function(data) {
 		window.OPCOLOR = d.colorscheme;
 		window.OPDARKMODE = d.darkmode;
 
-		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '353535' : 'FFFFFF') + '}.opborder{border-color:' + d.colorscheme + '}.opbg{background-color:' + d.colorscheme + '}.opfg{color:' + d.colorscheme + '}'));
+		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '353535' : 'FFFFFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000000') + '}.opborder{border-color:' + d.colorscheme + '}.opbg{background-color:' + d.colorscheme + '}.opfg{color:' + d.colorscheme + '}'));
 		style.id = 'opstyle';
 		head.appendChild(style);
 	}
