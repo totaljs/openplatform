@@ -204,7 +204,8 @@ function info() {
 	model.platform = process.platform;
 	model.processor = process.arch;
 	model.uptime = Math.floor(process.uptime() / 60);
-	model.connections = Object.keys(F.connections).length;
+	var conn = F.connections['/#get-authorize'];
+	model.connections = conn ? conn.online : 0;
 	model.ip = this.ip;
 	this.view('info', model);
 }
