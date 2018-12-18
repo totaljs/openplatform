@@ -359,7 +359,7 @@ OP.$process = function(data) {
 		b.remove(d.darkmode ? 'oplight' : 'opdark');
 
 		if (!d.colorscheme)
-			d.colorscheme = '#0a53ea';
+			d.colorscheme = '#4285f4';
 
 		window.OPCOLOR = d.colorscheme;
 		window.OPDARKMODE = d.darkmode;

@@ -83,7 +83,7 @@ h3 .fa { margin-right: 5px; }
 .padding { padding: 20px; }
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.user { float: left; cursor: pointer; width: 30px; height: 30px; border-radius: 2px; background-color: #0A53EA; color: rgba(255,255,255,0.5); margin: 9px 10px 0 10px; user-select: none; padding: 4px 0 0 0; text-align: center; font-size: 16px; }
+.user { float: left; cursor: pointer; width: 30px; height: 30px; border-radius: 2px; background-color: #4285f4; color: rgba(255,255,255,0.5); margin: 9px 10px 0 10px; user-select: none; padding: 4px 0 0 0; text-align: center; font-size: 16px; }
 .user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
 .user:hover { opacity: 0.9; color: white; }
 .user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }

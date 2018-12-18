@@ -4212,7 +4212,7 @@ COMPONENT('panel', 'width:350;icon:circle-o', function(self, config) {
 	};
 });
 
-COMPONENT('colorselector', 'colors:#000000,#0a53ea,#00a8ff,#16a085,#27ae60,#8e44ad,#d770ad,#f39c12,#d35400,#c0392b;empty:true', function(self, config) {
+COMPONENT('colorselector', 'colors:#000000,#4285f4,#00a8ff,#16a085,#27ae60,#8e44ad,#d770ad,#f39c12,#d35400,#c0392b;empty:true', function(self, config) {
 
 	var selected, list, content, colors = null;
 

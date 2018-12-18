@@ -1,5 +1,7 @@
 const Fs = require('fs');
 
+CONF.table_configs = 'userid:string|appid:string|body:string|dateupdated:date|datecreated:date';
+
 FUNC.apps = {};
 FUNC.users = {};
 FUNC.sessions = {};
@@ -8,6 +10,7 @@ FUNC.settings = {};
 FUNC.notifications = {};
 FUNC.files = {};
 FUNC.badges = {};
+FUNC.configs = {};
 
 // ====================================
 // Users
@@ -468,6 +471,28 @@ FUNC.settings.get = function(callback) {
 FUNC.settings.set = function(data, callback) {
 	Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(data), NOOP);
 	callback && callback(null);
+};
+
+// ====================================
+// Configs
+// ====================================
+
+FUNC.configs.get = function(userid, appid, callback) {
+	TABLE('configs').read().where('userid', userid).where('appid', appid).callback(function(err, doc) {
+		callback(err, doc ? doc.body : null);
+	});
+};
+
+FUNC.configs.set = function(userid, appid, data, callback) {
+	TABLE('configs').modify({ body: data, dateupdated: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
+		doc.userid = userid;
+		doc.appid = appid;
+		doc.datecreated = NOW;
+	}).first().callback(callback);
+};
+
+FUNC.configs.rem = function(userid, appid, callback) {
+	TABLE('configs').where('userid', userid).where('appid', appid).first().callback(callback);
 };
 
 // ====================================
