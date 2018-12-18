@@ -195,6 +195,21 @@ OP.confirm = function(message, buttons, callback) {
 	});
 };
 
+OP.config = function(body, callback) {
+
+	var data = {};
+
+	if (typeof(body) === 'function') {
+		callback = body;
+		data.body = null;
+	} else
+		data.body = JSON.stringify(body);
+
+	return OP.send('config', data, function(err, data) {
+		callback && callback(data, err);
+	});
+};
+
 OP.snackbar = function(message, type, button) {
 	var data = {};
 	data.body = message;

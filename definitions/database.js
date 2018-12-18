@@ -9,6 +9,7 @@ FUNC.settings = {};
 FUNC.notifications = {};
 FUNC.files = {};
 FUNC.badges = {};
+FUNC.configs = {};
 
 // ====================================
 // Users
@@ -330,6 +331,7 @@ FUNC.apps.rem = function(id, callback) {
 	db.read('apps').where('_id', id).callback(callback);
 	db.remove('apps').where('_id', id);
 	db.remove('notifications').where('appid', id);
+	db.remove('configs').where('appid', id);
 	db.query('users', function(collection, next) {
 		var filter = {};
 		var upd = { $unset: {} };
@@ -476,6 +478,28 @@ FUNC.notifications.rem = function(userid, callback) {
 
 FUNC.notifications.get = function(userid, callback) {
 	DBMS().find('notifications').where('userid', userid).callback(callback);
+};
+
+// ====================================
+// Configs
+// ====================================
+
+FUNC.configs.get = function(userid, appid, callback) {
+	DBMS().read('configs').where('userid', userid).where('appid', appid).callback(function(err, doc) {
+		callback(err, doc ? doc.body : null);
+	});
+};
+
+FUNC.configs.set = function(userid, appid, data, callback) {
+	DBMS().modify('configs', { body: data, dateupdated: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
+		doc.userid = userid;
+		doc.appid = appid;
+		doc.datecreated = NOW;
+	}).first().callback(callback);
+};
+
+FUNC.configs.rem = function(userid, appid, callback) {
+	DBMS().remove('configs').where('userid', userid).where('appid', appid).first().callback(callback);
 };
 
 // ====================================

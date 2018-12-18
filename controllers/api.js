@@ -53,6 +53,8 @@ exports.install = function() {
 	ROUTE('GET    /api/apps/                            *App          --> @query');
 	ROUTE('GET    /api/badges/                          *Badge        --> @exec');
 	ROUTE('POST   /api/notify/                          *Notification --> @save');
+	ROUTE('POST   /api/config/                          *Config       --> @save');
+	ROUTE('GET    /api/config/                          *Config       --> @get');
 
 	// CORS
 	CORS();

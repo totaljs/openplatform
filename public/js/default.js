@@ -219,6 +219,25 @@ $(window).on('message', function(e) {
 			SETTER('snackbar', data.body.type || 'success', data.body.body, data.body.button);
 			break;
 
+		case 'config':
+
+			var configcb = function(response, err) {
+				if (data.callback) {
+					var iframe = processes.findProcess(app.id);
+					iframe && data.callback && processes.message(iframe, 'config', typeof(response) === 'string' ? PARSE(response) : response, data.callback, err);
+				}
+			};
+
+			var atoken = app.profile.notify.substring(app.profile.notify.indexOf('accesstoken='));
+			if (data.body.body) {
+				var tmp = {};
+				tmp.body = data.body.body;
+				AJAX('POST /api/config/?' + atoken, tmp, configcb);
+			} else
+				AJAX('GET /api/config/?' + atoken, configcb);
+
+			break;
+
 		case 'message':
 			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body, null, null, data.body.button);
 			break;
