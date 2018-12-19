@@ -28,6 +28,12 @@
 	.userapp-roles input { margin-right: 5px; vertical-align: middle; }
 	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 4px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
 	.userapp-settings { margin-bottom: 15px; }
+
+	@{if user.colorscheme}
+	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
+	.button{background-color:@{user.colorscheme}}
+	@{fi}
+
 </style>
 
 <div data-jc="panel__common.form__if:apps;bg:true;width:420;title:@(Assign to users);icon:users" class="hidden">

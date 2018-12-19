@@ -3,20 +3,25 @@
 	@media(max-width: 450px) {
 		.col-2 { float: none; display: block; width: 100%; }
 	}
+	@{if user.colorscheme}
+	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
+	.button{background-color:@{user.colorscheme}}
+	@{fi}
+
 </style>
 <div class="row">
 	<div class="scroller" data-margin="40">
 		<div class="scroller-padding npb">
 			<div class="row">
 				<div class="col-2 m">
-					<div data-jc="textbox__settings.name__required:true" class="m">@(Openplatform name)</div>
+					<div data-jc="textbox__settings.name__required:true">@(Openplatform name)</div>
 				</div>
 				<div class="col-2 m">
-					<div data-jc="textbox__settings.url__required:true" class="m">@(URL address)</div>
+					<div data-jc="textbox__settings.url__required:true">@(URL address)</div>
 				</div>
 			</div>
-			<hr class="nmt" />
-			<div data-jc="checkbox__settings.test" class="m">@(This is <b>Test environment</b>)</div>
+			<div data-jc="checkbox__settings.test">@(This is <b>Test environment</b>)</div>
+			<br />
 		</div>
 		<hr class="nmt nmb" />
 		<div class="scroller-padding bg-smoke">
@@ -24,7 +29,7 @@
 			<div class="row">
 				<div class="col-2 m">
 					<div data-jc="textbox__settings.accesstoken__maxlength:50;required:true">@(Token for service account)</div>
-					<div class="help"><a href="javascript:void(0)" class="exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</a></div>
+					<div class="help"><span class="link exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
 				</div>
 				<div class="col-2 m">
 					<div data-jc="textbox__settings.email__type:email;required:true">@(Support email)</div>
@@ -45,7 +50,9 @@
 			<div data-jc="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
 			<div class="help m">@(The SMTP settings has to be according to the Total.js documentation in <b class="red">JSON format</b>.)</div>
 			<div data-jc="error__%smtpsettings" class="hidden m"></div>
-			<span class="link modify exec fs11" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</span>
+			<div class="help">
+				<span class="link exec" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</span>
+			</div>
 			<div data-jc="error__settings.response" class="hidden m"></div>
 		</div>
 	</div>
