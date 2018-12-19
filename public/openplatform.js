@@ -355,7 +355,8 @@ OP.$process = function(data) {
 		var d = data.body;
 		var b = document.body.classList;
 
-		b.add(d.darkmode ? 'opdark ui-dark' : 'oplight');
+		b.add(d.darkmode ? 'opdark' : 'oplight');
+		d.darkmode && b.add('ui-dark');
 		b.add('opbody');
 		b.remove(d.darkmode ? 'oplight' : 'opdark');
 		!d.darkmode && b.remove('ui-dark');
