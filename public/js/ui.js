@@ -3500,10 +3500,11 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 
 	var show = true;
 	var callback;
+	var delay;
 
 	self.readonly();
 	self.blind();
-	self.nocompile();
+	self.nocompile && self.nocompile();
 
 	self.make = function() {
 		self.aclass('ui-snackbar hidden');
@@ -3517,9 +3518,16 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 	self.hide = function() {
 		clearTimeout2(self.ID);
 		self.rclass('ui-snackbar-visible');
-		setTimeout(function() {
+		if (delay) {
+			clearTimeout(delay);
 			self.aclass('hidden');
-		}, 1000);
+			delay = null;
+		} else {
+			delay = setTimeout(function() {
+				delay = null;
+				self.aclass('hidden');
+			}, 1000);
+		}
 		show = true;
 	};
 
@@ -3555,7 +3563,6 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 			}, 50);
 		}
 
-		clearTimeout2(self.ID);
 		setTimeout2(self.ID, self.hide, config.timeout + 50);
 		show = false;
 	};
