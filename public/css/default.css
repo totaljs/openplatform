@@ -3,6 +3,8 @@
 html,body { height: 100%; overflow: hidden; }
 body { height: 100%; overflow: hidden; background: #808080 linear-gradient(#899aa4,#e9d0aa); background-size: cover; }
 
+.ui-dark { color: #C0C0C0; }
+
 header { height: 50px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; top: -50px; color: #909090; transition: all 0.3s; box-shadow: 0 5px 5px rgba(0,0,0,0.15); }
 header nav { float: left; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 50px; height: 49px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
@@ -28,13 +30,16 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 50px; float: righ
 .startmenu-apps-container { height: 386px; overflow-y: auto; width: 330px; padding: 5px 0; overflow-scrolling: touch; }
 .startmenu-nav { float: right; width: 200px; height: 450px; background-color: #404040; border-left: 1px solid rgba(0,0,0,0.1); }
 .startmenu-nav nav button { display: block; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
-.startmenu-nav nav button:hover { text-decoration: none; }
+.startmenu-nav nav button:hover { text-decoration: none; color: white; }
 .startmenu-nav nav button:last-child { border-bottom: 0; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
 .startmenu-search { padding: 5px; margin-bottom: 5px; background-color: #383838; }
-.startmenu-version { float: right; font-size: 11px; color: gray; margin: 11px 10px 0 0; text-align: right; font-weight: normal; line-height: 13px; }
-.startmenu-version b { display: block; }
+.startmenu-status { float: right; color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 10px 5px 0 10px; height: 50px; width: 200px; border-left: 1px solid rgba(0,0,0,0.1); cursor: pointer; }
+.startmenu-status:hover { background-color: rgba(255,255,255,0.1); }
+.startmenu-status b { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: white; font-size: 14px; }
+.startmenu-status i { font-size: 10px; float: left; margin: 3px 4px 0 0; }
+.startmenu-status span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; }
 .startmenu-search .ui-textbox { height: 34px; background-color: #383838; }
 .startmenu-search .ui-textbox-input { padding: 9px 4px 0 10px; }
 .startmenu-search .ui-textbox input { font-size: 16px; background-color: #383838; color: white; }
@@ -45,6 +50,8 @@ header .datetime { background-color: rgba(0,0,0,0.15); height: 50px; float: righ
 .startmenu .ui-textbox { border: 0; }
 .startmenu .ui-textbox-input { padding-left: 10px; padding-left: 10px; }
 
+.light .startmenu-status b { color: black; }
+.light .startmenu-nav nav button:hover { color: #404040; }
 .light header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); box-shadow: 0 5px 5px rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.2); }
 .light header nav button { color: #505050; border-right-color: rgba(0,0,0,0.1); }
 .light header nav button:first-child { border-left-color: rgba(0,0,0,0.1); }
@@ -73,10 +80,14 @@ h1 b { font-weight: 700; }
 
 h2 { font-weight: 400; margin: 0 0 12px 0; padding: 0; color: black; font-size: 20px; }
 h2 b { font-weight: 700; }
-h2 .fa { margin-right: 10px; }
+h2 i { margin-right: 10px; }
+.ui-dark h2 { color: white; }
 
 h3 { font-weight: 700; margin: 0 0 5px 0; padding: 0; color: black; font-size: 16px; }
-h3 .fa { margin-right: 5px; }
+h3 i { margin-right: 5px; }
+.ui-dark h3 { color: white; }
+
+.orange { color: orange; }
 
 .bg-smoke { background-color: #F8F8F8; }
 
@@ -240,4 +251,8 @@ h3 .fa { margin-right: 5px; }
 	.startmenu-nav nav button { padding: 10px 0; font-size: 16px; }
 	.startmenu-nav .fa { width: 34px; }
 	.app .appbadge { position: absolute; margin: 27px 0 0 22px; }
+	.username { right: 0; left: 0; text-align: center; }
+	.startmenu-title img { display: none; }
+	.startmenu-title > span { display: none; }
+	.startmenu-status { float: left; width: 70%; background-color: transparent; border-left: 0; }
 }

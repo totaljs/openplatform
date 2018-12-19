@@ -4,6 +4,8 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('supervisorid', 'UID');
 	schema.define('deputyid', 'UID');
 	schema.define('photo', 'String(150)');
+	schema.define('statusid', Number);
+	schema.define('status', 'String(70)');
 	schema.define('name', 'String(40)');
 	schema.define('firstname', 'Capitalize(40)', true);
 	schema.define('lastname', 'Capitalize(40)', true);
@@ -129,6 +131,8 @@ NEWSCHEMA('User', function(schema) {
 				item.blocked = model.blocked;
 				item.phone = model.phone;
 				item.photo = model.photo;
+				item.statusid = model.statusid;
+				item.status = model.status;
 				item.firstname = model.firstname;
 				item.lastname = model.lastname;
 				item.email = model.email;

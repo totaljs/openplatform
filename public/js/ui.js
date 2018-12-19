@@ -2485,7 +2485,7 @@ COMPONENT('processes', function(self, config) {
 		var margin = iframe.element.find('.ui-process-header').height();
 		var mm = iframe.element.find('.ui-process-mainmenu');
 
-		if (value.mobilemenu === false)
+		if (value.internal.mobilemenu === false)
 			mm.remove();
 		else
 			mm.rclass('hidden');

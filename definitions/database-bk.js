@@ -48,6 +48,9 @@ FUNC.users.query = function(filter, callback) {
 	// filter.limit
 	// filter.appid
 
+	if (typeof(filter.id) === 'string')
+		filter.id = filter.id.split(',');
+
 	if (filter.q)
 		filter.q = filter.q.toSearch();
 
@@ -71,6 +74,9 @@ FUNC.users.query = function(filter, callback) {
 	for (var i = 0; i < G.users.length; i++) {
 		var user = G.users[i];
 
+		if (filter.id && filter.id.indexOf(user.id) === -1)
+			continue;
+
 		if (filter.appid && (!user.apps || !user.apps[filter.appid]))
 			continue;
 
@@ -93,6 +99,9 @@ FUNC.users.query = function(filter, callback) {
 			continue;
 
 		if (filter.gender && user.gender !== filter.gender)
+			continue;
+
+		if (filter.statusid && user.statusid !== filter.statusid)
 			continue;
 
 		if (filter.customer && !user.customer)
@@ -348,18 +357,19 @@ FUNC.apps.rem = function(id, callback) {
 };
 
 FUNC.apps.query = function(filter, callback) {
+
 	// filter.page
 	// filter.limit
 	// filter.id {String Array}
-
-	if (filter.q)
-		filter.q = filter.q.toSearch();
 
 	if (!filter.page)
 		filter.page = 1;
 
 	if (!filter.limit)
 		filter.limit = 1000;
+
+	if (typeof(filter.id) === 'string')
+		filter.id = filter.id.split(',');
 
 	if (typeof(filter.page) === 'string')
 		filter.page = +filter.page;

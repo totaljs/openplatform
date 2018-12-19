@@ -19,11 +19,13 @@ OP.profile = function(user, callback) {
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
 	meta.sounds = user.sounds;
+	meta.statusid = user.statusid;
 	meta.volume = user.volume;
 	meta.darkmode = user.darkmode;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
 	meta.background = user.background || CONF.background;
 	meta.test = CONF.test === true;
+	meta.status = user.status;
 
 	var id = Object.keys(user.apps);
 
@@ -46,7 +48,7 @@ OP.profile = function(user, callback) {
 			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false, mobilemenu: false });
 			meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false, mobilemenu: false });
 			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 670, resize: false, mobilemenu: false });
-			meta.apps.push({ id: '_info', icon: 'question-circle', title: 'About', name: 'About', online: true, internal: true, linker: '_info', width: 400, height: 290, resize: false, mobilemenu: false });
+			meta.apps.push({ id: '_info', icon: 'question-circle', title: 'About', name: 'About', online: true, internal: true, linker: '_info', width: 400, height: 315, resize: false, mobilemenu: false });
 		}
 
 		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 730, resize: false, mobilemenu: false });
@@ -221,33 +223,69 @@ function readuser(user, type, app) {
 
 	var obj = {};
 	obj.id = user.id;
-	obj.supervisorid = user.supervisorid;
-	obj.deputyid = user.deputyid;
-	obj.apps = user.apps2;
-	obj.blocked = user.blocked;
-	obj.company = user.company;
-	obj.companylinker = user.companylinker;
-	obj.datebirth = user.datebirth;
+
+	if (user.supervisorid)
+		obj.supervisorid = user.supervisorid;
+
+	if (user.deputyid)
+		obj.deputyid = user.deputyid;
+
+	obj.statusid = user.statusid;
+
+	if (obj.status)
+		obj.status = user.status;
+
+	if (user.blocked)
+		obj.blocked = user.blocked;
+
+	if (user.company)
+		obj.company = user.company;
+
+	if (user.datebirth)
+		obj.datebirth = user.datebirth;
+
 	obj.datecreated = user.datecreated;
-	obj.dateend = user.dateend;
-	obj.datebeg = user.datebeg;
-	obj.dateupdated = user.dateupdated;
+
+	if (user.dateend)
+		obj.dateend = user.dateend;
+
+	if (user.datebeg)
+		obj.datebeg = user.datebeg;
+
+	if (user.dateupdated)
+		obj.dateupdated = user.dateupdated;
+
 	obj.firstname = user.firstname;
-	obj.gender = user.gender;
-	obj.language = user.language;
 	obj.lastname = user.lastname;
 	obj.name = user.name;
+
+	if (user.gender)
+		obj.gender = user.gender;
+
+	if (user.language)
+		obj.language = user.language;
+
 	obj.notifications = user.notifications;
 	obj.online = user.online;
-	obj.photo = CONF.url + '/photos/' + user.photo;
-	obj.ou = user.ou;
+
+	if (user.photo)
+		obj.photo = CONF.url + '/photos/' + user.photo;
+
+	if (user.ou)
+		obj.ou = user.ou;
+
 	obj.ougroups = user.ougroups ? Object.keys(user.ougroups) : EMPTYARRAY;
-	obj.locality = user.locality;
-	obj.localitylinker = user.localitylinker;
-	obj.reference = user.reference;
+
+	if (user.locality)
+		obj.locality = user.locality;
+
+	if (user.reference)
+		obj.reference = user.reference;
+
 	obj.countnotifications = user.countnotifications || 0;
 	obj.countbadges = user.countbadges || 0;
 	obj.countsessions = user.countsessions || 0;
+
 	obj.colorscheme = user.colorscheme || CONF.colorscheme;
 	obj.background = user.background || CONF.background;
 	obj.darkmode = user.darkmode;

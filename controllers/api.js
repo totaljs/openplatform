@@ -25,6 +25,7 @@ exports.install = function() {
 
 		ROUTE('GET    /api/account/                     *Account      --> @read');
 		ROUTE('POST   /api/account/                     *Account      --> @save');
+		ROUTE('POST   /api/account/status/              *Status       --> @save');
 		ROUTE('GET    /api/notifications/               *Notification --> @query');
 
 		ROUTE('GET    /api/internal/settings/           *Settings     --> @read');

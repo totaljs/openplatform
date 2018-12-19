@@ -39,17 +39,17 @@ function onImageError(image) {
 	return true;
 }
 
-Tangular.register('encodedata', function(value) {
+Thelpers.encodedata = function(value) {
 	return encodeURIComponent(value || '');
-});
+};
 
-Tangular.register('photo', function(value) {
+Thelpers.photo = function(value) {
 	return value ? ('/photos/' + value) : '/img/face.jpg';
-});
+};
 
-Tangular.register('responsive', function(value) {
+Thelpers.responsive = function(value) {
 	return isMOBILE ? (value === true ? '' : ' app-disabled') : '';
-});
+};
 
 $(window).on('message', function(e) {
 	var data = JSON.parse(e.originalEvent.data);

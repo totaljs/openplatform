@@ -67,6 +67,11 @@ FUNC.users.get = function(id, callback) {
 
 FUNC.users.query = function(filter, callback) {
 	var builder = DBMS().listing('users');
+
+	if (typeof(filter.id) === 'string')
+		filter.id = filter.id.split(',');
+
+	filter.id && builder.in(filter.id);
 	filter.appid && builder.contains('apps.' + filter.appid);
 	filter.q && builder.search('search', filter.q.toSearch());
 	filter.group && builder.where('groups', filter.group);
@@ -75,6 +80,7 @@ FUNC.users.query = function(filter, callback) {
 	filter.locality && builder.where('locality', filter.locality);
 	filter.company && builder.where('company', filter.company);
 	filter.gender && builder.where('gender', filter.gender);
+	filter.statusid && builder.where('statusid', filter.statusid);
 	filter.customer && builder.where('customer', true);
 	filter.reference && builder.where('reference', filter.reference);
 	builder.paginate(filter.page, filter.limit, 5000);
@@ -346,6 +352,9 @@ FUNC.apps.query = function(filter, callback) {
 	// filter.take
 	// filter.skip
 	// filter.id {String Array}
+
+	if (typeof(filter.id) === 'string')
+		filter.id = filter.id.split(',');
 
 	var builder = DBMS().listing('apps');
 	builder.paginate(filter.page, filter.limit, 5000);

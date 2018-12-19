@@ -6,6 +6,8 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; }
 .scroller { overflow-y: scroll; overflow-scrolling: touch; }
 .scroller-padding { padding: 20px 30px 20px 20px; }
 
+.ui-dark .panel { background-color: #252525; border-right-color: #303030; }
+
 .toolbar { height: 40px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
 .toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 40px; height: 40px; padding: 0; margin: 0; text-align: center; float: left; }
 .toolbar button:hover { background-color: white; }
@@ -42,6 +44,7 @@ h2 .fa { margin-right: 10px; }
 .bg-smoke { background-color: #F8F8F8; }
 
 .ui-dark .bg-smoke { background-color: #282828; }
+.ui-dark .bg-white { background-color: #303030; }
 
 .nav { height: 42px; border-bottom: 1px solid #E0E0E0; padding: 0 20px; }
 .nav > a { display: inline-block; margin: 10px 10px 0 0; color: #2E5ADA; position: relative; vertical-align: middle; }

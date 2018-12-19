@@ -56,7 +56,17 @@ NEWSCHEMA('App', function(schema) {
 				return;
 			}
 
-			OP.apps(app, $.query, $.callback);
+			if ($.query.userid) {
+				FUNC.users.get($.query.user.id, function(err, profile) {
+					if (err) {
+						$.invalid(err);
+					} else {
+						$.query.id = Object.keys(profile.apps);
+						OP.apps(app, $.query, $.callback);
+					}
+				});
+			} else
+				OP.apps(app, $.query, $.callback);
 		});
 	});
 

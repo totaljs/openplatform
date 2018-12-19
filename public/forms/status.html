@@ -1,0 +1,30 @@
+<div data-jc="form__common.form__if:status;width:500;title:@(My status);submit:statusform/submit;reload:statusform/reload" class="hidden">
+	<div class="padding">
+		<div data-jc="dropdown__statusform.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Off work|4);type:number__0" class="m">@(Availability)</div>
+		<div data-jc="textbox__statusform.status__maxlength:70" class="m">@(Status)</div>
+	</div>
+	<div class="ui-form-buttons" data-jc="validation__statusform">
+		<button name="submit" class="userbg" style="width:100%" disabled>@(APPLY)</button>
+	</div>
+</div>
+
+<script>
+	PLUGIN('statusform', function(exports) {
+
+		exports.reload = function() {
+			SET('statusform', { statusid: user.statusid, status: user.status }, true);
+		};
+
+		exports.submit = function(com) {
+			SETTER('loading', 'show');
+			var model = GETR('statusform');
+			AJAX('POST /api/account/status/', model, function() {
+				user.statusid = model.statusid;
+				user.status = model.status;
+				UPDATE('user');
+				SETTER('loading', 'hide', 1000);
+				com.hide();
+			});
+		};
+	});
+</script>
