@@ -66,6 +66,11 @@ OP.meta = function(app, user, serverside) {
 	meta.verify = CONF.url + '/api/verify/?accesstoken=' + meta.accesstoken;
 	meta.openplatform = CONF.url;
 	meta.openplatformid = OP.id;
+	meta.name = CONF.name;
+
+	if (CONF.email)
+		meta.email = CONF.email;
+
 	meta.colorscheme = CONF.colorscheme;
 	meta.background = CONF.background;
 

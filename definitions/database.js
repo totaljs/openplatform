@@ -351,6 +351,7 @@ FUNC.apps.query = function(filter, callback) {
 
 	// filter.take
 	// filter.skip
+	// filter.q
 	// filter.id {String Array}
 
 	if (typeof(filter.id) === 'string')
@@ -359,6 +360,7 @@ FUNC.apps.query = function(filter, callback) {
 	var builder = DBMS().listing('apps');
 	builder.paginate(filter.page, filter.limit, 5000);
 	filter.id && builder.in('_id', filter.id);
+	filter.q && builder.search('search', filter.q.toSearch());
 	builder.callback(callback);
 };
 
