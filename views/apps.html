@@ -81,7 +81,7 @@
 			<div class="search">
 				<div data-jc="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
 			</div>
-			<div class="scroller" data-margin="40">
+			<div data-jc="scrollbar__apps.items__margin:40;parent:window;offset:true">
 				<div data-jc="search__apps.search__selector:.item">
 					<div data-jc="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
 						<script type="text/html">
@@ -97,14 +97,14 @@
 			</nav>
 		</div>
 	</div>
-	<div class="col-sm-9 np" data-jc="xs__apps.form.id__if:value!=null;exec:resizelayout">
+	<div class="col-sm-9 np" data-jc="xs__apps.form.show__if:value!=null&&value==true;exec:resizelayout">
 
 		<nav class="nav visible-xs">
-			<a href="javascript:void(0)" class="exec" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
+			<span class="exec link" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
 		</nav>
 
 		<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
-			<div class="scroller" data-margin="40">
+			<div data-jc="scrollbar__apps.form.show__margin:40;parent:window;marginxs:42">
 				<div class="scroller-padding">
 
 					<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
@@ -202,7 +202,7 @@
 		} else {
 			resizelayout();
 			apps_refresh();
-			AJAX('GET /api/meta/', 'apps.meta');
+			AJAX('GET /api/internal/meta/', 'apps.meta');
 		}
 	});
 
@@ -231,7 +231,7 @@
 	function formscroll(value, path, el) {
 		if (path === 'apps.form') {
 			setTimeout(function() {
-				el.prop('scrollTop', 0);
+				el.SETTER('scrollbar', 'scrollTop', 0);
 			}, 10);
 		}
 	}

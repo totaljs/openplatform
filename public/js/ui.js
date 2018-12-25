@@ -1420,55 +1420,6 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 	};
 });
 
-COMPONENT('template', function(self) {
-
-	var properties = null;
-
-	self.readonly();
-	self.nocompile();
-
-	self.configure = function(key, value) {
-		if (key === 'properties')
-			properties = value.split(',').trim();
-	};
-
-	self.make = function(template) {
-
-		if (template) {
-			self.template = Tangular.compile(template);
-			return;
-		}
-
-		var script = self.find('script');
-
-		if (!script.length) {
-			script = self.element;
-			self.element = self.parent();
-		}
-
-		self.template = Tangular.compile(script.html());
-		script.remove();
-	};
-
-	self.setter = function(value, path) {
-
-		if (properties && path !== self.path) {
-			var key = path.substring(self.path.length + 1);
-			if (!key || properties.indexOf(key))
-				return;
-		}
-
-		if (NOTMODIFIED(self.id, value))
-			return;
-		if (value) {
-			KEYPRESS(function() {
-				self.html(self.template(value)).rclass('hidden');
-			}, 100, self.id);
-		} else
-			self.aclass('hidden');
-	};
-});
-
 COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;limit:0;selectedtext:{0} selected', function(self, config) {
 
 	var data = [], render = '';
@@ -3575,7 +3526,7 @@ COMPONENT('search', 'class:hidden;delay:200;attribute:data-search', function(sel
 		if (!config.selector || !config.attribute || value == null)
 			return;
 
-		KEYPRESS(function() {
+		setTimeout2('search' + self.ID, function() {
 
 			var elements = self.find(config.selector);
 			if (!value) {
@@ -4402,4 +4353,490 @@ COMPONENT('singleupload', 'title:{{ name }};url:/api/upload/', function(self, co
 	self.destroy = function() {
 		input.off().remove();
 	};
+});
+
+COMPONENT('suggestion', function(self, config) {
+
+	var container, arrow, timeout, icon, input = null;
+	var is = false, selectedindex = 0, resultscount = 0;
+	var ajax = null;
+
+	self.items = null;
+	self.template = Tangular.compile('<li data-index="{{ $.index }}"{{ if selected }} class="selected"{{ fi }}>{{ name | raw }}</li>');
+	self.callback = null;
+	self.readonly();
+	self.singleton();
+	self.nocompile && self.nocompile();
+
+	self.configure = function(key, value, init) {
+		if (init)
+			return;
+		switch (key) {
+			case 'placeholder':
+				self.find('input').prop('placeholder', value);
+				break;
+		}
+	};
+
+	self.make = function() {
+
+		self.aclass('ui-suggestion hidden');
+		self.append('<span class="ui-suggestion-arrow"></span><div class="ui-suggestion-search"><span class="ui-suggestion-button"><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="ui-suggestion-search-input" /></div></div><div class="ui-suggestion-container"><ul></ul></div>'.format(config.placeholder));
+		container = self.find('ul');
+		arrow = self.find('.ui-suggestion-arrow');
+		input = self.find('input');
+		icon = self.find('.ui-suggestion-button').find('.fa');
+
+		self.event('mouseenter mouseleave', 'li', function() {
+			container.find('li.selected').rclass('selected');
+			$(this).aclass('selected');
+			var arr = container.find('li:visible');
+			for (var i = 0; i < arr.length; i++) {
+				if ($(arr[i]).hclass('selected')) {
+					selectedindex = i;
+					break;
+				}
+			}
+		});
+
+		self.event('click', '.ui-suggestion-button', function(e) {
+			input.val('');
+			self.search();
+			e.stopPropagation();
+			e.preventDefault();
+		});
+
+		self.event('touchstart mousedown', 'li', function(e) {
+			self.callback && self.callback(self.items[+this.getAttribute('data-index')], $(self.target));
+			self.hide();
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		$(document).on('click', function(e) {
+			is && !$(e.target).hclass('ui-suggestion-search-input') && self.hide(0);
+		});
+
+		$(window).on('resize', function() {
+			is && self.hide(0);
+		});
+
+		self.event('keydown', 'input', function(e) {
+			var o = false;
+			switch (e.which) {
+				case 27:
+					o = true;
+					self.hide();
+					break;
+				case 13:
+					o = true;
+					var sel = self.find('li.selected');
+					if (sel.length && self.callback)
+						self.callback(self.items[+sel.attrd('index')]);
+					self.hide();
+					break;
+				case 38: // up
+					o = true;
+					selectedindex--;
+					if (selectedindex < 0)
+						selectedindex = 0;
+					else
+						self.move();
+					break;
+				case 40: // down
+					o = true;
+					selectedindex++ ;
+					if (selectedindex >= resultscount)
+						selectedindex = resultscount;
+					else
+						self.move();
+					break;
+			}
+
+			if (o) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+
+		});
+
+		self.event('input', 'input', function() {
+			setTimeout2(self.ID, self.search, 100, null, this.value);
+		});
+
+		self.on('reflow', function() {
+			is && self.hide(1);
+		});
+
+		$(window).on('scroll', function() {
+			is && self.hide(1);
+		});
+
+		self.on('scroll', function() {
+			is && self.hide(1);
+		});
+	};
+
+	self.move = function() {
+		var counter = 0;
+		var scroller = container.parent();
+		var h = scroller.height();
+		container.find('li').each(function() {
+			var el = $(this);
+
+			if (el.hclass('hidden')) {
+				el.rclass('selected');
+				return;
+			}
+
+			var is = selectedindex === counter;
+			el.tclass('selected', is);
+			if (is) {
+				var t = (h * counter) - h;
+				if ((t + h * 4) > h)
+					scroller.scrollTop(t - h);
+				else
+					scroller.scrollTop(0);
+			}
+			counter++;
+		});
+	};
+
+	self.search = function(value) {
+
+		icon.tclass('fa-times', !!value).tclass('fa-search', !value);
+
+		if (!value) {
+			container.find('li').rclass('hidden');
+			resultscount = self.items ? self.items.length : 0;
+			selectedindex = 0;
+			self.move();
+			return;
+		}
+
+		resultscount = 0;
+		selectedindex = 0;
+
+		if (ajax) {
+			ajax(value, function(items) {
+				var builder = [];
+				var indexer = {};
+				for (var i = 0; i < items.length; i++) {
+					var item = items[i];
+					indexer.index = i;
+					!item.value && (item.value = item.name);
+					resultscount++;
+					builder.push(self.template(item, indexer));
+				}
+				self.items = items;
+				container.html(builder);
+				self.move();
+			});
+		} else {
+			container.find('li').each(function() {
+				var el = $(this);
+				var val = this.innerHTML.toSearch();
+				var is = val.indexOf(value) === -1;
+				el.tclass('hidden', is);
+				if (!is)
+					resultscount++;
+			});
+			self.move();
+		}
+	};
+
+	self.show = function(orientation, target, items, callback) {
+
+		if (is) {
+			clearTimeout(timeout);
+			var obj = target instanceof jQuery ? target[0] : target;
+			if (self.target === obj) {
+				self.hide(0);
+				return;
+			}
+		}
+
+		ajax = null;
+		target = $(target);
+
+		var type = typeof(items);
+		var item;
+
+		if (type === 'function' && callback) {
+			ajax = items;
+			type = '';
+			items = null;
+		}
+
+		if (type === 'string')
+			items = self.get(items);
+		else if (type === 'function') {
+			callback = items;
+			items = (target.attrd('options') || '').split(';');
+			for (var i = 0; i < items.length; i++) {
+				item = items[i];
+				if (item) {
+					var val = item.split('|');
+					items[i] = { name: val[0], value: val[2] == null ? val[0] : val[2] };
+				}
+			}
+		}
+
+		if (!items && !ajax) {
+			self.hide(0);
+			return;
+		}
+
+		self.items = items;
+		self.callback = callback;
+		input.val('');
+
+		var builder = [];
+
+		if (!ajax) {
+			var indexer = {};
+			for (var i = 0; i < items.length; i++) {
+				item = items[i];
+				indexer.index = i;
+				!item.value && (item.value = item.name);
+				builder.push(self.template(item, indexer));
+			}
+		}
+
+		self.target = target[0];
+		var offset = target.offset();
+
+		container.html(builder);
+
+		switch (orientation) {
+			case 'left':
+				arrow.css({ left: '15px' });
+				break;
+			case 'right':
+				arrow.css({ left: '210px' });
+				break;
+			case 'center':
+				arrow.css({ left: '107px' });
+				break;
+		}
+
+		var options = { left: orientation === 'center' ? Math.ceil((offset.left - self.element.width() / 2) + (target.innerWidth() / 2)) : orientation === 'left' ? offset.left - 8 : (offset.left - self.element.width()) + target.innerWidth(), top: offset.top + target.innerHeight() + 10 };
+		self.css(options);
+
+		if (is)
+			return;
+
+		selectedindex = 0;
+		resultscount = items ? items.length : 0;
+		self.move();
+		self.search();
+
+		self.rclass('hidden');
+		setTimeout(function() {
+			self.aclass('ui-suggestion-visible');
+			self.emit('suggestion', true, self, self.target);
+		}, 100);
+
+		!isMOBILE && setTimeout(function() {
+			input.focus();
+		}, 500);
+
+		setTimeout(function() {
+			is = true;
+		}, 50);
+	};
+
+	self.hide = function(sleep) {
+		if (!is)
+			return;
+		clearTimeout(timeout);
+		timeout = setTimeout(function() {
+			self.rclass('ui-suggestion-visible').aclass('hidden');
+			self.emit('suggestion', false, self, self.target);
+			self.callback = null;
+			self.target = null;
+			is = false;
+		}, sleep ? sleep : 100);
+	};
+
+});
+
+COMPONENT('dynamicvalue', 'html:{{ name }};icon2:search;loading:true', function(self, config) {
+
+	var cls = 'ui-dynamicvalue';
+
+	self.readonly();
+	self.nocompile();
+
+	self.validate = function(value) {
+		return !config.required || config.disabled ? true : !!value;
+	};
+
+	self.state = function(type) {
+		if (!type)
+			return;
+		var invalid = config.required ? self.isInvalid() : false;
+		if (invalid === self.$oldstate)
+			return;
+		self.$oldstate = invalid;
+		self.tclass(cls + '-invalid', invalid);
+	};
+
+	self.configure = function(key, value) {
+		switch (key) {
+			case 'html':
+				config.html = Tangular.compile(value);
+				break;
+			case 'label':
+				var label = self.find('.' + cls + '-label');
+				label.tclass('hidden', !value);
+				label.find('span').html((value || '') + ':');
+				break;
+			case 'required':
+				self.noValid(!value);
+				!value && self.state(1, 1);
+				self.tclass(cls + '-required', value);
+				break;
+			case 'disabled':
+				self.tclass('ui-disabled', value);
+				break;
+			case 'icon':
+				var fa = self.find('.' + cls + '-label').find('i');
+				fa.rclass2('fa-').rclass('hidden');
+				if (value)
+					fa.aclass('fa-' + value);
+				else
+					fa.aclass('hidden');
+				break;
+			case 'remap':
+				config.remap = value ? FN(value) : null;
+				break;
+		}
+	};
+
+	self.make = function() {
+
+		if (!config.label)
+			config.label = self.html();
+
+		self.aclass(cls + '-container');
+		self.html('<div class="{2}-label{3}"><i class="fa hidden"></i><span>{1}:</span></div><div class="{2}"><div class="{2}-icon"><i class="fa fa-times"></i></div><div class="{2}-value">{0}</div></div>'.format(config.placeholder, config.label, cls, config.label ? '' : ' hidden'));
+
+		self.event('click', '.' + cls, function() {
+			!config.disabled && EXEC(config.click, self.element, function(value) {
+				self.set(value);
+				self.change();
+				config.required && setTimeout(self.validate2, 100);
+			}, self.get());
+		});
+
+		self.event('click', '.fa-times', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			if (!config.disabled) {
+				self.change();
+				self.set(null);
+			}
+		});
+	};
+
+	self.bindvalue = function(value) {
+
+		if (config.remap)
+			value = config.remap(value);
+
+		self.tclass(cls + '-is', !!value);
+		var fa = self.find('.' + cls + '-icon').find('i');
+
+		fa.rclass2('fa-');
+
+		if (value)
+			fa.aclass('fa-times');
+		else
+			fa.aclass('fa-' + config.icon2);
+
+		var val = value ? config.html(value) : config.placeholder;
+		var body = self.find('.' + cls + '-value');
+
+		if (body.html() !== val)
+			body.html(val);
+
+		config.loading && SETTER('loading', 'hide', 200);
+	};
+
+	self.setter = function(value, path, type) {
+		if (value) {
+			if (config.url) {
+				config.loading && SETTER('loading', 'show');
+				AJAX('GET ' + config.url.arg({ value: encodeURIComponent(value) }), self.bindvalue);
+			} else
+				EXEC(config.exec, value, self.bindvalue, type);
+		} else
+			self.bindvalue(value);
+	};
+
+});
+
+COMPONENT('scrollbar', 'reset:true;margin:0;marginxs:0;marginsm:0;marginmd:0;marginlg:0', function(self, config) {
+
+	self.readonly();
+
+	self.configure = function(key, value) {
+		if (key === 'track') {
+			if (!(value instanceof Array))
+				value = value.split(',').trim();
+
+			for (var i = 0; i < value.length; i++)
+				value[i] = self.path + '.' + value[i];
+
+			value.push(self.path);
+			config.track = value;
+		}
+	};
+
+	self.done = function() {
+
+		if (config.parent) {
+			var parent = config.parent === 'window' ? $(window) : self.element.closest(config.parent).height();
+			self.element.css('height', parent.height() - (config.offset ? self.element.offset().top : 0) - config.margin - config['margin' + WIDTH()]);
+		}
+
+		self.scrollbar.resize();
+	};
+
+	self.on('resize', self.done);
+
+	self.make = function() {
+		self.scrollbar = SCROLLBAR(self.element, { visibleX: config.visibleX, visibleY: config.visibleY });
+	};
+
+	self.resize = function() {
+		self.scrollbar.resize();
+	};
+
+	self.scrollLeft = function(val) {
+		self.scrollbar.scrollLeft(val);
+	};
+
+	self.scrollTop = function(val) {
+		self.scrollbar.scrollTop(val);
+	};
+
+	self.scroll = function(x, y) {
+		self.scrollbar.scroll(x, y);
+	};
+
+	self.reset = function() {
+		self.scroll(0, 0);
+	};
+
+	self.setter = function(value, path, type) {
+		if (config.track && config.track.indexOf(path) === -1)
+			return;
+		type && setTimeout(function() {
+			self.done();
+			config.reset && self.reset();
+		}, 500);
+	};
+
 });

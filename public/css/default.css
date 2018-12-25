@@ -6,7 +6,9 @@ body { height: 100%; overflow: hidden; background: #808080 linear-gradient(#899a
 .ui-dark { color: #C0C0C0; }
 
 header { height: 50px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; top: -50px; color: #909090; transition: all 0.3s; box-shadow: 0 5px 5px rgba(0,0,0,0.15); }
-header nav { float: left; }
+header .nav { float: left; width: 70%; overflow: hidden; height: 50px; }
+header .nav > div { overflow-x: scroll; width: 100%; height: 80px; overflow-scrolling: touch; }
+header nav { width: 5000px; height: 50px; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 50px; height: 49px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
 header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
@@ -255,4 +257,5 @@ h3 i { margin-right: 5px; }
 	.startmenu-title img { display: none; }
 	.startmenu-title > span { display: none; }
 	.startmenu-status { float: left; width: 70%; background-color: transparent; border-left: 0; }
+	.ui-notifications { border-left: 0; }
 }

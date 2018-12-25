@@ -1,6 +1,6 @@
 /*auto*/
 
-html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; }
+html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; height: 100%; }
 
 .panel { background-color: #F0F0F0; border-right: 1px solid #D0D0D0; }
 .scroller { overflow-y: scroll; overflow-scrolling: touch; }
@@ -47,9 +47,9 @@ h2 .fa { margin-right: 10px; }
 .ui-dark .bg-white { background-color: #303030; }
 
 .nav { height: 42px; border-bottom: 1px solid #E0E0E0; padding: 0 20px; }
-.nav > a { display: inline-block; margin: 10px 10px 0 0; color: #2E5ADA; position: relative; vertical-align: middle; }
-.nav > a .fa { margin-right: 5px; }
-.nav > a:hover { color: gray; text-decoration: none; }
+.nav > .link { display: inline-block; margin: 10px 10px 0 0; position: relative; vertical-align: middle; }
+.nav > .link .fa { margin-right: 5px; }
+.nav > .link:hover { color: gray; text-decoration: none; }
 .nav .right { float: right; }
 
 .buttonbar { background-color: #F0F0F0; height: 40px; }

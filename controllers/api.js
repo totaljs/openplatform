@@ -9,7 +9,7 @@ exports.install = function() {
 		// Internal
 		ROUTE('POST   /api/internal/apps/               *App          --> @refresh @save (response)');
 		ROUTE('DELETE /api/internal/apps/{id}/          *App          --> @remove', [10000]);
-		ROUTE('POST   /api/internal/apps/meta/          *Meta         --> @exec');
+		ROUTE('POST   /api/internal/apps/meta/          *AppMeta      --> @exec');
 		ROUTE('POST   /api/internal/users/              *User         --> @save');
 		ROUTE('DELETE /api/internal/users/{id}/         *User         --> @remove');
 
@@ -21,7 +21,7 @@ exports.install = function() {
 		ROUTE('GET    /api/internal/apps/',             json_apps_query);
 		ROUTE('GET    /api/internal/users/{id}/',       json_users_read);
 		ROUTE('GET    /api/internal/users/',            json_users_query);
-		ROUTE('GET    /api/meta/',                      json_meta_query);
+		ROUTE('GET    /api/internal/meta/',             json_meta_query);
 
 		ROUTE('GET    /api/account/                     *Account      --> @read');
 		ROUTE('POST   /api/account/                     *Account      --> @save');
@@ -56,6 +56,7 @@ exports.install = function() {
 	ROUTE('POST   /api/notify/                          *Notification --> @save');
 	ROUTE('POST   /api/config/                          *Config       --> @save');
 	ROUTE('GET    /api/config/                          *Config       --> @get');
+	ROUTE('GET    /api/meta/                            *Meta         --> @get');
 
 	// CORS
 	CORS();

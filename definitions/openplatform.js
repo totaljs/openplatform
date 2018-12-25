@@ -62,8 +62,14 @@ OP.meta = function(app, user, serverside) {
 	if (!user.apps || !user.apps[app.id])
 		return null;
 
-	var meta = { datetime: NOW, ip: user.ip, accesstoken: OP.encodeAuthToken(app, user), url: app.frame, settings: app.settings, id: app.id };
-	meta.verify = CONF.url + '/api/verify/?accesstoken=' + meta.accesstoken;
+	var meta = { datetime: NOW, ip: user.ip, url: app.frame, settings: app.settings, id: app.id };
+	var token = OP.encodeAuthToken(app, user);
+
+	if (!serverside) {
+		meta.accesstoken = token;
+		meta.verify = CONF.url + '/api/verify/?accesstoken=' + token;
+	}
+
 	meta.openplatform = CONF.url;
 	meta.openplatformid = OP.id;
 	meta.name = CONF.name;
@@ -85,7 +91,7 @@ OP.meta = function(app, user, serverside) {
 		meta.serverside = serverside === true;
 
 	if (app.allowreadmeta)
-		meta.meta = G.meta;
+		meta.meta = CONF.url + '/api/meta/?accesstoken=' + token;
 
 	if (app.allowreadprofile) {
 
@@ -98,10 +104,10 @@ OP.meta = function(app, user, serverside) {
 	}
 
 	if (app.allowreadapps)
-		meta.apps = CONF.url + '/api/apps/?accesstoken=' + meta.accesstoken;
+		meta.apps = CONF.url + '/api/apps/?accesstoken=' + token;
 
 	if (app.allowreadusers)
-		meta.users = CONF.url + '/api/users/?accesstoken=' + meta.accesstoken;
+		meta.users = CONF.url + '/api/users/?accesstoken=' + token;
 
 	return meta;
 };
@@ -237,7 +243,7 @@ function readuser(user, type, app) {
 
 	obj.statusid = user.statusid;
 
-	if (obj.status)
+	if (user.status)
 		obj.status = user.status;
 
 	if (user.blocked)
@@ -401,6 +407,9 @@ OP.refresh = function(app, callback) {
 			} else
 				app.origin = null;
 		}
+
+		if (app.origin)
+			app.origin = Object.keys(app.origin);
 
 		app.daterefreshed = NOW;
 		callback(err, app);

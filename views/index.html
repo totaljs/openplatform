@@ -14,11 +14,11 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@16.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@17.css" />
 	@{if user && (user.background || CONF.background)}
 	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
 	@{fi}
-	<script src="@{'%cdn'}/spa.min@16.js"></script>
+	<script src="@{'%cdn'}/spa.min@17.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
@@ -46,11 +46,15 @@
 			<i class="fa fa-th"></i>
 		</div>
 
-		<nav data-jc="repeater__dashboard.apps">
-			<script type="text/html">
-				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span class="userbg"></span></span></button>
-			</script>
-		</nav>
+		<div class="nav">
+			<div>
+				<nav data-jc="repeater__dashboard.apps__$setter:Dashboard/resizeapps" id="dashboardapps">
+					<script type="text/html">
+						<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span class="userbg"></span></span></button>
+					</script>
+				</nav>
+			</div>
+		</div>
 
 		<div class="button-notifications exec" data-path="common.notifications" data-value="!common.notifications">
 			<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
@@ -287,6 +291,15 @@
 
 			self.hidemenu = function() {
 				SET('common.startmenu', false);
+			};
+
+			self.resizeapps = function() {
+				var el = this.element;
+				setTimeout2(this.ID, function() {
+					el.css('width', el.find('button').length * 51);
+				}, 500, el);
+				var parent = el.parent().parent();
+				parent.css('width', WW - (parent.offset().left + (WIDTH() === 'xs' ? 80 : 210)));
 			};
 
 			self.open = function(el) {

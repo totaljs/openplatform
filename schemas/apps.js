@@ -1,4 +1,4 @@
-NEWSCHEMA('Meta', function(schema) {
+NEWSCHEMA('AppMeta', function(schema) {
 	schema.define('url', 'Url', true);
 	schema.addWorkflow('exec', function($) {
 		RESTBuilder.make(function(builder) {
@@ -41,7 +41,7 @@ NEWSCHEMA('App', function(schema) {
 			var ip = $.ip;
 
 			if (app.origin) {
-				if (!app.origin[ip] && app.hostname !== ip) {
+				if (app.origin.indexOf(ip) == -1 && app.hostname !== ip) {
 					$.invalid('error-invalid-origin');
 					return;
 				}

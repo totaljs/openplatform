@@ -23,6 +23,9 @@ ON('resize', function() {
 		var el = $(this);
 		el.css('height', h - (el.offset().top + 20));
 	});
+
+	var com = $('#dashboardapps')[0].$com;
+	com && PLUGIN('Dashboard').resizeapps.call(com);
 });
 
 $(window).on('resize', function() {

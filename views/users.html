@@ -43,7 +43,7 @@
 			<div class="search">
 				<div data-jc="textbox__users.filter.q__type:search;placeholder:@(Search users)"></div>
 			</div>
-			<div class="scroller" data-margin="40">
+			<div data-jc="scrollbar__users.items__margin:40;parent:window;offset:true">
 				<div data-jc="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
 					<script type="text/html">
 						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
@@ -59,50 +59,50 @@
 			</nav>
 		</div>
 	</div>
-	<div class="col-sm-9 np" data-jc="xs__users.form.show__if:value!=null;exec:resizelayout">
+	<div class="col-sm-9 np" data-jc="xs__users.form.show__if:value!=null&&value==true;exec:resizelayout">
 		<nav class="nav visible-xs">
-			<a href="javascript:void(0)" class="exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
+			<span class="link exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
 		</nav>
 		<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
-			<div class="scroller" data-margin="40">
-				<div data-jc="template__users.form__properties:datecreated,dateupdated,datelogged,online">
+			<div data-jc="scrollbar__users.form.show__margin:40;parent:window;marginxs:42">
+				<div data-bind="users.form__track:datecreated,dateupdated,datelogged,online__template">
 					<script type="text/html">
-						{{ if id }}
+						{{ if value.id }}
 							<div class="scroller-padding bg-smoke">
 								<table class="table table-bordered table-small nmb bg-white">
 									<tbody>
 										<tr>
 											<td>@(ID)</td>
-											<td class="col-xs-6 right">{{ id }}</td>
+											<td class="col-xs-6 right">{{ value.id }}</td>
 										</tr>
-										{{ if datelogged }}
+										{{ if value.datelogged }}
 										<tr>
 											<td>@(Logged)</td>
-											<td class="right">{{ if online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ datelogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ if value.online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ value.datelogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if datecreated }}
+										{{ if value.datecreated }}
 										<tr>
 											<td>@(Created)</td>
-											<td class="right">{{ datecreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.datecreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if dateupdated }}
+										{{ if value.dateupdated }}
 										<tr>
 											<td>@(Updated)</td>
-											<td class="right">{{ dateupdated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.dateupdated | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if datepassword }}
+										{{ if value.datepassword }}
 										<tr>
 											<td>@(Password changed)</td>
-											<td class="right">{{ datepassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.datepassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if datenotified }}
+										{{ if value.datenotified }}
 										<tr>
 											<td>@(Last notification)</td>
-											<td class="right">{{ datenotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.datenotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
 									</tbody>
@@ -165,7 +165,7 @@
 				</div>
 				<div class="padding bg-yellow">
 					<div data-jc="textbox__users.form.accesstoken__maxlength:50;required:true" class="b">@(Access Token)</div>
-					<div class="help"><a href="javascript:void(0)" class="exec" data-exec="userform_generatetoken">@(Generate token)</a></div>
+					<div class="help"><span class="exec link" data-exec="userform_generatetoken">@(Generate token)</span></div>
 				</div>
 				<div class="scroller-padding">
 					<div class="row">
@@ -201,10 +201,10 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-6 m">
-							<div data-jc="dropdown__users.form.supervisorid__empty:;datasource:%userssupervisors;icon:user;empty:">@(Select <b>Supervisor</b>)</div>
+							<div data-jc="dynamicvalue__users.form.supervisorid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Supervisor</b>)</div>
 						</div>
 						<div class="col-sm-6 m">
-							<div data-jc="dropdown__users.form.deputyid__empty:;datasource:%userssupervisors;icon:user;empty:">@(Select <b>Deputy</b>)</div>
+							<div data-jc="dynamicvalue__users.form.deputyid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Deputy</b>)</div>
 						</div>
 					</div>
 				</div>
@@ -246,7 +246,7 @@
 						</div>
 						<div class="col-sm-6 m">
 							<div data-jc="textbox__users.form.password__icon2:lock;maxlength:30;required:true">@(Password)</div>
-							<div class="help"><a href="javascript:void(0)" class="exec" data-exec="userform_generatepassword">@(Generate password)</a></div>
+							<div class="help"><span class="exec link" data-exec="userform_generatepassword">@(Generate password)</span></div>
 						</div>
 					</div>
 					<hr />
@@ -306,6 +306,7 @@
 			resizelayout();
 			userform_refresh(true);
 		}
+		OP.loading(false);
 	});
 
 	OP.on('maximize', function() {
@@ -329,6 +330,17 @@
 		});
 	}
 
+	function userform_search(el, next) {
+		SETTER('suggestion', 'show', 'left', el, function(search, next) {
+			AJAX('GET /api/internal/users/', { q: search }, function(response) {
+				users.form.id && (response.items = response.items.remove('id', users.form.id));
+				next(response.items);
+			});
+		}, function(selected) {
+			next(selected.id);
+		});
+	}
+
 	function userform_refresh(meta, delay) {
 		OP.loading2(true);
 		AJAX('GET /api/internal/users/', users.filter, function(response) {
@@ -339,7 +351,7 @@
 
 		if (meta === true) {
 			setTimeout(function() {
-				AJAX('GET /api/meta/', 'users.meta');
+				AJAX('GET /api/internal/meta/', 'users.meta');
 			}, delay || 0);
 			AJAX('GET /api/internal/apps/', 'users.apps');
 		}
@@ -348,7 +360,7 @@
 	function formscroll(value, path, el) {
 		if (path === 'users.form') {
 			setTimeout(function() {
-				el.find('.scroller').prop('scrollTop', 0);
+				el.SETTER('scrollbar', 'scrollTop', 0);
 			}, 10);
 		}
 	}
@@ -370,7 +382,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { show: true, id: '', accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, value: 80, apps: [] }, true);
+		SET('users.form', { show: true, id: '', accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, value: 80, apps: [], statusid: 0 }, true);
 	}
 
 	function usersform_remove() {

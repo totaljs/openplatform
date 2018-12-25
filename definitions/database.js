@@ -83,7 +83,7 @@ FUNC.users.query = function(filter, callback) {
 	filter.statusid && builder.where('statusid', filter.statusid);
 	filter.customer && builder.where('customer', true);
 	filter.reference && builder.where('reference', filter.reference);
-	builder.paginate(filter.page, filter.limit, 5000);
+	builder.paginate(filter.page, filter.limit, 1000);
 	builder.callback(callback);
 };
 
@@ -358,7 +358,7 @@ FUNC.apps.query = function(filter, callback) {
 		filter.id = filter.id.split(',');
 
 	var builder = DBMS().listing('apps');
-	builder.paginate(filter.page, filter.limit, 5000);
+	builder.paginate(filter.page, filter.limit, 1000);
 	filter.id && builder.in('_id', filter.id);
 	filter.q && builder.search('search', filter.q.toSearch());
 	builder.callback(callback);

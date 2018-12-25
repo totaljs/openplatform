@@ -54,7 +54,7 @@ NEWSCHEMA('User', function(schema) {
 			var ip = $.ip;
 
 			if (app.origin) {
-				if (!app.origin[ip] && app.hostname !== ip) {
+				if (app.origin.indexOf(ip) == -1 && app.hostname !== ip) {
 					$.invalid('error-invalid-origin');
 					return;
 				}
