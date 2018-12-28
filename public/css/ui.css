@@ -315,17 +315,17 @@ input:invalid { box-shadow: none; }
 .ui-range-label { margin-bottom: 0; font-size: 12px; text-align: left; color: gray; }
 .ui-range-label .fa { width: 14px; margin-right: 5px; }
 .ui-range-label-required:before { color: red; content: '***'; margin-right: 5px; }
-.ui-range input[type=range] { -webkit-appearance: none; margin: 8px 0; width: 100%; }
+.ui-range input[type=range] { -webkit-appearance: none; margin: 8px 0; width: 100%; padding: 0; line-height: 0; }
 .ui-range input[type=range]:focus { outline: none; }
 .ui-range input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 10px; cursor: pointer; animate: 0.2s; box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; background: #E0E0E0; border-radius: 3px; border: 0px solid #000101; }
 .ui-range input[type=range]::-webkit-slider-thumb { box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; border: 0px solid #000000; height: 17px; width: 39px; border-radius: 3px; background: #505050; cursor: pointer; -webkit-appearance: none; margin-top: -3.6px; }
 .ui-range input[type=range]:focus::-webkit-slider-runnable-track { background: #E0E0E0; }
 .ui-range input[type=range]::-moz-range-track { width: 100%; height: 10px; cursor: pointer; animate: 0.2s; box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; background: #E0E0E0; border-radius: 3px; border: 0px solid #000101; }
 .ui-range input[type=range]::-moz-range-thumb { box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; border: 0px solid #000000; height: 17px; width: 39px; border-radius: 3px; background: #505050; cursor: pointer; }
-.ui-range input[type=range]::-ms-track { width: 100%; height: 10px; cursor: pointer; animate: 0.2s; background: transparent; border-color: transparent; border-width: 39px 0; color: transparent; }
-.ui-range input[type=range]::-ms-fill-lower { background: #E0E0E0; border: 0px solid #000101; border-radius: 50px; box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; }
-.ui-range input[type=range]::-ms-fill-upper { background: #E0E0E0; border: 0px solid #000101; border-radius: 50px; box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; }
-.ui-range input[type=range]::-ms-thumb { box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; border: 0px solid #000000; height: 17px; width: 39px; border-radius: 3px; background: #505050; cursor: pointer; }
+.ui-range input[type=range]::-ms-track { width: 100%; height: 10px; cursor: pointer; animate: 0.2s; background: transparent; border-color: transparent; border-width: 39px 0; color: transparent; padding: 0; }
+.ui-range input[type=range]::-ms-fill-lower { background: #E0E0E0; border: 0px solid #000101; border-radius: 50px; box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; padding: 0; }
+.ui-range input[type=range]::-ms-fill-upper { background: #E0E0E0; border: 0px solid #000101; border-radius: 50px; box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; padding: 0; }
+.ui-range input[type=range]::-ms-thumb { box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d; border: 0px solid #000000; height: 17px; width: 39px; border-radius: 3px; background: #505050; cursor: pointer; padding: 0; }
 .ui-range input[type=range]:focus::-ms-fill-lower { background: #E0E0E0; }
 .ui-range input[type=range]:focus::-ms-fill-upper { background: #E0E0E0; }
 

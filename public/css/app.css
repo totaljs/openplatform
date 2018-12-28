@@ -4,7 +4,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 
 .panel { background-color: #F0F0F0; border-right: 1px solid #D0D0D0; }
 .scroller { overflow-y: scroll; overflow-scrolling: touch; }
-.scroller-padding { padding: 20px 30px 20px 20px; }
+.scroller-padding { padding: 20px; }
 
 .ui-dark .panel { background-color: #252525; border-right-color: #303030; }
 

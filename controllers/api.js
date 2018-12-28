@@ -80,7 +80,7 @@ function json_verify() {
 		}
 
 		if (app.origin) {
-			if (!app.origin[self.ip] && app.hostname !== self.ip) {
+			if (app.origin.indexOf(self.ip) == -1 && app.hostname !== self.ip) {
 				self.invalid('error-invalid-origin');
 				return;
 			}
