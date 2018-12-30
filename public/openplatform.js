@@ -160,14 +160,21 @@ OP.loading = function(visible, interval) {
 
 	OP.$loading && clearTimeout(OP.$loading);
 
+	var obj = { show: visible, text: '' };
+
+	if (typeof(interval) === 'string') {
+		obj.text = interval;
+		interval = 0;
+	}
+
 	if (!interval) {
-		OP.send('loading', visible);
+		OP.send('loading', obj);
 		return;
 	}
 
-	OP.$loading = setTimeout(function(visible) {
-		OP.send('loading', visible);
-	}, interval, visible);
+	OP.$loading = setTimeout(function(obj) {
+		OP.send('loading', obj);
+	}, interval, obj);
 };
 
 OP.success = function(message, button) {

@@ -203,7 +203,14 @@ $(window).on('message', function(e) {
 
 		case 'loading':
 			var iframe = processes.findProcess(app.id);
-			iframe && iframe.element.find('.ui-process-loading').tclass('hidden', data.body !== true);
+			if (iframe) {
+				var el = iframe.element.find('.ui-process-loading');
+				if (data.body && typeof(data.body) !== 'boolean') {
+					el.find('.ui-process-loading-text').html(data.body.text || '');
+					el.tclass('hidden', !data.body.show);
+				} else
+					el.tclass('hidden', data.body !== true); // backward compatibility
+			}
 			break;
 
 		case 'loading2':
