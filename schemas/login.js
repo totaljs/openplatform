@@ -20,7 +20,7 @@ NEWSCHEMA('Login', function(schema) {
 					return;
 				}
 
-				FUNC.sessions.get(user.id, function(err, user) {
+				FUNC.sessions.get(user.id, function(err, session) {
 
 					var done = function() {
 						var cookie = {};
@@ -31,17 +31,16 @@ NEWSCHEMA('Login', function(schema) {
 						$.success();
 					};
 
-					if (user) {
-						done();
-					} else {
-						user.verifytoken = U.GUID(15);
-						FUNC.users.set(user, ['verifytoken'], function(err) {
+					if (session) {
+						session.verifytoken = U.GUID(15);
+						FUNC.users.set(session, ['verifytoken'], function(err) {
 							if (err)
 								$.invalid(err);
 							else
 								done();
 						});
-					}
+					} else
+						done();
 
 				});
 
