@@ -2425,12 +2425,12 @@ COMPONENT('processes', function(self, config) {
 
 		iframe.iframe[0].$loaded = 0;
 		iframe.iframe.on('load', function() {
-			if (this.$loaded === 1) {
+			if (!this.$loaded) {
 				setTimeout(function() {
 					iframe.element.find('.ui-process-loading').aclass('hidden');
 					value.internal.notifydata && self.sendnotifydata(iframe, value.internal.notifydata);
 					value.internal.loaded = true;
-				}, 1500);
+				}, 500);
 			}
 			this.$loaded++;
 		});
@@ -2495,7 +2495,7 @@ COMPONENT('processes', function(self, config) {
 					url = value.href;
 			}
 			iframe.iframe.attr('src', makeurl(url, value.accesstoken));
-		}, 2500);
+		}, 100);
 
 		setTimeout(function() {
 			iframe.element.rclass('ui-process-animation');
