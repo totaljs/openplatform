@@ -84,7 +84,7 @@ COMPONENT('time', function(self) {
 			var dt = new Date();
 			time.html(dt.format('HH{0}mm{0}ss').format(index % 2 ? ':' : ' '));
 			if (index % 15 === 0 || index === 1)
-				date.html(dt.format('dd MMMM yyyy').toLowerCase());
+				date.html(dt.format('d MMMM yyyy').toLowerCase());
 		};
 
 		setInterval(self.bindtime, 1000);
