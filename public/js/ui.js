@@ -2367,9 +2367,11 @@ COMPONENT('processes', function(self, config) {
 				}, 500);
 			}
 		} else {
+
 			// RUN APP
 			// MINIMIZED
-			appminimized[app.id] = silent !== false;
+			appminimized[app.id] = silent === true;
+
 			$('.app[data-id="{0}"]'.format(app.id)).trigger('click');
 			WAIT(function() {
 				return app.loaded;

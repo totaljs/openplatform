@@ -56,7 +56,6 @@ Thelpers.responsive = function(value) {
 
 $(window).on('message', function(e) {
 	var data = JSON.parse(e.originalEvent.data);
-
 	if (!data.openplatform)
 		return;
 
@@ -144,7 +143,6 @@ $(window).on('message', function(e) {
 
 		case 'share':
 			var target = user.apps.findItem('id', data.body.app);
-
 			if (target == null) {
 				data.body.app = data.body.app.toLowerCase();
 				for (var i = 0; i < user.apps.length; i++) {
@@ -161,6 +159,7 @@ $(window).on('message', function(e) {
 					processes.message(iframe, 'share', data.body);
 				}, data.body.silent);
 			}
+
 			break;
 
 		case 'progress':
