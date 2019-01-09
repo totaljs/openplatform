@@ -144,6 +144,17 @@ $(window).on('message', function(e) {
 
 		case 'share':
 			var target = user.apps.findItem('id', data.body.app);
+
+			if (target == null) {
+				data.body.app = data.body.app.toLowerCase();
+				for (var i = 0; i < user.apps.length; i++) {
+					if (user.apps[i].name.toLowerCase() === data.body.app) {
+						target = user.apps[i];
+						break;
+					}
+				}
+			}
+
 			if (target) {
 				processes.wait(target, function(iframe) {
 					data.body.app = app.id;
