@@ -3,6 +3,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
 	schema.define('deputyid', 'UID');
+	schema.define('directory', 'String(40)');
 	schema.define('photo', 'String(150)');
 	schema.define('statusid', Number);
 	schema.define('status', 'String(70)');
@@ -71,6 +72,11 @@ NEWSCHEMA('User', function(schema) {
 				return;
 			}
 
+			if (user.directory) {
+				if (!user.sa || !$.query.all)
+					$.query.directory = user.directory;
+			}
+
 			OP.users(app, $.query, $.callback);
 		});
 	});
@@ -134,6 +140,7 @@ NEWSCHEMA('User', function(schema) {
 				item.statusid = model.statusid;
 				item.status = model.status;
 				item.firstname = model.firstname;
+				item.directory = model.directory;
 				item.lastname = model.lastname;
 				item.email = model.email;
 				item.name = model.name;

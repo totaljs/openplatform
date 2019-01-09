@@ -92,8 +92,8 @@
 			</div>
 			<nav class="toolbar">
 				<button class="exec" data-exec="apps_create" title="@(Add app)"><i class="fa fa-plus"></i></button>
-				<button data-bind="apps.selected__disabled:!value" class="exec" data-exec="apps_remove" title="@(Remove app)"><i class="fa fa-minus"></i></button>
-				<button data-bind="apps.selected__disabled:!value" class="exec" data-exec="apps_assign" title="@(Assign selected app to users)"><i class="fa fa-users"></i></button>
+				<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_remove" title="@(Remove app)"><i class="fa fa-minus"></i></button>
+				<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_assign" title="@(Assign selected app to users)"><i class="fa fa-users"></i></button>
 			</nav>
 		</div>
 	</div>
@@ -172,9 +172,62 @@
 							</div>
 						</script>
 					</div>
+
+					<div data-bind="apps.form__template__show:value && value.id" class="bg-yellow" style="margin-top:10px">
+						<script type="text/html">
+							<div class="padding">
+
+								<div class="b m"><i class="fa fa-lock mr5"></i>@(Current permissions)</div>
+
+								{{ if value.roles && value.roles.length }}
+									<div class="b fs12" style="margin-bottom:5px">@(Supported roles:)</div>
+									<div class="m">
+									{{ foreach m in value.roles }}
+										<span class="badge badge-large badge-blue mr5">{{ m }}</span>
+									{{ end }}
+									</div>
+								{{ fi }}
+								{{ if value.origin && value.origin.length }}
+									<div class="b fs12" style="margin-bottom:5px">@(Hostname whitelist:)</div>
+									<div class="m">
+									{{ foreach m in value.origin }}
+										<span class="badge badge-large badge-red mr5">{{ m }}</span>
+									{{ end }}
+									</div>
+								{{ fi }}
+								<table class="table table-small table-bordered nmb">
+									<tr>
+										<td>Notifications</td>
+										<td class="center bg-white" style="width:30px">{{ value.allownotifications | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Server-side verification)</td>
+										<td class="center bg-white">{{ value.serververify | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read meta information)</td>
+										<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read user profile){{ if value.allowreadprofile === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadprofile === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadprofile | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read users){{ if value.allowreadusers === 1 }} - <b>@(basic information of all users)</b>{{ else if value.allowreadusers === 2 }} - <b>@(all information of all users)</b>{{ else if value.allowreadusers === 3 }} - <b>@(basic information of all users which use this app)</b>{{ else if value.allowreadusers === 4 }} - <b>@(all information of all users which use this app)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadusers | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read apps){{ if value.allowreadapps === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadapps === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
+									</tr>
+								</table>
+							</div>
+						</script>
+					</div>
 					<br />
 					<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
-					<div class="mt10 m b" data-jc="checkbox" data-jc-path="apps.form.blocked">@(Application is blocked)</div>
+					<div class="mt10 m b" data-jc="checkbox__apps.form.blocked">@(Application is blocked)</div>
+					<div class="m hidden" data-bind="apps.form.id__show" data-jc="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
 					<hr />
 					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
 					<div class="help m"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>
@@ -256,7 +309,7 @@
 
 	function apps_create(url) {
 		SET('apps.selected', '');
-		SET('apps.form', { show: true, id: '', url: (typeof(url) === 'string' ? url : null) || '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, mobilemenu: true, accesstoken: GUID(30), serververify: true }, true);
+		SET('apps.form', { show: true, permissions: true, id: '', url: (typeof(url) === 'string' ? url : null) || '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, mobilemenu: true, accesstoken: GUID(30), serververify: true }, true);
 	}
 
 	function apps_remove() {

@@ -241,6 +241,9 @@ function readuser(user, type, app) {
 	if (user.deputyid)
 		obj.deputyid = user.deputyid;
 
+	if (user.directory)
+		obj.directory = user.directory;
+
 	obj.statusid = user.statusid;
 
 	if (user.status)
@@ -375,7 +378,7 @@ OP.appuser = function(appid, userid, callback) {
 	});
 };
 
-OP.refresh = function(app, callback) {
+OP.refresh = function(app, callback, meta) {
 	var builder = new RESTBuilder(app.url);
 	builder.exec(function(err, response, output) {
 
@@ -399,17 +402,22 @@ OP.refresh = function(app, callback) {
 			app.resize = response.resize;
 			app.type = response.type;
 			app.screenshots = response.allowscreenshots === true;
+			app.responsive = response.responsive;
+			app.mobilemenu = response.mobilemenu;
+			app.serververify = response.serververify;
 
-			if (response.origin && response.origin.length) {
-				app.origin = {};
-				for (var i = 0; i < response.origin.length; i++)
-					app.origin[response.origin[i]] = true;
-			} else
+			if (meta) {
+				app.allowreadapps = response.allowreadapps;
+				app.allowreadusers = response.allowreadusers;
+				app.allowreadprofile = response.allowreadprofile;
+				app.allownotifications = response.allownotifications;
+			}
+
+			if (response.origin && response.origin.length)
+				app.origin = response.origin;
+			else
 				app.origin = null;
 		}
-
-		if (app.origin)
-			app.origin = Object.keys(app.origin);
 
 		app.daterefreshed = NOW;
 		callback(err, app);

@@ -35,6 +35,8 @@ h2 .fa { margin-right: 10px; }
 .ui-dark .button:disabled { background-color: #404040; }
 .button .fa { margin-right: 5px; }
 
+.alert { color: #856404; background-color: #FFFFD5; border: 1px solid #e8e6bd; border-radius: 3px; padding: 10px 15px; font-size: 12px; line-height: 16px; }
+
 .cancel { font-size: 12px; margin: 8px 0 0; display: block; }
 .cancel .fa { margin-right: 5px; }
 

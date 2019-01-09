@@ -18,15 +18,7 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('title', 'String(30)', true);
 	schema.define('settings', String);
 	schema.define('accesstoken', 'String(50)');
-	schema.define('allownotifications', Boolean);
-	schema.define('allowreadusers', Number);        // 0: disabled, 1: basic info (name, photo, online), 2: all info (contact), 3: basic info only users which have this app, 4: all info only users which have this app
-	schema.define('allowreadapps', Number);         // 0: disabled, 1: basic info, 2: all info
-	schema.define('allowreadprofile', Number);      // 0: disabled, 1: basic info, 2: all info
-	schema.define('allowreadmeta', Boolean);
-	schema.define('serververify', Boolean);         // Enables server-side verification only
-	schema.define('responsive', Boolean);
-	schema.define('mobilemenu', Boolean);           // Enables mobile menu
-	schema.define('blocked', Boolean);
+	schema.define('permissions', Boolean);
 
 	schema.setQuery(function($) {
 		OP.decodeAuthToken($.query.accesstoken || '', function(err, obj) {
@@ -78,18 +70,20 @@ NEWSCHEMA('App', function(schema) {
 		}
 
 		var model = $.model.$clean();
+		var permissions = model.permissions;
 
 		model.search = (model.name + ' ' + model.title).toSearch();
 		model.linker = model.title.slug();
+		model.permissions = undefined;
 
 		if (model.id) {
 			FUNC.apps.get(model.id, function(err, item) {
 				if (item) {
 					FUNC.logger('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
 					model.dateupdated = NOW;
-					sync(item, model, true);
+					sync(item, model, true, permissions);
 					OP.refresh(item, function() {
-						FUNC.apps.set(model, null, function() {
+						FUNC.apps.set(item, null, function() {
 							FUNC.emit('apps.update', item.id);
 							FUNC.emit('apps.refresh', item.id);
 							$.success();
@@ -144,26 +138,37 @@ NEWSCHEMA('App', function(schema) {
 					return;
 				}
 
-				if (response.origin && response.origin.length) {
-					$.model.origin = {};
-					for (var i = 0; i < response.origin.length; i++)
-						$.model.origin[response.origin[i]] = true;
-				} else
-					$.model.origin = null;
+				var model = $.model;
 
-				$.model.version = response.version;
-				$.model.name = response.name;
-				$.model.description = response.description;
-				$.model.author = response.author;
-				$.model.type = response.type;
-				$.model.icon = response.icon;
-				$.model.frame = response.url;
-				$.model.email = response.email;
-				$.model.roles = response.roles;
-				$.model.groups = response.groups;
-				$.model.custom = response.custom;
-				$.model.online = true;
-				$.model.daterefreshed = NOW;
+				if (response.origin && response.origin.length)
+					model.origin = response.origin;
+				else
+					model.origin = null;
+
+				model.version = response.version;
+				model.name = response.name;
+				model.description = response.description;
+				model.author = response.author;
+				model.type = response.type;
+				model.icon = response.icon;
+				model.frame = response.url;
+				model.email = response.email;
+				model.roles = response.roles;
+				model.groups = response.groups;
+				model.custom = response.custom;
+				model.mainmenu = response.mainmenu;
+				model.responsive = response.responsive;
+				model.online = true;
+				model.daterefreshed = NOW;
+
+				if (model.permissions) {
+					model.allowreadapps = response.allowreadapps;
+					model.allowreadusers = response.allowreadusers;
+					model.allowreadmeta = response.allowreadmeta;
+					model.allowreadprofile = response.allowreadprofile;
+					model.allownotifications = response.allownotifications;
+				}
+
 				$.success();
 			});
 		});
@@ -228,16 +233,21 @@ NEWSCHEMA('App', function(schema) {
 
 });
 
-function sync(item, model, meta) {
+function sync(item, model, meta, permissions) {
 
 	if (meta) {
 		item.title = model.title;
 		item.options = model.options;
 		item.secret = model.secret;
-		item.allowreadapps = model.allowreadapps;
-		item.allowreadusers = model.allowreadusers;
-		item.allowreadprofile = model.allowreadprofile;
-		item.allownotifications = model.allownotifications;
+
+		if (permissions) {
+			item.allowreadapps = model.allowreadapps;
+			item.allowreadusers = model.allowreadusers;
+			item.allowreadmeta = model.allowreadmeta;
+			item.allowreadprofile = model.allowreadprofile;
+			item.allownotifications = model.allownotifications;
+		}
+
 		item.responsive = model.responsive;
 		item.blocked = model.blocked;
 		item.settings = model.settings;

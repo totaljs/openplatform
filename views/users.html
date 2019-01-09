@@ -163,17 +163,34 @@
 						</div>
 					</div>
 				</div>
-				<div class="padding bg-yellow">
+				<div class="padding bg-smoke">
 					<div data-jc="textbox__users.form.accesstoken__maxlength:50;required:true" class="b">@(Access Token)</div>
 					<div class="help"><span class="exec link" data-exec="userform_generatetoken">@(Generate token)</span></div>
 				</div>
 				<div class="scroller-padding">
+
+					<div class="alert m">
+						<i class="fa fa-warning mr5"></i><b>@(IMPORTANT):</b>
+						<div class="mt5">@(Directory can restrict OpenPlatform API for obtaining of users according to <b>Directory</b> except of administrators.)</div>
+					</div>
+
+					<div class="row">
+						<div class="col-sm-6 m">
+							<div data-jc="dropdown__users.form.directory__empty:;datasource:users.meta.directories;icon:folder;value:name">@(Select existing Directory)</div>
+						</div>
+						<div class="col-sm-6 m">
+							<div data-jc="textbox__users.form.directory__maxlength:40">@(Directory)</div>
+						</div>
+					</div>
+
+					<br />
+
 					<div class="row">
 						<div class="col-sm-6 m">
 							<div data-jc="dropdown__users.form.ou__empty:;datasource:users.meta.ou;value:name">@(Select existing Organization unit)</div>
 						</div>
 						<div class="col-sm-6 m">
-							<div data-jc="textbox__users.form.ou__maxlength:60">@(Organization unit)</div>
+							<div data-jc="textbox__users.form.ou__maxlength:100">@(Organization unit)</div>
 							<div class="help">@(For example <code>Developers / Node.js</code>)</div>
 						</div>
 					</div>
@@ -185,7 +202,7 @@
 							<div data-jc="dropdown__users.form.locality__empty:;datasource:users.meta.localities;icon:map-marker;value:name">@(Select existing Locality)</div>
 						</div>
 						<div class="col-sm-6 m">
-							<div data-jc="textbox__users.form.locality__maxlength:60">@(Locality)</div>
+							<div data-jc="textbox__users.form.locality__maxlength:40">@(Locality)</div>
 						</div>
 					</div>
 				</div>
@@ -196,7 +213,7 @@
 							<div data-jc="dropdown__users.form.company__empty:;datasource:users.meta.companies;icon:building;value:name">@(Select existing Company)</div>
 						</div>
 						<div class="col-sm-6 m">
-							<div data-jc="textbox__users.form.company__maxlength:60">@(Company)</div>
+							<div data-jc="textbox__users.form.company__maxlength:40">@(Company)</div>
 						</div>
 					</div>
 					<div class="row">
@@ -332,7 +349,7 @@
 
 	function userform_search(el, next) {
 		SETTER('suggestion', 'show', 'left', el, function(search, next) {
-			AJAX('GET /api/internal/users/', { q: search }, function(response) {
+			AJAX('GET /api/internal/users/', { q: search, directory: users.form.directory }, function(response) {
 				users.form.id && (response.items = response.items.remove('id', users.form.id));
 				next(response.items);
 			});

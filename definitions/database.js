@@ -78,11 +78,13 @@ FUNC.users.query = function(filter, callback) {
 	filter.role && builder.where('roles', filter.role);
 	filter.ou && builder.where('ougroups', filter.ou);
 	filter.locality && builder.where('locality', filter.locality);
+	filter.directory && builder.where('directory', filter.directory);
 	filter.company && builder.where('company', filter.company);
 	filter.gender && builder.where('gender', filter.gender);
 	filter.statusid && builder.where('statusid', filter.statusid);
 	filter.customer && builder.where('customer', true);
 	filter.reference && builder.where('reference', filter.reference);
+	filter.directory && builder.where('directory', filter.directory);
 	builder.paginate(filter.page, filter.limit, 1000);
 	builder.callback(callback);
 };
@@ -133,7 +135,8 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id, name: item._id, count: item.count });
+						if (item._id)
+							obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.companies = obj;
@@ -153,7 +156,8 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id, name: item._id, count: item.count });
+						if (item._id)
+							obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.customers = obj;
@@ -173,10 +177,32 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id, name: item._id, count: item.count });
+						if (item._id)
+							obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.localities = obj;
+					next(err);
+				});
+			}
+		});
+	});
+
+	// Directory
+	db.query('users', function(collection, next) {
+		collection.aggregate([{ $group: { _id: '$directory', count: { $sum: 1 }}}], function(err, response) {
+			if (err) {
+				next(err);
+			} else {
+				response.toArray(function(err, response) {
+					var obj = [];
+					for (var i = 0; i < response.length; i++) {
+						var item = response[i];
+						if (item._id)
+							obj.push({ id: item._id, name: item._id, count: item.count });
+					}
+					obj.quicksort('name');
+					meta.directories = obj;
 					next(err);
 				});
 			}
@@ -193,7 +219,8 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id, name: item._id, count: item.count });
+						if (item._id)
+							obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.roles = obj;
@@ -213,7 +240,8 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						obj.push({ id: item._id, name: item._id, count: item.count });
+						if (item._id)
+							obj.push({ id: item._id, name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.groups = obj;
@@ -233,8 +261,10 @@ FUNC.users.meta = function(callback) {
 					var obj = [];
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
-						item._id = item._id.replace(/\//g, ' / ');
-						obj.push({ id: item._id, name: item._id, count: item.count });
+						if (item._id) {
+							item._id = item._id.replace(/\//g, ' / ');
+							obj.push({ id: item._id, name: item._id, count: item.count });
+						}
 					}
 					meta.ou = obj;
 					next(err);
@@ -260,6 +290,12 @@ FUNC.users.assign = function(model, callback) {
 
 	if (model.company)
 		builder.where('company', model.company);
+
+	if (model.locality)
+		builder.where('locality', model.locality);
+
+	if (model.directory)
+		builder.where('directory', model.directory);
 
 	if (model.group)
 		builder.where('groups', model.group);
@@ -301,31 +337,16 @@ FUNC.apps.set = function(app, fields, callback) {
 	var builder;
 
 	if (app.id) {
-
 		if (fields && fields.length) {
 			obj = {};
 			for (var i = 0; i < fields.length; i++)
 				obj[fields[i]] = app[fields[i]];
-		} else {
+		} else
 			obj = CLONE(app);
-			obj._id = obj.id;
-		}
-
-		if (obj.origin)
-			obj.origin = Object.keys(obj.origin);
-		else
-			obj.origin = null;
-
 		builder = DBMS().modify('apps', obj).where('_id', app.id);
 	} else {
 		obj = CLONE(app);
 		obj._id = obj.id = UID();
-
-		if (obj.origin)
-			obj.origin = Object.keys(obj.origin);
-		else
-			obj.origin = null;
-
 		builder = DBMS().insert('apps', obj);
 	}
 

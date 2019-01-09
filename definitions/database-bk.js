@@ -80,16 +80,7 @@ FUNC.users.query = function(filter, callback) {
 		if (filter.appid && (!user.apps || !user.apps[filter.appid]))
 			continue;
 
-		if (filter.q && user.search.indexOf(filter.q) === -1)
-			continue;
-
-		if (filter.group && (!user.groups || user.groups.indexOf(filter.group) === -1))
-			continue;
-
-		if (filter.role && (!user.roles || user.roles.indexOf(filter.role) === -1))
-			continue;
-
-		if (filter.ou && (!user.ougroups || user.ougroups.indexOf(filter.ou) === -1))
+		if (filter.directory && user.directory !== filter.directory)
 			continue;
 
 		if (filter.locality && user.locality !== filter.locality)
@@ -105,6 +96,18 @@ FUNC.users.query = function(filter, callback) {
 			continue;
 
 		if (filter.customer && !user.customer)
+			continue;
+
+		if (filter.q && user.search.indexOf(filter.q) === -1)
+			continue;
+
+		if (filter.group && (!user.groups || user.groups.indexOf(filter.group) === -1))
+			continue;
+
+		if (filter.role && (!user.roles || user.roles.indexOf(filter.role) === -1))
+			continue;
+
+		if (filter.ou && (!user.ougroups || user.ougroups.indexOf(filter.ou) === -1))
 			continue;
 
 		count++;
@@ -188,6 +191,7 @@ FUNC.users.meta = function(callback) {
 	var customers = {};
 	var groups = {};
 	var roles = {};
+	var directories = {};
 
 	var toArray = function(obj, preparator) {
 		var arr = Object.keys(obj);
@@ -236,7 +240,14 @@ FUNC.users.meta = function(callback) {
 			if (localities[item.locality])
 				localities[item.locality].count++;
 			else
-				localities[item.locality] = { count: 1, id: item.locality.slug(), name: item.locality };
+				localities[item.locality] = { count: 1, id: item.locality, name: item.locality };
+		}
+
+		if (item.directory) {
+			if (directories[item.directory])
+				directories[item.directory].count++;
+			else
+				directories[item.directory] = { count: 1, id: item.directory, name: item.directory };
 		}
 
 		if (item.company) {
@@ -244,12 +255,12 @@ FUNC.users.meta = function(callback) {
 				if (customers[item.company])
 					customers[item.company].count++;
 				else
-					customers[item.company] = { count: 1, id: item.company.slug(), name: item.company };
+					customers[item.company] = { count: 1, id: item.company, name: item.company };
 			}
 			if (companies[item.company])
 				companies[item.company].count++;
 			else
-				companies[item.company] = { count: 1, id: item.company.slug(), name: item.company };
+				companies[item.company] = { count: 1, id: item.company, name: item.company };
 		}
 	}
 
@@ -258,6 +269,7 @@ FUNC.users.meta = function(callback) {
 	meta.companies = toArray(companies);
 	meta.customers = toArray(customers);
 	meta.localities = toArray(localities);
+	meta.directories = toArray(directories);
 	meta.groups = toArray(groups);
 	meta.roles = toArray(roles);
 	meta.languages = F.config.languages;
@@ -284,6 +296,8 @@ FUNC.users.assign = function(model, callback) {
 		if (ou && (!user.ougroups || !user.ougroups[ou]))
 			continue;
 		if (model.company && user.company !== model.company)
+			continue;
+		if (model.directory && user.directory !== model.directory)
 			continue;
 		if (model.group && user.groups.indexOf(model.group) === -1)
 			continue;
