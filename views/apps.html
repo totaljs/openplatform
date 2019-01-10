@@ -104,7 +104,7 @@
 		</nav>
 
 		<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
-			<div data-jc="scrollbar__apps.form.show__margin:40;parent:window;marginxs:42">
+			<div data-jc="scrollbar__apps.form__margin:40;parent:window;marginxs:42;track:show,directories">
 				<div class="scroller-padding">
 
 					<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
@@ -228,6 +228,10 @@
 					<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
 					<div class="mt10 m b" data-jc="checkbox__apps.form.blocked">@(Application is blocked)</div>
 					<div class="m hidden" data-bind="apps.form.id__show" data-jc="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
+					<hr />
+					<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
+					<div data-jc="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter)"></div>
+					<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
 					<hr />
 					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
 					<div class="help m"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>

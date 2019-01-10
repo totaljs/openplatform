@@ -127,6 +127,11 @@ NEWSCHEMA('User', function(schema) {
 					return;
 				}
 
+				if ($.user.directory && item.directory !== $.user.directory) {
+					$.invalid('error-permissions');
+					return;
+				}
+
 				if (model.password && !model.password.startsWith('***'))
 					item.password = model.password.sha256();
 
@@ -191,6 +196,9 @@ NEWSCHEMA('User', function(schema) {
 			item.datecreated = NOW;
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
+
+			if ($.user.directory)
+				item.directory = $.user.directory;
 
 			if (!item.accesstoken)
 				item.accesstoken = U.GUID(40);

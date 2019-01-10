@@ -154,6 +154,13 @@ $(window).on('message', function(e) {
 			}
 
 			if (target) {
+
+				if (data.body.silent === 'focused' || data.body.silent === 2) {
+					var is = processes.findProcess(target.id);
+					if (!is)
+						return;
+				}
+
 				processes.wait(target, function(iframe) {
 					data.body.app = app.id;
 					processes.message(iframe, 'share', data.body);

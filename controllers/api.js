@@ -120,18 +120,27 @@ function json_users_read(id) {
 function json_users_query() {
 	var self = this;
 	if (self.user.sa) {
+
+		if (self.user.directory)
+			self.query.directory = self.user.directory;
+
 		FUNC.users.query(self.query, function(err, users) {
 			if (users)
 				self.json(users, false, (k, v) => k >= 0 || USERS_LIST_FIELDS[k] ? v : undefined);
 			else
 				self.invalid(err);
 		});
+
 	} else
 		self.invalid('error-permissions');
 }
 
 function json_meta_query() {
-	this.json(G.meta, false);
+	var self = this;
+	if (self.user.directory)
+		self.json(G.metadirectories[self.user.directory] || EMPTYOBJECT);
+	else
+		self.json(G.meta, false);
 }
 
 function json_apps_meta(id) {

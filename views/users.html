@@ -174,7 +174,7 @@
 						<div class="mt5">@(Directory can restrict OpenPlatform API for obtaining of users according to <b>Directory</b> except of administrators.)</div>
 					</div>
 
-					<div class="row">
+					<div class="row" data-bind="user.directory__config [data-jc]:'disabled:' + (!!value)">
 						<div class="col-sm-6 m">
 							<div data-jc="dropdown__users.form.directory__empty:;datasource:users.meta.directories;icon:folder;value:name">@(Select existing Directory)</div>
 						</div>
@@ -370,7 +370,16 @@
 			setTimeout(function() {
 				AJAX('GET /api/internal/meta/', 'users.meta');
 			}, delay || 0);
-			AJAX('GET /api/internal/apps/', 'users.apps');
+			AJAX('GET /api/internal/apps/', function(response) {
+
+				if (user.directory) {
+					response.items = response.items.remove(function(app) {
+						return app.directories && app.directories.length && app.directories.indexOf(user.directory) === -1;
+					});
+				}
+
+				SET('users.apps', response);
+			});
 		}
 	}
 
@@ -399,7 +408,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { show: true, id: '', accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, value: 80, apps: [], statusid: 0 }, true);
+		SET('users.form', { show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, value: 80, apps: [], statusid: 0 }, true);
 	}
 
 	function usersform_remove() {

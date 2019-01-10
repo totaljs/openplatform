@@ -120,14 +120,22 @@ FUNC.users.online = function(user, is, callback) {
 };
 
 // Codelist of from users
-FUNC.users.meta = function(callback) {
+FUNC.users.meta = function(callback, directory) {
 
-	var meta = G.meta = {};
+	console.log('-->', directory);
+
+	var meta = {};
 	var db = DBMS();
 
 	// Companies
 	db.query('users', function(collection, next) {
-		collection.aggregate([{ $group: { _id: '$company', count: { $sum: 1 }}}], function(err, response) {
+
+		var filter = [];
+
+		directory && filter.push({ $match: { directory: directory }});
+		filter.push({ $group: { _id: '$company', count: { $sum: 1 }}});
+
+		collection.aggregate(filter, function(err, response) {
 			if (err) {
 				next(err);
 			} else {
@@ -148,7 +156,17 @@ FUNC.users.meta = function(callback) {
 
 	// Customers
 	db.query('users', function(collection, next) {
-		collection.aggregate([{ $match: { customer: true }}, { $group: { _id: '$company', count: { $sum: 1 }}}], function(err, response) {
+
+		var filter = [];
+
+		if (directory)
+			filter.push({ $match: { directory: directory, customer: true }});
+		else
+			filter.push({ $match: { customer: true }});
+
+		filter.push({ $group: { _id: '$company', count: { $sum: 1 }}});
+
+		collection.aggregate(filter, function(err, response) {
 			if (err) {
 				next(err);
 			} else {
@@ -169,7 +187,13 @@ FUNC.users.meta = function(callback) {
 
 	// Locality
 	db.query('users', function(collection, next) {
-		collection.aggregate([{ $group: { _id: '$locality', count: { $sum: 1 }}}], function(err, response) {
+
+		var filter = [];
+
+		directory && filter.push({ $match: { directory: directory }});
+		filter.push({ $group: { _id: '$locality', count: { $sum: 1 }}});
+
+		collection.aggregate(filter, function(err, response) {
 			if (err) {
 				next(err);
 			} else {
@@ -190,7 +214,13 @@ FUNC.users.meta = function(callback) {
 
 	// Directory
 	db.query('users', function(collection, next) {
-		collection.aggregate([{ $group: { _id: '$directory', count: { $sum: 1 }}}], function(err, response) {
+
+		var filter = [];
+
+		directory && filter.push({ $match: { directory: directory }});
+		filter.push({ $group: { _id: '$directory', count: { $sum: 1 }}});
+
+		collection.aggregate(filter, function(err, response) {
 			if (err) {
 				next(err);
 			} else {
@@ -211,7 +241,14 @@ FUNC.users.meta = function(callback) {
 
 	// Roles
 	db.query('users', function(collection, next) {
-		collection.aggregate([{ $unwind: '$roles' }, { $group: { _id: '$roles', count: { $sum: 1 }}}], function(err, response) {
+
+		var filter = [];
+
+		directory && filter.push({ $match: { directory: directory }});
+		filter.push({ $unwind: '$roles' });
+		filter.push({ $group: { _id: '$roles', count: { $sum: 1 }}});
+
+		collection.aggregate(filter, function(err, response) {
 			if (err) {
 				next(err);
 			} else {
@@ -232,7 +269,14 @@ FUNC.users.meta = function(callback) {
 
 	// Groups
 	db.query('users', function(collection, next) {
-		collection.aggregate([{ $unwind: '$groups' }, { $group: { _id: '$groups', count: { $sum: 1 }}}], function(err, response) {
+
+		var filter = [];
+
+		directory && filter.push({ $match: { directory: directory }});
+		filter.push({ $unwind: '$groups' });
+		filter.push({ $group: { _id: '$groups', count: { $sum: 1 }}});
+
+		collection.aggregate(filter, function(err, response) {
 			if (err) {
 				next(err);
 			} else {
@@ -253,7 +297,14 @@ FUNC.users.meta = function(callback) {
 
 	// Organization unit
 	db.query('users', function(collection, next) {
-		collection.aggregate([{ $unwind: '$ougroups' }, { $group: { _id: '$ougroups', count: { $sum: 1 }}}], function(err, response) {
+
+		var filter = [];
+
+		directory && filter.push({ $match: { directory: directory }});
+		filter.push({ $unwind: '$ougroups' });
+		filter.push({ $group: { _id: '$ougroups', count: { $sum: 1 }}});
+
+		collection.aggregate(filter, function(err, response) {
 			if (err) {
 				next(err);
 			} else {
@@ -273,7 +324,31 @@ FUNC.users.meta = function(callback) {
 		});
 	});
 
-	callback && db.callback(() => callback(null, meta));
+	if (directory) {
+		db.callback(function() {
+			G.metadirectories[directory] = meta;
+			callback && callback(null, meta);
+		});
+	} else {
+
+		db.callback(function() {
+
+			G.metadirectories = {};
+			G.meta = meta;
+
+			console.log(meta);
+
+			if (meta.directories && meta.directories.length) {
+				// Recursive read meta directories
+				meta.directories.wait(function(item, next) {
+					console.log('call -->', item.name);
+					FUNC.users.meta(next, item.name);
+				}, () => callback && callback(null, meta));
+			} else
+				callback && callback(null, meta);
+		});
+	}
+
 };
 
 // Assigns app according to the model (filter)
@@ -381,6 +456,7 @@ FUNC.apps.query = function(filter, callback) {
 	var builder = DBMS().listing('apps');
 	builder.paginate(filter.page, filter.limit, 1000);
 	filter.id && builder.in('_id', filter.id);
+	// filter.directory && builder.where('directory', filter.directory);
 	filter.q && builder.search('search', filter.q.toSearch());
 	builder.callback(callback);
 };

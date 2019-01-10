@@ -2,7 +2,8 @@ const OP = global.OP = {};
 
 OP.version = 3120;
 
-// G.meta;
+G.meta = {};
+G.metadirectories = {};
 
 // Return user profile object
 OP.profile = function(user, callback) {
@@ -26,6 +27,7 @@ OP.profile = function(user, callback) {
 	meta.background = user.background || CONF.background;
 	meta.test = CONF.test === true;
 	meta.status = user.status;
+	meta.directory = user.directory;
 
 	var id = Object.keys(user.apps);
 
@@ -46,9 +48,12 @@ OP.profile = function(user, callback) {
 
 		if (user.sa) {
 			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false, mobilemenu: false });
-			meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false, mobilemenu: false });
-			meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 670, resize: false, mobilemenu: false });
-			meta.apps.push({ id: '_info', icon: 'question-circle', title: 'About', name: 'About', online: true, internal: true, linker: '_info', width: 400, height: 315, resize: false, mobilemenu: false });
+
+			if (!user.directory) {
+				meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false, mobilemenu: false });
+				meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 670, resize: false, mobilemenu: false });
+				meta.apps.push({ id: '_info', icon: 'question-circle', title: 'About', name: 'About', online: true, internal: true, linker: '_info', width: 400, height: 315, resize: false, mobilemenu: false });
+			}
 		}
 
 		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 730, resize: false, mobilemenu: false });

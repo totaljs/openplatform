@@ -183,7 +183,7 @@ FUNC.users.online = function(user, is, callback) {
 };
 
 // Codelist of from users
-FUNC.users.meta = function(callback) {
+FUNC.users.meta = function(callback, directory) {
 
 	var ou = {};
 	var localities = {};
@@ -205,6 +205,9 @@ FUNC.users.meta = function(callback) {
 	for (var i = 0, length = G.users.length; i < length; i++) {
 
 		var item = G.users[i];
+
+		if (directory && item.directory !== directory)
+			continue;
 
 		var ougroups = item.ougroups ? Object.keys(item.ougroups) : EMPTYARRAY;
 
@@ -265,7 +268,8 @@ FUNC.users.meta = function(callback) {
 	}
 
 	// G.meta === important, is used as a cache
-	var meta = G.meta = {};
+
+	var meta = {};
 	meta.companies = toArray(companies);
 	meta.customers = toArray(customers);
 	meta.localities = toArray(localities);
@@ -278,7 +282,18 @@ FUNC.users.meta = function(callback) {
 		return item;
 	});
 
-	callback && callback(null, meta);
+	if (directory) {
+		G.metadirectories[directory] = meta;
+		callback && callback(null, meta);
+	} else {
+		G.metadirectories = {};
+		G.meta = meta;
+		meta.directories.wait(function(item, next) {
+			FUNC.users.meta(next, item.name);
+		}, function() {
+			callback && callback(null, meta);
+		});
+	}
 };
 
 // Assigns app according to the model (filter)
@@ -391,6 +406,9 @@ FUNC.apps.query = function(filter, callback) {
 	if (typeof(filter.limit) === 'string')
 		filter.limit = +filter.limit;
 
+	if (filter.q)
+		filter.q = filter.q.toSearch();
+
 	var arr = [];
 	var take = filter.limit;
 	var skip = (filter.page - 1) * take;
@@ -400,6 +418,12 @@ FUNC.apps.query = function(filter, callback) {
 		var app = G.apps[i];
 
 		if (filter.id && filter.id.indexOf(app.id) === -1)
+			continue;
+
+		if (filter.directory && app.directories && app.directories.length && app.directories.indexOf(filter.directory) === -1)
+			continue;
+
+		if (filter.q && app.search.indexOf(filter.q) === -1)
 			continue;
 
 		count++;

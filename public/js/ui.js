@@ -4837,10 +4837,12 @@ COMPONENT('scrollbar', 'reset:true;margin:0;marginxs:0;marginsm:0;marginmd:0;mar
 	self.setter = function(value, path, type) {
 		if (config.track && config.track.indexOf(path) === -1)
 			return;
-		type && setTimeout(function() {
-			self.done();
-			config.reset && self.reset();
-		}, 500);
+		if (type === 1) {
+			setTimeout(function() {
+				self.done();
+				config.reset && self.reset();
+			}, 500);
+		}
 	};
 
 });

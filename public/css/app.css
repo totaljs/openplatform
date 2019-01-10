@@ -27,7 +27,12 @@ h2 { margin: 0 0 12px 0; padding: 0; color: black; font-size: 16px; font-weight:
 h2 b { font-weight: 700; }
 h2 .fa { margin-right: 10px; }
 
+h3 { margin: 0 0 12px 0; padding: 0; color: black; font-size: 14px; font-weight: bold; }
+h3 b { font-weight: 700; }
+h3 .fa { margin-right: 5px; }
+
 .ui-dark h2 { color: white; }
+.ui-dark h3 { color: white; }
 
 .button { background-color: #4285f4; color: white; font-size: 12px; height: 34px; padding: 0 20px; margin: 0; border: 0; border-radius: 3px; display: block; width: 100%; }
 .button:hover { opacity: 0.9; }

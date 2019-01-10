@@ -19,6 +19,7 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('settings', String);
 	schema.define('accesstoken', 'String(50)');
 	schema.define('permissions', Boolean);
+	schema.define('directories', '[String]');
 
 	schema.setQuery(function($) {
 		OP.decodeAuthToken($.query.accesstoken || '', function(err, obj) {
@@ -64,7 +65,7 @@ NEWSCHEMA('App', function(schema) {
 
 	schema.setSave(function($) {
 
-		if (!$.user.sa) {
+		if (!$.user.sa || $.user.directory) {
 			$.invalid('error-permissions');
 			return;
 		}
@@ -113,7 +114,7 @@ NEWSCHEMA('App', function(schema) {
 
 	schema.setRemove(function($) {
 
-		if (!$.user.sa) {
+		if (!$.user.sa || $.user.directory) {
 			$.invalid('error-permissions');
 			return;
 		}
@@ -266,6 +267,7 @@ function sync(item, model, meta, permissions) {
 	item.frame = model.frame;
 	item.email = model.email;
 	item.roles = model.roles;
+	item.directories = model.directories;
 	item.groups = model.groups;
 	item.version = model.version;
 	item.custom = model.custom;
