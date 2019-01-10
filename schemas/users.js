@@ -3,7 +3,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
 	schema.define('deputyid', 'UID');
-	schema.define('directory', 'String(40)');
+	schema.define('directory', 'String(25)');
 	schema.define('photo', 'String(150)');
 	schema.define('statusid', Number);
 	schema.define('status', 'String(70)');
@@ -199,6 +199,9 @@ NEWSCHEMA('User', function(schema) {
 
 			if ($.user.directory)
 				item.directory = $.user.directory;
+
+			if (item.directory)
+				item.dirid =
 
 			if (!item.accesstoken)
 				item.accesstoken = U.GUID(40);
