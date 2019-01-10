@@ -30,7 +30,10 @@ NEWSCHEMA('Meta', function(schema) {
 				return;
 			}
 
-			$.callback(G.meta);
+			if (user.directory)
+				$.callback(G.metadirectories[user.directory] || EMPTYOBJECT);
+			else
+				$.callback(G.meta);
 		});
 	});
 
