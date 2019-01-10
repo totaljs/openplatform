@@ -509,3 +509,13 @@ input:invalid { box-shadow: none; }
 .ui-dark .ui-dynamicvalue-invalid .ui-dynamicvalue-icon { border-left-color: red; color: red; }
 .ui-dark .ui-disabled .ui-dynamicvalue { background-color: #282828; }
 .ui-dark .ui-disabled .ui-dynamicvalue-value { color: #777777; }
+
+.ui-autocomplete-container { position: absolute; z-index: 60; }
+.ui-autocomplete { background-color: white; width: 100%; margin: -5px 0 0 0; padding: 2px 0; border-radius: 0 0 4px 4px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border: 1px solid #E0E0E0; line-height: 14px; overflow-x: hidden; overflow-y: auto; }
+.ui-autocomplete ul { list-style-type: none; margin: 0; padding: 0; }
+.ui-autocomplete li { margin: 0; padding: 5px 12px 0; border-bottom: 1px solid #F0F0F0; cursor: pointer; font-size: 12px; color: #505050; height: 24px; }
+.ui-autocomplete li:last-child { border-bottom: 0; }
+.ui-autocomplete .selected { background-color: #F0F0F0; }
+.ui-autocomplete li span { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.ui-autocomplete li span:first-child { float: left; width: 65%; }
+.ui-autocomplete li span:last-child { float: right; width: 30%; font-size: 11px; color: #A0A0A0; }

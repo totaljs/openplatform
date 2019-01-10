@@ -230,7 +230,7 @@
 					<div class="m hidden" data-bind="apps.form.id__show" data-jc="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
 					<hr />
 					<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
-					<div data-jc="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter)"></div>
+					<div data-jc="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory"></div>
 					<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
 					<hr />
 					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
@@ -399,7 +399,27 @@
 				}, 'url');
 			}
 		});
-
 	});
+
+	function finddirectory(com, input) {
+		SETTER('autocomplete', 'attach', input.parent().parent(), function(query, render) {
+
+			var arr = apps.meta.directories;
+			var tmp = [];
+
+			query = query.toSearch();
+
+			for (var i = 0; i < arr.length; i++) {
+				var item = arr[i];
+				if (item.name.toSearch().indexOf(query) !== -1)
+					tmp.push(item);
+			}
+
+			render(tmp);
+
+		}, function(selected, input) {
+			PUSH('apps.form.directories', selected.name, 2);
+		}, 0, 5, 2);
+	}
 
 </script>
