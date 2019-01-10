@@ -230,7 +230,7 @@
 					<div class="m hidden" data-bind="apps.form.id__show" data-jc="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
 					<hr />
 					<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
-					<div data-jc="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25"></div>
+					<div data-jc="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25;type:lower"></div>
 					<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
 					<hr />
 					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>

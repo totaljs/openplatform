@@ -200,9 +200,6 @@ NEWSCHEMA('User', function(schema) {
 			if ($.user.directory)
 				item.directory = $.user.directory;
 
-			if (item.directory)
-				item.dirid =
-
 			if (!item.accesstoken)
 				item.accesstoken = U.GUID(40);
 
