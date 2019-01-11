@@ -154,7 +154,7 @@ $(window).on('message', function(e) {
 
 			if (target) {
 
-				if (data.body.silent === 'focused' || data.body.silent === 2) {
+				if (data.body.silent === 'open' || data.body.silent === 2) {
 					var is = processes.findProcess(target.id);
 					if (!is)
 						return;
@@ -203,7 +203,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'shake':
-			app && processes.shake(app.id);
+			app && processes.shake(app.id, data.body);
 			break;
 
 		case 'focus':

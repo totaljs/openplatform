@@ -2244,7 +2244,7 @@ COMPONENT('processes', function(self, config) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	self.shake = function(iframe) {
+	self.shake = function(iframe, type) {
 
 		if (typeof(iframe) === 'string') {
 			iframe = self.findProcess(iframe);
@@ -2253,6 +2253,11 @@ COMPONENT('processes', function(self, config) {
 		}
 
 		var el = iframe.element;
+		var focused = el.hclass('ui-process-focus');
+
+		if (type === true && focused)
+			return;
+
 		var def = {};
 		var max = 5;
 
