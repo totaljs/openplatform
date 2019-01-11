@@ -27,7 +27,11 @@ OP.profile = function(user, callback) {
 	meta.background = user.background || CONF.background;
 	meta.test = CONF.test === true;
 	meta.status = user.status;
-	meta.directory = user.directory;
+
+	if (user.directory)
+		meta.directory = user.directory;
+
+	meta.directoryid = user.directoryid || 0;
 
 	var id = Object.keys(user.apps);
 
@@ -246,8 +250,11 @@ function readuser(user, type, app) {
 	if (user.deputyid)
 		obj.deputyid = user.deputyid;
 
-	if (user.directory)
+	if (user.directory) {
 		obj.directory = user.directory;
+		obj.directoryid = user.directoryid;
+	} else
+		obj.directoryid = 0;
 
 	obj.statusid = user.statusid;
 

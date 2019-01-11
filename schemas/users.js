@@ -3,7 +3,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
 	schema.define('deputyid', 'UID');
-	schema.define('directory', 'String(25)');
+	schema.define('directory', 'Lower(25)');
 	schema.define('photo', 'String(150)');
 	schema.define('statusid', Number);
 	schema.define('status', 'String(70)');
@@ -146,6 +146,7 @@ NEWSCHEMA('User', function(schema) {
 				item.status = model.status;
 				item.firstname = model.firstname;
 				item.directory = model.directory;
+				item.directoryid = item.directory ? item.directory.crc32(true) : 0;
 				item.lastname = model.lastname;
 				item.email = model.email;
 				item.name = model.name;
@@ -197,8 +198,11 @@ NEWSCHEMA('User', function(schema) {
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
 
-			if ($.user.directory)
+			if ($.user.directory) {
 				item.directory = $.user.directory;
+				item.directoryid = item.directory.crc32(true);
+			} else
+				item.directoryid = 0;
 
 			if (!item.accesstoken)
 				item.accesstoken = U.GUID(40);
