@@ -298,6 +298,10 @@ OP.email = function(subject, body) {
 	return OP.send('email', { subject: subject, body: body, datecreated: new Date() });
 };
 
+OP.shake = function() {
+	return OP.send('shake');
+};
+
 OP.send = function(type, body, callback) {
 
 	if (typeof(body) === 'function') {
