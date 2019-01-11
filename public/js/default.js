@@ -285,11 +285,32 @@ $(window).on('message', function(e) {
 
 		case 'play':
 		case 'stop':
+
+			var custom = false;
+			switch (data.body) {
+				case 'beep':
+				case 'fail':
+				case 'success':
+				case 'phone':
+				case 'badges':
+				case 'notifications':
+					custom = true;
+					break;
+			}
+
+			if (custom)
+				data.body = '/sounds/' + data.body + '.mp3';
+
 			user.sounds && SETTER('audio', data.type, data.body);
+
 			break;
 
 		case 'badge':
-			app && AJAX('GET /api/badges/?' + app.profile.badge.substring(app.profile.badge.indexOf('accesstoken=')), NOOP);
+			if (app) {
+				if (data.body == null && app.id === common.focused)
+					return;
+				AJAX('GET /api/badges/?' + app.profile.badge.substring(app.profile.badge.indexOf('accesstoken=')), NOOP);
+			}
 			break;
 
 		case 'notify':

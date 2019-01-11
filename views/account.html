@@ -28,6 +28,8 @@
 
 </style>
 
+<div data-jc="audio__account.volume"></div>
+
 <div class="row">
 	<div data-jc="scrollbar__account__margin:40;parent:window;track:changepassword,response">
 
@@ -146,6 +148,14 @@
 			self.find('.ui-appearance-dark').tclass('ui-appearance-selected', value === true);
 			self.find('.ui-appearance-light').tclass('ui-appearance-selected', value !== true);
 		};
+	});
+
+	WATCH('account.volume', function(path, value, type) {
+		if (type === 2) {
+			setTimeout2('volume', function() {
+				SETTER('audio', 'play', '/sounds/success.mp3');
+			}, 500);
+		}
 	});
 
 </script>

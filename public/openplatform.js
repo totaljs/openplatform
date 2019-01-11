@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = '3.0.0';
+OP.version = 302;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -235,11 +235,13 @@ OP.meta = function(callback) {
 };
 
 OP.play = function(url) {
-	if (!(/^(http|https):\/\//).test(url)) {
+
+	if (!((/^[a-z]+$/).test(url)) && !(/^(http|https):\/\//).test(url)) {
 		if (url.substring(0, 1) !== '/')
 			url = '/' + url;
 		url = location.protocol + '//' + location.hostname + url;
 	}
+
 	return OP.send('play', url);
 };
 
@@ -267,8 +269,8 @@ OP.minimize = function() {
 	return OP.send('minimize');
 };
 
-OP.badge = function() {
-	return OP.send('badge');
+OP.badge = function(type) {
+	return OP.send('badge', type);
 };
 
 OP.log = function(message) {

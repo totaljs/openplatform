@@ -60,7 +60,7 @@ OP.profile = function(user, callback) {
 			}
 		}
 
-		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 730, resize: false, mobilemenu: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 740, resize: false, mobilemenu: false });
 		callback(null, meta);
 	});
 };
