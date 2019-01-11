@@ -60,7 +60,6 @@ $(window).on('message', function(e) {
 		return;
 
 	var app = dashboard.apps.findItem('accesstoken', data.accesstoken);
-
 	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))
 		return;
 
@@ -201,6 +200,10 @@ $(window).on('message', function(e) {
 
 		case 'maximize':
 			app && processes.maximize(app.id);
+			break;
+
+		case 'shake':
+			app && processes.shake(app.id);
 			break;
 
 		case 'focus':

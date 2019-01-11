@@ -2238,6 +2238,37 @@ COMPONENT('processes', function(self, config) {
 		return self;
 	};
 
+	function rnd(max, min) {
+		max = (max || 100000);
+		min = (min || 0);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	self.shake = function(iframe) {
+
+		if (typeof(iframe) === 'string') {
+			iframe = self.findProcess(iframe);
+			if (!iframe)
+				return false;
+		}
+
+		var el = iframe.element;
+		var def = {};
+		var max = 5;
+
+		def.left = el.css('left').parseInt();
+		def.top = el.css('top').parseInt();
+
+		el.animate({ index: 2 }, { duration: 80, step: function() {
+			var cur = {};
+			cur.left = rnd(def.left + max, def.left - max);
+			cur.top = rnd(def.top + max, def.top - max);
+			el.animate(cur, 50);
+		}, done: function() {
+			el.animate(def, 50);
+		}});
+	};
+
 	self.maximize = function(iframe) {
 
 		if (typeof(iframe) === 'string') {
