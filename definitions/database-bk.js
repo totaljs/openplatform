@@ -261,7 +261,7 @@ FUNC.users.meta = function(callback, directory) {
 			if (directories[item.directory])
 				directories[item.directory].count++;
 			else
-				directories[item.directory] = { count: 1, id: item.directory, name: item.directory };
+				directories[item.directory] = { count: 1, id: item.directory.crc32(true), name: item.directory };
 		}
 
 		if (item.company) {

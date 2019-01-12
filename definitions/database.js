@@ -237,7 +237,7 @@ FUNC.users.meta = function(callback, directory) {
 					for (var i = 0; i < response.length; i++) {
 						var item = response[i];
 						if (item._id)
-							obj.push({ id: item._id, name: item._id, count: item.count });
+							obj.push({ id: item._id.crc32(true), name: item._id, count: item.count });
 					}
 					obj.quicksort('name');
 					meta.directories = obj;
@@ -344,12 +344,9 @@ FUNC.users.meta = function(callback, directory) {
 			G.metadirectories = {};
 			G.meta = meta;
 
-			console.log(meta);
-
 			if (meta.directories && meta.directories.length) {
 				// Recursive read meta directories
 				meta.directories.wait(function(item, next) {
-					console.log('call -->', item.name);
 					FUNC.users.meta(next, item.name);
 				}, () => callback && callback(null, meta));
 			} else
