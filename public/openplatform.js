@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 302;
+OP.version = 400;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
