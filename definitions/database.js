@@ -78,7 +78,15 @@ FUNC.users.query = function(filter, callback) {
 	filter.role && builder.where('roles', filter.role);
 	filter.ou && builder.where('ougroups', filter.ou);
 	filter.locality && builder.where('locality', filter.locality);
-	filter.directory && builder.where('directory', filter.directory);
+
+	if (filter.directory) {
+		// Is number?
+		if ((/^\d+$/g).test(filter.directory))
+			builder.where('directoryid', +filter.directory);
+		else
+			builder.where('directory', filter.directory);
+	}
+
 	filter.company && builder.where('company', filter.company);
 	filter.gender && builder.where('gender', filter.gender);
 	filter.statusid && builder.where('statusid', filter.statusid);

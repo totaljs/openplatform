@@ -24,8 +24,14 @@ OP.profile = function(user, callback) {
 	meta.volume = user.volume;
 	meta.darkmode = user.darkmode;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
-	meta.background = user.background || CONF.background;
-	meta.test = CONF.test === true;
+
+	var bg = user.background || CONF.background;
+	if (bg)
+		meta.background = bg;
+
+	if (CONF.test === true)
+		meta.test = true;
+
 	meta.status = user.status;
 
 	if (user.directory)

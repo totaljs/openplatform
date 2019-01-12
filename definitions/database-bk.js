@@ -71,6 +71,14 @@ FUNC.users.query = function(filter, callback) {
 	var skip = (filter.page - 1) * take;
 	var count = 0;
 
+	if (filter.directory) {
+		// Is number?
+		if ((/^\d+$/g).test(filter.directory)) {
+			filter.directoryid = +filter.directory;
+			filter.directory = null;
+		}
+	}
+
 	for (var i = 0; i < G.users.length; i++) {
 		var user = G.users[i];
 
@@ -81,6 +89,9 @@ FUNC.users.query = function(filter, callback) {
 			continue;
 
 		if (filter.directory && user.directory !== filter.directory)
+			continue;
+
+		if (filter.directoryid && user.directoryid !== filter.directoryid)
 			continue;
 
 		if (filter.locality && user.locality !== filter.locality)
