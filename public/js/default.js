@@ -292,8 +292,14 @@ $(window).on('message', function(e) {
 				case 'fail':
 				case 'success':
 				case 'phone':
+				case 'message':
+				case 'alert':
 				case 'badges':
 				case 'notifications':
+					custom = true;
+					break;
+				case 'warning':
+					data.body = 'alert';
 					custom = true;
 					break;
 			}
