@@ -115,10 +115,15 @@ h3 i { margin-right: 5px; }
 .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
 .app-offline .app-version { color: silver; }
 .app-offline img { opacity: 0.4; }
-.app-disabled { border-color: #E0E0E0 !important; background-color: #F8F8F8; cursor: not-allowed; box-shadow: none !important; }
+.app-disabled .app-container { background-color: rgba(0,0,0,0.04) !important; cursor: not-allowed; box-shadow: none !important; color: #606060; }
+.app-disabled .app-icon { color: #606060 !important; }
 .app-disabled .app-name { border-color: #E0E0E0 !important; color: silver; }
 .app-disabled .app-version { color: silver; }
 .app-disabled img { opacity: 0.4; }
+
+.light .app-disabled .app-container { color: #A0A0A0; }
+.light .app-disabled .app-icon { color: #A0A0A0 !important; }
+
 .app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 7px; }
 .app > span .fa { margin-right: 5px; }
 .app-offline > span { display: block; }
