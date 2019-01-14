@@ -79,6 +79,9 @@ FUNC.users.query = function(filter, callback) {
 		}
 	}
 
+	if (filter.modified)
+		filter.modified = NOW.add('-' + filter.modified);
+
 	for (var i = 0; i < G.users.length; i++) {
 		var user = G.users[i];
 
@@ -119,6 +122,9 @@ FUNC.users.query = function(filter, callback) {
 			continue;
 
 		if (filter.ou && (!user.ougroups || user.ougroups.indexOf(filter.ou) === -1))
+			continue;
+
+		if (filter.modified && !((user.dateupdated && user.dateupdated > filter.modified) || (user.datecreated > filter.modified)))
 			continue;
 
 		count++;

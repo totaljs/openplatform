@@ -93,6 +93,13 @@ FUNC.users.query = function(filter, callback) {
 	filter.customer && builder.where('customer', true);
 	filter.reference && builder.where('reference', filter.reference);
 	filter.directory && builder.where('directory', filter.directory);
+
+	filter.modified && builder.or(function() {
+		filter.modified = NOW.add('-' + filter.modified);
+		builder.where('dateupdated', '>', filter.modified);
+		builder.where('datecreated', '>', filter.modified);
+	});
+
 	builder.paginate(filter.page, filter.limit, 1000);
 	builder.callback(callback);
 };
@@ -129,8 +136,6 @@ FUNC.users.online = function(user, is, callback) {
 
 // Codelist of from users
 FUNC.users.meta = function(callback, directory) {
-
-	console.log('-->', directory);
 
 	var meta = {};
 	var db = DBMS();
