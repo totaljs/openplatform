@@ -293,7 +293,10 @@ OP.notify = function(type, body, data) {
 };
 
 OP.share = function(app, type, body, silent) {
-	return OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date(), silent: silent });
+	setTimeout(function() {
+		OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date(), silent: silent });
+	}, 100);
+	return OP;
 };
 
 OP.email = function(subject, body) {

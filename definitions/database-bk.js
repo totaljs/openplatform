@@ -220,14 +220,14 @@ FUNC.users.meta = function(callback, directory) {
 		if (directory && item.directory !== directory)
 			continue;
 
-		var ougroups = item.ougroups ? Object.keys(item.ougroups) : EMPTYARRAY;
-
-		for (var j = 0; j < ougroups.length; j++) {
-			var oukey = ougroups[j];
-			if (ou[oukey])
-				ou[oukey].count++;
-			else
-				ou[oukey] = { count: 1, name: oukey };
+		if (item.ougroups) {
+			for (var j = 0; j < item.ougroups.length; j++) {
+				var o = item.ougroups[j];
+				if (ou[o])
+					ou[o].count++;
+				else
+					ou[o] = { count: 1, name: o };
+			}
 		}
 
 		if (item.groups) {
