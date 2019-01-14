@@ -26,6 +26,7 @@ mv definitions/op-database.js definitions/database.js
 
 tpm create openplatform.package
 cp openplatform.package ../openplatform.bundle
+cp openplatform.package ../openplatform@4.bundle
 
 cd ..
 rm -rf .bundle

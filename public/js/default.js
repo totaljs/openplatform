@@ -289,6 +289,7 @@ $(window).on('message', function(e) {
 			var custom = false;
 			switch (data.body) {
 				case 'beep':
+				case 'confirm':
 				case 'fail':
 				case 'success':
 				case 'phone':
