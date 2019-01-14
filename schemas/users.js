@@ -127,7 +127,7 @@ NEWSCHEMA('User', function(schema) {
 					return;
 				}
 
-				if ($.user.directory && item.directory !== $.user.directory) {
+				if ($.user && $.user.directory && item.directory !== $.user.directory) {
 					$.invalid('error-permissions');
 					return;
 				}
