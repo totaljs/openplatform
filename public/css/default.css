@@ -124,7 +124,7 @@ h3 i { margin-right: 5px; }
 .light .app-disabled .app-container { color: #A0A0A0; }
 .light .app-disabled .app-icon { color: #A0A0A0 !important; }
 
-.app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 7px; }
+.app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 9px; }
 .app > span .fa { margin-right: 5px; }
 .app-offline > span { display: block; }
 .app img { width: 120px; height: 120px; border-radius: 4px; }
