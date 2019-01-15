@@ -3,19 +3,27 @@
 	.screenshot-apps li { list-style-type: none; padding: 0; margin: 0; border-top: 1px solid #D0D0D0; cursor: pointer; height: 44px; }
 	.screenshot-apps li:first-child { border-top: 0; border-top-left-radius: 3px; border-top-right-radius: 3px; }
 	.screenshot-apps li:last-child { border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; }
-	.screenshot-apps li > i { float: left; width: 50px; padding: 10px 0 0; font-size: 24px; text-align: center; border-right: 1px solid #D0D0D0; height: 44px; color: #3065C6; }
+	.screenshot-apps li > i { float: left; width: 50px; padding: 10px 0 0; font-size: 24px; text-align: center; border-right: 1px solid #D0D0D0; height: 44px; color: black; }
 	.screenshot-apps li:hover { background-color: #F0F0F0; }
 	.screenshot-apps li span { display: block; margin-left: 70px; padding: 10px 0 0 0; font-size: 16px; }
 	.screenshot-apps li span .fa { font-size: 11px; vertical-align: middle; margin: -2px 0 0 8px; position: relative; display: inline-block; }
 	.screenshot-apps .selected { background-color: #015bca !important; color: white; }
 	.screenshot-apps .selected i { color: white; }
+	.screenshot-img { max-height: 200px; border: 1px solid #E0E0E0; overflow: hidden; padding: 5px; }
+
+	.ui-dark .screenshot-apps { border-color: #303030; }
+	.ui-dark .screenshot-apps li { border-top-color: #303030; }
+	.ui-dark .screenshot-apps li > i { border-right-color: #303030; color: white; }
+	.ui-dark .screenshot-apps li:hover { background-color: #181818; }
+	.ui-dark .screenshot-img { border-color: #303030; }
+	.ui-dark .screenshot-apps .selected { background-color: black !important; }
 </style>
 
 <div data-jc="form__common.form__if:screenshot;width:500;title:@(Screenshot);submit:screenshot/submit;reload:screenshot/reload" class="hidden">
 	<div class="padding">
 		<div class="row">
 			<div class="col-sm-3 m">
-				<div style="max-height:200px;border:1px solid #E0E0E0;overflow:hidden;padding:5px">
+				<div class="screenshot-im">
 					<img data-bind="screenshot.data__src:value" class="img-responsive" border="0" />
 				</div>
 			</div>
@@ -36,7 +44,7 @@
 		</ul>
 	</div>
 	<div class="ui-form-buttons">
-		<button name="submit" style="width:100%" disabled data-bind="screenshot.selected__disable:!value">@(SEND)</button>
+		<button name="submit" class="userbg" style="width:100%" disabled data-bind="screenshot.selected__disable:!value">@(SEND)</button>
 	</div>
 </div>
 

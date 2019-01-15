@@ -1,7 +1,6 @@
-const Fs = require('fs');
-
 NEWSCHEMA('Settings', function(schema) {
 
+	schema.define('name', 'String(100)', true);
 	schema.define('url', 'String(500)', true);
 	schema.define('email', 'Email', true);
 	schema.define('colorscheme', 'Lower(7)');
@@ -9,6 +8,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('accesstoken', 'String(50)', true);
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
+	schema.define('test', Boolean);
 
 	schema.setGet(function($) {
 
@@ -17,72 +17,80 @@ NEWSCHEMA('Settings', function(schema) {
 			return;
 		}
 
-		var model = $.model;
-		var options = F.config['mail-smtp-options'];
-		model.accesstoken = F.config.accesstoken;
-		model.url = F.config.url;
-		model.colorscheme = F.config.colorscheme;
-		model.background = F.config.background;
-		model.email = F.config.email;
-		model.smtp = F.config['mail-smtp'];
-		model.smtpsettings = typeof(options) === 'string' ? options : JSON.stringify(options);
-		OP.id = F.config.url.crc32(true);
-		$.callback();
+		FUNC.settings.get(function(err, response) {
+			var model = $.model;
+			var options = response.smtpsettings;
+			model.accesstoken = response.accesstoken;
+			model.url = response.url;
+			model.colorscheme = response.colorscheme;
+			model.background = response.background;
+			model.email = response.email;
+			model.smtp = response.smtp;
+			model.smtpsettings = typeof(options) === 'string' ? options : JSON.stringify(options);
+			model.test = response.test;
+			model.name = response.name;
+			OP.id = response.url.crc32(true);
+			$.callback();
+		});
 	});
 
 	schema.setSave(function($) {
 
 		if (!$.user.sa) {
-			$.error.push('error-permissions');
-			return $.callback();
+			$.error.invalid('error-permissions');
+			return;
 		}
 
-		var model = $.model;
+		var model = $.clean();
 
-		EMIT('settings.update', model);
+		FUNC.settings.set(model, function() {
 
-		if (model.url.endsWith('/'))
-			model.url = model.url.substring(0, model.url.length - 1);
+			FUNC.emit('settings.update', F.id);
 
-		// Removing older background
-		if (F.config.background && model.background !== F.config.background) {
-			var path = 'backgrounds/' + F.config.background;
-			Fs.unlink(F.path.public(path), NOOP);
-			F.touch('/' + path);
-		}
+			if (model.url.endsWith('/'))
+				model.url = model.url.substring(0, model.url.length - 1);
 
-		F.config.url = model.url;
-		F.config.email = model.email;
-		F.config.colorscheme = model.colorscheme;
-		F.config.background = model.background;
-		F.config['mail-smtp'] = model.smtp;
-		F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
-		F.config.accesstoken = model.accesstoken;
+			// Removing older background
+			if (CONF.background && model.background !== CONF.background)
+				FUNC.files.removebackground(CONF.background);
 
-		OP.id = F.config.url.crc32(true);
+			CONF.name = model.name;
+			CONF.url = model.url;
+			CONF.email = model.email;
+			CONF.colorscheme = model.colorscheme;
+			CONF.background = model.background;
+			CONF.mail_smtp = model.smtp;
+			CONF.mail_smtp_options = model.smtpsettings.parseJSON();
+			CONF.accesstoken = model.accesstoken;
+			CONF.test = model.test;
 
-		Fs.writeFile(F.path.databases('settings.json'), JSON.stringify(model.$clean()), NOOP);
-		$.success();
-		LOGGER('settings', 'update: ' + JSON.stringify(model.$clean()), '@' + $.user.name, $.ip);
+			OP.id = CONF.url.crc32(true);
+
+			$.success();
+			FUNC.logger('settings', 'update: ' + JSON.stringify(model), '@' + $.user.name, $.ip);
+		});
+
 	});
 
 	schema.addWorkflow('init', function($) {
-		Fs.readFile(F.path.databases('settings.json'), function(err, response) {
+
+		FUNC.settings.get(function(err, response) {
 
 			if (response) {
-				var model = response.toString('utf8').parseJSON(true);
-				F.config.url = model.url;
-				F.config.author = model.author;
-				F.config.email = model.email;
-				F.config.accesstoken = model.accesstoken;
-				F.config.colorscheme = model.colorscheme;
-				F.config.background = model.background;
-				F.config['mail-smtp'] = model.smtp;
-				F.config['mail-smtp-options'] = model.smtpsettings.parseJSON();
-				OP.id = F.config.url.crc32(true);
+				response.name && (CONF.name = response.name);
+				CONF.url = response.url || '';
+				CONF.author = response.author || '';
+				CONF.email = response.email || '';
+				CONF.accesstoken = response.accesstoken || '';
+				CONF.colorscheme = response.colorscheme || '';
+				CONF.background = response.background || '';
+				CONF.mail_smtp = response.smtp || '';
+				CONF.mail_smtp_options = typeof(response.smtpsettings) === 'string' ? response.smtpsettings.parseJSON() : response.smtpsettings;
+				CONF.test = response.test;
+				OP.id = CONF.url.crc32(true);
 			}
 
-			$.success();
+			$.success(true);
 		});
 	});
 });

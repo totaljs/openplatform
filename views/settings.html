@@ -1,17 +1,42 @@
+<style>
+	.col-2 { float: left; width: 50%; padding-left: 15px; padding-right: 15px; }
+	@media(max-width: 450px) {
+		.col-2 { float: none; display: block; width: 100%; }
+	}
+	@{if user.colorscheme}
+	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
+	.button{background-color:@{user.colorscheme}}
+	@{fi}
+
+</style>
 <div class="row">
-	<div class="scroller">
-		<div class="scroller-padding">
+	<div data-jc="scrollbar__account__margin:40;parent:window">
+		<div class="scroller-padding npb">
 			<div class="row">
-				<div class="col-sm-6 m">
+				<div class="col-2 m">
+					<div data-jc="textbox__settings.name__required:true">@(Openplatform name)</div>
+				</div>
+				<div class="col-2 m">
 					<div data-jc="textbox__settings.url__required:true">@(URL address)</div>
 				</div>
-				<div class="col-sm-6 m">
+			</div>
+			<div data-jc="checkbox__settings.test">@(This is <b>Test environment</b>)</div>
+			<br />
+		</div>
+		<hr class="nmt nmb" />
+		<div class="scroller-padding bg-smoke">
+
+			<div class="row">
+				<div class="col-2 m">
+					<div data-jc="textbox__settings.accesstoken__maxlength:50;required:true">@(Token for service account)</div>
+					<div class="help"><span class="link exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
+				</div>
+				<div class="col-2 m">
 					<div data-jc="textbox__settings.email__type:email;required:true">@(Support email)</div>
 				</div>
 			</div>
-			<div data-jc="textbox__settings.accesstoken__maxlength:50;required:true">@(Access token for service account)</div>
-			<div class="help m"><a href="javascript:void(0)" class="exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</a></div>
-			<div data-jc="colorselector__settings.colorscheme__null__'#0a53ea'" class="m"></div>
+
+			<div data-jc="colorselector__settings.colorscheme__null__'#4285f4'" class="m"></div>
 
 			<div style="font-size:12px">
 				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
@@ -19,24 +44,26 @@
 			</div>
 			<div class="clearfix"></div>
 		</div>
-		<div class="scroller-padding bg-smoke">
+		<div class="scroller-padding">
 			<h2>@(SMTP settings)</h2>
 			<div data-jc="textbox__settings.smtp__icon:globe;maxlength:50;placeholder:@(e.g. smtp.yourdomain.com)__''" class="m">@(SMTP host)</div>
 			<div data-jc="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
 			<div class="help m">@(The SMTP settings has to be according to the Total.js documentation in <b class="red">JSON format</b>.)</div>
 			<div data-jc="error__%smtpsettings" class="hidden m"></div>
-			<a href="javascript:void(0)" class="modify exec fs11" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</a>
-		</div>
-		<div class="scroller-padding">
-			<div data-jc="error__settings.response" class="hidden m"></div>
-			<div data-jc="validation__settings">
-				<button name="submit" class="button exec b" data-exec="settings_submit" disabled="disabled">@(SUBMIT)</button>
+			<div class="help">
+				<span class="link exec" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</span>
 			</div>
+			<div data-jc="error__settings.response" class="hidden m"></div>
 		</div>
+	</div>
+	<div class="buttonbar" data-jc="validation__settings">
+		<button name="submit" class="button exec b" data-exec="settings_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
 	</div>
 </div>
 
 <script>
+
+	resizelayout();
 
 	OPENPLATFORM.init(function(err, meta) {
 		if (err) {
@@ -56,23 +83,25 @@
 	}
 
 	function settings_submit() {
-		AJAX('POST /api/internal/settings/', settings, function(response) {
+		OP.loading(true);
+		AJAX('POST /api/internal/settings/', GETR('settings'), function(response) {
+			OP.loading(false);
 			SET('settings.response', response);
 			if (response.success) {
-				OPENPLATFORM.success('Settings have been updated successfully.');
-				OPENPLATFORM.close();
+				OP.success('Settings have been updated successfully.');
+				OP.close();
 			}
 		});
 	}
 
 	function settings_verify() {
-		OPENPLATFORM.loading(true);
+		OP.loading(true);
 		AJAX('POST /api/internal/settings/smtp/', settings, function(response) {
 			SET('%smtpsettings', response);
-			OPENPLATFORM.loading(false, 1000);
+			OP.loading(false, 1000);
 			if (response.success) {
 				SET('%smtpsettings', null, 3000);
-				OPENPLATFORM.success('SMTP server is working correctly.');
+				OP.success('SMTP server is working correctly.');
 			}
 		});
 	}

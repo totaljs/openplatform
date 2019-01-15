@@ -1,44 +1,46 @@
 /*auto*/
 
-html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; }
+html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; height: 100%; }
 
 .panel { background-color: #F0F0F0; border-right: 1px solid #D0D0D0; }
-.np { padding: 0; }
-.padding { padding: 20px; }
 .scroller { overflow-y: scroll; overflow-scrolling: touch; }
-.scroller-padding { padding: 20px 30px 20px 20px; }
-.b { font-weight: bold; }
-.m { margin-bottom: 15px; }
-.npb { padding-bottom: 0; }
-.nmt { margin-top: 0; }
-.nmb { margin-bottom: 0; }
-.mr5 { margin-right: 5px; }
-.mt10 { margin-top: 10px; }
+.scroller-padding { padding: 20px; }
 
-.toolbar { height: 30px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
-.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 28px; height: 29px; padding: 0; margin: 0; text-align: center; }
+.ui-dark .panel { background-color: #252525; border-right-color: #303030; }
+
+.toolbar { height: 40px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
+.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 40px; height: 40px; padding: 0; margin: 0; text-align: center; float: left; }
 .toolbar button:hover { background-color: white; }
 .toolbar button:disabled { color: #A0A0A0; cursor: not-allowed; background-color: #F0F0F0; }
+.toolbar > span { font-size: 11px; text-align: center; width: 68px; float: left; padding: 8px 0 0; }
 
-.search { padding: 10px 5px; background-color: white; border-bottom: 1px solid #D0D0D0; }
+.search { padding: 5px; background-color: white; border-bottom: 1px solid #D0D0D0; }
+.search .ui-textbox { border: 0; }
+.search .ui-textbox-control { border-left: 0; }
 
 .inactive { color: #A0A0A0; }
-.fs11 { font-size: 11px !important; line-height: 13px; }
-.help { font-size: 11px; color: #A0A0A0; margin-top: 7px; line-height: 13px; }
-.help .fa, .help .fal, .help .far { margin-right: 5px; }
-.help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
 
-.green { color: #8CC152; }
-.red { color: #D33634; }
+.fs11 { font-size: 11px !important; line-height: 13px; }
+.fs12 { font-size: 12px; }
 
 h2 { margin: 0 0 12px 0; padding: 0; color: black; font-size: 16px; font-weight: bold; }
 h2 b { font-weight: 700; }
 h2 .fa { margin-right: 10px; }
 
-.button { background-color: #2157E2; color: white; font-size: 12px; height: 34px; padding: 0 20px; margin: 0; border: 0; border-radius: 3px; display: block; width: 100%; }
+h3 { margin: 0 0 12px 0; padding: 0; color: black; font-size: 14px; font-weight: bold; }
+h3 b { font-weight: 700; }
+h3 .fa { margin-right: 5px; }
+
+.ui-dark h2 { color: white; }
+.ui-dark h3 { color: white; }
+
+.button { background-color: #4285f4; color: white; font-size: 12px; height: 34px; padding: 0 20px; margin: 0; border: 0; border-radius: 3px; display: block; width: 100%; }
 .button:hover { opacity: 0.9; }
 .button:disabled { opacity: 1; background-color: #D0D0D0; color: #A0A0A0; cursor: not-allowed; }
+.ui-dark .button:disabled { background-color: #404040; }
 .button .fa { margin-right: 5px; }
+
+.alert { color: #856404; background-color: #FFFFD5; border: 1px solid #e8e6bd; border-radius: 3px; padding: 10px 15px; font-size: 12px; line-height: 16px; }
 
 .cancel { font-size: 12px; margin: 8px 0 0; display: block; }
 .cancel .fa { margin-right: 5px; }
@@ -48,14 +50,20 @@ h2 .fa { margin-right: 10px; }
 .bg-yellow hr { border-color: #DCDCB7; }
 .bg-smoke { background-color: #F8F8F8; }
 
-.table-small { font-size: 12px; }
-.table-small > tbody > tr > td { padding: 3px 5px; }
+.ui-dark .bg-smoke { background-color: #282828; }
+.ui-dark .bg-white { background-color: #303030; }
 
 .nav { height: 42px; border-bottom: 1px solid #E0E0E0; padding: 0 20px; }
-.nav > a { display: inline-block; margin: 10px 10px 0 0; color: #2E5ADA; position: relative; vertical-align: middle; }
-.nav > a .fa { margin-right: 5px; }
-.nav > a:hover { color: gray; text-decoration: none; }
+.nav > .link { display: inline-block; margin: 10px 10px 0 0; position: relative; vertical-align: middle; }
+.nav > .link .fa { margin-right: 5px; }
+.nav > .link:hover { color: gray; text-decoration: none; }
 .nav .right { float: right; }
+
+.buttonbar { background-color: #F0F0F0; height: 40px; }
+.buttonbar .button { height: 40px; border-radius: 0; font-size: 12px; }
+.buttonbar .button i { margin-right: 8px; }
+.buttonbar span.cancel { line-height: 40px; display: inline-block; color: gray; font-size: 12px; cursor: pointer; }
+.buttonbar span.cancel:hover { text-decoration: underline; }
 
 @media(max-width: 767px) {
 	.panel { border-right: 0; }

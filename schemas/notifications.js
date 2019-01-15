@@ -1,5 +1,3 @@
-const Fs = require('fs');
-
 NEWSCHEMA('Notification', function(schema) {
 
 	schema.define('type', Number);
@@ -11,61 +9,51 @@ NEWSCHEMA('Notification', function(schema) {
 		var user = $.user;
 
 		if (!user.countnotifications) {
-			$.callback(null);
+			$.callback(EMPTYARRAY);
 			return;
 		}
 
-		var filename = F.path.databases('notifications_' + user.id + '.json');
+		FUNC.notifications.get(user.id, function(err, data) {
 
-		Fs.readFile(filename, function(err, data) {
+			// Remove notifications
+			FUNC.notifications.rem(user.id, function() {
 
-			user.countnotifications = 0;
-			OP.save2(2);
+				// Update session
+				FUNC.sessions.get(user.id, function(err, session) {
+					if (session) {
+						session.countnotifications = 0;
+						var keys = Object.keys(session.apps);
+						for (var i = 0; i < keys.length; i++)
+							session.apps[keys[i]].countnotifications = 0;
 
-			EMIT('users.notify', user, '', true);
+						FUNC.sessions.set(user.id, session, function() {
+							// Notifies all clients
+							FUNC.emit('users.notify', user.id, '', true);
+						});
+					}
+				});
+			});
 
-			if (err) {
-				$.callback(null);
-				return;
-			}
-
-			var body = data.toString('utf8');
-			$.callback('[' + body.substring(0, body.length - 1) + ']');
-			Fs.unlink(filename, NOOP);
+			// Returns notifications
+			$.callback(data);
 		});
 	});
 
 	schema.setSave(function($) {
 
-		var user, app;
+		OP.decodeToken($.query.accesstoken, function(err, obj) {
 
-		if ($.user && $.user.sa && !$.query.accesstoken) {
-
-			// Super Admin notifications
-
-			user = F.global.users.findItem('id', $.query.user);
-			if (!user) {
-				$.success();
-				return;
-			}
-
-			$.model.title = $.user.name;
-
-		} else {
-
-			var obj = $.query.accesstoken ? OP.decodeToken($.query.accesstoken) : null;
 			if (!obj) {
 				$.invalid('error-invalid-accesstoken');
 				return;
 			}
 
 			var ip = $.ip;
-
-			app = obj.app;
-			user = obj.user;
+			var user = obj.user;
+			var app = obj.app;
 
 			if (app.origin) {
-				if (!app.origin[ip] && app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
+				if (app.origin.indexOf(ip) == -1 && app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
 					$.invalid('error-invalid-origin');
 					return;
 				}
@@ -83,52 +71,45 @@ NEWSCHEMA('Notification', function(schema) {
 				$.invalid('error-accessible');
 				return;
 			}
-		}
 
-		var model = $.model.$clean();
-		model.userid = user.id;
+			var model = $.model.$clean();
+			model.userid = user.id;
+			model.appid = app.id;
+			model.datecreated = F.datetime;
+			model.ip = $.ip;
 
-		if (app)
-			model.idapp = app.id;
+			var can = true;
 
-		model.datecreated = F.datetime;
-		model.ip = $.ip;
+			if (app && user.apps[app.id]) {
+				var ua = user.apps[app.id];
+				if (ua.countnotifications)
+					ua.countnotifications++;
+				else
+					ua.countnotifications = 1;
+				if (ua.countnotifications > 15)
+					can = false;
+			}
 
-		var can = true;
-
-		if (app && user.apps[app.id]) {
-			var ua = user.apps[app.id];
-			if (ua.countnotifications)
-				ua.countnotifications++;
+			if (user.countnotifications)
+				user.countnotifications++;
 			else
-				ua.countnotifications = 1;
-			if (ua.countnotifications > 15)
-				can = false;
-		}
+				user.countnotifications = 1;
 
-		can && Fs.appendFile(F.path.databases('notifications_{0}.json'.format(user.id)), JSON.stringify(model) + ',', NOOP);
+			user.datenotified = F.datetime;
 
-		if (user.countnotifications)
-			user.countnotifications++;
-		else
-			user.countnotifications = 1;
+			if (can) {
 
-		user.datenotified = F.datetime;
+				// Adds notification
+				FUNC.notifications.add(model);
 
-		OP.save2(2);
-		EMIT('users.notify', user, app);
-		$.success();
+				// Updates session
+				FUNC.sessions.set(user.id, user);
 
-		// Stats
-		var db = NOSQL('users');
-		db.counter.hit('all');
-		db.counter.hit(user.id);
+				// Updates profile
+				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified'], () => FUNC.emit('users.notify', user.id, app.id), app);
+			}
 
-		if (app) {
-			db = NOSQL('apps');
-			db.counter.hit('all');
-			db.counter.hit(app.id);
-		}
+			$.success();
+		});
 	});
-
 });

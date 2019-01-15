@@ -1,10 +1,37 @@
 <style>
-	.accountphoto { background-color: #F0F0F0; padding: 15px 0; }
+	/*auto*/
+	.accountphoto { background-color: #F0F0F0; padding: 20px 0; }
 	.accountphoto img { max-width: 130px; }
+	.ui-appearance { height: 55px; }
+	.ui-appearance-label { float: left; padding: 5px 0 0 0; font-size: 12px; width: 250px; }
+	.ui-appearance-label i { margin-right: 5px; }
+	.ui-appearance-option { background-image: url(../img/appearance.png); border-radius: 3px; border: 2px solid #E0E0E0; width: 80px; height: 55px; float: right; margin-left: 10px; text-align: center; font-size: 11px; padding: 19px 0 0 20px; cursor: pointer; }
+	.ui-appearance-selected { border-color: #49a7f8 !important; }
+	.ui-appearance-light { background-position: -7px 0; background-size: 175px 51px; color: black; }
+	.ui-appearance-dark { background-position: 80px 0; background-size: 175px 51px; color: white; }
+	.col-2 { float: left; width: 50%; padding-left: 15px; padding-right: 15px; }
+
+	.ui-dark .accountphoto { background: #333333 linear-gradient(0deg,#000,#404040); }
+	.ui-dark .ui-appearance-option { border-color: #404040; }
+
+	@media(max-width: 450px) {
+		.col-2 { float: none; display: block; width: 100%; }
+		.ui-appearance-label { float: none; width: 100%; }
+		.ui-appearance-option { float: left; margin: 10px 10px 0 0; }
+		.ui-appearance { height: 110px; }
+	}
+
+	@{if user.colorscheme}
+	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
+	.button{background-color:@{user.colorscheme}}
+	@{fi}
+
 </style>
 
+<div data-jc="audio__account.volume"></div>
+
 <div class="row">
-	<div class="scroller">
+	<div data-jc="scrollbar__account__margin:40;parent:window;track:changepassword,response">
 
 		<div class="accountphoto">
 			<div data-jc="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
@@ -12,8 +39,25 @@
 
 		<div class="scroller-padding">
 
-			<div data-jc="textbox__account.email__type:email;required:true" class="m">@(Email address)</div>
-			<div data-jc="textbox__account.phone" class="m">@(Phone number)</div>
+			<div class="row">
+				<div class="col-2 m">
+					<div data-jc="textbox__account.email__type:email;required:true">@(Email address)</div>
+				</div>
+				<div class="col-2 m">
+					<div data-jc="textbox__account.phone">@(Phone number)</div>
+				</div>
+			</div>
+
+			<div class="ui-appearance" data-jc="appearance__account.darkmode">
+				<div class="ui-appearance-label">
+					<i class="fa fa-paint-brush"></i>@(Appearance):
+					<div class="help" style="margin-top:2px">@(You can choose light or dark mode. <b>IMPORTANT</b>: not all apps support changing of appearance.)</div>
+				</div>
+				<div class="ui-appearance-option ui-appearance-dark">@(Dark)</div>
+				<div class="ui-appearance-option ui-appearance-light ui-appearance-selected">@(Light)</div>
+			</div>
+
+			<hr />
 
 			<div data-jc="colorselector__account.colorscheme__null" class="m"></div>
 
@@ -22,21 +66,21 @@
 				<div data-jc="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
 			</div>
 			<div class="clearfix"></div>
+
 			<hr style="margin-top:8px" />
 
-			<div data-jc="checkbox__account.sounds">@(Enable sounds)</div>
-			<div data-jc="checkbox__account.notifications">@(Enable notifications)</div>
-			<div data-jc="checkbox__account.notificationsemail">@(Enable email notifications)</div>
-			<div data-jc="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
-			<div data-jc="checkbox__account.changepassword" class="b red">@(Change password)</div>
-
-			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
-				<div class="padding">
-					<div data-jc="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
-					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
+			<div class="row">
+				<div class="col-2">
+					<div data-jc="checkbox__account.sounds">@(Enable sounds)</div>
+					<div data-jc="checkbox__account.notifications">@(Enable notifications)</div>
+				</div>
+				<div class="col-2">
+					<div data-jc="checkbox__account.notificationsemail">@(Enable email notifications)</div>
+					<div data-jc="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
 				</div>
 			</div>
-			<hr />
+			<br />
+
 			<div data-jc="range__account.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
 			<div class="row fs11 silver m">
 				<div class="col-xs-6">
@@ -46,13 +90,21 @@
 					@(High)
 				</div>
 			</div>
+			<hr />
+			<div data-jc="checkbox__account.changepassword" class="b red">@(Change password)</div>
+
+			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
+				<div class="padding">
+					<div data-jc="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
+					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
+				</div>
+			</div>
 
 			<div data-jc="error__account.response" class="hidde m"></div>
-			<div data-jc="validation__account">
-				<button name="submit" class="button exec b" data-exec="account_submit" disabled="disabled">@(SUBMIT)</button>
-			</div>
 		</div>
-
+	</div>
+	<div class="buttonbar" data-jc="validation__account">
+		<button name="submit" class="button exec b" data-exec="account_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
 	</div>
 </div>
 
@@ -71,7 +123,9 @@
 	}
 
 	function account_submit() {
-		AJAX('POST /api/account/', account, function(response) {
+		OP.loading(true);
+		AJAX('POST /api/account/', GETR('account'), function(response) {
+			OP.loading(false);
 			SET('account.response', response);
 			if (response.success) {
 				OP.success('Your account has been updated successfully.');
@@ -79,4 +133,29 @@
 			}
 		});
 	}
+
+	COMPONENT('appearance', function(self, config) {
+		self.readonly();
+		self.make = function() {
+			self.event('click', '.ui-appearance-option', function() {
+				var el = $(this);
+				self.set(el.hclass('ui-appearance-dark'));
+				self.change();
+			});
+		};
+
+		self.setter = function(value) {
+			self.find('.ui-appearance-dark').tclass('ui-appearance-selected', value === true);
+			self.find('.ui-appearance-light').tclass('ui-appearance-selected', value !== true);
+		};
+	});
+
+	WATCH('account.volume', function(path, value, type) {
+		if (type === 2) {
+			setTimeout2('volume', function() {
+				SETTER('audio', 'play', '/sounds/success.mp3');
+			}, 500);
+		}
+	});
+
 </script>

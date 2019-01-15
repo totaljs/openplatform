@@ -8,87 +8,81 @@ AUTH(function(req, res, flags, next) {
 	// Acccess Token
 	var token = req.headers['x-token'];
 	if (token) {
+
 		if (DDOS[key] > 5) {
-			LOGGER('protection', key);
+			FUNC.logger('protection', key);
 			return next(false);
 		}
-		if (token === F.accesstoken)
+
+		if (token === CONF.accesstoken)
 			return next(true, SERVICEACCOUNT);
+
 		if (DDOS[key])
 			DDOS[key]++;
 		else
 			DDOS[key] = 1;
+
 		return next(false);
 	}
 
-	var cookie = req.cookie(F.config.cookie);
+	var cookie = req.cookie(CONF.cookie);
 	if (!cookie)
 		return next(false);
 
 	if (DDOS[key] > 5) {
-		LOGGER('protection', key);
+		FUNC.logger('protection', key);
 		return next(false);
 	}
 
 	cookie = F.decrypt(cookie);
 
 	if (cookie) {
-		var user = G.users.findItem('id', cookie.id);
-		if (user && !user.inactive && !user.blocked) {
-			user.datelogged = F.datetime;
-			user.online = true;
 
-			if (user.language && user.language !== 'en')
-				req.$language = user.language;
+		var sessionkey = cookie.id;
 
-			next(true, user);
-		} else
-			next(false);
-		return;
-	}
+		// Reads session
+		FUNC.sessions.get(sessionkey, function(err, user) {
 
-	if (DDOS[key])
-		DDOS[key]++;
-	else
-		DDOS[key] = 1;
+			if (user) {
+				next((user.inactive || user.blocked) ? false : true, user);
+				return;
+			}
 
-	return next(false);
+			// Reads a user from DB
+			FUNC.users.get(cookie.id, function(err, user) {
+				if (user && !user.inactive && !user.blocked) {
+
+					user.datelogged = NOW;
+					user.online = true;
+
+					if (user.language && user.language !== 'en')
+						req.$language = user.language;
+
+					// Write session
+					FUNC.sessions.set(sessionkey, user);
+
+					// Write info
+					FUNC.users.set(user, ['datelogged', 'online']);
+
+					// Continue
+					next(true, user);
+
+				} else
+					next(false);
+			});
+		});
+
+	} else {
+
+		if (DDOS[key])
+			DDOS[key]++;
+		else
+			DDOS[key] = 1;
+
+		next(false);
 });
 
 ON('service', function(counter) {
-
 	if (counter % 5 === 0)
 		DDOS = {};
-
-	// Notifications: each 1 hour
-	if (counter % 60 !== 0)
-		return;
-
-	var messages = [];
-
-	for (var i = 0, length = G.users.length; i < length; i++) {
-
-		var user = F.global.users[i];
-		if (!user || user.inactive || user.blocked || !user.notificationsemail || !user.countnotifications)
-			continue;
-
-		if (user.datenotifiedemail && user.datenotifiedemail.add('12 hour') > F.datetime)
-			continue;
-
-		user.datenotifiedemail = F.datetime;
-
-		if (F.config['mail-smtp']) {
-			var message = MAIL(user.email, '@(Unread notifications)', '/mails/notifications', user, user.language);
-			message.manually();
-			messages.push(message);
-			LOGGER('email', user.id + ': ' + user.name + '(' + user.email + '): ' + user.countnotifications + 'x');
-		}
-
-		EMIT('users.unread', user);
-	}
-
-	if (messages.length) {
-		OP.save2(2);
-		Mail.send2(messages, F.error());
-	}
 });

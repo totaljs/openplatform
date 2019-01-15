@@ -28,6 +28,12 @@
 	.userapp-roles input { margin-right: 5px; vertical-align: middle; }
 	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 4px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
 	.userapp-settings { margin-bottom: 15px; }
+
+	@{if user.colorscheme}
+	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
+	.button{background-color:@{user.colorscheme}}
+	@{fi}
+
 </style>
 
 <div data-jc="panel__common.form__if:apps;bg:true;width:420;title:@(Assign to users);icon:users" class="hidden">
@@ -75,7 +81,7 @@
 			<div class="search">
 				<div data-jc="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
 			</div>
-			<div class="scroller" data-margin="30">
+			<div data-jc="scrollbar__apps.items__margin:40;parent:window;offset:true">
 				<div data-jc="search__apps.search__selector:.item">
 					<div data-jc="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
 						<script type="text/html">
@@ -86,80 +92,164 @@
 			</div>
 			<nav class="toolbar">
 				<button class="exec" data-exec="apps_create" title="@(Add app)"><i class="fa fa-plus"></i></button>
-				<button data-bind="apps.selected__disabled:!value" class="exec" data-exec="apps_remove" title="@(Remove app)"><i class="fa fa-minus"></i></button>
-				<button data-bind="apps.selected__disabled:!value" class="exec" data-exec="apps_assign" title="@(Assign selected app to users)"><i class="fa fa-users"></i></button>
+				<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_remove" title="@(Remove app)"><i class="fa fa-minus"></i></button>
+				<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_assign" title="@(Assign selected app to users)"><i class="fa fa-users"></i></button>
 			</nav>
 		</div>
 	</div>
-	<div class="col-sm-9 np" data-jc="xs__apps.form.id__if:value!=null;exec:resizelayout">
+	<div class="col-sm-9 np" data-jc="xs__apps.form.show__if:value!=null&&value==true;exec:resizelayout">
 
 		<nav class="nav visible-xs">
-			<a href="javascript:void(0)" class="exec" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</a>
+			<span class="exec link" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
 		</nav>
 
-		<div class="scroller hidden" data-bind="apps.form.id__show:value != null__exec:formscroll">
-			<div class="scroller-padding">
-				<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
-				<div data-jc="error__apps.form.data" class="ui-error-nm"></div>
+		<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
+			<div data-jc="scrollbar__apps.form__margin:40;parent:window;marginxs:42;track:show,directories">
+				<div class="scroller-padding">
 
-				<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-yellow" style="margin-top:10px">
-					<script type="text/html">
-						<div class="padding">
-							<div class="b"><i class="fa fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
-							<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
-							{{ if value.description }}
-								<div class="help" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
-							{{ fi }}
-							{{ if value.roles && value.roles.length }}
-								<hr />
-								<div class="b fs11" style="margin-bottom:5px">@(Supported roles:)</div>
-								{{ foreach m in value.roles }}
-									<span class="badge badge-blue mr5">{{ m }}</span>
-								{{ end }}
-							{{ fi }}
-							{{ if value.origin && value.origin.length }}
-								<hr />
-								<div class="b fs11" style="margin-bottom:5px">@(Supported origin:)</div>
-								{{ foreach m in value.origin }}
-									<span class="badge badge-red mr5">{{ m }}</span>
-								{{ end }}
-							{{ fi }}
-						</div>
-					</script>
+					<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
+					<div data-jc="error__apps.form.data" class="ui-error-nm"></div>
+
+					<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-smoke" style="margin-top:10px">
+						<script type="text/html">
+							<div class="padding">
+								<div class="b"><i class="fa fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
+								<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
+								{{ if value.description }}
+									<div class="help m" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
+								{{ fi }}
+								{{ if value.roles && value.roles.length }}
+									<div class="b fs12" style="margin-bottom:5px">@(Supported roles:)</div>
+									<div class="m">
+									{{ foreach m in value.roles }}
+										<span class="badge badge-large badge-blue mr5">{{ m }}</span>
+									{{ end }}
+									</div>
+								{{ fi }}
+								{{ if value.origin && value.origin.length }}
+									<div class="b fs12" style="margin-bottom:5px">@(Hostname whitelist:)</div>
+									<div class="m">
+									{{ foreach m in value.origin }}
+										<span class="badge badge-large badge-red mr5">{{ m }}</span>
+									{{ end }}
+									</div>
+								{{ fi }}
+								<table class="table table-small table-bordered nmb">
+									<tr>
+										<td>Notifications</td>
+										<td class="center bg-white" style="width:30px">{{ value.allownotifications | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Optimized for mobile devices)</td>
+										<td class="center bg-white">{{ value.responsive | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Mobile menu)</td>
+										<td class="center bg-white">{{ value.mobilemenu | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Server-side verification)</td>
+										<td class="center bg-white">{{ value.serververify | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read meta information)</td>
+										<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read user profile){{ if value.allowreadprofile === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadprofile === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadprofile | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read users){{ if value.allowreadusers === 1 }} - <b>@(basic information of all users)</b>{{ else if value.allowreadusers === 2 }} - <b>@(all information of all users)</b>{{ else if value.allowreadusers === 3 }} - <b>@(basic information of all users which use this app)</b>{{ else if value.allowreadusers === 4 }} - <b>@(all information of all users which use this app)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadusers | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read apps){{ if value.allowreadapps === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadapps === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
+									</tr>
+								</table>
+								<div class="help" style="margin-top:15px"><i class="fa fa-warning red"></i>@(Application can't change own permissions when is installed.)</div>
+							</div>
+						</script>
+					</div>
+
+					<div data-bind="apps.form__template__show:value && value.id" class="bg-yellow" style="margin-top:10px">
+						<script type="text/html">
+							<div class="padding">
+
+								<div class="b m"><i class="fa fa-lock mr5"></i>@(Current permissions)</div>
+
+								{{ if value.roles && value.roles.length }}
+									<div class="b fs12" style="margin-bottom:5px">@(Supported roles:)</div>
+									<div class="m">
+									{{ foreach m in value.roles }}
+										<span class="badge badge-large badge-blue mr5">{{ m }}</span>
+									{{ end }}
+									</div>
+								{{ fi }}
+								{{ if value.origin && value.origin.length }}
+									<div class="b fs12" style="margin-bottom:5px">@(Hostname whitelist:)</div>
+									<div class="m">
+									{{ foreach m in value.origin }}
+										<span class="badge badge-large badge-red mr5">{{ m }}</span>
+									{{ end }}
+									</div>
+								{{ fi }}
+								<table class="table table-small table-bordered nmb">
+									<tr>
+										<td>Notifications</td>
+										<td class="center bg-white" style="width:30px">{{ value.allownotifications | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Server-side verification)</td>
+										<td class="center bg-white">{{ value.serververify | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read meta information)</td>
+										<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read user profile){{ if value.allowreadprofile === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadprofile === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadprofile | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read users){{ if value.allowreadusers === 1 }} - <b>@(basic information of all users)</b>{{ else if value.allowreadusers === 2 }} - <b>@(all information of all users)</b>{{ else if value.allowreadusers === 3 }} - <b>@(basic information of all users which use this app)</b>{{ else if value.allowreadusers === 4 }} - <b>@(all information of all users which use this app)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadusers | checked }}</td>
+									</tr>
+									<tr>
+										<td>@(Can read apps){{ if value.allowreadapps === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadapps === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+										<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
+									</tr>
+								</table>
+							</div>
+						</script>
+					</div>
+					<br />
+					<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
+					<div class="mt10 m b" data-jc="checkbox__apps.form.blocked">@(Application is blocked)</div>
+					<div class="m hidden" data-bind="apps.form.id__show" data-jc="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
+					<hr />
+					<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
+					<div data-jc="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25;type:lower"></div>
+					<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
+					<hr />
+					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
+					<div class="help m"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>
+					<div data-jc="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
 				</div>
-				<br />
-				<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
-				<div data-jc="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
-				<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
-				<div class="help"><a href="javascript:void(0)" class="exec" data-exec="apps_generatetoken">@(Generate token)</a></div>
 			</div>
-			<hr class="nmt nmb" />
-			<div class="scroller-padding">
-				<h2 class="m"><i class="fa fa-lock"></i>@(Permissions for this application)</h2>
-				<div class="mt10 red b" data-jc="checkbox" data-jc-path="apps.form.blocked">@(Application is blocked)</div>
-				<div data-jc="checkbox__apps.form.allownotifications">@(Allow push notifications)</div>
-				<div data-jc="checkbox__apps.form.responsive">@(Allow for mobile devices)</div>
-				<div data-jc="checkbox__apps.form.allowreadmeta">@(Allow to read OpenPlatform's meta information)</div>
-				<div data-jc="checkbox__apps.form.serververify" class="b">@(Enable server-side verification)</div>
-				<br />
-				<div data-jc="dropdown__apps.form.allowreadprofile__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__1" class="m">@(Read user profile)</div>
-				<div data-jc="dropdown__apps.form.allowreadusers__items:@(Disabled)|0,@(Basic information)|1,@(Basic information about users which use this application)|3,@(All information)|2,@(All information about users which use this application)|4;type:number__0" class="m">@(Read list of users)</div>
-				<div data-jc="dropdown__apps.form.allowreadapps__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number__0" class="m">@(Read list of applications)</div>
-				<div data-jc="error__apps.form.response"></div>
-				<div class="row" data-jc="validation__apps.form">
-					<div class="col-sm-5">
-						<button class="button b exec" name="submit" data-exec="apps_submit" disabled="disabled">@(SUBMIT)</button>
-					</div>
-					<div class="col-sm-3">
-						<a href="javascript:void(0)" class="cancel exec" data-exec="apps_cancel">@(Cancel changes)</a>
-					</div>
-				</div>
+			<div class="buttonbar" data-jc="validation__apps.form">
+				<button name="submit" class="button exec b" data-exec="apps_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SUBMIT)</button>
 			</div>
 		</div>
 	</div>
 </div>
 
 <script>
+
+	Thelpers.checked = function(value) {
+		return '<i class="{0}"></i>'.format(value ? 'fa fa-check-square green' : 'far fa-square');
+	};
 
 	var apps = {};
 
@@ -173,7 +263,7 @@
 		} else {
 			resizelayout();
 			apps_refresh();
-			AJAX('GET /api/meta/', 'apps.meta');
+			AJAX('GET /api/internal/meta/', 'apps.meta');
 		}
 	});
 
@@ -185,7 +275,10 @@
 	function apps_load(item) {
 		OP.loading(true);
 		var item = apps.items.items.findItem('id', item.id);
-		item && SET('apps.form', CLONE(item), true);
+		if (item) {
+			item.show = true;
+			SET('apps.form', CLONE(item), true);
+		}
 		OP.loading(false, 1000);
 	}
 
@@ -199,7 +292,7 @@
 	function formscroll(value, path, el) {
 		if (path === 'apps.form') {
 			setTimeout(function() {
-				el.prop('scrollTop', 0);
+				el.SETTER('scrollbar', 'scrollTop', 0);
 			}, 10);
 		}
 	}
@@ -210,7 +303,7 @@
 
 	function apps_cancel() {
 		SET('apps.selected', '');
-		SET('apps.form.id', null);
+		SET('apps.form.show', false);
 	}
 
 	function apps_generatetoken() {
@@ -218,9 +311,9 @@
 		CHANGE('apps.form.accesstoken', true);
 	}
 
-	function apps_create() {
+	function apps_create(url) {
 		SET('apps.selected', '');
-		SET('apps.form', { id: '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, accesstoken: GUID(30) }, true);
+		SET('apps.form', { show: true, permissions: true, id: '', url: (typeof(url) === 'string' ? url : null) || '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, mobilemenu: true, accesstoken: GUID(30), serververify: true }, true);
 	}
 
 	function apps_remove() {
@@ -251,6 +344,7 @@
 			if (response.success) {
 				apps_refresh();
 				apps_cancel();
+				OP.success('@(Done, application has been saved.)');
 			}
 		});
 	}
@@ -259,10 +353,7 @@
 		OP.confirm('@(Are you sure you want to applied the application according to the filter?)', ['@(Yes)', '@(Cancel)'], function(index) {
 			if (!index) {
 				var data = CLONE(assignform);
-				data.apps = {};
-				data.type = 'extend';
-				data.apps[apps.form.id] = { roles: data.roles || EMPTYARRAY, settings: '' };
-				data.roles = undefined;
+				data.appid = apps.form.id;
 				AJAX('POST /api/internal/users/apps/', data, function(response) {
 					OP.success('@(Done, the application has been applied for {0} users.)'.format(response.value));
 				});
@@ -308,7 +399,27 @@
 				}, 'url');
 			}
 		});
-
 	});
+
+	function finddirectory(com, input) {
+		SETTER('autocomplete', 'attach', input.parent().parent(), function(query, render) {
+
+			var arr = apps.meta.directories;
+			var tmp = [];
+
+			query = query.toSearch();
+
+			for (var i = 0; i < arr.length; i++) {
+				var item = arr[i];
+				if (item.name.toSearch().indexOf(query) !== -1)
+					tmp.push(item);
+			}
+
+			render(tmp);
+
+		}, function(selected, input) {
+			PUSH('apps.form.directories', selected.name, 2);
+		}, 0, 5, 2);
+	}
 
 </script>

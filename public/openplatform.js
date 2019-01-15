@@ -1,11 +1,12 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = '3.0.0';
+OP.version = 400;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
 OP.pending = [];
+OP.$appearance = 0;
 OP.interval = setInterval(function() {
 	if (OP.ready) {
 		clearInterval(OP.interval);
@@ -22,6 +23,11 @@ document.onkeydown = function(e) {
 		else
 			location.reload(true);
 	}
+};
+
+OP.appearance = function() {
+	OP.$appearance = 1;
+	OP.send('appearance');
 };
 
 OP.screenshot = function(cdn) {
@@ -127,22 +133,48 @@ OP.init = function(callback) {
 	});
 };
 
+
 document.addEventListener('click', function() {
 	OP && OP.focus();
 });
+
+document.addEventListener('touchstart', function() {
+	OP && OP.focus();
+});
+
+OP.loading2 = function(visible, interval) {
+
+	OP.$loading2 && clearTimeout(OP.$loading2);
+
+	if (!interval) {
+		OP.send('loading2', visible);
+		return;
+	}
+
+	OP.$loading2 = setTimeout(function(visible) {
+		OP.send('loading2', visible);
+	}, interval, visible);
+};
 
 OP.loading = function(visible, interval) {
 
 	OP.$loading && clearTimeout(OP.$loading);
 
+	var obj = { show: visible, text: '' };
+
+	if (typeof(interval) === 'string') {
+		obj.text = interval;
+		interval = 0;
+	}
+
 	if (!interval) {
-		OP.send('loading', visible);
+		OP.send('loading', obj);
 		return;
 	}
 
-	OP.$loading = setTimeout(function(visible) {
-		OP.send('loading', visible);
-	}, interval, visible);
+	OP.$loading = setTimeout(function(obj) {
+		OP.send('loading', obj);
+	}, interval, obj);
 };
 
 OP.success = function(message, button) {
@@ -170,6 +202,21 @@ OP.confirm = function(message, buttons, callback) {
 	});
 };
 
+OP.config = function(body, callback) {
+
+	var data = {};
+
+	if (typeof(body) === 'function') {
+		callback = body;
+		data.body = null;
+	} else
+		data.body = JSON.stringify(body);
+
+	return OP.send('config', data, function(err, data) {
+		callback && callback(data, err);
+	});
+};
+
 OP.snackbar = function(message, type, button) {
 	var data = {};
 	data.body = message;
@@ -188,11 +235,13 @@ OP.meta = function(callback) {
 };
 
 OP.play = function(url) {
-	if (!(/^(http|https):\/\//).test(url)) {
+
+	if (!((/^[a-z]+$/).test(url)) && !(/^(http|https):\/\//).test(url)) {
 		if (url.substring(0, 1) !== '/')
 			url = '/' + url;
 		url = location.protocol + '//' + location.hostname + url;
 	}
+
 	return OP.send('play', url);
 };
 
@@ -220,8 +269,8 @@ OP.minimize = function() {
 	return OP.send('minimize');
 };
 
-OP.badge = function() {
-	return OP.send('badge');
+OP.badge = function(type) {
+	return OP.send('badge', type);
 };
 
 OP.log = function(message) {
@@ -243,12 +292,19 @@ OP.notify = function(type, body, data) {
 	return OP.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
 };
 
-OP.share = function(app, type, body) {
-	return OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date() });
+OP.share = function(app, type, body, silent) {
+	setTimeout(function() {
+		OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date(), silent: silent });
+	}, 100);
+	return OP;
 };
 
 OP.email = function(subject, body) {
 	return OP.send('email', { subject: subject, body: body, datecreated: new Date() });
+};
+
+OP.shake = function(type) {
+	return OP.send('shake', type);
 };
 
 OP.send = function(type, body, callback) {
@@ -302,6 +358,36 @@ OP.$process = function(data) {
 	if (data.sender)
 		return;
 
+	if (data.type === 'appearance' && OP.$appearance) {
+
+		var head = document.head || document.getElementsByTagName('head')[0];
+		var style = document.createElement('style');
+
+		if (OP.$appearance === 1) {
+			OP.$appearance = 2;
+		} else
+			document.getElementById('opstyle').remove();
+
+		var d = data.body;
+		var b = document.body.classList;
+
+		b.add(d.darkmode ? 'opdark' : 'oplight');
+		d.darkmode && b.add('ui-dark');
+		b.add('opbody');
+		b.remove(d.darkmode ? 'oplight' : 'opdark');
+		!d.darkmode && b.remove('ui-dark');
+
+		if (!d.colorscheme)
+			d.colorscheme = '#4285f4';
+
+		window.OPCOLOR = d.colorscheme;
+		window.OPDARKMODE = d.darkmode;
+
+		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFFFFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000000') + '}.opborder{border-color:' + d.colorscheme + '}.opbg{background-color:' + d.colorscheme + '}.opfg{color:' + d.colorscheme + '}'));
+		style.id = 'opstyle';
+		head.appendChild(style);
+	}
+
 	if (data.type === 'reload') {
 		if (location.href.indexOf('openplatform=') === -1)
 			location.href = OP.tokenizator(location.href);
@@ -322,7 +408,6 @@ OP.$process = function(data) {
 
 	if (data.type === 'kill')
 		data.type = 'close';
-
 
 	if (data.type === 'share') {
 		data.body.share = function(type, body) {

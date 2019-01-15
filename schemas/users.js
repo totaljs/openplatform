@@ -1,11 +1,12 @@
-const Fs = require('fs');
-
 NEWSCHEMA('User', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
-	schema.define('delegateid', 'UID');
+	schema.define('deputyid', 'UID');
+	schema.define('directory', 'Lower(25)');
 	schema.define('photo', 'String(150)');
+	schema.define('statusid', Number);
+	schema.define('status', 'String(70)');
 	schema.define('name', 'String(40)');
 	schema.define('firstname', 'Capitalize(40)', true);
 	schema.define('lastname', 'Capitalize(40)', true);
@@ -16,7 +17,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('company', 'String(40)');
 	schema.define('ou', 'String(100)');
 	schema.define('language', 'String(2)');
-	schema.define('reference', 'String(70)');
+	schema.define('reference', 'String(100)');
 	schema.define('locality', 'String(40)');
 	schema.define('login', 'String(120)');
 	schema.define('password', 'String(30)');
@@ -27,6 +28,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('blocked', Boolean);
 	schema.define('customer', Boolean);
 	schema.define('welcome', Boolean);
+	schema.define('darkmode', Boolean);
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
@@ -38,40 +40,45 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('datebirth', Date);
 	schema.define('datebeg', Date);
 	schema.define('dateend', Date);
-	schema.define('apps', Object); // { "idapp": { roles: [], options: '' } }
+	schema.define('apps', Object); // { "appid": { roles: [], options: '' } }
 
 	schema.setQuery(function($) {
+		OP.decodeAuthToken($.query.accesstoken || '', function(err, obj) {
 
-		var obj = $.query.accesstoken ? OP.decodeAuthToken($.query.accesstoken) : null;
-
-		if (!obj) {
-			$.invalid('error-invalid-accesstoken');
-			return;
-		}
-
-		var user = obj.user;
-		var app = obj.app;
-		var ip = $.ip;
-
-		if (app.origin) {
-			if (!app.origin[ip] && app.hostname !== ip) {
-				$.invalid('error-invalid-origin');
+			if (!obj) {
+				$.invalid('error-invalid-accesstoken');
 				return;
 			}
-		} else if (app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
-			$.invalid('error-invalid-origin');
-			return;
-		} else if (user.blocked || user.inactive) {
-			$.invalid('error-permissions');
-			return;
-		}
 
-		if (!user.apps[app.id]) {
-			$.invalid('error-permissions');
-			return;
-		}
+			var user = obj.user;
+			var app = obj.app;
+			var ip = $.ip;
 
-		$.callback(OP.users(app, $.query));
+			if (app.origin) {
+				if (app.origin.indexOf(ip) == -1 && app.hostname !== ip) {
+					$.invalid('error-invalid-origin');
+					return;
+				}
+			} else if (app.hostname !== ip && (!$.user || $.user.id !== user.id)) {
+				$.invalid('error-invalid-origin');
+				return;
+			} else if (user.blocked || user.inactive) {
+				$.invalid('error-permissions');
+				return;
+			}
+
+			if (!user.apps[app.id]) {
+				$.invalid('error-permissions');
+				return;
+			}
+
+			if (user.directory) {
+				if (!user.sa || !$.query.all)
+					$.query.directory = user.directory;
+			}
+
+			OP.users(app, $.query, $.callback);
+		});
 	});
 
 	schema.setSave(function($) {
@@ -81,114 +88,137 @@ NEWSCHEMA('User', function(schema) {
 			return;
 		}
 
-		var model = $.model.$clean();
-		var newbie = false;
+		var model = $.clean();
 		var item;
 
-		delete model.welcome;
-		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).search();
+		model.welcome = undefined;
+		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).toSearch();
 		model.name = model.firstname + ' ' + model.lastname;
 		model.linker = model.name.slug();
 
-		if (model.id) {
-			// update
+		var prepare = function(item, model) {
 
-			item = G.users.findItem('id', model.id);
+			!item.apps && (item.apps = {});
+			item.ougroups = {};
 
-			if (item == null) {
-				$.invalid('error-users-404');
-				return;
+			var ou = item.ou.split('/').trim();
+			var oupath = '';
+
+			for (var i = 0; i < ou.length; i++) {
+				oupath += (oupath ? '/' : '') + ou[i];
+				item.ougroups[oupath] = true;
 			}
 
-			if (model.password && !model.password.startsWith('***'))
-				item.password = model.password.sha256();
+			item.ougroups = Object.keys(item.ougroups);
+			item.ou = OP.ou(item.ou);
+			item.linker = item.name.slug();
 
-			item.supervisorid = model.supervisorid;
-			item.sa = model.sa;
-			item.search = model.search;
-			item.blocked = model.blocked;
-			item.phone = model.phone;
-			item.photo = model.photo;
-			item.firstname = model.firstname;
-			item.lastname = model.lastname;
-			item.email = model.email;
-			item.name = model.name;
-			item.accesstoken = model.accesstoken;
-			item.company = model.company;
-			item.gender = model.gender;
-			item.ou = model.ou;
-			item.groups = model.groups;
-			item.language = model.language;
-			item.locality = model.locality;
-			item.login = model.login;
-			item.roles = model.roles;
-			item.customer = model.customer;
-			item.notifications = model.notifications;
-			item.sounds = model.sounds;
-			item.apps = model.apps;
-			item.dateupdated = NOW;
-			item.volume = model.volume;
-			item.datebirth = model.datebirth;
-			item.datebeg = model.datebeg;
-			item.dateend = model.dateend;
-			item.inactive = model.inactive;
-			item.notificationsphone = model.notificationsphone;
-			item.notificationsemail = model.notificationsemail;
+			if ($.model.welcome && !model.blocked && !model.inactive) {
+				$.model.token = F.encrypt({ id: item.id, date: NOW, type: 'welcome' }, 'token');
+				MAIL(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, item.language);
+			}
+		};
 
-			if (model.rebuildtoken || !item.verifytoken)
-				item.verifytoken = U.GUID(15);
+		if (model.id) {
 
-			if (!item.accesstoken)
-				item.accesstoken = U.GUID(40);
+			FUNC.users.get(model.id, function(err, item) {
 
-			LOGGER('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
-			newbie = true;
+				if (item == null) {
+					$.invalid('error-users-404');
+					return;
+				}
+
+				if ($.user && $.user.directory && item.directory !== $.user.directory) {
+					$.invalid('error-permissions');
+					return;
+				}
+
+				if (model.password && !model.password.startsWith('***'))
+					item.password = model.password.sha256();
+
+				item.supervisorid = model.supervisorid;
+				item.deputyid = model.deputyid;
+				item.sa = model.sa;
+				item.search = model.search;
+				item.blocked = model.blocked;
+				item.phone = model.phone;
+				item.photo = model.photo;
+				item.statusid = model.statusid;
+				item.status = model.status;
+				item.firstname = model.firstname;
+				item.directory = model.directory;
+				item.directoryid = item.directory ? item.directory.crc32(true) : 0;
+				item.lastname = model.lastname;
+				item.email = model.email;
+				item.name = model.name;
+				item.accesstoken = model.accesstoken;
+				item.company = model.company;
+				item.gender = model.gender;
+				item.ou = model.ou;
+				item.groups = model.groups;
+				item.language = model.language;
+				item.locality = model.locality;
+				item.login = model.login;
+				item.roles = model.roles;
+				item.customer = model.customer;
+				item.notifications = model.notifications;
+				item.sounds = model.sounds;
+				item.apps = model.apps;
+				item.dateupdated = NOW;
+				item.volume = model.volume;
+				item.datebirth = model.datebirth;
+				item.datebeg = model.datebeg;
+				item.dateend = model.dateend;
+				item.inactive = model.inactive;
+				item.notificationsphone = model.notificationsphone;
+				item.notificationsemail = model.notificationsemail;
+				item.darkmode = model.darkmode;
+
+				if (model.rebuildtoken || !item.verifytoken)
+					item.verifytoken = U.GUID(15);
+
+				if (!item.accesstoken)
+					item.accesstoken = U.GUID(40);
+
+				prepare(item, $.model);
+
+				FUNC.users.set(item, null, function() {
+					FUNC.users.meta();
+					FUNC.emit('users.meta');
+					FUNC.emit('users.update', item.id);
+					FUNC.emit('users.refresh', item.id, item.blocked || item.inactive ? true : undefined);
+					FUNC.logger('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+					$.success();
+				});
+			});
 
 		} else {
+
 			item = model;
-			item.id = UID();
 			item.datecreated = NOW;
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
 
+			if ($.user.directory) {
+				item.directory = $.user.directory;
+				item.directoryid = item.directory.crc32(true);
+			} else
+				item.directoryid = 0;
+
 			if (!item.accesstoken)
 				item.accesstoken = U.GUID(40);
 
-			G.users.push(item);
-			LOGGER('users', 'create: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+			prepare(item, $.model);
+
+			FUNC.users.set(item, null, function(err, id) {
+				FUNC.users.meta();
+				FUNC.emit('users.meta');
+				FUNC.emit('users.create', id);
+				FUNC.emit('users.refresh', id, item.blocked || item.inactive ? true : undefined);
+				FUNC.logger('users', 'create: ' + id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+				$.success();
+			});
 		}
-
-		if (!item.apps)
-			item.apps = {};
-
-		item.ougroups = {};
-
-		var ou = item.ou.split('/').trim();
-		var oupath = '';
-
-		for (var i = 0; i < ou.length; i++) {
-			oupath += (oupath ? '/' : '') + ou[i];
-			item.ougroups[oupath] = true;
-		}
-
-		item.ou = OP.ou(item.ou);
-		item.companylinker = item.company.slug();
-		item.localitylinker = item.locality.slug();
-		delete item.rebuildtoken;
-
-		if ($.model.welcome && !model.blocked && !model.inactive) {
-			$.model.token = F.encrypt({ id: item.id, date: NOW, type: 'welcome' }, 'token');
-			MAIL(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, item.language);
-		}
-
-		setTimeout2('users', function() {
-			$WORKFLOW('User', 'refresh');
-			OP.save2(2);
-		}, 1000);
-
-		EMIT('users.' + (newbie ? 'create' : 'update'), item);
-		EMIT('users.refresh', item, item.blocked || item.inactive ? true : undefined);
-		$.success();
 	});
 
 	schema.setRemove(function($) {
@@ -199,118 +229,16 @@ NEWSCHEMA('User', function(schema) {
 		}
 
 		var id = $.id;
-		var user = G.users.findItem('id', id);
-
-		if (user) {
-
-			G.users = G.users.remove('id', id);
-
-			// Supervisor
-			for (var i = 0, length = G.users.length; i < length; i++) {
-				var tmp = G.users[i];
-				if (tmp.supervisorid === id)
-					tmp.supervisorid = '';
+		FUNC.users.rem(id, function(err, item) {
+			if (item) {
+				FUNC.users.meta();
+				FUNC.emit('users.meta');
+				FUNC.emit('users.remove', id);
+				FUNC.emit('users.refresh', id, true);
+				FUNC.logger('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 			}
+			$.success();
 
-			LOGGER('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
-			Fs.unlink(F.path.databases('notifications_' + user.id + '.json'), NOOP);
-
-			setTimeout2('users', function() {
-				$WORKFLOW('User', 'refresh');
-				OP.save2(2);
-			}, 1000);
-
-			EMIT('users.remove', user);
-			EMIT('users.refresh', user, true);
-		}
-
-		$.success();
-	});
-
-	schema.addWorkflow('refresh', function($) {
-
-		var ou = {};
-		var localities = {};
-		var companies = {};
-		var customers = {};
-		var groups = {};
-		var roles = {};
-
-		var toArray = function(obj, preparator) {
-			var arr = Object.keys(obj);
-			var output = [];
-			for (var i = 0, length = arr.length; i < length; i++)
-				output.push(preparator ? preparator(obj[arr[i]]) : obj[arr[i]]);
-			output.quicksort('name');
-			return output;
-		};
-
-		for (var i = 0, length = G.users.length; i < length; i++) {
-
-			var item = G.users[i];
-			var ougroups = item.ougroups ? Object.keys(item.ougroups) : EMPTYARRAY;
-
-			for (var j = 0; j < ougroups.length; j++) {
-				var oukey = ougroups[j];
-				if (ou[oukey])
-					ou[oukey].count++;
-				else
-					ou[oukey] = { count: 1, name: oukey };
-			}
-
-			for (var j = 0; j < item.groups.length; j++) {
-				var g = item.groups[j];
-				if (groups[g])
-					groups[g].count++;
-				else
-					groups[g] = { count: 1, id: g, name: g };
-			}
-
-			for (var j = 0; j < item.roles.length; j++) {
-				var r = item.roles[j];
-				if (roles[r])
-					roles[r].count++;
-				else
-					roles[r] = { count: 1, id: r, name: r };
-			}
-
-			if (item.locality) {
-				if (localities[item.locality])
-					localities[item.locality].count++;
-				else
-					localities[item.locality] = { count: 1, id: item.locality.slug(), name: item.locality };
-			}
-
-			if (item.company) {
-
-				if (item.customer) {
-					if (customers[item.company])
-						customers[item.company].count++;
-					else
-						customers[item.company] = { count: 1, id: item.company.slug(), name: item.company };
-				}
-
-				if (companies[item.company])
-					companies[item.company].count++;
-				else
-					companies[item.company] = { count: 1, id: item.company.slug(), name: item.company };
-			}
-		}
-
-		var meta = G.meta = {};
-		meta.companies = toArray(companies);
-		meta.customers = toArray(customers);
-		meta.localities = toArray(localities);
-		meta.groups = toArray(groups);
-		meta.roles = toArray(roles);
-		meta.languages = F.config.languages;
-
-		meta.ou = toArray(ou, function(item) {
-			item.id = item.name = item.name.replace(/\//g, ' / ');
-			return item;
 		});
-
-		EMIT('users.meta', meta);
-		$.callback(meta);
 	});
 });

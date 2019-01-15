@@ -11,3 +11,4 @@ error-accessible           : User account is not accessible.
 error-notifications        : User has a lot of unread notifications.
 error-offline              : User is offline
 error-file-type            : Invalid file type.
+error-apps-404             : App not found.

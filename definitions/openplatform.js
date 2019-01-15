@@ -1,87 +1,16 @@
-const Fs = require('fs');
 const OP = global.OP = {};
 const SKIP = { localitylinker: 1, companylinker: 1, countsessions: 1 };
 
-// G.users = [];
-// G.apps = [];
-
-OP.login = function(login, password, callback) {
-	var user = G.users.findItem('login', login);
-	if (user && user.password === password.sha256())
-		callback(null, user);
-	else
-		callback();
-};
-
-OP.logout = function(controller) {
-	controller.redirect('/');
-};
-
-// Saves stats into the file
-OP.save = function(callback) {
-	G.users.quicksort('name');
-	G.apps.quicksort('name');
-	EMIT('users.backup', G.users);
-	Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users, null, cleaner_user), F.error());
-	EMIT('apps.backup', G.apps);
-	Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
-	callback && callback();
-};
-
-OP.save2 = function(type) {
-	setTimeout2('OP.saveState.' + (type || 0), function() {
-
-		if (!type || type === 2) {
-			EMIT('users.backup', G.users);
-			Fs.writeFile(F.path.databases('users.json'), JSON.stringify(G.users, null, cleaner_user), F.error());
-		}
-
-		if (!type || type === 1) {
-			EMIT('apps.backup', G.apps);
-			Fs.writeFile(F.path.databases('apps.json'), JSON.stringify(G.apps), F.error());
-		}
-
-	}, 1000, 10);
-};
-
-function cleaner_user(k) {
-	return k >= 0 || !SKIP[k];
-}
-
-OP.load = function(callback) {
-	$WORKFLOW('Settings', 'init', function() {
-
-		Fs.readFile(F.path.databases('users.json'), function(err, response) {
-			G.users = response ? response.toString('utf8').parseJSON(true) : [];
-
-			for (var i = 0, length = G.users.length; i < length; i++) {
-				var u = G.users[i];
-				u.online = false;
-				u.countsessions = 0;
-			}
-
-			Fs.readFile(F.path.databases('apps.json'), function(err, response) {
-				G.apps = response ? response.toString('utf8').parseJSON(true) : [];
-
-				for (var i = 0, length = G.apps.length; i < length; i++)
-					G.apps[i].online = false;
-
-				G.apps.quicksort('title');
-				G.apps.length && $WORKFLOW('App', 'state');
-				callback && callback();
-			});
-
-			// Refreshes meta info
-			$WORKFLOW('User', 'refresh');
-		});
-	});
-};
+OP.version = 4001;
+G.meta = {};
+G.metadirectories = {};
 
 // Return user profile object
-OP.profile = function(user) {
+OP.profile = function(user, callback) {
 
 	var meta = {};
 	meta.openplatformid = OP.id;
+	meta.version = OP.version;
 	meta.name = user.name;
 	meta.photo = user.photo;
 	meta.locality = user.locality;
@@ -91,23 +20,55 @@ OP.profile = function(user) {
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
 	meta.sounds = user.sounds;
+	meta.statusid = user.statusid;
 	meta.volume = user.volume;
-	meta.colorscheme = user.colorscheme || F.config.colorscheme;
-	meta.background = user.background || F.config.background;
+	meta.darkmode = user.darkmode;
+	meta.colorscheme = user.colorscheme || CONF.colorscheme;
 
-	for (var i = 0, length = G.apps.length; i < length; i++) {
-		var app = G.apps[i];
-		!app.blocked && user.apps && user.apps[app.id] && meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type });
-	}
+	var bg = user.background || CONF.background;
+	if (bg)
+		meta.background = bg;
 
-	if (user.sa) {
-		meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false });
-		meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false });
-		meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 690, resize: false });
-	}
+	if (CONF.test === true)
+		meta.test = true;
 
-	meta.apps.push({ id: '_account', icon: 'cog', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 720, resize: false });
-	return meta;
+	meta.status = user.status;
+
+	if (user.directory)
+		meta.directory = user.directory;
+
+	meta.directoryid = user.directoryid || 0;
+
+	var id = Object.keys(user.apps);
+
+	FUNC.apps.query(id.length ? { id: id } : EMPTYOBJECT, function(err, apps) {
+
+
+		if (err) {
+			FUNC.error('OP.profile', err);
+			callback(err, meta);
+			return;
+		}
+
+		for (var i = 0, length = apps.items.length; i < length; i++) {
+			var app = apps.items[i];
+			if (!app.blocked && user.apps && user.apps[app.id])
+				meta.apps.push({ id: app.id, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false });
+		}
+
+		if (user.sa) {
+			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false, mobilemenu: false });
+
+			if (!user.directory) {
+				meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false, mobilemenu: false });
+				meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 670, resize: false, mobilemenu: false });
+				meta.apps.push({ id: '_info', icon: 'question-circle', title: 'About', name: 'About', online: true, internal: true, linker: '_info', width: 400, height: 315, resize: false, mobilemenu: false });
+			}
+		}
+
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 740, resize: false, mobilemenu: false });
+		callback(null, meta);
+	});
 };
 
 // Output see the app only
@@ -116,13 +77,23 @@ OP.meta = function(app, user, serverside) {
 	if (!user.apps || !user.apps[app.id])
 		return null;
 
-	var meta = { datetime: NOW, ip: user.ip, accesstoken: OP.encodeAuthToken(app, user), url: app.frame, settings: app.settings, id: app.id };
+	var meta = { datetime: NOW, ip: user.ip, url: app.frame, settings: app.settings, id: app.id };
+	var token = OP.encodeAuthToken(app, user);
 
-	meta.verify = F.config.url + '/api/verify/?accesstoken=' + meta.accesstoken;
-	meta.openplatform = F.config.url;
+	if (!serverside) {
+		meta.accesstoken = token;
+		meta.verify = CONF.url + '/api/verify/?accesstoken=' + token;
+	}
+
+	meta.openplatform = CONF.url;
 	meta.openplatformid = OP.id;
-	meta.colorscheme = F.config.colorscheme;
-	meta.background = F.config.background;
+	meta.name = CONF.name;
+
+	if (CONF.email)
+		meta.email = CONF.email;
+
+	meta.colorscheme = CONF.colorscheme;
+	meta.background = CONF.background;
 
 	if (app.serververify && !serverside) {
 		var tmp = readuser(user, app.allowreadprofile, app);
@@ -135,7 +106,7 @@ OP.meta = function(app, user, serverside) {
 		meta.serverside = serverside === true;
 
 	if (app.allowreadmeta)
-		meta.meta = G.meta;
+		meta.meta = CONF.url + '/api/meta/?accesstoken=' + token;
 
 	if (app.allowreadprofile) {
 
@@ -143,17 +114,15 @@ OP.meta = function(app, user, serverside) {
 
 		// Specific settings for the current user
 		var data = user.apps ? user.apps[app.id] : null;
-		if (data) {
+		if (data)
 			meta.profile.settings = data.settings;
-			// meta.profile.roles = data.roles || EMPTYARRAY;
-		}
 	}
 
 	if (app.allowreadapps)
-		meta.apps = F.config.url + '/api/apps/?accesstoken=' + meta.accesstoken;
+		meta.apps = CONF.url + '/api/apps/?accesstoken=' + token;
 
 	if (app.allowreadusers)
-		meta.users = F.config.url + '/api/users/?accesstoken=' + meta.accesstoken;
+		meta.users = CONF.url + '/api/users/?accesstoken=' + token;
 
 	return meta;
 };
@@ -161,72 +130,74 @@ OP.meta = function(app, user, serverside) {
 // Notifications + badges
 OP.encodeToken = function(app, user) {
 	var sign = app.id + '-' + user.id + '-' + (user.accesstoken + app.accesstoken).crc32(true);
-	return sign + '-' + (sign + F.config.accesstoken).crc32(true);
+	return sign + '-' + (sign + CONF.accesstoken).crc32(true);
 };
 
-OP.decodeToken = function(sign) {
+OP.decodeToken = function(sign, callback) {
 
 	var arr = sign.split('-');
-	if (arr.length !== 4)
-		return null;
+	if (arr.length !== 4) {
+		callback();
+		return;
+	}
 
-	var tmp = (arr[0] + '-' + arr[1] + '-' + arr[2] + F.config.accesstoken).crc32(true) + '';
-	if (tmp !== arr[3])
-		return null;
+	var tmp = (arr[0] + '-' + arr[1] + '-' + arr[2] + CONF.accesstoken).crc32(true) + '';
+	if (tmp !== arr[3]) {
+		callback();
+		return;
+	}
 
-	var obj = {};
-	var app = G.apps.findItem('id', arr[0]);
-	if (app == null)
-		return null;
-
-	var user = G.users.findItem('id', arr[1]);
-	if (user == null)
-		return null;
-
-	var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '';
-	if (tmp !== arr[2])
-		return null;
-
-	obj.app = app;
-	obj.user = user;
-	return obj;
+	OP.appuser(arr[0], arr[1], function(app, user) {
+		if (!user || !app) {
+			callback();
+		} else {
+			var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '';
+			if (tmp === arr[2])
+				callback(null, { app: app, user: user });
+			else
+				callback();
+		}
+	});
 };
 
 // Auth token
 OP.encodeAuthToken = function(app, user) {
 	var sign = app.id + '-' + user.id;
-	sign += '-' + ((user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + F.config.accesstoken).crc32(true));
-	return sign.encrypt(F.config.accesstoken.substring(0, 20));
+	sign += '-' + ((user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true));
+	return sign.encrypt(CONF.accesstoken.substring(0, 20));
 };
 
-OP.decodeAuthToken = function(sign) {
+OP.decodeAuthToken = function(sign, callback) {
 
-	sign = sign.decrypt(F.config.accesstoken.substring(0, 20));
+	if (!sign) {
+		callback();
+		return;
+	}
 
-	if (!sign)
-		return null;
+	sign = sign.decrypt(CONF.accesstoken.substring(0, 20));
+
+	if (!sign) {
+		callback();
+		return;
+	}
 
 	var arr = sign.split('-');
-
 	if (arr.length !== 3)
 		return null;
 
-	var obj = {};
-	var app = G.apps.findItem('id', arr[0]);
-	if (app == null)
-		return null;
+	OP.appuser(arr[0], arr[1], function(app, user) {
 
-	var user = G.users.findItem('id', arr[1]);
-	if (user == null)
-		return null;
+		if (!app || !user) {
+			callback();
+			return;
+		}
 
-	var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + F.config.accesstoken).crc32(true);
-	if (tmp !== arr[2])
-		return null;
-
-	obj.app = app;
-	obj.user = user;
-	return obj;
+		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
+		if (tmp !== arr[2])
+			callback();
+		else
+			callback(null, { user: user, app: app });
+	});
 };
 
 function readapp(app, type) {
@@ -250,6 +221,7 @@ function readapp(app, type) {
 	obj.datecreated = app.datecreated;
 	obj.author = app.author;
 	obj.type = app.type;
+	obj.mobilemenu = app.mobilemenu;
 
 	switch (type) {
 		case 2:
@@ -277,34 +249,81 @@ function readuser(user, type, app) {
 
 	var obj = {};
 	obj.id = user.id;
-	obj.supervisorid = user.supervisorid;
-	obj.apps = user.apps2;
-	obj.blocked = user.blocked;
-	obj.company = user.company;
-	obj.companylinker = user.companylinker;
-	obj.datebirth = user.datebirth;
+
+	if (user.supervisorid)
+		obj.supervisorid = user.supervisorid;
+
+	if (user.deputyid)
+		obj.deputyid = user.deputyid;
+
+	if (user.directory) {
+		obj.directory = user.directory;
+		obj.directoryid = user.directoryid;
+	} else
+		obj.directoryid = 0;
+
+	obj.statusid = user.statusid;
+
+	if (user.status)
+		obj.status = user.status;
+
+	if (user.blocked)
+		obj.blocked = user.blocked;
+
+	if (user.company)
+		obj.company = user.company;
+
+	if (user.datebirth)
+		obj.datebirth = user.datebirth;
+
 	obj.datecreated = user.datecreated;
-	obj.dateend = user.dateend;
-	obj.datebeg = user.datebeg;
-	obj.dateupdated = user.dateupdated;
+
+	if (user.dateend)
+		obj.dateend = user.dateend;
+
+	if (user.datebeg)
+		obj.datebeg = user.datebeg;
+
+	if (user.dateupdated)
+		obj.dateupdated = user.dateupdated;
+
 	obj.firstname = user.firstname;
-	obj.gender = user.gender;
-	obj.language = user.language;
 	obj.lastname = user.lastname;
 	obj.name = user.name;
+
+	if (user.gender)
+		obj.gender = user.gender;
+
+	if (user.language)
+		obj.language = user.language;
+
 	obj.notifications = user.notifications;
 	obj.online = user.online;
-	obj.photo = F.config.url + '/photos/' + user.photo;
-	obj.ou = user.ou;
+
+	if (user.photo)
+		obj.photo = CONF.url + '/photos/' + user.photo;
+
+	if (user.ou)
+		obj.ou = user.ou;
+
 	obj.ougroups = user.ougroups ? Object.keys(user.ougroups) : EMPTYARRAY;
-	obj.locality = user.locality;
-	obj.localitylinker = user.localitylinker;
-	obj.reference = user.reference;
+
+	if (user.locality)
+		obj.locality = user.locality;
+
+	if (user.reference)
+		obj.reference = user.reference;
+
 	obj.countnotifications = user.countnotifications || 0;
 	obj.countbadges = user.countbadges || 0;
 	obj.countsessions = user.countsessions || 0;
-	obj.colorscheme = user.colorscheme || F.config.colorscheme;
-	obj.background = user.background || F.config.background;
+
+	obj.colorscheme = user.colorscheme || CONF.colorscheme;
+	obj.background = user.background || CONF.background;
+	obj.darkmode = user.darkmode;
+
+	if (obj.background)
+		obj.background = CONF.url + '/backgrounds/' + obj.background;
 
 	var appdata = user.apps[app.id];
 
@@ -315,16 +334,14 @@ function readuser(user, type, app) {
 	} else
 		obj.roles = appdata ? appdata.roles : EMPTYARRAY;
 
-	// obj.appcountbadges = appdata.countbadges || 0;
-	// obj.appcountnotifications = appdata.countnotifications || 0;
 	obj.groups = user.groups;
 	obj.sa = user.sa;
 	obj.sounds = user.sounds;
 	obj.volume = user.volume;
-	obj.badge = F.config.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
+	obj.badge = CONF.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
 
 	if (obj.notifications)
-		obj.notify = F.config.url + '/api/notify/?accesstoken=' + OP.encodeToken(app, user);
+		obj.notify = CONF.url + '/api/notify/?accesstoken=' + OP.encodeToken(app, user);
 
 	switch (type) {
 		case 2:
@@ -337,26 +354,28 @@ function readuser(user, type, app) {
 	return obj;
 }
 
-OP.users = function(app, query) {
-	var arr = [];
+OP.users = function(app, query, callback) {
 	if (app.allowreadusers) {
-		for (var i = 0, length = G.users.length; i < length; i++) {
-			var item = readuser(G.users[i], app.allowreadusers, app);
-			item && arr.push(item);
-		}
-	}
-	return { items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length };
+		query.appid = app.id;
+		FUNC.users.query(query, function(err, users) {
+			for (var i = 0; i < users.items.length; i++)
+				users.items[i] = readuser(users.items[i], app.allowreadusers, app);
+			callback(null, users);
+		});
+	} else
+		callback();
 };
 
-OP.apps = function(app, query) {
-	var arr = [];
+OP.apps = function(app, query, callback) {
 	if (app.allowreadapps) {
-		for (var i = 0, length = G.users.length; i < length; i++) {
-			var item = readapp(G.apps[i], app.allowreadapps);
-			item && arr.push(item);
-		}
-	}
-	return { items: arr, page: 1, count: arr.length, pages: 1, limit: arr.length };
+		query.appid = app.id;
+		FUNC.apps.query(query, function(err, apps) {
+			for (var i = 0; i < apps.items.length; i++)
+				apps.items[i] = readapp(apps.items[i], app.allowreadapps, app);
+			callback(null, apps);
+		});
+	} else
+		callback();
 };
 
 OP.ou = function(val) {
@@ -368,5 +387,65 @@ F.helpers.profile = function() {
 	return JSON.stringify(readuser(this.user, 1));
 };
 
+OP.appuser = function(appid, userid, callback) {
+	FUNC.apps.get(appid, function(err, app) {
+		if (app)
+			FUNC.users.get(userid, (err, user) => callback(app, user));
+		else
+			callback();
+	});
+};
+
+OP.refresh = function(app, callback, meta) {
+	var builder = new RESTBuilder(app.url);
+	builder.exec(function(err, response, output) {
+
+		if (err || !response.url) {
+			app.online = false;
+		} else {
+
+			app.hostname = output.hostname.replace(/:\d+/, '');
+			app.online = true;
+			app.version = response.version;
+			app.name = response.name;
+			app.description = response.description;
+			app.author = response.author;
+			app.icon = response.icon;
+			app.frame = response.url;
+			app.email = response.email;
+			app.roles = response.roles;
+			app.groups = response.groups;
+			app.width = response.width;
+			app.height = response.height;
+			app.resize = response.resize;
+			app.type = response.type;
+			app.screenshots = response.allowscreenshots === true;
+			app.responsive = response.responsive;
+			app.mobilemenu = response.mobilemenu;
+			app.serververify = response.serververify;
+
+			if (meta) {
+				app.allowreadapps = response.allowreadapps;
+				app.allowreadusers = response.allowreadusers;
+				app.allowreadprofile = response.allowreadprofile;
+				app.allownotifications = response.allownotifications;
+			}
+
+			if (response.origin && response.origin.length)
+				app.origin = response.origin;
+			else
+				app.origin = null;
+		}
+
+		app.daterefreshed = NOW;
+		callback(err, app);
+	});
+};
+
 // Load
-OP.load();
+F.wait('initialization');
+ON('ready', function() {
+	$WORKFLOW('Settings', 'init', function() {
+		FUNC.init(() => F.wait('initialization'));
+	});
+});

@@ -23,6 +23,9 @@ ON('resize', function() {
 		var el = $(this);
 		el.css('height', h - (el.offset().top + 20));
 	});
+
+	var com = $('#dashboardapps')[0].$com;
+	com && PLUGIN('Dashboard').resizeapps.call(com);
 });
 
 $(window).on('resize', function() {
@@ -33,34 +36,30 @@ ON('ready', function() {
 	EMIT('resize');
 });
 
-AJAX('GET /api/meta/', 'common.meta');
-
 function onImageError(image) {
 	// image.onerror = null;
 	image.src = '/img/empty.png';
 	return true;
 }
 
-Tangular.register('encodedata', function(value) {
+Thelpers.encodedata = function(value) {
 	return encodeURIComponent(value || '');
-});
+};
 
-Tangular.register('photo', function(value) {
+Thelpers.photo = function(value) {
 	return value ? ('/photos/' + value) : '/img/face.jpg';
-});
+};
 
-Tangular.register('responsive', function(value) {
+Thelpers.responsive = function(value) {
 	return isMOBILE ? (value === true ? '' : ' app-disabled') : '';
-});
+};
 
 $(window).on('message', function(e) {
 	var data = JSON.parse(e.originalEvent.data);
-
 	if (!data.openplatform)
 		return;
 
 	var app = dashboard.apps.findItem('accesstoken', data.accesstoken);
-
 	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))
 		return;
 
@@ -68,10 +67,32 @@ $(window).on('message', function(e) {
 
 	switch (data.type) {
 
+		case 'install':
+
+			if (user.sa) {
+				var target = user.apps.findItem('id', '_apps');
+				if (target) {
+					internalapp($('.internal[data-id="_apps"]'));
+					processes.wait(target, function(iframe) {
+						data.body.app = app.id;
+						processes.message(iframe, 'share', data.body);
+					}, false);
+				}
+			}
+
+			break;
+
 		case 'screenshot':
 			SET('screenshot.data', data.body);
 			screenshot.app = app ? app.internal : null;
 			SET('common.form', 'screenshot');
+			break;
+
+		case 'appearance':
+			if (app) {
+				var iframe = processes.findProcess(app.id);
+				iframe && processes.message(iframe, 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme }, data.callback);
+			}
 			break;
 
 		case 'launched':
@@ -121,12 +142,34 @@ $(window).on('message', function(e) {
 
 		case 'share':
 			var target = user.apps.findItem('id', data.body.app);
+			if (target == null) {
+				data.body.app = data.body.app.toLowerCase();
+				for (var i = 0; i < user.apps.length; i++) {
+					if (user.apps[i].name.toLowerCase() === data.body.app) {
+						target = user.apps[i];
+						break;
+					}
+				}
+			}
+
 			if (target) {
+
+				if (data.body.silent === 'open' || data.body.silent === 2) {
+					var is = processes.findProcess(target.id);
+					if (!is)
+						return;
+				}
+
 				processes.wait(target, function(iframe) {
 					data.body.app = app.id;
 					processes.message(iframe, 'share', data.body);
-				});
+
+					if (data.body.silent !== true)
+						processes.focus(target.id);
+
+				}, data.body.silent);
 			}
+
 			break;
 
 		case 'progress':
@@ -141,9 +184,9 @@ $(window).on('message', function(e) {
 				appwindow = appwindow.parent();
 				var icon = appwindow.find('> div > .fa');
 				if (p)
-					!app.progress && icon.rclass2('fa-').aclass('fa-spinner fa-pulse');
+					!app.progress && icon.rclass2('fa-').rclass('usercolor').aclass('fa-spinner fa-pulse usercolor');
 				else
-					icon.rclass2('fa-').aclass('fa-' + app.internal.icon);
+					icon.rclass2('fa-').rclass('usercolor').aclass('fa-' + app.internal.icon);
 				app.progress = p;
 			}
 			break;
@@ -157,6 +200,10 @@ $(window).on('message', function(e) {
 
 		case 'maximize':
 			app && processes.maximize(app.id);
+			break;
+
+		case 'shake':
+			app && processes.shake(app.id, data.body);
 			break;
 
 		case 'focus':
@@ -180,11 +227,49 @@ $(window).on('message', function(e) {
 
 		case 'loading':
 			var iframe = processes.findProcess(app.id);
-			iframe && iframe.element.find('.ui-process-loading').tclass('hidden', data.body !== true);
+			if (iframe) {
+				var el = iframe.element.find('.ui-process-loading');
+				if (data.body && typeof(data.body) !== 'boolean') {
+					el.find('.ui-process-loading-text').html(data.body.text || '');
+					el.tclass('hidden', !data.body.show);
+				} else
+					el.tclass('hidden', data.body !== true); // backward compatibility
+			}
+			break;
+
+		case 'loading2':
+			var iframe = processes.findProcess(app.id);
+			if (iframe) {
+				var fa = iframe.element.find('.ui-process-header').find('div .fa');
+				var icon = iframe.meta.internal.icon;
+				if (data.body == true)
+					fa.rclass('fa-' + icon).aclass('fa-pulse fa-spinner usercolor');
+				else
+					fa.rclass('fa-pulse fa-spinner usercolor').aclass('fa-' + icon);
+			}
 			break;
 
 		case 'snackbar':
 			SETTER('snackbar', data.body.type || 'success', data.body.body, data.body.button);
+			break;
+
+		case 'config':
+
+			var configcb = function(response, err) {
+				if (data.callback) {
+					var iframe = processes.findProcess(app.id);
+					iframe && data.callback && processes.message(iframe, 'config', typeof(response) === 'string' ? PARSE(response) : response, data.callback, err);
+				}
+			};
+
+			var atoken = app.profile.notify.substring(app.profile.notify.indexOf('accesstoken='));
+			if (data.body.body) {
+				var tmp = {};
+				tmp.body = data.body.body;
+				AJAX('POST /api/config/?' + atoken, tmp, configcb);
+			} else
+				AJAX('GET /api/config/?' + atoken, configcb);
+
 			break;
 
 		case 'message':
@@ -200,11 +285,39 @@ $(window).on('message', function(e) {
 
 		case 'play':
 		case 'stop':
+
+			var custom = false;
+			switch (data.body) {
+				case 'beep':
+				case 'confirm':
+				case 'fail':
+				case 'success':
+				case 'phone':
+				case 'message':
+				case 'alert':
+				case 'badges':
+				case 'notifications':
+					custom = true;
+					break;
+				case 'warning':
+					data.body = 'alert';
+					custom = true;
+					break;
+			}
+
+			if (custom)
+				data.body = '/sounds/' + data.body + '.mp3';
+
 			user.sounds && SETTER('audio', data.type, data.body);
+
 			break;
 
 		case 'badge':
-			app && AJAX('GET /api/badges/?' + app.profile.badge.substring(app.profile.badge.indexOf('accesstoken=')), NOOP);
+			if (app) {
+				if (data.body == null && app.id === common.focused)
+					return;
+				AJAX('GET /api/badges/?' + app.profile.badge.substring(app.profile.badge.indexOf('accesstoken=')), NOOP);
+			}
 			break;
 
 		case 'notify':
@@ -216,11 +329,11 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'log':
-			WSLOGMESSAGE.TYPE = 'log';
 			WSLOGMESSAGE.appid = app.id;
 			WSLOGMESSAGE.appurl = app.url;
 			WSLOGMESSAGE.body = data.body;
-			SETTER('websocket', 'send', WSLOGMESSAGE);
+			AJAX('POST /api/profile/logger/', WSLOGMESSAGE);
+			// SETTER('websocket', 'send', WSLOGMESSAGE);
 			break;
 
 		case 'open':
@@ -234,3 +347,21 @@ $(window).on('message', function(e) {
 			break;
 	}
 });
+
+FUNC.open = function(data) {
+
+	if (data == null) {
+		// maybe blocked
+		// refresh
+		location.reload(true);
+		return;
+	}
+
+	data.internal = user.apps.findItem('id', data.id);
+	data.progress = 0;
+	dashboard.apps.push(data);
+	SET('dashboard.current', data);
+	$('.appunread[data-id="{0}"]'.format(data.id)).aclass('hidden');
+	$('.appbadge[data-id="{0}"]'.format(data.id)).aclass('hidden');
+	SETTER('processes', 'emitevent', 'app.open', data.id);
+};

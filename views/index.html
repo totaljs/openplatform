@@ -12,32 +12,32 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="theme-color" content="#0A53EA">
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@16.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@17.css" />
 	@{if user && (user.background || CONF.background)}
 	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
 	@{fi}
-	<script src="@{'%cdn'}/spa.min@16.js"></script>
+	<script src="@{'%cdn'}/spa.min@17.js"></script>
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
-<body data-jc="exec" class="noscroll">
+<body data-jc="exec" class="noscroll @{if user.darkmode}ui-dark@{else}light@{fi}">
 
-	<div data-jc="shortcuts"></div>
 	<div data-jc="LAZY features__null__placeholder:@(What are you looking for?)"></div>
 	<div data-jc="LAZY contextmenu"></div>
 	<div data-jc="LAZY confirm"></div>
 	<div data-jc="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
 	<div data-jc="LAZY contextmenu"></div>
 	<div data-jc="LAZY calendar"></div>
-	<div data-jc="LAZY audio__user.volume"></div>
 	<div data-jc="LAZY message__null__button:@(Close)"></div>
+	<div data-jc="audio__user.volume"></div>
 	<div data-jc="loading" class="hidden"></div>
+	<div data-jc="shortcuts"></div>
 	<div data-jc="websocket__null__url:/"></div>
 
-	<div class="username" data-bind="user__html span:value.name"><i class="fa fa-user-circle"></i><span></span></div>
+	<div class="username hidden" data-bind="user__html span:value.name__show:value.name"><i class="fa fa-user-circle"></i><span></span></div>
+	<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
 
 	<header data-bind="user__.header-show:value && value.name">
 		<div class="datetime hidden-xs" data-jc="time"></div>
@@ -46,27 +46,31 @@
 			<i class="fa fa-th"></i>
 		</div>
 
-		<nav data-jc="repeater__dashboard.apps">
-			<script type="text/html">
-				<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span></span></span></button>
-			</script>
-		</nav>
+		<div class="nav">
+			<div>
+				<nav data-jc="repeater__dashboard.apps__$setter:Dashboard/resizeapps" id="dashboardapps">
+					<script type="text/html">
+						<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span class="userbg"></span></span></button>
+					</script>
+				</nav>
+			</div>
+		</div>
 
-		<div class="user-notifications exec" data-path="common.notifications" data-value="!common.notifications">
+		<div class="button-notifications exec" data-path="common.notifications" data-value="!common.notifications">
 			<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
 			<i class="far fa-bell" data-bind="common.notifications__.fa:!!value__.far:!value"></i>
 		</div>
 
 	</header>
 
-	<div data-jc="notificationspanel__common.notifications" data-bind="common.notifications__show:value" class="hidden">
-		<div class="ui-npanel-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
+	<div data-jc="notifications__common.notifications" data-bind="common.notifications__show:value" class="hidden">
+		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
-			<div class="ui-npanel-message{{ if type === 1 }} ui-npanel-success{{ else if type === 2 }} ui-npanel-error{{ fi }}">
-				<div class="ui-npanel-date"><i class="fa fa-clock-o"></i>{{ datecreated | format('yyyy-MM-dd HH:mm') }}</div>
-				<div class="ui-npanel-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
-				<div class="ui-npanel-padding">
-					<div class="ui-npanel-body">{{ body }}</div>
+			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}">
+				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ datecreated | format('yyyy-MM-dd HH:mm') }}</div>
+				<div class="ui-notifications-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
+				<div class="ui-notifications-padding">
+					<div class="ui-notifications-body">{{ body }}</div>
 					{{ if data }}
 					<button data-data="{{ data | encodedata }}" data-id="{{ appid }}" class="exec" data-exec="Dashboard/navigate">@(Open app)</button>
 					{{ fi }}
@@ -75,18 +79,19 @@
 		</script>
 	</div>
 
-	<div>
-		<div data-jc="processes__dashboard.current__datasource:dashboard.apps"></div>
-	</div>
+	<div data-jc="processes__dashboard.current__datasource:dashboard.apps"></div>
 
 	<div class="startmenu hidden" data-bind="common.startmenu__exec:togglemenu">
 		<div class="startmenu-nav" data-jc="xs__common.startmenuapps__if:!value">
 			<div>
 				<nav>
 					@{if user.sa}
-					<button class="exec internal b" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
-					<button class="exec internal b" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
-					<button class="exec internal b" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
+					<button class="exec internal" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
+						@{if !user.directory}
+						<button class="exec internal" data-exec="internalapp" data-id="_apps"><i class="fa fa-rocket"></i>@(Apps)</button>
+						<button class="exec internal" data-exec="internalapp" data-id="_settings"><i class="fa fa-cogs"></i>@(Settings)</button>
+						<button class="exec internal" data-exec="internalapp" data-id="_info"><i class="fa fa-question-circle"></i>@(About)</button>
+						@{fi}
 					@{fi}
 					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
@@ -117,6 +122,7 @@
 		</div>
 		<div class="clearfix"></div>
 		<div class="startmenu-title">
+			<div class="startmenu-status exec" data-value="'status'" data-path="common.form" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
 			<button class="exec" data-path="common.startmenuapps" data-value="!value"><i class="fa fa-ellipsis-h"></i></button>
 			<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
 			<span data-bind="user.name__html:value"></span>
@@ -124,6 +130,7 @@
 	</div>
 
 	<div data-jc="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
+	<div data-jc="importer__common.form__if:status;url:/forms/status.html"></div>
 
 	<script>
 
@@ -136,6 +143,10 @@
 				el.rclass('hidden');
 				setTimeout(function() {
 					el.aclass('startmenu-visible');
+					if (isMOBILE)
+						SET('common.notifications', false);
+					else
+						$('.startmenu-search').find('input').focus();
 				}, 10);
 			} else {
 				el.rclass('startmenu-visible');
@@ -163,22 +174,19 @@
 		});
 
 		function refresh_notifications() {
-			user.countnotifications && SETTER('websocket', 'send', { TYPE: 'notifications' });
+			user.countnotifications && AJAX('GET /api/notifications/', function(arr) {
+				SETTER('notifications', 'append', arr.take(50));
+			});
 			user.countnotifications = 0;
 		}
 
 		function internalapp(el) {
 			var id = el.attr('data-id');
-
-			WSOPEN.id = id;
-			WSOPEN.href = null;
-
 			var iframe = dashboard.apps.findItem('id', id);
 			if (iframe)
 				SETTER('processes', 'maximize', id);
 			else
-				SETTER('websocket', 'send', WSOPEN);
-
+				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 			common.startmenu && SET('common.startmenu', false);
 		}
 
@@ -188,37 +196,45 @@
 		}
 
 		function internallogoff() {
-			location.href = '/logoff/';
+			SETTER('loading', 'show');
+			SETTER('processes', 'kill');
+			setTimeout(function() {
+				location.href = '/logoff/';
+			}, 1000);
 		}
 
 		ON('message', function(message) {
 			switch (message.TYPE) {
-				case 'open':
-					message.body.internal = user.apps.findItem('id', message.body.id);
-					message.body.progress = 0;
-					dashboard.apps.push(message.body);
-					SET('dashboard.current', message.body);
-					$('.appunread[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
-					$('.appbadge[data-id="{0}"]'.format(message.body.id)).aclass('hidden');
-					SETTER('processes', 'emitevent', 'app.open', message.body.id);
-					break;
 				case 'logoff':
 					COOKIES.set('@{'%cookie'}', '', '-1 day');
 					location.href = '/';
 					break;
 				case 'profile':
-					var is = user !== EMPTYOBJECT;
-					message.body.apps.quicksort('title');
-					SET('user', message.body);
-					EXEC('Dashboard/sync');
-					EXEC('Dashboard/init');
-					SET('common.startmenusearch', '');
-					CSS('.ui-process-header,.user{background-color:{0}}{1}'.format(user.colorscheme || 'inherent', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50%!important}') : ''), 'usertheme');
+					AJAX('GET /api/profile/', function(profile) {
+
+						if (profile == null) {
+							// refresh (maybe blocked)
+							location.reload(true);
+							return;
+						}
+
+						var is = !!user;
+						profile.apps.quicksort('title');
+						var tmp = user;
+						SET('user', profile);
+						EXEC('Dashboard/sync');
+						EXEC('Dashboard/init');
+						SET('common.startmenusearch', '');
+						CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+						$(document.body).tclass('light', !user.darkmode);
+						if (is && (tmp.darkmode !== user.darkmode || tmp.colorscheme !== user.colorscheme || tmp.background !== user.background))
+							SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
+					});
+
 					break;
-				case 'notifications':
-					// take max. 50
-					var arr = message.body;
-					arr && arr.length && SETTER('notificationspanel', 'append', arr.take(50));
+				case 'settings':
+					document.title = message.body.name;
+					SET('user.test', message.body.test === true);
 					break;
 				case 'notify':
 					var tmp = message.body;
@@ -253,7 +269,6 @@
 		});
 
 		var dashboard = {};
-		var WSOPEN = { TYPE: 'open' };
 
 		dashboard.current = null;
 		dashboard.apps = [];
@@ -265,15 +280,11 @@
 				return;
 
 			var id = el.attr('data-id');
-
-			WSOPEN.id = id;
-			WSOPEN.href = null;
-
 			var iframe = dashboard.apps.findItem('id', id);
 			if (iframe)
 				SETTER('processes', 'maximize', id);
 			else
-				SETTER('websocket', 'send', WSOPEN);
+				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 
 			common.startmenu && SET('common.startmenu', false);
 		});
@@ -282,6 +293,15 @@
 
 			self.hidemenu = function() {
 				SET('common.startmenu', false);
+			};
+
+			self.resizeapps = function() {
+				var el = this.element;
+				setTimeout2(this.ID, function() {
+					el.css('width', el.find('button').length * 51);
+				}, 500, el);
+				var parent = el.parent().parent();
+				parent.css('width', WW - (parent.offset().left + (WIDTH() === 'xs' ? 80 : 210)));
 			};
 
 			self.open = function(el) {
@@ -312,10 +332,8 @@
 				if (iframe) {
 					SETTER('processes', 'sendnotifydata', app.id, data);
 				} else {
-					WSOPEN.id = app.id;
-					WSOPEN.href = app.url;
 					app.notifydata = data;
-					SETTER('websocket', 'send', WSOPEN);
+					AJAX('GET /api/profile/{0}/'.format(app.id), { href: app.url }, FUNC.open);
 				}
 			};
 
@@ -422,6 +440,28 @@
 			nav.find('button.focused').rclass('focused');
 			nav.find('button[data-id="{0}"]'.format(id)).aclass('focused');
 		});
+
+		Thelpers.status = function(value) {
+			var str;
+			switch (value) {
+				case 1:
+					str = 'orange"></i>@(Busy)';
+					break;
+				case 2:
+					str = 'orange"></i>@(Do not disturb)';
+					break;
+				case 3:
+					str = 'orange"></i>@(Be right back)';
+					break;
+				case 4:
+					str = 'red"></i>@(Off work)';
+					break;
+				default:
+					str = 'green"></i>@(Available)';
+					break;
+			}
+			return '<i class="fa fa-circle ' + str;
+		};
 
 	</script>
 

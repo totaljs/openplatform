@@ -1,9 +1,7 @@
-const WSOPEN = { TYPE: 'open', body: null };
-const WSPROFILE =  { TYPE: 'profile', body: null };
-const WSNOTIFICATIONS = { TYPE: 'notifications', body: null };
+const WSPROFILE =  { TYPE: 'profile' };
+const WSSETTINGS =  { TYPE: 'settings', body: {} };
 const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
 const WSLOGOFF = { TYPE: 'logoff' };
-const WSID = [''];
 const COOKIES = { security: 1, httponly: true };
 
 var WS;
@@ -15,6 +13,7 @@ exports.install = function() {
 		ROUTE('GET /users/');
 		ROUTE('GET /apps/');
 		ROUTE('GET /settings/');
+		ROUTE('GET /info/', info);
 		ROUTE('GET /account/');
 		WEBSOCKET('/', realtime, ['json']);
 	});
@@ -30,8 +29,8 @@ exports.install = function() {
 
 function manifest(req, res) {
 	var meta = {};
-	meta.name = F.config.name;
-	meta.short_name = F.config.name;
+	meta.name = CONF.name;
+	meta.short_name = CONF.name;
 	meta.icons = [{ src: '/icon.png', size: '500x500', type: 'image/png' }];
 	meta.start_url = '/';
 	meta.display = 'standalone';
@@ -42,12 +41,13 @@ function login() {
 	var self = this;
 
 	if (self.query.token) {
-		var data = F.decrypt(self.query.token, 'token');
-		if (data && data.date.add('5 days') > F.datetime) {
+		var data = F.decrypt(self.query.token, CONF.secret_password);
+		if (data && data.date.add('2 days') > NOW) {
 			var cookie = {};
 			cookie.id = data.id;
-			cookie.date = F.datetime;
-			self.cookie(F.config.cookie, F.encrypt(cookie), '1 month', COOKIES);
+			cookie.date = NOW;
+			cookie.ua = (self.req.headers['user-agent'] || '').substring(0, 20);
+			self.cookie(CONF.cookie, F.encrypt(cookie), CONF.cookie_expiration, COOKIES);
 			self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
 			return;
 		}
@@ -58,8 +58,8 @@ function login() {
 
 function logoff() {
 	var self = this;
-	self.cookie(F.config.cookie, '', '-5 days');
-	OP.logout(self);
+	self.cookie(CONF.cookie, '', '-5 days');
+	FUNC.users.logout(self.user, self);
 }
 
 function realtime() {
@@ -77,121 +77,135 @@ function realtime() {
 		}
 
 		client.id = client.user.id;
-		client.user.online = true;
-		client.user.countsessions++;
-		WSPROFILE.body = OP.profile(client.user);
+		FUNC.users.online(client.user, true);
 		client.send(WSPROFILE);
 	});
 
 	self.on('close', function(client) {
-		client.user.countsessions--;
-		if (client.user.countsessions <= 0) {
-			client.user.online = false;
-			client.user.countsessions = 0;
-		}
-	});
-
-	self.on('message', function(client, message) {
-
-		switch (message.TYPE) {
-
-			// Open app
-			case 'open':
-
-				switch (message.id) {
-					case '_users':
-					case '_apps':
-					case '_settings':
-					case '_account':
-
-						if (message.id !== '_account' && !client.user.sa)
-							return;
-
-						var user = client.user;
-						WSOPEN.body = { datetime: NOW, ip: client.ip, accesstoken: message.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: '/{0}/'.format(message.id.substring(1)), settings: null, id: message.id };
-						WSOPEN.body.ip = client.ip;
-						WSOPEN.body.href = '';
-
-						client.send(WSOPEN);
-						return;
-				}
-
-				if (client.user.apps[message.id]) {
-					var app = F.global.apps.findItem('id', message.id);
-					WSOPEN.body = OP.meta(app, client.user);
-					WSOPEN.body.ip = client.ip;
-					WSOPEN.body.href = message.href;
-
-					LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
-
-					if (WSOPEN.body) {
-
-						client.send(WSOPEN);
-						client.user.apps[message.id].countnotifications = 0;
-						client.user.apps[message.id].countbadges = 0;
-
-						// Stats
-						var db = NOSQL('apps');
-						db.counter.hit('all');
-						db.counter.hit(message.id);
-					}
-				}
-
-				break;
-
-			case 'log':
-				LOGGER('logs', '[{0}]'.format(client.user.id + ' ' + client.user.name), '({1} {0})'.format(message.appurl, message.appid), message.body);
-				break;
-
-			case 'notifications':
-				$QUERY('Notification', null, function(err, response) {
-					if (response) {
-						WSNOTIFICATIONS.body = response;
-						client.send(WSNOTIFICATIONS);
-					}
-				}, client);
-				break;
-
-			// Get user's profile
-			case 'profile':
-				// returns profile's detail
-				WSPROFILE.body = OP.profile(client.user);
-				WSPROFILE.body.ip = client.ip;
-				client.send(WSPROFILE);
-				break;
-		}
-
+		FUNC.users.online(client.user, false);
 	});
 }
 
 ON('apps.refresh', function() {
-	WS && WS.all(function(client) {
-		WSPROFILE.body = OP.profile(client.user);
-		client.send(WSPROFILE);
+	WS && WS.send(WSPROFILE);
+});
+
+ON('users.refresh', function(userid, removed) {
+
+	if (!WS)
+		return;
+
+	if (!userid) {
+
+		// Refresh all connections
+		var processed = new Set();
+
+		WS.all().wait(function(client, next) {
+
+			if (!client || !client.user || processed.has(client.user))
+				return next();
+
+			processed.add(client.user);
+			FUNC.users.get(client.user.id, function(err, user) {
+				if (err || !user)
+					return next();
+				FUNC.sessions.set(user.id, user, function() {
+					client.user = user;
+					client.send(WSPROFILE);
+				});
+				next();
+			});
+
+		});
+
+		return;
+	}
+
+	var clients;
+
+	WS.all(function(client) {
+		if (client.id === userid) {
+			if (clients)
+				clients.push(client);
+			else
+				clients = [client];
+		}
+	});
+
+	if (!clients || !clients.length)
+		return;
+
+	FUNC.users.get(userid, function(err, user) {
+		user && FUNC.sessions.set(user.id, user);
+		for (var i = 0; i < clients.length; i++)
+			clients[i].send(user ? WSPROFILE : WSLOGOFF);
 	});
 });
 
-ON('users.refresh', function(user, removed) {
-	WS && WS.all(function(client) {
-		if (removed || client.user.blocked || client.user.inactive) {
-			if (client.id === user.id) {
-				client.send(WSLOGOFF);
-				setTimeout(() => client.close(), 100);
-			}
-		} else if (client.id === user.id) {
-			WSPROFILE.body = OP.profile(client.user);
-			client.send(WSPROFILE);
+ON('settings.update', function() {
+	WS && FUNC.settings.get(function(err, response) {
+		if (response) {
+			var body = WSSETTINGS.body;
+			body.name = response.name;
+			body.url = response.url;
+			body.email = response.email;
+			body.test = response.test;
+			body.background = response.background;
+			body.colorscheme = response.colorscheme;
+			WS.send(WSSETTINGS);
 		}
 	});
 });
 
-ON('users.notify', function(user, app) {
-	if (WS) {
-		WSNOTIFY.body.count = user.countnotifications;
-		WSNOTIFY.body.app.id = app;
-		WSNOTIFY.body.app.count = app ? user.apps[app].countnotifications : 0;
-		WSNOTIFY.body.app.badges = app ? user.apps[app].countbadges : 0;
-		WSID[0] = user.id;
-		WS.send(WSNOTIFY, WSID);
-	}
-});
+function notify(userid, appid, clear) {
+
+	if (!WS)
+		return;
+
+	var clients;
+
+	WS.all(function(client) {
+		if (client.user.id === userid) {
+			if (clients)
+				clients.push(client);
+			else
+				clients = [client];
+		}
+	});
+
+	if (!clients || !clients.length)
+		return;
+
+	FUNC.users.get(userid, function(err, user) {
+		if (user) {
+			for (var i = 0; i < clients.length; i++) {
+				var client = clients[i];
+				WSNOTIFY.body.count = clear ? 0 : user.countnotifications;
+				WSNOTIFY.body.app.id = appid;
+				WSNOTIFY.body.app.count = clear ? 0 : appid ? user.apps[appid].countnotifications : 0;
+				WSNOTIFY.body.app.badges = clear ? 0 : appid ? user.apps[appid].countbadges : 0;
+				client.send(WSNOTIFY);
+			}
+		}
+	});
+}
+
+ON('users.notify', notify);
+ON('users.badge', notify);
+
+function info() {
+	var memory = process.memoryUsage();
+	var model = {};
+	model.memoryTotal = (memory.heapTotal / 1024 / 1024).floor(2);
+	model.memoryUsage = (memory.heapUsed / 1024 / 1024).floor(2);
+	model.memoryRss = (memory.rss / 1024 / 1024).floor(2);
+	model.node = process.version;
+	model.version = 'v' + F.version_header;
+	model.platform = process.platform;
+	model.processor = process.arch;
+	model.uptime = Math.floor(process.uptime() / 60);
+	var conn = F.connections['/#get-authorize'];
+	model.connections = conn ? conn.online : 0;
+	model.ip = this.ip;
+	this.view('info', model);
+}
