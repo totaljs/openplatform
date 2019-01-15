@@ -17,4 +17,5 @@ NEWSCHEMA('UserApps', function(schema) {
 		else
 			$.invalid('error-permissions');
 	});
+
 });

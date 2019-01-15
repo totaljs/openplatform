@@ -6,6 +6,7 @@ NEWSCHEMA('Login', function(schema) {
 	schema.define('password', 'String(50)', true);
 
 	schema.addWorkflow('exec', function($) {
+
 		FUNC.users.login($.model.name, $.model.password, function(err, user) {
 
 			if (user) {
@@ -43,7 +44,6 @@ NEWSCHEMA('Login', function(schema) {
 						done();
 
 				});
-
 			} else
 				$.invalid('error-credentials');
 		});

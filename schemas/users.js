@@ -94,6 +94,7 @@ NEWSCHEMA('User', function(schema) {
 		model.welcome = undefined;
 		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).toSearch();
 		model.name = model.firstname + ' ' + model.lastname;
+		model.linker = model.name.slug();
 
 		var prepare = function(item, model) {
 
@@ -237,6 +238,7 @@ NEWSCHEMA('User', function(schema) {
 				FUNC.logger('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
 			}
 			$.success();
+
 		});
 	});
 });

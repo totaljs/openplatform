@@ -120,7 +120,6 @@ function json_users_read(id) {
 function json_users_query() {
 	var self = this;
 	if (self.user.sa) {
-
 		if (self.user.directory)
 			self.query.directory = self.user.directory;
 

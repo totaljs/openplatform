@@ -1,7 +1,7 @@
 const OP = global.OP = {};
+const SKIP = { localitylinker: 1, companylinker: 1, countsessions: 1 };
 
 OP.version = 4001;
-
 G.meta = {};
 G.metadirectories = {};
 

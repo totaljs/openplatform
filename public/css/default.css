@@ -110,6 +110,7 @@ h3 i { margin-right: 5px; }
 .app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
 .app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: white; background-color: rgba(0,0,0,0.1); margin-bottom: 2px; border-radius: 3px; }
 .app-running .app-container, .app-container:hover { background-color: rgba(0,0,0,0.3); }
+
 .app-container:hover .app-icon { color: white; }
 .app-offline { cursor: not-allowed; box-shadow: none !important; }
 .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
@@ -130,11 +131,10 @@ h3 i { margin-right: 5px; }
 .app img { width: 120px; height: 120px; border-radius: 4px; }
 .app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
 .app-version { color: #A0A0A0; font-size: 11px; }
-.app .fa-times { position: absolute; right: 20px; top: 10px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
+.app .fa-times { position: absolute; right: 20px; top: 6px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
 .app .fa-times:hover { opacity: 0.8; }
 .appunread { position: absolute; background-color: #D23B3B; color: white; width: 24px; border-radius: 100%; height: 24px; font-size: 12px; padding: 3px 0 0; margin-top: -2px; left: 5px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
 .app .appbadge { position: absolute; margin: 14px 0 0 37px; font-size: 7px; }
-
 .appbadge .fa { color: red; font-size: 7px; }
 
 .appprocess { position: relative; }
