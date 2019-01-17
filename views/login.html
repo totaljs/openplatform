@@ -13,14 +13,14 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="robots" content="all,follow" />
 	@{head}
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@16.css" />
-	<script src="@{'%cdn'}/spa.min@16.js"></script>
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@17.css" />
+	<script src="@{'%cdn'}/spa.min@17.js"></script>
 	<style type="text/css">
 		/*auto*/
 		html,body { overflow: hidden; height: 100%; }
 		body { background-color: #303030; color: #D0D0D0; }
 
-		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -300px 0 0 -140px; background-color: #252525; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 2px solid #202020; }
+		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -170px 0 0 -140px; background-color: #252525; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 2px solid #202020; }
 		.padding { padding: 20px; }
 		.panelshow { transform: scale(1); }
 		a { color: white; }
@@ -240,7 +240,11 @@
 			config.error && attrs.attr('error');
 			attrs.attr('data-jc-bind', '');
 
-			config.autofill && attrs.attr('name', self.path.replace(/\./g, '_'));
+			if (config.autofill) {
+				attrs.attr('name', self.path.replace(/\./g, '_'));
+				self.autofill();
+			}
+
 			config.align && attrs.attr('class', 'ui-' + config.align);
 			config.autofocus && attrs.attr('autofocus');
 
