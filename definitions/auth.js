@@ -80,6 +80,8 @@ AUTH(function(req, res, flags, next) {
 			DDOS[key] = 1;
 
 		next(false);
+	}
+
 });
 
 ON('service', function(counter) {
