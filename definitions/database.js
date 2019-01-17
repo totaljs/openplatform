@@ -100,6 +100,9 @@ FUNC.users.query = function(filter, callback) {
 		builder.where('datecreated', '>', filter.modified);
 	});
 
+	filter.online && builder.where('online', true);
+	filter.logged && builder.where('datelogged', '>', NOW.add('-' + filter.modified));
+
 	builder.paginate(filter.page, filter.limit, 1000);
 	builder.callback(callback);
 };
@@ -609,7 +612,7 @@ FUNC.configs.get = function(userid, appid, callback) {
 };
 
 FUNC.configs.set = function(userid, appid, data, callback) {
-	DBMS().modify('configs', { body: data, dateupdated: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
+	DBMS().modify('configs', { body: data, datelogged: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
 		doc.userid = userid;
 		doc.appid = appid;
 		doc.datecreated = NOW;

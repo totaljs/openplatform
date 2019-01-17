@@ -82,6 +82,9 @@ FUNC.users.query = function(filter, callback) {
 	if (filter.modified)
 		filter.modified = NOW.add('-' + filter.modified);
 
+	if (filter.logged)
+		filter.logged = NOW.add('-' + filter.logged);
+
 	for (var i = 0; i < G.users.length; i++) {
 		var user = G.users[i];
 
@@ -125,6 +128,12 @@ FUNC.users.query = function(filter, callback) {
 			continue;
 
 		if (filter.modified && !((user.dateupdated && user.dateupdated > filter.modified) || (user.datecreated > filter.modified)))
+			continue;
+
+		if (filter.online && !user.online)
+			continue;
+
+		if (filter.logged && user.datelogged < filter.logged)
 			continue;
 
 		count++;
