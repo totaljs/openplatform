@@ -2084,11 +2084,17 @@ COMPONENT('processes', function(self, config) {
 				opt.top = '50px';
 			else if (ot + internal.height >= WH) {
 				var tmp = (WH - internal.height - 80);
-				opt.top = (tmp < 50 ? 55 : tmp) + 'px';
+				opt.top = (tmp < 55 ? 60 : tmp) + 'px';
 			}
 
+			var h = (internal.height || 0) - (resize.padding || 0);
+			if (h > WH - 70)
+				h = WH - 70;
+
+			opt.height = h;
+
 			iframe.element.css(opt);
-			iframe.iframe.css({ height: internal.height - resize.padding });
+			iframe.iframe.css({ height: h });
 			self.notifyresize(iframe.id);
 		}
 
