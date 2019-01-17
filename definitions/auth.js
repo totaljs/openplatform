@@ -81,7 +81,6 @@ AUTH(function(req, res, flags, next) {
 
 		next(false);
 	}
-
 });
 
 ON('service', function(counter) {
