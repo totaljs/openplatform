@@ -214,13 +214,13 @@ $(window).on('message', function(e) {
 		case 'restart':
 
 			if (app) {
-				common.messages[app.id] = data.message;
-				SETTER('loading', 'show');
+				// common.messages[app.id] = data.message;
 				app.href = data.url;
 				processes.kill(app.id);
 				setTimeout(function() {
-					SET('dashboard.current', app);
-				}, 4000);
+					AJAX('GET /api/profile/{0}/'.format(app.id), FUNC.open);
+					// SET('dashboard.current', app);
+				}, 1000);
 			}
 
 			break;

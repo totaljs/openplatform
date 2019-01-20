@@ -106,7 +106,7 @@
 			<div data-jc="search__common.startmenusearch__selector:.app" class="startmenu-apps-container">
 				<div data-jc="repeater__user.apps__if:!value.internal">
 					<script type="text/html">
-						<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}" draggable="true">
+						<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
 							<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 							<i class="appclose fa fa-times hidden exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
 							<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
