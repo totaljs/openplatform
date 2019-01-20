@@ -127,10 +127,10 @@
 									</div>
 								{{ fi }}
 								{{ if value.origin && value.origin.length }}
-									<div class="b fs12" style="margin-bottom:5px">@(Hostname whitelist:)</div>
+									<div class="b fs12" style="margin-bottom:5px">@(Allowed hosts:)</div>
 									<div class="m">
 									{{ foreach m in value.origin }}
-										<span class="badge badge-large badge-red mr5">{{ m }}</span>
+										<span class="badge badge-large badge-green mr5">{{ m }}</span>
 									{{ end }}
 									</div>
 								{{ fi }}
@@ -188,11 +188,17 @@
 									</div>
 								{{ fi }}
 								{{ if value.origin && value.origin.length }}
-									<div class="b fs12" style="margin-bottom:5px">@(Hostname whitelist:)</div>
+									<div class="b fs12" style="margin-bottom:5px">@(Allowed hosts:)</div>
 									<div class="m">
 									{{ foreach m in value.origin }}
-										<span class="badge badge-large badge-red mr5">{{ m }}</span>
+										<span class="badge badge-large badge-green mr5">{{ m }}</span>
 									{{ end }}
+									</div>
+								{{ fi }}
+								{{ if value.hostname }}
+									<div class="b fs12" style="margin-bottom:5px">@(Current host:)</div>
+									<div class="m">
+										<span class="badge badge-large badge-yellow">{{ value.hostname }}</span>
 									</div>
 								{{ fi }}
 								<table class="table table-small table-bordered nmb">
@@ -221,6 +227,7 @@
 										<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
 									</tr>
 								</table>
+
 							</div>
 						</script>
 					</div>
