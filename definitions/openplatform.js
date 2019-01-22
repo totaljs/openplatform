@@ -1,7 +1,6 @@
 const OP = global.OP = {};
-const SKIP = { localitylinker: 1, companylinker: 1, countsessions: 1 };
 
-OP.version = 4001;
+OP.version = 4002;
 G.meta = {};
 G.metadirectories = {};
 
@@ -431,7 +430,7 @@ OP.refresh = function(app, callback, meta) {
 				app.allownotifications = response.allownotifications;
 			}
 
-			if (response.origin && response.origin.length)
+			if (response.origin && response.origin instanceof Array && response.origin.length)
 				app.origin = response.origin;
 			else
 				app.origin = null;
