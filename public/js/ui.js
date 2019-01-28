@@ -82,7 +82,7 @@ COMPONENT('time', function(self) {
 				index = 0;
 
 			var dt = new Date();
-			time.html(dt.format('HH{0}mm{0}ss').format(index % 2 ? ':' : ' '));
+			time.html(dt.format((user.time === 12 ? '!' : '') + 'HH{0}mm{0}ss' + (user.time === 12 ? ' a' : '')).format(index % 2 ? ':' : ' '));
 			if (index % 15 === 0 || index === 1)
 				date.html(dt.format('dddd').substring(0, 3) + ' ' + dt.format('d MMM yyyy'));
 		};
