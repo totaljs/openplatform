@@ -32,6 +32,8 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
+	schema.define('dateformat', 'String(20)'); // date format
+	schema.define('time', Number); // 12 or 24
 	schema.define('volume', Number);
 	schema.define('sa', Boolean);
 	schema.define('inactive', Boolean);
@@ -173,6 +175,8 @@ NEWSCHEMA('User', function(schema) {
 				item.notificationsphone = model.notificationsphone;
 				item.notificationsemail = model.notificationsemail;
 				item.darkmode = model.darkmode;
+				item.dateformat = model.dateformat || 'yyyy-MM-dd';
+				item.time = model.time || 24;
 
 				if (model.rebuildtoken || !item.verifytoken)
 					item.verifytoken = U.GUID(15);

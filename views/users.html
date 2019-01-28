@@ -139,7 +139,7 @@
 					</div>
 				</div>
 				<hr class="nmt nmb" />
-				<div class="scroller-padding">
+				<div class="scroller-padding npb">
 					<div class="row">
 						<div class="col-sm-4 m">
 							<div data-jc="dropdown__users.form.language__empty:;icon:language;datasource:users.meta.languages">@(Language)</div>
@@ -153,15 +153,37 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-4 m">
-							<div data-jc="textbox__users.form.datebirth__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
+							<div data-jc="textbox__users.form.datebirth__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
 						</div>
 						<div class="col-sm-4 m">
-							<div data-jc="textbox__users.form.datebeg__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
+							<div data-jc="textbox__users.form.datebeg__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
 						</div>
 						<div class="col-sm-4 m">
-							<div data-jc="textbox__users.form.dateend__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlenght:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
+							<div data-jc="textbox__users.form.dateend__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
 						</div>
 					</div>
+					<hr />
+					<div class="row">
+						<div class="col-sm-4 m">
+							<div data-jc="textbox__users.form.dateformat__maxlength:10;align:center" class="m">@(Date format)</div>
+						</div>
+						<div class="col-sm-4 m">
+							<div data-jc="dropdown__users.form.time__items:@(24 hours)|24,@(12 hours)|12;type:number__24">@(Time)</div>
+						</div>
+					</div>
+					<!--
+					<div class="row">
+						<div class="col-sm-6 m">
+							<div class="help"><code>D</code> or <code>DD</code> days</div>
+							<div class="help"><code>M</code> or <code>MM</code> months</div>
+							<div class="help"><code>Y</code> or <code>YY</code> or <code>YYYY</code> years</div>
+						</div>
+						<div class="col-sm-6 m">
+							<div class="help"><code>H</code> or <code>HH</code> hours</div>
+							<div class="help"><code>m</code> or <code>mm</code> minutes</div>
+							<div class="help"><code>s</code> or <code>ss</code> seconds</div>
+						</div>
+					</div>-->
 				</div>
 				<div class="padding bg-smoke">
 					<div data-jc="textbox__users.form.accesstoken__maxlength:50;required:true" class="b">@(Access Token)</div>
@@ -408,7 +430,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
+		SET('users.form', { time: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
 	}
 
 	function usersform_remove() {

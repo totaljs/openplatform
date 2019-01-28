@@ -324,7 +324,7 @@
 	}
 
 	function apps_remove() {
-		OP.confirm('@(Are you sure you want to remove selected user?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(index) {
+		OP.confirm('@(Are you sure you want to remove selected app?)', ['"trash-o"@(Yes)', '@(Cancel)'], function(index) {
 			if (!index) {
 				var id = apps.selected;
 				AJAX('DELETE /api/internal/apps/{0}/'.format(id), function(response) {
