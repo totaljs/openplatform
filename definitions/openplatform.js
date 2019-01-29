@@ -23,7 +23,7 @@ OP.profile = function(user, callback) {
 	meta.volume = user.volume;
 	meta.darkmode = user.darkmode;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
-	meta.time = user.time;
+	meta.timeformat = user.timeformat;
 	meta.dateformat = user.dateformat;
 
 	var bg = user.background || CONF.background;
@@ -318,8 +318,8 @@ function readuser(user, type, app) {
 	if (user.dateformat)
 		obj.dateformat = user.dateformat;
 
-	if (user.time)
-		obj.time = user.time;
+	if (user.timeformat)
+		obj.timeformat = user.timeformat;
 
 	obj.countnotifications = user.countnotifications || 0;
 	obj.countbadges = user.countbadges || 0;

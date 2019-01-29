@@ -168,7 +168,7 @@
 							<div data-jc="textbox__users.form.dateformat__maxlength:10;align:center" class="m">@(Date format)</div>
 						</div>
 						<div class="col-sm-4 m">
-							<div data-jc="dropdown__users.form.time__items:@(24 hours)|24,@(12 hours)|12;type:number__24">@(Time)</div>
+							<div data-jc="dropdown__users.form.timeformat__items:@(24 hour clock)|24,@(12 hour clock)|12;type:number__24">@(Time)</div>
 						</div>
 					</div>
 					<!--
@@ -430,7 +430,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { time: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
+		SET('users.form', { timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
 	}
 
 	function usersform_remove() {
