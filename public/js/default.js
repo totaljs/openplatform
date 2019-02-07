@@ -288,6 +288,8 @@ $(window).on('message', function(e) {
 
 			var custom = false;
 			switch (data.body) {
+				case 'done':
+				case 'drum':
 				case 'beep':
 				case 'confirm':
 				case 'fail':
