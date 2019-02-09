@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 400;
+OP.version = 401;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -25,9 +25,33 @@ document.onkeydown = function(e) {
 	}
 };
 
+OP.help = function(body) {
+	OP.send('help', { body: body });
+};
+
+OP.success2 = function(msg, show) {
+	OP.console('success', msg, show);
+};
+
+OP.warning2 = function(msg, show) {
+	OP.console('warning', msg, show);
+};
+
+OP.error2 = function(msg, show) {
+	OP.console('error', msg, show);
+};
+
+OP.info2 = function(msg, show) {
+	OP.console('info', msg, show);
+};
+
 OP.appearance = function() {
 	OP.$appearance = 1;
 	OP.send('appearance');
+};
+
+OP.console = function(type, msg, show) {
+	OP.send('console', { type: type, msg: msg, show: show });
 };
 
 OP.screenshot = function(cdn) {

@@ -8,6 +8,11 @@ common.notifications = false;
 common.data = {};
 common.startmenu = false;
 common.startmenuapps = true;
+common.console = {};
+common.consolewindow = false;
+common.consolecount = 0;
+common.wikishow = false;
+common.wiki = EMPTYARRAY;
 
 NAV.clientside('.jr');
 SETTER(true, 'loading', 'hide', 500);
@@ -82,9 +87,47 @@ $(window).on('message', function(e) {
 
 			break;
 
+		case 'help':
+			// markdown help
+			SET('common.wiki', data.body.body || EMPTYARRAY);
+			var is = common.wiki ? common.wiki.length > 0 : false;
+			is && RECONFIGURE('wiki', { title: 'Wiki: ' + app.internal.title || app.internal.name });
+			SET('common.wikishow', is);
+			break;
+
+		case 'console':
+
+			data.body.body = data.body.msg;
+			delete data.body.msg;
+
+			var all = false;
+			var id = 'app' + app.id;
+
+			// process console
+			if (common.console[id] == null) {
+				common.console[id] = { icon: app.internal.icon, name: app.internal.title || app.internal.name, items: [data.body] };
+				all = true;
+			} else
+				common.console[id].items.unshift(data.body);
+
+			if (common.console[id].items.length > 100)
+				common.console[id].items = common.console[app.id].items.splice(0, 100);
+
+			UPDATE('common.console' + (all ? '' : ('.' + id)));
+
+			if (data.body.show) {
+				SETTER('console', 'show', id);
+				SET('common.consolewindow', true);
+			}
+
+			if (!common.consolewindow)
+				INC('common.consolecount');
+
+			break;
+
 		case 'screenshot':
 			SET('screenshot.data', data.body);
-			screenshot.app = app ? app.internal : null;
+			// screenshot.app = app ? app.internal : null;
 			SET('common.form', 'screenshot');
 			break;
 

@@ -22,25 +22,28 @@
 	@{import('meta', 'head', 'default.css', 'default.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
-<body data-jc="exec" class="noscroll @{if user.darkmode}ui-dark@{else}light@{fi}">
+<body data---="exec" class="noscroll @{if user.darkmode}ui-dark@{else}light@{fi}">
 
-	<div data-jc="LAZY features__null__placeholder:@(What are you looking for?)"></div>
-	<div data-jc="LAZY contextmenu"></div>
-	<div data-jc="LAZY confirm"></div>
-	<div data-jc="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
-	<div data-jc="LAZY contextmenu"></div>
-	<div data-jc="LAZY calendar"></div>
-	<div data-jc="LAZY message__null__button:@(Close)"></div>
-	<div data-jc="audio__user.volume"></div>
-	<div data-jc="loading" class="hidden"></div>
-	<div data-jc="shortcuts"></div>
-	<div data-jc="websocket__null__url:/"></div>
+	<div data---="LAZY features__null__placeholder:@(What are you looking for?)"></div>
+	<div data---="LAZY contextmenu"></div>
+	<div data---="LAZY confirm"></div>
+	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
+	<div data---="LAZY contextmenu"></div>
+	<div data---="LAZY calendar"></div>
+	<div data---="LAZY message__null__button:@(Close)"></div>
+	<div data---="audio__user.volume"></div>
+	<div data---="loading" class="hidden"></div>
+	<div data---="shortcuts"></div>
+	<div data---="websocket__null__url:/"></div>
 
-	<div class="username hidden" data-bind="user__html span:value.name__show:value.name"><i class="fa fa-user-circle"></i><span></span></div>
-	<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
+	<footer>
+		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
+		<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
+		<div class="username hidden" data-bind="user__html span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
+	</footer>
 
 	<header data-bind="user__.header-show:value && value.name">
-		<div class="datetime hidden-xs" data-jc="time"></div>
+		<div class="datetime hidden-xs" data---="time"></div>
 
 		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value">
 			<i class="fa fa-th"></i>
@@ -48,7 +51,7 @@
 
 		<div class="nav">
 			<div>
-				<nav data-jc="repeater__dashboard.apps__$setter:Dashboard/resizeapps" id="dashboardapps">
+				<nav data---="repeater__dashboard.apps__$setter:Dashboard/resizeapps" id="dashboardapps">
 					<script type="text/html">
 						<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span class="userbg"></span></span></button>
 					</script>
@@ -63,7 +66,7 @@
 
 	</header>
 
-	<div data-jc="notifications__common.notifications" data-bind="common.notifications__show:value" class="hidden">
+	<div data---="notifications__common.notifications" data-bind="common.notifications__show:value" class="hidden">
 		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
 			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}">
@@ -79,10 +82,11 @@
 		</script>
 	</div>
 
-	<div data-jc="processes__dashboard.current__datasource:dashboard.apps"></div>
+	<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
+	<div data---="processes__dashboard.current__datasource:dashboard.apps"></div>
 
 	<div class="startmenu hidden" data-bind="common.startmenu__exec:togglemenu">
-		<div class="startmenu-nav" data-jc="xs__common.startmenuapps__if:!value">
+		<div class="startmenu-nav" data---="xs__common.startmenuapps__if:!value">
 			<div>
 				<nav>
 					@{if user.sa}
@@ -101,10 +105,10 @@
 		</div>
 		<div class="startmenu-apps">
 			<div class="startmenu-search">
-				<div data-jc="textbox__common.startmenusearch__type:search;placeholder:@(Search apps)"></div>
+				<div data---="textbox__common.startmenusearch__type:search;placeholder:@(Search apps)"></div>
 			</div>
-			<div data-jc="search__common.startmenusearch__selector:.app" class="startmenu-apps-container">
-				<div data-jc="repeater__user.apps__if:!value.internal">
+			<div data---="search__common.startmenusearch__selector:.app" class="startmenu-apps-container">
+				<div data---="repeater__user.apps__if:!value.internal">
 					<script type="text/html">
 						<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
 							<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
@@ -129,14 +133,19 @@
 		</div>
 	</div>
 
-	<div data-jc="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
-	<div data-jc="importer__common.form__if:status;url:/forms/status.html"></div>
+	<div data---="console__common.consolewindow__datasource:common.console"></div>
+	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
+	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
 
 	<script>
 
 		// For screenshots
 		common.cdn = '@{'%cdn'}';
 		common.cluster = '@{F.id}';
+
+		WATCH('common.consolewindow', function() {
+			SET('common.consolecount', 0, 1000);
+		});
 
 		function togglemenu(value, path, el) {
 			if (value) {
@@ -181,7 +190,7 @@
 		}
 
 		function internalapp(el) {
-			var id = el.attr('data-id');
+			var id = typeof(el) === 'string' ? el : el.attrd('id');
 			var iframe = dashboard.apps.findItem('id', id);
 			if (iframe)
 				SETTER('processes', 'maximize', id);
@@ -226,7 +235,9 @@
 						EXEC('Dashboard/init');
 						SET('common.startmenusearch', '');
 						CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
-						$(document.body).tclass('light', !user.darkmode);
+						var b = $(document.body);
+						b.tclass('light', !user.darkmode);
+						b.tclass('ui-dark', !!user.darkmode);
 						if (is && (tmp.darkmode !== user.darkmode || tmp.colorscheme !== user.colorscheme || tmp.background !== user.background))
 							SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
 					});
@@ -293,6 +304,14 @@
 
 			self.hidemenu = function() {
 				SET('common.startmenu', false);
+			};
+
+			self.showconsole = function() {
+				TOGGLE('common.consolewindow');
+			};
+
+			self.showprofile = function() {
+				internalapp('_account');
 			};
 
 			self.resizeapps = function() {
