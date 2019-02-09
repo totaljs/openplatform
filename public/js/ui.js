@@ -5144,7 +5144,7 @@ COMPONENT('autocomplete', 'height:200', function(self, config) {
 	};
 });
 
-COMPONENT('console', '', function(self, config) {
+COMPONENT('console', function(self, config) {
 
 	var cls = 'ui-console';
 	var cls2 = '.ui-console';

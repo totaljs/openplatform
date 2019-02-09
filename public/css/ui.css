@@ -72,6 +72,8 @@ button { outline: 0; }
 .markdown h3 code { font-size: 18px; font-weight: normal; background-color: #DAE8F8; }
 .markdown h4 code { font-size: 17px; font-weight: normal; background-color: #DAE8F8; }
 .markdown a code { background-color: #DAE8F8; text-decoration: none !important; border-color: #d5dfeb; }
+.markdown .video { position: relative; padding-bottom: 56.25%; padding-top: 25px; height: 0; margin-bottom: 15px; }
+.markdown .video iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
 .ui-dark .markdown { color: #A0A0A0; }
 .ui-dark .markdown h1 { color: white; border-color: #303030; }
