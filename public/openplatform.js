@@ -51,7 +51,16 @@ OP.appearance = function() {
 };
 
 OP.console = function(type, msg, show) {
-	OP.send('console', { type: type, msg: msg, show: show });
+
+	if (msg instanceof Array) {
+		for (var i = 0; i < msg.length; i++) {
+			var m = msg[i];
+			if (m && m.error)
+				m = m.error;
+			m && OP.send('console', { type: type, msg: m, show: show });
+		}
+	} else
+		OP.send('console', { type: type, msg: msg, show: show });
 };
 
 OP.screenshot = function(cdn) {
