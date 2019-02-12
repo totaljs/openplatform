@@ -1,7 +1,7 @@
 /*auto*/
 
-html,body { height: 100%; overflow: hidden; }
-body { height: 100%; overflow: hidden; background: #808080 linear-gradient(#899aa4,#e9d0aa); background-size: cover; }
+html,body { height: 100%; overflow: hidden; -ms-overflow-style: none; }
+body { height: 100%; background: #808080 linear-gradient(#899aa4,#e9d0aa); background-size: cover; }
 
 .ui-dark { color: #C0C0C0; }
 
