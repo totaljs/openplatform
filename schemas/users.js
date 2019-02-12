@@ -203,7 +203,7 @@ NEWSCHEMA('User', function(schema) {
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
 
-			if ($.user.directory) {
+			if ($.user && $.user.directory) {
 				item.directory = $.user.directory;
 				item.directoryid = item.directory.crc32(true);
 			} else
