@@ -15,10 +15,20 @@ button { outline: 0; }
 .ui-console-tabs > .ui-console-close { color: red !important; float: right; border-right: 0; }
 .ui-console-message { height: 24px; font-size: 12px; border-bottom: 1px solid #F0F0F0; line-height: 24px; padding: 0 5px 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 30px; }
 .ui-console-message i { width: 20px; text-align: center; }
+.ui-console-message a { text-decoration: underline; }
+.ui-console-message code { color: white; padding: 1px 2px; font-size: 11px; border-radius: 2px; }
 .ui-console-error { color: red; }
+.ui-console-error a { color: red; }
+.ui-console-error code { background-color: red; }
 .ui-console-warning { color: #E8A826; }
+.ui-console-warning a { color: #E8A826; }
+.ui-console-warning code { background-color: #E8A826; }
 .ui-console-success { color: #8CC152; }
+.ui-console-success a { color: #8CC152; }
+.ui-console-success code { background-color: #8CC152; }
 .ui-console-info { color: #3BAFDA; }
+.ui-console-info a { color: #3BAFDA; }
+.ui-console-info code { background-color: #3BAFDA; }
 .ui-console-body { overflow: hidden; }
 
 .ui-dark .ui-console { border: 5px solid rgba(0,0,0,0.8); }

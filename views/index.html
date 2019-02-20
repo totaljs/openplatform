@@ -73,9 +73,9 @@
 				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ datecreated | format('yyyy-MM-dd HH:mm') }}</div>
 				<div class="ui-notifications-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-notifications-padding">
-					<div class="ui-notifications-body">{{ body }}</div>
+					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
 					{{ if data }}
-					<button data-data="{{ data | encodedata }}" data-id="{{ appid }}" class="exec" data-exec="Dashboard/navigate">@(Open app)</button>
+					<button data-data="{{ data | encodedata }}" data-id="{{ appid }}" class="exec userbg" data-exec="Dashboard/navigate">@(Open app)</button>
 					{{ fi }}
 				</div>
 			</div>

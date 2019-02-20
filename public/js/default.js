@@ -51,6 +51,10 @@ Thelpers.encodedata = function(value) {
 	return encodeURIComponent(value || '');
 };
 
+Thelpers.markdown_notifications = function(value) {
+	return (value || '').markdown(MD_NOTIFICATION);
+};
+
 Thelpers.photo = function(value) {
 	return value ? ('/photos/' + value) : '/img/face.jpg';
 };

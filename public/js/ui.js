@@ -1,3 +1,6 @@
+var MD_LINE = { wrap: false, headlines: false, tables: false, code: false, ul: false, linetag: '' };
+var MD_NOTIFICATION = { wrap: false, headlines: false };
+
 COMPONENT('xs', function(self, config) {
 	var is = false;
 	self.readonly();
@@ -2625,6 +2628,7 @@ COMPONENT('notifications', function() {
 
 		container.prepend(builder.join(''));
 		button.tclass('hidden', count === 0);
+		refresh_markdown(container);
 	};
 });
 
@@ -3337,11 +3341,9 @@ COMPONENT('audio', function(self) {
 		if (!can)
 			return;
 
-		var audio = new window.Audio();
+		var audio = new window.Audio(url);
 
-		audio.src = url;
 		audio.volume = volume;
-		audio.play();
 
 		audio.onended = function() {
 			audio.$destroy = true;
@@ -3359,6 +3361,7 @@ COMPONENT('audio', function(self) {
 		};
 
 		self.items.push(audio);
+		audio.play();
 		return self;
 	};
 
@@ -3558,7 +3561,7 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 		callback = close;
 
 		self.find('.ui-snackbar-icon').html('<i class="fa {0}"></i>'.format(icon || 'fa-info-circle'));
-		self.find('.ui-snackbar-body').html(message).attr('title', message);
+		self.find('.ui-snackbar-body').html(message.markdown(MD_LINE)).attr('title', message);
 		self.find('.ui-snackbar-dismiss').html(button || config.button);
 
 		if (show) {
@@ -5212,7 +5215,7 @@ COMPONENT('console', function(self, config) {
 			var item = arr[i];
 			var type = item.type || 'info';
 			var icon = type === 'error' ? 'bug' : type === 'warning' ? type : type === 'success' ? 'check-circle' : 'info-circle';
-			builder.push('<div class="{0}-message {0}-{2}"><i class="fa fa-{3}"></i>{1}</div>'.format(cls, Thelpers.encode(item.body), type, icon));
+			builder.push('<div class="{0}-message {0}-{2}"><i class="fa fa-{3}"></i>{1}</div>'.format(cls, item.body.markdown(MD_LINE), type, icon));
 		}
 
 		elogs.html(builder.join(''));
@@ -5332,6 +5335,8 @@ COMPONENT('wiki', 'title:Wiki', function(self, config) {
 			self.find(cls2 + '-title span').html(value);
 	};
 
+	self.refresh_markdown = refresh_markdown;
+
 	self.setter = function(value) {
 		self.tclass('hidden', !value);
 		if (value) {
@@ -5340,127 +5345,127 @@ COMPONENT('wiki', 'title:Wiki', function(self, config) {
 		}
 	};
 
-	self.refresh_markdown = function(el) {
-		self.markdown_linechart(el.find('.lang-linechart'));
-		self.markdown_barchart(el.find('.lang-barchart'));
-		self.markdown_video(el.find('.lang-video'));
-		self.markdown_iframe(el.find('.lang-iframe'));
-		el.find('pre code').each(FN('(i,b) => W.hljs && W.hljs.highlightBlock(b)'));
-		el.find('a').each(function() {
-			var el = $(this);
-			var href = el.attr('href');
-			href.substring(0, 1) !== '/' && el.attr('target', '_blank');
-			if (href === '#') {
-				var beg = '';
-				var end = '';
-				var text = el.html();
-				if (text.substring(0, 1) === '<')
-					beg = '-';
-				if (text.substring(text.length - 1) === '>')
-					end = '-';
-				el.attr('href', '#' + (beg + el.text().toLowerCase().replace(/[^\w]+/g, '-') + end).replace(/-{2,}/g, '-'));
-			}
-		});
-	};
-
-	self.markdown_barchart = function(selector) {
-		selector.each(function() {
-
-			var el = $(this);
-			var arr = el.html().split('\n').trim();
-			var series = [];
-			var categories = [];
-			var y = '';
-
-			for (var i = 0; i < arr.length; i++) {
-				var line = arr[i].split('|').trim();
-				for (var j = 1; j < line.length; j++) {
-					if (i === 0)
-						series.push({ name: line[j], data: [] });
-					else
-						series[j - 1].data.push(+line[j]);
-				}
-				if (i)
-					categories.push(line[0]);
-				else
-					y = line[0];
-			}
-
-			var options = {
-				chart: {
-					height: 300,
-					type: 'bar',
-				},
-				yaxis: { title: { text: y }},
-				series: series,
-				xaxis: { categories: categories, },
-				fill: { opacity: 1 },
-			};
-
-			var chart = new ApexCharts($(this).parent().empty()[0], options);
-			chart.render();
-		});
-	};
-
-	self.markdown_linechart = function(selector) {
-		selector.each(function() {
-
-			var el = $(this);
-			var arr = el.html().split('\n').trim();
-			var series = [];
-			var categories = [];
-			var y = '';
-
-			for (var i = 0; i < arr.length; i++) {
-				var line = arr[i].split('|').trim();
-				for (var j = 1; j < line.length; j++) {
-					if (i === 0)
-						series.push({ name: line[j], data: [] });
-					else
-						series[j - 1].data.push(+line[j]);
-				}
-				if (i)
-					categories.push(line[0]);
-				else
-					y = line[0];
-			}
-
-			var options = {
-				chart: {
-					height: 300,
-					type: 'line',
-				},
-				yaxis: { title: { text: y }},
-				series: series,
-				xaxis: { categories: categories, },
-				fill: { opacity: 1 },
-			};
-
-			var chart = new ApexCharts($(this).parent().empty()[0], options);
-			chart.render();
-		});
-	};
-
-	self.markdown_video = function(selector) {
-		selector.each(function() {
-			var el = $(this);
-			var html = el.html();
-			if (html.indexOf('youtube') !== -1) {
-				el.parent().replaceWith('<div class="video"><iframe src="https://www.youtube.com/embed/' + html.split('v=')[1] + '" frameborder="0" allowfullscreen></iframe></div>');
-			} else if (html.indexOf('vimeo') !== -1) {
-				el.parent().replaceWith('<div class="video"><iframe src="//player.vimeo.com/video/' + html.substring(html.lastIndexOf('/') + 1) + '" frameborder="0" allowfullscreen></iframe></div>');
-			}
-		});
-	};
-
-	self.markdown_iframe = function(selector) {
-		selector.each(function() {
-			var el = $(this);
-			el.parent().replaceWith('<div class="iframe">' + el.html().replace(/&lt;/g, '<').replace(/&gt;/g, '>') + '</div>');
-		});
-	};
-
 }, ['@{'%cdn'}/highlight.min@914.js', '@{'%cdn'}/apexcharts.min@224.js']);
+
+function refresh_markdown(el) {
+	markdown_linechart(el.find('.lang-linechart'));
+	markdown_barchart(el.find('.lang-barchart'));
+	markdown_video(el.find('.lang-video'));
+	markdown_iframe(el.find('.lang-iframe'));
+	el.find('pre code').each(FN('(i,b) => W.hljs && W.hljs.highlightBlock(b)'));
+	el.find('a').each(function() {
+		var el = $(this);
+		var href = el.attr('href');
+		href.substring(0, 1) !== '/' && el.attr('target', '_blank');
+		if (href === '#') {
+			var beg = '';
+			var end = '';
+			var text = el.html();
+			if (text.substring(0, 1) === '<')
+				beg = '-';
+			if (text.substring(text.length - 1) === '>')
+				end = '-';
+			el.attr('href', '#' + (beg + el.text().toLowerCase().replace(/[^\w]+/g, '-') + end).replace(/-{2,}/g, '-'));
+		}
+	});
+}
+
+function markdown_barchart(selector) {
+	selector.each(function() {
+
+		var el = $(this);
+		var arr = el.html().split('\n').trim();
+		var series = [];
+		var categories = [];
+		var y = '';
+
+		for (var i = 0; i < arr.length; i++) {
+			var line = arr[i].split('|').trim();
+			for (var j = 1; j < line.length; j++) {
+				if (i === 0)
+					series.push({ name: line[j], data: [] });
+				else
+					series[j - 1].data.push(+line[j]);
+			}
+			if (i)
+				categories.push(line[0]);
+			else
+				y = line[0];
+		}
+
+		var options = {
+			chart: {
+				height: 300,
+				type: 'bar',
+			},
+			yaxis: { title: { text: y }},
+			series: series,
+			xaxis: { categories: categories, },
+			fill: { opacity: 1 },
+		};
+
+		var chart = new ApexCharts($(this).parent().empty()[0], options);
+		chart.render();
+	});
+}
+
+function markdown_linechart(selector) {
+	selector.each(function() {
+
+		var el = $(this);
+		var arr = el.html().split('\n').trim();
+		var series = [];
+		var categories = [];
+		var y = '';
+
+		for (var i = 0; i < arr.length; i++) {
+			var line = arr[i].split('|').trim();
+			for (var j = 1; j < line.length; j++) {
+				if (i === 0)
+					series.push({ name: line[j], data: [] });
+				else
+					series[j - 1].data.push(+line[j]);
+			}
+			if (i)
+				categories.push(line[0]);
+			else
+				y = line[0];
+		}
+
+		var options = {
+			chart: {
+				height: 300,
+				type: 'line',
+			},
+			yaxis: { title: { text: y }},
+			series: series,
+			xaxis: { categories: categories, },
+			fill: { opacity: 1 },
+		};
+
+		var chart = new ApexCharts($(this).parent().empty()[0], options);
+		chart.render();
+	});
+}
+
+function markdown_video(selector) {
+	selector.each(function() {
+		var el = $(this);
+		var html = el.html();
+		if (html.indexOf('youtube') !== -1) {
+			el.parent().replaceWith('<div class="video"><iframe src="https://www.youtube.com/embed/' + html.split('v=')[1] + '" frameborder="0" allowfullscreen></iframe></div>');
+		} else if (html.indexOf('vimeo') !== -1) {
+			el.parent().replaceWith('<div class="video"><iframe src="//player.vimeo.com/video/' + html.substring(html.lastIndexOf('/') + 1) + '" frameborder="0" allowfullscreen></iframe></div>');
+		}
+	});
+}
+
+function markdown_iframe(selector) {
+	selector.each(function() {
+		var el = $(this);
+		el.parent().replaceWith('<div class="iframe">' + el.html().replace(/&lt;/g, '<').replace(/&gt;/g, '>') + '</div>');
+	});
+}
 
 if (String.prototype.markdown == null) {
 	(function Markdown() {
@@ -5490,7 +5495,7 @@ if (String.prototype.markdown == null) {
 		function markdown_imagelinks(value) {
 			var end = value.indexOf(')') + 1;
 			var img = value.substring(1, end);
-			return '<a href="' + value.substring(end + 2, value.length - 1) + '">' + markdown_links(img) + '</a>';
+			return '<a href="' + value.substring(end + 2, value.length - 1) + '" target="_blank">' + markdown_links(img) + '</a>';
 		}
 
 		function markdown_table(value, align, ishead) {
@@ -5523,12 +5528,12 @@ if (String.prototype.markdown == null) {
 				}
 			}
 
-			return img ? ('<img src="' + link + '" alt="' + text + '"' + (responsive ? ' class="img-responsive"' : '') + ' border="0" />') : ('<a href="' + link + '">' + text + '</a>');
+			return img ? ('<img src="' + link + '" alt="' + text + '"' + (responsive ? ' class="img-responsive"' : '') + ' border="0" />') : ('<a href="' + link + '" target="_blank">' + text + '</a>');
 		}
 
 		function markdown_links2(value)	{
 			value = value.substring(4, value.length - 4);
-			return '<a href="' + value + '">' + value + '</a>';
+			return '<a href="' + value + '" target="_blank">' + value + '</a>';
 		}
 
 		function markdown_format(value) {
@@ -5575,7 +5580,8 @@ if (String.prototype.markdown == null) {
 			return value.substring(0, beg - 1) + '<i class="fa fa-' + value.substring(beg, end) + '"></i>' + value.substring(end + 1);
 		}
 
-		String.prototype.markdown = function() {
+		String.prototype.markdown = function(opt) {
+
 			var lines = this.split('\n');
 			var builder = [];
 			var ul = [];
@@ -5586,9 +5592,20 @@ if (String.prototype.markdown == null) {
 			var prevsize = 0;
 			var tmp;
 
+			if (!opt)
+				opt = {};
+
+			if (opt.wrap == null)
+				opt.wrap = true;
+
+			if (opt.linetag == null)
+				opt.linetag = 'p';
+
 			var closeul = function() {
-				while (ul.length)
-					builder.push('</' + ul.pop() + '>');
+				while (ul.length) {
+					if (opt.ul !== false)
+						builder.push('</' + ul.pop() + '>');
+				}
 			};
 
 			for (var i = 0, length = lines.length; i < length; i++) {
@@ -5598,36 +5615,50 @@ if (String.prototype.markdown == null) {
 				if (lines[i].substring(0, 3) === '```') {
 
 					if (iscode) {
-						builder.push('</code></pre>');
+						if (opt.code !== false)
+							builder.push('</code></pre>');
 						iscode = false;
 						continue;
 					}
 
 					closeul();
 					iscode = true;
-					tmp = '<pre><code class="lang-' + lines[i].substring(3) + '">';
+					if (opt.code !== false)
+						tmp = '<pre><code class="lang-' + lines[i].substring(3) + '">';
 					prev = 'code';
 					continue;
 				}
 
 				if (iscode) {
-					builder.push(tmp + lines[i]);
+					if (opt.code !== false)
+						builder.push(tmp + lines[i]);
 					if (tmp)
 						tmp = '';
 					continue;
 				}
 
-				var line = lines[i].replace(imagelinks, markdown_imagelinks).replace(links, markdown_links).replace(links2, markdown_links2).replace(format, markdown_format).replace(code, markdown_code).replace(regicons, markdown_icon);
+				var line = lines[i];
+
+				if (opt.links !== false)
+					line = line.replace(imagelinks, markdown_imagelinks).replace(links, markdown_links).replace(links2, markdown_links2);
+				if (opt.formatting !== false)
+					line = line.replace(format, markdown_format).replace(code, markdown_code);
+
+				if (opt.icons !== false)
+					line = line.replace(regicons, markdown_icon);
+
 				if (!line) {
 					if (table) {
 						table = null;
-						builder.push('</tbody></table>');
+						if (opt.tables !== false)
+							builder.push('</tbody></table>');
 					}
 				}
 
 				if (line === '' && lines[i - 1] === '') {
 					closeul();
-					builder.push('<br />');
+					if (opt.br !== false)
+						builder.push('<br />');
 					prev = 'br';
 					continue;
 				}
@@ -5646,7 +5677,8 @@ if (String.prototype.markdown == null) {
 									align = column[0] === ':' ? 'center' : 'right';
 								table.push(align);
 							}
-							builder.push('<table class="table table-bordered"><thead>');
+							if (opt.tables !== false)
+								builder.push('<table class="table table-bordered"><thead>');
 							prev = 'table';
 							ishead = true;
 							i++;
@@ -5654,10 +5686,12 @@ if (String.prototype.markdown == null) {
 							continue;
 					}
 
-					if (ishead)
-						builder.push(markdown_table(line, table, true) + '</thead><tbody>');
-					else
-						builder.push(markdown_table(line, table));
+					if (opt.tables !== false) {
+						if (ishead)
+							builder.push(markdown_table(line, table, true) + '</thead><tbody>');
+						else
+							builder.push(markdown_table(line, table));
+					}
 					ishead = false;
 					continue;
 				}
@@ -5668,35 +5702,40 @@ if (String.prototype.markdown == null) {
 
 					if (line.substring(0, 2) === '# ') {
 						tmp = line.substring(2).trim();
-						builder.push('<h1 id="' + markdown_id(tmp) + '">' + tmp + '</h1>');
+						if (opt.headlines !== false)
+							builder.push('<h1 id="' + markdown_id(tmp) + '">' + tmp + '</h1>');
 						prev = '#';
 						continue;
 					}
 
 					if (line.substring(0, 3) === '## ') {
 						tmp = line.substring(3).trim();
-						builder.push('<h2 id="' + markdown_id(tmp) + '">' + tmp + '</h2>');
+						if (opt.headlines !== false)
+							builder.push('<h2 id="' + markdown_id(tmp) + '">' + tmp + '</h2>');
 						prev = '##';
 						continue;
 					}
 
 					if (line.substring(0, 4) === '### ') {
 						tmp = line.substring(4).trim();
-						builder.push('<h3 id="' + markdown_id(tmp) + '">' + tmp + '</h3>');
+						if (opt.headlines !== false)
+							builder.push('<h3 id="' + markdown_id(tmp) + '">' + tmp + '</h3>');
 						prev = '###';
 						continue;
 					}
 
 					if (line.substring(0, 5) === '#### ') {
 						tmp = line.substring(5).trim();
-						builder.push('<h4 id="' + markdown_id(tmp) + '">' + tmp + '</h4>');
+						if (opt.headlines !== false)
+							builder.push('<h4 id="' + markdown_id(tmp) + '">' + tmp + '</h4>');
 						prev = '####';
 						continue;
 					}
 
 					if (line.substring(0, 6) === '##### ') {
 						tmp = line.substring(6).trim();
-						builder.push('<h5 id="' + markdown_id(tmp) + '">' + tmp + '</h5>');
+						if (opt.headlines !== false)
+							builder.push('<h5 id="' + markdown_id(tmp) + '">' + tmp + '</h5>');
 						prev = '#####';
 						continue;
 					}
@@ -5706,12 +5745,14 @@ if (String.prototype.markdown == null) {
 
 				if (tmp === '---' || tmp === '***') {
 					prev = 'hr';
-					builder.push('<hr class="line' + (tmp.charAt(0) === '-' ? '1' : '2') + '" />');
+					if (opt.hr !== false)
+						builder.push('<hr class="line' + (tmp.charAt(0) === '-' ? '1' : '2') + '" />');
 					continue;
 				}
 
 				if (line.substring(0, 5) === '&gt; ') {
-					builder.push('<blockquote>' + line.substring(5).trim() + '</blockquote>');
+					if (opt.blockquotes !== false)
+						builder.push('<blockquote>' + line.substring(5).trim() + '</blockquote>');
 					prev = '>';
 					continue;
 				}
@@ -5739,7 +5780,8 @@ if (String.prototype.markdown == null) {
 						} else {
 							// back to normal
 							prevsize = size;
-							builder.push('</' + ul.pop() + '>');
+							if (opt.ul !== false)
+								builder.push('</' + ul.pop() + '>');
 						}
 					}
 
@@ -5748,7 +5790,10 @@ if (String.prototype.markdown == null) {
 						var subtype;
 						if (type === 'ol')
 							subtype = tmpline.charAt(0);
-						builder.push('<' + type + (subtype ? (' type="' + subtype + '"') : '') + '>');
+
+						if (opt.ul !== false)
+							builder.push('<' + type + (subtype ? (' type="' + subtype + '"') : '') + '>');
+
 						ul.push(type + (append ? '></li' : ''));
 						prev = type;
 						prevsize = size;
@@ -5758,16 +5803,15 @@ if (String.prototype.markdown == null) {
 
 				} else {
 					closeul();
-					line && builder.push('<p>' + line.trim() + '</p>');
+					line && builder.push((opt.linetag ? ('<' + opt.linetag + '>') : '') + line.trim() + (opt.linetag ? ('</' + opt.linetag + '>') : ''));
 					prev = 'p';
 				}
 			}
 
 			closeul();
-			table && builder.push('</tbody></table>');
-			iscode && builder.push('</code></pre>');
-
-			return '<div class="markdown">' + builder.join('\n') + '</div>';
+			table && opt.tables !== false && builder.push('</tbody></table>');
+			iscode && opt.code !== false && builder.push('</code></pre>');
+			return (opt.wrap ? '<div class="markdown">' : '') + builder.join('\n') + (opt.wrap ? '</div>' : '');
 		};
 
 	})();
