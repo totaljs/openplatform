@@ -1,4 +1,4 @@
-var MD_LINE = { wrap: false, headlines: false, tables: false, code: false, ul: false, linetag: '' };
+var MD_LINE = { wrap: false, headlines: false, tables: false, code: false, ul: false, linetag: '', images: false };
 var MD_NOTIFICATION = { wrap: false, headlines: false };
 
 COMPONENT('xs', function(self, config) {
@@ -5514,7 +5514,7 @@ if (String.prototype.markdown == null) {
 			return '<tr>' + builder + '</tr>';
 		}
 
-		function markdown_links(value) {
+		function markdown_links(value, images) {
 			var end = value.lastIndexOf(']');
 			var img = value.charAt(0) === '!';
 			var text = value.substring(img ? 2 : 1, end);
@@ -5528,7 +5528,7 @@ if (String.prototype.markdown == null) {
 				}
 			}
 
-			return img ? ('<img src="' + link + '" alt="' + text + '"' + (responsive ? ' class="img-responsive"' : '') + ' border="0" />') : ('<a href="' + link + '" target="_blank">' + text + '</a>');
+			return img ? (images !== false ? ('<img src="' + link + '" alt="' + text + '"' + (responsive ? ' class="img-responsive"' : '') + ' border="0" />') : '') : ('<a href="' + link + '" target="_blank">' + text + '</a>');
 		}
 
 		function markdown_links2(value)	{
@@ -5608,6 +5608,10 @@ if (String.prototype.markdown == null) {
 				}
 			};
 
+			var formatlinks = function(val) {
+				return markdown_links(val, opt.images);
+			};
+
 			for (var i = 0, length = lines.length; i < length; i++) {
 
 				lines[i] = lines[i].replace(encodetags, encode);
@@ -5639,8 +5643,12 @@ if (String.prototype.markdown == null) {
 
 				var line = lines[i];
 
-				if (opt.links !== false)
-					line = line.replace(imagelinks, markdown_imagelinks).replace(links, markdown_links).replace(links2, markdown_links2);
+				if (opt.links !== false) {
+					if (opt.images !== false)
+						line = line.replace(imagelinks, markdown_imagelinks);
+					line = line.replace(links, formatlinks).replace(links2, markdown_links2);
+				}
+
 				if (opt.formatting !== false)
 					line = line.replace(format, markdown_format).replace(code, markdown_code);
 
