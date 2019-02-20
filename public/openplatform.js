@@ -29,20 +29,20 @@ OP.help = function(body) {
 	OP.send('help', { body: body });
 };
 
-OP.success2 = function(msg, show) {
-	OP.console('success', msg, show);
+OP.success2 = function(msg, show, plus) {
+	OP.console('success', msg, show, plus);
 };
 
-OP.warning2 = function(msg, show) {
-	OP.console('warning', msg, show);
+OP.warning2 = function(msg, show, plus) {
+	OP.console('warning', msg, show, plus);
 };
 
-OP.error2 = function(msg, show) {
-	OP.console('error', msg, show);
+OP.error2 = function(msg, show, plus) {
+	OP.console('error', msg, show, plus);
 };
 
-OP.info2 = function(msg, show) {
-	OP.console('info', msg, show);
+OP.info2 = function(msg, show, plus) {
+	OP.console('info', msg, show, plus);
 };
 
 OP.appearance = function() {
@@ -50,17 +50,17 @@ OP.appearance = function() {
 	OP.send('appearance');
 };
 
-OP.console = function(type, msg, show) {
+OP.console = function(type, msg, show, text) {
 
 	if (msg instanceof Array) {
 		for (var i = 0; i < msg.length; i++) {
 			var m = msg[i];
 			if (m && m.error)
 				m = m.error;
-			m && OP.send('console', { type: type, msg: m, show: show });
+			m && OP.send('console', { type: type, msg: (text || '') + m, show: show });
 		}
 	} else
-		OP.send('console', { type: type, msg: msg, show: show });
+		OP.send('console', { type: type, msg: (text || '') + msg, show: show });
 };
 
 OP.screenshot = function(cdn) {
