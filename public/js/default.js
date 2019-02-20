@@ -107,6 +107,22 @@ $(window).on('message', function(e) {
 			var all = false;
 			var id = 'app' + app.id;
 
+			switch (data.body.type) {
+				case 0:
+					data.body.type = 'info';
+					break;
+				case 1:
+					data.body.type = 'success';
+					break;
+				case 2:
+					data.body.type = 'warning';
+					break;
+				case 3:
+				case 99:
+					data.body.type = 'error';
+					break;
+			}
+
 			// process console
 			if (common.console[id] == null) {
 				common.console[id] = { icon: app.internal.icon, name: app.internal.title || app.internal.name, items: [data.body] };
