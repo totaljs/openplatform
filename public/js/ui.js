@@ -5475,7 +5475,7 @@ if (String.prototype.markdown == null) {
 		var links2 = /&lt;(https|http)+:\/\/.*?&gt;/g;
 		var imagelinks = /\[!\[.*?\]\(.*?\)\]\(.*?\)/g;
 		var format = /__.*?__|_.*?_|\*\*.*?\*\*|\*.*?\*|~~.*?~~|~.*?~/g;
-		var ordered = /^([a-z|0-9]{1,2}\.\s)|-\s/i;
+		var ordered = /^([a-z|0-9]{1,2}\.\s)|^-\s{1}/i;
 		var orderedsize = /^(\s|\t)+/;
 		var code = /`.*?`/g;
 		var encodetags = /<|>/g;
@@ -5537,14 +5537,21 @@ if (String.prototype.markdown == null) {
 			return '<a href="' + value + '" target="_blank">' + value + '</a>';
 		}
 
-		function markdown_format(value) {
-			switch (value.charAt(0)) {
-				case '_':
-					return '<strong>' + value.replace(formatclean, '') + '</strong>';
-				case '*':
-					return '<em>' + value.replace(formatclean, '') + '</em>';
-				case '~':
-					return '<strike>' + value.replace(formatclean, '') + '</strike>';
+		function markdown_format(value, index, text) {
+
+			var p = text.charAt(index - 1);
+			var n = text.charAt(index + value.length);
+			var empty = /\s|\W/;
+
+			if ((!p || empty.test(p)) && (!n || empty.test(n))) {
+				switch (value.charAt(0)) {
+					case '_':
+						return '<strong>' + value.replace(formatclean, '') + '</strong>';
+					case '*':
+						return '<em>' + value.replace(formatclean, '') + '</em>';
+					case '~':
+						return '<strike>' + value.replace(formatclean, '') + '</strike>';
+				}
 			}
 			return value;
 		}
@@ -5604,8 +5611,9 @@ if (String.prototype.markdown == null) {
 
 			var closeul = function() {
 				while (ul.length) {
+					var text = ul.pop();
 					if (opt.ul !== false)
-						builder.push('</' + ul.pop() + '>');
+						builder.push('</' + text + '>');
 				}
 			};
 
