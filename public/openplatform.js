@@ -416,7 +416,7 @@ OP.$process = function(data) {
 		window.OPCOLOR = d.colorscheme;
 		window.OPDARKMODE = d.darkmode;
 
-		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFFFFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000000') + '}.opborder,.opborderhover:hover{border-color:' + d.colorscheme + '}.opbg,.opbghover:hover{background-color:' + d.colorscheme + '}.opfg,.opfghover:hover{color:' + d.colorscheme + '}'));
+		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFFFFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000000') + '}.opborder,.opborderhover:hover{border-color:' + d.colorscheme + '!important}.opbg,.opbghover:hover{background-color:' + d.colorscheme + '!important}.opfg,.opfghover:hover{color:' + d.colorscheme + '!important}'));
 		style.id = 'opstyle';
 		head.appendChild(style);
 	}
