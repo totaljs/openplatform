@@ -265,7 +265,7 @@ input:invalid { box-shadow: none; }
 .ui-confirm-visible .ui-confirm-body { -webkit-transform: scale(1); transform: scale(1); }
 .ui-confirm-click { transform: scale(1.07) !important; }
 
-.loading { background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzgiIGhlaWdodD0iMzgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSI4LjA0MiUiIHkxPSIwJSIgeDI9IjY1LjY4MiUiIHkyPSIyMy44NjUlIiBpZD0iYSI+PHN0b3Agc3RvcC1jb2xvcj0iI0EwQTBBMCIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0EwQTBBMCIgc3RvcC1vcGFjaXR5PSIuNjMxIiBvZmZzZXQ9IjYzLjE0NiUiLz48c3RvcCBzdG9wLWNvbG9yPSIjQTBBMEEwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxIDEpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSJ1cmwoI2EpIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGZpbGw9IiNBMEEwQTAiIGN4PSIzNiIgY3k9IjE4IiByPSIxIi8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%; animation: rotate 1s forwards infinite; }
+.loading { background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzgiIGhlaWdodD0iMzgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSI4LjA0MiUiIHkxPSIwJSIgeDI9IjY1LjY4MiUiIHkyPSIyMy44NjUlIiBpZD0iYSI+PHN0b3Agc3RvcC1jb2xvcj0iI0EwQTBBMCIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0EwQTBBMCIgc3RvcC1vcGFjaXR5PSIuNjMxIiBvZmZzZXQ9IjYzLjE0NiUiLz48c3RvcCBzdG9wLWNvbG9yPSIjQTBBMEEwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxIDEpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSJ1cmwoI2EpIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGZpbGw9IiNBMEEwQTAiIGN4PSIzNiIgY3k9IjE4IiByPSIxIi8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%; animation: rotate 1s forwards infinite; max-width: 300px; max-height: 300px; width: 100%; height: 100%; }
 
 @keyframes rotate {
 	from { transform: rotate(0deg); }
@@ -374,7 +374,7 @@ input:invalid { box-shadow: none; }
 .ui-process iframe { width: 100%; height: 100%; overflow: auto; overflow-scrolling: touch; background-color: #202020; margin: 0; padding: 0; line-height: 0; border: 0; }
 .light .ui-process iframe { background-color: white; }
 .ui-process-loading { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; background-color: rgba(60,60,60,0.9); user-select: none; }
-.ui-process-loading .loading { background-size: 80px 80px; width: 100%; height: 100%; }
+.ui-process-loading .loading { background-size: 80px 80px; width: 80px; height: 80px; position: absolute; left: 50%; top: 50%; margin: -74px 0 0 -40px; }
 .light .ui-process-loading { background-color: rgba(255,255,255,0.9); }
 .ui-process .visible { left: 0; right: 0; bottom: 0; top: 0; border-radius: 0; opacity: 0.8; }
 .ui-process-animation { opacity: 0; transform: scale(0.5); }
