@@ -1864,7 +1864,7 @@ COMPONENT('processes', function(self, config) {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div><span><i class="fa fa-{{ internal.icon }}"></i></span><div>{{ internal.title }}</div></div><nav><button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
+	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div><span><i class="fa fa-{{ internal.icon }}"></i></span><div>{{ internal.title }}</div></div><nav><button name="refresh" class="ui-process-button ui-process-refresh"><i class="fa fa-refresh"></i></button><button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
 
 	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
@@ -1905,6 +1905,14 @@ COMPONENT('processes', function(self, config) {
 				SETTER('loading', 'hide', 2000);
 				var iframe = iframes.findItem('id', id);
 				self.message(iframe, 'screenshotmake', common.cdn);
+				break;
+			case 'refresh':
+				var btn = $(this);
+				btn.aclass('fa-spin');
+				setTimeout(function() {
+					btn.rclass('fa-spin');
+				}, 2000);
+				self.reload(id);
 				break;
 			case 'help':
 				var iframe = iframes.findItem('id', id);
@@ -2463,6 +2471,7 @@ COMPONENT('processes', function(self, config) {
 		iframe.id = value.id;
 		iframe.width = value.internal.width;
 		iframe.hidden = appminimized[iframe.id];
+		iframe.user = user;
 		self.append(self.template(value, iframe));
 
 		if (appminimized[iframe.id])

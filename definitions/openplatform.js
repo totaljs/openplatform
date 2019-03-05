@@ -1,6 +1,6 @@
 const OP = global.OP = {};
 
-OP.version = 4002;
+OP.version = 4003;
 G.meta = {};
 G.metadirectories = {};
 
@@ -342,7 +342,10 @@ function readuser(user, type, app) {
 		obj.roles = appdata ? appdata.roles : EMPTYARRAY;
 
 	obj.groups = user.groups;
-	obj.sa = user.sa;
+
+	if (user.sa)
+		obj.sa = user.sa;
+
 	obj.sounds = user.sounds;
 	obj.volume = user.volume;
 	obj.badge = CONF.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
