@@ -353,17 +353,29 @@ input:invalid { box-shadow: none; }
 	.ui-notify { margin-left: auto; margin-right: auto; width: 90%; }
 }
 
-.ui-message { background-color: rgba(0,0,0,0.9); position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 1010; width: 100%; display: table; height: 100%; transition: 0.3s all; opacity: 0; }
-.light .ui-message { background-color: rgba(255,255,255,0.9); }
-.ui-message > div { display: table-cell; vertical-align: middle; text-align: center; color: black; padding: 15px; }
-.ui-message-body { padding: 30px 25px 20px; position: relative; display: inline-block; border-radius: 4px; max-width: 600px; text-align: left; transform: scale(1.5); transition: 0.2s all; box-shadow: 0 5px 20px rgba(0,0,0,0.1); background-color: white; border-width: 3px; border-style: solid; }
-.ui-message-warning { border-color: #DA4453; min-width: 300px; }
-.ui-message-success { border-color: #8CC152; min-width: 300px; }
-.ui-message-info { border-color: #E0E0E0; min-width: 300px; }
-.ui-message button { display: block; min-width: 100px; margin: 20px auto 0; cursor: pointer; outline: 0; background-color: #E0E0E0; border: 0; border-radius: 4px; color: gray; padding: 0 20px; height: 40px; font-weight: bold; }
-.ui-message button:hover { background-color: #E5E5E5; }
+.ui-message { background-color: rgba(50,50,50,0.9); position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 1010; width: 100%; display: table; height: 100%; transition: 0.3s all; opacity: 0; }
+.ui-message > div { display: table-cell; vertical-align: middle; text-align: center; padding: 15px; }
+.ui-message-body { padding: 30px 25px 20px; position: relative; display: inline-block; color: white; border-radius: 4px; max-width: 500px; text-align: left; transform: scale(1.5); transition: 0.2s all; box-shadow: 0 5px 20px rgba(0,0,0,0.1); background-color: #202020; border-width: 3px; border-style: solid; }
+.ui-message-warning .ui-message-body { border-color: #DA4453; min-width: 300px; }
+.ui-message-success .ui-message-body { border-color: #8CC152; min-width: 300px; }
+.ui-message-info .ui-message-body { border-color: #3BAFDA; min-width: 300px; }
+.ui-message button { display: block; min-width: 100px; margin: 20px auto 0; cursor: pointer; outline: 0; background-color: #404040; border: 1px solid #404040; border-radius: 3px; color: white; padding: 0 20px; height: 34px; font-weight: bold; }
+.ui-message button:hover { background-color: #444444; }
+.ui-message button:active { border-color: #505050; }
+.ui-message-icon { border-radius: 100px; width: 60px; height: 60px; padding: 6px 0 0 0; font-size: 30px; text-align: center; position: absolute; left: 50%; border: 4px solid #3BAFDA; margin-left: -30px; z-index: 5; background-color: #202020; color: #3BAFDA; margin-top: -40px; transform: scale(2); transition: all 0.3s; }
+.ui-message-icon-animate { transform: scale(1); }
+.ui-message-success .ui-message-icon { border-color: #8CC152; color: #8CC152; }
+.ui-message-warning .ui-message-icon { border-color: #DA4453; color: #DA4453; }
+.ui-message-error i { margin-right: 5px; color: red; }
 .ui-message-visible { opacity: 1; }
 .ui-message-visible .ui-message-body { transform: scale(1); }
+
+.light .ui-message { background-color: rgba(255,255,255,0.9); }
+.light .ui-message-body { background-color: white; color: black; }
+.light .ui-message button { background-color: white; border: 1px solid #E0E0E0; color: black; }
+.light .ui-message button:hover { background-color: #F0F0F0; }
+.light .ui-message button:active { border-color: #D0D0D0; }
+.light .ui-message-icon { background-color: white; }
 
 .ui-process-loading-text { position: absolute; top: 44%; left: 50%; width: 250px; margin: 64px 0 0 -125px; text-align: center; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 12px; color: white; line-height: 16px; }
 .light .ui-process-loading-text { color: black; }

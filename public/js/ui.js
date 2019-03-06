@@ -3629,15 +3629,16 @@ COMPONENT('search', 'class:hidden;delay:200;attribute:data-search', function(sel
 
 COMPONENT('message', function(self, config) {
 
+	var cls = 'ui-message';
+	var cls2 = '.' + cls;
 	var is, visible = false;
-	var timer = null;
 
 	self.readonly();
 	self.singleton();
-	self.nocompile();
+	self.nocompile && self.nocompile();
 
 	self.make = function() {
-		self.aclass('ui-message hidden');
+		self.aclass(cls + ' hidden');
 
 		self.event('click', 'button', function() {
 			self.hide();
@@ -3648,16 +3649,25 @@ COMPONENT('message', function(self, config) {
 		});
 	};
 
-	self.warning = function(message, icon, fn, button) {
+	self.warning = function(message, icon, fn) {
 		if (typeof(icon) === 'function') {
 			fn = icon;
 			icon = undefined;
 		}
 		self.callback = fn;
-		self.content('ui-message-warning', message, icon || 'fa-warning', button);
+		self.content(cls + '-warning', message, icon || 'warning');
 	};
 
-	self.success = function(message, icon, fn, button) {
+	self.info = function(message, icon, fn) {
+		if (typeof(icon) === 'function') {
+			fn = icon;
+			icon = undefined;
+		}
+		self.callback = fn;
+		self.content(cls + '-info', message, icon || 'info-circle');
+	};
+
+	self.success = function(message, icon, fn) {
 
 		if (typeof(icon) === 'function') {
 			fn = icon;
@@ -3665,34 +3675,51 @@ COMPONENT('message', function(self, config) {
 		}
 
 		self.callback = fn;
-		self.content('ui-message-success', message, icon || 'fa-check-circle', button);
+		self.content(cls + '-success', message, icon || 'check-circle');
+	};
+
+	FUNC.messageresponse = function(success, callback) {
+		return function(response, err) {
+			if (err || response instanceof Array) {
+
+				var msg = [];
+				var template = '<div class="' + cls + '-error"><i class="fa fa-warning"></i>{0}</div>';
+
+				if (response instanceof Array) {
+					for (var i = 0; i < response.length; i++)
+						msg.push(template.format(response[i].error));
+					msg = msg.join('');
+				} else
+					msg = template.format(err.toString());
+
+				self.warning(msg);
+			} else {
+				self.success(success);
+				callback && callback(response);
+			}
+		};
 	};
 
 	self.hide = function() {
 		self.callback && self.callback();
-		self.rclass('ui-message-visible');
-		timer && clearTimeout(timer);
-		timer = setTimeout(function() {
-			visible = false;
-			self.aclass('hidden');
-		}, 1000);
+		self.aclass('hidden');
+		visible = false;
 	};
 
-	self.content = function(cls, text, icon, button) {
-		var btn = (button || config.button || 'Close');
-		if (is)
-			self.find('button').html(btn);
-		else
-			self.html('<div><div class="ui-message-body"><div class="text"></div><hr /><button>' + btn + '</button></div></div>');
-		timer && clearTimeout(timer);
+	self.content = function(classname, text, icon) {
+		!is && self.html('<div><div class="ui-message-icon"><i class="fa fa-' + icon + '"></i></div><div class="ui-message-body"><div class="text"></div><hr /><button>' + (config.button || 'OK') + '</button></div></div>');
 		visible = true;
 		is = true;
-		self.find('.ui-message-body').rclass().aclass('ui-message-body ' + cls);
+		self.rclass2(cls + '-').aclass(classname);
+		self.find(cls2 + '-body').rclass().aclass(cls + '-body');
 		self.find('.text').html(text);
 		self.rclass('hidden');
 		setTimeout(function() {
-			self.aclass('ui-message-visible');
-		}, 5);
+			self.aclass(cls + '-visible');
+			setTimeout(function() {
+				self.find(cls2 + '-icon').aclass(cls + '-icon-animate');
+			}, 300);
+		}, 100);
 	};
 });
 
