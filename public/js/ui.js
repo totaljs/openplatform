@@ -3709,11 +3709,15 @@ COMPONENT('message', function(self, config) {
 	self.content = function(classname, text, icon) {
 		!is && self.html('<div><div class="ui-message-icon"><i class="fa fa-' + icon + '"></i></div><div class="ui-message-body"><div class="text"></div><hr /><button>' + (config.button || 'OK') + '</button></div></div>');
 		visible = true;
-		is = true;
 		self.rclass2(cls + '-').aclass(classname);
 		self.find(cls2 + '-body').rclass().aclass(cls + '-body');
+
+		if (is)
+			self.find(cls2 + '-icon').find('.fa').rclass2('fa-').aclass('fa-' + icon);
+
 		self.find('.text').html(text);
 		self.rclass('hidden');
+		is = true;
 		setTimeout(function() {
 			self.aclass(cls + '-visible');
 			setTimeout(function() {
