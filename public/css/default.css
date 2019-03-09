@@ -1,8 +1,8 @@
 /*auto*/
 
 html,body { height: 100%; overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto; }
-body { height: 100%; background: #808080 linear-gradient(#899aa4,#e9d0aa); background-size: cover; }
-
+body { height: 100%; background: #808080 linear-gradient(#5f5e50,#565656); background-size: cover; }
+body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 .ui-dark { color: #C0C0C0; }
 
 header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; top: -50px; color: #909090; transition: all 0.3s; box-shadow: 0 5px 5px rgba(0,0,0,0.15); }
@@ -30,10 +30,10 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .console:hover { opacity: 0.7; }
 .testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; line-height: 16px; margin: 6px 10px 0 0; border-radius: 3px; }
 
-.startmenu { position: fixed; top: 45px; height: 500px; background-color: #404040; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
-.startmenu-title { height: 50px; border-top: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
-.startmenu-title img { width: 32px; height: 32px; border-radius: 100px; float: left; margin: 9px 0 0 14px; }
-.startmenu-title > span { float: left; margin: 14px 0 0 12px; }
+.startmenu { position: fixed; top: 45px; height: 490px; background-color: #404040; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
+.startmenu-title { height: 40px; border-top: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
+.startmenu-title img { width: 28px; height: 28px; border-radius: 100px; float: left; margin: 5px 0 0 8px; }
+.startmenu-title > span { float: left; margin: 11px 0 0 8px; font-size: 13px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
 .startmenu-apps { padding: 0 0 15px; margin-right: 200px; overflow: hidden; }
 .startmenu-apps-container { height: 386px; overflow-y: auto; width: 330px; padding: 5px 0; overflow-scrolling: touch; }
@@ -42,15 +42,15 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .startmenu-nav nav button:hover { text-decoration: none; color: white; }
 .startmenu-nav nav button:last-child { border-bottom: 0; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
-.startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 10px 15px; }
+.startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 8px 15px 10px; }
 .startmenu-search { padding: 5px; margin-bottom: 5px; background-color: #383838; }
-.startmenu-status { float: right; color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 10px 5px 0 10px; height: 50px; width: 200px; border-left: 1px solid rgba(0,0,0,0.1); cursor: pointer; }
+.startmenu-status { float: right; color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 39px; width: 200px; border-left: 1px solid rgba(0,0,0,0.1); cursor: pointer; border-radius: 0 0 3px 0; }
 .startmenu-status:hover { background-color: rgba(255,255,255,0.1); }
-.startmenu-status b { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: white; font-size: 14px; }
+.startmenu-status b { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: white; font-size: 13px; line-height: 14px; }
 .startmenu-status i { font-size: 10px; float: left; margin: 3px 4px 0 0; }
 .startmenu-status span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; }
-.startmenu-search .ui-textbox { height: 34px; background-color: #383838; }
-.startmenu-search .ui-textbox-input { padding: 9px 4px 0 10px; }
+.startmenu-search .ui-textbox { height: 30px; background-color: #383838; }
+.startmenu-search .ui-textbox-input { padding: 7px 4px 0 10px; }
 .startmenu-search .ui-textbox input { font-size: 16px; background-color: #383838; color: white; }
 .startmenu-search .ui-textbox-control { width: 40px; border-left: 0; color: gray; }
 .startmenu-search input:-webkit-autofill, .startmenu-search input:-webkit-autofill:hover, .startmenu-search input:-webkit-autofill:active, .startmenu-search input:-webkit-autofill:focus { background-color: #303030 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #303030 inset !important; -webkit-text-fill-color: white !important; }
@@ -78,9 +78,9 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .light .app-container { color: black; background-color: rgba(0,0,0,0.05); }
 .light .app-container:hover .app-icon { color: black; }
 .light .app-icon { color: #505050; }
-.light .startmenu-search .ui-textbox { background-color: #D0D0D0; }
+.light .startmenu-search .ui-textbox { background-color: transparent; }
 .light .startmenu-search { background-color: #D0D0D0; }
-.light .startmenu-search .ui-textbox input { background-color: #D0D0D0; color: black; }
+.light .startmenu-search .ui-textbox input { background-color: transparent; color: black; }
 .light .app-running .app-container, .light .app-container:hover { background-color: rgba(0,0,0,0.1); }
 .light .startmenu-title button { color: black; }
 

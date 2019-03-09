@@ -651,7 +651,7 @@ input:invalid { box-shadow: none; }
 .ui-dark .ui-disabled .ui-dynamicvalue { background-color: #282828; }
 .ui-dark .ui-disabled .ui-dynamicvalue-value { color: #777777; }
 
-.ui-autocomplete-container { position: absolute; z-index: 60; }
+.ui-autocomplete-container { position: absolute; }
 .ui-autocomplete { background-color: white; width: 100%; margin: -5px 0 0 0; padding: 2px 0; border-radius: 0 0 4px 4px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border: 1px solid #E0E0E0; line-height: 14px; overflow-x: hidden; overflow-y: auto; }
 .ui-autocomplete ul { list-style-type: none; margin: 0; padding: 0; }
 .ui-autocomplete li { margin: 0; padding: 5px 12px 0; border-bottom: 1px solid #F0F0F0; cursor: pointer; font-size: 12px; color: #505050; height: 24px; }
@@ -660,3 +660,38 @@ input:invalid { box-shadow: none; }
 .ui-autocomplete li span { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 .ui-autocomplete li span:first-child { float: left; width: 65%; }
 .ui-autocomplete li span:last-child { float: right; width: 30%; font-size: 11px; color: #A0A0A0; }
+
+.ui-modal-noscroll, .ui-modal-noscroll body { overflow: hidden; }
+.ui-modal-container { background-color: rgba(240,240,240,0.8); position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 100; }
+.ui-modal { background-color: white; margin: 0 auto; border-radius: 3px; box-shadow: 0 0 30px rgba(0,0,0,0.05); transform: scale(0); transition: transform 0.2s; position: absolute; left: 50%; overflow: hidden; border: 1px solid #E0E0E0; }
+.ui-modal-visible .ui-modal { transform: scale(1); }
+.ui-modal-body-area { overflow-x: hidden; overflow-y: scroll; overflow-scrolling: touch; width: 100%; }
+.ui-modal-body { margin-right: 30px; }
+.ui-modal-header { border-bottom: 1px solid #E0E0E0; height: 50px; padding: 0 0 0 15px; }
+.ui-modal-icon { float: left; height: 50px; line-height: 50px; margin-right: 7px; }
+.ui-modal-header label { height: 50px; line-height: 50px; font-size: 16px; float: left; padding: 0; margin: 0; font-weight: bold; color: black; }
+.ui-modal-header label i { margin-right: 5px; }
+.ui-modal-header .cancel { float: right; line-height: 50px; width: 28px; color: red; transition: transform 0.2s; font-size: 16px; }
+.ui-modal-header .cancel:hover { transform: scale(1.2); }
+.ui-modal-footer { border-top: 1px solid #E0E0E0; height: 60px; padding: 0 15px; line-height: 58px; text-align: right; }
+.ui-modal-footer button { height: 33px; border: 0; background-color: #4285F4; color: white; border-radius: 2px; padding: 0 15px; margin: 0; line-height: 28px; font-weight: bold; }
+.ui-modal-footer button:disabled { background-color: #E0E0E0; color: #A0A0A0; cursor: not-allowed; }
+.ui-modal-footer .link { font-size: 12px; vertical-align: middle; position: relative; display: inline-block; margin: 0 10px; }
+.ui-modal-footer i { margin-right: 5px; }
+.ui-modal .padding { padding: 15px; }
+.ui-modal-align-1 { left: auto; right: 25px; bottom: 25px; top: auto; }
+.ui-modal-align-2 { left: 25px; bottom: 25px; top: auto; }
+.ui-modal-align-3 { left: 25px; top: 25px; }
+.ui-modal-align-4 { left: auto; right: 25px; top: 25px; }
+
+.ui-dark .ui-modal { background-color: #202020; border-color: #404040; }
+.ui-dark .ui-modal-container { background-color: rgba(0,0,0,0.7); position: fixed; left: 0; right: 0; top: 0; bottom: 0; }
+.ui-dark .ui-modal-footer { border-top-color: #303030; }
+.ui-dark .ui-modal-header { border-bottom-color: #303030; }
+.ui-dark .ui-modal-header label { color: white; }
+.ui-dark .ui-modal-footer .link { color: gray; }
+.ui-dark .ui-modal-footer button:disabled { background-color: #404040; color: gray; cursor: not-allowed; }
+
+@media(max-width: 768px) {
+	.ui-modal { width: 90%; left: 50%; right: auto; bottom: auto; }
+}
