@@ -64,8 +64,9 @@ Thelpers.responsive = function(value) {
 };
 
 $(window).on('message', function(e) {
-	var data = JSON.parse(e.originalEvent.data);
-	if (!data.openplatform)
+
+	var data = PARSE((e.originalEvent && e.originalEvent.data).toString() || '');
+	if (!data || !data.openplatform)
 		return;
 
 	var app = dashboard.apps.findItem('accesstoken', data.accesstoken);
