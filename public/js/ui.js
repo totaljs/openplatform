@@ -1859,20 +1859,22 @@ COMPONENT('processes', function(self, config) {
 	var appminimized = {};
 	var order = [];
 	var ismobile = isMOBILE && screen.width <= 700;
+	var elpanel;
 
 	self.hidemenu = function() {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div><span><i class="fa fa-{{ internal.icon }}"></i></span><div>{{ internal.title }}</div></div><nav><button name="refresh" class="ui-process-button ui-process-refresh"><i class="fa fa-refresh"></i></button><button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize-left" class="ui-process-button"><i class="fa fa-arrow-left"></i></button><button name="maximize-right" class="ui-process-button"><i class="fa fa-arrow-right"></i></button><button name="maximize" class="ui-process-button"><i class="fas fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
+	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div><span><i class="fa fa-{{ internal.icon }}"></i></span><div>{{ internal.title }}</div></div><nav>{{ if !internal.internal }}<button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="options" class="ui-process-menu ui-process-button"><span><i class="fa fa-cog"></i></span></button>{{ fi }}<button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize" class="ui-process-button"><i class="far fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
 
 	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
 	self.nocompile();
 
 	self.make = function() {
-		self.append('<div class="ui-process-clone hidden"></div>');
+		self.append('<div class="ui-process-panel hidden"></div><div class="ui-process-clone hidden"></div>');
 		clone = self.find('.ui-process-clone');
+		elpanel = self.find('.ui-process-panel');
 	};
 
 	var move = { is: false, x: 0, y: 0 };
@@ -1936,7 +1938,71 @@ COMPONENT('processes', function(self, config) {
 			case 'close':
 				self.kill(id);
 				break;
+			case 'options':
+				var opt = {};
+				opt.element = this;
+				opt.ready = false;
+				common.appoptions = opt;
+				var iframe = iframes.findItem('id', id);
+
+				self.message(iframe, 'options');
+
+				setTimeout(function() {
+
+					if (opt.ready)
+						return;
+
+					EXEC(config.options, opt, function() {
+						opt.ready = true;
+						opt.align = 'right';
+						opt.offsetY = -8;
+						opt.offsetX = 3;
+						opt.callback = function(selected) {
+
+							if (selected.callbackid) {
+								var callbackid = selected.callbackid;
+								selected.callbackid = undefined;
+								self.message(iframes.findItem('id', id), 'options', selected, callbackid);
+								return;
+							}
+
+							switch (selected.value) {
+								case 'print':
+									self.message(iframes.findItem('id', id), 'print');
+									break;
+								case 'close':
+									self.kill(id);
+									break;
+								case 'reset':
+									self.resetsize(id);
+									break;
+								case 'refresh':
+									self.reload(id);
+									break;
+								case 'mutesounds':
+									if (common.muted[id])
+										delete common.muted[id];
+									else
+										common.muted[id] = 1;
+									self.animateoptions(iframe);
+									break;
+								case 'mutenotifications':
+									AJAX('GET /api/profile/{0}/mute/'.format(id), function(response) {
+										iframe.meta.notifications = response.value;
+										self.animateoptions(iframe);
+									});
+									break;
+							}
+						};
+						SETTER('menu', 'show', opt);
+					}, iframe);
+				}, 300);
+				break;
 		}
+
+		if (this.name !== 'menu')
+			SETTER('menu', 'hide');
+
 		self.hidemenu();
 		e.preventDefault();
 		e.stopPropagation();
@@ -1969,6 +2035,7 @@ COMPONENT('processes', function(self, config) {
 	});
 
 	self.focus = function(id) {
+		SETTER('menu', 'hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 		if (oldfocus === id)
 			return;
@@ -1995,7 +2062,7 @@ COMPONENT('processes', function(self, config) {
 		var iframe = iframes.findItem('id', id);
 		if (iframe.mobile)
 			return false;
-		clone.rclass('hidden');
+		move.resize = iframe.meta.internal.resize;
 		move.is = true;
 		move.el = el;
 		move.x = x;
@@ -2004,6 +2071,7 @@ COMPONENT('processes', function(self, config) {
 		move.h = el.height();
 		self.find('.ui-process-focus').rclass('ui-process-focus');
 		el.aclass('ui-process-focus');
+		clone.rclass('hidden');
 		SET('common.focused', id);
 		self.hidemenu();
 	};
@@ -2012,7 +2080,7 @@ COMPONENT('processes', function(self, config) {
 		clone.rclass('hidden');
 		resize.is = true;
 		resize.el = el;
-		el.find('.ui-process-button[name="maximize"]').find('.fal').rclass2('fa-').aclass('fa-window-maximize');
+		el.find('.ui-process-button[name="maximize"]').find('.far').rclass2('fa-').aclass('fa-window-maximize');
 		resize.iframe = el.find('iframe');
 		resize.padding = el.find('.ui-process-header').height();
 		resize.x = x;
@@ -2023,12 +2091,25 @@ COMPONENT('processes', function(self, config) {
 	};
 
 	self.mup = function(e) {
+
 		if (move.is) {
+			var id = move.el.attrd('id');
 			move.is = false;
 			move.el.attrd('cache', '');
 			clone.aclass('hidden');
-			self.notifyresize(move.el.attrd('id'), true);
 			e.preventDefault();
+
+			if (move.pl) {
+				self.resize_maximize(id, 2);
+			} else if (move.pr)
+				self.resize_maximize(id, 1);
+			else
+				self.notifyresize(id, true);
+
+			move.plast && elpanel.aclass('hidden');
+			move.plast = null;
+			move.pl = false;
+			move.pr = false;
 		}
 
 		if (resize.is) {
@@ -2061,6 +2142,30 @@ COMPONENT('processes', function(self, config) {
 
 			move.el.css({ left: x, top: y });
 			e.preventDefault();
+
+			if (move.resize) {
+				if (x < -50)
+					move.pl = true;
+				else
+					move.pl = false;
+
+				if (x > (WW - 320))
+					move.pr = true;
+				else
+					move.pr = false;
+
+				if (move.pl || move.pr) {
+					var last = move.pl ? 'l' : 'r';
+					if (last !== move.plast) {
+						move.plast = last;
+						elpanel.css({ left: move.pl ? 8 : 'auto', right: move.pr ? 8 : 'auto' }).rclass('hidden');
+					}
+				} else if (move.plast) {
+					elpanel.aclass('hidden');
+					move.plast = null;
+				}
+			}
+
 		} else if (resize.is) {
 
 			var w = resize.w + (x - resize.x);
@@ -2081,12 +2186,15 @@ COMPONENT('processes', function(self, config) {
 		}
 	};
 
-	self.resetsize = function() {
+	self.resetsize = function(id) {
 		for (var i = 0; i < iframes.length; i++) {
+
 			var iframe = iframes[i];
+			if (typeof(id) === 'string' && id !== iframe.id)
+				continue;
+
 			var internal = iframe.meta.internal;
 			var opt = { width: internal.width, height: internal.height };
-
 			var ol = iframe.element.css('left').parseInt();
 			var ot = +iframe.element.css('top').parseInt();
 
@@ -2498,6 +2606,7 @@ COMPONENT('processes', function(self, config) {
 		value.internal.running = true;
 		item.running = true;
 		iframe.meta = value;
+
 		iframe.element = $('.ui-process[data-id="{0}"]'.format(value.id));
 		iframe.iframe = iframe.element.find('iframe');
 
@@ -2584,7 +2693,22 @@ COMPONENT('processes', function(self, config) {
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
 		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');
+
+		if (!value.notifications || common.muted[value.id])
+			self.animateoptions(iframe);
+
 	};
+
+	self.animateoptions = function(iframe) {
+		var icon = iframe.element.find('.fa-cog');
+		icon.aclass('fa-spin');
+		icon.parent().aclass('red');
+		setTimeout(function() {
+			icon.parent().rclass('red');
+			icon.rclass('fa-spin');
+		}, 2000);
+	};
+
 });
 
 COMPONENT('notifications', function() {
@@ -2592,6 +2716,7 @@ COMPONENT('notifications', function() {
 	var self = this;
 	var container, button;
 	var count = 0;
+	var sw = SCROLLBARWIDTH();
 
 	self.readonly();
 	self.singleton();
@@ -2605,7 +2730,6 @@ COMPONENT('notifications', function() {
 		self.element.append('<div class="ui-notifications-container"></div>');
 		container = self.find('.ui-notifications-container');
 		button = self.find('.ui-notifications-clear');
-
 		$(window).on('resize', self.resize);
 
 		self.event('click', '.ui-notifications-message', function() {
@@ -2628,6 +2752,7 @@ COMPONENT('notifications', function() {
 			self.set(false);
 		});
 
+		sw && self.css('right', '-' + sw + 'px');
 		setTimeout(self.resize, 500);
 	};
 
@@ -6132,4 +6257,154 @@ COMPONENT('modal', 'zindex:100;width:800', function(self, config) {
 
 		first = false;
 	};
+});
+
+COMPONENT('menu', function(self) {
+
+	self.singleton();
+	self.readonly();
+	self.nocompile && self.nocompile();
+
+	var cls = 'ui-menu';
+	var is = false;
+	var events = {};
+	var ul;
+
+	self.make = function() {
+		self.aclass(cls + ' hidden');
+		self.append('<ul></ul>');
+		ul = self.find('ul');
+
+		self.event('touchstart mousedown', 'li', function(e) {
+			var el = $(this);
+			if (el.hclass(cls + '-divider')) {
+				e.preventDefault();
+				e.stopPropagation();
+			} else {
+				self.opt.callback(self.opt.items[el.index()]);
+				self.hide();
+			}
+		});
+
+		events.hide = function() {
+			is && self.hide();
+		};
+
+		self.event('scroll', events.hide);
+		self.on('reflow', events.hide);
+		self.on('scroll', events.hide);
+		self.on('resize', events.hide);
+
+		events.click = function(e) {
+			if (is && (!self.target || (self.target !== e.target && !self.target.contains(e.target))))
+				self.hide();
+		};
+	};
+
+	self.bindevents = function() {
+		events.is = true;
+		$(document).on('touchstart mousedown', events.click);
+		$(window).on('scroll', events.hide);
+	};
+
+	self.unbindevents = function() {
+		events.is = false;
+		$(document).off('touchstart mousedown', events.click);
+		$(window).off('scroll', events.hide);
+	};
+
+	self.showxy = function(x, y, items, callback) {
+		var opt = {};
+		opt.x = x;
+		opt.y = y;
+		opt.items = items;
+		opt.callback = callback;
+		self.show(opt);
+	};
+
+	self.show = function(opt) {
+
+		if (typeof(opt) === 'string') {
+			// old version
+			opt = { align: opt };
+			opt.element = arguments[1];
+			opt.items = arguments[2];
+			opt.callback = arguments[3];
+			opt.offsetX = arguments[4];
+			opt.offsetY = arguments[5];
+		}
+
+		var tmp = opt.element ? opt.element instanceof jQuery ? opt.element[0] : opt.element.element ? opt.element.dom : opt.element : null;
+
+		if (is && tmp && self.target === tmp) {
+			self.hide();
+			return;
+		}
+
+		var builder = [];
+
+		self.target = tmp;
+		self.opt = opt;
+
+		for (var i = 0; i < opt.items.length; i++) {
+			var item = opt.items[i];
+			builder.push(typeof(item) == 'string' ? '<li class="{1}-divider">{0}</li>'.format(item === '-' ? '<hr />' : ('<span>' + item + '</span>'), cls) : '<li{2}>{3}{0}{1}</li>'.format(item.icon ? '<i class="{0}"></i>'.format(item.icon.charAt(0) === '!' ? item.icon.substring(1) : ('fa fa-' + item.icon)) : '', item.name, item.icon ? '' : (' class="' + cls + '-nofa"'), item.shortcut ? '<b>{0}</b>'.format(item.shortcut) : ''));
+		}
+
+		var css = {};
+
+		ul.html(builder.join(''));
+
+		if (is) {
+			css.left = 0;
+			css.top = 0;
+			self.element.css(css);
+		} else {
+			self.rclass('hidden');
+			self.aclass(cls + '-visible', 100);
+			is = true;
+			if (!events.is)
+				self.bindevents();
+		}
+
+		var target = $(opt.element);
+		var w = self.width();
+		var offset = target.offset();
+
+		if (opt.element) {
+			switch (opt.align) {
+				case 'center':
+					css.left = Math.ceil((offset.left - w / 2) + (target.innerWidth() / 2));
+					break;
+				case 'right':
+					css.left = (offset.left - w) + target.innerWidth();
+					break;
+				default:
+					css.left = offset.left;
+					break;
+			}
+			css.top = offset.top + target.innerHeight() + 10;
+		} else {
+			css.left = opt.x;
+			css.top = opt.y;
+		}
+
+		if (opt.offsetX)
+			css.left += opt.offsetX;
+
+		if (opt.offsetY)
+			css.top += opt.offsetY;
+
+		self.element.css(css);
+	};
+
+	self.hide = function() {
+		events.is && self.unbindevents();
+		is = false;
+		self.target = null;
+		self.opt = null;
+		self.aclass('hidden');
+		self.rclass(cls + '-visible');
+	};
+
 });

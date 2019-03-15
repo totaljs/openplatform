@@ -82,6 +82,12 @@ NEWSCHEMA('Notification', function(schema) {
 
 			if (app && user.apps[app.id]) {
 				var ua = user.apps[app.id];
+
+				if (ua.notifications === false) {
+					$.invalid('error-notifications-muted');
+					return;
+				}
+
 				if (ua.countnotifications)
 					ua.countnotifications++;
 				else

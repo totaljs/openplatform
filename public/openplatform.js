@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 401;
+OP.version = 402;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -235,6 +235,16 @@ OP.confirm = function(message, buttons, callback) {
 	});
 };
 
+OP.options = function(fn, callback) {
+	OP.on('options', function() {
+		var arr = [];
+		fn(arr);
+		OP.send('options', arr, function(err, selected) {
+			selected && callback(selected);
+		});
+	});
+};
+
 OP.config = function(body, callback) {
 
 	var data = {};
@@ -370,10 +380,16 @@ OP.send = function(type, body, callback) {
 };
 
 OP.on = function(name, callback) {
+	if (name === 'print' || name === 'options')
+		OP.events[name] = null;
 	!OP.events[name] && (OP.events[name] = []);
 	OP.events[name].push(callback);
 	return OP;
 };
+
+OP.on('print', function() {
+	window.print();
+});
 
 OP.$process = function(data) {
 

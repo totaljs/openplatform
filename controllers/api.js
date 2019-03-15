@@ -35,6 +35,7 @@ exports.install = function() {
 		// Real-time operation
 		ROUTE('GET    /api/profile/                     *Profile      --> @get');
 		ROUTE('GET    /api/profile/{id}/                *App          --> @run');
+		ROUTE('GET    /api/profile/{id}/mute/           *App          --> @mute');
 		ROUTE('POST   /api/profile/logger/              *Logger       --> @insert');
 
 		ROUTE('/api/upload/photo/',                     json_upload_photo, ['post'], 1024 * 2);

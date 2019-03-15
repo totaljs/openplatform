@@ -1,6 +1,7 @@
 var WSLOGMESSAGE = {};
 var common = {};
 
+common.muted = {};
 common.page = '';
 common.form = '';
 common.inlineform = '';
@@ -88,6 +89,19 @@ $(window).on('message', function(e) {
 						processes.message(iframe, 'share', data.body);
 					}, false);
 				}
+			}
+
+			break;
+
+		case 'options':
+
+			if (data.body instanceof Array) {
+				for (var i = 0; i < data.body.length; i++) {
+					var mi = data.body[i];
+					if (mi && typeof(mi) === 'object')
+						mi.callbackid = data.callback;
+				}
+				common.appoptions.appitems = data.body;
 			}
 
 			break;
@@ -349,6 +363,9 @@ $(window).on('message', function(e) {
 
 		case 'play':
 		case 'stop':
+
+			if (common.muted[app.id])
+				return;
 
 			var custom = false;
 			switch (data.body) {

@@ -31,6 +31,7 @@
 	<div data---="LAZY contextmenu"></div>
 	<div data---="LAZY calendar"></div>
 	<div data---="LAZY message__null__button:@(Close)"></div>
+	<div data---="LAZY menu"></div>
 	<div data---="audio__user.volume"></div>
 	<div data---="loading" class="hidden"></div>
 	<div data---="shortcuts"></div>
@@ -75,7 +76,7 @@
 				<div class="ui-notifications-padding">
 					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
 					{{ if data }}
-					<button data-data="{{ data | encodedata }}" data-id="{{ appid }}" class="exec userbg" data-exec="Dashboard/navigate">@(Open app)</button>
+					<button data-data="{{ data | encodedata }}" data-id="{{ appid }}" class="exec" data-exec="Dashboard/navigate">@(OPEN)</button>
 					{{ fi }}
 				</div>
 			</div>
@@ -83,7 +84,7 @@
 	</div>
 
 	<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
-	<div data---="processes__dashboard.current__datasource:dashboard.apps"></div>
+	<div data---="processes__dashboard.current__datasource:dashboard.apps;options:Dashboard/appmenu"></div>
 
 	<div class="startmenu hidden" data-bind="common.startmenu__exec:togglemenu">
 		<div class="startmenu-nav" data---="xs__common.startmenuapps__if:!value">
@@ -404,6 +405,26 @@
 					});
 				} else
 					SET('common.startmenu', true, 500);
+			};
+
+			self.appmenu = function(opt, next, iframe) {
+
+				opt.items = [];
+
+				if (opt.appitems) {
+					for (var i = 0; i < opt.appitems.length; i++)
+						opt.items.push(opt.appitems[i]);
+					opt.items.push('-');
+				}
+
+				opt.items.push({ name: common.muted[iframe.id] ? '<strong>@(Enable sounds)</strong>' : '@(Mute sounds)', icon: common.muted[iframe.id] ? 'volume-up red' : 'volume-mute', value: 'mutesounds' });
+				opt.items.push({ name: iframe.meta.notifications ? '@(Mute notifications)' : '<strong>@(Enable notifications)</strong>', icon: '!far fa-envelope-o' + (iframe.meta.notifications ? '' : ' red'), value: 'mutenotifications' });
+				opt.items.push('-');
+				opt.items.push({ name: '@(Print)', icon: 'print', value: 'print' });
+				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'refresh' });
+				opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'reset' });
+				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
+				next();
 			};
 
 		});
