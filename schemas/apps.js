@@ -211,7 +211,7 @@ NEWSCHEMA('App', function(schema) {
 				if (data) {
 					data.ip = $.ip;
 					data.href = $.query.href;
-					data.notifications = user.apps[$.id].notifications;
+					data.notifications = user.apps[$.id].notifications !== false;
 
 					$.callback(data);
 
