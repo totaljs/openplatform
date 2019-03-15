@@ -1989,6 +1989,7 @@ COMPONENT('processes', function(self, config) {
 								case 'mutenotifications':
 									AJAX('GET /api/profile/{0}/mute/'.format(id), function(response) {
 										iframe.meta.notifications = response.value;
+										$('.appnonotify[data-id="{0}"]'.format(id)).tclass('hidden', !!response.value);
 										self.animateoptions(iframe);
 									});
 									break;

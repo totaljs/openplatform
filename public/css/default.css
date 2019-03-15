@@ -55,6 +55,9 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .startmenu-search .ui-textbox-control { width: 40px; border-left: 0; color: gray; }
 .startmenu-search input:-webkit-autofill, .startmenu-search input:-webkit-autofill:hover, .startmenu-search input:-webkit-autofill:active, .startmenu-search input:-webkit-autofill:focus { background-color: #303030 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #303030 inset !important; -webkit-text-fill-color: white !important; }
 
+.appnonotify { font-size: 10px; position: absolute; top: 3px; left: 36px; color: white; }
+.light .appnonotify { color: black; }
+
 .startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
 .startmenu .ui-textbox { border: 0; }
 .startmenu .ui-textbox-input { padding-left: 10px; padding-left: 10px; }
