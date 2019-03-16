@@ -1957,6 +1957,10 @@ COMPONENT('processes', function(self, config) {
 						opt.align = 'right';
 						opt.offsetY = -8;
 						opt.offsetX = 3;
+
+						if (isMOBILE)
+							opt.position = 'bottom';
+
 						opt.callback = function(selected) {
 
 							if (selected.callbackid) {
@@ -6384,7 +6388,8 @@ COMPONENT('menu', function(self) {
 					css.left = offset.left;
 					break;
 			}
-			css.top = offset.top + target.innerHeight() + 10;
+
+			css.top = opt.position === 'bottom' ? (offset.top - self.element.height() - 10) : (offset.top + target.innerHeight() + 10);
 		} else {
 			css.left = opt.x;
 			css.top = opt.y;

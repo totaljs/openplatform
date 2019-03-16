@@ -423,7 +423,10 @@
 				opt.items.push('-');
 				opt.items.push({ name: '@(Print)', icon: 'print', value: 'print' });
 				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'refresh' });
-				opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'reset' });
+
+				if (!isMOBILE)
+					opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'reset' });
+
 				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
 				next();
 			};
