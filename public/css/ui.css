@@ -433,7 +433,8 @@ input:invalid { box-shadow: none; }
 .ui-process-priority-21 { z-index: 30; }
 .ui-process-focus { z-index: 31; }
 .ui-process-focus .ui-process-header div { font-weight: bold; }
-.ui-process-panel { width: 45%; top: 52px; bottom: 38px; z-index: 150; background-color: rgba(100,100,100,0.5); position: absolute; };
+.ui-process-panel { width: 45%; top: 52px; bottom: 38px; z-index: 150; background-color: rgba(150,150,150,0.5); position: absolute; };
+.light .ui-process-panel { background-color: rgba(100,100,100,0.5); }
 
 @media(max-width: 700px) {
 	.ui-confirm button { display: block; margin: 10px 0 0; display: block; width: 100%; }

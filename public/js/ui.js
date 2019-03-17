@@ -2149,12 +2149,12 @@ COMPONENT('processes', function(self, config) {
 			e.preventDefault();
 
 			if (move.resize) {
-				if (x < -50)
+				if (x < -250)
 					move.pl = true;
 				else
 					move.pl = false;
 
-				if (x > (WW - 320))
+				if ((x + move.w) > (WW + 250))
 					move.pr = true;
 				else
 					move.pr = false;
