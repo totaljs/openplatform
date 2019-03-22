@@ -1,10 +1,10 @@
 const Fs = require('fs');
+const COOKIEOPTIONS = { httponly: true, security: 'lax' };
 
 CONF.table_configs = 'userid:string|appid:string|body:string|dateupdated:date|datecreated:date';
 
 FUNC.apps = {};
 FUNC.users = {};
-FUNC.sessions = {};
 FUNC.common = {};
 FUNC.settings = {};
 FUNC.notifications = {};
@@ -507,30 +507,6 @@ function refresh_apps() {
 
 	}, () => FUNC.emit('apps.refresh'));
 }
-
-// ====================================
-// Sessions
-// ====================================
-
-FUNC.sessions.set = function(key, value, expire, callback) {
-
-	if (typeof(expire) === 'function') {
-		callback = expire;
-		expire = null;
-	}
-
-	F.cache.set(key, value, expire || '2 hours');
-	callback && callback(null);
-};
-
-FUNC.sessions.get = function(key, callback) {
-	callback(null, F.cache.get2(key));
-};
-
-FUNC.sessions.rem = function(key, callback) {
-	F.cache.remove(key);
-	callback(null);
-};
 
 // ====================================
 // Settings

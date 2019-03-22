@@ -25,62 +25,30 @@ AUTH(function(req, res, flags, next) {
 		return next(false);
 	}
 
-	var cookie = req.cookie(CONF.cookie);
-	if (!cookie)
-		return next(false);
+	var opt = {};
+	opt.key = CONF.cookie_key || 'auth';
+	opt.name = CONF.cookie;
+	opt.expire = CONF.cookie_expiration;
 
-	if (DDOS[key] > 5) {
-		FUNC.logger('protection', key);
-		return next(false);
-	}
+	OP.session.getcookie(req, opt, function(err, profile, meta) {
 
-	cookie = F.decrypt(cookie);
+		if (profile == null) {
 
-	if (cookie) {
+			if (DDOS[key])
+				DDOS[key]++;
+			else
+				DDOS[key] = 1;
 
-		var sessionkey = cookie.id;
+			if (DDOS[key] > 5)
+				FUNC.logger('protection', key);
 
-		// Reads session
-		FUNC.sessions.get(sessionkey, function(err, user) {
-
-			if (user) {
-				next((user.inactive || user.blocked) ? false : true, user);
-				return;
-			}
-
-			// Reads a user from DB
-			FUNC.users.get(cookie.id, function(err, user) {
-				if (user && !user.inactive && !user.blocked) {
-
-					user.datelogged = NOW;
-					user.online = true;
-
-					if (user.language && user.language !== 'en')
-						req.$language = user.language;
-
-					// Write session
-					FUNC.sessions.set(sessionkey, user);
-
-					// Write info
-					FUNC.users.set(user, ['datelogged', 'online']);
-
-					// Continue
-					next(true, user);
-
-				} else
-					next(false);
-			});
-		});
-
-	} else {
-
-		if (DDOS[key])
-			DDOS[key]++;
-		else
-			DDOS[key] = 1;
-
-		next(false);
-	}
+			next(false);
+		} else {
+			req.$sessionid = meta.sessionid;
+			req.$language = profile.language;
+			next(true, profile);
+		}
+	});
 });
 
 ON('service', function(counter) {

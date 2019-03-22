@@ -21,29 +21,22 @@ NEWSCHEMA('Login', function(schema) {
 					return;
 				}
 
-				FUNC.sessions.get(user.id, function(err, session) {
 
-					var done = function() {
-						var cookie = {};
-						cookie.id = user.id;
-						cookie.date = NOW;
-						cookie.ua = ($.controller.req.headers['user-agent'] || '').substring(0, 20);
-						$.controller.cookie(CONF.cookie, F.encrypt(cookie), CONF.cookie_expiration || '1 month', COOKIEOPTIONS);
-						$.success();
-					};
+				var opt = {};
+				opt.name = CONF.cookie;
+				opt.key = CONF.cookie_key || 'auth';
+				opt.sessionid = UID();
+				opt.id = user.id;
+				opt.expire = CONF.cookie_expiration || '1 month';
+				opt.data = user;
+				opt.note = 'Login form';
 
-					if (session) {
-						session.verifytoken = U.GUID(15);
-						FUNC.users.set(session, ['verifytoken'], function(err) {
-							if (err)
-								$.invalid(err);
-							else
-								done();
-						});
-					} else
-						done();
-
+				OP.session.setcookie($.controller, opt, function() {
+					user.verifytoken = U.GUID(15);
+					FUNC.users.set(user, ['verifytoken'], NOOP);
+					$.success();
 				});
+
 			} else
 				$.invalid('error-credentials');
 		});

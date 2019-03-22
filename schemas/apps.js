@@ -1,3 +1,5 @@
+const session = SESSION('users');
+
 NEWSCHEMA('AppMeta', function(schema) {
 	schema.define('url', 'Url', true);
 	schema.addWorkflow('exec', function($) {
@@ -218,7 +220,8 @@ NEWSCHEMA('App', function(schema) {
 					user.apps[$.id].countnotifications = 0;
 					user.apps[$.id].countbadges && FUNC.badges.rem(user.id, $.id);
 					user.apps[$.id].countbadges = 0;
-					FUNC.sessions.set(user.id, user);
+
+					session.set2(user.id, user);
 
 					// Stats
 					var db = NOSQL('apps');
@@ -242,7 +245,8 @@ NEWSCHEMA('App', function(schema) {
 		}
 
 		user.apps[$.id].notifications = (user.apps[$.id].notifications == null || !user.apps[$.id].notifications == false) ? false : true;
-		FUNC.sessions.set(user.id, user);
+
+		session.set2(user.id, user);
 		$.success(true, user.apps[$.id].notifications == true);
 	});
 

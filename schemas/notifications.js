@@ -18,20 +18,23 @@ NEWSCHEMA('Notification', function(schema) {
 			// Remove notifications
 			FUNC.notifications.rem(user.id, function() {
 
-				// Update session
-				FUNC.sessions.get(user.id, function(err, session) {
-					if (session) {
-						session.countnotifications = 0;
-						var keys = Object.keys(session.apps);
-						for (var i = 0; i < keys.length; i++)
-							session.apps[keys[i]].countnotifications = 0;
-
-						FUNC.sessions.set(user.id, session, function() {
-							// Notifies all clients
-							FUNC.emit('users.notify', user.id, '', true);
-						});
-					}
+				OP.session.refresh2(user.id, function(err, count) {
+					count && FUNC.emit('users.notify', user.id, '', true);
 				});
+
+				// Update all session
+				// OP.session.get2(user.id, function(err, sessions) {
+				// 	sessions.wait(function(item, next) {
+				// 		var session = item.data;
+				// 		session.countnotifications = 0;
+				// 		var keys = Object.keys(session.apps);
+				// 		for (var i = 0; i < keys.length; i++)
+				// 			session.apps[keys[i]].countnotifications = 0;
+				// 		OP.session.set(item.uid, item.id, item.expire, session, next, item.note);
+				// 	}, function() {
+				// 		FUNC.emit('users.notify', user.id, '', true);
+				// 	});
+				// });
 			});
 
 			// Returns notifications
@@ -109,7 +112,7 @@ NEWSCHEMA('Notification', function(schema) {
 				FUNC.notifications.add(model);
 
 				// Updates session
-				FUNC.sessions.set(user.id, user);
+				OP.session.set2(user.id, user);
 
 				// Updates profile
 				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified'], () => FUNC.emit('users.notify', user.id, app.id), app);

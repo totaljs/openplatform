@@ -4,6 +4,50 @@ OP.version = 4003;
 G.meta = {};
 G.metadirectories = {};
 
+// Total.js session management
+OP.session = SESSION();
+OP.session.ondata = function(meta, next) {
+	FUNC.users.get(meta.id, function(err, user) {
+		if (user && !user.inactive && !user.blocked) {
+
+			user.datelogged = NOW;
+			user.online = true;
+
+			// Write info
+			FUNC.users.set(user, ['datelogged', 'online']);
+
+			// Write session
+			next(null, user);
+		} else
+			next();
+	});
+};
+
+OP.cookie = function(req, user, sessionid, callback, note) {
+
+	if (typeof(sessionid) === 'function') {
+		note = callback;
+		callback = sessionid;
+		sessionid = null;
+	}
+
+	var opt = {};
+	opt.name = CONF.cookie;
+	opt.key = CONF.cookie_key || 'auth';
+	opt.sessionid = sessionid || UID();
+	opt.id = user.id;
+	opt.expire = CONF.cookie_expiration || '1 month';
+	opt.data = user;
+	opt.note = note;
+
+	OP.session.setcookie($.controller, opt, function() {
+		user.verifytoken = U.GUID(15);
+		FUNC.users.set(user, ['verifytoken'], NOOP);
+		callback && callback();
+	});
+};
+
+
 // Return user profile object
 OP.profile = function(user, callback) {
 

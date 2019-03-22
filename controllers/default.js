@@ -3,6 +3,7 @@ const WSSETTINGS =  { TYPE: 'settings', body: {} };
 const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
 const WSLOGOFF = { TYPE: 'logoff' };
 const COOKIES = { security: 1, httponly: true };
+const session = SESSION('users');
 
 var WS;
 
@@ -43,12 +44,17 @@ function login() {
 	if (self.query.token) {
 		var data = F.decrypt(self.query.token, CONF.secret_password);
 		if (data && data.date.add('2 days') > NOW) {
-			var cookie = {};
-			cookie.id = data.id;
-			cookie.date = NOW;
-			cookie.ua = (self.req.headers['user-agent'] || '').substring(0, 20);
-			self.cookie(CONF.cookie, F.encrypt(cookie), CONF.cookie_expiration, COOKIES);
-			self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
+			FUNC.users.get(data.id, function(err, user) {
+
+				if (user == null) {
+					$.invalid('error-users-404');
+					return;
+				}
+
+				OP.cookie(self, user, null, function() {
+					self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
+				}, 'Password recovery');
+			});
 			return;
 		}
 	}
@@ -59,6 +65,7 @@ function login() {
 function logoff() {
 	var self = this;
 	self.cookie(CONF.cookie, '', '-5 days');
+	OP.session.remove(self.req.$sessionid);
 	FUNC.users.logout(self.user, self);
 }
 
@@ -107,13 +114,15 @@ ON('users.refresh', function(userid, removed) {
 
 			processed.add(client.user);
 			FUNC.users.get(client.user.id, function(err, user) {
+
 				if (err || !user)
 					return next();
-				FUNC.sessions.set(user.id, user, function() {
+
+				session.set2(user.id, user, function() {
 					client.user = user;
 					client.send(WSPROFILE);
+					next();
 				});
-				next();
 			});
 
 		});
@@ -136,7 +145,7 @@ ON('users.refresh', function(userid, removed) {
 		return;
 
 	FUNC.users.get(userid, function(err, user) {
-		user && FUNC.sessions.set(user.id, user);
+		user && session.set2(user.id, user);
 		for (var i = 0; i < clients.length; i++)
 			clients[i].send(user ? WSPROFILE : WSLOGOFF);
 	});

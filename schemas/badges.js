@@ -39,8 +39,8 @@ NEWSCHEMA('Badge', function(schema) {
 				// Updates profile
 				FUNC.users.set(user, ['countbadges', 'apps'], () => FUNC.emit('users.badge', user.id, app.id), app);
 
-				// Updates sessions
-				FUNC.sessions.set(user.id, user);
+				// Updates all sessions
+				OP.session.set2(user.id, user);
 			}
 
 			// Response
