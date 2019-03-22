@@ -35,7 +35,6 @@
 	<div data---="audio__user.volume"></div>
 	<div data---="loading" class="hidden"></div>
 	<div data---="shortcuts"></div>
-	<!--<div data---="websocket__null__url:/"></div>-->
 
 	<footer>
 		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
@@ -498,7 +497,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
@@ -605,7 +604,6 @@
 					return;
 				}
 
-				var is = !!user;
 				profile.apps.quicksort('title');
 				SET('user', profile);
 				refresh_color(user);
@@ -615,7 +613,7 @@
 			});
 		}
 
-		refresh_profile();
+		setTimeout(refresh_profile, 1000);
 
 		setInterval(function() {
 
