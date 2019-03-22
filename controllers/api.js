@@ -37,6 +37,7 @@ exports.install = function() {
 		ROUTE('GET    /api/profile/{id}/                *App          --> @run');
 		ROUTE('GET    /api/profile/{id}/mute/           *App          --> @mute');
 		ROUTE('POST   /api/profile/logger/              *Logger       --> @insert');
+		ROUTE('GET    /api/profile/live/',              json_profile);
 
 		ROUTE('/api/upload/photo/',                     json_upload_photo, ['post'], 1024 * 2);
 		ROUTE('/api/upload/background/',                json_upload_background, ['post', 'upload'], 1024 * 5);
@@ -186,4 +187,8 @@ function json_online(id) {
 		}
 		self.json(ONLINE);
 	});
+}
+
+function json_profile() {
+	this.json(OP.profilelive(this.user));
 }

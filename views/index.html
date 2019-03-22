@@ -35,7 +35,7 @@
 	<div data---="audio__user.volume"></div>
 	<div data---="loading" class="hidden"></div>
 	<div data---="shortcuts"></div>
-	<div data---="websocket__null__url:/"></div>
+	<!--<div data---="websocket__null__url:/"></div>-->
 
 	<footer>
 		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
@@ -144,6 +144,8 @@
 		// For screenshots
 		common.cdn = '@{'%cdn'}';
 		common.cluster = '@{F.id}';
+		common.livecounter = 0;
+		common.liverefreshing = false;
 
 		WATCH('common.consolewindow', function() {
 			SET('common.consolecount', 0, 1000);
@@ -221,28 +223,7 @@
 					location.href = '/';
 					break;
 				case 'profile':
-					AJAX('GET /api/profile/', function(profile) {
 
-						if (profile == null) {
-							// refresh (maybe blocked)
-							location.reload(true);
-							return;
-						}
-
-						var is = !!user;
-						profile.apps.quicksort('title');
-						var tmp = user;
-						SET('user', profile);
-						EXEC('Dashboard/sync');
-						EXEC('Dashboard/init');
-						SET('common.startmenusearch', '');
-						CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
-						var b = $(document.body);
-						b.tclass('light', !user.darkmode);
-						b.tclass('ui-dark', !!user.darkmode);
-						if (is && (tmp.darkmode !== user.darkmode || tmp.colorscheme !== user.colorscheme || tmp.background !== user.background))
-							SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
-					});
 
 					break;
 				case 'settings':
@@ -506,6 +487,149 @@
 			}
 			return '<i class="fa fa-circle ' + str;
 		};
+
+		ON('response', function(response) {
+			// unauthorized
+			if (response.status === 401) {
+				location.href = '/';
+				response.cancel = true;
+				return;
+			}
+		});
+
+		function refresh_color(user) {
+			CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background && is ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			var b = $(document.body);
+			b.tclass('light', !user.darkmode);
+			b.tclass('ui-dark', !!user.darkmode);
+			SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
+		}
+
+		function refresh_profiledata() {
+
+			if (common.liverefreshing)
+				return;
+
+			common.liverefreshing = true;
+			AJAX('GET /api/profile/live', function(response) {
+
+				common.liverefreshing = false;
+
+				if (response == null) {
+					// maybe blocked
+					location.reload(true);
+					return;
+				}
+
+				var isui = user.darkmode !== response.darkmode || user.colorscheme !== response.colorscheme || user.background !== response.background;
+				if (isui) {
+					user.darkmode = response.darkmode;
+					user.colorscheme = response.colorscheme;
+					user.background = response.background;
+					refresh_color(user);
+				}
+
+				var is = false;
+
+				if (user.name !== response.name) {
+					is = true;
+					user.name = response.name;
+				}
+
+				if (user.photo !== response.photo) {
+					is = true;
+					user.photo = response.photo;
+				}
+
+				if (user.test !== response.test) {
+					is = true;
+					user.test = response.test;
+				}
+
+				if (user.volume !== response.volume) {
+					is = true;
+					user.volume = response.value;
+				}
+
+				if (user.countnotifications !== response.countnotifications) {
+					is = true;
+					user.countnotifications = response.countnotifications;
+				}
+
+				var keys = [];
+
+				for (var i = 0; i < user.apps.length; i++) {
+					var app = user.apps[i];
+					var ua = response.apps[app.id];
+
+					if (app.id.charAt(0) !== '_')
+						keys.push(app.id);
+
+					if (ua == null)
+						continue;
+
+					if (app.countnotifications !== ua.countnotifications) {
+						app.countnotifications = ua.countnotifications;
+						is = true;
+					}
+
+					if (app.countbadges !== ua.countbadges) {
+						app.countbadges = ua.countbadges;
+						is = true;
+					}
+
+					if (app.notifications != null && ua.notifications != null && app.notifications !== ua.notifications) {
+						app.notifications = ua.notifications;
+						is = true;
+					}
+				}
+
+				var keysnew = Object.keys(response.apps);
+
+				keys.sort();
+				keysnew.sort();
+
+				if (keys.join('') !== keysnew.join(''))
+					refresh_profile();
+				else if (is)
+					UPD('user');
+			});
+		}
+
+		function refresh_profile() {
+			AJAX('GET /api/profile/', function(profile) {
+
+				if (profile == null) {
+					// refresh (maybe blocked)
+					location.reload(true);
+					return;
+				}
+
+				var is = !!user;
+				profile.apps.quicksort('title');
+				SET('user', profile);
+				refresh_color(user);
+				EXEC('Dashboard/sync');
+				EXEC('Dashboard/init');
+				SET('common.startmenusearch', '');
+			});
+		}
+
+		refresh_profile();
+
+		setInterval(function() {
+
+			common.livecounter++;
+
+			if (document.hasFocus())
+				refresh_profiledata();
+			else if (common.livecounter % 5 === 0)
+				refresh_profiledata();
+
+			if (common.livecounter > 99999999)
+				common.livecounter = 0;
+
+		}, 5000);
 
 	</script>
 

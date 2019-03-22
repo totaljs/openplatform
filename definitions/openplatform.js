@@ -40,13 +40,12 @@ OP.cookie = function(req, user, sessionid, callback, note) {
 	opt.data = user;
 	opt.note = note;
 
-	OP.session.setcookie($.controller, opt, function() {
+	OP.session.setcookie(req, opt, function() {
 		user.verifytoken = U.GUID(15);
 		FUNC.users.set(user, ['verifytoken'], NOOP);
 		callback && callback();
 	});
 };
-
 
 // Return user profile object
 OP.profile = function(user, callback) {
@@ -88,7 +87,6 @@ OP.profile = function(user, callback) {
 
 	FUNC.apps.query(id.length ? { id: id } : EMPTYOBJECT, function(err, apps) {
 
-
 		if (err) {
 			FUNC.error('OP.profile', err);
 			callback(err, meta);
@@ -103,7 +101,6 @@ OP.profile = function(user, callback) {
 
 		if (user.sa) {
 			meta.apps.push({ id: '_users', icon: 'users', title: 'Users', name: 'Users', online: true, internal: true, linker: '_users', width: 800, height: 650, resize: false, mobilemenu: false });
-
 			if (!user.directory) {
 				meta.apps.push({ id: '_apps', icon: 'rocket', title: 'Apps', name: 'Apps', online: true, internal: true, linker: '_apps', width: 800, height: 650, resize: false, mobilemenu: false });
 				meta.apps.push({ id: '_settings', icon: 'cogs', title: 'Settings', name: 'Settings', online: true, internal: true, linker: '_settings', width: 600, height: 670, resize: false, mobilemenu: false });
@@ -114,6 +111,46 @@ OP.profile = function(user, callback) {
 		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 740, resize: false, mobilemenu: false });
 		callback(null, meta);
 	});
+};
+
+// Return user profile object
+OP.profilelive = function(user) {
+
+	var meta = {};
+	meta.openplatformid = OP.id;
+	meta.version = OP.version;
+	meta.name = user.name;
+	meta.photo = user.photo;
+	meta.locality = user.locality;
+	meta.ou = user.ou;
+	meta.company = user.company;
+	meta.sa = user.sa;
+	meta.apps = [];
+	meta.countnotifications = user.countnotifications;
+	meta.sounds = user.sounds;
+	meta.statusid = user.statusid;
+	meta.volume = user.volume;
+	meta.darkmode = user.darkmode;
+	meta.colorscheme = user.colorscheme || CONF.colorscheme;
+	meta.timeformat = user.timeformat;
+	meta.dateformat = user.dateformat;
+
+	var bg = user.background || CONF.background;
+	if (bg)
+		meta.background = bg;
+
+	if (CONF.test === true)
+		meta.test = true;
+
+	meta.status = user.status;
+
+	if (user.directory)
+		meta.directory = user.directory;
+
+	meta.directoryid = user.directoryid || 0;
+	meta.apps = user.apps;
+
+	return meta;
 };
 
 // Output see the app only

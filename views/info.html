@@ -29,8 +29,8 @@
 		<td class="right">@{model.memoryUsage} / @{model.memoryTotal} MB</td>
 	</tr>
 	<tr>
-		<td class="bg-smoke">@(Connections)</td>
-		<td class="right">@{model.connections}x</td>
+		<td class="bg-smoke">@(Performance)</td>
+		<td class="right">@{Math.ceil(F.stats.performance.request)} @(req/min.)</td>
 	</tr>
 	<tr>
 		<td class="bg-smoke">@(Uptime)</td>

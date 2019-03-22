@@ -1,12 +1,3 @@
-const WSPROFILE =  { TYPE: 'profile' };
-const WSSETTINGS =  { TYPE: 'settings', body: {} };
-const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
-const WSLOGOFF = { TYPE: 'logoff' };
-const COOKIES = { security: 1, httponly: true };
-const session = SESSION('users');
-
-var WS;
-
 exports.install = function() {
 
 	GROUP(['authorize'], function() {
@@ -16,11 +7,10 @@ exports.install = function() {
 		ROUTE('GET /settings/');
 		ROUTE('GET /info/', info);
 		ROUTE('GET /account/');
-		WEBSOCKET('/', realtime, ['json']);
+		ROUTE('GET /logoff/', logoff);
 	});
 
 	ROUTE('GET /*', login, ['unauthorize']);
-	ROUTE('GET /logoff/', logoff);
 
 	LOCALIZE('/pages/*.html');
 	LOCALIZE('/forms/*.html');
@@ -59,6 +49,9 @@ function login() {
 		}
 	}
 
+	if (self.url !== '/')
+		self.status = 401;
+
 	self.view('login');
 }
 
@@ -69,134 +62,22 @@ function logoff() {
 	FUNC.users.logout(self.user, self);
 }
 
-function realtime() {
-	var self = this;
-
-	WS = self;
-
-	self.autodestroy(() => WS = null);
-
-	self.on('open', function(client) {
-
-		if (client.user.blocked) {
-			client.close('blocked');
-			return;
-		}
-
-		client.id = client.user.id;
-		FUNC.users.online(client.user, true);
-		client.send(WSPROFILE);
-	});
-
-	self.on('close', function(client) {
-		FUNC.users.online(client.user, false);
-	});
-}
-
-ON('apps.refresh', function() {
-	WS && WS.send(WSPROFILE);
-});
-
 ON('users.refresh', function(userid, removed) {
-
-	if (!WS)
-		return;
-
-	if (!userid) {
-
-		// Refresh all connections
-		var processed = new Set();
-
-		WS.all().wait(function(client, next) {
-
-			if (!client || !client.user || processed.has(client.user))
-				return next();
-
-			processed.add(client.user);
-			FUNC.users.get(client.user.id, function(err, user) {
-
-				if (err || !user)
-					return next();
-
-				session.set2(user.id, user, function() {
-					client.user = user;
-					client.send(WSPROFILE);
-					next();
-				});
-			});
-
-		});
-
-		return;
-	}
-
-	var clients;
-
-	WS.all(function(client) {
-		if (client.id === userid) {
-			if (clients)
-				clients.push(client);
-			else
-				clients = [client];
-		}
-	});
-
-	if (!clients || !clients.length)
-		return;
-
-	FUNC.users.get(userid, function(err, user) {
-		user && session.set2(user.id, user);
-		for (var i = 0; i < clients.length; i++)
-			clients[i].send(user ? WSPROFILE : WSLOGOFF);
-	});
+	if (userid) {
+		if (removed)
+			OP.session.remove2(userid);
+		else
+			OP.session.refresh2(userid);
+	} else
+		OP.session.refresh(null);
 });
 
 ON('settings.update', function() {
-	WS && FUNC.settings.get(function(err, response) {
-		if (response) {
-			var body = WSSETTINGS.body;
-			body.name = response.name;
-			body.url = response.url;
-			body.email = response.email;
-			body.test = response.test;
-			body.background = response.background;
-			body.colorscheme = response.colorscheme;
-			WS.send(WSSETTINGS);
-		}
-	});
+	// Nothing to do
 });
 
 function notify(userid, appid, clear) {
-
-	if (!WS)
-		return;
-
-	var clients;
-
-	WS.all(function(client) {
-		if (client.user.id === userid) {
-			if (clients)
-				clients.push(client);
-			else
-				clients = [client];
-		}
-	});
-
-	if (!clients || !clients.length)
-		return;
-
-	FUNC.users.get(userid, function(err, user) {
-		if (user) {
-			for (var i = 0; i < clients.length; i++) {
-				var client = clients[i];
-				WSNOTIFY.body.count = clear ? 0 : user.countnotifications;
-				WSNOTIFY.body.app.id = appid;
-				WSNOTIFY.body.app.count = clear ? 0 : appid ? user.apps[appid].countnotifications : 0;
-				WSNOTIFY.body.app.badges = clear ? 0 : appid ? user.apps[appid].countbadges : 0;
-				client.send(WSNOTIFY);
-			}
-		}
-	});
+	OP.session.refresh2(userid);
 }
 
 ON('users.notify', notify);

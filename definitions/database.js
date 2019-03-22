@@ -595,19 +595,15 @@ FUNC.notifications.rem = function(userid, callback) {
 };
 
 FUNC.notifications.get = function(userid, callback) {
-
 	// Reads notifications + remove it
-
 	var filename = F.path.databases('notifications_' + userid + '.json');
 	Fs.readFile(filename, function(err, data) {
-
 		if (err) {
 			callback(err);
-			return;
+		} else {
+			var body = data.toString('utf8');
+			callback(null, ('[' + body.substring(0, body.length - 1) + ']').parseJSON());
 		}
-
-		var body = data.toString('utf8');
-		callback(null, ('[' + body.substring(0, body.length - 1) + ']').parseJSON());
 	});
 };
 

@@ -70,6 +70,9 @@ $(window).on('message', function(e) {
 	if (!data || !data.openplatform)
 		return;
 
+	if (data.type === 'refreshprofile')
+		refresh_profile();
+
 	var app = dashboard.apps.findItem('accesstoken', data.accesstoken);
 	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))
 		return;
