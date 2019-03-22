@@ -46,6 +46,12 @@ AUTH(function(req, res, flags, next) {
 		} else {
 			req.$sessionid = meta.sessionid;
 			req.$language = profile.language;
+
+			if (profile.online === false) {
+				profile.online = true;
+				OP.session.set2(meta.id, profile);
+			}
+
 			next(true, profile);
 		}
 	});

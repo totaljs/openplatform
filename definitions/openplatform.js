@@ -6,6 +6,7 @@ G.metadirectories = {};
 
 // Total.js session management
 OP.session = SESSION();
+
 OP.session.ondata = function(meta, next) {
 	FUNC.users.get(meta.id, function(err, user) {
 		if (user && !user.inactive && !user.blocked) {
@@ -22,6 +23,16 @@ OP.session.ondata = function(meta, next) {
 			next();
 	});
 };
+
+OP.session.onfree = function(item) {
+	if (item.data)
+		item.data.online = false;
+};
+
+ON('service', function(counter) {
+	if (counter % 10 === 0)
+		OP.session.freeunused('1 hour');
+});
 
 OP.cookie = function(req, user, sessionid, callback, note) {
 
@@ -42,7 +53,9 @@ OP.cookie = function(req, user, sessionid, callback, note) {
 
 	OP.session.setcookie(req, opt, function() {
 		user.verifytoken = U.GUID(15);
-		FUNC.users.set(user, ['verifytoken'], NOOP);
+		user.online = true;
+		user.datelogged = NOW;
+		FUNC.users.set(user, ['verifytoken', 'datelogged', 'online'], NOOP);
 		callback && callback();
 	});
 };

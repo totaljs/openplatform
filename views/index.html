@@ -189,7 +189,7 @@
 			user.countnotifications && AJAX('GET /api/notifications/', function(arr) {
 				SETTER('notifications', 'append', arr.take(50));
 			});
-			user.countnotifications = 0;
+			SET('user.countnotifications', 0);
 		}
 
 		function internalapp(el) {

@@ -328,10 +328,14 @@
 		</div>
 
 	</div>
+
 </div>
+
+@{json(user, 'userdata')}
 
 <script>
 
+	var user = PARSE('#userdata');
 	var users = {};
 	users.form = {};
 	users.filter = { page: 1, limit: 100 };

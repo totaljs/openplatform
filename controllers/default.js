@@ -57,8 +57,10 @@ function login() {
 
 function logoff() {
 	var self = this;
+	self.user.online = false;
 	self.cookie(CONF.cookie, '', '-5 days');
 	OP.session.remove(self.req.$sessionid);
+	FUNC.users.set(self.user, ['online'], NOOP);
 	FUNC.users.logout(self.user, self);
 }
 
@@ -67,9 +69,9 @@ ON('users.refresh', function(userid, removed) {
 		if (removed)
 			OP.session.remove2(userid);
 		else
-			OP.session.refresh2(userid);
+			OP.session.free2(userid);
 	} else
-		OP.session.refresh(null);
+		OP.session.free(null);
 });
 
 ON('settings.update', function() {
@@ -77,7 +79,7 @@ ON('settings.update', function() {
 });
 
 function notify(userid, appid, clear) {
-	OP.session.refresh2(userid);
+	OP.session.free2(userid);
 }
 
 ON('users.notify', notify);

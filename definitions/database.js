@@ -1,8 +1,6 @@
 const Fs = require('fs');
-const COOKIEOPTIONS = { httponly: true, security: 'lax' };
 
 CONF.table_configs = 'userid:string|appid:string|body:string|dateupdated:date|datecreated:date';
-
 FUNC.apps = {};
 FUNC.users = {};
 FUNC.common = {};
