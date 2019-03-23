@@ -29,7 +29,7 @@ NEWSCHEMA('Login', function(schema) {
 				opt.id = user.id;
 				opt.expire = CONF.cookie_expiration || '1 month';
 				opt.data = user;
-				opt.note = 'Login form';
+				opt.note = ($.headers['user-agent'] || '').parseUA();
 
 				OP.session.setcookie($.controller, opt, function() {
 					user.verifytoken = U.GUID(15);

@@ -86,6 +86,7 @@ ON('users.notify', notify);
 ON('users.badge', notify);
 
 function info() {
+	var self = this;
 	var memory = process.memoryUsage();
 	var model = {};
 	model.memoryTotal = (memory.heapTotal / 1024 / 1024).floor(2);
@@ -99,5 +100,9 @@ function info() {
 	var conn = F.connections['/#get-authorize'];
 	model.connections = conn ? conn.online : 0;
 	model.ip = this.ip;
-	this.view('info', model);
+
+	OP.session.count(function(err, count) {
+		model.sessions = count;
+		self.view('info', model);
+	});
 }

@@ -33,6 +33,10 @@
 		<td class="right">@{Math.ceil(F.stats.performance.request)} @(req/min.)</td>
 	</tr>
 	<tr>
+		<td class="bg-smoke">@(Sessions)</td>
+		<td class="right">@(online:) @{model.sessions.used}x / @(unused:) @{model.sessions.free}x</td>
+	</tr>
+	<tr>
 		<td class="bg-smoke">@(Uptime)</td>
 		<td class="right">@{model.uptime} @(minutes)</td>
 	</tr>
