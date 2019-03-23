@@ -291,6 +291,19 @@ FUNC.users.meta = function(callback, directory) {
 		}
 	}
 
+	if (G.apps) {
+		for (var i = 0, length = G.apps.length; i < length; i++) {
+			var item = G.apps[i];
+			if (item.roles && item.roles) {
+				for (var j = 0; j < item.roles.length; j++) {
+					var r = item.roles[j];
+					if (!roles[r])
+						roles[r] = { count: 1, id: r, name: r };
+				}
+			}
+		}
+	}
+
 	// G.meta === important, is used as a cache
 
 	var meta = {};
@@ -562,6 +575,7 @@ FUNC.badges.rem = function(userid, appid, callback) {
 // ====================================
 
 FUNC.notifications.add = function(data, callback) {
+
 	// data.userid
 	// data.appid
 	// data.type
@@ -653,8 +667,6 @@ FUNC.init = function(callback) {
 			u.countsessions = 0;
 		}
 
-		FUNC.users.meta();
-
 		Fs.readFile(F.path.databases('apps.json'), function(err, response) {
 			G.apps = response ? response.toString('utf8').parseJSON(true) : [];
 
@@ -664,6 +676,7 @@ FUNC.init = function(callback) {
 			G.apps.quicksort('title');
 			G.apps.length && $WORKFLOW('App', 'state');
 
+			FUNC.users.meta();
 			callback && callback();
 			refresh_apps();
 		});

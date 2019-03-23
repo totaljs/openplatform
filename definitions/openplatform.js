@@ -430,8 +430,10 @@ function readuser(user, type, app) {
 
 	if (user.roles && user.roles.length) {
 		obj.roles = appdata ? appdata.roles.slice(0) : EMPTYARRAY;
-		for (var i = 0; i < user.roles.length; i++)
-			obj.roles.push(user.roles[i]);
+		for (var i = 0; i < user.roles.length; i++) {
+			if (obj.roles.indexOf(user.roles[i]) === -1)
+				obj.roles.push(user.roles[i]);
+		}
 	} else
 		obj.roles = appdata ? appdata.roles : EMPTYARRAY;
 
@@ -440,12 +442,14 @@ function readuser(user, type, app) {
 	if (user.sa)
 		obj.sa = user.sa;
 
+	var token = OP.encodeToken(app, user);
+
 	obj.sounds = user.sounds;
 	obj.volume = user.volume;
-	obj.badge = CONF.url + '/api/badges/?accesstoken=' + OP.encodeToken(app, user);
+	obj.badge = CONF.url + '/api/badges/?accesstoken=' + token;
 
 	if (obj.notifications)
-		obj.notify = CONF.url + '/api/notify/?accesstoken=' + OP.encodeToken(app, user);
+		obj.notify = CONF.url + '/api/notify/?accesstoken=' + token;
 
 	switch (type) {
 		case 2:
