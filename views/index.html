@@ -555,6 +555,11 @@
 					user.countnotifications = response.countnotifications;
 				}
 
+				if (user.sa !== response.sa) {
+					is = true;
+					user.sa = response.sa;
+				}
+
 				var keys = [];
 
 				for (var i = 0; i < user.apps.length; i++) {

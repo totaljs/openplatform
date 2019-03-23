@@ -59,7 +59,7 @@ function logoff() {
 	var self = this;
 	self.user.online = false;
 	self.cookie(CONF.cookie, '', '-5 days');
-	OP.session.remove(self.req.$sessionid);
+	OP.session.remove(self.sessionid);
 	FUNC.users.set(self.user, ['online'], NOOP);
 	FUNC.users.logout(self.user, self);
 }
