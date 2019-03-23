@@ -133,10 +133,19 @@ OP.profilelive = function(user) {
 	meta.openplatformid = OP.id;
 	meta.version = OP.version;
 	meta.name = user.name;
-	meta.photo = user.photo;
-	meta.locality = user.locality;
-	meta.ou = user.ou;
-	meta.company = user.company;
+
+	if (user.photo)
+		meta.photo = user.photo;
+
+	if (user.locality)
+		meta.locality = user.locality;
+
+	if (user.ou)
+		meta.ou = user.ou;
+
+	if (user.company)
+		meta.company = user.company;
+
 	meta.sa = user.sa;
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
@@ -155,7 +164,8 @@ OP.profilelive = function(user) {
 	if (CONF.test === true)
 		meta.test = true;
 
-	meta.status = user.status;
+	if (user.status)
+		meta.status = user.status;
 
 	if (user.directory)
 		meta.directory = user.directory;
