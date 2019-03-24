@@ -24,14 +24,14 @@ OP.session.ondata = function(meta, next) {
 	});
 };
 
-OP.session.onfree = function(item) {
+OP.session.onrelease = function(item) {
 	if (item.data)
 		item.data.online = false;
 };
 
 ON('service', function(counter) {
 	if (counter % 10 === 0)
-		OP.session.freeunused('1 hour');
+		OP.session.releaseunused('1 hour');
 });
 
 OP.cookie = function(req, user, sessionid, callback, note) {

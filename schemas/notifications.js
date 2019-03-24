@@ -18,7 +18,7 @@ NEWSCHEMA('Notification', function(schema) {
 			// Remove notifications
 			FUNC.notifications.rem(user.id, function() {
 
-				OP.session.free2(user.id, function(err, count) {
+				OP.session.release2(user.id, function(err, count) {
 					count && FUNC.emit('users.notify', user.id, '', true);
 				});
 

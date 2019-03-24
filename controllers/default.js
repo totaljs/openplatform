@@ -69,9 +69,9 @@ ON('users.refresh', function(userid, removed) {
 		if (removed)
 			OP.session.remove2(userid);
 		else
-			OP.session.free2(userid);
+			OP.session.release2(userid);
 	} else
-		OP.session.free(null);
+		OP.session.release(null);
 });
 
 ON('settings.update', function() {
@@ -79,7 +79,7 @@ ON('settings.update', function() {
 });
 
 function notify(userid, appid, clear) {
-	OP.session.free2(userid);
+	OP.session.release2(userid);
 }
 
 ON('users.notify', notify);
