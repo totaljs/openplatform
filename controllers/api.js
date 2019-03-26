@@ -202,7 +202,7 @@ function json_sessions() {
 		var data = [];
 		for (var i = 0; i < sessions.length; i++) {
 			var item = sessions[i];
-			data.push({ id: item.sessionid, note: item.note, used: item.used, created: item.created });
+			data.push({ id: item.sessionid, note: item.note, used: item.used, created: item.created, current: item.sessionid === self.sessionid });
 		}
 		self.json(data);
 	});
