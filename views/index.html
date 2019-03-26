@@ -40,6 +40,7 @@
 		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
 		<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
 		<div class="username hidden" data-bind="user__html span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
+		<div class="status hidden" data-bind="common.status__show__exec:renderstatus"></div>
 	</footer>
 
 	<header data-bind="user__.header-show:value && value.name">
@@ -98,6 +99,7 @@
 						@{fi}
 					@{fi}
 					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
+					<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
 					<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off red"></i>@(Sign out)</button>
 				</nav>
@@ -129,14 +131,17 @@
 		<div class="startmenu-title">
 			<div class="startmenu-status exec" data-value="'status'" data-path="common.form" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
 			<button class="exec" data-path="common.startmenuapps" data-value="!value"><i class="fa fa-ellipsis-h"></i></button>
-			<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
-			<span data-bind="user.name__html:value"></span>
+			<div class="startmenu-profile exec" data-exec="Dashboard/showprofile">
+				<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
+				<span data-bind="user.name__html:value"></span>
+			</div>
 		</div>
 	</div>
 
 	<div data---="console__common.consolewindow__datasource:common.console"></div>
 	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
+	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
 
 	<script>
 
@@ -294,6 +299,11 @@
 
 			self.showprofile = function() {
 				internalapp('_account');
+			};
+
+			self.showsessions = function() {
+				SET('common.form', 'sessionsform');
+				SET('common.startmenu', false);
 			};
 
 			self.resizeapps = function() {
@@ -463,6 +473,11 @@
 			var nav = $('header').find('nav');
 			nav.find('button.focused').rclass('focused');
 			nav.find('button[data-id="{0}"]'.format(id)).aclass('focused');
+			if (!id) {
+				common.statustimeout && clearTimeout(common.statustimeout);
+				common.statustimeout = null;
+				NULL('common.status');
+			}
 		});
 
 		Thelpers.status = function(value) {
@@ -633,6 +648,58 @@
 				common.livecounter = 0;
 
 		}, 5000);
+
+		function renderstatus(value, path, el) {
+			if (value && !value.status) {
+				value.status = 1;
+				common.statustimeout && clearTimeout(common.statustimeout);
+				el.tclass('green', value.type === 'success');
+				el.tclass('orange', value.type === 'warning');
+				el.tclass('red', value.type === 'error');
+				el.tclass('blue', value.type === 'info');
+				el.html(Thelpers.markdown_status(value));
+				el.attr('title', el.text());
+				common.statustimeout = setTimeout(function() {
+					common.statustimeout = null;
+					el.empty();
+				}, 10000);
+			} else
+				el.empty();
+		}
+
+		Thelpers.time2 = function(value) {
+
+			if (!value)
+				return value;
+
+			var diff = Date.now() - (value instanceof Date ? value : value.parseDate()).getTime();
+
+			var minutes = Math.ceil((diff / 1000) / 60);
+			if (minutes < 60) {
+				if (minutes <= 1)
+					return 'now';
+				return minutes + ' minutes ago';
+			}
+
+			var hours = (minutes / 60) >> 0;
+			if (hours < 24)
+				return hours + ' ' + Thelpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago';
+
+			var days = (hours / 24) >> 0;
+			if (days < 30)
+				return days + ' ' + Thelpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago';
+
+			var months = (days / 29) >> 0;
+			if (months < 12)
+				return months + ' ' + Thelpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago';
+
+			var years = (months / 12) >> 0;
+			return years + ' ' + Thelpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago';
+		};
+
+		Thelpers.time = function(value) {
+			return value ? '<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(), Thelpers.time2(value), value.format(null)) : value;
+		};
 
 	</script>
 

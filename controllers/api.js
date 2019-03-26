@@ -39,6 +39,9 @@ exports.install = function() {
 		ROUTE('POST   /api/profile/logger/              *Logger       --> @insert');
 		ROUTE('GET    /api/profile/live/',              json_profile);
 
+		ROUTE('GET    /api/sessions/',                  json_sessions);
+		ROUTE('DELETE /api/sessions/{id}/',             json_sessions_remove);
+
 		ROUTE('/api/upload/photo/',                     json_upload_photo, ['post'], 1024 * 2);
 		ROUTE('/api/upload/background/',                json_upload_background, ['post', 'upload'], 1024 * 5);
 	});
@@ -191,4 +194,27 @@ function json_online(id) {
 
 function json_profile() {
 	this.json(OP.profilelive(this.user));
+}
+
+function json_sessions() {
+	var self = this;
+	OP.session.list(self.user.id, function(err, sessions) {
+		var data = [];
+		for (var i = 0; i < sessions.length; i++) {
+			var item = sessions[i];
+			data.push({ id: item.sessionid, note: item.note, used: item.used, created: item.created });
+		}
+		self.json(data);
+	});
+}
+
+function json_sessions_remove(id) {
+	var self = this;
+	OP.session.get(id, function(err, item, meta) {
+		if (meta && meta.id === self.user.id) {
+			OP.session.remove(meta.sessionid);
+			self.success(true, meta.sessionid === self.sessionid);
+		} else
+			self.invalid('error-session');
+	});
 }

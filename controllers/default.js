@@ -43,7 +43,7 @@ function login() {
 
 				OP.cookie(self, user, null, function() {
 					self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
-				}, 'Password recovery');
+				}, (self.headers['user-agent'] || '').parseUA() + ' ({0})'.format(self.ip));
 			});
 			return;
 		}

@@ -19,6 +19,8 @@ header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: poi
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 6px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
 .header-show { top: 0; }
 
+.fs12 { font-size: 12px; }
+.gray { color: gray; }
 footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; background: #303030 linear-gradient(#303030,#353535); box-shadow: 0 5px -5px rgba(0,0,0,0.2); color: white; }
 .light footer { background: #E0E0E0 linear-gradient(#F0F0F0,#EAEAEA); box-shadow: 0 5px -5px rgba(0,0,0,0.02); color: black; }
 
@@ -29,11 +31,13 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
 .testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; line-height: 16px; margin: 6px 10px 0 0; border-radius: 3px; }
+footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px; line-height: 30px; padding-right: 10px; border-right: 1px solid #E0E0E0; max-width: 400px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 
 .startmenu { position: fixed; top: 45px; height: 490px; background-color: #404040; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
 .startmenu-title { height: 40px; border-top: 1px solid rgba(0,0,0,0.1); color: white; font-size: 16px; padding: 0; font-weight: bold; }
-.startmenu-title img { width: 28px; height: 28px; border-radius: 100px; float: left; margin: 5px 0 0 8px; }
-.startmenu-title > span { float: left; margin: 11px 0 0 8px; font-size: 13px; }
+.startmenu-profile { cursor: pointer; font-weight: normal; }
+.startmenu-profile img { width: 28px; height: 28px; border-radius: 100px; float: left; margin: 5px 0 0 8px; }
+.startmenu-profile > span { float: left; margin: 11px 0 0 8px; font-size: 13px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
 .startmenu-apps { padding: 0 0 15px; margin-right: 200px; overflow: hidden; }
 .startmenu-apps-container { height: 386px; overflow-y: auto; width: 330px; padding: 5px 0; overflow-scrolling: touch; }

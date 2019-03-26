@@ -1,4 +1,4 @@
-<div data-jc="modal__common.form__if:status;width:500;title:@(My status);submit:statusform/submit;reload:statusform/reload;center:true" class="hidden">
+<div data---="modal__common.form__if:status;width:500;title:@(My status);submit:statusform/submit;reload:statusform/reload;center:true" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -6,13 +6,24 @@
 	</div>
 
 	<div>
+		<div class="center bg-smoke padding">
+			<br />
+			<div>
+				<span class="far fa-3x mr5 fa-smile orange"></span>
+				<span class="far fa-3x mr5 fa-smile-wink orange"></span>
+				<span class="far fa-5x mr5 fa-grin-beam-sweat red"></span>
+				<span class="far fa-3x mr5 fa-grin-hearts orange"></span>
+				<span class="far fa-3x fa-smile-beam orange"></span>
+			</div>
+			<br />
+		</div>
 		<div class="padding">
 			<div data---="dropdown__statusform.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Off work|4);type:number__0" class="m">@(Availability)</div>
-			<div data---="textbox__statusform.status__maxlength:70" class="m">@(Status)</div>
+			<div data---="textbox__statusform.status__maxlength:70;placeholder:@(Type a current status)" class="m b">@(Status)</div>
 		</div>
 	</div>
-	<div data-jc="validation__statusform">
-		<button name="submit" class="userbg" style="width:100%" disabled>@(APPLY)</button>
+	<div data---="validation__statusform">
+		<button name="submit" class="userbg" style="width:100%" disabled>@(APPLY STATUS)</button>
 	</div>
 </div>
 

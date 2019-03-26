@@ -56,6 +56,10 @@ Thelpers.markdown_notifications = function(value) {
 	return (value || '').markdown(MD_NOTIFICATION);
 };
 
+Thelpers.markdown_status = function(value) {
+	return '<i class="fa fa-{0} mr5"></i>'.format(value.type === 'success' ? 'check-circle' : value.type === 'warning' ? 'warning' : value.type === 'error' ? 'bug' : 'info-circle') + (value.body || '').markdown(MD_LINE);
+};
+
 Thelpers.photo = function(value) {
 	return value ? ('/photos/' + value) : '/img/face.jpg';
 };
@@ -150,6 +154,9 @@ $(window).on('message', function(e) {
 
 			if (common.console[id].items.length > 100)
 				common.console[id].items = common.console[app.id].items.splice(0, 100);
+
+			if (app.id === common.focused)
+				SET('common.status', data.body);
 
 			UPDATE('common.console' + (all ? '' : ('.' + id)));
 
