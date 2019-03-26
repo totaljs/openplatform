@@ -3704,7 +3704,7 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 	};
 
 	self.waiting = function(message, button, close) {
-		self.show(message, button, close, 'fa-spinner fa-pulse');
+		self.show(message, button, close, 'fa-spinner fa-pulse usercolor');
 	};
 
 	self.success = function(message, button, close) {
