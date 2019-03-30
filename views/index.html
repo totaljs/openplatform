@@ -226,24 +226,9 @@
 					COOKIES.set('@{'%cookie'}', '', '-1 day');
 					location.href = '/';
 					break;
-				case 'profile':
-
-
-					break;
 				case 'settings':
 					document.title = message.body.name;
 					SET('user.test', message.body.test === true);
-					break;
-				case 'notify':
-					var tmp = message.body;
-					SET('user.countnotifications', tmp.count);
-					if (tmp.app.id) {
-						dashboard.apps.findItem('id', tmp.app.id) == null && $('.appunread[data-id="{0}"]'.format(tmp.app.id)).html(tmp.app.count).tclass('hidden', !tmp.app.count);
-						$('.appbadge[data-id="{0}"]'.format(tmp.app.id)).tclass('hidden', !tmp.app.badges);
-						tmp.app.badges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
-					}
-					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
-					common.notifications && refresh_notifications();
 					break;
 			}
 		});
@@ -568,6 +553,7 @@
 				if (user.countnotifications !== response.countnotifications) {
 					is = true;
 					user.countnotifications = response.countnotifications;
+					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
 				}
 
 				if (user.sa !== response.sa) {
@@ -594,6 +580,7 @@
 
 					if (app.countbadges !== ua.countbadges) {
 						app.countbadges = ua.countbadges;
+						app.countbadges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
 						is = true;
 					}
 
