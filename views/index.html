@@ -624,9 +624,9 @@
 		setTimeout(refresh_profile, 1000);
 
 		setInterval(function() {
-
 			common.livecounter++;
-
+ 			if (common.livecounter % 24 === 0)
+				refresh_profile();
 			if (document.hasFocus())
 				refresh_profiledata();
 			else if (common.livecounter % 5 === 0)
