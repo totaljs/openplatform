@@ -554,6 +554,7 @@
 					is = true;
 					user.countnotifications = response.countnotifications;
 					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
+					common.notifications && refresh_notifications();
 				}
 
 				if (user.sa !== response.sa) {
