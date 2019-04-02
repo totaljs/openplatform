@@ -115,7 +115,7 @@
 						<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
 							<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 							<i class="far fa-bell-slash appnonotify{{ if !mutenotifications }} hidden{{ fi }}" data-id="{{ id }}"></i>
-							<i class="appclose fa fa-times hidden exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
+							<i class="appclose fa fa-times {{ if !running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
 							<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
 							<b class="appbadge{{ if !countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b>
 							<div class="app-container">
