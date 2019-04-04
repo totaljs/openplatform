@@ -1,5 +1,3 @@
-const COOKIEOPTIONS = { httponly: true, security: 'lax' };
-
 NEWSCHEMA('Login', function(schema) {
 
 	schema.define('name', 'String(120)', true);
@@ -21,7 +19,6 @@ NEWSCHEMA('Login', function(schema) {
 					return;
 				}
 
-
 				var opt = {};
 				opt.name = CONF.cookie;
 				opt.key = CONF.cookie_key || 'auth';
@@ -32,8 +29,9 @@ NEWSCHEMA('Login', function(schema) {
 				opt.note = ($.headers['user-agent'] || '').parseUA() + ' (' + $.ip + ')';
 
 				OP.session.setcookie($.controller, opt, function() {
+					user.online = true;
 					user.verifytoken = U.GUID(15);
-					FUNC.users.set(user, ['verifytoken'], NOOP);
+					FUNC.users.set(user, ['verifytoken', 'online'], NOOP);
 					$.success();
 				});
 
