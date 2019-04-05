@@ -401,7 +401,7 @@
 						cur.allowreadprofile = val.allowreadprofile === true ? 1 : (val.allowreadprofile || 1);
 						cur.serververify = val.serverside === true;
 					}
-					!cur.title && (cur.title = val.name);
+					!cur.title && (cur.title = val.title || val.name);
 					return cur;
 				}, 'url');
 			}
