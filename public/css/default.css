@@ -206,7 +206,7 @@ h3 i { margin-right: 5px; }
 .caption { font-size: 14px; margin-bottom: 15px; color: black; text-transform: uppercase; font-weight: bold; }
 .caption .fa { margin-right: 5px; }
 
-.ui-notifications { position: fixed; width: 300px; top: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: scroll; overflow-x: hidden; z-index: 33; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
+.ui-notifications { position: fixed; width: 400px; top: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: scroll; overflow-x: hidden; z-index: 33; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
 .light .ui-notifications { background-color: rgba(255,255,255,0.8); border-left-color: #E0E0E0; }
 .ui-notifications .fa { margin-right: 3px; }
 .ui-notifications-clear { margin: 15px 0 0 10px; font-size: 11px; cursor: pointer; color: silver; }

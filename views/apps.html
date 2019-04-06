@@ -36,37 +36,37 @@
 
 </style>
 
-<div data-jc="panel__common.form__if:apps;bg:true;width:420;title:@(Assign to users);icon:users" class="hidden">
-	<div data-jc-scope="assignform">
+<div data---="panel__common.form__if:apps;bg:true;width:420;title:@(Assign to users);icon:users" class="hidden">
+	<div data----scope="assignform">
 		<div class="padding bg-yellow" style="padding:25px 20px">
-			<div data-jc="dropdowncheckbox__roles__datasource:apps.form.roles;alltext:@(All selected);empty:@(No roles)">@(Roles)</div>
+			<div data---="dropdowncheckbox__roles__datasource:apps.form.roles;alltext:@(All selected);empty:@(No roles)">@(Roles)</div>
 			<div class="help">@(You can choose the application roles.)</div>
 		</div>
 		<hr class="nmt nmb" />
 		<div class="padding">
 			<div class="b fs11" style="text-transform:uppercase;margin-bottom:25px"><i class="fa fa-filter mr5"></i>@(Users filtering)</div>
 
-			<div data-jc="dropdown__ou__datasource:apps.meta.ou;value:name;empty:__''" class="m">@(Organization unit)</div>
+			<div data---="dropdown__ou__datasource:apps.meta.ou;value:name;empty:__''" class="m">@(Organization unit)</div>
 
 			<div class="row">
 				<div class="col-sm-6 m">
-					<div data-jc="dropdown__company__datasource:apps.meta.companies;value:name;empty:__''">@(Company)</div>
+					<div data---="dropdown__company__datasource:apps.meta.companies;value:name;empty:__''">@(Company)</div>
 				</div>
 				<div class="col-sm-6 m">
-					<div data-jc="dropdown__locality__datasource:apps.meta.localities;value:name;empty:__''">@(Locality)</div>
+					<div data---="dropdown__locality__datasource:apps.meta.localities;value:name;empty:__''">@(Locality)</div>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-sm-6 m">
-					<div data-jc="dropdown__group__datasource:apps.meta.groups;value:name;empty:__''">@(Group)</div>
+					<div data---="dropdown__group__datasource:apps.meta.groups;value:name;empty:__''">@(Group)</div>
 				</div>
 				<div class="col-sm-6 m">
-					<div data-jc="dropdown__role__datasource:apps.meta.roles;value:name;empty:__''">@(Role)</div>
+					<div data---="dropdown__role__datasource:apps.meta.roles;value:name;empty:__''">@(Role)</div>
 				</div>
 			</div>
-			<div data-jc="checkbox__customer">@(Only users with flag <b>customer</b>)</div>
-			<div data-jc="checkbox__sa" class="m">@(Only users with flag <b>administrator</b>)</div>
+			<div data---="checkbox__customer">@(Only users with flag <b>customer</b>)</div>
+			<div data---="checkbox__sa" class="m">@(Only users with flag <b>administrator</b>)</div>
 		</div>
 		<hr class="nmt nmb" />
 		<div class="padding">
@@ -79,11 +79,11 @@
 	<div class="col-sm-3 np">
 		<div class="panel">
 			<div class="search">
-				<div data-jc="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
+				<div data---="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
 			</div>
-			<div data-jc="scrollbar__apps.items__margin:40;parent:window;offset:true">
-				<div data-jc="search__apps.search__selector:.item">
-					<div data-jc="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
+			<div data---="scrollbar__apps.items__margin:40;parent:window;offset:true">
+				<div data---="search__apps.search__selector:.item">
+					<div data---="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
 						<script type="text/html">
 							<div class="item{{ if blocked }} inactive{{ fi }}" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
 						</script>
@@ -97,18 +97,18 @@
 			</nav>
 		</div>
 	</div>
-	<div class="col-sm-9 np" data-jc="xs__apps.form.show__if:value!=null&&value==true;exec:resizelayout">
+	<div class="col-sm-9 np" data---="xs__apps.form.show__if:value!=null&&value==true;exec:resizelayout">
 
 		<nav class="nav visible-xs">
 			<span class="exec link" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
 		</nav>
 
 		<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
-			<div data-jc="scrollbar__apps.form__margin:40;parent:window;marginxs:42;track:show,directories">
+			<div data---="scrollbar__apps.form__margin:40;parent:window;marginxs:42;track:show,directories">
 				<div class="scroller-padding">
 
-					<div data-jc="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json)">@(URL address to <b>openplatform.json</b>)</div>
-					<div data-jc="error__apps.form.data" class="ui-error-nm"></div>
+					<div data---="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json);$id:firstinput">@(URL address to <b>openplatform.json</b>)</div>
+					<div data---="error__apps.form.data" class="ui-error-nm"></div>
 
 					<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-smoke" style="margin-top:10px">
 						<script type="text/html">
@@ -232,20 +232,20 @@
 						</script>
 					</div>
 					<br />
-					<div data-jc="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
-					<div class="mt10 m b" data-jc="checkbox__apps.form.blocked">@(Application is blocked)</div>
-					<div class="m hidden" data-bind="apps.form.id__show" data-jc="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
+					<div data---="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
+					<div class="mt10 m b" data---="checkbox__apps.form.blocked">@(Application is blocked)</div>
+					<div class="m hidden" data-bind="apps.form.id__show" data---="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
 					<hr />
 					<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
-					<div data-jc="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25;type:lower"></div>
+					<div data---="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25;type:lower"></div>
 					<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
 					<hr />
-					<div data-jc="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
+					<div data---="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
 					<div class="help m"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>
-					<div data-jc="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
+					<div data---="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
 				</div>
 			</div>
-			<div class="buttonbar" data-jc="validation__apps.form">
+			<div class="buttonbar" data---="validation__apps.form">
 				<button name="submit" class="button exec b" data-exec="apps_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SUBMIT)</button>
 			</div>
 		</div>
@@ -285,6 +285,7 @@
 		if (item) {
 			item.show = true;
 			SET('apps.form', CLONE(item), true);
+			FIND('#firstinput').element.find('input').focus();
 		}
 		OP.loading(false, 1000);
 	}
@@ -321,6 +322,7 @@
 	function apps_create(url) {
 		SET('apps.selected', '');
 		SET('apps.form', { show: true, permissions: true, id: '', url: (typeof(url) === 'string' ? url : null) || '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, mobilemenu: true, accesstoken: GUID(30), serververify: true }, true);
+		FIND('#firstinput').element.find('input').focus();
 	}
 
 	function apps_remove() {
