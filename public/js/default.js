@@ -318,7 +318,7 @@ $(window).on('message', function(e) {
 			if (iframe) {
 				var el = iframe.element.find('.ui-process-loading');
 				if (data.body && typeof(data.body) !== 'boolean') {
-					el.find('.ui-process-loading-text').html(data.body.text || '');
+					el.find('.ui-process-loading-text').html((data.body.text || '').markdown(MD_LINE));
 					el.tclass('hidden', !data.body.show);
 				} else
 					el.tclass('hidden', data.body !== true); // backward compatibility
@@ -338,7 +338,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'snackbar':
-			SETTER('snackbar', data.body.type || 'success', data.body.body, data.body.button);
+			SETTER('snackbar', data.body.type || 'success', data.body.body.markdown(MD_LINE), data.body.button);
 			break;
 
 		case 'config':
@@ -361,7 +361,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'message':
-			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body, null, null, data.body.button);
+			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body.markdown(MD_LINE), null, null, data.body.button);
 			break;
 
 		case 'confirm':
