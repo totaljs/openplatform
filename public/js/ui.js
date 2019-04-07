@@ -2352,28 +2352,33 @@ COMPONENT('processes', function(self, config) {
 
 	self.notifyresize = function(id, skipNotify) {
 		var iframe = self.findProcess(id);
-		if (iframe && !iframe.mobile) {
+		if (iframe) {
+
 			var el = iframe.element;
 			var w = el.width();
 			var h = el.height() - iframe.element.find('.ui-process-header').height();
 
-			if (!skipNotify) {
-				el.find('iframe').css('height', h);
-				self.message(iframe, 'resize', { width: w, height: h });
+			if (iframe.mobile) {
+				if (!skipNotify)
+					self.message(iframe, 'resize', { width: w, height: h });
+			} else {
+				if (!skipNotify) {
+					el.find('iframe').css('height', h);
+					self.message(iframe, 'resize', { width: w, height: h });
+				}
+				var off = el.offset();
+				appdefs[id].w = w;
+				appdefs[id].h = el.height();
+				appdefs[id].x = off.left;
+				appdefs[id].y = off.top;
+				CACHE('appdefs', appdefs, '5 months');
 			}
-
-			var off = el.offset();
-			appdefs[id].w = w;
-			appdefs[id].h = el.height();
-			appdefs[id].x = off.left;
-			appdefs[id].y = off.top;
-			CACHE('appdefs', appdefs, '5 months');
 		}
 	};
 
 	self.notifyresize2 = function(id) {
 		var iframe = self.findProcess(id);
-		if (iframe && !iframe.mobile) {
+		if (iframe) {
 			var el = iframe.element;
 			var w = el.width();
 			var h = el.height() - iframe.element.find('.ui-process-header').height();
