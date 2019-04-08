@@ -88,9 +88,9 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light .startmenu-status b { color: black; }
 .light .startmenu-nav nav button:hover { color: #404040; }
 .light header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); box-shadow: 0 5px 5px rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.2); }
-.light header nav button { color: #505050; border-right-color: rgba(0,0,0,0.1); }
+.light header nav button { color: black; border-right-color: rgba(0,0,0,0.1); }
 .light header nav button:first-child { border-left-color: rgba(0,0,0,0.1); }
-.light header nav button.focused { background-color: #D0D0D0; }
+.light header nav button.focused { background-color: #D0D0D0; color: black; }
 .light header .datetime { color: black; background-color: rgba(0,0,0,0.05); }
 .light .button-notifications .fa { color: black; }
 .light .ui-process-header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); color: black; border-bottom: 1px solid #D4D4D4; }
@@ -107,7 +107,11 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light .startmenu-search .ui-textbox { background-color: transparent; }
 .light .startmenu-search { background-color: #E0E0E0; }
 .light .startmenu-search .ui-textbox input { background-color: transparent; color: black; }
-.light .app-running .app-container, .light .app-container:hover { background-color: rgba(0,0,0,0.1); }
+.light .app-container:hover { background-color: rgba(0,0,0,0.1); }
+.app-running .app-meta { font-weight: bold; color: white; }
+.light .app-running .app-meta { color: black; }
+.app-running .app-icon { color: white; }
+.light .app-running .app-icon { color: black; }
 .light .startmenu-title button { color: black; }
 
 h1 { font-weight: bold; margin: 0 0 15px; padding: 0 0 5px; color: black; font-size: 18px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; border-bottom: 2px solid black; }
@@ -142,8 +146,8 @@ h3 i { margin-right: 5px; }
 .button-notifications .far { color: #606060; }
 
 .app { padding: 0; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
-.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: white; background-color: rgba(0,0,0,0.1); margin-bottom: 1px; }
-.app-running .app-container, .app-container:hover { background-color: rgba(0,0,0,0.3); }
+.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: #E0E0E0; background-color: rgba(0,0,0,0.1); margin-bottom: 1px; }
+.app-container:hover { background-color: rgba(0,0,0,0.3); }
 
 .app-container:hover .app-icon { color: white; }
 .app-offline { cursor: not-allowed; box-shadow: none !important; }
