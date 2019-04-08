@@ -1,4 +1,15 @@
-<div data---="modal__common.form__if:status;width:500;title:@(My status);submit:statusform/submit;reload:statusform/reload;center:true" class="hidden">
+<style>
+	.mystatus { padding: 20px 10px; border-radius: 3px; cursor: pointer; font-size: 14px; margin-bottom: 10px; border: 2px solid transparent; }
+	.mystatus div { margin-top: 5px; }
+	.mystatus:hover { background-color: #F8F8F8; color: black; }
+	.ui-dark .mystatus:hover { background-color: #303030; color: white; }
+	.mystatus-selected { background-color: #FFFEDA !important; color: black; border: 2px solid rgba(0,0,0,0.1); }
+	.mystatus .yellow { color: yellow; }
+	.mystatus .black { color: black; }
+	.ui-dark .mystatus-selected { background-color: #31312d !important; color: white; border-color: rgba(255,255,255,0.1); }
+</style>
+
+<div data---="modal__common.form__if:status;width:500;title:@(My status);submit:statusform/submit;reload:statusform/reload" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -17,9 +28,68 @@
 			</div>
 			<br />
 		</div>
-		<div class="padding">
-			<div data---="dropdown__statusform.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Off work|4);type:number__0" class="m">@(Availability)</div>
-			<div data---="textbox__statusform.status__maxlength:70;placeholder:@(Type a current status)" class="m b">@(Status)</div>
+		<div class="padding mt5">
+			<div class="row" data-bind="statusform.statusid__change:statusform/selected">
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="0" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-smile fa-2x status0"></i>
+						<div>@(Available)</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="1" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-spinner fa-spin fa-2x status1" style="color:#FF4F37"></i>
+						<div>@(Busy)</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="2" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-moon fa-2x status2"></i>
+						<div>@(Do not disturb)</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="3" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-door-open fa-2x status3"></i>
+						<div>@(Be right back)</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="4" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-brain fa-2x status4"></i>
+						<div>@(Meeting)</div>
+					</div>
+				</div>
+
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="5" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-car fa-2x status5"></i>
+						<div>@(Business trip)</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="6" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-umbrella-beach fa-2x status6"></i>
+						<div>@(Holiday)</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="7" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-heartbeat fa-2x status7"></i>
+						<div>@(Sick)</div>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4 center">
+					<div data-id="8" class="mystatus exec" data-exec="statusform/select">
+						<i class="fa fa-home fa-2x status8"></i>
+						<div>@(Off work)</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr class="nmt nmb" />
+		<div class="padding mt5">
+			<div data---="textbox__statusform.status__maxlength:70;placeholder:@(Type a current status)" class="m">@(Note)</div>
 		</div>
 	</div>
 	<div data---="validation__statusform">
@@ -38,6 +108,7 @@
 			SETTER('loading', 'show');
 			var model = GETR('statusform');
 			AJAX('POST /api/account/status/', model, function() {
+				SET('common.statusid', model.statusid);
 				user.statusid = model.statusid;
 				user.status = model.status;
 				UPDATE('user');
@@ -45,5 +116,17 @@
 				hide();
 			});
 		};
+
+		exports.selected = function(value, path, el) {
+			var cls = 'mystatus-selected';
+			el.find('.' + cls).rclass(cls);
+			el.find('.mystatus[data-id="{0}"]'.format(value)).aclass(cls);
+		};
+
+		exports.select = function(el) {
+			SET('statusform.statusid', +el.attrd('id'));
+			CHANGE('statusform.status');
+		};
+
 	});
 </script>

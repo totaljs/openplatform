@@ -44,6 +44,8 @@
 	</footer>
 
 	<header data-bind="user__.header-show:value && value.name">
+
+		<div class="button-status exec" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
 		<div class="datetime hidden-xs" data---="time"></div>
 
 		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value">
@@ -59,12 +61,10 @@
 				</nav>
 			</div>
 		</div>
-
 		<div class="button-notifications exec" data-path="common.notifications" data-value="!common.notifications">
 			<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
 			<i class="far fa-bell" data-bind="common.notifications__.fa:!!value__.far:!value"></i>
 		</div>
-
 	</header>
 
 	<div data---="notifications__common.notifications" data-bind="common.notifications__show:value" class="hidden">
@@ -129,7 +129,7 @@
 		</div>
 		<div class="clearfix"></div>
 		<div class="startmenu-title">
-			<div class="startmenu-status exec" data-value="'status'" data-path="common.form" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
+			<div class="startmenu-status exec" data-exec="Dashboard/showstatusform" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
 			<button class="exec" data-path="common.startmenuapps" data-value="!value"><i class="fa fa-ellipsis-h"></i></button>
 			<div class="startmenu-profile exec" data-exec="Dashboard/showprofile">
 				<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
@@ -150,6 +150,8 @@
 		common.cluster = '@{F.id}';
 		common.livecounter = 0;
 		common.liverefreshing = false;
+
+		CACHEPATH('common.statusid', '12 hours');
 
 		WATCH('common.consolewindow', function() {
 			SET('common.consolecount', 0, 1000);
@@ -296,7 +298,7 @@
 				setTimeout2(this.ID, function() {
 					el.css('width', el.find('button').length * 52);
 					var parent = el.parent().parent();
-					parent.css('width', WW - (50 + (WIDTH() === 'xs' ? 80 : 220)));
+					parent.css('width', WW - (80 + (WIDTH() === 'xs' ? 120 : 220)));
 				}, 100, el);
 			};
 
@@ -359,6 +361,11 @@
 
 			self.saveState = function() {
 				CACHE('running', dashboard.apps.map(FN('n => n.id')), '1 year');
+			};
+
+			self.showstatusform = function() {
+				SET('common.form', 'status');
+				self.hidemenu();
 			};
 
 			self.init = function() {
@@ -465,26 +472,42 @@
 			}
 		});
 
-		Thelpers.status = function(value) {
+		Thelpers.status = function(value, icon) {
 			var str;
 			switch (value) {
 				case 1:
-					str = 'orange"></i>@(Busy)';
+					str = 'spinner fa-spin status1"></i>@(Busy)';
 					break;
 				case 2:
-					str = 'orange"></i>@(Do not disturb)';
+					str = 'moon status2"></i>@(Do not disturb)';
 					break;
 				case 3:
-					str = 'orange"></i>@(Be right back)';
+					str = 'door-open status3"></i>@(Be right back)';
 					break;
 				case 4:
-					str = 'red"></i>@(Off work)';
+					str = 'brain status4"></i>@(Meeting)';
+					break;
+				case 5:
+					str = 'car status5"></i>@(Business trip)';
+					break;
+				case 6:
+					str = 'umbrella-beach status6"></i>@(Holiday)';
+					break;
+				case 7:
+					str = 'heartbeat status7"></i>@(Sick)';
+					break;
+				case 8:
+					str = 'home status8"></i>@(Off work)';
 					break;
 				default:
-					str = 'green"></i>@(Available)';
+					str = 'smile status0"></i>@(Available)';
 					break;
 			}
-			return '<i class="fa fa-circle ' + str;
+
+			var index = str.indexOf('</i>');
+			var title = str.substring(index + 4);
+
+			return '<i title="' + title + '" class="fa fa-' + (icon ? str.substring(0, index + 4) : str);
 		};
 
 		ON('response', function(response) {
@@ -555,6 +578,12 @@
 					user.countnotifications = response.countnotifications;
 					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
 					common.notifications && refresh_notifications();
+				}
+
+				if (user.statusid !== response.statusid || user.status !== response.status) {
+					is = true;
+					user.statusid = response.statusid;
+					user.status = response.status;
 				}
 
 				if (user.sa !== response.sa) {

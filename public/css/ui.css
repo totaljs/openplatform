@@ -128,7 +128,7 @@ button { outline: 0; }
 .ui-dark .hljs-deletion{background:#fdd}
 .ui-dark .hljs-addition{background:#dfd}
 
-.ui-xs { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; background-color: white; z-index: 2; float: none; height: auto !important; }
+.ui-xs { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; background-color: white; z-index: 2; float: none; height: 318px !important; }
 .ui-checkbox { margin-bottom: 5px; line-height: 10px; font-size: 12px; }
 .ui-checkbox span { cursor: pointer; vertical-align: middle; }
 .ui-checkbox div { position: relative; display: inline-block; width: 16px; height: 16px; border: 1px solid #D0D0D0; margin-right: 6px; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 2px; }
@@ -679,7 +679,7 @@ input:invalid { box-shadow: none; }
 .ui-modal-header .cancel { float: right; line-height: 50px; width: 28px; color: red; transition: transform 0.2s; font-size: 16px; }
 .ui-modal-header .cancel:hover { transform: scale(1.2); }
 .ui-modal-footer { border-top: 1px solid #E0E0E0; height: 60px; padding: 0 15px; line-height: 58px; text-align: right; }
-.ui-modal-footer button { height: 33px; border: 0; background-color: #4285F4; color: white; border-radius: 2px; padding: 0 15px; margin: 0; line-height: 28px; font-weight: bold; }
+.ui-modal-footer button { height: 33px; border: 0; color: white; border-radius: 2px; padding: 0 15px; margin: 0; line-height: 28px; font-weight: bold; }
 .ui-modal-footer button:disabled { background-color: #E0E0E0; color: #A0A0A0; cursor: not-allowed; }
 .ui-modal-footer .link { font-size: 12px; vertical-align: middle; position: relative; display: inline-block; margin: 0 10px; }
 .ui-modal-footer i { margin-right: 5px; }

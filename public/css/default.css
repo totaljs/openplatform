@@ -19,6 +19,25 @@ header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: poi
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 6px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
 .header-show { top: 0; }
 
+.button-status { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 20px; cursor: pointer; text-align: center; background-color: rgba(0,0,0,0.05); border-left: 1px solid #C9C9C9; }
+.ui-dark .button-status { border-left-color: #404040; }
+.button-status i { transition: all 0.3s; }
+.button-status:hover { opacity: 0.9; }
+.button-status:hover i { transform: scale(1.2); }
+.button-status-warning:before { content: '!'; color: white; background-color: red; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 15px; }
+
+.status0 { color: #68B25B; }
+.status1 { color: #C55140; }
+.status2 { color: #EAB34C; }
+.status3 { color: #B76DCF; }
+.status4 { color: #6DCFA8; }
+.status5 { color: #6DAFCF; }
+.status6 { color: #A1CF6D; }
+.status7 { color: #D06D6D; animation: large 1s forwards infinite; }
+.status8 { color: #D60000; }
+
+.black { color: black; }
+.yellow { color: yellow; }
 .fs12 { font-size: 12px; }
 .gray { color: gray; }
 footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; background: #303030 linear-gradient(#303030,#353535); box-shadow: 0 5px -5px rgba(0,0,0,0.2); color: white; }
@@ -106,6 +125,7 @@ h3 i { margin-right: 5px; }
 .orange { color: orange; }
 
 .bg-smoke { background-color: #F8F8F8; }
+.ui-dark .bg-smoke { background-color: #303030; }
 
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -116,7 +136,7 @@ h3 i { margin-right: 5px; }
 .user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
 .user.selected { color: white; }
 
-.button-notifications { float: right; font-size: 22px; padding: 8px 20px 0 0; height: 45px; cursor: pointer; }
+.button-notifications { float: right; font-size: 22px; padding: 0; width: 45px; height: 44px; line-height: 44px; cursor: pointer; text-align: center; }
 .button-notifications span { font-size: 10px; width: 20px; height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 2px 0 0 0; margin: -2px 0 0 9px; font-weight: bold; }
 .button-notifications .fa { color: white; }
 .button-notifications .far { color: #606060; }
@@ -254,29 +274,36 @@ h3 i { margin-right: 5px; }
 @media(max-width: 700px) {
 	header { box-shadow: none; height: 45px; }
 	.ui-notifications { width: auto; left: 0; }
+	.startmenu-profile { display: none; }
 	.form-border { border-left: 0; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
 	.startmenu { width: 100%; border-radius: 0; top: 45px; height: auto; }
 	.startmenu-nav { width: 100%; bottom: 50px; }
-	.startmenu-apps { margin-right: 0; }
-	.startmenu-apps-container { width: 100%; position: relative; height: 210px; }
+	.startmenu-apps { margin-right: 0; height: 318px; }
+	.startmenu-apps-container { width: 100%; position: relative; height: 269px; }
 	.startmenu-version { display: none; }
 	.app { margin-right: 0; }
-	.app-icon { width: 50px; }
-	.app-meta { margin-left: 60px; }
+	.app-icon { width: 42px; }
+	.app-meta { margin-left: 50px; }
 	.app-name { font-size: 16px; margin-bottom: 3px; }
 	.startmenu-search { padding: 2px 5px; }
 	.startmenu-search .ui-textbox { height: 40px; }
 	.startmenu-search .ui-textbox-input { padding: 11px 4px 0 10px; }
 	.startmenu-search .ui-textbox input { font-size: 16px; }
 	.startmenu-search .ui-textbox-control { width: 40px; }
-	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; }
+	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; margin-top: 5px; }
 	.startmenu-nav nav button { padding: 10px 0; font-size: 16px; }
 	.startmenu-nav .fa { width: 34px; }
 	.app .appbadge { position: absolute; margin: 27px 0 0 22px; }
 	.username { right: 0; left: 0; text-align: center; }
 	.startmenu-title img { display: none; }
 	.startmenu-title > span { display: none; }
-	.startmenu-status { float: left; width: 70%; background-color: transparent; border-left: 0; }
+	.startmenu-status { float: left; width: 60%; background-color: transparent; border-left: 0; }
 	.ui-notifications { border-left: 0; }
+}
+
+@keyframes large {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.2); }
+	100% { transform: scale(1); }
 }
