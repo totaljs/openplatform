@@ -58,23 +58,23 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .startmenu-profile img { width: 28px; height: 28px; border-radius: 100px; float: left; margin: 5px 0 0 8px; }
 .startmenu-profile > span { float: left; margin: 11px 0 0 8px; font-size: 13px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
-.startmenu-apps { padding: 0 0 15px; margin-right: 200px; overflow: hidden; }
-.startmenu-apps-container { height: 386px; overflow-y: auto; width: 330px; padding: 5px 0; overflow-scrolling: touch; }
+.startmenu-apps { padding: 0; margin-right: 200px; overflow: hidden; }
+.startmenu-apps-container { height: 410px; width: 330px; padding: 0; }
 .startmenu-nav { float: right; width: 200px; height: 450px; background-color: #404040; border-left: 1px solid rgba(0,0,0,0.1); }
 .startmenu-nav nav button { display: block; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; color: white; }
 .startmenu-nav nav button:last-child { border-bottom: 0; }
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 8px 15px 10px; }
-.startmenu-search { padding: 5px; margin-bottom: 5px; background-color: #383838; }
+.startmenu-search { padding: 5px; background-color: #404040; border-bottom: 1px solid rgba(0,0,0,0.05); }
 .startmenu-status { float: right; color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 39px; width: 200px; border-left: 1px solid rgba(0,0,0,0.1); cursor: pointer; border-radius: 0 0 3px 0; }
 .startmenu-status:hover { background-color: rgba(255,255,255,0.1); }
 .startmenu-status b { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: white; font-size: 13px; line-height: 14px; }
 .startmenu-status i { font-size: 10px; float: left; margin: 3px 4px 0 0; }
 .startmenu-status span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; }
-.startmenu-search .ui-textbox { height: 30px; background-color: #383838; }
+.startmenu-search .ui-textbox { height: 30px; background-color: #404040; }
 .startmenu-search .ui-textbox-input { padding: 7px 4px 0 10px; }
-.startmenu-search .ui-textbox input { font-size: 16px; background-color: #383838; color: white; }
+.startmenu-search .ui-textbox input { font-size: 16px; background-color: #404040; color: white; }
 .startmenu-search .ui-textbox-control { width: 40px; border-left: 0; color: gray; }
 .startmenu-search input:-webkit-autofill, .startmenu-search input:-webkit-autofill:hover, .startmenu-search input:-webkit-autofill:active, .startmenu-search input:-webkit-autofill:focus { background-color: #303030 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #303030 inset !important; -webkit-text-fill-color: white !important; }
 
@@ -105,7 +105,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light .app-container:hover .app-icon { color: black; }
 .light .app-icon { color: #505050; }
 .light .startmenu-search .ui-textbox { background-color: transparent; }
-.light .startmenu-search { background-color: #D0D0D0; }
+.light .startmenu-search { background-color: #E0E0E0; }
 .light .startmenu-search .ui-textbox input { background-color: transparent; color: black; }
 .light .app-running .app-container, .light .app-container:hover { background-color: rgba(0,0,0,0.1); }
 .light .startmenu-title button { color: black; }
@@ -141,8 +141,8 @@ h3 i { margin-right: 5px; }
 .button-notifications .fa { color: white; }
 .button-notifications .far { color: #606060; }
 
-.app { padding: 0 10px; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
-.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: white; background-color: rgba(0,0,0,0.1); margin-bottom: 2px; border-radius: 3px; }
+.app { padding: 0; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
+.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: white; background-color: rgba(0,0,0,0.1); margin-bottom: 1px; }
 .app-running .app-container, .app-container:hover { background-color: rgba(0,0,0,0.3); }
 
 .app-container:hover .app-icon { color: white; }
@@ -165,9 +165,9 @@ h3 i { margin-right: 5px; }
 .app img { width: 120px; height: 120px; border-radius: 4px; }
 .app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
 .app-version { color: #A0A0A0; font-size: 11px; }
-.app .fa-times { position: absolute; right: 20px; top: 9px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
+.app .fa-times { position: absolute; right: 10px; top: 9px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
 .app .fa-times:hover { opacity: 0.8; }
-.appunread { position: absolute; background-color: #D23B3B; color: white; width: 24px; border-radius: 100%; height: 24px; font-size: 12px; padding: 3px 0 0; margin-top: -2px; left: 5px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
+.appunread { position: absolute; background-color: #D23B3B; color: white; width: 18px; border-radius: 100%; height: 18px; font-size: 10px; line-height: 18px; margin-top: -2px; left: 3px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
 .app .appbadge { position: absolute; margin: 14px 0 0 37px; font-size: 7px; }
 .appbadge .fa { color: red; font-size: 7px; }
 
@@ -181,7 +181,7 @@ h3 i { margin-right: 5px; }
 .appprogress span { height: 3px; display: block; border-radius: 3px; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
 .light .appprogress span { box-shadow: none; }
 
-.app-icon { float: left; width: 40px; font-size: 16px; text-align: center; height: 37px; padding: 7px 0 0 0; background-color: rgba(0,0,0,0.1); color: #A0A0A0; }
+.app-icon { float: left; width: 40px; font-size: 16px; text-align: center; height: 38px; padding: 7px 0 0 0; background-color: rgba(0,0,0,0.1); color: #A0A0A0; }
 .app-meta { margin-left: 50px; padding: 7px 0 0 0; font-size: 16px; }
 
 .form-border { border-left: 1px solid #F0F0F0; }
@@ -280,7 +280,7 @@ h3 i { margin-right: 5px; }
 	.startmenu { width: 100%; border-radius: 0; top: 45px; height: auto; }
 	.startmenu-nav { width: 100%; bottom: 50px; }
 	.startmenu-apps { margin-right: 0; height: 318px; }
-	.startmenu-apps-container { width: 100%; position: relative; height: 269px; }
+	.startmenu-apps-container { width: 100%; position: relative; height: 272px; }
 	.startmenu-version { display: none; }
 	.app { margin-right: 0; }
 	.app-icon { width: 42px; }

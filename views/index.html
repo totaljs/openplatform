@@ -110,20 +110,22 @@
 				<div data---="textbox__common.startmenusearch__type:search;placeholder:@(Search apps)"></div>
 			</div>
 			<div data---="search__common.startmenusearch__selector:.app" class="startmenu-apps-container">
-				<div data---="repeater__user.apps__if:!value.internal">
-					<script type="text/html">
-						<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
-							<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
-							<i class="far fa-bell-slash appnonotify{{ if !mutenotifications }} hidden{{ fi }}" data-id="{{ id }}"></i>
-							<i class="appclose fa fa-times {{ if !running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
-							<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
-							<b class="appbadge{{ if !countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b>
-							<div class="app-container">
-								<div class="app-icon"><i class="fa fa-{{ icon }}"></i></div>
-								<div class="app-meta">{{ title }}</div>
+				<div class="noscrollbar">
+					<div data---="repeater__user.apps__if:!value.internal">
+						<script type="text/html">
+							<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
+								<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
+								<i class="far fa-bell-slash appnonotify{{ if !mutenotifications }} hidden{{ fi }}" data-id="{{ id }}"></i>
+								<i class="appclose fa fa-times {{ if !running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
+								<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
+								<b class="appbadge{{ if !countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b>
+								<div class="app-container">
+									<div class="app-icon"><i class="fa fa-{{ icon }}"></i></div>
+									<div class="app-meta">{{ title }}</div>
+								</div>
 							</div>
-						</div>
-					</script>
+						</script>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -166,6 +168,7 @@
 						SET('common.notifications', false);
 					else
 						$('.startmenu-search').find('input').focus();
+					el.find('.noscrollbar').noscrollbar();
 				}, 10);
 			} else {
 				el.rclass('startmenu-visible');
