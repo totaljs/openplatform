@@ -10,17 +10,17 @@
 
 </style>
 <div class="row">
-	<div data-jc="scrollbar__account__margin:40;parent:window">
+	<div data---="scrollbar__account__margin:40;parent:window">
 		<div class="scroller-padding npb">
 			<div class="row">
 				<div class="col-2 m">
-					<div data-jc="textbox__settings.name__required:true">@(Openplatform name)</div>
+					<div data---="textbox__settings.name__required:true">@(Openplatform name)</div>
 				</div>
 				<div class="col-2 m">
-					<div data-jc="textbox__settings.url__required:true">@(URL address)</div>
+					<div data---="textbox__settings.url__required:true">@(URL address)</div>
 				</div>
 			</div>
-			<div data-jc="checkbox__settings.test">@(This is <b>Test environment</b>)</div>
+			<div data---="checkbox__settings.test">@(This is <b>Test environment</b>)</div>
 			<br />
 		</div>
 		<hr class="nmt nmb" />
@@ -28,35 +28,35 @@
 
 			<div class="row">
 				<div class="col-2 m">
-					<div data-jc="textbox__settings.accesstoken__maxlength:50;required:true">@(Token for service account)</div>
+					<div data---="textbox__settings.accesstoken__maxlength:50;required:true">@(Token for service account)</div>
 					<div class="help"><span class="link exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
 				</div>
 				<div class="col-2 m">
-					<div data-jc="textbox__settings.email__type:email;required:true">@(Support email)</div>
+					<div data---="textbox__settings.email__type:email;required:true">@(Support email)</div>
 				</div>
 			</div>
 
-			<div data-jc="colorselector__settings.colorscheme__null__'#4285f4'" class="m"></div>
+			<div data---="colorselector__settings.colorscheme__null__'#4285f4'" class="m"></div>
 
 			<div style="font-size:12px">
 				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
-				<div data-jc="singleupload__settings.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+				<div data---="singleupload__settings.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
 			</div>
 			<div class="clearfix"></div>
 		</div>
 		<div class="scroller-padding">
 			<h2>@(SMTP settings)</h2>
-			<div data-jc="textbox__settings.smtp__icon:globe;maxlength:50;placeholder:@(e.g. smtp.yourdomain.com)__''" class="m">@(SMTP host)</div>
-			<div data-jc="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
+			<div data---="textbox__settings.smtp__icon:globe;maxlength:50;placeholder:@(e.g. smtp.yourdomain.com)__''" class="m">@(SMTP host)</div>
+			<div data---="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
 			<div class="help m">@(The SMTP settings has to be according to the Total.js documentation in <b class="red">JSON format</b>.)</div>
-			<div data-jc="error__%smtpsettings" class="hidden m"></div>
+			<div data---="error__%smtpsettings" class="hidden m"></div>
 			<div class="help">
 				<span class="link exec" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</span>
 			</div>
-			<div data-jc="error__settings.response" class="hidden m"></div>
+			<div data---="error__settings.response" class="hidden m"></div>
 		</div>
 	</div>
-	<div class="buttonbar" data-jc="validation__settings">
+	<div class="buttonbar" data---="validation__settings">
 		<button name="submit" class="button exec b" data-exec="settings_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
 	</div>
 </div>

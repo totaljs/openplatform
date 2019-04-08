@@ -173,7 +173,7 @@ document.addEventListener('click', function() {
 
 document.addEventListener('touchstart', function() {
 	OP && OP.focus();
-});
+}, { passive: true });
 
 OP.loading2 = function(visible, interval) {
 

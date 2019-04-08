@@ -76,13 +76,13 @@
 
 			<div data-bind="common.type__show:value !== 'password'">
 				<form method="POST" onsubmit="return false">
-					<div class="m" data-jc="textbox__form.name__icon2:user;required:true;autofocus:true;autofill:true" data-jc-id="formname">@(Login name)</div>
-					<div class="m" data-jc="textbox__form.password__icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
-					<div data-jc="error__form.response"></div>
+					<div class="m" data---="textbox__form.name__icon2:user;required:true;autofocus:true;autofill:true;$id:formname">@(Login name)</div>
+					<div class="m" data---="textbox__form.password__icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
+					<div data---="error__form.response"></div>
 					<div class="m fs12">
 						<div><a href="#password" class="exec" data-exec="toggletype">@(I forgot my password)</a></div>
 					</div>
-					<div data-jc="validation__form">
+					<div data---="validation__form">
 						<button type="button" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
 					</div>
 				</form>
@@ -90,12 +90,12 @@
 
 			<div data-bind="common.type__show:value === 'password'">
 				<form method="POST" onsubmit="return false">
-					<div class="m" data-jc="textbox__password.name__icon2:user;required:true;autofill:true" data-jc-id="passwordname">@(Login name)</div>
-					<div data-jc="error__password.response"></div>
+					<div class="m" data---="textbox__password.name__icon2:user;required:true;autofill:true;$id:passwordname">@(Login name)</div>
+					<div data---="error__password.response"></div>
 					<div class="m fs12">
 						<div><a href="#password" class="exec" data-exec="toggletype">@(Back to sign-in)</a></div>
 					</div>
-					<div data-jc="validation__password">
+					<div data---="validation__password">
 						<button type="button" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset password)</button>
 					</div>
 				</form>

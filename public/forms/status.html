@@ -101,6 +101,7 @@
 	PLUGIN('statusform', function(exports) {
 
 		exports.reload = function() {
+			SET('common.statusid', user.statusid);
 			SET('statusform', { statusid: user.statusid, status: user.status }, true);
 		};
 
@@ -108,9 +109,9 @@
 			SETTER('loading', 'show');
 			var model = GETR('statusform');
 			AJAX('POST /api/account/status/', model, function() {
-				SET('common.statusid', model.statusid);
 				user.statusid = model.statusid;
 				user.status = model.status;
+				SET('common.statusid', user.statusid);
 				UPDATE('user');
 				SETTER('loading', 'hide', 1000);
 				hide();

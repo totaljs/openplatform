@@ -5095,7 +5095,8 @@ COMPONENT('scrollbar', 'reset:true;margin:0;marginxs:0;marginsm:0;marginmd:0;mar
 				self.done();
 				config.reset && self.reset();
 			}, 500);
-		}
+		} else
+			self.done();
 	};
 
 });

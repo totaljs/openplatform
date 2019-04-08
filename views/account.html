@@ -28,27 +28,27 @@
 
 </style>
 
-<div data-jc="audio__account.volume"></div>
+<div data---="audio__account.volume"></div>
 
 <div class="row">
-	<div data-jc="scrollbar__account__margin:40;parent:window;track:changepassword,response">
+	<div data---="scrollbar__account__margin:40;parent:window;track:changepassword,response">
 
 		<div class="accountphoto">
-			<div data-jc="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
 		</div>
 
 		<div class="scroller-padding">
 
 			<div class="row">
 				<div class="col-2 m">
-					<div data-jc="textbox__account.email__type:email;required:true">@(Email address)</div>
+					<div data---="textbox__account.email__type:email;required:true">@(Email address)</div>
 				</div>
 				<div class="col-2 m">
-					<div data-jc="textbox__account.phone">@(Phone number)</div>
+					<div data---="textbox__account.phone">@(Phone number)</div>
 				</div>
 			</div>
 
-			<div class="ui-appearance" data-jc="appearance__account.darkmode">
+			<div class="ui-appearance" data---="appearance__account.darkmode">
 				<div class="ui-appearance-label">
 					<i class="fa fa-paint-brush"></i>@(Appearance):
 					<div class="help" style="margin-top:2px">@(You can choose light or dark mode. <b>IMPORTANT</b>: not all apps support changing of appearance.)</div>
@@ -59,11 +59,11 @@
 
 			<hr />
 
-			<div data-jc="colorselector__account.colorscheme__null" class="m"></div>
+			<div data---="colorselector__account.colorscheme__null" class="m"></div>
 
 			<div style="font-size:12px">
 				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
-				<div data-jc="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+				<div data---="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
 			</div>
 			<div class="clearfix"></div>
 
@@ -71,17 +71,17 @@
 
 			<div class="row">
 				<div class="col-2">
-					<div data-jc="checkbox__account.sounds">@(Enable sounds)</div>
-					<div data-jc="checkbox__account.notifications">@(Enable notifications)</div>
+					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
+					<div data---="checkbox__account.notifications">@(Enable notifications)</div>
 				</div>
 				<div class="col-2">
-					<div data-jc="checkbox__account.notificationsemail">@(Enable email notifications)</div>
-					<div data-jc="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
+					<div data---="checkbox__account.notificationsemail">@(Enable email notifications)</div>
+					<div data---="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
 				</div>
 			</div>
 			<br />
 
-			<div data-jc="range__account.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
+			<div data---="range__account.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
 			<div class="row fs11 silver m">
 				<div class="col-xs-6">
 					@(Low)
@@ -91,19 +91,19 @@
 				</div>
 			</div>
 			<hr />
-			<div data-jc="checkbox__account.changepassword" class="b red">@(Change password)</div>
+			<div data---="checkbox__account.changepassword" class="b red">@(Change password)</div>
 
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<div class="padding">
-					<div data-jc="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
+					<div data---="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
 					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
 				</div>
 			</div>
 
-			<div data-jc="error__account.response" class="hidde m"></div>
+			<div data---="error__account.response" class="hidde m"></div>
 		</div>
 	</div>
-	<div class="buttonbar" data-jc="validation__account">
+	<div class="buttonbar" data---="validation__account">
 		<button name="submit" class="button exec b" data-exec="account_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
 	</div>
 </div>
