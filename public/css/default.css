@@ -101,13 +101,13 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light .startmenu-title { color: black; }
 .light .startmenu-nav { background-color: #D0D0D0; }
 .light .startmenu-nav nav button { color: black; }
-.light .app-container { color: black; background-color: rgba(0,0,0,0.05); }
-.light .app-container:hover .app-icon { color: black; }
-.light .app-icon { color: #505050; }
+.light .app-container { color: black; background-color: rgba(0,0,0,0.1); }
+.light .app-container:hover .app-icon { color: black; background-color: rgba(0,0,0,0.1); }
+.light .app-container:hover { background-color: rgba(0,0,0,0.13); }
+.light .app-icon { color: #505050; background-color: rgba(0,0,0,0.05); }
 .light .startmenu-search .ui-textbox { background-color: transparent; }
 .light .startmenu-search { background-color: #E0E0E0; }
 .light .startmenu-search .ui-textbox input { background-color: transparent; color: black; }
-.light .app-container:hover { background-color: rgba(0,0,0,0.1); }
 .app-running .app-meta { font-weight: bold; color: white; }
 .light .app-running .app-meta { color: black; }
 .app-running .app-icon { color: white; }
@@ -146,10 +146,10 @@ h3 i { margin-right: 5px; }
 .button-notifications .far { color: #606060; }
 
 .app { padding: 0; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
-.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: #E0E0E0; background-color: rgba(0,0,0,0.1); margin-bottom: 1px; }
-.app-container:hover { background-color: rgba(0,0,0,0.3); }
+.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: #E0E0E0; background-color: rgba(0,0,0,0.15); margin-bottom: 1px; }
+.app-container:hover { background-color: rgba(0,0,0,0.25); }
 
-.app-container:hover .app-icon { color: white; }
+.app-container:hover .app-icon { color: white;  background-color: rgba(0,0,0,0.25); }
 .app-offline { cursor: not-allowed; box-shadow: none !important; }
 .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
 .app-offline .app-version { color: silver; }
@@ -185,7 +185,7 @@ h3 i { margin-right: 5px; }
 .appprogress span { height: 3px; display: block; border-radius: 3px; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
 .light .appprogress span { box-shadow: none; }
 
-.app-icon { float: left; width: 40px; font-size: 16px; text-align: center; height: 38px; padding: 7px 0 0 0; background-color: rgba(0,0,0,0.1); color: #A0A0A0; }
+.app-icon { float: left; width: 40px; font-size: 16px; text-align: center; height: 38px; padding: 7px 0 0 0; background-color: rgba(0,0,0,0.2); color: #A0A0A0; }
 .app-meta { margin-left: 50px; padding: 7px 0 0 0; font-size: 16px; }
 
 .form-border { border-left: 1px solid #F0F0F0; }
