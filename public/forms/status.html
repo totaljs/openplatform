@@ -92,8 +92,8 @@
 			<div data---="textbox__statusform.status__maxlength:70;placeholder:@(Type a current status)" class="m">@(Note)</div>
 		</div>
 	</div>
-	<div data---="validation__statusform">
-		<button name="submit" class="userbg" style="width:100%" disabled>@(APPLY STATUS)</button>
+	<div>
+		<button name="submit" class="userbg" style="width:100%">@(APPLY STATUS)</button>
 	</div>
 </div>
 
@@ -106,8 +106,15 @@
 		};
 
 		exports.submit = function(hide) {
+
+			var model = GETR('?');
+
+			if (user.statusid === model.statusid && user.status === model.status) {
+				hide();
+				return;
+			}
+
 			SETTER('loading', 'show');
-			var model = GETR('statusform');
 			AJAX('POST /api/account/status/', model, function() {
 				user.statusid = model.statusid;
 				user.status = model.status;
@@ -126,7 +133,6 @@
 
 		exports.select = function(el) {
 			SET('statusform.statusid', +el.attrd('id'));
-			CHANGE('statusform.status');
 		};
 
 	});
