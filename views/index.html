@@ -423,7 +423,7 @@
 
 			for (var i = 0; i < user.apps.length; i++) {
 				var app = user.apps[i];
-				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: app.icon });
+				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: app.icon, keywords: app.name });
 			}
 
 			items.push({ name: '@(Reset windows)', icon: 'window-restore', TYPE: 'reset' });
