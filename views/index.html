@@ -113,7 +113,7 @@
 				<div class="noscrollbar">
 					<div data---="repeater__user.apps__if:!value.internal">
 						<script type="text/html">
-							<div class="app{{ if !online }} app-offline{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
+							<div class="app{{ if !online }} app-offline{{ fi }}{{ if running }} app-running{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
 								<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 								<i class="far fa-bell-slash appnonotify{{ if !mutenotifications }} hidden{{ fi }}" data-id="{{ id }}"></i>
 								<i class="appclose fa fa-times {{ if !running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
