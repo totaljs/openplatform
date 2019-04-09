@@ -4,10 +4,12 @@
 	.users .name { font-size: 12px; font-weight: bold; }
 	.users .name b { color: #68A754; }
 	.users .position { font-size: 11px; }
-	.users .item { line-height: 12px; font-size: 12px; padding: 5px; cursor: pointer; border-bottom: 1px solid #E0E0E0; }
+	.users .item { line-height: 12px; font-size: 12px; padding: 5px 5px 5px 0; cursor: pointer; border-bottom: 1px solid #E0E0E0; }
 	.users .item .fa-circle { font-size: 8px; }
 	.users .item:hover { background-color: #2E5ADA; color: white; }
 	.users .selected { background-color: #2E5ADA; color: white; }
+
+	.si { width: 24px; text-align: center; border-right: 1px solid rgba(200,200,200,0.3); margin-right: 4px; }
 
 	@media(max-width: 767px) {
 		.users .item { font-size: 14px; padding: 8px; line-height: 14px; }
@@ -46,7 +48,7 @@
 			<div data---="scrollbar__users.items__margin:40;parent:window;offset:true">
 				<div data---="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
 					<script type="text/html">
-						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ statusid | status(true) }}{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
 					</script>
 				</div>
 			</div>
@@ -131,7 +133,7 @@
 					<hr />
 					<div class="row">
 						<div class="col-sm-6 m">
-							<div data---="dropdown__users.form.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Off work|4);type:number__0">@(Status)</div>
+							<div data---="dropdown__users.form.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Meeting|4,Business trip|5,Holiday|6,Sick|7,Off work|8);type:number__0">@(Status)</div>
 						</div>
 						<div class="col-sm-6 m">
 							<div data---="textbox__users.form.status__maxlength:70">@(Status note)</div>
@@ -552,4 +554,41 @@
 		SET('users.filter.page', el.attr('name') === 'prev' ? (users.filter.page - 1) : (users.filter.page + 1));
 	}
 
+	Thelpers.status = function(value, icon) {
+		var str;
+		switch (value) {
+			case 1:
+				str = 'spinner fa-spin status1"></i>@(Busy)';
+				break;
+			case 2:
+				str = 'moon status2"></i>@(Do not disturb)';
+				break;
+			case 3:
+				str = 'door-open status3"></i>@(Be right back)';
+				break;
+			case 4:
+				str = 'brain status4"></i>@(Meeting)';
+				break;
+			case 5:
+				str = 'car status5"></i>@(Business trip)';
+				break;
+			case 6:
+				str = 'umbrella-beach status6"></i>@(Holiday)';
+				break;
+			case 7:
+				str = 'heartbeat status7"></i>@(Sick)';
+				break;
+			case 8:
+				str = 'home status8"></i>@(Off work)';
+				break;
+			default:
+				str = 'smile status0"></i>@(Available)';
+				break;
+		}
+
+		var index = str.indexOf('</i>');
+		var title = str.substring(index + 4);
+
+		return '<i title="' + title + '" class="si fa fa-' + (icon ? str.substring(0, index + 4) : str);
+	};
 </script>

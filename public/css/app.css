@@ -74,3 +74,13 @@ h3 .fa { margin-right: 5px; }
 	.search .ui-textbox input { font-size: 14px; }
 	.search .ui-textbox-control { width: 34px; }
 }
+
+.status0 { color: #68B25B; }
+.status1 { color: #C55140; }
+.status2 { color: #EAB34C; }
+.status3 { color: #B76DCF; }
+.status4 { color: #6DCFA8; }
+.status5 { color: #6DAFCF; }
+.status6 { color: #A1CF6D; }
+.status7 { color: #D06D6D; }
+.status8 { color: #D60000; }
