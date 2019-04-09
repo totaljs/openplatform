@@ -645,6 +645,14 @@
 				}
 
 				profile.apps.quicksort('title');
+
+				for (var i = 0; i < profile.apps.length; i++) {
+					var app = profile.apps[i];
+					var item = window.user && window.user.apps ? window.user.apps.findItem('id', app.id) : null;
+					if (item)
+						app.running = item.running;
+				}
+
 				SET('user', profile);
 				refresh_color(user);
 				EXEC('Dashboard/sync');
