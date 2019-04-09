@@ -372,7 +372,8 @@
 			response.show = true;
 			response.password = '*************';
 			SET('users.form', response, true);
-			FIND('#firstinput').find('input').focus();
+			if (!isMOBILE)
+				FIND('#firstinput').find('input').focus();
 		});
 	}
 
@@ -438,7 +439,8 @@
 	function userform_create() {
 		SET('users.selected', '');
 		SET('users.form', { timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
-		FIND('#firstinput').find('input').focus();
+		if (!isMOBILE)
+			FIND('#firstinput').find('input').focus();
 	}
 
 	function usersform_remove() {

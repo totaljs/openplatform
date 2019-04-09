@@ -52,6 +52,7 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; line-height: 16px; margin: 6px 10px 0 0; border-radius: 3px; }
 footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px; line-height: 30px; padding-right: 10px; border-right: 1px solid #E0E0E0; max-width: 400px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 
+.startmenu .ui-xs { height: 318px !important; }
 .startmenu { position: fixed; top: 45px; height: 490px; background-color: #404040; width: 500px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
 .startmenu-title { height: 40px; border-top: 1px solid rgba(0,0,0,0.15); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-profile { cursor: pointer; font-weight: normal; }
@@ -104,7 +105,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light .app-container { color: black; background-color: rgba(0,0,0,0.05); }
 .light .app-container:hover .app-icon { color: black; background-color: rgba(0,0,0,0.07); }
 .light .app-container:hover { background-color: rgba(0,0,0,0.1); }
-.light .app-icon { color: #505050; background-color: rgba(0,0,0,0.05); }
+.light .app-icon { color: #505050; background-color: rgba(0,0,0,0.07); }
 .light .startmenu-search .ui-textbox { background-color: transparent; }
 .light .startmenu-search { background-color: #E0E0E0; }
 .light .startmenu-search .ui-textbox input { background-color: transparent; color: black; }

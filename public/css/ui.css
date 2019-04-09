@@ -128,7 +128,7 @@ button { outline: 0; }
 .ui-dark .hljs-deletion{background:#fdd}
 .ui-dark .hljs-addition{background:#dfd}
 
-.ui-xs { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; background-color: white; z-index: 2; float: none; height: 318px !important; }
+.ui-xs { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; background-color: white; z-index: 2; float: none; }
 .ui-checkbox { margin-bottom: 5px; line-height: 10px; font-size: 12px; }
 .ui-checkbox span { cursor: pointer; vertical-align: middle; }
 .ui-checkbox div { position: relative; display: inline-block; width: 16px; height: 16px; border: 1px solid #D0D0D0; margin-right: 6px; vertical-align: middle; cursor: pointer; color: white; font-size: 11px; text-align: center; padding: 1px 0 0 1px; background-color: white; border-radius: 2px; }

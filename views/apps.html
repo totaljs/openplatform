@@ -285,7 +285,8 @@
 		if (item) {
 			item.show = true;
 			SET('apps.form', CLONE(item), true);
-			FIND('#firstinput').element.find('input').focus();
+			if (!isMOBILE)
+				FIND('#firstinput').element.find('input').focus();
 		}
 		OP.loading(false, 1000);
 	}
@@ -322,7 +323,8 @@
 	function apps_create(url) {
 		SET('apps.selected', '');
 		SET('apps.form', { show: true, permissions: true, id: '', url: (typeof(url) === 'string' ? url : null) || '', allowreadprofile: 1, allowreadusers: 0, allowreadapps: 0, allownotifications: true, responsive: true, allowreadmeta: true, mobilemenu: true, accesstoken: GUID(30), serververify: true }, true);
-		FIND('#firstinput').element.find('input').focus();
+		if (!isMOBILE)
+			FIND('#firstinput').element.find('input').focus();
 	}
 
 	function apps_remove() {
