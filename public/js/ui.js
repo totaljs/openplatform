@@ -3745,7 +3745,7 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 	};
 });
 
-COMPONENT('search', 'class:hidden;delay:200;attribute:data-search', function(self, config) {
+COMPONENT('search', 'class:hidden;delay:50;attribute:data-search', function(self, config) {
 	self.readonly();
 	self.setter = function(value) {
 
@@ -3761,29 +3761,14 @@ COMPONENT('search', 'class:hidden;delay:200;attribute:data-search', function(sel
 			}
 
 			var search = value.toSearch();
-			var hide = [];
-			var show = [];
 
-			elements.toArray().wait(function(item, next) {
-				var el = $(item);
+			elements.each(function() {
+				var el = $(this);
 				var val = (el.attr(config.attribute) || '').toSearch();
-				if (val.indexOf(search) === -1)
-					hide.push(el);
-				else
-					show.push(el);
-				setTimeout(next, 3);
-			}, function() {
-
-				hide.forEach(function(item) {
-					item.tclass(config.class, true);
-				});
-
-				show.forEach(function(item) {
-					item.tclass(config.class, false);
-				});
+				el.tclass(config.class, val.indexOf(search) === -1);
 			});
 
-		}, config.delay, 'search' + self.id);
+		}, config.delay);
 	};
 });
 
