@@ -646,11 +646,16 @@
 
 				profile.apps.quicksort('title');
 
-				for (var i = 0; i < profile.apps.length; i++) {
-					var app = profile.apps[i];
-					var item = window.user && window.user.apps ? window.user.apps.findItem('id', app.id) : null;
-					if (item)
-						app.running = item.running;
+				if (window.user && window.user.apps) {
+					var apps = profile.apps;
+					for (var i = 0; i < apps.length; i++) {
+						var app = apps[i];
+						var ua = user.apps.findItem('id', app.id);
+						if (ua == null)
+							user.apps.push(ua);
+						else
+							COPY(app, ua);
+					}
 				}
 
 				SET('user', profile);
