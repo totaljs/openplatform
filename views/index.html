@@ -71,7 +71,7 @@
 		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
 			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}">
-				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ datecreated | time2 }}</div>
+				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ datecreated | time }}</div>
 				<div class="ui-notifications-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-notifications-padding">
 					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
@@ -747,6 +747,13 @@
 		Thelpers.time = function(value) {
 			return value ? '<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(), Thelpers.time2(value), value.format(null)) : value;
 		};
+
+		ON('knockknock', function() {
+			$('.ta-time').each(function() {
+				var el = $(this);
+				el.html(Thelpers.time(new Date(+el.attrd('time'))));
+			});
+		});
 
 	</script>
 
