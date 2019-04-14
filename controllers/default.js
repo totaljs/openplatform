@@ -117,7 +117,7 @@ function lock() {
 	var self = this;
 	OP.session.get(self.sessionid, function(err, profile, meta) {
 		meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
-		OP.session.set(meta.sessionid, meta.id, profile, '1 month', meta.note, meta.settings);
+		OP.session.set(meta.sessionid, meta.id, profile, CONF.cookie_expiration || '1 month', meta.note, meta.settings);
 		self.redirect('/');
 	});
 }
