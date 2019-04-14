@@ -1,3 +1,5 @@
+var DDOS = {};
+
 NEWSCHEMA('Account', function(schema) {
 
 	schema.define('email', 'Email', true);
@@ -10,6 +12,8 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('sounds', Boolean);
 	schema.define('darkmode', Boolean);
 	schema.define('volume', Number);
+	schema.define('pin', 'String(4)'); // Unlock pin
+	schema.define('locking', Number); // in minutes (0: disabled)
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('background', 'String(150)');
 
@@ -28,7 +32,7 @@ NEWSCHEMA('Account', function(schema) {
 				data.volume = user.volume;
 				data.colorscheme = user.colorscheme;
 				data.background = user.background;
-				data.password = '*********';
+				data.locking = user.locking;
 			}
 			$.callback(data);
 		});
@@ -64,6 +68,10 @@ NEWSCHEMA('Account', function(schema) {
 				user.colorscheme = model.colorscheme;
 				user.background = model.background;
 				user.dateupdated = NOW;
+				user.locking = model.locking;
+
+				if (model.pin && model.pin.length === 4 && model.pin && model.pin != '0000')
+					user.pin = model.pin.sha256().hash() + '';
 
 				FUNC.users.set(user, Object.keys(model), function() {
 					FUNC.emit('users.update', user.id, 'account');
@@ -76,4 +84,46 @@ NEWSCHEMA('Account', function(schema) {
 		});
 	});
 
+	schema.addWorkflow('unlock', function($) {
+
+		if (!$.user) {
+			$.invalid('error-offline');
+			return;
+		}
+
+		if (!$.controller.req.locked) {
+			$.success();
+			return;
+		}
+
+		var pin = $.query.pin || '0000';
+		var id = $.user.id;
+
+		if (DDOS[id])
+			DDOS[id]++;
+		else
+			DDOS[id] = 1;
+
+		if (DDOS[id] > 7) {
+			OP.logout($.controller);
+			return;
+		}
+
+		var pin = pin.sha256().hash() + '';
+		if ($.user.pin !== pin) {
+			$.invalid('error-pin');
+			return;
+		}
+
+		OP.session.get($.sessionid, function(err, profile, meta) {
+			meta.settings = (meta.settings || '').replace('locked:1', 'locked:0');
+			OP.session.set($.sessionid, profile.id, profile, '1 month', meta.note, meta.settings, $.done());
+			delete DDOS[id];
+		});
+	});
+});
+
+ON('service', function(counter) {
+	if (counter % 60 === 0)
+		DDOS = {};
 });

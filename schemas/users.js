@@ -20,6 +20,11 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('reference', 'String(100)');
 	schema.define('locality', 'String(40)');
 	schema.define('login', 'String(120)');
+
+	// This can be used in Account scheme:
+	// schema.define('pin', 'String(4)'); // PIN for unlocking
+
+	schema.define('locking', Number); // in minutes (0 = disabled)
 	schema.define('password', 'String(30)');
 	schema.define('roles', '[String]');
 	schema.define('groups', '[String]');
@@ -146,6 +151,8 @@ NEWSCHEMA('User', function(schema) {
 				item.phone = model.phone;
 				item.photo = model.photo;
 				item.statusid = model.statusid;
+				// item.pin = model.pin;
+				item.locking = model.locking;
 				item.status = model.status;
 				item.firstname = model.firstname;
 				item.directory = model.directory;

@@ -1,4 +1,4 @@
-@{layout('')}
+	@{layout('')}
 @{title(config.name)}
 
 <!DOCTYPE html>
@@ -71,7 +71,7 @@
 		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
 			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}">
-				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ datecreated | format('yyyy-MM-dd HH:mm') }}</div>
+				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ datecreated | time2 }}</div>
 				<div class="ui-notifications-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-notifications-padding">
 					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
@@ -101,6 +101,9 @@
 					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
 					<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
+					@{if user.pin}
+					<button class="exec internal" data-exec="internallock"><i class="fa fa-lock"></i>@(Lock screen)</button>
+					@{fi}
 					<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off red"></i>@(Sign out)</button>
 				</nav>
 			</div>
@@ -215,6 +218,13 @@
 		function internalreset() {
 			common.startmenu && SET('common.startmenu', false);
 			SETTER('processes', 'resetsize');
+		}
+
+		function internallock() {
+			SETTER('loading', 'show');
+			setTimeout(function() {
+				location.href = '/lock/';
+			}, 500);
 		}
 
 		function internallogoff() {
@@ -427,6 +437,7 @@
 			}
 
 			items.push({ name: '@(Reset windows)', icon: 'window-restore', TYPE: 'reset' });
+			items.push({ name: '@(Lock screen)', icon: 'lock', TYPE: 'lock' });
 			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
 
 			SETTER('features', 'show', items, function(item) {
@@ -436,6 +447,9 @@
 						break;
 					case 'logoff':
 						internallogoff();
+						break;
+					case 'lock':
+						internallock();
 						break;
 					case 'reset':
 						internalreset();
@@ -540,7 +554,7 @@
 
 				common.liverefreshing = false;
 
-				if (response == null) {
+				if (response == null || typeof(response) === 'string') {
 					// maybe blocked
 					location.reload(true);
 					return;
@@ -638,8 +652,8 @@
 		function refresh_profile() {
 			AJAX('GET /api/profile/', function(profile) {
 
-				if (profile == null) {
-					// refresh (maybe blocked)
+				if (profile == null || typeof(profile) === 'string') {
+					// refresh (maybe locked / logged out)
 					location.reload(true);
 					return;
 				}

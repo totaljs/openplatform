@@ -193,8 +193,9 @@ FUNC.users.login = function(login, password, callback) {
 		callback(null, user);
 };
 
-FUNC.users.logout = function(user, controller) {
-	controller.redirect('/');
+FUNC.users.logout = function(user, controller, noredirect) {
+	if (!noredirect)
+		controller.redirect('/');
 };
 
 FUNC.users.password = function(login, callback) {

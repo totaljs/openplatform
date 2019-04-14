@@ -17,24 +17,9 @@ NEWSCHEMA('Notification', function(schema) {
 
 			// Remove notifications
 			FUNC.notifications.rem(user.id, function() {
-
 				OP.session.release2(user.id, function(err, count) {
 					count && FUNC.emit('users.notify', user.id, '', true);
 				});
-
-				// Update all session
-				// OP.session.get2(user.id, function(err, sessions) {
-				// 	sessions.wait(function(item, next) {
-				// 		var session = item.data;
-				// 		session.countnotifications = 0;
-				// 		var keys = Object.keys(session.apps);
-				// 		for (var i = 0; i < keys.length; i++)
-				// 			session.apps[keys[i]].countnotifications = 0;
-				// 		OP.session.set(item.uid, item.id, item.expire, session, next, item.note);
-				// 	}, function() {
-				// 		FUNC.emit('users.notify', user.id, '', true);
-				// 	});
-				// });
 			});
 
 			// Returns notifications

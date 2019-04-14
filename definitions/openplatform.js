@@ -1,6 +1,6 @@
 const OP = global.OP = {};
 
-OP.version = 4100;
+OP.version = 4110;
 G.meta = {};
 G.metadirectories = {};
 
@@ -27,6 +27,14 @@ OP.session.ondata = function(meta, next) {
 OP.session.onrelease = function(item) {
 	if (item.data)
 		item.data.online = false;
+};
+
+OP.logout = function(controller) {
+	controller.cookie(CONF.cookie, '', '-5 days');
+	controller.user.online = false;
+	OP.session.remove(controller.sessionid);
+	FUNC.users.set(controller.user, ['online'], NOOP);
+	FUNC.users.logout(controller.user, controller);
 };
 
 ON('service', function(counter) {
@@ -121,7 +129,7 @@ OP.profile = function(user, callback) {
 			}
 		}
 
-		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 500, height: 740, resize: false, mobilemenu: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 480, height: 600, resize: false, mobilemenu: false });
 		callback(null, meta);
 	});
 };

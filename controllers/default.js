@@ -7,10 +7,11 @@ exports.install = function() {
 		ROUTE('GET /settings/');
 		ROUTE('GET /info/', info);
 		ROUTE('GET /account/');
-		ROUTE('GET /logoff/', logoff);
 	});
 
-	ROUTE('GET /*', login, ['unauthorize']);
+	ROUTE('GET /*',       login, ['unauthorize']);
+	ROUTE('GET /logoff/', logoff);
+	ROUTE('GET /lock/',   lock);
 
 	LOCALIZE('/pages/*.html');
 	LOCALIZE('/forms/*.html');
@@ -49,6 +50,12 @@ function login() {
 		}
 	}
 
+	if (self.req.locked) {
+		// locked
+		self.view('locked');
+		return;
+	}
+
 	if (self.url !== '/')
 		self.status = 401;
 
@@ -57,11 +64,10 @@ function login() {
 
 function logoff() {
 	var self = this;
-	self.user.online = false;
-	self.cookie(CONF.cookie, '', '-5 days');
-	OP.session.remove(self.sessionid);
-	FUNC.users.set(self.user, ['online'], NOOP);
-	FUNC.users.logout(self.user, self);
+	if (self.user)
+		OP.logout(self);
+	else
+		self.redirect('/');
 }
 
 ON('users.refresh', function(userid, removed) {
@@ -104,5 +110,14 @@ function info() {
 	OP.session.count(function(err, count) {
 		model.sessions = count;
 		self.view('info', model);
+	});
+}
+
+function lock() {
+	var self = this;
+	OP.session.get(self.sessionid, function(err, profile, meta) {
+		meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
+		OP.session.set(meta.sessionid, meta.id, profile, '1 month', meta.note, meta.settings);
+		self.redirect('/');
 	});
 }

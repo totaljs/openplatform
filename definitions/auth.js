@@ -45,14 +45,23 @@ AUTH(function($) {
 			$.invalid();
 		} else {
 
-			$.req.$language = profile.language;
+			var locked = false;
 
-			if (profile.online === false) {
+			if (profile.locking && profile.pin && meta.used && !$.req.mobile && meta.used < NOW.add('-' + profile.locking + ' minutes'))
+				locked = true;
+
+			$.req.$language = profile.language;
+			$.req.locked = (meta.settings ? meta.settings.indexOf('locked:1') != -1 : false) || locked;
+
+			if (profile.online === false || locked) {
 				profile.online = true;
-				OP.session.set2(meta.id, profile);
+				OP.session.set(meta.sessionid, meta.id, profile, opt.expire, meta.note, 'locked:' + (locked ? 1 : 0));
 			}
 
-			$.success(profile);
+			if ($.req.locked)
+				$.invalid(profile);
+			else
+				$.success(profile);
 		}
 	});
 });

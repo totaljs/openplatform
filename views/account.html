@@ -21,9 +21,19 @@
 		.ui-appearance { height: 110px; }
 	}
 
+	.volume { height: 20px; padding: 0; font-size: 11px; border: 1px solid #E0E0E0; border-radius: 2px; margin: 8px 0 0; }
+	.volume > div { margin-left: 20px; }
+	.volume span { width: 33.33%; float: left; border-left: 1px solid #E0E0E0; text-align: center; line-height: 18px; cursor: pointer; }
+	.volume span:first-child { border-left: 0; }
+	.volume i { float: left; line-height: 18px; height: 18px; width: 20px; background-color: #F0F0F0; border-radius: 2px 0 0 2px; text-align: center; font-size: 10px; }
+
 	@{if user.colorscheme}
 	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
 	.button{background-color:@{user.colorscheme}}
+	.volume .selected {background-color:@{user.colorscheme};color:white}
+	.ui-singleupload{color:@{user.colorscheme}!important}
+	@{else}
+	.volume .selected {background-color:#4285f4;color:white}
 	@{fi}
 
 </style>
@@ -35,72 +45,78 @@
 
 		<div class="accountphoto">
 			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+			<div class="help center"><i class="fa fa-camera"></i>@(Recommended resolution 300x300 pixels)</div>
 		</div>
 
 		<div class="scroller-padding">
 
 			<div class="row">
 				<div class="col-2 m">
-					<div data---="textbox__account.email__type:email;required:true">@(Email address)</div>
+					<div data---="input__account.email__type:email;innerlabel:1;required:1">@(Email address)</div>
 				</div>
 				<div class="col-2 m">
-					<div data---="textbox__account.phone">@(Phone number)</div>
+					<div data---="input__account.phone__innerlabel:1">@(Phone number)</div>
 				</div>
 			</div>
-
-			<div class="ui-appearance" data---="appearance__account.darkmode">
-				<div class="ui-appearance-label">
-					<i class="fa fa-paint-brush"></i>@(Appearance):
-					<div class="help" style="margin-top:2px">@(You can choose light or dark mode. <b>IMPORTANT</b>: not all apps support changing of appearance.)</div>
-				</div>
-				<div class="ui-appearance-option ui-appearance-dark">@(Dark)</div>
-				<div class="ui-appearance-option ui-appearance-light ui-appearance-selected">@(Light)</div>
-			</div>
-
-			<hr />
-
-			<div data---="colorselector__account.colorscheme__null" class="m"></div>
-
+			<div data---="colorselector__account.colorscheme__null" style="margin-bottom:5px"></div>
 			<div style="font-size:12px">
 				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
 				<div data---="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
 			</div>
 			<div class="clearfix"></div>
-
-			<hr style="margin-top:8px" />
+			<hr />
+			<div class="ui-appearance" data---="appearance__account.darkmode">
+				<div class="ui-appearance-label">
+					<i class="fa fa-paint-brush"></i>@(Appearance):
+					<div class="help" style="margin-top:2px">@(You can choose light or dark mode. Not all apps support appearance.)</div>
+				</div>
+				<div class="ui-appearance-option ui-appearance-dark">@(Dark)</div>
+				<div class="ui-appearance-option ui-appearance-light ui-appearance-selected">@(Light)</div>
+			</div>
+			<hr />
 
 			<div class="row">
 				<div class="col-2">
-					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
 					<div data---="checkbox__account.notifications">@(Enable notifications)</div>
-				</div>
-				<div class="col-2">
 					<div data---="checkbox__account.notificationsemail">@(Enable email notifications)</div>
 					<div data---="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
 				</div>
-			</div>
-			<br />
-
-			<div data---="range__account.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
-			<div class="row fs11 silver m">
-				<div class="col-xs-6">
-					@(Low)
+				<div class="col-2">
+					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
+					<div data---="checkbox__account.changepassword" class="b red">@(Change password)</div>
+					<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
+						<i class="fa fa-volume-up"></i>
+						<div>
+							<span data-volume="15">silent</span>
+							<span data-volume="50">medium</span>
+							<span data-volume="100">loud</span>
+						</div>
+					</div>
 				</div>
-				<div class="col-xs-6 right">
-					@(High)
-				</div>
 			</div>
-			<hr />
-			<div data---="checkbox__account.changepassword" class="b red">@(Change password)</div>
 
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<div class="padding">
-					<div data---="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
+					<div data---="input__account.password__maxlength:30;type:password;required:1;innerlabel:1">@(Login password)</div>
 					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
 				</div>
 			</div>
 
-			<div data---="error__account.response" class="hidde m"></div>
+		</div>
+
+		<div class="scroller-padding bg-yellow npb">
+			<h2><i class="fa fa-lock"></i>@(Screen locking)</h2>
+			<div class="fs12 m">@(Screen will be locked only on desktop computers. )</div>
+			<div class="row">
+				<div class="col-xs-6">
+					<div data---="input__account.locking__maxlength:30;type:number;innerlabel:1;placeholder:@(In minutes)">@(Idle time)</div>
+					<div class="help m"><i class="fa fa-clock"></i>@(Must be defined in minutes.)</div>
+				</div>
+				<div class="col-xs-6">
+					<div data---="input__account.pin__maxlength:4;type:password;innerlabel:1;mask:####;maskregexp:\d,\d,\d,\d;placeholder:@(In minutes)">@(PIN code)</div>
+					<div class="help m"><i class="fa fa-calculator"></i>@(Only 4 numbers.)</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="buttonbar" data---="validation__account">
@@ -126,6 +142,10 @@
 		OP.loading(true);
 		AJAX('POST /api/account/', GETR('account'), function(response) {
 			OP.loading(false);
+
+			if (response instanceof Array)
+				OP.message(response[0].message, 'warning');
+
 			SET('account.response', response);
 			if (response.success) {
 				OP.send('refreshprofile');
@@ -151,6 +171,11 @@
 		};
 	});
 
+	WATCH('account.locking', function(path, value, type) {
+		if (value <= 0)
+			SET('account.locking', '@(disabled)');
+	});
+
 	WATCH('account.volume', function(path, value, type) {
 		if (type === 2) {
 			setTimeout2('volume', function() {
@@ -158,5 +183,16 @@
 			}, 500);
 		}
 	});
+
+	function account_volume_set(el) {
+		SET('account.volume', +el.attrd('volume'), 2);
+	}
+
+	function account_volume(value, path, el) {
+		var cls = 'selected';
+		el.find('.' + cls).rclass(cls);
+		el.find('span[data-volume="{0}"]'.format(value)).aclass('selected');
+		CHANGE('account.email');
+	}
 
 </script>

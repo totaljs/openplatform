@@ -62,6 +62,7 @@ exports.install = function() {
 	ROUTE('POST   /api/config/                          *Config       --> @save');
 	ROUTE('GET    /api/config/                          *Config       --> @get');
 	ROUTE('GET    /api/meta/                            *Meta         --> @get');
+	ROUTE('GET    /api/unlock/                          *Account      --> @unlock');
 
 	// CORS
 	CORS();
