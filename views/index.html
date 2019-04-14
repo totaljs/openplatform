@@ -110,7 +110,7 @@
 		</div>
 		<div class="startmenu-apps">
 			<div class="startmenu-search">
-				<div data---="textbox__common.startmenusearch__type:search;placeholder:@(Search apps)"></div>
+				<div data---="textbox__common.startmenusearch__type:search;$delay:50;placeholder:@(Search apps)"></div>
 			</div>
 			<div data---="search__common.startmenusearch__selector:.app" class="startmenu-apps-container">
 				<div class="noscrollbar">
@@ -660,11 +660,16 @@
 
 				profile.apps.quicksort('title');
 
-				for (var i = 0; i < profile.apps.length; i++) {
-					var app = profile.apps[i];
-					var item = window.user && window.user.apps ? window.user.apps.findItem('id', app.id) : null;
-					if (item)
-						app.running = item.running;
+				if (window.user && window.user.apps) {
+					var apps = profile.apps;
+					for (var i = 0; i < apps.length; i++) {
+						var app = apps[i];
+						var ua = user.apps.findItem('id', app.id);
+						if (ua == null)
+							user.apps.push(ua);
+						else
+							COPY(app, ua);
+					}
 				}
 
 				SET('user', profile);
