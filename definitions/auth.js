@@ -28,7 +28,7 @@ AUTH(function($) {
 	var opt = {};
 	opt.key = CONF.cookie_key || 'auth';
 	opt.name = CONF.cookie;
-	opt.expire = CONF.cookie_expiration;
+	opt.expire = CONF.cookie_expiration || '1 month';
 
 	OP.session.getcookie($, opt, function(err, profile, meta) {
 
