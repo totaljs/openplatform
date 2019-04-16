@@ -774,11 +774,10 @@
 			opt.items = [];
 			opt.items.push(app.title);
 			opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
+			opt.items.push({ name: '@(Show window)', icon: '!far fa-window-maximize', value: 'maximize' });
 
 			if (!$('.ui-process[data-id="{0}"]'.format(id)).hclass('hidden'))
-				opt.items.push({ name: '@(Minimize)', icon: 'window-minimize', value: 'minimize' });
-
-			opt.items.push({ name: '@(Show)', icon: '!far fa-window-maximize', value: 'maximize' });
+				opt.items.push({ name: '@(Minimize window)', icon: 'window-minimize', value: 'minimize' });
 
 			if (!isMOBILE)
 				opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'resetsize' });
