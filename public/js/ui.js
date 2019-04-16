@@ -2397,6 +2397,7 @@ COMPONENT('processes', function(self, config) {
 		var iframe = self.findProcess(id);
 		if (iframe) {
 			iframe.element.aclass('hidden');
+			$('.appprocess[data-id="{0}"]'.format(id)).rclass('focused');
 			self.message(iframe, 'minimize');
 		}
 		return self;
@@ -2407,6 +2408,22 @@ COMPONENT('processes', function(self, config) {
 		min = (min || 0);
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
+
+	self.highlight = function(iframe, type) {
+
+		if (typeof(iframe) === 'string') {
+			iframe = self.findProcess(iframe);
+			if (!iframe)
+				return false;
+		}
+
+		var el = iframe.element;
+		var cls = 'ui-process-highlight';
+		el.aclass(cls);
+		setTimeout(function() {
+			el.rclass(cls);
+		}, 200);
+	};
 
 	self.shake = function(iframe, type) {
 

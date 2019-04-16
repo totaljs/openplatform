@@ -321,6 +321,9 @@
 				self.hidemenu();
 				var id = el.attrd('id');
 				SETTER('processes', 'maximize', id);
+				setTimeout(function() {
+					SETTER('processes', 'highlight', id);
+				}, 200);
 			};
 
 			self.close = function(el, e) {
@@ -753,6 +756,45 @@
 				var el = $(this);
 				el.html(Thelpers.time(new Date(+el.attrd('time'))));
 			});
+		});
+
+		$(document).on('contextmenu', '.appprocess', function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+
+			var opt = {};
+			opt.element = $(this);
+
+			var id = opt.element.attrd('id');
+			var app = user.apps.findItem('id', id);
+
+			if (app == null)
+				return;
+
+			opt.items = [];
+			opt.items.push(app.title);
+			opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
+
+			if (!$('.ui-process[data-id="{0}"]'.format(id)).hclass('hidden'))
+				opt.items.push({ name: '@(Minimize)', icon: 'window-minimize', value: 'minimize' });
+
+			opt.items.push({ name: '@(Show)', icon: '!far fa-window-maximize', value: 'maximize' });
+
+			if (!isMOBILE)
+				opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'resetsize' });
+
+			opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
+
+			opt.callback = function(item) {
+				SETTER('processes', item.value, id);
+				if (item.value === 'maximize') {
+					setTimeout(function() {
+						SETTER('processes', 'highlight', id);
+					}, 100);
+				}
+			};
+
+			SETTER('menu', 'show', opt);
 		});
 
 	</script>
