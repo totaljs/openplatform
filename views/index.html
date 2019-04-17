@@ -771,12 +771,17 @@
 			if (app == null)
 				return;
 
+			var hidden = $('.ui-process[data-id="{0}"]'.format(id)).hclass('hidden');
+
 			opt.items = [];
 			opt.items.push(app.title);
-			opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
+
+			if (!hidden)
+				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
+
 			opt.items.push({ name: '@(Show window)', icon: '!far fa-window-maximize', value: 'maximize' });
 
-			if (!$('.ui-process[data-id="{0}"]'.format(id)).hclass('hidden'))
+			if (!hidden)
 				opt.items.push({ name: '@(Minimize window)', icon: 'window-minimize', value: 'minimize' });
 
 			if (!isMOBILE)
