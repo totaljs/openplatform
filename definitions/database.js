@@ -540,7 +540,7 @@ FUNC.settings.set = function(data, callback) {
 // ====================================
 
 FUNC.configs.get = function(userid, appid, callback) {
-	TABLE('configs').read().where('userid', userid).where('appid', appid).callback(function(err, doc) {
+	TABLE('configs').one().where('userid', userid).where('appid', appid).callback(function(err, doc) {
 		callback(err, doc ? doc.body : null);
 	});
 };

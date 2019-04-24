@@ -24,17 +24,11 @@ NEWSCHEMA('Config', function(schema) {
 				return;
 			}
 
-			if (!app.allownotifications) {
-				$.invalid('error-permissions');
-				return;
-			}
-
-			if (!user.notifications || user.blocked || user.inactive) {
+			if (user.blocked || user.inactive)
 				$.invalid('error-accessible');
-				return;
-			}
+			else
+				FUNC.configs.get(user.id, app.id, $.callback);
 
-			FUNC.configs.get(user.id, app.id, $.callback);
 		});
 	});
 
@@ -60,12 +54,7 @@ NEWSCHEMA('Config', function(schema) {
 				return;
 			}
 
-			if (!app.allownotifications) {
-				$.invalid('error-permissions');
-				return;
-			}
-
-			if (!user.notifications || user.blocked || user.inactive) {
+			if (user.blocked || user.inactive) {
 				$.invalid('error-accessible');
 				return;
 			}
