@@ -32,6 +32,7 @@
 	<div data---="LAZY calendar"></div>
 	<div data---="LAZY message__null__button:@(Close)"></div>
 	<div data---="LAZY menu"></div>
+	<div data---="nativenotifications"></div>
 	<div data---="audio__user.volume"></div>
 	<div data---="loading" class="hidden"></div>
 	<div data---="shortcuts"></div>
@@ -67,7 +68,7 @@
 		</div>
 	</header>
 
-	<div data---="notifications__common.notifications" data-bind="common.notifications__show:value" class="hidden">
+	<div data---="notifications__common.notifications" data-bind="common.notifications__show" class="hidden">
 		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
 			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}">
@@ -597,6 +598,9 @@
 					is = true;
 					user.countnotifications = response.countnotifications;
 					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
+					SETTER('nativenotifications', 'append', '@(Alert!)', '@(You have {0}.)'.format(user.countnotifications.pluralize(@('# unread notifications', '# unread notification', '# unread notifications', '# unread notifications'))), function() {
+						SET('common.notifications', true);
+					}, '/icon.png');
 					common.notifications && refresh_notifications();
 				}
 
