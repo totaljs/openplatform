@@ -805,6 +805,10 @@
 			SETTER('menu', 'show', opt);
 		});
 
+		ON('ready', function() {
+			NAV.query.notifications && SET('common.notifications', true, 2000);
+		});
+
 	</script>
 
 	@{components('openplatform')}
