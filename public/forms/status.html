@@ -114,15 +114,14 @@
 				return;
 			}
 
-			SETTER('loading', 'show');
 			AJAX('POST /api/account/status/', model, function() {
 				user.statusid = model.statusid;
 				user.status = model.status;
 				SET('common.statusid', user.statusid);
 				UPDATE('user');
-				SETTER('loading', 'hide', 1000);
-				hide();
 			});
+
+			hide();
 		};
 
 		exports.selected = function(value, path, el) {
