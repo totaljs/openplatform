@@ -64,6 +64,15 @@ FUNC.users.query = function(filter, callback) {
 	if (typeof(filter.limit) === 'string')
 		filter.limit = +filter.limit;
 
+	// Removed users
+	if (filter.removed) {
+		var builder = NOSQL('removed').list();
+		filter.modified && builder.where('dtcreated', '>', NOW.add('-' + filter.modified));
+		builder.paginate(filter.page, filter.limit);
+		builder.callback(callback);
+		return;
+	}
+
 	var arr = [];
 	var take = filter.limit;
 	var skip = (filter.page - 1) * take;
@@ -177,6 +186,8 @@ FUNC.users.rem = function(id, callback) {
 
 		// Removes notifications
 		Fs.unlink(F.path.databases('notifications_' + item.id + '.json'), NOOP);
+
+		NOSQL('removed').insert({ id: id, reference: item.reference, dtcreated: NOW });
 
 		// Backup users
 		save(2);
