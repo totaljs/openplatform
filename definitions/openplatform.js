@@ -11,11 +11,11 @@ OP.session.ondata = function(meta, next) {
 	FUNC.users.get(meta.id, function(err, user) {
 		if (user && !user.inactive && !user.blocked) {
 
-			user.datelogged = NOW;
+			user.dtlogged = NOW;
 			user.online = true;
 
 			// Write info
-			FUNC.users.set(user, ['datelogged', 'online']);
+			FUNC.users.set(user, ['dtlogged', 'online']);
 
 			// Write session
 			next(null, user);
@@ -62,8 +62,8 @@ OP.cookie = function(req, user, sessionid, callback, note) {
 	OP.session.setcookie(req, opt, function() {
 		user.verifytoken = U.GUID(15);
 		user.online = true;
-		user.datelogged = NOW;
-		FUNC.users.set(user, ['verifytoken', 'datelogged', 'online'], NOOP);
+		user.dtlogged = NOW;
+		FUNC.users.set(user, ['verifytoken', 'dtlogged', 'online'], NOOP);
 		callback && callback();
 	});
 };
@@ -190,7 +190,7 @@ OP.meta = function(app, user, serverside) {
 	if (!user.apps || !user.apps[app.id])
 		return null;
 
-	var meta = { datetime: NOW, ip: user.ip, url: app.frame, settings: app.settings, id: app.id };
+	var meta = { date: NOW, ip: user.ip, url: app.frame, settings: app.settings, id: app.id };
 	var token = OP.encodeAuthToken(app, user);
 
 	if (!serverside) {
@@ -330,8 +330,8 @@ function readapp(app, type) {
 	obj.name = app.name;
 	obj.version = app.version;
 	obj.online = app.online;
-	obj.daterefreshed = app.daterefreshed;
-	obj.datecreated = app.datecreated;
+	obj.dtsync = app.dtsync;
+	obj.dtcreated = app.dtcreated;
 	obj.author = app.author;
 	obj.type = app.type;
 	obj.mobilemenu = app.mobilemenu;
@@ -386,19 +386,19 @@ function readuser(user, type, app) {
 	if (user.company)
 		obj.company = user.company;
 
-	if (user.datebirth)
-		obj.datebirth = user.datebirth;
+	if (user.dtbirth)
+		obj.dtbirth = user.dtbirth;
 
-	obj.datecreated = user.datecreated;
+	obj.dtcreated = user.dtcreated;
 
-	if (user.dateend)
-		obj.dateend = user.dateend;
+	if (user.dtend)
+		obj.dtend = user.dtend;
 
-	if (user.datebeg)
-		obj.datebeg = user.datebeg;
+	if (user.dtbeg)
+		obj.dtbeg = user.dtbeg;
 
-	if (user.dateupdated)
-		obj.dateupdated = user.dateupdated;
+	if (user.dtupdated)
+		obj.dtupdated = user.dtupdated;
 
 	obj.firstname = user.firstname;
 	obj.lastname = user.lastname;
@@ -563,7 +563,7 @@ OP.refresh = function(app, callback, meta) {
 				app.origin = null;
 		}
 
-		app.daterefreshed = NOW;
+		app.dtsync = NOW;
 		callback(err, app);
 	});
 };

@@ -96,12 +96,12 @@ FUNC.users.query = function(filter, callback) {
 
 	filter.modified && builder.or(function() {
 		filter.modified = NOW.add('-' + filter.modified);
-		builder.where('dateupdated', '>', filter.modified);
-		builder.where('datecreated', '>', filter.modified);
+		builder.where('dtupdated', '>', filter.modified);
+		builder.where('dtcreated', '>', filter.modified);
 	});
 
 	filter.online && builder.where('online', true);
-	filter.logged && builder.where('datelogged', '>', NOW.add('-' + filter.modified));
+	filter.logged && builder.where('dtlogged', '>', NOW.add('-' + filter.modified));
 
 	builder.paginate(filter.page, filter.limit, 1000);
 	builder.callback(callback);
@@ -567,7 +567,7 @@ FUNC.notifications.add = function(data, callback) {
 	// data.data
 	// data.title
 	// data.ip
-	// data.datecreated
+	// data.dtcreated
 
 	DBMS().insert('notifications', data).callback(callback);
 };
@@ -612,10 +612,10 @@ FUNC.configs.get = function(userid, appid, callback) {
 };
 
 FUNC.configs.set = function(userid, appid, data, callback) {
-	DBMS().modify('configs', { body: data, datelogged: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
+	DBMS().modify('configs', { body: data, dtlogged: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
 		doc.userid = userid;
 		doc.appid = appid;
-		doc.datecreated = NOW;
+		doc.dtcreated = NOW;
 	}).first().callback(callback);
 };
 

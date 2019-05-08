@@ -8,8 +8,8 @@ NEWSCHEMA('Status', function(schema) {
 			if (user) {
 				user.statusid = $.model.statusid;
 				user.status = $.model.status;
-				user.dateupdated = NOW;
-				FUNC.users.set(user, ['statusid', 'status', 'dateupdated'], function() {
+				user.dtupdated = NOW;
+				FUNC.users.set(user, ['statusid', 'status', 'dtupdated'], function() {
 					FUNC.emit('users.update', user.id, 'account');
 					FUNC.emit('users.refresh', user.id);
 					$.success();

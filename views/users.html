@@ -67,7 +67,7 @@
 		</nav>
 		<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
 			<div data---="scrollbar__users.form.show__margin:40;parent:window;marginxs:42">
-				<div data-bind="users.form__track:datecreated,dateupdated,datelogged,online__template">
+				<div data-bind="users.form__track:dtcreated,dtcreated,dtlogged,online__template">
 					<script type="text/html">
 						{{ if value.id }}
 							<div class="scroller-padding bg-smoke">
@@ -77,34 +77,34 @@
 											<td>@(ID)</td>
 											<td class="col-xs-6 right">{{ value.id }}</td>
 										</tr>
-										{{ if value.datelogged }}
+										{{ if value.dtlogged }}
 										<tr>
 											<td>@(Logged)</td>
-											<td class="right">{{ if value.online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ value.datelogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ if value.online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ value.dtlogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if value.datecreated }}
+										{{ if value.dtcreated }}
 										<tr>
 											<td>@(Created)</td>
-											<td class="right">{{ value.datecreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if value.dateupdated }}
+										{{ if value.dtcreated }}
 										<tr>
 											<td>@(Updated)</td>
-											<td class="right">{{ value.dateupdated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if value.datepassword }}
+										{{ if value.dtpassword }}
 										<tr>
 											<td>@(Password changed)</td>
-											<td class="right">{{ value.datepassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.dtpassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if value.datenotified }}
+										{{ if value.dtnotified }}
 										<tr>
 											<td>@(Last notification)</td>
-											<td class="right">{{ value.datenotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.dtnotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
 									</tbody>

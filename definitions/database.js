@@ -1,6 +1,6 @@
 const Fs = require('fs');
 
-CONF.table_configs = 'userid:string|appid:string|body:string|dateupdated:date|datecreated:date';
+CONF.table_configs = 'userid:string|appid:string|body:string|dtupdated:date|dtcreated:date';
 FUNC.apps = {};
 FUNC.users = {};
 FUNC.common = {};
@@ -125,13 +125,13 @@ FUNC.users.query = function(filter, callback) {
 		if (filter.ou && (!user.ougroups || user.ougroups.indexOf(filter.ou) === -1))
 			continue;
 
-		if (filter.modified && !((user.dateupdated && user.dateupdated > filter.modified) || (user.datecreated > filter.modified)))
+		if (filter.modified && !((user.dtupdated && user.dtupdated > filter.modified) || (user.dtcreated > filter.modified)))
 			continue;
 
 		if (filter.online && !user.online)
 			continue;
 
-		if (filter.logged && user.datelogged < filter.logged)
+		if (filter.logged && user.dtlogged < filter.logged)
 			continue;
 
 		count++;
@@ -546,10 +546,10 @@ FUNC.configs.get = function(userid, appid, callback) {
 };
 
 FUNC.configs.set = function(userid, appid, data, callback) {
-	TABLE('configs').modify({ body: data, dateupdated: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
+	TABLE('configs').modify({ body: data, dtupdated: NOW }, true).where('userid', userid).where('appid', appid).insert(function(doc) {
 		doc.userid = userid;
 		doc.appid = appid;
-		doc.datecreated = NOW;
+		doc.dtcreated = NOW;
 	}).first().callback(callback);
 };
 
@@ -584,7 +584,7 @@ FUNC.notifications.add = function(data, callback) {
 	// data.data
 	// data.title
 	// data.ip
-	// data.datecreated
+	// data.dtcreated
 
 	var filename = F.path.databases('notifications_' + data.userid + '.json');
 	Fs.appendFile(filename, JSON.stringify(data) + ',', NOOP);

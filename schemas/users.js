@@ -44,9 +44,9 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('inactive', Boolean);
 	schema.define('sounds', Boolean);
 	schema.define('rebuildtoken', Boolean);
-	schema.define('datebirth', Date);
-	schema.define('datebeg', Date);
-	schema.define('dateend', Date);
+	schema.define('dtbirth', Date);
+	schema.define('dtbeg', Date);
+	schema.define('dtend', Date);
 	schema.define('apps', Object); // { "appid": { roles: [], options: '' } }
 
 	schema.setQuery(function($) {
@@ -173,11 +173,11 @@ NEWSCHEMA('User', function(schema) {
 				item.notifications = model.notifications;
 				item.sounds = model.sounds;
 				item.apps = model.apps;
-				item.dateupdated = NOW;
+				item.dtupdated = NOW;
 				item.volume = model.volume;
-				item.datebirth = model.datebirth;
-				item.datebeg = model.datebeg;
-				item.dateend = model.dateend;
+				item.dtbirth = model.dtbirth;
+				item.dtbeg = model.dtbeg;
+				item.dtend = model.dtend;
 				item.inactive = model.inactive;
 				item.notificationsphone = model.notificationsphone;
 				item.notificationsemail = model.notificationsemail;
@@ -206,7 +206,7 @@ NEWSCHEMA('User', function(schema) {
 		} else {
 
 			item = model;
-			item.datecreated = NOW;
+			item.dtcreated = NOW;
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
 

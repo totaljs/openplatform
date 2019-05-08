@@ -83,7 +83,7 @@ NEWSCHEMA('App', function(schema) {
 			FUNC.apps.get(model.id, function(err, item) {
 				if (item) {
 					FUNC.logger('apps', 'update: ' + item.id + ' - ' + item.name, '@' + $.user.name, $.ip);
-					model.dateupdated = NOW;
+					model.dtupdated = NOW;
 					sync(item, model, true, permissions);
 					OP.refresh(item, function() {
 						FUNC.apps.set(item, null, function() {
@@ -96,7 +96,7 @@ NEWSCHEMA('App', function(schema) {
 					$.invalid('error-apps-404');
 			});
 		} else {
-			model.datecreated = NOW;
+			model.dtcreated = NOW;
 			OP.refresh(model, function(err) {
 
 				if (err) {
@@ -162,7 +162,7 @@ NEWSCHEMA('App', function(schema) {
 				model.mainmenu = response.mainmenu;
 				model.responsive = response.responsive;
 				model.online = true;
-				model.daterefreshed = NOW;
+				model.dtsync = NOW;
 
 				if (model.permissions) {
 					model.allowreadapps = response.allowreadapps;
@@ -290,7 +290,7 @@ function sync(item, model, meta, permissions) {
 	item.version = model.version;
 	item.custom = model.custom;
 	item.online = model.online === true;
-	item.daterefreshed = NOW;
+	item.dtsync = NOW;
 	item.origin = model.origin;
 	item.width = model.width;
 	item.height = model.height;

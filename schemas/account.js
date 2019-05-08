@@ -53,8 +53,11 @@ NEWSCHEMA('Account', function(schema) {
 				if (user.photo && model.photo !== user.photo)
 					FUNC.files.removebackground(user.photo);
 
-				if (model.password && !model.password.startsWith('***'))
+				if (model.password && !model.password.startsWith('***')) {
 					user.password = model.password.sha256();
+					user.dtpassword = NOW;
+					model.dtpassword = NOW;
+				}
 
 				user.email = model.email;
 				user.notifications = model.notifications;
@@ -67,7 +70,7 @@ NEWSCHEMA('Account', function(schema) {
 				user.volume = model.volume;
 				user.colorscheme = model.colorscheme;
 				user.background = model.background;
-				user.dateupdated = NOW;
+				user.dtupdated = NOW;
 				user.locking = model.locking;
 
 				if (model.pin && model.pin.length === 4 && model.pin && model.pin != '0000')

@@ -1,5 +1,5 @@
 const SKIP = { password: true, search: true, verifytoken: true };
-const ONLINE = { online: true, datelogged: null };
+const ONLINE = { online: true, dtlogged: null };
 const USERS_LIST_FIELDS = { id: 1, statusid: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1, items: 1, count: 1, page: 1, pages: 1, limit: 1 };
 
 exports.install = function() {
@@ -184,10 +184,10 @@ function json_online(id) {
 	FUNC.users.get(id, function(err, user) {
 		if (user) {
 			ONLINE.online = user.online;
-			ONLINE.datelogged = user.datelogged;
+			ONLINE.dtlogged = user.dtlogged;
 		} else {
 			ONLINE.online = false;
-			ONLINE.datelogged = null;
+			ONLINE.dtlogged = null;
 		}
 		self.json(ONLINE);
 	});

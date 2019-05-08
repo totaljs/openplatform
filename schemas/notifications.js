@@ -63,7 +63,7 @@ NEWSCHEMA('Notification', function(schema) {
 			var model = $.model.$clean();
 			model.userid = user.id;
 			model.appid = app.id;
-			model.datecreated = F.datetime;
+			model.dtcreated = F.datetime;
 			model.ip = $.ip;
 
 			var can = true;
@@ -89,7 +89,7 @@ NEWSCHEMA('Notification', function(schema) {
 			else
 				user.countnotifications = 1;
 
-			user.datenotified = F.datetime;
+			user.dtnotified = NOW;
 
 			if (can) {
 
@@ -100,7 +100,7 @@ NEWSCHEMA('Notification', function(schema) {
 				OP.session.set2(user.id, user);
 
 				// Updates profile
-				FUNC.users.set(user, ['countnotifications', 'apps', 'datenotified'], () => FUNC.emit('users.notify', user.id, app.id), app);
+				FUNC.users.set(user, ['countnotifications', 'apps', 'dtnotified'], () => FUNC.emit('users.notify', user.id, app.id), app);
 			}
 
 			$.success();
