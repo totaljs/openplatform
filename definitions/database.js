@@ -46,8 +46,6 @@ FUNC.users.query = function(filter, callback) {
 	// filter.limit
 	// filter.appid
 
-	var fields = filter.fields ? filter.fields instanceof Array ? filter.fields : filter.fields.split(',') : null;
-
 	if (typeof(filter.id) === 'string')
 		filter.id = filter.id.split(',');
 
@@ -157,13 +155,7 @@ FUNC.users.query = function(filter, callback) {
 		if (take <= 0)
 			break;
 
-		if (fields && fields.length) {
-			var obj = {};
-			for (var j = 0; j < fields.length; j++)
-				obj[fields[j]] = user[fields[j]];
-			arr.push(obj);
-		} else
-			arr.push(user);
+		arr.push(user);
 	}
 
 	var data = {};

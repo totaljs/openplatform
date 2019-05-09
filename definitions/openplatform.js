@@ -350,7 +350,7 @@ function readapp(app, type) {
 	return obj;
 }
 
-function readuser(user, type, app) {
+function readuser(user, type, app, fields) {
 
 	// type 1: basic info
 	// type 2: all info
@@ -361,120 +361,155 @@ function readuser(user, type, app) {
 		return;
 
 	var obj = {};
-	obj.id = user.id;
 
-	if (user.supervisorid)
+	if (!fields || fields.id)
+		obj.id = user.id;
+
+	if (user.supervisorid || (!fields || fields.supervisorid))
 		obj.supervisorid = user.supervisorid;
 
-	if (user.deputyid)
+	if (user.deputyid && (!fields || fields.deputyid))
 		obj.deputyid = user.deputyid;
 
-	if (user.directory) {
-		obj.directory = user.directory;
-		obj.directoryid = user.directoryid;
-	} else
-		obj.directoryid = 0;
+	if (!fields || fields.directory) {
+		if (user.directory) {
+			obj.directory = user.directory;
+			obj.directoryid = user.directoryid;
+		} else
+			obj.directoryid = 0;
+	}
 
-	obj.statusid = user.statusid;
+	if (!fields || fields.statusid)
+		obj.statusid = user.statusid;
 
-	if (user.status)
+	if (user.status && (!fields || fields.status))
 		obj.status = user.status;
 
-	if (user.blocked)
+	if (user.blocked && (!fields || fields.blocked))
 		obj.blocked = user.blocked;
 
-	if (user.company)
+	if (user.company && (!fields || fields.company))
 		obj.company = user.company;
 
-	if (user.dtbirth)
+	if (user.dtbirth && (!fields || fields.dtbirth))
 		obj.dtbirth = user.dtbirth;
 
-	obj.dtcreated = user.dtcreated;
+	if (user.dtcreated && (!fields || fields.dtcreated))
+		obj.dtcreated = user.dtcreated;
 
-	if (user.dtend)
+	if (user.dtend && (!fields || fields.dtend))
 		obj.dtend = user.dtend;
 
-	if (user.dtbeg)
+	if (user.dtbeg && (!fields || fields.dtbeg))
 		obj.dtbeg = user.dtbeg;
 
-	if (user.dtupdated)
+	if (user.dtupdated && (!fields || fields.dtupdated))
 		obj.dtupdated = user.dtupdated;
 
-	obj.firstname = user.firstname;
-	obj.lastname = user.lastname;
-	obj.name = user.name;
+	if (user.firstname && (!fields || fields.firstname))
+		obj.firstname = user.firstname;
 
-	if (user.gender)
+	if (user.lastname && (!fields || fields.lastname))
+		obj.lastname = user.lastname;
+
+	if (user.name && (!fields || fields.name))
+		obj.name = user.name;
+
+	if (user.gender && (!fields || fields.gender))
 		obj.gender = user.gender;
 
-	if (user.language)
+	if (user.language && (!fields || fields.language))
 		obj.language = user.language;
 
-	obj.notifications = user.notifications;
-	obj.online = user.online;
+ 	if (!fields || fields.notifications)
+		obj.notifications = user.notifications;
 
-	if (user.photo)
+	if (!fields || fields.online)
+		obj.online = user.online;
+
+	if (user.photo && (!fields || fields.photo))
 		obj.photo = CONF.url + '/photos/' + user.photo;
 
-	if (user.ou)
+	if (user.ou && (!fields || fields.ou))
 		obj.ou = user.ou;
 
-	obj.ougroups = user.ougroups ? Object.keys(user.ougroups) : EMPTYARRAY;
+	if (!fields || fields.ougroups)
+		obj.ougroups = user.ougroups ? Object.keys(user.ougroups) : EMPTYARRAY;
 
-	if (user.locality)
+	if (user.locality && (!fields || fields.locality))
 		obj.locality = user.locality;
 
-	if (user.reference)
+	if (user.reference && (!fields || fields.locality))
 		obj.reference = user.reference;
 
-	if (user.dateformat)
+	if (user.dateformat && (!fields || fields.dateformat))
 		obj.dateformat = user.dateformat;
 
-	if (user.timeformat)
+	if (user.timeformat && (!fields || fields.timeformat))
 		obj.timeformat = user.timeformat;
 
-	obj.countnotifications = user.countnotifications || 0;
-	obj.countbadges = user.countbadges || 0;
-	obj.countsessions = user.countsessions || 0;
+	if (!fields || fields.countnotifications)
+		obj.countnotifications = user.countnotifications || 0;
 
-	obj.colorscheme = user.colorscheme || CONF.colorscheme;
-	obj.background = user.background || CONF.background;
-	obj.darkmode = user.darkmode;
+	if (!fields || fields.countbadges)
+		obj.countbadges = user.countbadges || 0;
 
-	if (obj.background)
+	if (!fields || fields.countsessions)
+		obj.countsessions = user.countsessions || 0;
+
+	if (!fields || fields.colorscheme)
+		obj.colorscheme = user.colorscheme || CONF.colorscheme;
+
+	if (!fields || fields.background)
+		obj.background = user.background || CONF.background;
+
+	if (!fields || fields.darkmode)
+		obj.darkmode = user.darkmode;
+
+	if (obj.background && (!fields || fields.background))
 		obj.background = CONF.url + '/backgrounds/' + obj.background;
 
-	var appdata = user.apps[app.id];
+	if (!fields || fields.roles) {
+		var appdata = user.apps[app.id];
+		if (user.roles && user.roles.length) {
+			obj.roles = appdata ? appdata.roles.slice(0) : EMPTYARRAY;
+			for (var i = 0; i < user.roles.length; i++) {
+				if (obj.roles.indexOf(user.roles[i]) === -1)
+					obj.roles.push(user.roles[i]);
+			}
+		} else
+			obj.roles = appdata ? appdata.roles : EMPTYARRAY;
+	}
 
-	if (user.roles && user.roles.length) {
-		obj.roles = appdata ? appdata.roles.slice(0) : EMPTYARRAY;
-		for (var i = 0; i < user.roles.length; i++) {
-			if (obj.roles.indexOf(user.roles[i]) === -1)
-				obj.roles.push(user.roles[i]);
-		}
-	} else
-		obj.roles = appdata ? appdata.roles : EMPTYARRAY;
+	if (!fields || fields.groups)
+		obj.groups = user.groups;
 
-	obj.groups = user.groups;
-
-	if (user.sa)
+	if (user.sa && (!fields || fields.sa))
 		obj.sa = user.sa;
 
-	var token = OP.encodeToken(app, user);
+	if (!fields || fields.sounds)
+		obj.sounds = user.sounds;
 
-	obj.sounds = user.sounds;
-	obj.volume = user.volume;
-	obj.badge = CONF.url + '/api/badges/?accesstoken=' + token;
+	if (!fields || fields.volume)
+		obj.volume = user.volume;
 
-	if (obj.notifications)
+	var token;
+
+	if (!fields || fields.badge || (obj.notifications && fields.notify))
+		token = OP.encodeToken(app, user);
+
+	if (!fields || fields.badge)
+		obj.badge = CONF.url + '/api/badges/?accesstoken=' + token;
+
+	if (obj.notifications && (!fields || fields.notify))
 		obj.notify = CONF.url + '/api/notify/?accesstoken=' + token;
 
-	switch (type) {
-		case 2:
-		case 4:
+	if (type === 2 || type === 4) {
+		if (!fields || fields.email)
 			obj.email = user.email;
+
+		if (!fields || fields.phone)
 			obj.phone = user.phone;
-			break;
 	}
 
 	return obj;
@@ -482,10 +517,21 @@ function readuser(user, type, app) {
 
 OP.users = function(app, query, callback) {
 	if (app.allowreadusers) {
+
+		var fields = query.fields ? query.fields instanceof Array ? query.fields : query.fields.split(',') : null;
+		var f;
+
+		if (fields) {
+			f = {};
+			for (var i = 0; i < fields.length; i++)
+				f[fields[i]] = 1;
+		}
+
+
 		query.appid = app.id;
 		FUNC.users.query(query, function(err, users) {
 			for (var i = 0; i < users.items.length; i++)
-				users.items[i] = readuser(users.items[i], app.allowreadusers, app);
+				users.items[i] = readuser(users.items[i], app.allowreadusers, app, f);
 			callback(null, users);
 		});
 	} else
