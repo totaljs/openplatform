@@ -27,7 +27,7 @@ rm definitions/op-database-mongodb-bk.js
 
 tpm create openplatform.package
 cp openplatform.package ../openplatform.bundle
-cp openplatform.package ../openplatform@4.bundle
+# cp openplatform.package ../openplatform@4.bundle
 
 cd ..
 rm -rf .bundle
