@@ -166,7 +166,6 @@ OP.init = function(callback) {
 	});
 };
 
-
 document.addEventListener('click', function() {
 	OP && OP.focus();
 });
