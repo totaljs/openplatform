@@ -28,7 +28,6 @@
 	<div data---="LAZY contextmenu"></div>
 	<div data---="LAZY confirm"></div>
 	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
-	<div data---="LAZY contextmenu"></div>
 	<div data---="LAZY calendar"></div>
 	<div data---="LAZY message__null__button:@(Close)"></div>
 	<div data---="LAZY menu"></div>
@@ -47,7 +46,10 @@
 	<header data-bind="user__.header-show:value && value.name">
 
 		<div class="button-status exec" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
-		<div class="datetime hidden-xs" data---="time"></div>
+		<div class="datetime hidden-xs">
+			<span class="exec" data-exec="Dashboard/showdesktop" title="@(Show desktop)"><i class="fa fa-ellipsis-v"></i></span>
+			<div data---="time"></div>
+		</div>
 
 		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value">
 			<i class="fa fa-th"></i>
@@ -55,9 +57,11 @@
 
 		<div class="nav">
 			<div>
-				<nav data---="repeater__dashboard.apps__$setter:Dashboard/resizeapps" id="dashboardapps">
+				<nav data-bind="dashboard.apps__change:Dashboard/resizeapps__template:button" id="dashboardapps">
 					<script type="text/html">
-						<button title="{{ internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ id }}"><b class="appbadge{{ if !internal.countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ internal.icon }}"></i><span class="appprogress ap{{ id }}"><span class="userbg"></span></span></button>
+						{{ foreach m in value }}
+							<button title="{{ m.internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ m.id }}"><b class="appbadge{{ if !m.internal.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ m.internal.icon }}"></i><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
+						{{ end }}
 					</script>
 				</nav>
 			</div>
@@ -115,19 +119,23 @@
 			</div>
 			<div data---="search__common.startmenusearch__selector:.app" class="startmenu-apps-container">
 				<div class="noscrollbar">
-					<div data---="repeater__user.apps__if:!value.internal">
+					<div data-bind="user.apps__template:.app">
 						<script type="text/html">
-							<div class="app{{ if !online }} app-offline{{ fi }}{{ if running }} app-running{{ fi }}{{ responsive | responsive }}" data-id="{{ id }}" data-search="{{ title }}">
-								<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
-								<i class="far fa-bell-slash appnonotify{{ if !mutenotifications }} hidden{{ fi }}" data-id="{{ id }}"></i>
-								<i class="appclose fa fa-times {{ if !running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ id }}"></i>
-								<b class="appunread{{ if !countnotifications }} hidden{{ fi }}" data-id="{{ id }}">{{ countnotifications }}</b>
-								<b class="appbadge{{ if !countbadges }} hidden{{ fi }}" data-id="{{ id }}"><i class="fa fa-circle"></i></b>
-								<div class="app-container">
-									<div class="app-icon"><i class="fa fa-{{ icon }}"></i></div>
-									<div class="app-meta">{{ title }}</div>
+							{{ foreach m in value }}
+								{{ if !m.internal }}
+								<div class="app{{ if !m.online }} app-offline{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.responsive | responsive }}" data-id="{{ m.id }}" data-search="{{ m.title }}">
+									<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
+									<i class="far fa-bell-slash appnonotify{{ if !m.mutenotifications }} hidden{{ fi }}" data-id="{{ m.id }}"></i>
+									<i class="appclose fa fa-times {{ if !m.running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ m.id }}"></i>
+									<b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b>
+									<b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b>
+									<div class="app-container">
+										<div class="app-icon"><i class="fa fa-{{ m.icon }}"></i></div>
+										<div class="app-meta">{{ m.title }}</div>
+									</div>
 								</div>
-							</div>
+								{{ fi }}
+							{{ end }}
 						</script>
 					</div>
 				</div>
@@ -140,6 +148,27 @@
 			<div class="startmenu-profile exec" data-exec="Dashboard/showprofile">
 				<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
 				<span data-bind="user.name__html:value"></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="launchpad">
+		<div class="noscrollbar">
+			<div data-bind="user.apps__template:figure">
+				<script type="text/html">
+					{{ foreach m in value }}
+						{{ if m.favorite }}
+						<figure class="launchpadapp app{{ if !m.online }} app-offline{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.responsive | responsive }}" data-exec="Dashboard/open" data-id="{{ m.id }}">
+							<div>
+								<i class="far fa-bell-slash appnonotify{{ if !m.mutenotifications }} hidden{{ fi }}" data-id="{{ m.id }}"></i>
+								<b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b>
+								<i class="fa fa-{{ m.icon }}"></i>
+								<span>{{ m.title }}<b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b></span>
+							</div>
+						</figure>
+						{{ fi }}
+					{{ end }}
+				</script>
 			</div>
 		</div>
 	</div>
@@ -183,7 +212,12 @@
 		}
 
 		$('body').on('click touchstart', function(e) {
-			e.target.nodeName === 'BODY' && common.startmenu && TOGGLE('common.startmenu');
+			if (common.startmenu) {
+				var t = e.target;
+				var el = $(t);
+				if (t.tagName === 'BODY' || el.closest('.launchpad').length)
+					TOGGLE('common.startmenu');
+			}
 		});
 
 		function mainmenu(el) {
@@ -290,6 +324,34 @@
 
 		PLUGIN('Dashboard', function(self) {
 
+			self.favorite = function(id) {
+				AJAX('GET /api/profile/{0}/favorite/'.format(id), function(response) {
+					var app = user.apps.findItem('id', id);
+					app.favorite = response.value;
+					user.apps.quicksort('title');
+					UPD('user.apps');
+				});
+			};
+
+			self.showdesktop = function() {
+
+				if (common.hiddenwindows)
+					return;
+
+				SET('common.hiddenwindows', true);
+
+				var back = function() {
+					SET('common.hiddenwindows', false);
+					$('.ui-process').rclass('hidden2');
+					$(document).off('click', back);
+				};
+
+				$('.ui-process').aclass('hidden2');
+				setTimeout(function() {
+					$(document).on('click', back);
+				}, 10);
+			};
+
 			self.hidemenu = function() {
 				SET('common.startmenu', false);
 			};
@@ -307,9 +369,8 @@
 				SET('common.startmenu', false);
 			};
 
-			self.resizeapps = function() {
-				var el = this.element;
-				setTimeout2(this.ID, function() {
+			self.resizeapps = function(value, path, el) {
+				setTimeout2('resizeapps', function() {
 					el.css('width', el.find('button').length * 52);
 					var parent = el.parent().parent();
 					parent.css('width', WW - (80 + (WIDTH() === 'xs' ? 60 : 220)));
@@ -403,7 +464,7 @@
 						}
 						next();
 					});
-				} else
+				} else if (!user.apps.findItem('favorite', true))
 					SET('common.startmenu', true, 500);
 			};
 
@@ -426,6 +487,7 @@
 				if (!isMOBILE)
 					opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'reset' });
 
+				opt.items.push({ name: '@(Favorite)', icon: '!fa' + (iframe.meta.internal.favorite ? '' : 'r') + ' fa-heart', value: 'favorite' });
 				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
 				next();
 			};
@@ -665,8 +727,6 @@
 					return;
 				}
 
-				profile.apps.quicksort('title');
-
 				if (window.user && window.user.apps) {
 					var apps = profile.apps;
 					for (var i = 0; i < apps.length; i++) {
@@ -679,6 +739,14 @@
 					}
 				}
 
+				if (!common.ready) {
+					SET('common.ready', true);
+					setTimeout(function() {
+						$('.launchpad').aclass('launchpad-visible');
+					}, 1000);
+				}
+
+				profile.apps.quicksort('title');
 				SET('user', profile);
 				refresh_color(user);
 				EXEC('Dashboard/sync');
@@ -791,6 +859,7 @@
 			if (!isMOBILE)
 				opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'resetsize' });
 
+			opt.items.push({ name: '@(Favorite)', icon: '!fa' + (app.favorite ? '' : 'r') + ' fa-heart', value: 'favorite' });
 			opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
 
 			opt.callback = function(item) {
@@ -799,7 +868,61 @@
 					setTimeout(function() {
 						SETTER('processes', 'highlight', id);
 					}, 100);
-				}
+				} else if (item.value === 'favorite')
+					EXEC('Dashboard/favorite', id);
+			};
+
+			SETTER('menu', 'show', opt);
+		});
+
+		$(document).on('contextmenu', '.launchpadapp', function(e) {
+
+			e.stopPropagation();
+			e.preventDefault();
+
+			var opt = {};
+			var el = $(this);
+
+			opt.x = e.pageX;
+			opt.y = e.pageY;
+
+			var id = el.attrd('id');
+			var app = user.apps.findItem('id', id);
+
+			if (app == null)
+				return;
+
+			var appel = $('.ui-process[data-id="{0}"]'.format(id));
+			var hidden = appel.hclass('hidden');
+			var running = !!appel.length;
+
+			opt.items = [];
+			opt.items.push(app.title);
+
+			if (running) {
+				if (!hidden)
+					opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
+
+				opt.items.push({ name: '@(Show window)', icon: '!far fa-window-maximize', value: 'maximize' });
+
+				if (!hidden)
+					opt.items.push({ name: '@(Minimize window)', icon: 'window-minimize', value: 'minimize' });
+
+				if (!isMOBILE)
+					opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'resetsize' });
+			}
+
+			opt.items.push({ name: '@(Favorite)', icon: 'heart', value: 'favorite' });
+			running && opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
+
+			opt.callback = function(item) {
+				SETTER('processes', item.value, id);
+				if (item.value === 'maximize') {
+					setTimeout(function() {
+						SETTER('processes', 'highlight', id);
+					}, 100);
+				} else if (item.value === 'favorite')
+					EXEC('Dashboard/favorite', id);
 			};
 
 			SETTER('menu', 'show', opt);

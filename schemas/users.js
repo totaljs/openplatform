@@ -47,7 +47,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('dtbirth', Date);
 	schema.define('dtbeg', Date);
 	schema.define('dtend', Date);
-	schema.define('apps', Object); // { "appid": { roles: [], options: '' } }
+	schema.define('apps', Object); // { "appid": { roles: [], options: '', favorite: false } }
 
 	schema.setQuery(function($) {
 		OP.decodeAuthToken($.query.accesstoken || '', function(err, obj) {

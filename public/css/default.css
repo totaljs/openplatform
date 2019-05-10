@@ -8,6 +8,8 @@ body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 #pincodewindow { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 10000; background-color: rgba(255,255,255,0.8); }
 .light #pincodewindow {}
 
+.hidden2 { display: none; }
+
 header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; top: -50px; color: #909090; transition: all 0.3s; box-shadow: 0 5px 5px rgba(0,0,0,0.15); }
 header .nav { float: left; width: 70%; overflow: hidden; height: 45px; }
 header .nav > div { overflow-x: scroll; width: 100%; height: 80px; overflow-scrolling: touch; overflow-y: hidden }
@@ -19,8 +21,14 @@ header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button.focused { background-color: #4c4c4c; }
 header nav button > .fa { font-size: 20px; }
 header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
-header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 6px 0 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
+header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
+header .datetime > div { padding: 7px 0 0; }
+header .datetime > span { width: 10px; height: 45px; float: left; background-color: rgba(0,0,0,0.2); cursor: pointer; line-height: 45px; font-size: 10px; text-align: center; color: gray; }
+header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 .header-show { top: 0; }
+
+.light header .datetime > span { background-color: rgba(0,0,0,0.05); }
+.light header .datetime > span:hover { background-color: rgba(0,0,0,0.1); }
 
 .button-status { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 20px; cursor: pointer; text-align: center; background-color: rgba(0,0,0,0.05); border-left: 1px solid #C9C9C9; }
 .ui-dark .button-status { border-left-color: #404040; }
@@ -149,34 +157,33 @@ h3 i { margin-right: 5px; }
 .button-notifications .fa { color: white; }
 .button-notifications .far { color: #606060; }
 
-.app { padding: 0; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
+.startmenu-apps .app { padding: 0; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
 .app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: #E0E0E0; background-color: rgba(0,0,0,0.08); margin-bottom: 1px; }
 .app-container:hover { background-color: rgba(0,0,0,0.15); }
-
 .app-container:hover .app-icon { color: white;  background-color: rgba(0,0,0,0.25); }
-.app-offline { cursor: not-allowed; box-shadow: none !important; }
-.app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
-.app-offline .app-version { color: silver; }
-.app-offline img { opacity: 0.4; }
-.app-disabled .app-container { background-color: rgba(0,0,0,0.04) !important; cursor: not-allowed; box-shadow: none !important; color: #606060; }
-.app-disabled .app-icon { color: #606060 !important; }
-.app-disabled .app-name { border-color: #E0E0E0 !important; color: silver; }
-.app-disabled .app-version { color: silver; }
-.app-disabled img { opacity: 0.4; }
+.startmenu-apps .app-offline { cursor: not-allowed; box-shadow: none !important; }
+.startmenu-apps .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
+.startmenu-apps .app-offline .app-version { color: silver; }
+.startmenu-apps .app-offline img { opacity: 0.4; }
+.startmenu-apps .app-disabled .app-container { background-color: rgba(0,0,0,0.04) !important; cursor: not-allowed; box-shadow: none !important; color: #606060; }
+.startmenu-apps .app-disabled .app-icon { color: #606060 !important; }
+.startmenu-apps .app-disabled .app-name { border-color: #E0E0E0 !important; color: silver; }
+.startmenu-apps .app-disabled .app-version { color: silver; }
+.startmenu-apps .app-disabled img { opacity: 0.4; }
 
 .light .app-disabled .app-container { color: #A0A0A0; }
 .light .app-disabled .app-icon { color: #A0A0A0 !important; }
 
-.app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 9px; }
-.app > span .fa { margin-right: 5px; }
-.app-offline > span { display: block; }
-.app img { width: 120px; height: 120px; border-radius: 4px; }
-.app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
-.app-version { color: #A0A0A0; font-size: 11px; }
-.app .fa-times { position: absolute; right: 10px; top: 9px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
-.app .fa-times:hover { opacity: 0.8; }
+.startmenu-apps .app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 9px; }
+.startmenu-apps .app > span .fa { margin-right: 5px; }
+.startmenu-apps .app-offline > span { display: block; }
+.startmenu-apps .app img { width: 120px; height: 120px; border-radius: 4px; }
+.startmenu-apps .app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
+.startmenu-apps .app-version { color: #A0A0A0; font-size: 11px; }
+.startmenu-apps .app .fa-times { position: absolute; right: 10px; top: 9px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
+.startmenu-apps .app .fa-times:hover { opacity: 0.8; }
 .appunread { position: absolute; background-color: #D23B3B; color: white; width: 18px; border-radius: 100%; height: 18px; font-size: 10px; line-height: 18px; margin-top: -2px; left: 3px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
-.app .appbadge { position: absolute; margin: 14px 0 0 37px; font-size: 7px; }
+.startmenu-apps .app .appbadge { position: absolute; margin: 14px 0 0 37px; font-size: 7px; }
 .appbadge .fa { color: red; font-size: 7px; }
 
 .appprocess { position: relative; }
@@ -290,10 +297,10 @@ h3 i { margin-right: 5px; }
 	.startmenu-apps { margin-right: 0; height: 318px; }
 	.startmenu-apps-container { width: 100%; position: relative; height: 272px; }
 	.startmenu-version { display: none; }
-	.app { margin-right: 0; }
-	.app-icon { width: 42px; }
-	.app-meta { margin-left: 50px; }
-	.app-name { font-size: 16px; margin-bottom: 3px; }
+	.startmenu-apps .app { margin-right: 0; }
+	.startmenu-apps .app-icon { width: 42px; }
+	.startmenu-apps .app-meta { margin-left: 50px; }
+	.startmenu-apps .app-name { font-size: 16px; margin-bottom: 3px; }
 	.startmenu-search { padding: 2px 5px; }
 	.startmenu-search .ui-textbox { height: 40px; }
 	.startmenu-search .ui-textbox-input { padding: 11px 4px 0 10px; }
@@ -302,7 +309,7 @@ h3 i { margin-right: 5px; }
 	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; margin-top: 5px; }
 	.startmenu-nav nav button { padding: 7px 0; font-size: 16px; }
 	.startmenu-nav .fa { width: 34px; }
-	.app .appbadge { position: absolute; margin: 27px 0 0 22px; }
+	.startmenu-apps .app .appbadge { position: absolute; margin: 27px 0 0 22px; }
 	.username { right: 0; left: 0; text-align: center; }
 	.startmenu-title img { display: none; }
 	.startmenu-title > span { display: none; }
@@ -314,4 +321,30 @@ h3 i { margin-right: 5px; }
 	0% { transform: scale(1); }
 	50% { transform: scale(1.2); }
 	100% { transform: scale(1); }
+}
+
+.launchpad { position: absolute; overflow: hidden; opacity: 0; transform: scale(1.3); transition: transform 0.3s; }
+.launchpad figure { width: 20%; text-align: center; position: relative; display: inline-block; font-size: 12px; margin-bottom: 40px; }
+.launchpad figure div { max-width: 120px; margin: 0 auto; width: 100%; color: rgba(255,255,255,0.5); cursor: pointer; transition: color 0.3s text-align: center; }
+.launchpad figure i { display: block; font-size: 50px; margin-bottom: 10px; }
+.launchpad figure div:hover { color: white; }
+.launchpad figure span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.launchpad .appunread { margin: 5px 0 0 -30px; left: 50%; }
+.launchpad .appbadge { margin-left: 6px; position: relative; display: inline-block; vertical-align: top; }
+.launchpad .app.app-running div { color: white; }
+.launchpad .app-disabled { opacity: 0.5; cursor: not-allowed; }
+.launchpad .app-disabled div:hover { color: rgba(255,255,255,0.5); }
+.launchpad-visible { transform: scale(1); opacity: 1; }
+
+.light .launchpad figure div { color: rgba(0,0,0,0.4); }
+.light .launchpad .app.app-running div { color: black; }
+.light .launchpad figure div:hover { color: black; }
+.light .launchpad .app-disabled div:hover { color: rgba(0,0,0,0.4); }
+
+@media(max-width: 980px) {
+	.launchpad figure { width: 33%; }
+}
+
+@media(max-width: 768px) {
+	.launchpad figure i { font-size: 35px; margin-bottom: 6px; }
 }

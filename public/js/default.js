@@ -23,15 +23,20 @@ WATCH('common.page', function() {
 });
 
 ON('resize', function() {
-	var h = $(window).height();
-	$('.scrollable').css('height', h - 50);
+
+	$('.scrollable').css('height', WH - 50);
 	$('.fullheight').each(function() {
 		var el = $(this);
-		el.css('height', h - (el.offset().top + 20));
+		el.css('height', WH - (el.offset().top + 20));
 	});
 
+	var d = WIDTH();
+	var w = (WW / (d === 'xs' ? 1.10 : 1.40)) >> 0;
+	var h = (WH / 1.40) >> 0;
+	$('.launchpad').css({ height: h, width: w, left: ((WW / 2) - (w / 2)) >> 0, top: ((WH / 2) - (h / 2)) >> 0 }).noscrollbar(true);
 	var com = $('#dashboardapps')[0].$com;
 	com && PLUGIN('Dashboard').resizeapps.call(com);
+
 });
 
 $(window).on('resize', function() {

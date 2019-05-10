@@ -179,6 +179,18 @@ NEWSCHEMA('App', function(schema) {
 		});
 	});
 
+	schema.addWorkflow('favorite', function($) {
+		var user = $.user;
+		var app = user.apps[$.id];
+		if (app) {
+			app.favorite = app.favorite == null ? true : !app.favorite;
+			session.set2(user.id, user);
+			FUNC.users.set(user, ['apps']);
+			$.success(true, app.favorite);
+		} else
+			$.invalid('error-apps-404');
+	});
+
 	schema.addWorkflow('run', function($) {
 
 		var user = $.user;

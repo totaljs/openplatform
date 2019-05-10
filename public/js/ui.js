@@ -2019,6 +2019,9 @@ COMPONENT('processes', function(self, config) {
 							}
 
 							switch (selected.value) {
+								case 'favorite':
+									EXEC('Dashboard/favorite', id);
+									break;
 								case 'print':
 									self.message(iframes.findItem('id', id), 'print');
 									break;
