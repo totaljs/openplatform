@@ -341,7 +341,11 @@ h3 i { margin-right: 5px; }
 .light .launchpad figure div:hover { color: black; }
 .light .launchpad .app-disabled div:hover { color: rgba(0,0,0,0.4); }
 
-@media(max-width: 980px) {
+@media(min-width: 1500px) {
+	.launchpad figure { width: 15%; }
+}
+
+@media(max-width: 1150px) {
 	.launchpad figure { width: 33%; }
 }
 

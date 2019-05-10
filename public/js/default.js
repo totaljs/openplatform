@@ -34,8 +34,8 @@ ON('resize', function() {
 	var w = (WW / (d === 'xs' ? 1.10 : 1.40)) >> 0;
 	var h = (WH / 1.40) >> 0;
 	$('.launchpad').css({ height: h, width: w, left: ((WW / 2) - (w / 2)) >> 0, top: ((WH / 2) - (h / 2)) >> 0 });
-	var com = $('#dashboardapps')[0].$com;
-	com && PLUGIN('Dashboard').resizeapps.call(com);
+	var el = $('#dashboardapps');
+	el && PLUGIN('Dashboard').resizeapps.call(el, null, null, el);
 
 });
 

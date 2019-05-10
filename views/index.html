@@ -57,7 +57,7 @@
 
 		<div class="nav">
 			<div>
-				<nav data-bind="dashboard.apps__change:Dashboard/resizeapps__template:button" id="dashboardapps">
+				<nav data-bind="dashboard.apps__exec:Dashboard/resizeapps__template:button" id="dashboardapps">
 					<script type="text/html">
 						{{ foreach m in value }}
 							<button title="{{ m.internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ m.id }}"><b class="appbadge{{ if !m.internal.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="fa fa-{{ m.internal.icon }}"></i><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
