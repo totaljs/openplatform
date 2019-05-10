@@ -170,6 +170,7 @@ h3 i { margin-right: 5px; }
 .startmenu-apps .app-disabled .app-name { border-color: #E0E0E0 !important; color: silver; }
 .startmenu-apps .app-disabled .app-version { color: silver; }
 .startmenu-apps .app-disabled img { opacity: 0.4; }
+.appfavorite { position: absolute; font-size: 6px; margin: 28px 0 0 18px; z-index: 1; }
 
 .light .app-disabled .app-container { color: #A0A0A0; }
 .light .app-disabled .app-icon { color: #A0A0A0 !important; }
