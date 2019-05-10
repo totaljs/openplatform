@@ -247,7 +247,7 @@
 					<div class="m hidden" data-bind="apps.form.id__show" data---="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
 
 					<hr />
-					<div data-bind="apps.form.settings__show" class="hidden padding bg-smoke m radius">
+					<div data-bind="apps.form.settings2__show:value && value.length" class="hidden padding bg-smoke m radius">
 						<h2 class="red"><i class="fa fa-cog fa-spin"></i>@(Custom application settings)</h2>
 						<div data---="parameters__apps.form.settings2__height:150;dateformat:@(yyyy-MM-dd)"></div>
 					</div>
