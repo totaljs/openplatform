@@ -14,6 +14,42 @@ OP.interval = setInterval(function() {
 	}
 }, 500);
 
+document.addEventListener('click', function(e) {
+
+	var target = e.target;
+
+	if (target.tagName === 'A') {
+
+		if (target.href.substring(0, 15) === 'openplatform://') {
+
+			var app = target.href.substring(15);
+			var index = app.indexOf('?');
+			var data = index === - 1 ? '' : app.substring(index + 1);
+
+			if (index !== -1)
+				app = app.substring(0, index);
+
+			e.preventDefault();
+
+			if (data) {
+				var arr = data.split('&');
+				data = {};
+				for (var i = 0; i < arr.length; i++) {
+					var arg = arr[i].split('=');
+					if (arg[0])
+						data[arg[0]] = arg[1] && decodeURIComponent(arg[1]);
+				}
+			}
+
+			console.log(data);
+
+			OP.share(app, 'link', data);
+			return false;
+		}
+	}
+
+});
+
 document.onkeydown = function(e) {
 	if (e.keyCode === 116) {
 		e.returnValue = false;

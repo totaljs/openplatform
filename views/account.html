@@ -1,7 +1,7 @@
 <style>
 	/*auto*/
 	.accountphoto { background-color: #F0F0F0; padding: 20px 0; }
-	.accountphoto img { max-width: 130px; }
+	.accountphoto img { max-width: 110px; }
 	.ui-appearance { height: 55px; }
 	.ui-appearance-label { float: left; padding: 5px 0 0 0; font-size: 12px; width: 250px; }
 	.ui-appearance-label i { margin-right: 5px; }
@@ -45,7 +45,7 @@
 
 		<div class="accountphoto">
 			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
-			<div class="help center"><i class="fa fa-camera"></i>@(Recommended resolution 300x300 pixels)</div>
+			<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
 		</div>
 
 		<div class="scroller-padding">
@@ -84,14 +84,15 @@
 				<div class="col-2">
 					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
 					<div data---="checkbox__account.changepassword" class="b red">@(Change password)</div>
-					<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
-						<i class="fa fa-volume-up"></i>
-						<div>
-							<span data-volume="15">silent</span>
-							<span data-volume="50">medium</span>
-							<span data-volume="100">loud</span>
-						</div>
-					</div>
+				</div>
+			</div>
+
+			<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
+				<i class="fa fa-volume-up"></i>
+				<div>
+					<span data-volume="15">@(silent)</span>
+					<span data-volume="50">@(medium)</span>
+					<span data-volume="100">@(loud)</span>
 				</div>
 			</div>
 
@@ -104,7 +105,7 @@
 
 		</div>
 
-		<div class="scroller-padding bg-yellow npb">
+		<div class="scroller-padding bg-yellow-fade npb">
 			<h2><i class="fa fa-lock"></i>@(Screen locking)</h2>
 			<div class="fs12 m">@(Screen will be locked only on desktop computers. )</div>
 			<div class="row">
@@ -194,5 +195,12 @@
 		el.find('span[data-volume="{0}"]'.format(value)).aclass('selected');
 		CHANGE('account.email');
 	}
+
+	ON('resize', function() {
+		setTimeout2('resize', function() {
+			resizelayout();
+			SETTER('scrollbar', 'resize');
+		}, 100);
+	});
 
 </script>

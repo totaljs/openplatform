@@ -110,11 +110,21 @@
 					<div data---="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json);$id:firstinput">@(URL address to <b>openplatform.json</b>)</div>
 					<div data---="error__apps.form.data" class="ui-error-nm"></div>
 
-					<div data-bind="apps.form.data__template__show:value && value.name && value.url" class="bg-smoke" style="margin-top:10px">
+					<div data-bind="apps.form.data__template__show:value && value.name && value.url" style="margin-top:10px">
 						<script type="text/html">
-							<div class="padding">
+
+							{{ if value.readme }}
+							<hr style="margin-bottom:12px" />
+							<div>
+								<h2>@(Read me)</h2>
+								{{ value.readme | markdown }}
+							</div>
+							{{ fi }}
+
+							<div class="padding bg-smoke radius">
 								<div class="b"><i class="fa fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
 								<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
+
 								{{ if value.description }}
 									<div class="help m" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
 								{{ fi }}
@@ -168,12 +178,12 @@
 										<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
 									</tr>
 								</table>
-								<div class="help" style="margin-top:15px"><i class="fa fa-warning red"></i>@(Application can't change own permissions when is installed.)</div>
+								<div class="help" style="margin-top:15px"><i class="fa fa-warning red"></i>@(Application can't change its own permissions when is installed.)</div>
 							</div>
 						</script>
 					</div>
 
-					<div data-bind="apps.form__template__show:value && value.id" class="bg-yellow" style="margin-top:10px">
+					<div data-bind="apps.form__template__show:value && value.id" class="bg-yellow radius" style="margin-top:10px">
 						<script type="text/html">
 							<div class="padding">
 
@@ -235,14 +245,28 @@
 					<div data---="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
 					<div class="mt10 m b" data---="checkbox__apps.form.blocked">@(Application is blocked)</div>
 					<div class="m hidden" data-bind="apps.form.id__show" data---="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
+
 					<hr />
+					<div data-bind="apps.form.settings__show" class="hidden padding bg-smoke m radius">
+						<h2 class="red"><i class="fa fa-cog fa-spin"></i>@(Custom application settings)</h2>
+						<div data---="parameters__apps.form.settings2__height:150;dateformat:@(yyyy-MM-dd)"></div>
+					</div>
+
 					<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
 					<div data---="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25;type:lower"></div>
 					<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
 					<hr />
-					<div data---="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
-					<div class="help m"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>
-					<div data---="textbox__apps.form.settings__icon2:cog;maxlength:200;placeholder:@(You can type your own custom settings)" class="m">@(Custom settings)</div>
+
+					<div class="row">
+						<div class="col-sm-6 m">
+							<div data---="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
+							<div class="help"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>
+						</div>
+						<div class="col-sm-6 m">
+							<div data---="textbox__apps.form.serialnumber__maxlength:50">@(Serial number)</div>
+							<div class="help"><i class="fa fa-warning"></i>@(Enter a serial number if the author requires it)</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="buttonbar" data---="validation__apps.form">
@@ -349,6 +373,15 @@
 
 		var data = CLONE(apps.form);
 
+		data.settings = data.settings2.length ? {} : null;
+
+		for (var i = 0; i < data.settings2.length; i++) {
+			var item = data.settings2[i];
+			data.settings[item.name] = item.value;
+		}
+
+		data.settings2 = undefined;
+
 		AJAX('POST /api/internal/apps/', data, function(response) {
 			OP.loading(false);
 			SET('apps.form.response', response);
@@ -390,11 +423,48 @@
 		OP.loading(true);
 		AJAX('POST /api/internal/apps/meta/', { url: value }, function(response, err) {
 			OP.loading(false, 500);
+
 			if (response instanceof Array) {
 				SET('apps.form.data', response);
 			} else {
 
 				var val = response.value;
+
+				if (val && !val.settings)
+					val.settings = {};
+
+				var settings = val.settings;
+				var newsettings = [];
+
+				var keys = Object.keys(settings);
+				for (var i = 0; i < keys.length; i++) {
+					var key = keys[i];
+					var type = settings[key].toLowerCase();
+					var v = apps.form.settings ? apps.form.settings[key] : null;
+					var vt = typeof(v);
+
+					if (v == null || type !== vt) {
+						switch (type) {
+							case 'number':
+								v = 0;
+								break;
+							case 'string':
+								v = '';
+								break;
+							case 'boolean':
+								v = false;
+								break;
+							case 'date':
+								if (!(v instanceof Date))
+									v = null;
+								break;
+						}
+					}
+
+					newsettings.push({ name: key, type: type, value: v });
+				}
+
+				SET('apps.form.settings2', newsettings);
 				SET('apps.form.data', val);
 
 				MODIFY('apps.form', function(cur) {
@@ -408,6 +478,8 @@
 					!cur.title && (cur.title = val.title || val.name);
 					return cur;
 				}, 'url');
+
+
 			}
 		});
 	});
@@ -432,5 +504,9 @@
 			PUSH('apps.form.directories', selected.name, 2);
 		}, 0, 5, 2);
 	}
+
+	Thelpers.markdown = function(value) {
+		return (value || '').markdown();
+	};
 
 </script>

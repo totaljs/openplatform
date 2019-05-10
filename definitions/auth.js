@@ -1,4 +1,4 @@
-const SERVICEACCOUNT = { id: '0000000000000000000', name: 'Service Account', sa: true };
+const SERVICEACCOUNT = { id: '0000000000000000000', name: 'Service Account', sa: true, service: true };
 var DDOS = {};
 
 AUTH(function($) {

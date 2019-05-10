@@ -1192,7 +1192,7 @@ COMPONENT('importer', function(self, config) {
 	};
 });
 
-COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:{file\\:base64,name\\:filename};format:{0}', function(self, config) {
+COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;customize:1;schema:{file\\:base64,name\\:filename}', function(self, config) {
 
 	var empty, img, canvas, name, content = null;
 
@@ -1235,7 +1235,16 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 		canvas = null;
 	};
 
-	self.resize = function(image) {
+	var resizewidth = function(w, h, size) {
+		return Math.ceil(w * (size / h));
+	};
+
+	var resizeheight = function(w, h, size) {
+		return Math.ceil(h * (size / w));
+	};
+
+	self.resizeforce = function(image) {
+
 		var canvas = document.createElement('canvas');
 		var ctx = canvas.getContext('2d');
 		canvas.width = config.width;
@@ -1247,20 +1256,63 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 		var h = 0;
 		var x = 0;
 		var y = 0;
+		var is = false;
+		var diff = 0;
 
-		if (image.width < config.width && image.height < config.height) {
-			w = image.width;
-			h = image.height;
-			x = (config.width / 2) - (image.width / 2);
-			y = (config.height / 2) - (image.height / 2);
-		} else if (image.width >= image.height) {
-			w = config.width;
-			h = image.height * (config.width / image.width);
-			y = (config.height / 2) - (h / 2);
-		} else {
-			h = config.height;
-			w = (image.width * (config.height / image.height)) >> 0;
-			x = (config.width / 2) - (w / 2);
+		if (config.customize) {
+			if (image.width > config.width || image.height > config.height) {
+				if (image.width > image.height) {
+
+					w = resizewidth(image.width, image.height, config.height);
+					h = config.height;
+
+					if (w < config.width) {
+						w = config.width;
+						h = resizeheight(image.width, image.height, config.width);
+					}
+
+					if (w > config.width) {
+						diff = w - config.width;
+						x -= (diff / 2) >> 0;
+					}
+
+					is = true;
+				} else if (image.height > image.width) {
+
+					w = config.width;
+					h = resizeheight(image.width, image.height, config.width);
+
+					if (h < config.height) {
+						h = config.height;
+						w = resizewidth(image.width, image.height, config.height);
+					}
+
+					if (h > config.height) {
+						diff = h - config.height;
+						y -= (diff / 2) >> 0;
+					}
+
+					is = true;
+				}
+			}
+		}
+
+		if (!is) {
+			if (image.width < config.width && image.height < config.height) {
+				w = image.width;
+				h = image.height;
+				x = (config.width / 2) - (image.width / 2);
+				y = (config.height / 2) - (image.height / 2);
+			} else if (image.width >= image.height) {
+				w = config.width;
+				h = image.height * (config.width / image.width);
+				y = (config.height / 2) - (h / 2);
+			} else {
+				h = config.height;
+				w = (image.width * (config.height / image.height)) >> 0;
+				x = (config.width / 2) - (w / 2);
+			}
+
 		}
 
 		ctx.drawImage(image, x, y, w, h);
@@ -1299,11 +1351,6 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 			switch (e.type) {
 				case 'drop':
 					break;
-				case 'dragenter':
-				case 'dragover':
-					return;
-				case 'dragexit':
-				case 'dragleave':
 				default:
 					return;
 			}
@@ -1323,7 +1370,8 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 			reader.onload = function () {
 				var img = new Image();
 				img.onload = function() {
-					self.resize(img);
+					self.resizeforce(img);
+					self.change(true);
 				};
 				img.crossOrigin = 'anonymous';
 				if (orient < 2) {
@@ -1349,8 +1397,8 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;schema:
 				if (err) {
 					SETTER('snackbar', 'warning', err.toString());
 				} else {
-					self.set(response);
 					self.change(true);
+					self.set(response);
 				}
 			});
 		}
@@ -4094,7 +4142,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 	self.make = function() {
 
 		self.aclass('ui-features-layer hidden');
-		self.append('<div class="ui-features"><div class="ui-features-search"><span><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="ui-features-search-input" /></div></div><div class="ui-features-container"><ul></ul></div></div>'.format(config.placeholder));
+		self.append('<div class="ui-features"><div class="ui-features-search"><span><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="ui-features-search-input" /></div></div><div class="ui-features-container noscrollbar"><ul></ul></div></div>'.format(config.placeholder));
 
 		container = self.find('ul');
 		input = self.find('input');
@@ -5053,33 +5101,40 @@ COMPONENT('scrollbar', 'reset:true;margin:0;marginxs:0;marginsm:0;marginmd:0;mar
 		}
 	};
 
-	self.done = function() {
+	self.init = function() {
 
-		if (config.parent) {
-			var parent = config.parent === 'window' ? $(window) : self.element.closest(config.parent).height();
-			self.element.css('height', parent.height() - (config.offset ? self.element.offset().top : 0) - config.margin - config['margin' + WIDTH()]);
-		}
+		var resize = function() {
+			SETTER('scrollbar', 'resize');
+		};
 
-		self.scrollbar.resize();
+		var resizedelay = function() {
+			setTimeout2('scrollbar', resize, 300);
+		};
+
+		if (W.OP)
+			W.OP.on('resize', resizedelay);
+		else
+			$(W).on('resize', resizedelay);
 	};
-
-	self.on('resize', self.done);
 
 	self.make = function() {
 		self.scrollbar = SCROLLBAR(self.element, { visibleX: config.visibleX, visibleY: config.visibleY });
+		self.scrollleft = self.scrollbar.scrollLeft;
+		self.scrolltop = self.scrollbar.scrollTop;
+		self.scrollright = self.scrollbar.scrollRight;
+		self.scrollbottom = self.scrollbar.scrollBottom;
 	};
 
 	self.resize = function() {
+		if (config.parent) {
+			var parent = config.parent === 'window' ? $(window) : self.element.closest(config.parent);
+			self.element.css('height', parent.height() - (config.offset ? self.element.offset().top : 0) - config.margin - config['margin' + WIDTH()]);
+		}
 		self.scrollbar.resize();
 	};
 
-	self.scrollLeft = function(val) {
-		self.scrollbar.scrollLeft(val);
-	};
-
-	self.scrollTop = function(val) {
-		self.scrollbar.scrollTop(val);
-	};
+	self.on('resize', self.resize);
+	self.done = self.resize;
 
 	self.scroll = function(x, y) {
 		self.scrollbar.scroll(x, y);
@@ -5092,15 +5147,11 @@ COMPONENT('scrollbar', 'reset:true;margin:0;marginxs:0;marginsm:0;marginmd:0;mar
 	self.setter = function(value, path, type) {
 		if (config.track && config.track.indexOf(path) === -1)
 			return;
-		if (type === 1) {
-			setTimeout(function() {
-				self.done();
-				config.reset && self.reset();
-			}, 500);
-		} else
+		type && setTimeout(function() {
 			self.done();
+			config.reset && self.reset();
+		}, 500);
 	};
-
 });
 
 COMPONENT('autocomplete', 'height:200', function(self, config) {
@@ -7901,4 +7952,150 @@ COMPONENT('nativenotifications', 'timeout:8000', function(self, config) {
 			self.items.length && self.autoclose();
 		}, config.timeout);
 	};
+});
+
+COMPONENT('parameters', 'search:Search;dateformat:yyyy-MM-dd;offset:5', function(self, config) {
+
+	var cls = 'ui-parameters';
+	var cls2 = '.ui-parameters';
+	var container, search, scroller, prevh, skip;
+
+	self.readonly();
+	self.nocompile && self.nocompile();
+	self.bindvisible();
+
+	self.init = function() {
+		Thelpers.ui_parameters_value = function(val, format) {
+			if (val instanceof Date)
+				return val.format(format);
+			if (typeof(val) === 'number')
+				return val;
+			return val ? Thelpers.encode(val.toString()) : '';
+		};
+	};
+
+	self.template = Tangular.compile('<div class="{0}-item{{ if modified }} {0}-modified{{ fi }}" data-index="{{ $.index }}" data-search="{{ $.search }}"><div class="{0}-name">{{ name }}</div><div class="{0}-type">{{ type }}</div><div class="{0}-value">{{ if type === \'boolean\' }}<div class="{0}-boolean">{{ if value }}true{{ else }}false{{ fi }}</div>{{ else }}<input class="{0}-input" value="{{ value | ui_parameters_value(\'{1}\') }}" />{{ fi }}</div></div>'.format(cls, config.dateformat));
+
+	self.search = function() {
+		var val = search.find('input').val().toSearch();
+		search.find('i').rclass('fa-').tclass('fa-search', !val).tclass('fa-times', !!val);
+		self.find(cls2 + '-item').each(function() {
+			var el = $(this);
+			el.tclass('hidden', val ? el.attrd('search').indexOf(val) === -1 : false);
+		});
+		self.scrollbar.resize();
+	};
+
+	self.resize = function() {
+		var h = 0;
+
+		if (config.height > 0)
+			h = config.height;
+		else if (config.parent)
+			h = (config.parent === 'window' ? WH : config.parent === 'parent' ? self.parent().height() : self.closest(config.parent).height()) - search.height() - self.element.offset().top - config.offset;
+
+		if (prevh === h)
+			return;
+
+		prevh = h;
+		scroller.css('height', h);
+		self.scrollbar.resize();
+	};
+
+	self.make = function() {
+		self.aclass(cls);
+		self.append('<div class="{0}-search"><span><i class="fa fa-search"></i></span><div><input type="text" placeholder="{1}" maxlength="50" class="{0}-searchinput" /></div></div><div class="{0}-scroller"><div class="{0}-container"></div></div>'.format(cls, config.search));
+		container = self.find(cls2 + '-container');
+		search = self.find(cls2 + '-search');
+		scroller = self.find(cls2 + '-scroller');
+
+		self.scrollbar = SCROLLBAR(scroller);
+
+		search.on('keydown', cls2 + '-searchinput', function(e) {
+			setTimeout2(self.ID, self.search, 300);
+		});
+
+		search.on('click', '.fa-times', function() {
+			search.find('input').val('');
+			self.search();
+		});
+
+		container.on('dblclick', cls2 + '-boolean', function() {
+			var el = $(this).parent();
+			var row = el.closest(cls2 + '-item');
+			var index = +row.attrd('index');
+			var item = self.get()[index];
+			var indexer = { index: index, search: item.name.toSearch() };
+
+			skip = true;
+
+			item.value = !item.value;
+			item.modified = item.prev !== item.value;
+			row.replaceWith(self.template(item, indexer));
+			item.modified && self.change(true);
+			UPD(self.path, 2);
+		});
+
+		container.on('change', cls2 + '-input', function() {
+			var el = $(this);
+			var row = el.closest(cls2 + '-item');
+			var index = +row.attrd('index');
+			var item = self.get()[index];
+			var indexer = { index: index, search: item.name.toSearch() };
+			item.value = el.val();
+			switch (item.type) {
+				case 'date':
+					item.value = item.value ? item.value.parseDate(config.dateformat) : null;
+					if (item.value && isNaN(item.value.getTime()))
+						item.value = item.prev;
+					var a = item.value ? item.value.format(config.dateformat) : 0;
+					var b = item.prev ? item.prev.format(config.dateformat) : 0;
+					item.modified = a !== b;
+					break;
+				case 'number':
+					item.value = item.value.parseFloat();
+					item.modified = item.value !== item.prev;
+					break;
+				default:
+					item.modified = item.value !== item.prev;
+					break;
+			}
+			row.replaceWith(self.template(item, indexer));
+			item.modified && self.change(true);
+
+			skip = true;
+			UPD(self.path, 2);
+		});
+
+		self.on('resize', self.resize);
+		self.resize();
+		self.scrollbar.resize();
+	};
+
+	self.setter = function(value) {
+
+		if (skip) {
+			skip = false;
+			return;
+		}
+
+		if (value == null)
+			value = EMPTYARRAY;
+
+		var builder = [];
+		var indexer = {};
+
+		for (var i = 0; i < value.length; i++) {
+			var item = value[i];
+			indexer.index = i;
+			indexer.search = item.name.toSearch();
+			item.prev = item.type === 'date' && item.value ? item.value.format(config.dateformat) : item.value;
+			builder.push(self.template(item, indexer));
+		}
+
+		container.html(builder.join(''));
+		self.search();
+		self.resize();
+	};
+
 });

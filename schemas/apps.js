@@ -18,10 +18,11 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('id', 'UID');
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(30)', true);
-	schema.define('settings', String);
 	schema.define('accesstoken', 'String(50)');
+	schema.define('serialnumber', 'String(50)');
 	schema.define('permissions', Boolean);
 	schema.define('directories', '[String]');
+	schema.define('settings', Object);
 
 	schema.setQuery(function($) {
 		OP.decodeAuthToken($.query.accesstoken || '', function(err, obj) {
@@ -161,6 +162,7 @@ NEWSCHEMA('App', function(schema) {
 				model.custom = response.custom;
 				model.mainmenu = response.mainmenu;
 				model.responsive = response.responsive;
+				model.readme = response.readme;
 				model.online = true;
 				model.dtsync = NOW;
 
@@ -258,6 +260,7 @@ function sync(item, model, meta, permissions) {
 		item.title = model.title;
 		item.options = model.options;
 		item.secret = model.secret;
+		item.serialnumber = model.serialnumber;
 
 		if (permissions) {
 			item.allowreadapps = model.allowreadapps;

@@ -25,7 +25,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 
 h2 { margin: 0 0 12px 0; padding: 0; color: black; font-size: 16px; font-weight: bold; }
 h2 b { font-weight: 700; }
-h2 .fa { margin-right: 10px; }
+h2 .fa { margin-right: 6px; }
 
 h3 { margin: 0 0 12px 0; padding: 0; color: black; font-size: 14px; font-weight: bold; }
 h3 b { font-weight: 700; }
@@ -49,6 +49,7 @@ h3 .fa { margin-right: 5px; }
 .bg-yellow { background-color: #FFFFD5; }
 .bg-yellow hr { border-color: #DCDCB7; }
 .bg-smoke { background-color: #F8F8F8; }
+.bg-yellow-fade { background: linear-gradient(#FFFFD5,white); }
 
 .ui-dark .bg-smoke { background-color: #282828; }
 .ui-dark .bg-white { background-color: #303030; }
@@ -58,6 +59,7 @@ h3 .fa { margin-right: 5px; }
 .nav > .link .fa { margin-right: 5px; }
 .nav > .link:hover { color: gray; text-decoration: none; }
 .nav .right { float: right; }
+.radius { border-radius: 3px; }
 
 .buttonbar { background-color: #F0F0F0; height: 40px; }
 .buttonbar .button { height: 40px; border-radius: 0; font-size: 12px; }

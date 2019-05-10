@@ -71,7 +71,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 8px 15px 10px; }
 .startmenu-search { padding: 5px; background-color: #404040; border-bottom: 1px solid rgba(0,0,0,0.05); }
-.startmenu-status { float: right; color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 39px; width: 200px; border-left: 1px solid rgba(0,0,0,0.1); cursor: pointer; border-radius: 0 0 3px 0; }
+.startmenu-status { float: right; color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 38px; width: 200px; border-left: 1px solid rgba(0,0,0,0.1); cursor: pointer; border-radius: 0 0 3px 0; }
 .startmenu-status:hover { background-color: rgba(255,255,255,0.1); }
 .startmenu-status b { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: white; font-size: 13px; line-height: 14px; }
 .startmenu-status i { font-size: 10px; float: left; margin: 3px 4px 0 0; }
