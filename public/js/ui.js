@@ -2716,7 +2716,7 @@ COMPONENT('processes', function(self, config) {
 			mm.rclass('hidden');
 
 		if (iframe.mobile) {
-			var h = WH - $('header').height();
+			var h = WH - $('header').height() - 31;
 			var w = WW;
 			iframe.element.css({ width: w, height: h, left: 0, top: 45 });
 			iframe.iframe.css({ height: h - margin });
