@@ -487,7 +487,7 @@
 				if (!isMOBILE)
 					opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'reset' });
 
-				opt.items.push({ name: '@(Favorite)', icon: '!fa' + (iframe.meta.internal.favorite ? '' : 'r') + ' fa-heart', value: 'favorite' });
+				opt.items.push({ name: '@(Favorite)', icon: '!fa' + (iframe.meta.internal.favorite ? ' red' : 'r') + ' fa-heart', value: 'favorite' });
 				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
 				next();
 			};
@@ -859,7 +859,7 @@
 			if (!isMOBILE)
 				opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'resetsize' });
 
-			opt.items.push({ name: '@(Favorite)', icon: '!fa' + (app.favorite ? '' : 'r') + ' fa-heart', value: 'favorite' });
+			opt.items.push({ name: '@(Favorite)', icon: '!fa' + (app.favorite ? ' red' : 'r') + ' fa-heart', value: 'favorite' });
 			opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
 
 			opt.callback = function(item) {
@@ -912,7 +912,7 @@
 					opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'resetsize' });
 			}
 
-			opt.items.push({ name: '@(Favorite)', icon: 'heart', value: 'favorite' });
+			opt.items.push({ name: '@(Favorite)', icon: 'heart red', value: 'favorite' });
 			running && opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
 
 			opt.callback = function(item) {
