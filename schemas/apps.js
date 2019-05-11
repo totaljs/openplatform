@@ -21,6 +21,7 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('accesstoken', 'String(50)');
 	schema.define('serialnumber', 'String(50)');
 	schema.define('permissions', Boolean);
+	schema.define('autorefresh', Boolean);
 	schema.define('directories', '[String]');
 	schema.define('settings', Object);
 
@@ -165,8 +166,9 @@ NEWSCHEMA('App', function(schema) {
 				model.readme = response.readme;
 				model.online = true;
 				model.dtsync = NOW;
+				model.autorefresh = response.autorefresh;
 
-				if (model.permissions) {
+				if (model.permissions || model.autorefresh) {
 					model.allowreadapps = response.allowreadapps;
 					model.allowreadusers = response.allowreadusers;
 					model.allowreadmeta = response.allowreadmeta;
@@ -202,13 +204,14 @@ NEWSCHEMA('App', function(schema) {
 			case '_info':
 			case '_settings':
 			case '_account':
+			case '_welcome':
 
 				if ($.id !== '_account' && !user.sa) {
 					$.invalid('error-permissions');
 					return;
 				}
 
-				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: $.id !== '_account' && $.id !== '_settings' };
+				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: $.id === '_welcome' ? CONF.welcome : '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: $.id !== '_account' && $.id !== '_welcome' && $.id !== '_settings' };
 				$.callback(data);
 				return;
 		}
@@ -271,7 +274,6 @@ function sync(item, model, meta, permissions) {
 	if (meta) {
 		item.title = model.title;
 		item.options = model.options;
-		item.secret = model.secret;
 		item.serialnumber = model.serialnumber;
 
 		if (permissions) {
@@ -288,6 +290,7 @@ function sync(item, model, meta, permissions) {
 		item.accesstoken = model.accesstoken;
 		item.serververify = model.serververify;
 		item.mobilemenu = model.mobilemenu;
+		item.autorefresh = model.autorefresh;
 	}
 
 	item.linker = model.linker;

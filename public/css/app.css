@@ -7,12 +7,16 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .scroller-padding { padding: 20px; }
 
 .ui-dark .panel { background-color: #252525; border-right-color: #303030; }
+.marketplace { position: absolute; }
+.marketplace iframe { border: 0; width: 100%; height: 100%; padding: 0; margin: 0; }
 
 .toolbar { height: 40px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
-.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 40px; height: 40px; padding: 0; margin: 0; text-align: center; float: left; }
+.toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 20%; height: 40px; padding: 0; margin: 0; text-align: center; float: left; }
 .toolbar button:hover { background-color: white; }
 .toolbar button:disabled { color: #A0A0A0; cursor: not-allowed; background-color: #F0F0F0; }
 .toolbar > span { font-size: 11px; text-align: center; width: 68px; float: left; padding: 8px 0 0; }
+.toolbar .market { border-right: 0; color: white; }
+.toolbar .market:hover { opacity: 0.8; }
 
 .search { padding: 5px; background-color: white; border-bottom: 1px solid #D0D0D0; }
 .search .ui-textbox { border: 0; }

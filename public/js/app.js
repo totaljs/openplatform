@@ -11,6 +11,9 @@ function resizelayout() {
 
 		el.css('height', h - (el.offset().top + m));
 	});
+
+	var el = $('.marketplace');
+	el.length && el.css({ height: WH - el.offset().top, width: el.parent().width() });
 }
 
 function onImageError(image) {
@@ -19,4 +22,9 @@ function onImageError(image) {
 	return true;
 }
 
-ON('ready', resizelayout);
+ON('ready', function() {
+	resizelayout();
+	setTimeout(function() {
+		$('body').rclass('invisible');
+	}, 100);
+});

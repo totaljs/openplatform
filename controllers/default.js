@@ -7,11 +7,13 @@ exports.install = function() {
 		ROUTE('GET /settings/');
 		ROUTE('GET /info/', info);
 		ROUTE('GET /account/');
+		ROUTE('GET /welcome/');
 	});
 
 	ROUTE('GET /*',       login, ['unauthorize']);
 	ROUTE('GET /logoff/', logoff);
 	ROUTE('GET /lock/',   lock);
+	ROUTE('GET /marketplace/');
 
 	LOCALIZE('/pages/*.html');
 	LOCALIZE('/forms/*.html');

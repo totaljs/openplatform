@@ -14,3 +14,4 @@ error-offline              : User is offline
 error-file-type            : Invalid file type.
 error-apps-404             : App not found.
 error-pin                  : PIN is invalid.
+smtp                       : You need to type SMTP hostname.

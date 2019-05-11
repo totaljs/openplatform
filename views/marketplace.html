@@ -1,3 +1,5 @@
+@{layout('')}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,18 +12,26 @@
 	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@17.css" />
 	<script src="@{'%cdn'}/spa.min@17.js"></script>
-	@{import('meta', 'head', 'app.css', 'app.js', 'favicon.ico')}
+	@{import('meta', 'head', 'favicon.ico')}
+	<style>
+		html, body { height: 100%; width: 100%; overflow: hidden; margin: 0; padding: 0; }
+		.scrollarea { height: 100%; width: 100%; }
+	</style>
 </head>
-<body data---="exec" class="invisible">
-
-	<div data---="LAZY calendar"></div>
-	<div data---="LAZY suggestion__null__placeholder:@(Search)"></div>
-	<div data---="LAZY autocomplete"></div>
-	<div data---="LAZY directory"></div>
-
-	<div class="container-fluid">
-		@{body}
+<body>
+	<div class="scrollarea noscrollbar">
+		MARKETPLACE
 	</div>
+
+	<script>
+		function installapp(url, settings, serialnumber) {
+			var data = {};
+			data.TYPE = 'install';
+			data.url = url;
+			// data.settings = {};
+			window.parent.postMessage(JSON.stringify(data), '*');
+		}
+	</script>
 
 </body>
 </html>

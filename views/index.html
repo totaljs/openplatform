@@ -95,6 +95,9 @@
 		<div class="startmenu-nav" data---="xs__common.startmenuapps__if:!value">
 			<div>
 				<nav>
+					@{if CONF.welcome}
+					<button class="exec" data-exec="internalapp" data-id="_welcome" id="welcomeapp"><i class="fa fa-flag"></i>@(Welcome)</button>
+					@{fi}
 					@{if user.sa}
 					<button class="exec internal" data-exec="internalapp" data-id="_users"><i class="fa fa-users"></i>@(Users)</button>
 						@{if !user.directory}
@@ -123,7 +126,7 @@
 						<script type="text/html">
 							{{ foreach m in value }}
 								{{ if !m.internal }}
-								<div class="app{{ if !m.online }} app-offline{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.responsive | responsive }}" data-id="{{ m.id }}" data-search="{{ m.title }}">
+								<div class="app{{ if !m.online }} app-offline{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.responsive | responsive }}" data-id="{{ m.id }}" data-search="{{ m.title }}{{ if m.title !== m.name }} {{ m.name }}{{ fi }}">
 									<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 									<i class="far fa-bell-slash appnonotify{{ if !m.mutenotifications }} hidden{{ fi }}" data-id="{{ m.id }}"></i>
 									<i class="appclose fa fa-times {{ if !m.running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ m.id }}"></i>
@@ -466,8 +469,23 @@
 						}
 						next();
 					});
-				} else if (!user.apps.findItem('favorite', true))
-					SET('common.startmenu', true, 500);
+				} else {
+
+					var skip = false;
+					var wa = $('#welcomeapp');
+
+					if (wa.length) {
+						var ls = localStorage;
+						if (ls.getItem('welcome') !== '1') {
+							ls.setItem('welcome', '1');
+							skip = true;
+							internalapp(wa);
+						}
+					}
+
+					if (!skip && !user.apps.findItem('favorite', true))
+						SET('common.startmenu', true, 500);
+				}
 			};
 
 			self.appmenu = function(opt, next, iframe) {

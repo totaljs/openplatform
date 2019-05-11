@@ -308,7 +308,7 @@ h3 i { margin-right: 5px; }
 	.startmenu-search .ui-textbox input { font-size: 16px; }
 	.startmenu-search .ui-textbox-control { width: 40px; }
 	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; margin-top: 5px; }
-	.startmenu-nav nav button { padding: 7px 0; font-size: 16px; }
+	.startmenu-nav nav button { padding: 6px 0; font-size: 15px; }
 	.startmenu-nav .fa { width: 34px; }
 	.startmenu-apps .app .appbadge { position: absolute; margin: 27px 0 0 22px; }
 	.username { right: 0; left: 0; text-align: center; }
