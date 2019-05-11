@@ -7257,7 +7257,7 @@ COMPONENT('table', 'highlight:true;unhighlight:true;multiple:false;pk:id', funct
 
 });
 
-COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;searchalign:1;after:\\:', function(self, config) {
+COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;direxclude:false;searchalign:1;after:\\:', function(self, config) {
 
 	var cls = 'ui-input';
 	var cls2 = '.' + cls;
@@ -7313,6 +7313,10 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					}
 				};
 				SETTER('autocomplete', 'show', opt);
+			} else if (config.mask) {
+				setTimeout(function(input) {
+					input.selectionStart = input.selectionEnd = 0;
+				}, 50, this);
 			}
 		});
 
@@ -7880,80 +7884,6 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		self.$oldstate = invalid;
 		self.tclass(cls + '-invalid', invalid);
 		config.error && self.find(cls2 + '-error').tclass('hidden', !invalid);
-	};
-});
-
-COMPONENT('nativenotifications', 'timeout:8000', function(self, config) {
-
-	var autoclosing;
-	var system = false;
-	var N = window.Notification;
-
-	self.singleton();
-	self.readonly();
-	self.nocompile && self.nocompile();
-	self.items = [];
-
-	self.make = function() {
-		if (!N)
-			return;
-		system = N.permission === 'granted';
-		!system && N.requestPermission(function (permission) {
-			system = permission === 'granted';
-		});
-	};
-
-	self.append = function(title, message, callback, img) {
-
-		if (!system)
-			return;
-
-		var obj = { id: Math.floor(Math.random() * 100000), date: new Date(), callback: callback };
-		var options = {};
-
-		options.body = message.replace(/(<([^>]+)>)/ig, '');
-		self.items.push(obj);
-
-		self.autoclose();
-
-		if (img === undefined)
-			options.icon = config.icon || '/icon.png';
-		else if (img != null)
-			options.icon = img;
-
-		obj.system = new N(title, options);
-		obj.system.onclick = function() {
-
-			window.focus();
-			self.items = self.items.remove('id', obj.id);
-
-			if (obj.callback) {
-				obj.callback();
-				obj.callback = null;
-			}
-
-			obj.system.close();
-			obj.system.onclick = null;
-			obj.system = null;
-		};
-	};
-
-	self.autoclose = function() {
-
-		if (autoclosing)
-			return self;
-
-		autoclosing = setTimeout(function() {
-			clearTimeout(autoclosing);
-			autoclosing = null;
-			var obj = self.items.shift();
-			if (obj) {
-				obj.system.onclick = null;
-				obj.system.close();
-				obj.system = null;
-			}
-			self.items.length && self.autoclose();
-		}, config.timeout);
 	};
 });
 

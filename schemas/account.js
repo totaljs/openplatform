@@ -11,7 +11,11 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('photo', 'String(50)');
 	schema.define('sounds', Boolean);
 	schema.define('darkmode', Boolean);
+	schema.define('dateformat', ['yyyy-MM-dd', 'dd.MM.yyyy', 'MM.dd.yyyy']); // date format
+	schema.define('timeformat', [12, 24]); // 12 or 24
+	schema.define('numberformat', [1, 2, 3, 4]); // 1: "1 000.10", 2: "1 000,10", 3: "100,000.00", 4: "100.000,00"
 	schema.define('volume', Number);
+	schema.define('language', 'Lower(2)');
 	schema.define('pin', 'String(4)'); // Unlock pin
 	schema.define('locking', Number); // in minutes (0: disabled)
 	schema.define('colorscheme', 'Lower(7)');
@@ -30,9 +34,13 @@ NEWSCHEMA('Account', function(schema) {
 				data.darkmode = user.darkmode;
 				data.sounds = user.sounds;
 				data.volume = user.volume;
+				data.language = user.language;
 				data.colorscheme = user.colorscheme;
 				data.background = user.background;
 				data.locking = user.locking;
+				data.dateformat = user.dateformat;
+				data.timeformat = user.timeformat;
+				data.numberformat = user.numberformat;
 			}
 			$.callback(data);
 		});
@@ -59,13 +67,34 @@ NEWSCHEMA('Account', function(schema) {
 					model.dtpassword = NOW;
 				}
 
-				user.email = model.email;
+				var modified = false;
+
+				if (user.email !== model.email) {
+					user.email = model.email;
+					modified = true;
+				}
+
 				user.notifications = model.notifications;
 				user.notificationsemail = model.notificationsemail;
 				user.notificationsphone = model.notificationsphone;
-				user.phone = model.phone;
+
+				if (user.phone !== model.phone) {
+					user.phone = model.phone;
+					modified = true;
+				}
+
 				user.darkmode = model.darkmode;
-				user.photo = model.photo;
+
+				if (user.photo !== model.photo) {
+					user.photo = model.photo;
+					modified = true;
+				}
+
+				if (user.language !== model.language) {
+					user.language = model.language;
+					modified = true;
+				}
+
 				user.sounds = model.sounds;
 				user.volume = model.volume;
 				user.colorscheme = model.colorscheme;
@@ -73,10 +102,37 @@ NEWSCHEMA('Account', function(schema) {
 				user.dtupdated = NOW;
 				user.locking = model.locking;
 
+				var tmp = model.dateformat || 'yyyy-MM-dd';
+
+				if (user.dateformat !== tmp) {
+					user.dateformat = tmp;
+					modified = true;
+				}
+
+				tmp = model.timeformat || 24;
+				if (user.timeformat !== tmp) {
+					user.timeformat = model.timeformat;
+					modified = true;
+				}
+
+				tmp = model.numberformat || 1;
+
+				if (user.numberformat !== tmp) {
+					user.numberformat = model.numberformat;
+					modified = true;
+				}
+
+				var keys = Object.keys(model);
+
+				if (modified) {
+					user.dtmodified = NOW;
+					keys.push('dtmodified');
+				}
+
 				if (model.pin && model.pin.length === 4 && model.pin && model.pin != '0000')
 					user.pin = model.pin.sha256().hash() + '';
 
-				FUNC.users.set(user, Object.keys(model), function() {
+				FUNC.users.set(user, keys, function() {
 					FUNC.emit('users.update', user.id, 'account');
 					FUNC.emit('users.refresh', user.id);
 					$.success();

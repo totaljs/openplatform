@@ -10,6 +10,7 @@
 	.ui-appearance-light { background-position: -7px 0; background-size: 175px 51px; color: black; }
 	.ui-appearance-dark { background-position: 80px 0; background-size: 175px 51px; color: white; }
 	.col-2 { float: left; width: 50%; padding-left: 15px; padding-right: 15px; }
+	.col-4 { float: left; width: 33.33%; padding-left: 15px; padding-right: 15px; }
 
 	.ui-dark .accountphoto { background: #333333 linear-gradient(0deg,#000,#404040); }
 	.ui-dark .ui-appearance-option { border-color: #404040; }
@@ -49,7 +50,6 @@
 		</div>
 
 		<div class="scroller-padding">
-
 			<div class="row">
 				<div class="col-2 m">
 					<div data---="input__account.email__type:email;innerlabel:1;required:1">@(Email address)</div>
@@ -75,6 +75,16 @@
 			</div>
 			<hr />
 
+			<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
+				<i class="fa fa-volume-up"></i>
+				<div>
+					<span data-volume="15">@(silent)</span>
+					<span data-volume="50">@(medium)</span>
+					<span data-volume="100">@(loud)</span>
+				</div>
+			</div>
+			<br />
+
 			<div class="row">
 				<div class="col-2">
 					<div data---="checkbox__account.notifications">@(Enable notifications)</div>
@@ -87,22 +97,29 @@
 				</div>
 			</div>
 
-			<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
-				<i class="fa fa-volume-up"></i>
-				<div>
-					<span data-volume="15">@(silent)</span>
-					<span data-volume="50">@(medium)</span>
-					<span data-volume="100">@(loud)</span>
-				</div>
-			</div>
-
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<div class="padding">
 					<div data---="input__account.password__maxlength:30;type:password;required:1;innerlabel:1">@(Login password)</div>
 					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
 				</div>
 			</div>
-
+			<br />
+			<div class="row">
+				<div class="col-2 m">
+					<div data---="input__account.dateformat__innerlabel:1;dirsource:dateformats;dirsearch:false">@(Date format)</div>
+				</div>
+				<div class="col-2 m">
+					<div data---="input__account.timeformat__innerlabel:1;dirsource:timeformats;dirsearch:false">@(Time)</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-2 m">
+					<div data---="input__account.numberformat__innerlabel:1;dirsource:numberformats;dirsearch:false">@(Number format)</div>
+				</div>
+				<div class="col-2 m">
+					<div data---="input__account.language__innerlabel:1;dirsource:languages;dirsearch:false">@(Language)</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="scroller-padding bg-yellow-fade npb">
@@ -125,7 +142,14 @@
 	</div>
 </div>
 
+@{json(CONF.languages, 'languagesdata')}
+
 <script>
+
+	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
+	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
+	var timeformats = [{ id: 24, name: '@(24 hour clock)' }, { id: 12, name: '@(12 hour clock)' }];
+	var languages = PARSE('#languagesdata');
 
 	OP.init(function(err, meta) {
 		if (err) {

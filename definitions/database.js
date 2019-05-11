@@ -134,7 +134,7 @@ FUNC.users.query = function(filter, callback) {
 		if (filter.ou && (!user.ougroups || user.ougroups.indexOf(filter.ou) === -1))
 			continue;
 
-		if (filter.modified && !((user.dtupdated && user.dtupdated > filter.modified) || (user.dtcreated > filter.modified)))
+		if (filter.modified && !((user.dtmodified && user.dtmodified > filter.modified) || (user.dtcreated > filter.modified)))
 			continue;
 
 		if (filter.online && !user.online)
@@ -228,6 +228,7 @@ FUNC.users.meta = function(callback, directory) {
 	var groups = {};
 	var roles = {};
 	var directories = {};
+	var positions = {};
 
 	var toArray = function(obj, preparator) {
 		var arr = Object.keys(obj);
@@ -282,6 +283,13 @@ FUNC.users.meta = function(callback, directory) {
 				localities[item.locality] = { count: 1, id: item.locality, name: item.locality };
 		}
 
+		if (item.position) {
+			if (positions[item.position])
+				positions[item.position].count++;
+			else
+				positions[item.position] = { count: 1, id: item.position, name: item.position };
+		}
+
 		if (item.directory) {
 			if (directories[item.directory])
 				directories[item.directory].count++;
@@ -322,6 +330,7 @@ FUNC.users.meta = function(callback, directory) {
 	meta.companies = toArray(companies);
 	meta.customers = toArray(customers);
 	meta.localities = toArray(localities);
+	meta.positions = toArray(positions);
 	meta.directories = toArray(directories);
 	meta.groups = toArray(groups);
 	meta.roles = toArray(roles);

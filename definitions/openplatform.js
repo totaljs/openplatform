@@ -433,6 +433,9 @@ function readuser(user, type, app, fields) {
 	if (user.language && (!fields || fields.language))
 		obj.language = user.language;
 
+	if (user.position && (!fields || fields.position))
+		obj.position = user.position;
+
 	if (user.meta && (!fields || fields.meta))
 		obj.meta = user.meta;
 
@@ -459,6 +462,9 @@ function readuser(user, type, app, fields) {
 
 	if (user.dateformat && (!fields || fields.dateformat))
 		obj.dateformat = user.dateformat;
+
+	if (user.numberformat && (!fields || fields.numberformat))
+		obj.numberformat = user.numberformat;
 
 	if (user.timeformat && (!fields || fields.timeformat))
 		obj.timeformat = user.timeformat;

@@ -16,8 +16,9 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('phone', 'Phone');
 	schema.define('company', 'String(40)');
 	schema.define('ou', 'String(100)');
-	schema.define('language', 'String(2)');
+	schema.define('language', 'Lower(2)');
 	schema.define('reference', 'String(100)');
+	schema.define('position', 'String(40)');
 	schema.define('locality', 'String(40)');
 	schema.define('login', 'String(120)');
 
@@ -37,8 +38,9 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
-	schema.define('dateformat', 'String(20)'); // date format
-	schema.define('timeformat', Number); // 12 or 24
+	schema.define('dateformat', ['yyyy-MM-dd', 'dd.MM.yyyy', 'MM.dd.yyyy']); // date format
+	schema.define('timeformat', [12, 24]); // 12 or 24
+	schema.define('numberformat', [1, 2, 3, 4]); // 1: "1 000.10", 2: "1 000,10", 3: "100,000.00", 4: "100.000,00"
 	schema.define('volume', Number);
 	schema.define('sa', Boolean);
 	schema.define('inactive', Boolean);
@@ -87,6 +89,12 @@ NEWSCHEMA('User', function(schema) {
 			OP.users(app, $.query, $.callback);
 		});
 	});
+
+	function isdatemodified(dt1, dt2) {
+		if (dt1 instanceof Date && dt2 instanceof Date)
+			return dt1.getTime() !== dt2.getTime();
+		return dt1 === dt2;
+	}
 
 	schema.setSave(function($) {
 
@@ -143,53 +151,180 @@ NEWSCHEMA('User', function(schema) {
 				if (model.password && !model.password.startsWith('***'))
 					item.password = model.password.sha256();
 
-				item.supervisorid = model.supervisorid;
-				item.deputyid = model.deputyid;
-				item.sa = model.sa;
+				var modified = false;
+
+				if (item.supervisorid !== model.supervisorid) {
+					item.supervisorid = model.supervisorid;
+					modified = true;
+				}
+
+				if (item.deputyid !== model.deputyid) {
+					item.deputyid = model.deputyid;
+					modified = true;
+				}
+
+				if (item.sa !== model.sa) {
+					item.sa = model.sa;
+					modified = true;
+				}
+
 				item.search = model.search;
-				item.blocked = model.blocked;
-				item.phone = model.phone;
-				item.photo = model.photo;
-				item.statusid = model.statusid;
-				// item.pin = model.pin;
+
+				if (item.blocked !== model.blocked) {
+					item.blocked = model.blocked;
+					modified = true;
+				}
+
+				if (item.phone !== model.phone) {
+					item.phone = model.phone;
+					modified = true;
+				}
+
+				if (item.photo !== model.photo) {
+					item.photo = model.photo;
+					modified = true;
+				}
+
+				if (item.statusid !== model.statusid) {
+					item.statusid = model.statusid;
+					modified = true;
+				}
+
+				if (item.status !== model.status) {
+					item.status = model.status;
+					modified = true;
+				}
+
 				item.locking = model.locking;
-				item.status = model.status;
-				item.firstname = model.firstname;
-				item.directory = model.directory;
-				item.directoryid = item.directory ? item.directory.crc32(true) : 0;
-				item.lastname = model.lastname;
-				item.email = model.email;
-				item.name = model.name;
+
+				if (item.firstname !== model.firstname) {
+					item.firstname = model.firstname;
+					modified = true;
+				}
+
+				if (item.lastname !== model.lastname) {
+					item.lastname = model.lastname;
+					modified = true;
+				}
+
+				if (item.directory !== model.directory) {
+					item.directory = model.directory;
+					item.directoryid = item.directory ? item.directory.crc32(true) : 0;
+					modified = true;
+				}
+
+				if (item.email !== model.email) {
+					item.email = model.email;
+					modified = true;
+				}
+
+				if (item.name !== model.name) {
+					item.name = model.name;
+					modified = true;
+				}
+
 				item.accesstoken = model.accesstoken;
-				item.company = model.company;
-				item.gender = model.gender;
-				item.ou = model.ou;
+
+				if (item.company !== model.company) {
+					item.company = model.company;
+					modified = true;
+				}
+
+				if (item.gender !== model.gender) {
+					item.gender = model.gender;
+					modified = true;
+				}
+
+				if (item.ou !== model.ou) {
+					item.ou = model.ou;
+					modified = true;
+				}
+
 				item.groups = model.groups;
-				item.language = model.language;
-				item.locality = model.locality;
-				item.login = model.login;
 				item.roles = model.roles;
-				item.customer = model.customer;
+
+				if (item.language !== model.language) {
+					item.language = model.language;
+					modified = true;
+				}
+
+				if (item.locality !== model.locality) {
+					item.locality = model.locality;
+					modified = true;
+				}
+
+				if (item.position !== model.position) {
+					item.position = model.position;
+					modified = true;
+				}
+
+				item.login = model.login;
+
+				if (item.customer !== model.customer) {
+					item.customer = model.customer;
+					modified = true;
+				}
+
 				item.notifications = model.notifications;
 				item.sounds = model.sounds;
 				item.apps = model.apps;
 				item.dtupdated = NOW;
 				item.volume = model.volume;
-				item.dtbirth = model.dtbirth;
-				item.dtbeg = model.dtbeg;
-				item.dtend = model.dtend;
-				item.inactive = model.inactive;
+
+				if (isdatemodified(item.dtbirth, model.dtbirth)) {
+					item.dtbirth = model.dtbirth;
+					modified = true;
+				}
+
+				if (isdatemodified(item.dtbeg, model.dtbeg)) {
+					item.dtbeg = model.dtbeg;
+					modified = true;
+				}
+
+				if (isdatemodified(item.dtend, model.dtend)) {
+					item.dtend = model.dtend;
+					modified = true;
+				}
+
+				if (item.inactive != model.inactive) {
+					item.inactive = model.inactive;
+					modified = true;
+				}
+
 				item.notificationsphone = model.notificationsphone;
 				item.notificationsemail = model.notificationsemail;
 				item.darkmode = model.darkmode;
-				item.dateformat = model.dateformat || 'yyyy-MM-dd';
-				item.timeformat = model.timeformat || 24;
+
+				var tmp = model.dateformat || 'yyyy-MM-dd';
+				if (item.dateformat !== tmp) {
+					item.dateformat = tmp;
+					modified = true;
+				}
+
+				tmp = model.timeformat || 24;
+
+				if (item.timeformat !== tmp) {
+					item.timeformat = tmp;
+					modified = true;
+				}
+
+				tmp = model.numberformat || 1;
+
+				if (item.numberformat !== tmp) {
+					item.numberformat = tmp;
+					modified = true;
+				}
+
+				// item.pin = model.pin;
 
 				if (model.rebuildtoken || !item.verifytoken)
 					item.verifytoken = U.GUID(15);
 
 				if (!item.accesstoken)
 					item.accesstoken = U.GUID(40);
+
+				if (modified)
+					item.dtmodified = NOW;
 
 				prepare(item, $.model);
 

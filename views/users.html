@@ -167,10 +167,13 @@
 					<hr />
 					<div class="row">
 						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.dateformat__maxlength:10;align:center" class="m">@(Date format)</div>
+							<div data---="dropdown__users.form.dateformat__datasource:dateformats__1">@(Date format)</div>
 						</div>
 						<div class="col-sm-4 m">
 							<div data---="dropdown__users.form.timeformat__items:@(24 hour clock)|24,@(12 hour clock)|12;type:number__24">@(Time)</div>
+						</div>
+						<div class="col-sm-4 m">
+							<div data---="dropdown__users.form.numberformat__datasource:numberformats;type:number__1">@(Number format)</div>
 						</div>
 					</div>
 					<!--
@@ -227,6 +230,14 @@
 						</div>
 						<div class="col-sm-6 m">
 							<div data---="textbox__users.form.locality__maxlength:40">@(Locality)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6 m">
+							<div data---="dropdown__users.form.position__empty:;datasource:users.meta.positions;icon:suitcase;value:name">@(Select existing Position)</div>
+						</div>
+						<div class="col-sm-6 m">
+							<div data---="textbox__users.form.position__maxlength:40">@(Position)</div>
 						</div>
 					</div>
 				</div>
@@ -345,6 +356,9 @@
 	users.filter = { page: 1, limit: 100 };
 	users.items = EMPTYARRAY;
 
+	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
+	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
+
 	OP.init(function(err, meta) {
 		if (err) {
 			document.body.innerHTML = '401: unauthorized';
@@ -373,6 +387,12 @@
 			OP.loading(false, 1000);
 			response.show = true;
 			response.password = '*************';
+			if (!response.dateformat)
+				response.dateformat = 'yyyy-MM-dd';
+			if (!response.timeformat)
+				response.timeformat = 24;
+			if (!response.numberformat)
+				response.numberformat = 1;
 			SET('users.form', response, true);
 			if (!isMOBILE)
 				FIND('#firstinput').find('input').focus();
@@ -440,7 +460,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
+		SET('users.form', { numberformat: 1, timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
 		if (!isMOBILE)
 			FIND('#firstinput').find('input').focus();
 	}
