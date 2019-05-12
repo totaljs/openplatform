@@ -624,7 +624,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg,.user{background-color:{0}}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.userbg,.user{background-color:{0}}.ui-features .selected{background-color:{0}!important}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);

@@ -549,7 +549,7 @@ input:invalid { box-shadow: none; }
 .ui-features-search input { width: 100%; background-color: white; border: 0; font-size: 20px; outline: 0; padding: 0; margin: 0; height: 55px; }
 .ui-features-search > div { margin-right: 48px; padding: 0 0 0 15px; }
 .ui-features-search > span { float: right; width: 40px; text-align: center; line-height: 55px; font-size: 18px; padding: 2px 4px 0 0; color: #A0A0A0; }
-.ui-features .selected { font-weight: bold; background-color: #1484FC !important; color: white !important; }
+.ui-features .selected { font-weight: bold; color: white !important; }
 .ui-features-visible { opacity: 1; transform: scale(1); }
 .ui-features-container { max-height: 250px; overflow: hidden; }
 .ui-features ul { list-style-type: none; margin: 0; padding: 0; }
