@@ -89,6 +89,7 @@ OP.profile = function(user, callback) {
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
 	meta.timeformat = user.timeformat;
 	meta.dateformat = user.dateformat;
+	meta.numberformat = user.numberformat;
 	meta.repo = user.repo;
 
 	var bg = user.background || CONF.background;
@@ -141,21 +142,22 @@ OP.profile = function(user, callback) {
 OP.profilelive = function(user) {
 
 	var meta = {};
-	meta.openplatformid = OP.id;
-	meta.version = OP.version;
+	// meta.openplatformid = OP.id;
+	// meta.version = OP.version;
+
 	meta.name = user.name;
 
 	if (user.photo)
 		meta.photo = user.photo;
 
-	if (user.locality)
-		meta.locality = user.locality;
+	// if (user.locality)
+	// 	meta.locality = user.locality;
 
-	if (user.ou)
-		meta.ou = user.ou;
+	// if (user.ou)
+	// 	meta.ou = user.ou;
 
-	if (user.company)
-		meta.company = user.company;
+	// if (user.company)
+	// 	meta.company = user.company;
 
 	meta.sa = user.sa;
 	meta.apps = [];
@@ -165,8 +167,10 @@ OP.profilelive = function(user) {
 	meta.volume = user.volume;
 	meta.darkmode = user.darkmode;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
-	meta.timeformat = user.timeformat;
-	meta.dateformat = user.dateformat;
+
+	// meta.timeformat = user.timeformat;
+	// meta.dateformat = user.dateformat;
+	// meta.numberformat = user.numberformat;
 
 	var bg = user.background || CONF.background;
 	if (bg)
@@ -178,10 +182,10 @@ OP.profilelive = function(user) {
 	if (user.status)
 		meta.status = user.status;
 
-	if (user.directory)
-		meta.directory = user.directory;
+	// if (user.directory)
+	// 	meta.directory = user.directory;
 
-	meta.directoryid = user.directoryid || 0;
+	// meta.directoryid = user.directoryid || 0;
 	meta.apps = user.apps;
 
 	return meta;

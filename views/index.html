@@ -37,6 +37,7 @@
 	<div data---="shortcuts"></div>
 
 	<footer>
+		<div class="samode hidden userbg" data-bind="user.sa__show__delay:200" title="@(Super Administrator)"><i class="fa fa-unlock mr5"></i>@(SA)</div>
 		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
 		<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
 		<div class="username hidden" data-bind="user__html span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>

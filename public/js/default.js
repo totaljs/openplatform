@@ -220,6 +220,11 @@ $(window).on('message', function(e) {
 				meta.data = common.data[app.id];
 				meta.width = iframe.element.width();
 				meta.height = iframe.iframe.height();
+				meta.dateformat = user.dateformat;
+				meta.timeformat = user.timeformat;
+				meta.numberformat = user.numberformat;
+				meta.darkmode = user.darkmode;
+				meta.colorscheme = user.colorscheme;
 				meta.ww = WW;
 				meta.wh = WH;
 				meta.display = WIDTH();
