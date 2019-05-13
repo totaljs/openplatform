@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 402;
+OP.version = 403;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -497,9 +497,19 @@ OP.$process = function(data) {
 	}
 
 	var events = OP.events[data.type];
-	events && events.forEach(function(e) {
-		e(data.body || {});
-	});
+	if (events) {
+		var d = {};
+		for (var i = 0; i < events.length; i++)
+			events[i](data.body || d);
+	}
+};
+
+OP.emit = function(name, a, b, c, d, e) {
+	var events = OP.events[name];
+	if (events && events.length) {
+		for (var i = 0; i < events.length; i++)
+			events[i](a, b, c, d, e);
+	}
 };
 
 window.addEventListener('message', function(e) {
