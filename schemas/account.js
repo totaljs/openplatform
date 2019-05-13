@@ -163,7 +163,7 @@ NEWSCHEMA('Account', function(schema) {
 		else
 			DDOS[id] = 1;
 
-		if (DDOS[id] > 7) {
+		if (DDOS[id] > 4) {
 			OP.logout($.controller);
 			return;
 		}

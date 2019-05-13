@@ -54,6 +54,11 @@
 		header .photo { height: 100px; width: 100px; line-height: 100px; font-size: 40px; border-radius: 100px; margin: 0 auto; display: block; border: 1px solid #E0E0E0; position: absolute; left: 50%; margin-left: -50px; margin-top: -50px; background-color: white; color: @{user.colorscheme}; }
 		header .username { padding-top: 60px; font-weight: bold; color: black; font-size: 14px; }
 
+		.ui-dark .panel { background-color: #303030; border-color: #404040; }
+		.ui-dark header { background-color: #252525; color: gray; border-bottom-color: #404040; }
+		.ui-dark .username { color: white; }
+		.ui-dark .ui-error { border-top-color: #404040; color: red; }
+
 		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
 		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
 		button:disabled { background-color: #101010; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
@@ -62,7 +67,7 @@
 
 	</style>
 </head>
-<body data---="exec">
+<body data---="exec"@{if user.darkmode} class="ui-dark"@{fi}>
 
 	<div class="panel">
 		<header>
