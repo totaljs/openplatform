@@ -237,12 +237,26 @@ OP.meta = function(app, user, serverside) {
 	if (app.allowreadmeta)
 		meta.meta = CONF.url + '/api/meta/?accesstoken=' + token;
 
+	var data;
+
 	if (app.allowreadprofile) {
 
 		meta.profile = readuser(user, app.allowreadprofile, app);
 
 		// Specific settings for the current user
-		var data = user.apps ? user.apps[app.id] : null;
+		data = user.apps ? user.apps[app.id] : null;
+		if (data)
+			meta.profile.settings = data.settings;
+
+	} else {
+		meta.profile = {};
+		meta.profile.id = user.id;
+		meta.profile.name = user.name;
+		meta.profile.dateformat = user.dateformat;
+		meta.profile.timeformat = user.timeformat;
+		meta.profile.numberformat = user.numberformat;
+		meta.profile.language = user.language;
+		data = user.apps ? user.apps[app.id] : null;
 		if (data)
 			meta.profile.settings = data.settings;
 	}

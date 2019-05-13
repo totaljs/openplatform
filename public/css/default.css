@@ -10,6 +10,7 @@ body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 .light #pincodewindow {}
 
 .hidden2 { display: none; }
+.ui-wiki * { user-select: all; }
 
 header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; top: -50px; color: #909090; transition: all 0.3s; box-shadow: 0 5px 5px rgba(0,0,0,0.15); }
 header .nav { float: left; width: 70%; overflow: hidden; height: 45px; }
