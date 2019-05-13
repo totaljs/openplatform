@@ -41,13 +41,10 @@ document.addEventListener('click', function(e) {
 				}
 			}
 
-			console.log(data);
-
 			OP.share(app, 'link', data);
 			return false;
 		}
 	}
-
 });
 
 document.onkeydown = function(e) {
