@@ -7,7 +7,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('photo', 'String(150)');
 	schema.define('statusid', Number);
 	schema.define('status', 'String(70)');
-	schema.define('name', 'String(40)');
+	// schema.define('name', 'String(40)');
 	schema.define('firstname', 'Capitalize(40)', true);
 	schema.define('lastname', 'Capitalize(40)', true);
 	schema.define('gender', ['male', 'female'], true);
@@ -108,7 +108,7 @@ NEWSCHEMA('User', function(schema) {
 
 		model.welcome = undefined;
 		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).toSearch();
-		model.name = model.firstname + ' ' + model.lastname;
+		model.name = (model.firstname + ' ' + model.lastname).max(40);
 		model.linker = model.name.slug();
 
 		var prepare = function(item, model) {
