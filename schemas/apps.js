@@ -112,7 +112,7 @@ NEWSCHEMA('App', function(schema) {
 					FUNC.logger('apps', 'create: ' + id + ' - ' + model.name, '@' + $.user.name, $.ip);
 					$.success();
 				});
-			});
+			}, true);
 		}
 	});
 
