@@ -267,6 +267,19 @@ NEWSCHEMA('User', function(schema) {
 
 				item.notifications = model.notifications;
 				item.sounds = model.sounds;
+
+				var apps = Object.keys(model.apps);
+
+				for (var i = 0; i < apps.length; i++) {
+					var app = model.apps[apps[i]];
+					var appold = item.apps[apps[i]];
+					if (appold) {
+						app.favorite = appold.favorite;
+						app.countnotifications = appold.countnotifications;
+						app.countbadges = appold.countbadges;
+					}
+				}
+
 				item.apps = model.apps;
 				item.dtupdated = NOW;
 				item.volume = model.volume;
