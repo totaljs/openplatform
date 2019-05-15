@@ -1,6 +1,6 @@
-const SKIP = { password: true, search: true, verifytoken: true };
+const SKIP = { password: true, search: true, verifytoken: true, accesstoken: true, rebuildtoken: true };
 const ONLINE = { online: true, dtlogged: null };
-const USERS_LIST_FIELDS = { id: 1, statusid: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1, items: 1, count: 1, page: 1, pages: 1, limit: 1 };
+const USERS_LIST_FIELDS = { id: 1, statusid: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1, items: 1, count: 1, page: 1, pages: 1, limit: 1, customer: 1 };
 
 exports.install = function() {
 

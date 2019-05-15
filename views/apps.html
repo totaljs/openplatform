@@ -173,6 +173,10 @@
 										<td class="center bg-white">{{ value.serververify | checked }}</td>
 									</tr>
 									<tr>
+										<td>@(Optimized for guest user)</td>
+										<td class="center bg-white">{{ value.allowguest | checked }}</td>
+									</tr>
+									<tr>
 										<td>@(Can read meta information)</td>
 										<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
 									</tr>
@@ -232,6 +236,10 @@
 										<td class="center bg-white">{{ value.serververify | checked }}</td>
 									</tr>
 									<tr>
+										<td>@(Optimized for guest user)</td>
+										<td class="center bg-white">{{ value.allowguest | checked }}</td>
+									</tr>
+									<tr>
 										<td>@(Can read meta information)</td>
 										<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
 									</tr>
@@ -255,6 +263,7 @@
 					<br />
 					<div data---="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
 					<div class="mt10 m b" data---="checkbox__apps.form.blocked">@(Application is blocked)</div>
+					<div class="m" data---="checkbox__apps.form.guest">@(Allow for guest user)</div>
 					<div class="m hidden" data-bind="apps.form.id__show" data---="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
 					<div class="m b red" data---="checkbox__apps.form.autorefresh">@(Application can refresh its permissions automatically)</div>
 					<div class="help m hidden" data-bind="apps.form.autorefresh__show"><i class="fa fa-warning red"></i>@(You need to know that this is very <b>dangerous step</b>.)</div>

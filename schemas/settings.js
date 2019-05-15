@@ -12,6 +12,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
 	schema.define('test', Boolean);
+	schema.define('guest', Boolean);
 
 	schema.setGet(function($) {
 
@@ -35,6 +36,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.verifytoken = response.verifytoken;
 			model.marketplace = response.marketplace;
 			model.welcome = response.welcome;
+			model.guest = response.guest;
 			OP.id = response.url.crc32(true);
 			$.callback();
 		});
@@ -72,6 +74,7 @@ NEWSCHEMA('Settings', function(schema) {
 			CONF.verifytoken = model.verifytoken;
 			CONF.marketplace = model.marketplace;
 			CONF.welcome = model.welcome;
+			CONF.guest = model.guest;
 
 			OP.id = CONF.url.crc32(true);
 

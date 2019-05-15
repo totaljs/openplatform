@@ -110,6 +110,12 @@ FUNC.users.query = function(filter, callback) {
 		if (filter.locality && user.locality !== filter.locality)
 			continue;
 
+		if (filter.position && user.position !== filter.position)
+			continue;
+
+		if (filter.groupid && user.groupid !== filter.groupid)
+			continue;
+
 		if (filter.company && user.company !== filter.company)
 			continue;
 

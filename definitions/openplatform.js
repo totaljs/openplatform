@@ -421,6 +421,9 @@ function readuser(user, type, app, fields) {
 	if (user.company && (!fields || fields.company))
 		obj.company = user.company;
 
+	if (user.groupid && (!fields || fields.groupid))
+		obj.groupid = user.groupid;
+
 	if (user.dtbirth && (!fields || fields.dtbirth))
 		obj.dtbirth = user.dtbirth;
 

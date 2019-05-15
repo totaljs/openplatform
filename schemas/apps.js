@@ -22,6 +22,7 @@ NEWSCHEMA('App', function(schema) {
 	schema.define('serialnumber', 'String(50)');
 	schema.define('permissions', Boolean);
 	schema.define('autorefresh', Boolean);
+	schema.define('guest', Boolean);
 	schema.define('directories', '[String]');
 	schema.define('settings', Object);
 
@@ -170,6 +171,7 @@ NEWSCHEMA('App', function(schema) {
 
 				if (model.permissions || model.autorefresh) {
 					model.allowreadapps = response.allowreadapps;
+					model.allowguest = response.allowguest;
 					model.allowreadusers = response.allowreadusers;
 					model.allowreadmeta = response.allowreadmeta;
 					model.allowreadprofile = response.allowreadprofile;
@@ -281,6 +283,7 @@ function sync(item, model, meta, permissions) {
 			item.allowreadusers = model.allowreadusers;
 			item.allowreadmeta = model.allowreadmeta;
 			item.allowreadprofile = model.allowreadprofile;
+			item.allowguest = model.allowguest;
 			item.allownotifications = model.allownotifications;
 		}
 
@@ -313,4 +316,5 @@ function sync(item, model, meta, permissions) {
 	item.width = model.width;
 	item.height = model.height;
 	item.resize = model.resize;
+	item.guest = model.guest;
 }

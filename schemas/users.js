@@ -1,8 +1,11 @@
+MAIN.fields = ['id', 'supervisorid', 'deputyid', 'groupid', 'directory', 'directoryid', 'statusid', 'status', 'name', 'firstname', 'lastname', 'gender', 'email', 'phone', 'company', 'ou', 'language', 'reference', 'position', 'locality', 'login', 'password', 'locking', 'roles', 'groups', 'colorscheme', 'background', 'blocked', 'customer', 'darkmode', 'notifications', 'notificationsemail', 'notificationsphone', 'dateformat', 'timeformat', 'numberformat', 'volume', 'sa', 'inactive', 'sounds', 'dtbirth', 'dtbeg', 'dtend', 'dtcreated', 'dtmodified', 'dtupdated', 'dtnofified', 'apps', 'verifytoken', 'accesstoken', 'pin', 'search', 'linker', 'ougroups', 'repo', 'online', 'photo', 'countbadges', 'countnotifications'];
+
 NEWSCHEMA('User', function(schema) {
 
 	schema.define('id', 'UID');
 	schema.define('supervisorid', 'UID');
 	schema.define('deputyid', 'UID');
+	schema.define('groupid', 'String(30)');
 	schema.define('directory', 'Lower(25)');
 	schema.define('photo', 'String(150)');
 	schema.define('statusid', Number);
@@ -12,7 +15,6 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('lastname', 'Capitalize(40)', true);
 	schema.define('gender', ['male', 'female'], true);
 	schema.define('email', 'Email', true);
-	schema.define('accesstoken', 'String(50)');
 	schema.define('phone', 'Phone');
 	schema.define('company', 'String(40)');
 	schema.define('ou', 'String(100)');
@@ -46,6 +48,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('inactive', Boolean);
 	schema.define('sounds', Boolean);
 	schema.define('rebuildtoken', Boolean);
+	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('dtbirth', Date);
 	schema.define('dtbeg', Date);
 	schema.define('dtend', Date);
@@ -105,8 +108,13 @@ NEWSCHEMA('User', function(schema) {
 
 		var model = $.clean();
 		var item;
+		var rebuildaccesstoken = model.rebuildaccesstoken;
+		var rebuildtoken = model.rebuildtoken;
 
-		model.welcome = undefined;
+		delete model.rebuildaccesstoken;
+		delete model.rebuildtoken;
+		delete model.welcome;
+
 		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).toSearch();
 		model.name = (model.firstname + ' ' + model.lastname).max(40);
 		model.linker = model.name.slug();
@@ -223,8 +231,6 @@ NEWSCHEMA('User', function(schema) {
 					modified = true;
 				}
 
-				item.accesstoken = model.accesstoken;
-
 				if (item.company !== model.company) {
 					item.company = model.company;
 					modified = true;
@@ -330,11 +336,11 @@ NEWSCHEMA('User', function(schema) {
 
 				// item.pin = model.pin;
 
-				if (model.rebuildtoken || !item.verifytoken)
+				if (rebuildtoken || !item.verifytoken)
 					item.verifytoken = U.GUID(15);
 
-				if (!item.accesstoken)
-					item.accesstoken = U.GUID(40);
+				if (rebuildaccesstoken || !item.accesstoken)
+					item.accesstoken = GUID(40);
 
 				if (modified)
 					item.dtmodified = NOW;
@@ -357,6 +363,7 @@ NEWSCHEMA('User', function(schema) {
 			item.dtcreated = NOW;
 			item.password = item.password.sha256();
 			item.verifytoken = U.GUID(15);
+			item.accesstoken = U.GUID(40);
 
 			if ($.user && $.user.directory) {
 				item.directory = $.user.directory;
@@ -364,11 +371,7 @@ NEWSCHEMA('User', function(schema) {
 			} else
 				item.directoryid = 0;
 
-			if (!item.accesstoken)
-				item.accesstoken = U.GUID(40);
-
 			prepare(item, $.model);
-
 			FUNC.users.set(item, null, function(err, id) {
 				FUNC.users.meta();
 				FUNC.emit('users.meta');

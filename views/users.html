@@ -15,6 +15,8 @@
 		.users .item { font-size: 14px; padding: 8px; line-height: 14px; }
 	}
 
+	.m { margin-bottom: 20px; }
+
 	.userapp-container { border-bottom: 1px solid #F0F0F0; margin-bottom: 10px; background-color: white; }
 	.userapp-container:last-child { border-bottom: 0; margin-bottom: 0; }
 	.userapp-container-disabled img { filter: grayscale(100%); }
@@ -32,10 +34,12 @@
 	.userapp-roles input { margin-right: 5px; vertical-align: middle; }
 	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 4px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
 	.userapp-settings { margin-bottom: 15px; }
+	.customer { float: right; font-size: 9px; color: gray; margin: 1px 0 0; }
 	@{if user.colorscheme}
 	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
 	.button{background-color:@{user.colorscheme}}
 	.users .selected,.users .item:hover{background-color:@{user.colorscheme}}
+	.users .selected,.users .item:hover .customer, .users .selected .customer { color: white; }
 	@{fi}
 
 </style>
@@ -49,7 +53,7 @@
 			<div data---="scrollbar__users.items__margin:40;parent:window;offset:true">
 				<div data---="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
 					<script type="text/html">
-						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ statusid | status(true) }}{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ if customer }}<i class="fa fa-user-secret customer" title="@(Customer)"></i>{{ fi }}{{ statusid | status(true) }}{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
 					</script>
 				</div>
 			</div>
@@ -114,7 +118,7 @@
 						{{ fi }}
 					</script>
 				</div>
-				<div class="scroller-padding">
+				<div class="scroller-padding npb">
 					<div class="row">
 						<div class="col-sm-6 m">
 							<div data---="textbox__users.form.firstname__maxlength:50;required:true;$id:firstinput">@(First name)</div>
@@ -131,7 +135,6 @@
 							<div data---="textbox__users.form.phone__icon2:phone;maxlength:30;type:phone">@(Phone number)</div>
 						</div>
 					</div>
-					<hr />
 					<div class="row">
 						<div class="col-sm-6 m">
 							<div data---="dropdown__users.form.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Meeting|4,Business trip|5,Holiday|6,Sick|7,Off work|8);type:number__0">@(Status)</div>
@@ -141,8 +144,8 @@
 						</div>
 					</div>
 				</div>
-				<hr class="nmt nmb" />
-				<div class="scroller-padding npb">
+				<hr />
+				<div class="scroller-padding">
 					<div class="row">
 						<div class="col-sm-4 m">
 							<div data---="dropdown__users.form.language__empty:;icon:language;datasource:users.meta.languages">@(Language)</div>
@@ -177,25 +180,9 @@
 							<div data---="dropdown__users.form.numberformat__datasource:numberformats;type:number__1">@(Number format)</div>
 						</div>
 					</div>
-					<!--
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div class="help"><code>D</code> or <code>DD</code> days</div>
-							<div class="help"><code>M</code> or <code>MM</code> months</div>
-							<div class="help"><code>Y</code> or <code>YY</code> or <code>YYYY</code> years</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div class="help"><code>H</code> or <code>HH</code> hours</div>
-							<div class="help"><code>m</code> or <code>mm</code> minutes</div>
-							<div class="help"><code>s</code> or <code>ss</code> seconds</div>
-						</div>
-					</div>-->
 				</div>
-				<div class="padding bg-smoke">
-					<div data---="textbox__users.form.accesstoken__maxlength:50;required:true" class="b">@(Access Token)</div>
-					<div class="help"><span class="exec link" data-exec="userform_generatetoken">@(Generate token)</span></div>
-				</div>
-				<div class="scroller-padding">
+
+				<div class="scroller-padding bg-smoke npb">
 
 					<div class="alert m">
 						<i class="fa fa-warning mr5"></i><b>@(IMPORTANT):</b>
@@ -210,8 +197,9 @@
 							<div data---="textbox__users.form.directory__maxlength:25;type:lower">@(Directory)</div>
 						</div>
 					</div>
+				</div>
 
-					<br />
+				<div class="scroller-padding npb">
 
 					<div class="row">
 						<div class="col-sm-6 m">
@@ -246,6 +234,16 @@
 				<div class="scroller-padding">
 					<div class="row">
 						<div class="col-sm-6 m">
+							<div data---="dynamicvalue__users.form.supervisorid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Supervisor</b>)</div>
+						</div>
+						<div class="col-sm-6 m">
+							<div data---="dynamicvalue__users.form.deputyid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Deputy</b>)</div>
+						</div>
+					</div>
+				</div>
+				<div class="scroller-padding bg-smoke npb">
+					<div class="row">
+						<div class="col-sm-6 m">
 							<div data---="dropdown__users.form.company__empty:;datasource:users.meta.companies;icon:building;value:name">@(Select existing Company)</div>
 						</div>
 						<div class="col-sm-6 m">
@@ -254,14 +252,15 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-6 m">
-							<div data---="dynamicvalue__users.form.supervisorid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Supervisor</b>)</div>
+							<div class="alert">
+								<i class="fa fa-info-circle mr5"></i>@(<b>Group ID</b> is suitable for pairing of users from the same company or group.)
+							</div>
 						</div>
 						<div class="col-sm-6 m">
-							<div data---="dynamicvalue__users.form.deputyid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Deputy</b>)</div>
+							<div data---="textbox__users.form.groupid__maxlength:30;placeholder:@(Some identificator)">@(Group ID)</div>
 						</div>
 					</div>
 				</div>
-				<hr class="nmt nmb" />
 				<div class="scroller-padding">
 					<div class="row">
 						<div class="col-sm-6">
@@ -276,7 +275,10 @@
 							<div data---="checkbox__users.form.notifications">@(Enable notifications)</div>
 							<div data---="checkbox__users.form.notificationsemail">@(Enable email notifications)</div>
 							<div data---="checkbox__users.form.notificationsphone">@(Enable phone notifications)</div>
-							<div data---="checkbox__users.form.rebuildtoken">@(Re-build verification token)</div>
+							<div data-bind="users.form.id__show" class="hidden">
+								<div data---="checkbox__users.form.rebuildaccesstoken" class="b">@(Re-build access token)</div>
+								<div data---="checkbox__users.form.rebuildtoken" class="b">@(Re-build verification token)</div>
+							</div>
 						</div>
 					</div>
 					<br />
