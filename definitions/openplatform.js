@@ -660,6 +660,9 @@ OP.refresh = function(app, callback, meta) {
 F.wait('initialization');
 ON('ready', function() {
 	$WORKFLOW('Settings', 'init', function() {
-		FUNC.init(() => F.wait('initialization'));
+		FUNC.init(function() {
+			F.wait('initialization');
+			EMIT('loaded');
+		});
 	});
 });
