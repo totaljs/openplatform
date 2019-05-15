@@ -38,7 +38,7 @@
 			<div class="help m"><i class="fa fa-warning"></i>@(<b>Token for service account</b> can control the entire API of OpenPlatform as Super User.)</div>
 			<div class="row">
 				<div class="col-2 m">
-					<div data---="textbox__settings.accesstoken__maxlength:50;required:true">@(Token for service account)</div>
+					<div data---="textbox__settings.accesstoken__maxlength:50;required:true;type:password">@(Token for service account)</div>
 					<div class="help"><span class="link exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
 				</div>
 
@@ -49,7 +49,7 @@
 			<div class="alert m">@(<b>Verification token</b> is a simple fuse for Hijacking data of third-party apps. If you change it then you may <b>loss data</b> in third-party apps.)</div>
 			<div class="row">
 				<div class="col-2">
-					<div data---="textbox__settings.verifytoken__maxlength:20">@(Verification token)</div>
+					<div data---="textbox__settings.verifytoken__maxlength:20;type:password">@(Verification token)</div>
 					<div class="help"><span class="link exec" data-exec="settings_verifytoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
 				</div>
 			</div>
