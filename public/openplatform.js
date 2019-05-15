@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 403;
+OP.version = 404;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -187,16 +187,18 @@ OP.init = function(callback) {
 		document.body.innerHTML = '401: Unauthorized';
 	}, 2000);
 
-	OP.send('verify', data, function(err, response) {
-		if (timeout) {
-			clearTimeout(timeout);
-			OP.ready = !err;
-			callback(null, response, setTimeout(function() {
-				response.href && (location.href = response.href);
-			}, 100));
-		}
-		timeout = null;
-	});
+	setTimeout(function() {
+		OP.send('verify', data, function(err, response) {
+			if (timeout) {
+				clearTimeout(timeout);
+				OP.ready = !err;
+				callback(null, response, setTimeout(function() {
+					response.href && (location.href = response.href);
+				}, 100));
+			}
+			timeout = null;
+		});
+	}, 5);
 };
 
 document.addEventListener('click', function() {
