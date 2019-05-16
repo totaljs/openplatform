@@ -32,7 +32,7 @@ NEWSCHEMA('Login', function(schema) {
 				OP.session.setcookie($.controller, opt, function() {
 					user.online = true;
 					user.verifytoken = U.GUID(15);
-					FUNC.users.set(user, ['verifytoken', 'online'], NOOP);
+					FUNC.users.set(user, ['verifytoken', 'online']);
 					$.success();
 				});
 

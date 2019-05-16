@@ -100,7 +100,7 @@ NEWSCHEMA('Notification', function(schema) {
 				OP.session.set2(user.id, user);
 
 				// Updates profile
-				FUNC.users.set(user, ['countnotifications', 'apps', 'dtnotified'], () => FUNC.emit('users.notify', user.id, app.id), app);
+				FUNC.users.set(user, ['countnotifications', 'apps', 'dtnotified'], () => FUNC.emit('users.notify', user.id, app.id), app, 'notify');
 			}
 
 			$.success();

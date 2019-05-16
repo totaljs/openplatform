@@ -35,7 +35,7 @@ function login() {
 	var self = this;
 
 	if (self.query.token) {
-		var data = F.decrypt(self.query.token, CONF.secret_password);
+		var data = F.decrypt(self.query.token, CONF.secretpassword);
 		if (data && data.date.add('2 days') > NOW) {
 			FUNC.users.get(data.id, function(err, user) {
 

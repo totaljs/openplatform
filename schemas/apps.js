@@ -189,7 +189,7 @@ NEWSCHEMA('App', function(schema) {
 		if (app) {
 			app.favorite = app.favorite == null ? true : !app.favorite;
 			session.set2(user.id, user);
-			FUNC.users.set(user, ['apps']);
+			FUNC.users.set(user, ['apps'], null, app, 'favorite');
 			$.success(true, app.favorite);
 		} else
 			$.invalid('error-apps-404');
@@ -215,6 +215,7 @@ NEWSCHEMA('App', function(schema) {
 
 				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: $.id === '_welcome' ? CONF.welcome : '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: $.id !== '_account' && $.id !== '_welcome' && $.id !== '_settings' };
 				$.callback(data);
+
 				return;
 		}
 
@@ -227,7 +228,8 @@ NEWSCHEMA('App', function(schema) {
 
 			if (app) {
 				data = OP.meta(app, user);
-				LOGGER('logs', '[{0}]'.format(user.id + ' ' + user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
+
+				FUNC.logger('logs', 'run: ' + app.id + ' (' + app.name + ')', '@' + user.name, $.ip);
 
 				if (data) {
 					data.ip = $.ip;

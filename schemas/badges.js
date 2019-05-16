@@ -37,7 +37,7 @@ NEWSCHEMA('Badge', function(schema) {
 				// They don't need own DB
 
 				// Updates profile
-				FUNC.users.set(user, ['countbadges', 'apps'], () => FUNC.emit('users.badge', user.id, app.id), app);
+				FUNC.users.set(user, ['countbadges', 'apps'], () => FUNC.emit('users.badge', user.id, app.id), app, 'badge');
 
 				// Updates all sessions
 				OP.session.set2(user.id, user);
