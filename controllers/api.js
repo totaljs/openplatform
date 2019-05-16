@@ -61,8 +61,8 @@ exports.install = function() {
 	ROUTE('GET    /api/badges/                          *Badge        --> @exec');
 	ROUTE('POST   /api/notify/                          *Notification --> @save');
 	ROUTE('POST   /api/config/                          *Config       --> @save');
-	ROUTE('GET    /api/config/                          *Config       --> @get');
-	ROUTE('GET    /api/meta/                            *Meta         --> @get');
+	ROUTE('GET    /api/config/                          *Config       --> @read');
+	ROUTE('GET    /api/meta/                            *Meta         --> @read');
 	ROUTE('GET    /api/unlock/                          *Account      --> @unlock');
 
 	// CORS

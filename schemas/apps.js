@@ -171,7 +171,7 @@ NEWSCHEMA('App', function(schema) {
 
 				if (model.permissions || model.autorefresh) {
 					model.allowreadapps = response.allowreadapps;
-					model.allowguest = response.allowguest;
+					model.allowguestuser = response.allowguestuser;
 					model.allowreadusers = response.allowreadusers;
 					model.allowreadmeta = response.allowreadmeta;
 					model.allowreadprofile = response.allowreadprofile;
@@ -285,7 +285,7 @@ function sync(item, model, meta, permissions) {
 			item.allowreadusers = model.allowreadusers;
 			item.allowreadmeta = model.allowreadmeta;
 			item.allowreadprofile = model.allowreadprofile;
-			item.allowguest = model.allowguest;
+			item.allowguestuser = model.allowguestuser;
 			item.allownotifications = model.allownotifications;
 		}
 

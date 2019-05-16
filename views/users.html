@@ -60,9 +60,9 @@
 			<nav class="toolbar">
 				<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
 				<button data-bind="users.selected__disabled:!value" class="exec" data-exec="usersform_remove" title="@(Remove user)"><i class="fa fa-minus"></i></button>
+				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Filter)"><i class="fa fa-filter"></i></button>
 				<button data-bind="users.response__enabled:users_pagination" name="prev" class="exec" data-exec="users_page" title="@(Previous page)"><i class="fa fa-chevron-left"></i></button>
-				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Next page)"><i class="fa fa-chevron-right"></i></button>
-				<span data-bind="users.response__!html:value.page + '/' + value.pages"></span>
+				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Next page)" style="border-right:0"><i class="fa fa-chevron-right"></i></button>
 			</nav>
 		</div>
 	</div>
@@ -523,7 +523,7 @@
 			if (response.success) {
 				userform_refresh(true, 2000);
 				userform_cancel();
-				OP.success('@(Done, user has been saved.)');
+				OP.success('@(Done, the user has been saved.)');
 			}
 		});
 	}

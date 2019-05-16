@@ -66,6 +66,8 @@ NEWSCHEMA('Notification', function(schema) {
 			model.dtcreated = F.datetime;
 			model.ip = $.ip;
 
+			console.log('NOTIFY');
+
 			var can = true;
 
 			if (app && user.apps[app.id]) {

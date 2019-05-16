@@ -367,6 +367,9 @@ NEWSCHEMA('User', function(schema) {
 			item.verifytoken = U.GUID(15);
 			item.accesstoken = U.GUID(40);
 
+			item.dtupdated = NOW;
+			item.dtmodified = NOW;
+
 			if ($.user && $.user.directory) {
 				item.directory = $.user.directory;
 				item.directoryid = item.directory.crc32(true);
