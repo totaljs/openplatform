@@ -62,7 +62,7 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
 .testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; margin: 8px 10px 0 0; border-radius: 2px; vertical-align: middle; }
-.samode { float: right; color: white; font-size: 10px; font-weight: bold; padding: 0 8px; height: 30px; line-height: 16px; margin: 0; line-height: 30px; }
+.samode { float: right; color: white; font-size: 10px; font-weight: bold; padding: 0 8px; height: 30px; line-height: 16px; margin: 0; line-height: 30px; width: 45px; }
 
 footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px; line-height: 30px; padding-right: 10px; border-right: 1px solid #E0E0E0; max-width: 400px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 
