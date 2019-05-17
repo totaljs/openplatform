@@ -1,4 +1,4 @@
-MAIN.fields = ['id', 'supervisorid', 'deputyid', 'groupid', 'directory', 'directoryid', 'statusid', 'status', 'name', 'firstname', 'lastname', 'gender', 'email', 'phone', 'company', 'ou', 'language', 'reference', 'position', 'locality', 'login', 'password', 'locking', 'roles', 'groups', 'colorscheme', 'background', 'blocked', 'customer', 'darkmode', 'notifications', 'notificationsemail', 'notificationsphone', 'dateformat', 'timeformat', 'numberformat', 'volume', 'sa', 'inactive', 'sounds', 'dtbirth', 'dtbeg', 'dtend', 'dtcreated', 'dtmodified', 'dtupdated', 'dtnofified', 'apps', 'verifytoken', 'accesstoken', 'pin', 'search', 'linker', 'ougroups', 'repo', 'online', 'photo', 'countbadges', 'countnotifications'];
+MAIN.fields = ['id', 'supervisorid', 'deputyid', 'groupid', 'directory', 'directoryid', 'statusid', 'status', 'name', 'firstname', 'lastname', 'gender', 'email', 'phone', 'company', 'ou', 'language', 'reference', 'position', 'locality', 'login', 'password', 'locking', 'roles', 'groups', 'colorscheme', 'background', 'blocked', 'customer', 'darkmode', 'notifications', 'notificationsemail', 'notificationsphone', 'dateformat', 'timeformat', 'numberformat', 'volume', 'sa', 'inactive', 'sounds', 'dtbirth', 'dtbeg', 'dtend', 'dtcreated', 'dtmodified', 'dtupdated', 'dtnofified', 'apps', 'verifytoken', 'accesstoken', 'pin', 'search', 'linker', 'ougroups', 'repo', 'online', 'photo', 'countbadges', 'countnotifications', 'dtlogged'];
 
 NEWSCHEMA('User', function(schema) {
 
@@ -277,13 +277,15 @@ NEWSCHEMA('User', function(schema) {
 				var apps = Object.keys(model.apps);
 
 				for (var i = 0; i < apps.length; i++) {
-					var app = model.apps[apps[i]];
-					var appold = item.apps[apps[i]];
+					var key = apps[i];
+					var app = model.apps[key];
+					var appold = item.apps[key];
 					if (appold) {
 						app.favorite = appold.favorite;
 						app.countnotifications = appold.countnotifications;
 						app.countbadges = appold.countbadges;
 					}
+					app.id = key;
 				}
 
 				item.apps = model.apps;
@@ -365,11 +367,22 @@ NEWSCHEMA('User', function(schema) {
 			item.verifytoken = U.GUID(15);
 			item.accesstoken = U.GUID(40);
 
+			item.dtupdated = NOW;
+			item.dtmodified = NOW;
+
 			if ($.user && $.user.directory) {
 				item.directory = $.user.directory;
 				item.directoryid = item.directory.crc32(true);
 			} else
 				item.directoryid = 0;
+
+			var apps = Object.keys(model.apps);
+
+			for (var i = 0; i < apps.length; i++) {
+				var key = apps[i];
+				var app = model.apps[key];
+				app.id = key;
+			}
 
 			prepare(item, $.model);
 			FUNC.users.set(item, null, function(err, id) {

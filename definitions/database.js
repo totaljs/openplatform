@@ -3,7 +3,6 @@ const Fs = require('fs');
 CONF.table_configs = 'userid:string|appid:string|body:string|dtupdated:date|dtcreated:date';
 FUNC.apps = {};
 FUNC.users = {};
-FUNC.common = {};
 FUNC.settings = {};
 FUNC.notifications = {};
 FUNC.files = {};
@@ -159,14 +158,14 @@ FUNC.users.query = function(filter, callback) {
 		take--;
 
 		if (take <= 0)
-			break;
+			continue;
 
 		arr.push(user);
 	}
 
 	var data = {};
 	data.items = arr;
-	data.limit = data.count = data.items.length;
+	data.limit = filter.limit;
 	data.page = filter.page;
 	data.pages = Math.ceil(count / filter.limit);
 	data.count = count;
@@ -186,8 +185,8 @@ FUNC.users.rem = function(id, callback) {
 			var tmp = G.users[i];
 			if (tmp.supervisorid === id)
 				tmp.supervisorid = '';
-			if (tmp.delegateid === id)
-				tmp.delegateid = '';
+			if (tmp.deputyid === id)
+				tmp.deputyid = '';
 		}
 
 		// Removes notifications
@@ -398,7 +397,7 @@ FUNC.users.assign = function(model, callback) {
 
 	updated.wait(function(id, next) {
 		// Notifies user about change
-		FUNC.emit('users.refresh', id);
+		FUNC.emit('users.refresh', id, 'apps');
 		setImmediate(next);
 	});
 
@@ -534,7 +533,7 @@ function refresh_apps() {
 			// Good to know:
 			// This is not needed because OP uses references in this case
 			// This fields are as info for another storage
-			// FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'daterefreshed']);
+			// FUNC.apps.set(item, ['hostname', 'online', 'version', 'name', 'description', 'author', 'icon', 'frame', 'email', 'roles', 'groups', 'width', 'height', 'resize', 'type', 'screenshots', 'origin', 'dtsync']);
 
 			// Important
 			FUNC.emit('apps.sync', item.id);
@@ -701,8 +700,6 @@ FUNC.init = function(callback) {
 				G.apps[i].online = false;
 
 			G.apps.quicksort('title');
-			G.apps.length && $WORKFLOW('App', 'state');
-
 			FUNC.users.meta();
 			callback && callback();
 			refresh_apps();
@@ -710,23 +707,22 @@ FUNC.init = function(callback) {
 	});
 };
 
-FUNC.emit = function(type, a, b, c, d, e) {
-	EMIT(type, a, b, c, d, e);
-};
-
-FUNC.on = function(type, callback) {
-	ON(type, callback);
-};
+FUNC.emit = EMIT;
+FUNC.on = ON;
 
 FUNC.error = function(place, err) {
 	F.error(err, null, place);
+};
+
+FUNC.log = function(user, appid, type, body) {
+	NOSQL('logs').insert({ userid: user.id, appid: appid, type: type, body: body, dtcreated: NOW });
 };
 
 FUNC.logger = LOGGER;
 
 // FileStorage
 function save(type) {
-	setTimeout2('OP.saveState.' + (type || 0), function() {
+	setTimeout2('OP.savestate.' + (type || 0), function() {
 
 		if (!type || type === 2) {
 			EMIT('users.backup', G.users);

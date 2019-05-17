@@ -3,7 +3,7 @@
 	.apps .name { font-size: 12px; font-weight: bold; }
 	.apps .name b { color: #68A754; }
 	.apps .position { font-size: 11px; }
-	.apps .item { line-height: 12px; font-size: 12px; padding: 5px; cursor: pointer; border-bottom: 1px solid #E0E0E0; }
+	.apps .item { line-height: 12px; font-size: 12px; padding: 5px; cursor: pointer; border-bottom: 1px solid #E0E0E0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 	.apps .item .fa-circle { font-size: 8px; }
 	.apps .item:hover { background-color: #2E5ADA; color: white; }
 	.apps .selected { background-color: #2E5ADA; color: white; }
@@ -174,7 +174,7 @@
 									</tr>
 									<tr>
 										<td>@(Optimized for guest user)</td>
-										<td class="center bg-white">{{ value.allowguest | checked }}</td>
+										<td class="center bg-white">{{ value.allowguestuser | checked }}</td>
 									</tr>
 									<tr>
 										<td>@(Can read meta information)</td>
@@ -237,7 +237,7 @@
 									</tr>
 									<tr>
 										<td>@(Optimized for guest user)</td>
-										<td class="center bg-white">{{ value.allowguest | checked }}</td>
+										<td class="center bg-white">{{ value.allowguestuser | checked }}</td>
 									</tr>
 									<tr>
 										<td>@(Can read meta information)</td>
