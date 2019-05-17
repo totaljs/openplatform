@@ -1,1 +1,1 @@
-{"name":"OpenPlatform v4","url":"https://openplatform.totaljs.com","verifytoken":"","marketplace":"/marketplace/","welcome":"/welcome/","email":"petersirka@gmail.com","colorscheme":"#4285f4","background":"","accesstoken":"4pjzn69ti6pi3ipjtjaj6meif612zyggidn26anr","smtp":"","smtpsettings":"","test":true,"guest":true}
+{"url":"http://127.0.0.1:8000","email":"petersirka@gmail.com","accesstoken":"m2c0oxqhwba8ajz0g20nvqypjwc8y1dhepthsmaa","smtp":"mail.yourdomain.com","smtpsettings":"{\"user\":\"\",\"password\":\"\",\"timeout\":2000}"}

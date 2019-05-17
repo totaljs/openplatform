@@ -8,6 +8,7 @@ cp -a ../schemas/ schemas
 cp -a ../public/ public
 cp -a ../resources/ resources
 cp -a ../views/ views
+cp -a ../guest.json guest.json
 mv controllers/api.js controllers/op-api.js
 mv controllers/default.js controllers/op-default.js
 
