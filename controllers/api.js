@@ -33,7 +33,7 @@ exports.install = function() {
 		ROUTE('POST   /api/internal/settings/smtp/      *SettingsSMTP --> @exec', [10000]);
 
 		// Real-time operation
-		ROUTE('GET    /api/profile/                     *Profile      --> @get');
+		ROUTE('GET    /api/profile/                     *Profile      --> @read');
 		ROUTE('GET    /api/profile/{id}/                *App          --> @run');
 		ROUTE('GET    /api/profile/{id}/favorite/       *App          --> @favorite');
 		ROUTE('GET    /api/profile/{id}/mute/           *App          --> @mute');
@@ -64,6 +64,7 @@ exports.install = function() {
 	ROUTE('GET    /api/config/                          *Config       --> @read');
 	ROUTE('GET    /api/meta/                            *Meta         --> @read');
 	ROUTE('GET    /api/unlock/                          *Account      --> @unlock');
+	ROUTE('GET    /guest/',                             redirect_guest);
 
 	// CORS
 	CORS();
@@ -71,6 +72,12 @@ exports.install = function() {
 
 function json_verify() {
 	var self = this;
+
+	if (CONF.guest && OP.guest && self.query.accesstoken.endsWith('0-0-0')) {
+		self.json(OP.metaguest());
+		return;
+	}
+
 	OP.decodeAuthToken(self.query.accesstoken, function(err, obj) {
 
 		if (!obj) {
@@ -219,4 +226,10 @@ function json_sessions_remove(id) {
 		} else
 			self.invalid('error-session');
 	});
+}
+
+function redirect_guest() {
+	var self = this;
+	CONF.guest && self.cookie(CONF.cookie, 'guest', '1 day');
+	self.redirect('/');
 }

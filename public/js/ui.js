@@ -2700,6 +2700,7 @@ COMPONENT('processes', function(self, config) {
 		}
 
 		var item = GET(config.datasource).findItem('id', value.id);
+		console.log(value);
 		if (!item) {
 			WARN('Application {0} not found.'.format(value.id));
 			return;

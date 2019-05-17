@@ -4,6 +4,12 @@ NEWSCHEMA('Logger', function(schema) {
 	schema.define('body', 'String', true);
 	schema.define('type', ['error', 'info', 'warning', 'success', 'alert'])('info');
 	schema.setInsert(function($) {
+
+		if ($.user.guest) {
+			$.invalid('error-permissions');
+			return;
+		}
+
 		FUNC.log($.user, $.model.appid, $.model.type, $.model.body);
 		$.success();
 	});

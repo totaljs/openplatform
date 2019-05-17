@@ -1,3 +1,4 @@
+const Fs = require('fs');
 const OP = global.OP = {};
 
 OP.version = 4200;
@@ -92,6 +93,9 @@ OP.profile = function(user, callback) {
 	meta.numberformat = user.numberformat;
 	meta.repo = user.repo;
 
+	if (user.guest)
+		meta.guest = true;
+
 	var bg = user.background || CONF.background;
 	if (bg)
 		meta.background = bg;
@@ -167,6 +171,9 @@ OP.profilelive = function(user) {
 	meta.volume = user.volume;
 	meta.darkmode = user.darkmode;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
+
+	if (user.guest)
+		meta.guest = true;
 
 	// meta.timeformat = user.timeformat;
 	// meta.dateformat = user.dateformat;
@@ -270,6 +277,27 @@ OP.meta = function(app, user, serverside) {
 	return meta;
 };
 
+OP.metaguest = function() {
+	var meta = { date: NOW };
+	meta.openplatform = CONF.url;
+	meta.openplatformid = OP.id;
+	meta.name = CONF.name;
+	meta.guest = true;
+	meta.id = '0';
+
+	if (CONF.email)
+		meta.email = CONF.email;
+
+	if (CONF.verifytoken)
+		meta.verifytoken = CONF.verifytoken;
+
+	meta.colorscheme = CONF.colorscheme;
+	meta.background = CONF.background;
+	meta.profile = CLONE(OP.guest);
+	meta.profile.apps = meta.profile.accesstoken = meta.profile.verifytoken = undefined;
+	return meta;
+};
+
 // Notifications + badges
 OP.encodeToken = function(app, user) {
 	var sign = app.id + '-' + user.id + '-' + (user.accesstoken + app.accesstoken).crc32(true);
@@ -312,7 +340,7 @@ OP.encodeAuthToken = function(app, user) {
 
 OP.decodeAuthToken = function(sign, callback) {
 
-	if (!sign) {
+	if (!sign || sign.length < 30) {
 		callback();
 		return;
 	}
@@ -656,6 +684,63 @@ OP.refresh = function(app, callback, meta) {
 	});
 };
 
+OP.guestrefresh = function() {
+	FUNC.apps.query({ guest: true }, function(err, apps) {
+		OP.guest.apps = {};
+		for (var i = 0; i < apps.items.length; i++) {
+			var app = apps.items[i];
+			OP.guest.apps[app.id] = { roles: [], countnotifications: 0, countbadges: 0 };
+		}
+	});
+};
+
+OP.guestload = function() {
+
+	Fs.readFile(PATH.root('guest.json'), function(err, data) {
+
+		if (err)
+			return;
+
+		var user = data.toString('utf8').parseJSON(true);
+		if (user) {
+			user.id = '0';
+			user.verifytoken = '0';
+			user.accesstoken = '0';
+			user.sounds = true;
+			user.dtcreated = new Date(2019, 5, 17, 23, 15, 0);
+			user.dtupdated = null;
+			user.dtlogged = NOW;
+			user.online = true;
+			user.guest = true;
+			user.apps = {};
+
+			delete user.sa;
+			delete user.countnotifications;
+			delete user.supervisorid;
+			delete user.deputyid;
+			delete user.ou;
+			delete user.ougroups;
+
+			if (!user.company)
+				user.company = undefined;
+
+			if (!user.reference)
+				user.reference = undefined;
+			if (!user.dateformat)
+				user.dateformat = 'yyyy-MM-dd';
+
+			if (!user.timeformat)
+				user.timeformat = 24;
+
+			if (!user.numberformat)
+				user.numberformat = 1;
+
+			OP.guest = user;
+			OP.guestrefresh();
+		}
+	});
+};
+
 // Load
 F.wait('initialization');
 ON('ready', function() {
@@ -663,6 +748,9 @@ ON('ready', function() {
 		FUNC.init(function() {
 			F.wait('initialization');
 			EMIT('loaded');
+			OP.guestload();
 		});
 	});
 });
+
+

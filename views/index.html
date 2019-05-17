@@ -46,7 +46,10 @@
 
 	<header data-bind="user__.header-show:value && value.name">
 
+		@{if !user.guest}
 		<div class="button-status exec" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
+		@{fi}
+
 		<div class="datetime hidden-xs">
 			<span class="exec" data-exec="Dashboard/showdesktop" title="@(Show desktop)"><i class="fa fa-ellipsis-v"></i></span>
 			<div data---="time"></div>
@@ -67,10 +70,12 @@
 				</nav>
 			</div>
 		</div>
+		@{if !user.guest}
 		<div class="button-notifications exec" data-path="common.notifications" data-value="!common.notifications">
 			<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
 			<i class="far fa-bell" data-bind="common.notifications__.fa:!!value__.far:!value"></i>
 		</div>
+		@{fi}
 	</header>
 
 	<div data---="notifications__common.notifications" data-bind="common.notifications__show" class="hidden">
@@ -107,8 +112,10 @@
 						<button class="exec internal" data-exec="internalapp" data-id="_info"><i class="fa fa-question-circle"></i>@(About)</button>
 						@{fi}
 					@{fi}
+					@{if !user.guest}
 					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
 					<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
+					@{fi }
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
 					@{if user.pin}
 					<button class="exec internal" data-exec="internallock"><i class="fa fa-lock"></i>@(Lock screen)</button>
@@ -148,7 +155,9 @@
 		</div>
 		<div class="clearfix"></div>
 		<div class="startmenu-title">
+			@{if !user.guest}
 			<div class="startmenu-status exec" data-exec="Dashboard/showstatusform" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
+			@{fi}
 			<button class="exec" data-path="common.startmenuapps" data-value="!value"><i class="fa fa-ellipsis-h"></i></button>
 			<div class="startmenu-profile exec" data-exec="Dashboard/showprofile">
 				<img src="/img/face.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
@@ -271,13 +280,14 @@
 			SETTER('loading', 'show');
 			SETTER('processes', 'kill');
 			setTimeout(function() {
-				location.href = '/logoff/';
+				location.href = '/logout/';
 			}, 1000);
 		}
 
 		ON('message', function(message) {
 			switch (message.TYPE) {
 				case 'logoff':
+				case 'logout':
 					COOKIES.set('@{'%cookie'}', '', '-1 day');
 					location.href = '/';
 					break;
@@ -367,7 +377,8 @@
 			};
 
 			self.showprofile = function() {
-				internalapp('_account');
+				if (!user.guest)
+					internalapp('_account');
 			};
 
 			self.showsessions = function() {
@@ -508,7 +519,9 @@
 				if (!isMOBILE)
 					opt.items.push({ name: '@(Reset size)', icon: '!far fa-window-restore', value: 'reset' });
 
-				opt.items.push({ name: '@(Favorite)', icon: '!fa' + (iframe.meta.internal.favorite ? ' red' : 'r') + ' fa-heart', value: 'favorite' });
+				if (!user.guest)
+					opt.items.push({ name: '@(Favorite)', icon: '!fa' + (iframe.meta.internal.favorite ? ' red' : 'r') + ' fa-heart', value: 'favorite' });
+
 				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
 				next();
 			};

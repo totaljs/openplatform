@@ -92,6 +92,7 @@ NEWSCHEMA('App', function(schema) {
 						FUNC.apps.set(item, null, function() {
 							FUNC.emit('apps.update', item.id);
 							FUNC.emit('apps.refresh', item.id);
+							OP.guestrefresh();
 							$.success();
 						});
 					});
@@ -111,6 +112,7 @@ NEWSCHEMA('App', function(schema) {
 					FUNC.emit('apps.create', id);
 					FUNC.emit('apps.refresh', id);
 					FUNC.logger('apps', 'create: ' + id + ' - ' + model.name, '@' + $.user.name, $.ip);
+					OP.guestrefresh();
 					$.success();
 				});
 			}, true);
@@ -208,14 +210,13 @@ NEWSCHEMA('App', function(schema) {
 			case '_account':
 			case '_welcome':
 
-				if ($.id !== '_account' && !user.sa) {
+				if ($.id !== '_account' && $.id !== '_welcome' && !user.sa) {
 					$.invalid('error-permissions');
 					return;
 				}
 
 				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: $.id === '_welcome' ? CONF.welcome : '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: $.id !== '_account' && $.id !== '_welcome' && $.id !== '_settings' };
 				$.callback(data);
-
 				return;
 		}
 
@@ -227,28 +228,33 @@ NEWSCHEMA('App', function(schema) {
 		FUNC.apps.get($.id, function(err, app) {
 
 			if (app) {
-				data = OP.meta(app, user);
+				data = user.guest ? OP.metaguest() : OP.meta(app, user);
 
-				FUNC.logger('logs', 'run: ' + app.id + ' (' + app.name + ')', '@' + user.name, $.ip);
+				FUNC.logger('logs', 'run: ' + app.id + ' (' + app.name + ')', '@' + (user.guest ? 'GUEST' : user.name), $.ip);
 
 				if (data) {
+
 					data.ip = $.ip;
 					data.href = $.query.href;
-					data.notifications = user.apps[$.id].notifications !== false;
+
+					if (user.guest) {
+						data.id = app.id;
+						data.url = app.frame;
+						data.accesstoken = '0-0-0';
+					} else {
+						data.notifications = user.apps[$.id].notifications !== false;
+						user.apps[$.id].countnotifications = 0;
+						user.apps[$.id].countbadges && FUNC.badges.rem(user.id, $.id);
+						user.apps[$.id].countbadges = 0;
+						session.set2(user.id, user);
+					}
 
 					$.callback(data);
-
-					user.apps[$.id].countnotifications = 0;
-					user.apps[$.id].countbadges && FUNC.badges.rem(user.id, $.id);
-					user.apps[$.id].countbadges = 0;
-
-					session.set2(user.id, user);
 
 					// Stats
 					var db = NOSQL('apps');
 					db.counter.hit('all');
 					db.counter.hit($.id);
-
 					return;
 				}
 			}

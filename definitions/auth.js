@@ -25,6 +25,11 @@ AUTH(function($) {
 		return $.invalid();
 	}
 
+	if (CONF.guest && $.cookie(CONF.cookie) === 'guest') {
+		$.success(OP.guest);
+		return;
+	}
+
 	var opt = {};
 	opt.key = CONF.cookie_key || 'auth';
 	opt.name = CONF.cookie;

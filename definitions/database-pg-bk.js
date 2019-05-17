@@ -460,6 +460,7 @@ FUNC.apps.query = function(filter, callback) {
 	filter.id && builder.in('id', filter.id);
 	filter.q && builder.search('search', filter.q);
 	filter.directory && builder.query('$1=ANY (directories)', [filter.directory]);
+	filter.guest && builder.query('(allowguestuser=TRUE AND guest=TRUE)');
 	builder.sort('title');
 	builder.paginate(filter.page, filter.limit);
 	builder.callback(callback);

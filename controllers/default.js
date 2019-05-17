@@ -11,9 +11,9 @@ exports.install = function() {
 	});
 
 	ROUTE('GET /*',       login, ['unauthorize']);
-	ROUTE('GET /logoff/', logoff);
-	ROUTE('GET /lock/',   lock);
 	ROUTE('GET /marketplace/');
+	ROUTE('GET /logout/', logout);
+	ROUTE('GET /lock/', lock);
 
 	LOCALIZE('/pages/*.html');
 	LOCALIZE('/forms/*.html');
@@ -64,7 +64,7 @@ function login() {
 	self.view('login');
 }
 
-function logoff() {
+function logout() {
 	var self = this;
 	if (self.user)
 		OP.logout(self);

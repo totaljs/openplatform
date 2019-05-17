@@ -486,6 +486,9 @@ FUNC.apps.query = function(filter, callback) {
 		if (filter.directory && app.directories && app.directories.length && app.directories.indexOf(filter.directory) === -1)
 			continue;
 
+		if (filter.guest && (!app.allowguestuser || !app.guest))
+			continue;
+
 		if (filter.q && app.search.indexOf(filter.q) === -1)
 			continue;
 

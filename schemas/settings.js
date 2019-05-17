@@ -102,6 +102,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.marketplace = response.marketplace;
 				CONF.verifytoken = response.verifytoken;
 				CONF.welcome = response.welcome;
+				CONF.guest = response.guest;
 				OP.id = CONF.url.crc32(true);
 			}
 

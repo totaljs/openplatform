@@ -18,27 +18,26 @@
 	<style type="text/css">
 		/*auto*/
 		html,body { overflow: hidden; height: 100%; }
-		body { background-color: #303030; color: #D0D0D0; }
+		body { background-color: #F0F0F0; color: black; }
 
-		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -170px 0 0 -140px; background-color: #252525; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 2px solid #202020; }
+		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -240px 0 0 -140px; background-color: white; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 1px solid #D0D0D0; box-shadow: 0 0 30px rgba(0,0,0,0.05); }
 		.padding { padding: 20px; }
 		.panelshow { transform: scale(1); }
-		a { color: white; }
-		h1 { color: black; margin: 0; padding: 20px 0; font-family: Arial; text-align: center; font-size: 16px; border-bottom: 1px solid #101010; color: white }
+		a { color: black; }
+		h1 { color: black; margin: 0; padding: 22px 0 20px; font-family: Arial; text-align: center; font-size: 16px; border-bottom: 1px solid #E0E0E0; color: black }
 		h1 .fa { margin-right: 10px; }
-		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: silver; }
-		input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { background-color: #F0F0F0; cursor: not-allowed; color: silver; }
-		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus { background-color: #181818 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #181818 inset !important; -webkit-text-fill-color: white !important; }
-		.ui-textbox { border: 1px solid #101010; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: #181818; display: table; }
-		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: white; width: 100%; background-color: #181818; }
-		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #101010; width: 30px; color: gray; }
+
+		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: gray; }
+		input[type="text"]:disabled, input[type="password"]:disabled { background-color: #F0F0F0; cursor: not-allowed; color: gray; }
+		.ui-textbox { border: 1px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
+		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: white; width: 100%; background-color: white; }
+		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #E0E0E0; width: 30px; color: gray; }
 		.ui-textbox .fa-times { color: red; cursor: pointer; }
 		.ui-textbox-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
 		.ui-textbox-label .fa { margin-right: 5px; }
 		.ui-textbox-label-required:before { color: red; content: '***'; margin-right: 5px; }
-		.ui-textbox-invalid { border-color: #96322C !important; background-color: #96322C !important; }
-		.ui-textbox-invalid input { background-color: #96322C !important; }
-		.ui-textbox-invalid div { border-color: #871C15; color: white; }
+		.ui-textbox-invalid { border-color: red !important; }
+		.ui-textbox-invalid div { border-color: red; color: red; }
 		.ui-textbox .fa-caret-up, .ui-textbox .fa-caret-down { display: block; line-height: 9px; cursor: pointer; }
 		.ui-textbox .fa-calendar { cursor: pointer; }
 		.ui-textbox-helper { margin-top: 8px; font-size: 11px; color: red; text-align: left; display: none; }
@@ -55,22 +54,24 @@
 		.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
 		.success .fa { margin-right: 8px; }
 
-		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
+		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 40px; text-transform: uppercase; font-size: 14px; }
 		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
-		button:disabled { background-color: #101010; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+		button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
 		button .fa { margin-right: 5px; }
-		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 20px 0 0 0; }
+		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 15px 0 0 0; }
 
 		@media(max-width: 768px) {
 			.panel { margin: 20px; left: 0; position: relative; top: 50%; margin-top: -200px; width: auto; max-width: 1000px; }
 		}
+
+		.gray { color: gray; }
 
 	</style>
 </head>
 <body data-jc="exec">
 
 	<div class="panel">
-		<h1><i class="fa fa-lock"></i>@{config.name}</h1>
+		<h1><i class="fa fa-lock"></i>@{CONF.name}</h1>
 		<div data-bind="password.response__show:value && value.success === true" class="success hidden">@(We sent you email with instructions for resetting of your password.)</div>
 		<div class="padding">
 
@@ -79,11 +80,14 @@
 					<div class="m" data---="textbox__form.name__icon2:user;required:true;autofocus:true;autofill:true;$id:formname">@(Login name)</div>
 					<div class="m" data---="textbox__form.password__icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
 					<div data---="error__form.response"></div>
-					<div class="m fs12">
-						<div><a href="#password" class="exec" data-exec="toggletype">@(I forgot my password)</a></div>
+					<div class="m fs12" style="line-height:16px">
+						<div><a href="#password" class="exec gray" data-exec="toggletype"><i class="fa fa-angle-right mr5"></i>@(Reset password)</a></div>
+						@{if CONF.guest}
+						<div><a href="/guest/" class="b"><i class="fa fa-angle-right mr5"></i>@(Sign-in as a guest)</a></div>
+						@{fi}
 					</div>
 					<div data---="validation__form">
-						<button type="button" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
+						<button type="button" class="b" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
 					</div>
 				</form>
 			</div>

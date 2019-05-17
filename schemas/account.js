@@ -22,6 +22,12 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('background', 'String(150)');
 
 	schema.setGet(function($) {
+
+		if ($.user.guest) {
+			$.invalid('error-permissions');
+			return;
+		}
+
 		FUNC.users.get($.user.id, function(err, user) {
 			var data = {};
 			if (user) {
@@ -47,6 +53,11 @@ NEWSCHEMA('Account', function(schema) {
 	});
 
 	schema.setSave(function($) {
+
+		if ($.user.guest) {
+			$.invalid('error-permissions');
+			return;
+		}
 
 		var model = $.clean();
 
@@ -147,6 +158,11 @@ NEWSCHEMA('Account', function(schema) {
 
 		if (!$.user) {
 			$.invalid('error-offline');
+			return;
+		}
+
+		if ($.user.guest) {
+			$.invalid('error-permissions');
 			return;
 		}
 

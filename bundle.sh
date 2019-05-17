@@ -23,7 +23,7 @@ for f in *.js; do mv "$f" "`echo op-$f`"; done
 cd ..
 
 mv definitions/op-database.js definitions/database.js
-rm definitions/op-database-mongodb-bk.js
+rm definitions/op-database-pg-bk.js
 
 tpm create openplatform.package
 cp openplatform.package ../openplatform.bundle
