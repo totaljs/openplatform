@@ -62,7 +62,7 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
 .testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; margin: 8px 10px 0 0; border-radius: 2px; vertical-align: middle; }
-.samode { float: right; color: white; font-size: 10px; font-weight: bold; padding: 0 8px; height: 30px; line-height: 16px; margin: 0; line-height: 30px; }
+.samode { float: right; color: white; font-size: 10px; font-weight: bold; padding: 0 8px; height: 30px; line-height: 16px; margin: 0; line-height: 30px; width: 45px; }
 
 footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px; line-height: 30px; padding-right: 10px; border-right: 1px solid #E0E0E0; max-width: 400px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 
@@ -186,7 +186,7 @@ h3 i { margin-right: 5px; }
 .startmenu-apps .app-version { color: #A0A0A0; font-size: 11px; }
 .startmenu-apps .app .fa-times { position: absolute; right: 10px; top: 9px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
 .startmenu-apps .app .fa-times:hover { opacity: 0.8; }
-.appunread { position: absolute; background-color: #D23B3B; color: white; width: 18px; border-radius: 100%; height: 18px; font-size: 10px; line-height: 18px; margin-top: -2px; left: 3px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
+.appunread { position: absolute; background-color: #D23B3B; color: white; width: 18px; border-radius: 100%; height: 18px; font-size: 10px; line-height: 18px; margin-top: 1px; left: 1px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
 .startmenu-apps .app .appbadge { position: absolute; margin: 14px 0 0 37px; font-size: 7px; }
 .appbadge .fa { color: red; font-size: 7px; }
 

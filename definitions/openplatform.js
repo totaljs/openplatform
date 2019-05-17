@@ -33,7 +33,7 @@ OP.logout = function(controller) {
 	controller.cookie(CONF.cookie, '', '-5 days');
 	controller.user.online = false;
 	OP.session.remove(controller.sessionid);
-	FUNC.users.set(controller.user, ['online'], NOOP);
+	FUNC.users.set(controller.user, ['online']);
 	FUNC.users.logout(controller.user, controller);
 };
 
@@ -63,7 +63,7 @@ OP.cookie = function(req, user, sessionid, callback, note) {
 		user.verifytoken = U.GUID(15);
 		user.online = true;
 		user.dtlogged = NOW;
-		FUNC.users.set(user, ['verifytoken', 'dtlogged', 'online'], NOOP);
+		FUNC.users.set(user, ['verifytoken', 'dtlogged', 'online']);
 		callback && callback();
 	});
 };

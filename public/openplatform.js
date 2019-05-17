@@ -366,18 +366,18 @@ OP.notify = function(type, body, data) {
 		type = 0;
 	}
 
-	return OP.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
+	return OP.send('notify', { type: type, body: body, data: data || '', dtcreated: new Date() });
 };
 
 OP.share = function(app, type, body, silent) {
 	setTimeout(function() {
-		OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date(), silent: silent });
+		OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, dtcreated: new Date(), silent: silent });
 	}, 100);
 	return OP;
 };
 
 OP.email = function(subject, body) {
-	return OP.send('email', { subject: subject, body: body, datecreated: new Date() });
+	return OP.send('email', { subject: subject, body: body, dtcreated: new Date() });
 };
 
 OP.shake = function(type) {

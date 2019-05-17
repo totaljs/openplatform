@@ -233,7 +233,6 @@ FUNC.users.rem = function(id, callback) {
 
 	db.read('tbl_user').where('id', id).callback(function(err, response) {
 		if (response) {
-
 			db.insert('tbl_user_removed', { id: id, reference: response.reference, groupid: response.groupid, dtcreated: NOW });
 			db.modify('tbl_user', { supervisorid: null }).where('supervisorid', id);
 			db.modify('tbl_user', { deputyid: null }).where('deputyid', id);

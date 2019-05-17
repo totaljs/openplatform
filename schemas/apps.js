@@ -171,7 +171,7 @@ NEWSCHEMA('App', function(schema) {
 
 				if (model.permissions || model.autorefresh) {
 					model.allowreadapps = response.allowreadapps;
-					model.allowguest = response.allowguest;
+					model.allowguestuser = response.allowguestuser;
 					model.allowreadusers = response.allowreadusers;
 					model.allowreadmeta = response.allowreadmeta;
 					model.allowreadprofile = response.allowreadprofile;
@@ -189,7 +189,7 @@ NEWSCHEMA('App', function(schema) {
 		if (app) {
 			app.favorite = app.favorite == null ? true : !app.favorite;
 			session.set2(user.id, user);
-			FUNC.users.set(user, ['apps']);
+			FUNC.users.set(user, ['apps'], null, app, 'favorite');
 			$.success(true, app.favorite);
 		} else
 			$.invalid('error-apps-404');
@@ -215,6 +215,7 @@ NEWSCHEMA('App', function(schema) {
 
 				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: $.id === '_welcome' ? CONF.welcome : '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: $.id !== '_account' && $.id !== '_welcome' && $.id !== '_settings' };
 				$.callback(data);
+
 				return;
 		}
 
@@ -227,7 +228,8 @@ NEWSCHEMA('App', function(schema) {
 
 			if (app) {
 				data = OP.meta(app, user);
-				LOGGER('logs', '[{0}]'.format(user.id + ' ' + user.name), '({1} {0})'.format(app.frame, app.id), 'open app');
+
+				FUNC.logger('logs', 'run: ' + app.id + ' (' + app.name + ')', '@' + user.name, $.ip);
 
 				if (data) {
 					data.ip = $.ip;
@@ -283,7 +285,7 @@ function sync(item, model, meta, permissions) {
 			item.allowreadusers = model.allowreadusers;
 			item.allowreadmeta = model.allowreadmeta;
 			item.allowreadprofile = model.allowreadprofile;
-			item.allowguest = model.allowguest;
+			item.allowguestuser = model.allowguestuser;
 			item.allownotifications = model.allownotifications;
 		}
 

@@ -77,7 +77,7 @@
 		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
 			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}">
-				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ datecreated | time }}</div>
+				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ dtcreated | time }}</div>
 				<div class="ui-notifications-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-notifications-padding">
 					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
