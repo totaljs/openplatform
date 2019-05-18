@@ -251,7 +251,7 @@ NEWSCHEMA('App', function(schema) {
 
 						if (data.newversion) {
 							user.apps[$.id].version = app.version;
-							FUNC.users.set(user.id, ['apps'], null, app, 'version');
+							FUNC.users.set(user, ['apps'], null, app, 'version');
 						}
 
 						session.set2(user.id, user);
