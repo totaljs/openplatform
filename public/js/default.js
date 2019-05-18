@@ -47,6 +47,34 @@ ON('ready', function() {
 	EMIT('resize');
 });
 
+common.titlescache = {};
+
+FUNC.titlechange = function(type, id, text) {
+
+	if (common.titlescache[id])
+		return;
+
+	var el = $('.ui-process[data-id="{0}"]'.format(id));
+	var header = el.find('.ui-process-header');
+	var meta = header.find('.ui-process-meta');
+	var title = meta.find('div');
+	var icon = meta.find('i');
+	var bk = {};
+	bk.icon = icon.attr('class');
+	bk.name = title.text();
+
+	header.aclass('ui-process-header-' + type);
+	icon.rclass().aclass('fa fa-' + (type === 'success' ? 'check-circle' : 'warning'));
+	title.html(text);
+
+	common.titlescache[id] = setTimeout(function() {
+		header.rclass('ui-process-header-' + type);
+		icon.rclass().aclass(bk.icon);
+		title.html(bk.name);
+		common.titlescache[id] = null;
+	}, 1500);
+};
+
 function onImageError(image) {
 	// image.onerror = null;
 	image.src = '/img/empty.png';
@@ -123,6 +151,14 @@ $(window).on('message', function(e) {
 			SET('common.wiki', data.body.body || EMPTYARRAY);
 			var is = common.wiki ? common.wiki.length > 0 : false;
 			is && RECONFIGURE('wiki', { title: 'Wiki: ' + app.internal.title || app.internal.name });
+			SET('common.wikishow', is);
+			break;
+
+		case 'changelog':
+			// markdown help
+			SET('common.wiki', data.body.body || EMPTYARRAY);
+			var is = common.wiki ? common.wiki.length > 0 : false;
+			is && RECONFIGURE('wiki', { title: 'Changelog: ' + app.internal.title || app.internal.name });
 			SET('common.wikishow', is);
 			break;
 
@@ -234,6 +270,11 @@ $(window).on('message', function(e) {
 					setTimeout(function() {
 						processes.notifyresize2(app.id);
 					}, 100);
+					if (app.newversion) {
+						setTimeout(function() {
+							processes.changelog(app.id, app.version);
+						}, 1000);
+					}
 				}
 			}
 			break;
@@ -302,6 +343,13 @@ $(window).on('message', function(e) {
 
 		case 'shake':
 			app && processes.shake(app.id, data.body);
+			break;
+
+		case 'titlesuccess':
+			FUNC.titlechange('success', app.id, data.body);
+			break;
+		case 'titlewarning':
+			FUNC.titlechange('warning', app.id, data.body);
 			break;
 
 		case 'focus':
@@ -463,6 +511,7 @@ FUNC.open = function(data) {
 	data.internal = user.apps.findItem('id', data.id);
 	data.progress = 0;
 	dashboard.apps.push(data);
+
 	SET('dashboard.current', data);
 	$('.appunread[data-id="{0}"]'.format(data.id)).aclass('hidden');
 	$('.appbadge[data-id="{0}"]'.format(data.id)).aclass('hidden');

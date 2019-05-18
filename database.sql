@@ -114,6 +114,7 @@ CREATE TABLE "public"."tbl_user_app" (
 	"id" varchar(50) NOT NULL,
 	"userid" varchar(25),
 	"appid" varchar(25),
+	"version" varchar(10),
 	"roles" _varchar,
 	"settings" varchar(100),
 	"notifications" bool DEFAULT true,

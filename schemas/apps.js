@@ -246,6 +246,14 @@ NEWSCHEMA('App', function(schema) {
 						user.apps[$.id].countnotifications = 0;
 						user.apps[$.id].countbadges && FUNC.badges.rem(user.id, $.id);
 						user.apps[$.id].countbadges = 0;
+						data.newversion = user.apps[$.id].version !== app.version;
+						data.version = user.apps[$.id].version || '';
+
+						if (data.newversion) {
+							user.apps[$.id].version = app.version;
+							FUNC.users.set(user.id, ['apps'], null, app, 'version');
+						}
+
 						session.set2(user.id, user);
 					}
 

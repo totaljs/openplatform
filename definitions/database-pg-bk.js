@@ -15,6 +15,7 @@ FUNC.configs = {};
 // ====================================
 
 var MODEL_FAVORITE = {};
+var MODEL_VERSION = {};
 var MODEL_NOTIFICATIONS = {};
 var MODEL_BADGES = {};
 
@@ -43,6 +44,13 @@ FUNC.users.set = function(user, fields, callback, app, type) {
 			if (type === 'favorite') {
 				MODEL_FAVORITE.favorite = app.favorite;
 				db.modify('tbl_user_app', MODEL_FAVORITE).where('id', user.id + app.id);
+				callback && db.callback(callback);
+				return;
+			}
+
+			if (type === 'version') {
+				MODEL_VERSION.version = app.version;
+				db.modify('tbl_user_app', MODEL_VERSION).where('id', user.id + app.id);
 				callback && db.callback(callback);
 				return;
 			}

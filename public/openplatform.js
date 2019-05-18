@@ -58,12 +58,24 @@ document.onkeydown = function(e) {
 	}
 };
 
+OP.changelog = function(body) {
+	OP.send('changelog', { body: body });
+};
+
 OP.help = function(body) {
 	OP.send('help', { body: body });
 };
 
 OP.success2 = function(msg, show, plus) {
 	OP.console('success', msg, show, plus);
+};
+
+OP.titlesuccess = function(msg) {
+	OP.send('titlesuccess', msg);
+};
+
+OP.titlewarning = function(msg) {
+	OP.send('titlewarning', msg);
 };
 
 OP.warning2 = function(msg, show, plus) {

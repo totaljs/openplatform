@@ -111,6 +111,11 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light .ui-process-header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); color: black; border-bottom: 1px solid #D4D4D4; }
 .light .ui-process-header nav button { color: #505050; }
 .light .ui-process { box-shadow: 0 5px 30px rgba(0,0,0,0.2);}
+
+.light .ui-process-header-success, .ui-process-header-success { background: #68B25B; color: white !important; }
+.light .ui-process-header-warning, .ui-process-header-warning { background: #D63B32; color: white !important; }
+.light .ui-process-header-warning nav button, .light .ui-process-header-success nav button, .ui-process-header-warning nav button, .ui-process-header-success nav button { color: white; }
+
 .light { background-color: #505050; }
 .light .startmenu { background-color: #E0E0E0; }
 .light .startmenu-title { color: black; }

@@ -1951,7 +1951,7 @@ COMPONENT('processes', function(self, config) {
 		common.startmenu && TOGGLE('common.startmenu');
 	};
 
-	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div><span><i class="fa fa-{{ internal.icon }}"></i></span><div>{{ internal.title }}</div></div><nav>{{ if !internal.internal }}<button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="options" class="ui-process-menu ui-process-button"><span><i class="fa fa-cog"></i></span></button>{{ fi }}<button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize" class="ui-process-button"><i class="far fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
+	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div class="ui-process-meta"><span><i class="fa fa-{{ internal.icon }}"></i></span><div>{{ internal.title }}</div></div><nav>{{ if !internal.internal }}<button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="options" class="ui-process-menu ui-process-button"><span><i class="fa fa-cog"></i></span></button>{{ fi }}<button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize" class="ui-process-button"><i class="far fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
 
 	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
@@ -2465,6 +2465,11 @@ COMPONENT('processes', function(self, config) {
 		}
 	};
 
+	self.changelog = function(id, version) {
+		var iframe = self.findProcess(id);
+		iframe && self.message(iframe, 'changelog', version);
+	};
+
 	self.notifyresize2 = function(id) {
 		var iframe = self.findProcess(id);
 		if (iframe) {
@@ -2700,7 +2705,6 @@ COMPONENT('processes', function(self, config) {
 		}
 
 		var item = GET(config.datasource).findItem('id', value.id);
-		console.log(value);
 		if (!item) {
 			WARN('Application {0} not found.'.format(value.id));
 			return;
@@ -5618,9 +5622,14 @@ COMPONENT('wiki', 'title:Wiki', function(self, config) {
 
 	self.rebind = function(path, value) {
 		var builder = [];
-		var template = '<div class="{0}-topic"><label data-index="{1}"><i class="fa"></i>{2}</label><div class="{0}-topic-body"></div></div>';
-		for (var i = 0; i < (value || EMPTYARRAY).length; i++)
-			builder.push(template.format(cls, i, value[i].name));
+		if (value instanceof Array) {
+			var template = '<div class="{0}-topic"><label data-index="{1}"><i class="fa"></i>{2}</label><div class="{0}-topic-body"></div></div>';
+			for (var i = 0; i < (value || EMPTYARRAY).length; i++)
+				builder.push(template.format(cls, i, value[i].name));
+		} else {
+			// raw content
+			builder.push('<div class="{0}-topic {0}-visible"><div class="{0}-topic-body" style="border-bottom:0">{1}</div></div>'.format(cls, (value || '').markdown()));
+		}
 		etopics.html(builder.join(''));
 		self.resize();
 	};

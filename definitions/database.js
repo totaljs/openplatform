@@ -13,12 +13,13 @@ FUNC.configs = {};
 // Users
 // ====================================
 
-FUNC.users.set = function(user, fields, callback, app) {
+FUNC.users.set = function(user, fields, callback, app, type) {
 
 	// @user {Object}
 	// @fields {String Array} Optional, changed fields
 	// @callback {Function} Optional
 	// @app {Object} Optional, app instance (can contain an app when the count of notifications/badges is updated)
+	// @type {String} Optional, a type of update for apps
 
 	if (user.id) {
 		var item = G.users.findItem('id', user.id);
