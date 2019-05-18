@@ -9,6 +9,7 @@
 	.users .item:hover { background-color: #2E5ADA; color: white; }
 	.users .selected { background-color: #2E5ADA; color: white; }
 
+	.ui-directory-container { height: 120px; }
 	.si { width: 24px; text-align: center; border-right: 1px solid rgba(200,200,200,0.3); margin-right: 4px; }
 
 	@media(max-width: 767px) {
@@ -60,7 +61,7 @@
 			<nav class="toolbar">
 				<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
 				<button data-bind="users.selected__disabled:!value" class="exec" data-exec="usersform_remove" title="@(Remove user)"><i class="fa fa-minus"></i></button>
-				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Filter)"><i class="fa fa-filter"></i></button>
+				<button class="exec" data-exec="userform_filter" title="@(Filter)"><i class="fa fa-filter"></i></button>
 				<button data-bind="users.response__enabled:users_pagination" name="prev" class="exec" data-exec="users_page" title="@(Previous page)"><i class="fa fa-chevron-left"></i></button>
 				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Next page)" style="border-right:0"><i class="fa fa-chevron-right"></i></button>
 			</nav>
@@ -94,10 +95,10 @@
 											<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
-										{{ if value.dtcreated }}
+										{{ if value.dtmodified }}
 										<tr>
 											<td>@(Updated)</td>
-											<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+											<td class="right">{{ value.dtmodified | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
 										{{ if value.dtpassword }}
@@ -436,6 +437,51 @@
 				SET('users.apps', response);
 			});
 		}
+	}
+
+	function userform_filter(el) {
+		var opt = {};
+		opt.element = el;
+		opt.width = 300;
+
+		var items = opt.items = [];
+		var makecl = function(type) {
+			var arr = users.meta[type];
+			var o = [];
+			for (var i = 0; i < arr.length; i++)
+				o.push(arr[i].name);
+			return o;
+		};
+
+		items.push({ label: '@(Company)', placeholder: '@(All companies)', name: 'company', dirempty: '', type: makecl('companies') });
+		items.push({ label: '@(Position)', placeholder: '@(All positions)', name: 'position', dirempty: '', type: makecl('positions') });
+		items.push({ label: '@(Locality)', placeholder: '@(All localities)', name: 'locality', dirempty: '', type: makecl('localities') });
+		items.push({ label: '@(Structure)', placeholder: '@(All organization units)', name: 'ou', dirempty: '', type: makecl('ou') });
+		items.push({ label: '@(Gender)', placeholder: '@(All genders)', name: 'gender', dirempty: '', type: ['male', 'female'] });
+		items.push({ label: '@(Language)', placeholder: '@(All languages)', name: 'language', dirempty: '', type: makecl('languages') });
+		items.push({ label: '@(Group)', placeholder: '@(All groups)', name: 'group', dirempty: '', type: makecl('groups') });
+		items.push({ label: '@(Role)', placeholder: '@(All roles)', name: 'role', dirempty: '', type: makecl('roles') });
+		items.push({ label: '@(Status)', placeholder: '@(All statuses)', name: 'statusid', dirempty: '', type: [{ name: '@(Available)', id: 0 }, { name: '@(Busy)', id: 1 }, { name: '@(Do not disturb)', id: 2 }, { name: '@(Be right back)', id: 3 }, { name: '@(Meeting)', id: 4 }, { name: '@(Business trip)', id: 5 }, { name: '@(Holiday)', id: 6 }, { name: '@(Sick)', id: 7 }, { name: '@(Off work)', id: 8 }] });
+
+		if (!user.directory)
+			items.push({ label: '@(Directory)', placeholder: '@(Directories)', name: 'directory', dirempty: '@(All directories)', type: makecl('directories') });
+
+		items.push({ label: '@(Group ID)', name: 'groupid', type: String, placeholder: '@(Type a group ID)' });
+		items.push({ label: '@(Customers)', name: 'customer', type: Boolean });
+		items.push({ label: '@(On-line)', name: 'online', type: Boolean });
+		items.push({ label: '@(Super admin)', name: 'sa', type: Boolean });
+
+		opt.value = users.filter;
+		opt.offsetY = -5;
+		opt.offsetX = -70;
+		opt.align = 'left';
+		opt.position = 'bottom';
+
+		opt.callback = function(value, changed, keys) {
+			userform_refresh();
+		};
+
+		SETTER('filter', 'show', opt);
 	}
 
 	function formscroll(value, path, el) {

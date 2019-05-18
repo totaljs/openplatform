@@ -218,18 +218,20 @@ FUNC.users.query = function(filter, callback) {
 	filter.directoryid && builder.where('directoryid', filter.directoryid);
 	filter.locality && builder.where('locality', filter.locality);
 	filter.position && builder.where('position', filter.position);
+	filter.language && builder.where('language', filter.language);
 	filter.groupid && builder.where('groupid', filter.groupid);
 	filter.company && builder.where('company', filter.company);
 	filter.gender && builder.where('gender', filter.gender);
-	filter.statusid && builder.where('statusid', filter.statusid);
+	filter.statusid && builder.where('statusid', +filter.statusid);
 	filter.customer && builder.query('customer=TRUE');
+	filter.sa && builder.query('sa=TRUE');
 	filter.q && builder.search('search', filter.q);
 	filter.group && builder.query('$1=ANY (groups)', [filter.group]);
 	filter.role && builder.query('$1=ANY (roles)', [filter.role]);
 	filter.ou && builder.query('$1=ANY (ougroups)', [filter.ou]);
 	filter.modified && builder.where('dtmodified', '>', filter.modified);
 	filter.logged && builder.where('dtlogged', '<', filter.logged);
-	filter.online && builder.query('online', true);
+	filter.online && builder.query('online=TRUE');
 	filter.appid && builder.where('appid', filter.appid);
 
 	builder.paginate(filter.page, filter.limit);

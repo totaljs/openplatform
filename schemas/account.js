@@ -73,9 +73,12 @@ NEWSCHEMA('Account', function(schema) {
 					FUNC.files.removebackground(user.photo);
 
 				if (model.password && !model.password.startsWith('***')) {
-					user.password = model.password.sha256();
-					user.dtpassword = NOW;
-					model.dtpassword = NOW;
+					var tmp = model.password.sha256();
+					if (tmp !== user.password) {
+						user.password = tmp;
+						user.dtpassword = NOW;
+						model.dtpassword = NOW;
+					}
 				}
 
 				var modified = false;

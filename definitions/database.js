@@ -1,4 +1,6 @@
 const Fs = require('fs');
+const REG_OU_REPLACE = /\//g;
+const REG_OU_REPLACE2 = /\s\/\s/g;
 
 CONF.table_configs = 'userid:string|appid:string|body:string|dtupdated:date|dtcreated:date';
 FUNC.apps = {};
@@ -96,6 +98,12 @@ FUNC.users.query = function(filter, callback) {
 	if (filter.logged)
 		filter.logged = NOW.add('-' + filter.logged);
 
+	if (filter.statusid)
+		filter.statusid = +filter.statusid;
+
+	if (filter.ou)
+		filter.ou = filter.ou.replace(REG_OU_REPLACE2, '/');
+
 	for (var i = 0; i < G.users.length; i++) {
 		var user = G.users[i];
 
@@ -126,10 +134,16 @@ FUNC.users.query = function(filter, callback) {
 		if (filter.gender && user.gender !== filter.gender)
 			continue;
 
-		if (filter.statusid && user.statusid !== filter.statusid)
+		if (filter.statusid >= 0 && user.statusid !== filter.statusid)
+			continue;
+
+		if (filter.language && user.language !== filter.language)
 			continue;
 
 		if (filter.customer && !user.customer)
+			continue;
+
+		if (filter.sa && !user.sa)
 			continue;
 
 		if (filter.q && user.search.indexOf(filter.q) === -1)
@@ -357,7 +371,7 @@ FUNC.users.meta = function(callback, directory) {
 	meta.roles = toArray(roles);
 	meta.languages = toArray(languages);
 	meta.ou = toArray(ou, function(item) {
-		item.id = item.name = item.name.replace(/\//g, ' / ');
+		item.id = item.name = item.name.replace(REG_OU_REPLACE, ' / ');
 		return item;
 	});
 

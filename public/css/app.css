@@ -90,3 +90,36 @@ h3 .fa { margin-right: 5px; }
 .status6 { color: #A1CF6D; }
 .status7 { color: #D06D6D; }
 .status8 { color: #D60000; }
+
+.ui-filter { z-index: 20; position: absolute; background-color: white; border: 1px solid #DEDEDE; border-radius: 2px; width: 280px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); opacity: 0; transform: scale(0.3); transition: all 0.2s; transform-origin: left top; }
+.ui-filter-visible { opacity: 1; transform: scale(1); }
+.ui-filter-item { height: 27px; border-top: 1px solid #E0E0E0; }
+.ui-filter-item:first-child { border-top: 0; }
+.ui-filter-item-label { float: left; width: 33%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; line-height: 26px; padding: 0 5px; color: gray; }
+.ui-filter-item-value { margin-left: 33%; border-left: 1px solid #E0E0E0; padding: 0; height: 27px; overflow: hidden; }
+.ui-filter-placeholder { color: #A0A0A0; position: absolute; font-size: 11px; height: 26px; line-height: 27px; margin-left: 5px; cursor: pointer; }
+.ui-filter-item-icon { float: right; width: 30px; height: 27px; font-size: 11px; text-align: center; line-height: 27px; border-left: 1px solid #E0E0E0; }
+.ui-filter-icon-click { cursor: pointer; }
+.ui-filter-item-input { margin-right: 30px; }
+.ui-filter-item input { border: 0; width: 100%; outline: 0; background-color: white; font-size: 11px; height: 25px; color: black; margin: 0; padding: 0 4px; line-height: 25px; }
+.ui-filter-checkbox { width: 15px; height: 15px; text-align: center; padding: 2px 0 0; border: 1px solid #E0E0E0; border-radius: 2px; font-size: 10px; margin: 6px 0 0 5px; cursor: pointer; }
+.ui-filter-checkbox i { display: none; }
+.ui-filter-checkbox-checked { background-color: #4285F4 !important; color: white; border-color: #4285F4 !important; }
+.ui-filter-checkbox-checked i { display: block; }
+.ui-filter-option { font-size: 11px; padding: 0 5px; line-height: 27px; cursor: pointer; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; height: 26px; }
+.ui-filter-buttons { height: 30px; }
+.ui-filter-buttons button { border: 0; background: white; width: 33%; font-size: 12px; float: left; margin: 0; padding: 0; background-color: #F0F0F0; height: 30px; outline: 0; }
+.ui-filter-buttons button i { margin-right: 5px; }
+.ui-filter-buttons button[name="reset"] { border-radius: 0 0 0 2px; }
+.ui-filter-buttons button[name="apply"] { background-color: #4285F4 !important; color: white; font-weight: bold; width: 34%; }
+.ui-filter-buttons button[name="cancel"] { border-radius: 0 0 2px 0; }
+.ui-filter-buttons button:hover { opacity: 0.8; }
+
+.ui-dark .ui-filter-checkbox { border-color: #404040; background-color: #404040; }
+.ui-dark .ui-filter { background-color: #282828; border-color: #353535; }
+.ui-dark .ui-filter-item { border-top-color: #353535; }
+.ui-dark .ui-filter-item-value { border-left-color: #353535; }
+.ui-dark .ui-filter-item-icon { border-left-color: #353535; color: #A0A0A0; }
+.ui-dark .ui-filter-item input { background-color: #282828; color: white; }
+.ui-dark .ui-filter-placeholder { color: #606060; }
+.ui-dark .ui-filter-buttons button { background-color: #404040; }
