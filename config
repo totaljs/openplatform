@@ -5,9 +5,9 @@ version                         : 4.0.0
 allow_custom_titles             : true
 
 url                             : http://127.0.0.1:8000
-languages       (Array)         : ['en']
 
 cookie                          : __opu
 cookie_expiration               : 1 month
+secretpassword       (random)   : 10
 
 cdn                             : //cdn.componentator.com

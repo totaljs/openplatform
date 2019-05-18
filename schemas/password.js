@@ -19,7 +19,7 @@ NEWSCHEMA('Password', function(schema) {
 					model.firstname = user.firstname;
 					model.lastname = user.lastname;
 					model.login = user.login;
-					model.token = F.encrypt({ id: user.id, date: NOW, type: 'password' }, CONFIG.secretpassword);
+					model.token = ENCRYPTREQ($.req, { id: user.id, date: NOW, type: 'password' }, CONF.secretpassword);
 					model.email = user.email;
 					MAIL(model.email, '@(Password recovery)', '/mails/password', model, user.language);
 					$.success();

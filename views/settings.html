@@ -65,6 +65,8 @@
 		</div>
 
 		<div class="scroller-padding bg-yellow-fade">
+			<div data---="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
+			<div class="help m">@(The SMTP settings has to be according to the Total.js documentation in valid <b class="red">JSON format</b>.)</div>
 			<div class="row">
 				<div class="col-2 m">
 					<div data---="textbox__settings.smtp__icon:globe;maxlength:50;placeholder:@(e.g. smtp.yourdomain.com)__''">@(SMTP host)</div>
@@ -74,8 +76,8 @@
 					<div data---="error__%smtpsettings" class="hidden" style="padding-top:4px"></div>
 				</div>
 				<div class="col-2 m">
-					<div data---="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
-					<div class="help">@(The SMTP settings has to be according to the Total.js documentation in valid <b class="red">JSON format</b>.)</div>
+					<div data---="textbox__settings.sender__icon:envelope-o;maxlength:120;type:email;placeholder:@(noreply@yourdomain.com)__''">@(Sender)</div>
+					<div class="help">@(A sender email address)</div>
 				</div>
 			</div>
 

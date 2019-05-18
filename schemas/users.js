@@ -137,7 +137,7 @@ NEWSCHEMA('User', function(schema) {
 			item.linker = item.name.slug();
 
 			if ($.model.welcome && !model.blocked && !model.inactive) {
-				$.model.token = F.encrypt({ id: item.id, date: NOW, type: 'welcome' }, 'token');
+				$.model.token = ENCRYPTREQ($.req, { id: item.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
 				MAIL(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, item.language);
 			}
 		};

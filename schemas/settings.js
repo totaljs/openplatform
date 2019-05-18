@@ -11,6 +11,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('accesstoken', 'String(50)', true);
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
+	schema.define('sender', 'Email');
 	schema.define('test', Boolean);
 	schema.define('guest', Boolean);
 
@@ -31,6 +32,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.email = response.email;
 			model.smtp = response.smtp;
 			model.smtpsettings = typeof(options) === 'string' ? options : JSON.stringify(options);
+			model.sender = response.sender;
 			model.test = response.test;
 			model.name = response.name;
 			model.verifytoken = response.verifytoken;
@@ -69,6 +71,7 @@ NEWSCHEMA('Settings', function(schema) {
 			CONF.background = model.background;
 			CONF.mail_smtp = model.smtp;
 			CONF.mail_smtp_options = model.smtpsettings.parseJSON();
+			CONF.mail_address_from = model.sender;
 			CONF.accesstoken = model.accesstoken;
 			CONF.test = model.test;
 			CONF.verifytoken = model.verifytoken;
@@ -98,6 +101,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.background = response.background || '';
 				CONF.mail_smtp = response.smtp || '';
 				CONF.mail_smtp_options = typeof(response.smtpsettings) === 'string' ? response.smtpsettings.parseJSON() : response.smtpsettings;
+				CONF.mail_address_from = response.sender;
 				CONF.test = response.test;
 				CONF.marketplace = response.marketplace;
 				CONF.verifytoken = response.verifytoken;

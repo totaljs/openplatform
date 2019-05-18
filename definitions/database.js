@@ -25,6 +25,10 @@ FUNC.users.set = function(user, fields, callback, app, type) {
 		var item = G.users.findItem('id', user.id);
 		item && U.extend(user, item);
 	} else {
+
+		if (typeof(user) === 'string')
+			throw new Error('USER IS STRING');
+
 		user.id = UID();
 		G.users.push(user);
 	}
@@ -216,7 +220,10 @@ FUNC.users.logout = function(user, controller, noredirect) {
 };
 
 FUNC.users.password = function(login, callback) {
-	callback(null, G.users.findItem('login', login));
+	var user = G.users.findItem('login', login);
+	if (user == null)
+		user = G.users.findItem('email', login);
+	callback(null, user);
 };
 
 FUNC.users.online = function(user, is, callback) {
@@ -235,6 +242,7 @@ FUNC.users.meta = function(callback, directory) {
 	var roles = {};
 	var directories = {};
 	var positions = {};
+	var languages = {};
 
 	var toArray = function(obj, preparator) {
 		var arr = Object.keys(obj);
@@ -296,6 +304,13 @@ FUNC.users.meta = function(callback, directory) {
 				positions[item.position] = { count: 1, id: item.position, name: item.position };
 		}
 
+		if (item.language) {
+			if (languages[item.language])
+				languages[item.language].count++;
+			else
+				languages[item.language] = { count: 1, id: item.language, name: item.language };
+		}
+
 		if (item.directory) {
 			if (directories[item.directory])
 				directories[item.directory].count++;
@@ -340,7 +355,7 @@ FUNC.users.meta = function(callback, directory) {
 	meta.directories = toArray(directories);
 	meta.groups = toArray(groups);
 	meta.roles = toArray(roles);
-	meta.languages = F.config.languages;
+	meta.languages = toArray(languages);
 	meta.ou = toArray(ou, function(item) {
 		item.id = item.name = item.name.replace(/\//g, ' / ');
 		return item;

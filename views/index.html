@@ -487,7 +487,7 @@
 
 					if (wa.length) {
 						var ls = localStorage;
-						if (ls.getItem('welcome') !== '1') {
+						if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
 							ls.setItem('welcome', '1');
 							skip = true;
 							internalapp(wa);
@@ -962,7 +962,12 @@
 		});
 
 		ON('ready', function() {
-			NAV.query.notifications && SET('common.notifications', true, 2000);
+			WAIT('user.openplatformid', function() {
+				NAV.query.notifications && SET('common.notifications', true, 2000);
+				if (NAV.query.password && !user.guest) {
+					EXEC('Dashboard/showprofile');
+				}
+			});
 		});
 
 		Thelpers.type = function(val) {

@@ -32,10 +32,17 @@ function manifest(req, res) {
 }
 
 function login() {
+
 	var self = this;
 
+	if (self.req.locked) {
+		// locked
+		self.view('locked');
+		return;
+	}
+
 	if (self.query.token) {
-		var data = F.decrypt(self.query.token, CONF.secretpassword);
+		var data = DECRYPTREQ(self.req, self.query.token, CONF.secretpassword);
 		if (data && data.date.add('2 days') > NOW) {
 			FUNC.users.get(data.id, function(err, user) {
 
@@ -50,12 +57,6 @@ function login() {
 			});
 			return;
 		}
-	}
-
-	if (self.req.locked) {
-		// locked
-		self.view('locked');
-		return;
 	}
 
 	if (self.url !== '/')

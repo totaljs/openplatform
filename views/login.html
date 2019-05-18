@@ -17,6 +17,7 @@
 	<script src="@{'%cdn'}/spa.min@17.js"></script>
 	<style type="text/css">
 		/*auto*/
+
 		html,body { overflow: hidden; height: 100%; }
 		body { background-color: #F0F0F0; color: black; }
 
@@ -30,7 +31,7 @@
 		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: gray; }
 		input[type="text"]:disabled, input[type="password"]:disabled { background-color: #F0F0F0; cursor: not-allowed; color: gray; }
 		.ui-textbox { border: 1px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
-		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: white; width: 100%; background-color: white; }
+		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: black; width: 100%; background-color: white; }
 		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #E0E0E0; width: 30px; color: gray; }
 		.ui-textbox .fa-times { color: red; cursor: pointer; }
 		.ui-textbox-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
@@ -51,7 +52,7 @@
 		.hidden { display: none; }
 		.m { margin-bottom: 15px; }
 
-		.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
+		.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; line-height: 14px; }
 		.success .fa { margin-right: 8px; }
 
 		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 40px; text-transform: uppercase; font-size: 14px; }
@@ -64,6 +65,7 @@
 			.panel { margin: 20px; left: 0; position: relative; top: 50%; margin-top: -200px; width: auto; max-width: 1000px; }
 		}
 
+		.alert { color: #856404; background-color: #FFFFD5; border: 1px solid #e8e6bd; border-radius: 3px; padding: 10px 15px; font-size: 12px; line-height: 16px; }
 		.gray { color: gray; }
 
 	</style>
@@ -72,7 +74,7 @@
 
 	<div class="panel">
 		<h1><i class="fa fa-lock"></i>@{CONF.name}</h1>
-		<div data-bind="password.response__show:value && value.success === true" class="success hidden">@(We sent you email with instructions for resetting of your password.)</div>
+		<div data-bind="password.response__show:value && value.success === true" class="success hidden"><i class="fa fa-check-circle mr5"></i>@(We sent you email with instructions for resetting of your password.)</div>
 		<div class="padding">
 
 			<div data-bind="common.type__show:value !== 'password'">
@@ -94,19 +96,19 @@
 
 			<div data-bind="common.type__show:value === 'password'">
 				<form method="POST" onsubmit="return false">
-					<div class="m" data---="textbox__password.name__icon2:user;required:true;autofill:true;$id:passwordname">@(Login name)</div>
+					<div class="m" data---="textbox__password.name__icon2:user;required:true;autofill:true;$id:passwordname;placeholder:@(Login name or email address)">@(Login name)</div>
 					<div data---="error__password.response"></div>
 					<div class="m fs12">
-						<div><a href="#password" class="exec" data-exec="toggletype">@(Back to sign-in)</a></div>
+						<div><a href="#password" class="exec" data-exec="toggletype"><i class="fa fa-angle-right mr5"></i>@(Back to Sign-in form)</a></div>
 					</div>
 					<div data---="validation__password">
-						<button type="button" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset password)</button>
+						<button type="button" class="b" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset)</button>
 					</div>
 				</form>
 			</div>
 
 			<footer>
-				<div>All rights reserved &copy; 2017-2019</div>
+				<div>All rights reserved &copy; 2017-@{NOW.getFullYear()}</div>
 				<a href="https://www.totaljs.com" target="_blank">www.totaljs.com</a>
 			</footer>
 		</div>

@@ -270,7 +270,7 @@ function readapps(user, callback) {
 }
 
 FUNC.users.login = function(login, password, callback) {
-	DBMS().read('tbl_user').where('login', login).callback(function(err, response) {
+	DBMS().read('tbl_user').query('login=$1 OR email=$1', [login]).callback(function(err, response) {
 		if (response && response.password === password.sha256()) {
 			delete response.password;
 			readapps(response, callback);
@@ -321,6 +321,7 @@ FUNC.users.meta = function(callback, directory) {
 
 	db.query('SELECT locality as name, COUNT(1) as count FROM tbl_user' + plus + ' GROUP BY locality ORDER BY 1', arg).set('localities');
 	db.query('SELECT position as name, COUNT(1) as count FROM tbl_user' + plus + ' GROUP BY position ORDER BY 1', arg).set('positions');
+	db.query('SELECT language as name, COUNT(1) as count FROM tbl_user' + plus + ' GROUP BY language ORDER BY 1', arg).set('languages');
 	db.query('SELECT company as name, COUNT(1) as count FROM tbl_user WHERE' + plus2 + ' customer=TRUE GROUP BY company ORDER BY 1', arg).set('customers');
 	db.query('SELECT company as name, COUNT(1) as count FROM tbl_user WHERE' + plus2 + ' customer=FALSE GROUP BY company ORDER BY 1', arg).set('companies');
 	db.query('SELECT directory as name, COUNT(1) as count FROM tbl_user' + plus + ' GROUP BY directory ORDER BY 1', arg).set('directories');
@@ -343,7 +344,7 @@ FUNC.users.meta = function(callback, directory) {
 		meta.groups = prepare(response.groups);
 		meta.roles = prepare(response.roles);
 		meta.ou = prepare(response.ou, true);
-		meta.languages = CONF.languages;
+		meta.languages = prepare(response.languages);
 
 		if (directory) {
 			G.metadirectories[directory] = meta;
