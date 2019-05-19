@@ -72,7 +72,7 @@ FUNC.titlechange = function(type, id, text) {
 		icon.rclass().aclass(bk.icon);
 		title.html(bk.name);
 		common.titlescache[id] = null;
-	}, 1500);
+	}, 2500);
 };
 
 function onImageError(image) {
