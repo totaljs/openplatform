@@ -92,6 +92,21 @@ FUNC.users.query = function(filter, callback) {
 		}
 	}
 
+	if (filter.blocked && typeof(filter.blocked) === 'string')
+		filter.blocked = filter.blocked === 'true';
+
+	if (filter.inactive && typeof(filter.inactive) === 'string')
+		filter.inactive = filter.inactive === 'true';
+
+	if (filter.customer && typeof(filter.customer) === 'string')
+		filter.customer = filter.customer === 'true';
+
+	if (filter.sa && typeof(filter.sa) === 'string')
+		filter.sa = filter.sa === 'true';
+
+	if (filter.online && typeof(filter.online) === 'string')
+		filter.online = filter.online === 'true';
+
 	if (filter.modified)
 		filter.modified = NOW.add('-' + filter.modified);
 
@@ -141,6 +156,12 @@ FUNC.users.query = function(filter, callback) {
 			continue;
 
 		if (filter.customer && !user.customer)
+			continue;
+
+		if (filter.inactive && !user.inactive)
+			continue;
+
+		if (filter.blocked && !user.blocked)
 			continue;
 
 		if (filter.sa && !user.sa)
@@ -720,11 +741,8 @@ FUNC.init = function(callback) {
 	Fs.readFile(F.path.databases('users.json'), function(err, response) {
 		G.users = response ? response.toString('utf8').parseJSON(true) : [];
 
-		for (var i = 0, length = G.users.length; i < length; i++) {
-			var u = G.users[i];
-			u.online = false;
-			u.countsessions = 0;
-		}
+		for (var i = 0, length = G.users.length; i < length; i++)
+			G.users[i].online = false;
 
 		Fs.readFile(F.path.databases('apps.json'), function(err, response) {
 			G.apps = response ? response.toString('utf8').parseJSON(true) : [];

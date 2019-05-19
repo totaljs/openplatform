@@ -35,7 +35,7 @@ AUTH(function($) {
 	opt.name = CONF.cookie;
 	opt.expire = CONF.cookie_expiration || '1 month';
 
-	OP.session.getcookie($, opt, function(err, profile, meta) {
+	OP.session.getcookie($, opt, function(err, profile, meta, init) {
 
 		if (profile == null) {
 
@@ -48,6 +48,7 @@ AUTH(function($) {
 				FUNC.logger('protection', key);
 
 			$.invalid();
+
 		} else {
 
 			var locked = false;

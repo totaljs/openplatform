@@ -18,6 +18,10 @@ OP.session.ondata = function(meta, next) {
 			// Write info
 			FUNC.users.set(user, ['dtlogged', 'online']);
 
+			OP.session.count(user.id, function(err, stats) {
+				user.countsessions = stats.count;
+			});
+
 			// Write session
 			next(null, user);
 		} else
@@ -523,9 +527,6 @@ function readuser(user, type, app, fields) {
 
 	if (!fields || fields.countbadges)
 		obj.countbadges = user.countbadges || 0;
-
-	if (!fields || fields.countsessions)
-		obj.countsessions = user.countsessions || 0;
 
 	if (!fields || fields.colorscheme)
 		obj.colorscheme = user.colorscheme || CONF.colorscheme;

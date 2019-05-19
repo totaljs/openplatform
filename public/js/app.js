@@ -69,19 +69,25 @@ COMPONENT('filter', 'reset:Reset;apply:Apply;cancel:Cancel', function(self, conf
 					delete self.opt.value[key];
 				}
 
-				self.opt.callback(self.opt.value);
+				self.opt.callback(self.opt.value, null, null, false);
 				self.hide(1);
 			} else {
 
 				var obj = {};
 				var changed = [];
 				var keys = [];
+				var is = false;
 
 				for (var i = 0; i < self.opt.items.length; i++) {
 					var item = self.opt.items[i];
 					var key = item.name || item.label;
 					if (item.current != undefined) {
-						self.opt.value[key] = obj[key] = item.current;
+						if (self.opt.clean && item.type === Boolean && item.current === false) {
+							item.current = undefined;
+							delete self.opt.value[key];
+							delete obj[key];
+						} else
+							self.opt.value[key] = obj[key] = item.current;
 						item.changed && changed.push(key);
 					} else {
 						delete self.opt.value[key];
@@ -91,7 +97,14 @@ COMPONENT('filter', 'reset:Reset;apply:Apply;cancel:Cancel', function(self, conf
 					keys.push(key);
 				}
 
-				self.opt.callback(self.opt.value, changed, obj, keys);
+				for (var i = 0; i < keys.length; i++) {
+					if (self.opt.value[keys[i]] != null) {
+						is = true;
+						break;
+					}
+				}
+
+				self.opt.callback(self.opt.value, changed, keys, is);
 				self.hide(1);
 			}
 		});

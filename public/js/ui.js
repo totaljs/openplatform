@@ -3510,7 +3510,13 @@ COMPONENT('calendar', 'today:Set today;firstday:0;close:Close;yearselect:true;mo
 			self.date(dt);
 		});
 
-		$(window).on('scroll click', function() {
+		$(window).on('scroll click', function(e) {
+			visible && setTimeout2('calendarhide', function() {
+				EXEC('$calendar.hide');
+			}, 20);
+		});
+
+		ON('scroll', function() {
 			visible && setTimeout2('calendarhide', function() {
 				EXEC('$calendar.hide');
 			}, 20);
@@ -3777,6 +3783,12 @@ COMPONENT('app-managment', function(self, config) {
 				el.aclass(cls);
 				el.find('input').prop('checked', false);
 			}
+
+			var val = (value ? value[id] : null) || EMPTYOBJECT;
+			el.find('.usersapp-info').tclass('hidden', value == null || value[id] == null);
+			el.find('.userapp-user-version').html(val.version || '---');
+			el.find('.userapp-user-notifications').html(val.countnotifications || '---').tclass('b color', val.countnotifications > 0);
+			el.find('.userapp-user-badges').html(val.countbadges || '---').tclass('b color', val.countbadges > 0);
 
 			// HACK
 			el.find('.userapp-settings-input').val(users.form && users.form.apps && users.form.apps[id] ? users.form.apps[id].settings || '' : '');

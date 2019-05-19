@@ -205,6 +205,21 @@ FUNC.users.query = function(filter, callback) {
 		}
 	}
 
+	if (filter.blocked && typeof(filter.blocked) === 'string')
+		filter.blocked = filter.blocked === 'true';
+
+	if (filter.inactive && typeof(filter.inactive) === 'string')
+		filter.inactive = filter.inactive === 'true';
+
+	if (filter.customer && typeof(filter.customer) === 'string')
+		filter.customer = filter.customer === 'true';
+
+	if (filter.sa && typeof(filter.sa) === 'string')
+		filter.sa = filter.sa === 'true';
+
+	if (filter.online && typeof(filter.online) === 'string')
+		filter.online = filter.online === 'true';
+
 	if (filter.modified)
 		filter.modified = NOW.add('-' + filter.modified);
 
@@ -224,6 +239,8 @@ FUNC.users.query = function(filter, callback) {
 	filter.gender && builder.where('gender', filter.gender);
 	filter.statusid && builder.where('statusid', +filter.statusid);
 	filter.customer && builder.query('customer=TRUE');
+	filter.inactive && builder.query('inactive=TRUE');
+	filter.blocked && builder.query('blocked=TRUE');
 	filter.sa && builder.query('sa=TRUE');
 	filter.q && builder.search('search', filter.q);
 	filter.group && builder.query('$1=ANY (groups)', [filter.group]);

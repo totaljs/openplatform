@@ -8,6 +8,8 @@
 	.users .item .fa-circle { font-size: 8px; }
 	.users .item:hover { background-color: #2E5ADA; color: white; }
 	.users .selected { background-color: #2E5ADA; color: white; }
+	.userphoto { background-color: #F0F0F0; padding: 24px 0; }
+	.userphoto img { max-width: 130px; }
 
 	.ui-directory-container { height: 120px; }
 	.si { width: 24px; text-align: center; border-right: 1px solid rgba(200,200,200,0.3); margin-right: 4px; }
@@ -18,14 +20,16 @@
 
 	.m { margin-bottom: 20px; }
 
-	.userapp-container { border-bottom: 1px solid #F0F0F0; margin-bottom: 10px; background-color: white; }
+	.userapp-container { border-bottom: 1px solid #F0F0F0; margin-bottom: 10px; background-color: white; padding-bottom: 5px; }
 	.userapp-container:last-child { border-bottom: 0; margin-bottom: 0; }
 	.userapp-container-disabled img { filter: grayscale(100%); }
+	.userapp-container-disabled .usersapp-info { display: none; }
 	.userapp-container-disabled .userapp-settings { display: none; }
-	.userapp-container-disabled { color: #A0A0A0; }
+	.userapp-container-disabled { color: #A0A0A0; padding-bottom: 0; }
 	.userapp-container-disabled .userapp-roles { display: none; }
-	.userapp-checkbox { float: left; width: 30px; height: 30px; background-color: white; margin-right: 10px; border-radius: 4px; border: 2px solid #E0E0E0; cursor: pointer; color: #A0D468; padding: 3px 0 0 0; text-align: center; font-size: 20px; }
+	.userapp-checkbox { float: left; width: 30px; height: 30px; background-color: #8CC152; margin-right: 10px; border-radius: 4px; border: 2px solid #8CC152; cursor: pointer; color: white; line-height: 28px; text-align: center; font-size: 20px; }
 	.userapp-container-disabled .userapp-checkbox .fa { display: none; }
+	.userapp-container-disabled .userapp-checkbox { background-color: white; border-color: #E0E0E0; }
 	.userapp-header > .fa { margin-right: 5px; }
 	.userapp-header { height: 40px; line-height: 15px; }
 	.userapp-roles { margin-bottom: 10px; line-height: 0; }
@@ -33,8 +37,10 @@
 	.userapp-roles label { cursor: pointer; }
 	.userapp-roles div:nth-child(odd) { background-color: #F8F8F8; }
 	.userapp-roles input { margin-right: 5px; vertical-align: middle; }
-	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 4px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
-	.userapp-settings { margin-bottom: 15px; }
+	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 5px 8px; border-radius: 2px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
+	.userapp-settings { margin-bottom: 5px; }
+	.userapp-version { font-size: 11px; }
+	.usersapp-info { font-size: 10px; color: #A0A0A0; margin-top: 5px; margin-bottom: 5px; }
 	.customer { float: right; font-size: 9px; color: gray; margin: 1px 0 0; }
 	@{if user.colorscheme}
 	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
@@ -61,7 +67,7 @@
 			<nav class="toolbar">
 				<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
 				<button data-bind="users.selected__disabled:!value" class="exec" data-exec="usersform_remove" title="@(Remove user)"><i class="fa fa-minus"></i></button>
-				<button class="exec" data-exec="userform_filter" title="@(Filter)"><i class="fa fa-filter"></i></button>
+				<button data-bind="common.isfilter__.red" class="exec" data-exec="userform_filter" title="@(Filter)"><i class="fa fa-filter"></i></button>
 				<button data-bind="users.response__enabled:users_pagination" name="prev" class="exec" data-exec="users_page" title="@(Previous page)"><i class="fa fa-chevron-left"></i></button>
 				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Next page)" style="border-right:0"><i class="fa fa-chevron-right"></i></button>
 			</nav>
@@ -73,49 +79,66 @@
 		</nav>
 		<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
 			<div data---="scrollbar__users.form.show__margin:40;parent:window;marginxs:42">
-				<div data-bind="users.form__track:dtcreated,dtcreated,dtlogged,online__template">
+				<div class="userphoto">
+					<div data---="preview__users.form.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+					<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
+				</div>
+				<div data-bind="users.form__track:id__template">
 					<script type="text/html">
 						{{ if value.id }}
-							<div class="scroller-padding bg-smoke">
+							<div class="scroller-padding">
 								<table class="table table-bordered table-small nmb bg-white">
 									<tbody>
 										<tr>
-											<td>@(ID)</td>
+											<td class="bg-smoke">@(ID)</td>
 											<td class="col-xs-6 right">{{ value.id }}</td>
 										</tr>
 										{{ if value.dtlogged }}
 										<tr>
-											<td>@(Logged)</td>
+											<td class="bg-smoke">@(Logged)</td>
 											<td class="right">{{ if value.online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ value.dtlogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
 										{{ if value.dtcreated }}
 										<tr>
-											<td>@(Created)</td>
+											<td class="bg-smoke">@(Created)</td>
 											<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
 										{{ if value.dtmodified }}
 										<tr>
-											<td>@(Updated)</td>
+											<td class="bg-smoke">@(Updated)</td>
 											<td class="right">{{ value.dtmodified | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
 										{{ if value.dtpassword }}
 										<tr>
-											<td>@(Password changed)</td>
+											<td class="bg-smoke">@(Password changed)</td>
 											<td class="right">{{ value.dtpassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
 										</tr>
 										{{ fi }}
 										{{ if value.dtnotified }}
 										<tr>
-											<td>@(Last notification)</td>
+											<td class="bg-smoke">@(Last notification)</td>
 											<td class="right">{{ value.dtnotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
+										</tr>
+										{{ fi }}
+										{{ if value.countnotifications }}
+										<tr>
+											<td class="bg-smoke">@(Undread notifications)</td>
+											<td class="right">{{ value.countnotifications }}x</td>
+										</tr>
+										{{ fi }}
+										{{ if value.countsessions }}
+										<tr>
+											<td class="bg-smoke">@(Open sessions)</td>
+											<td class="right">{{ value.countsessions }}x</td>
 										</tr>
 										{{ fi }}
 									</tbody>
 								</table>
 							</div>
+							<hr class="nmb nmt" />
 						{{ fi }}
 					</script>
 				</div>
@@ -160,13 +183,13 @@
 					</div>
 					<div class="row">
 						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.datebirth__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
+							<div data---="textbox__users.form.dtbirth__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
 						</div>
 						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.datebeg__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
+							<div data---="textbox__users.form.dtbeg__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
 						</div>
 						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.dateend__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
+							<div data---="textbox__users.form.dtend__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
 						</div>
 					</div>
 					<hr />
@@ -323,7 +346,7 @@
 								<div class="userapp-header">
 									<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
 									<i class="fa fa-{{ icon }}"></i><b>{{ title }}</b>
-									<div class="fs11">v{{ version }}</div>
+									<div class="userapp-version">v{{ version }}</div>
 								</div>
 								{{ if roles && roles.length }}
 								<div class="userapp-roles">
@@ -335,6 +358,7 @@
 								<div class="userapp-settings">
 									<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ id }}" placeholder="@(Custom settings for the application)" />
 								</div>
+								<div class="usersapp-info">@(Version:) <span class="userapp-user-version"></span> / @(Notifications:) <span class="userapp-user-notifications"></span> / @(Badges:) <span class="userapp-user-badges"></span></div>
 							</div>
 						</script>
 					</div>
@@ -470,14 +494,18 @@
 		items.push({ label: '@(Customers)', name: 'customer', type: Boolean });
 		items.push({ label: '@(On-line)', name: 'online', type: Boolean });
 		items.push({ label: '@(Super admin)', name: 'sa', type: Boolean });
+		items.push({ label: '@(Inactive)', name: 'inactive', type: Boolean });
+		items.push({ label: '@(Blocked)', name: 'blocked', type: Boolean });
 
 		opt.value = users.filter;
 		opt.offsetY = -5;
 		opt.offsetX = -70;
 		opt.align = 'left';
 		opt.position = 'bottom';
+		opt.clean = true;
 
-		opt.callback = function(value, changed, keys) {
+		opt.callback = function(value, changed, keys, is) {
+			SET('common.isfilter', is);
 			userform_refresh();
 		};
 
@@ -509,7 +537,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { numberformat: 1, timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
+		SET('users.form', { language: 'en', numberformat: 1, timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, dtbeg: NOW, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
 		if (!isMOBILE)
 			FIND('#firstinput').find('input').focus();
 	}

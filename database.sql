@@ -48,6 +48,7 @@ CREATE TABLE "public"."tbl_user" (
 	"notificationsphone" bool DEFAULT false,
 	"countnotifications" int2 DEFAULT '0'::smallint,
 	"countbadges" int2 DEFAULT '0'::smallint,
+	"countsessions" int2 DEFAULT '0'::smallint,
 	"volume" int2 DEFAULT '50'::smallint,
 	"sa" bool DEFAULT false,
 	"darkmode" bool DEFAULT false,
