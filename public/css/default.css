@@ -150,6 +150,7 @@ h3 i { margin-right: 5px; }
 
 .bg-smoke { background-color: #F8F8F8; }
 .ui-dark .bg-smoke { background-color: #303030; }
+.bg-yellow { background-color: #FFF8D8; }
 
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 

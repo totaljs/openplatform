@@ -281,7 +281,7 @@ NEWSCHEMA('User', function(schema) {
 					var app = model.apps[key];
 					var appold = item.apps[key];
 					if (appold) {
-						app.favorite = appold.favorite;
+						// app.favorite = appold.favorite;
 						app.countnotifications = appold.countnotifications;
 						app.countbadges = appold.countbadges;
 					}

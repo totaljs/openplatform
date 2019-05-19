@@ -3747,7 +3747,14 @@ COMPONENT('app-managment', function(self, config) {
 			var el = $(this).closest('.userapp-container');
 			var id = el.attrd('id');
 			var apps = self.get();
-			var app = apps[id].roles;
+			var app = apps[id];
+
+			if (this.name === 'favorite') {
+				app.favorite = this.checked;
+				return;
+			}
+
+			app = app.roles;
 			var index = app.indexOf(this.value);
 			if (this.checked) {
 				index === -1 && app.push(this.value);
@@ -3777,7 +3784,10 @@ COMPONENT('app-managment', function(self, config) {
 			if (value && value[id]) {
 				el.rclass(cls);
 				el.find('input').each(function() {
-					this.checked = value[id].roles.indexOf(this.value) !== -1;
+					if (this.name === 'favorite')
+						this.checked = value[id].favorite === true;
+					else
+						this.checked = value[id].roles.indexOf(this.value) !== -1;
 				});
 			} else {
 				el.aclass(cls);

@@ -10,6 +10,9 @@
 	.users .selected { background-color: #2E5ADA; color: white; }
 	.userphoto { background-color: #F0F0F0; padding: 24px 0; }
 	.userphoto img { max-width: 130px; }
+	.usersapp-favorite { font-size: 11px; height: 20px; margin-top: 8px; }
+	.usersapp-favorite span { margin-left: 5px; vertical-align: middle; cursor: pointer; color: #505050; }
+	.usersapp-favorite input { vertical-align: middle; cursor: pointer; }
 
 	.ui-directory-container { height: 120px; }
 	.si { width: 24px; text-align: center; border-right: 1px solid rgba(200,200,200,0.3); margin-right: 4px; }
@@ -26,7 +29,7 @@
 	.userapp-container-disabled .usersapp-info { display: none; }
 	.userapp-container-disabled .userapp-settings { display: none; }
 	.userapp-container-disabled { color: #A0A0A0; padding-bottom: 0; }
-	.userapp-container-disabled .userapp-roles { display: none; }
+	.userapp-container-disabled .userapp-roles, .userapp-container-disabled .usersapp-favorite { display: none; }
 	.userapp-checkbox { float: left; width: 30px; height: 30px; background-color: #8CC152; margin-right: 10px; border-radius: 4px; border: 2px solid #8CC152; cursor: pointer; color: white; line-height: 28px; text-align: center; font-size: 20px; }
 	.userapp-container-disabled .userapp-checkbox .fa { display: none; }
 	.userapp-container-disabled .userapp-checkbox { background-color: white; border-color: #E0E0E0; }
@@ -40,7 +43,7 @@
 	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 5px 8px; border-radius: 2px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
 	.userapp-settings { margin-bottom: 5px; }
 	.userapp-version { font-size: 11px; }
-	.usersapp-info { font-size: 10px; color: #A0A0A0; margin-top: 5px; margin-bottom: 5px; }
+	.usersapp-info { float: right; font-size: 10px; color: #A0A0A0; margin: 2px 0 0; }
 	.customer { float: right; font-size: 9px; color: gray; margin: 1px 0 0; }
 	@{if user.colorscheme}
 	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
@@ -138,11 +141,10 @@
 									</tbody>
 								</table>
 							</div>
-							<hr class="nmb nmt" />
 						{{ fi }}
 					</script>
 				</div>
-				<div class="scroller-padding npb">
+				<div class="scroller-padding bg-yellow npb">
 					<div class="row">
 						<div class="col-sm-6 m">
 							<div data---="textbox__users.form.firstname__maxlength:50;required:true;$id:firstinput">@(First name)</div>
@@ -168,7 +170,6 @@
 						</div>
 					</div>
 				</div>
-				<hr />
 				<div class="scroller-padding">
 					<div class="row">
 						<div class="col-sm-4 m">
@@ -359,6 +360,7 @@
 									<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ id }}" placeholder="@(Custom settings for the application)" />
 								</div>
 								<div class="usersapp-info">@(Version:) <span class="userapp-user-version"></span> / @(Notifications:) <span class="userapp-user-notifications"></span> / @(Badges:) <span class="userapp-user-badges"></span></div>
+								<div class="usersapp-favorite"><label><input type="checkbox" name="favorite" /><span>@(Favorite)</span></label></div>
 							</div>
 						</script>
 					</div>
@@ -490,6 +492,7 @@
 		if (!user.directory)
 			items.push({ label: '@(Directory)', placeholder: '@(Directories)', name: 'directory', dirempty: '@(All directories)', type: makecl('directories') });
 
+		items.push({ label: '@(App)', placeholder: '@(All apps)', name: 'appid', dirempty: '', type: users.apps.items });
 		items.push({ label: '@(Group ID)', name: 'groupid', type: String, placeholder: '@(Type a group ID)' });
 		items.push({ label: '@(Customers)', name: 'customer', type: Boolean });
 		items.push({ label: '@(On-line)', name: 'online', type: Boolean });
@@ -584,7 +587,7 @@
 			if (app) {
 				opt[key] = { roles: obj.roles.remove(function(role) {
 					return app.roles.indexOf(role) === -1;
-				}), settings: settings[key] };
+				}), settings: settings[key], favorite: obj.favorite };
 			}
 		});
 
