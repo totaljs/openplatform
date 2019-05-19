@@ -75,6 +75,8 @@ OP.titlesuccess = function(msg) {
 };
 
 OP.titlewarning = function(msg) {
+	if (msg instanceof Array)
+		msg = msg[0].error;
 	OP.send('titlewarning', msg);
 };
 
