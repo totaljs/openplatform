@@ -459,11 +459,14 @@ OP.$process = function(data) {
 
 		var head = document.head || document.getElementsByTagName('head')[0];
 		var style = document.createElement('style');
+		var tmp;
 
 		if (OP.$appearance === 1) {
 			OP.$appearance = 2;
-		} else
-			document.getElementById('opstyle').remove();
+		} else {
+			tmp = document.getElementById('opstyle');
+			tmp && tmp.parentNode.removeChild(tmp);
+		}
 
 		var d = data.body;
 		var b = document.body.classList;
