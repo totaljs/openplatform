@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 404;
+OP.version = 405;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -90,6 +90,10 @@ OP.error2 = function(msg, show, plus) {
 
 OP.info2 = function(msg, show, plus) {
 	OP.console('info', msg, show, plus);
+};
+
+OP.busy = function(is) {
+	OP.send('busy', is);
 };
 
 OP.appearance = function() {
