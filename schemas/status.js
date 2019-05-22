@@ -9,6 +9,7 @@ NEWSCHEMA('Status', function(schema) {
 				user.statusid = $.model.statusid;
 				user.status = $.model.status;
 				user.dtupdated = NOW;
+				user.dtmodified = NOW;
 				FUNC.users.set(user, ['statusid', 'status', 'dtupdated'], function() {
 					FUNC.emit('users.update', user.id, 'account');
 					FUNC.emit('users.refresh', user.id);
