@@ -521,6 +521,8 @@
 				if (!user.guest)
 					opt.items.push({ name: '@(Favorite)', icon: '!fa' + (iframe.meta.internal.favorite ? ' red' : 'r') + ' fa-heart', value: 'favorite' });
 
+				opt.items.push({ name: '@(Changelog)', icon: 'history', value: 'changelog' });
+				opt.items.push('-');
 				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
 				next();
 			};

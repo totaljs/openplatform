@@ -2063,6 +2063,10 @@ COMPONENT('processes', function(self, config) {
 								case 'print':
 									self.message(iframes.findItem('id', id), 'print');
 									break;
+								case 'changelog':
+									var tmp = iframes.findItem('id', id);
+									self.message(tmp, 'changelog', tmp.oldversion);
+									break;
 								case 'close':
 									self.kill(id);
 									break;

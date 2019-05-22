@@ -264,6 +264,7 @@ $(window).on('message', function(e) {
 				meta.ww = WW;
 				meta.wh = WH;
 				meta.display = WIDTH();
+				iframe.oldversion = app.version;
 				processes.message(iframe, 'verify', meta, data.callback);
 				iframe.meta.href = undefined;
 				if (data.type === 'verify') {
