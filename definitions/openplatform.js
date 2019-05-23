@@ -598,7 +598,7 @@ OP.users = function(app, query, callback) {
 				f[fields[i]] = 1;
 		}
 
-		if (app.allowreadusers !== 1 && app.allowreadusers === 2)
+		if (app.allowreadusers !== 1 && app.allowreadusers !== 2)
 			query.appid = app.id;
 
 		query.active = true;
