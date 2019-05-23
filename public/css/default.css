@@ -269,6 +269,7 @@ h3 i { margin-right: 5px; }
 .ui-notifications-error .ui-notifications-title  { border-bottom-color: #E60000; background-color: #E60000; }
 .ui-notifications-error .ui-notifications-title img { border-bottom-color: #C1281E; }
 
+.ui-notifications-close { float: right; width: 30px; height: 30px; line-height: 30px; text-align: center; border-left: 1px solid rgba(255,255,255,0.3); cursor: pointer; padding: 0 0 0 3px; color: white; }
 .ui-notifications-date { float: right; font-size: 10px; margin: 7px 10px 0 0; color: white; }
 .ui-notifications-title img { border: 1px solid #3BAFDA; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
 .ui-notifications-title { font-size: 13px; border-bottom: 1px solid #3BAFDA; padding: 5px 10px; color: white; background-color: #3BAFDA; }

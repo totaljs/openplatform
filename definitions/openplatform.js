@@ -598,11 +598,16 @@ OP.users = function(app, query, callback) {
 				f[fields[i]] = 1;
 		}
 
+		if (app.allowreadusers !== 1 && app.allowreadusers === 2)
+			query.appid = app.id;
 
-		query.appid = app.id;
+		query.active = true;
+
 		FUNC.users.query(query, function(err, users) {
-			for (var i = 0; i < users.items.length; i++)
-				users.items[i] = readuser(users.items[i], app.allowreadusers, app, f);
+			for (var i = 0; i < users.items.length; i++) {
+				var user = readuser(users.items[i], app.allowreadusers, app, f);
+				users.items[i] = user;
+			}
 			callback(null, users);
 		});
 	} else

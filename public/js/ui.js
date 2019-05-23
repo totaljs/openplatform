@@ -2864,17 +2864,26 @@ COMPONENT('notifications', function() {
 		button = self.find('.ui-notifications-clear');
 		$(window).on('resize', self.resize);
 
-		self.event('click', '.ui-notifications-message', function() {
+		self.event('click', '.ui-notifications-message', function(e) {
 			count--;
 			var el = $(this);
+
+			var target = $(e.target);
+			var hide = target.hclass('.ui-notifications-close') || target.hclass('fa-times');
+
+			if (el.attrd('data') && !hide)
+				EXEC('Dashboard/navigate', el);
+
 			el.aclass('ui-notifications-remove');
 			setTimeout(function() {
 				el.remove();
 			}, 300);
+
 			if (!count) {
 				button.aclass('hidden');
 				self.set(false);
 			}
+
 		});
 
 		self.event('click', '.ui-notifications-clear', function() {

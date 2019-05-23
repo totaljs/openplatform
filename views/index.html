@@ -81,14 +81,12 @@
 	<div data---="notifications__common.notifications" data-bind="common.notifications__show" class="hidden">
 		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
 		<script type="text/html">
-			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}">
+			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}"{{ if data }} data-data="{{ data | encodedata }}" data-id="{{ appid }}"{{ fi }}>
+				<div class="ui-notifications-close"><i class="fa fa-times"></i></div>
 				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ dtcreated | time }}</div>
 				<div class="ui-notifications-title"><i class="fa fa-{{ icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-notifications-padding">
 					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
-					{{ if data }}
-					<button data-data="{{ data | encodedata }}" data-id="{{ appid }}" class="exec" data-exec="Dashboard/navigate">@(OPEN)</button>
-					{{ fi }}
 				</div>
 			</div>
 		</script>

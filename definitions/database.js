@@ -98,6 +98,9 @@ FUNC.users.query = function(filter, callback) {
 	if (filter.inactive && typeof(filter.inactive) === 'string')
 		filter.inactive = filter.inactive === 'true';
 
+	if (filter.active && typeof(filter.active) === 'string')
+		filter.active = filter.active === 'true';
+
 	if (filter.customer && typeof(filter.customer) === 'string')
 		filter.customer = filter.customer === 'true';
 
@@ -156,6 +159,9 @@ FUNC.users.query = function(filter, callback) {
 			continue;
 
 		if (filter.customer && !user.customer)
+			continue;
+
+		if (filter.active && user.inactive)
 			continue;
 
 		if (filter.inactive && !user.inactive)

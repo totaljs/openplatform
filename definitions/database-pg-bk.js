@@ -211,6 +211,9 @@ FUNC.users.query = function(filter, callback) {
 	if (filter.inactive && typeof(filter.inactive) === 'string')
 		filter.inactive = filter.inactive === 'true';
 
+	if (filter.active && typeof(filter.active) === 'string')
+		filter.active = filter.active === 'true';
+
 	if (filter.customer && typeof(filter.customer) === 'string')
 		filter.customer = filter.customer === 'true';
 
@@ -240,6 +243,7 @@ FUNC.users.query = function(filter, callback) {
 	filter.statusid && builder.where('statusid', +filter.statusid);
 	filter.customer && builder.query('customer=TRUE');
 	filter.inactive && builder.query('inactive=TRUE');
+	filter.active && builder.query('inactive=FALSE');
 	filter.blocked && builder.query('blocked=TRUE');
 	filter.sa && builder.query('sa=TRUE');
 	filter.q && builder.search('search', filter.q);
