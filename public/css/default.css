@@ -20,8 +20,8 @@ header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
 header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button.focused { background-color: #4c4c4c; }
-header nav button > .fa { font-size: 20px; }
-header nav > .fa { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
+header nav button > i { font-size: 20px; }
+header nav > i { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
 header .datetime > div { padding: 7px 0 0; }
 header .datetime > span { width: 10px; height: 45px; float: left; background-color: rgba(0,0,0,0.2); cursor: pointer; line-height: 45px; font-size: 10px; text-align: center; color: gray; }
@@ -80,7 +80,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .startmenu-nav nav button { display: block; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; color: white; }
 .startmenu-nav nav button:last-child { border-bottom: 0; }
-.startmenu-nav .fa { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
+.startmenu-nav i { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
 .startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 8px 15px 10px; }
 .startmenu-search { padding: 5px; background-color: #404040; border-bottom: 1px solid rgba(0,0,0,0.05); }
 .startmenu-status { float: right; color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 38px; width: 200px; border-left: 1px solid rgba(0,0,0,0.1); cursor: pointer; border-radius: 0 0 3px 0; }
@@ -108,7 +108,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light header nav button:first-child { border-left-color: rgba(0,0,0,0.1); }
 .light header nav button.focused { background-color: #D0D0D0; color: black; }
 .light header .datetime { color: black; background-color: rgba(0,0,0,0.05); }
-.light .button-notifications .fa { color: black; }
+.light .button-notifications i { color: black; }
 .light .ui-process-header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); color: black; border-bottom: 1px solid #D4D4D4; }
 .light .ui-process-header nav button { color: #505050; }
 .light .ui-process { box-shadow: 0 5px 30px rgba(0,0,0,0.2);}
@@ -186,7 +186,7 @@ h3 i { margin-right: 5px; }
 .light .app-disabled .app-icon { color: #A0A0A0 !important; }
 
 .startmenu-apps .app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 9px; }
-.startmenu-apps .app > span .fa { margin-right: 5px; }
+.startmenu-apps .app > span i { margin-right: 5px; }
 .startmenu-apps .app-offline > span { display: block; }
 .startmenu-apps .app img { width: 120px; height: 120px; border-radius: 4px; }
 .startmenu-apps .app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
@@ -195,11 +195,11 @@ h3 i { margin-right: 5px; }
 .startmenu-apps .app .fa-times:hover { opacity: 0.8; }
 .appunread { position: absolute; background-color: #D23B3B; color: white; width: 18px; border-radius: 100%; height: 18px; font-size: 10px; line-height: 18px; margin-top: 1px; left: 1px; box-shadow: 0 2px 3px rgba(0,0,0,0.2); overflow: hidden; text-align: center; }
 .startmenu-apps .app .appbadge { position: absolute; margin: 14px 0 0 37px; font-size: 7px; }
-.appbadge .fa { color: red; font-size: 7px; }
+.appbadge i { color: red; font-size: 7px; }
 
 .appprocess { position: relative; }
 .appprocess .appbadge { position: absolute; margin: 20px 0 0 7px; font-size: 7px; }
-.appprocess .appbadge .fa { font-size: 7px; }
+.appprocess .appbadge i { font-size: 7px; }
 
 .appprogress { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 3px; padding: 0; }
 .appprocess .appprogress { bottom: 5px; top: auto; padding: 0 8px; }
@@ -229,10 +229,10 @@ h3 i { margin-right: 5px; }
 
 .toolbar { margin-bottom: 15px; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
-.toolbar button .fa { margin-right: 5px; }
+.toolbar button i { margin-right: 5px; }
 .toolbar button:hover { background-color: white; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
 .toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #D5D7DB; box-shadow: none; }
-.toolbar button:disabled .fa { color: silver; }
+.toolbar button:disabled i { color: silver; }
 .toolbar button.right { float: right; margin-left: 5px; margin-right: 0; }
 .toolbar > span { margin: 2px 6px 0; border-left: 1px solid #D0D0D0; height: 20px; padding: 0 2px 0 0; vertical-align: middle; display: inline-block; position: relative; }
 .toolbar .selected { background-color: #FFE7A1 !important; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
@@ -244,17 +244,17 @@ h3 i { margin-right: 5px; }
 .keyvalue:hover { background-color: #F8F8F8; padding-left: 10px; padding-right: 10px; }
 .keyvalue .key { font-size: 11px; font-weight: bold; margin-bottom: 2px; color: black; }
 .keyvalue .value { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 14px; color: #A0A0A0; }
-.keyvalue .fa { margin-right: 5px; }
+.keyvalue i { margin-right: 5px; }
 .upper { text-transform: uppercase; }
 .w100p { width: 100%; }
 .img-application { border-radius: 25px; border: 1px solid #E0E0E0; }
 .silver { color: #A0A0A0; }
 .caption { font-size: 14px; margin-bottom: 15px; color: black; text-transform: uppercase; font-weight: bold; }
-.caption .fa { margin-right: 5px; }
+.caption i { margin-right: 5px; }
 
 .ui-notifications { position: fixed; width: 340px; top: 45px; right: 0; background: rgba(20,20,20,0.9); padding: 0; overflow-y: scroll; overflow-x: hidden; z-index: 33; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
 .light .ui-notifications { background-color: rgba(255,255,255,0.8); border-left-color: #E0E0E0; }
-.ui-notifications .fa { margin-right: 3px; }
+.ui-notifications i { margin-right: 3px; }
 .ui-notifications-clear { margin: 15px 0 0 10px; font-size: 11px; cursor: pointer; color: silver; }
 .light .ui-notifications-clear { color: black; }
 .ui-notifications-clear:hover { text-decoration: underline; }
@@ -283,19 +283,19 @@ h3 i { margin-right: 5px; }
 
 .panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 15px 20px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: black; font-weight: bold; }
-.panel > label .fa { margin-right: 5px; }
+.panel > label i { margin-right: 5px; }
 
 .button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
 .button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
 .button:disabled { background-color: #F0F0F0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
-.button .fa { margin-right: 5px; }
+.button i { margin-right: 5px; }
 
 .success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
-.success .fa { margin-right: 8px; }
+.success i { margin-right: 8px; }
 
 .buttons > div { position: relative; display: inline-block; width: 33.33%; vertical-align: top; padding: 5px; }
 .buttons button { width: 100%; margin: 0; padding: 0; font-size: 11px; height: 60px; background-color: #F0F0F0; border: 0; border-radius: 4px; overflow: hidden; text-transform: overflow; white-space: nowrap; }
-.buttons button .fa { font-size: 25px; display: block; }
+.buttons button i { font-size: 25px; display: block; }
 .buttons button:hover { background-color: #E0E0E0; }
 
 @media(max-width: 700px) {
@@ -320,7 +320,7 @@ h3 i { margin-right: 5px; }
 	.startmenu-search .ui-textbox-control { width: 40px; }
 	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; margin-top: 5px; }
 	.startmenu-nav nav button { padding: 6px 0; font-size: 15px; }
-	.startmenu-nav .fa { width: 34px; }
+	.startmenu-nav i { width: 34px; }
 	.startmenu-apps .app .appbadge { position: absolute; margin: 27px 0 0 22px; }
 	.username { right: 0; left: 0; text-align: center; }
 	.startmenu-title img { display: none; }

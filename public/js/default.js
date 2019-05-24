@@ -69,7 +69,7 @@ FUNC.titlechange = function(type, id, text) {
 
 	common.titlescache[id] = setTimeout(function() {
 		header.rclass('ui-process-header-' + type);
-		icon.rclass().aclass(bk.icon);
+		icon.rclass().aclass(Thelpers.icon(bk.icon));
 		title.html(bk.name);
 		common.titlescache[id] = null;
 	}, 2500);
