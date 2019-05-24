@@ -1,5 +1,5 @@
 Thelpers.icon = function(val) {
-	return 'fa-' + (/\sfar$/).test(val) ? val : (val + ' fa');
+	return 'fa-' + ((/\sfar$/).test(val) ? val : (val + ' fa'));
 };
 
 function resizelayout() {
