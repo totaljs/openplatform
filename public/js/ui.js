@@ -3855,7 +3855,7 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 	};
 
 	self.waiting = function(message, button, close) {
-		self.show(message, button, close, 'fa-spinner fa-pulse usercolor');
+		self.show(message, button, close, 'fa-spinner fa-pulse');
 	};
 
 	self.success = function(message, button, close) {
@@ -3876,7 +3876,7 @@ COMPONENT('snackbar', 'timeout:4000;button:OK', function(self, config) {
 		callback = close;
 
 		self.find('.ui-snackbar-icon').html('<i class="fa {0}"></i>'.format(icon || 'fa-info-circle'));
-		self.find('.ui-snackbar-body').html(message.markdown(MD_LINE)).attr('title', message);
+		self.find('.ui-snackbar-body').html(message).attr('title', message);
 		self.find('.ui-snackbar-dismiss').html(button || config.button);
 
 		if (show) {
