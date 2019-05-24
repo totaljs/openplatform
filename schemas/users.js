@@ -354,7 +354,7 @@ NEWSCHEMA('User', function(schema) {
 					FUNC.emit('users.meta');
 					FUNC.emit('users.update', item.id);
 					FUNC.emit('users.refresh', item.id, item.blocked || item.inactive ? true : undefined);
-					FUNC.logger('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+					FUNC.logger('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || '127.0.0.1');
 					$.success();
 				});
 			});
@@ -390,7 +390,7 @@ NEWSCHEMA('User', function(schema) {
 				FUNC.emit('users.meta');
 				FUNC.emit('users.create', id);
 				FUNC.emit('users.refresh', id, item.blocked || item.inactive ? true : undefined);
-				FUNC.logger('users', 'create: ' + id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+				FUNC.logger('users', 'create: ' + id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || '127.0.0.1');
 				$.success();
 			});
 		}
@@ -410,7 +410,7 @@ NEWSCHEMA('User', function(schema) {
 				FUNC.emit('users.meta');
 				FUNC.emit('users.remove', id);
 				FUNC.emit('users.refresh', id, true);
-				FUNC.logger('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || 'localhost');
+				FUNC.logger('users', 'remove: ' + id, '@' + ($.user ? $.user.name : 'root'), $.ip || '127.0.0.1');
 			}
 			$.success();
 
