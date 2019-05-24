@@ -1,3 +1,7 @@
+Thelpers.icon = function(val) {
+	return 'fa-' + (/\sfar$/).test(val) ? val : (val + ' fa');
+};
+
 function resizelayout() {
 	var h = $(window).height();
 	$('.scroller').each(function() {

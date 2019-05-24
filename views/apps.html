@@ -133,7 +133,7 @@
 							{{ fi }}
 
 							<div class="padding bg-smoke radius">
-								<div class="b"><i class="fa fa-{{ value.icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
+								<div class="b"><i class="{{ value.icon | icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
 								<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
 
 								{{ if value.description }}
