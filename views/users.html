@@ -16,6 +16,8 @@
 
 	.ui-directory-container { height: 120px; }
 	.si { width: 24px; text-align: center; border-right: 1px solid rgba(200,200,200,0.3); margin-right: 4px; }
+	.info { height: 24px; border-top: 1px solid #D0D0D0; font-size: 11px; line-height: 24px; padding: 0 5px; }
+	.info > div { float: right; }
 
 	@media(max-width: 767px) {
 		.users .item { font-size: 14px; padding: 8px; line-height: 14px; }
@@ -60,12 +62,18 @@
 			<div class="search">
 				<div data---="textbox__users.filter.q__type:search;placeholder:@(Search users)"></div>
 			</div>
-			<div data---="scrollbar__users.items__margin:40;parent:window;offset:true">
+			<div data---="scrollbar__users.items__margin:64;parent:window;offset:true">
 				<div data---="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
 					<script type="text/html">
 						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ if customer }}<i class="fa fa-user-secret customer" title="@(Customer)"></i>{{ fi }}{{ statusid | status(true) }}{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
 					</script>
 				</div>
+			</div>
+			<div class="info" data-bind="users.response__template">
+				<script type="text/html">
+					<div class="b">{{ value.page }} / {{ value.pages | pluralize(@('# pages', '# page', '# pages', '# pages')) }}</div>
+					{{ value.count | pluralize(@('# users', '# user', '# users', '# users')) }}
+				</script>
 			</div>
 			<nav class="toolbar">
 				<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
