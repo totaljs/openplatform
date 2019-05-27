@@ -8138,7 +8138,7 @@ COMPONENT('nativenotifications', 'timeout:8000', function(self, config) {
 
 	self.append = function(title, message, callback, img) {
 
-		if (!system || !self.get())
+		if (!system)
 			return;
 
 		var obj = { id: Math.floor(Math.random() * 100000), date: new Date(), callback: callback };
@@ -8155,6 +8155,7 @@ COMPONENT('nativenotifications', 'timeout:8000', function(self, config) {
 			options.icon = img;
 
 		obj.system = new N(title, options);
+		console.log(obj.system);
 		obj.system.onclick = function() {
 
 			window.focus();

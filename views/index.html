@@ -251,6 +251,7 @@
 			user.countnotifications && AJAX('GET /api/notifications/', function(arr) {
 				SETTER('notifications', 'append', arr.take(50));
 			});
+			FUNC.faviconbadge(false);
 			SET('user.countnotifications', 0);
 		}
 
@@ -696,11 +697,15 @@
 				if (user.countnotifications !== response.countnotifications) {
 					is = true;
 					user.countnotifications = response.countnotifications;
-					user.countnotifications && user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
-					SETTER('nativenotifications', 'append', '@(Alert!)', '@(You have {0}.)'.format(user.countnotifications.pluralize(@('# unread notifications', '# unread notification', '# unread notifications', '# unread notifications'))), function() {
-						SET('common.notifications', true);
-					}, '/icon.png');
-					common.notifications && refresh_notifications();
+					if (user.countnotifications) {
+						user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
+						FUNC.faviconbadge(user.countnotifications);
+						SETTER('nativenotifications', 'append', '@(Alert!)', '@(You have {0}.)'.format(user.countnotifications.pluralize(@('# unread notifications', '# unread notification', '# unread notifications', '# unread notifications'))), function() {
+							SET('common.notifications', true);
+						}, '/icon.png');
+						common.notifications && refresh_notifications();
+					} else
+						FUNC.faviconbadge(false);
 				}
 
 				if (user.statusid !== response.statusid || user.status !== response.status) {
@@ -726,14 +731,14 @@
 					if (ua == null)
 						continue;
 
-					if (app.countnotifications !== ua.countnotifications) {
-						app.countnotifications = ua.countnotifications;
-						is = true;
-					}
-
 					if (app.countbadges !== ua.countbadges) {
 						app.countbadges = ua.countbadges;
 						app.countbadges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
+						is = true;
+					}
+
+					if (app.countnotifications !== ua.countnotifications) {
+						app.countnotifications = ua.countnotifications;
 						is = true;
 					}
 

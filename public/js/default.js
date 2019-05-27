@@ -15,6 +15,52 @@ common.consolecount = 0;
 common.wikishow = false;
 common.wiki = EMPTYARRAY;
 
+FUNC.faviconbadge = function(text, color) {
+
+	var key = '$badgeicon';
+	var tmp = W[key];
+
+	if (!text && !tmp)
+		return;
+
+	if (!tmp) {
+		tmp = W[key] = {};
+		tmp.el = $(document.head).find('link[rel="icon"]');
+		tmp.href = tmp.el.attr('href');
+		tmp.type = tmp.el.attr('type');
+	}
+
+	if (!text) {
+		tmp.el.attr({ type: tmp.type, href: tmp.href });
+		return;
+	}
+
+	var canvas = document.createElement('canvas');
+	var img = new Image();
+	img.src = tmp.href;
+	img.onload = function() {
+		canvas.width = img.width;
+		canvas.height = img.height;
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0);
+		ctx.fillStyle = color || 'red';
+		var size = img.width / 3.4;
+		ctx.arc(img.width - size, img.height - size, size, 0, 2 * Math.PI);
+		ctx.fill();
+		ctx.textAlign = 'center';
+		ctx.fillStyle = 'white';
+		ctx.font = 'bold 12px Arial';
+
+		if (text > 99)
+			text = '99';
+		else
+			text += '';
+
+		ctx.fillText(text, img.width - size, img.height - 5);
+		tmp.el.attr({ type: 'image/png', href: canvas.toDataURL() });
+	};
+};
+
 NAV.clientside('.jr');
 SETTER(true, 'loading', 'hide', 500);
 
