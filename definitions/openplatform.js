@@ -677,6 +677,7 @@ OP.refresh = function(app, callback, meta) {
 				app.allowreadusers = response.allowreadusers;
 				app.allowreadprofile = response.allowreadprofile;
 				app.allownotifications = response.allownotifications;
+				app.allowreadmeta = response.allowreadmeta;
 			}
 
 			if (response.origin && response.origin instanceof Array && response.origin.length)
