@@ -81,9 +81,9 @@ OP.profile = function(user, callback) {
 	meta.version = OP.version;
 	meta.name = user.name;
 	meta.photo = user.photo;
-	meta.locality = user.locality;
-	meta.ou = user.ou;
-	meta.company = user.company;
+	// meta.locality = user.locality;
+	// meta.ou = user.ou;
+	// meta.company = user.company;
 	meta.sa = user.sa;
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
@@ -95,7 +95,8 @@ OP.profile = function(user, callback) {
 	meta.timeformat = user.timeformat;
 	meta.dateformat = user.dateformat;
 	meta.numberformat = user.numberformat;
-	meta.repo = user.repo;
+	meta.language = user.language;
+	// meta.repo = user.repo;
 
 	if (user.guest)
 		meta.guest = true;
@@ -127,7 +128,7 @@ OP.profile = function(user, callback) {
 		for (var i = 0, length = apps.items.length; i < length; i++) {
 			var app = apps.items[i];
 			if (!app.blocked && user.apps && user.apps[app.id])
-				meta.apps.push({ id: app.id, favorite: user.apps[app.id].favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: user.apps[app.id].notifications === false, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false });
+				meta.apps.push({ id: app.id, type: app.type, favorite: user.apps[app.id].favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: user.apps[app.id].notifications === false, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false });
 		}
 
 		if (user.sa) {
@@ -272,6 +273,9 @@ OP.meta = function(app, user, serverside) {
 			meta.profile.settings = data.settings;
 	}
 
+	if (user.repo)
+		meta.profile.repo = user.repo;
+
 	if (app.allowreadapps)
 		meta.apps = CONF.url + '/api/apps/?accesstoken=' + token;
 
@@ -385,6 +389,7 @@ function readapp(app, type) {
 	obj.title = app.title;
 	obj.allowreadapps = app.allowreadapps;
 	obj.allowreadusers = app.allowreadusers;
+	obj.allowreadmeta = app.allowreadmeta;
 	obj.allownotifications = app.allownotifications;
 	obj.responsive = app.responsive;
 	obj.icon = app.icon;

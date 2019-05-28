@@ -81,7 +81,11 @@ ON('resize', function() {
 	var h = (WH / 1.40) >> 0;
 	$('.launchpad').css({ height: h, width: w, left: ((WW / 2) - (w / 2)) >> 0, top: ((WH / 2) - (h / 2)) >> 0 });
 	var el = $('#dashboardapps');
-	el && PLUGIN('Dashboard').resizeapps.call(el, null, null, el);
+	if (el) {
+		var tmp = PLUGIN('Dashboard');
+		if (tmp)
+			tmp.resizeapps.call(el, null, null, el);
+	}
 
 });
 
@@ -305,8 +309,27 @@ $(window).on('message', function(e) {
 				meta.dateformat = user.dateformat;
 				meta.timeformat = user.timeformat;
 				meta.numberformat = user.numberformat;
+				meta.datefdow = user.datefdow;
 				meta.darkmode = user.darkmode;
 				meta.colorscheme = user.colorscheme;
+				meta.userapps = [];
+
+				for (var i = 0; i < user.apps.length; i++) {
+					var ua = user.apps[i];
+					if (!ua.internal) {
+						var a = {};
+						a.name = ua.name;
+						a.title = ua.title;
+						a.type = ua.type;
+						a.favorite = ua.favorite;
+						a.icon = ua.icon;
+						a.responsive = ua.responsive;
+						a.version = ua.version;
+						a.online = ua.online;
+						meta.userapps.push(a);
+					}
+				}
+
 				meta.ww = WW;
 				meta.wh = WH;
 				meta.display = WIDTH();

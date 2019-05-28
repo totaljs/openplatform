@@ -7,9 +7,18 @@
 	.mystatus .yellow { color: yellow; }
 	.mystatus .black { color: black; }
 	.ui-dark .mystatus-selected { background-color: #31312d !important; color: white; border-color: rgba(255,255,255,0.1); }
+	.mystatus-text { padding: 20px 50px 0; text-align: center; font-size: 14px; color: #A0A0A0; }
+	.ui-dark .mystatus-text { color: #505050; }
+	.mystatus-text .ui-textbox { height: 44px; margin-top: 12px; }
+	.mystatus-text .ui-textbox-input input { font-size: 18px; text-align: center; font-weight: bold; }
+	.mystatus-text .ui-textbox-input { padding: 12px 8px 0 8px; }
+	.mystatus-text .ui-textbox-label { text-align: center; color: gray; }
+	@media(max-width: 767px) {
+		.mystatus-text { padding-left: 20px; padding-right: 20px; }
+	}
 </style>
 
-<div data---="modal__common.form__if:status;width:500;title:@(My status);submit:statusform/submit;reload:statusform/reload" class="hidden">
+<div data---="modal__common.form__if:status;width:500;title:@(My status);submit:statusform/submit;reload:statusform/reload;autofocus:true" class="hidden">
 
 	<div>
 		<span class="link cancel"><i class="fa fa-times"></i></span>
@@ -28,6 +37,11 @@
 			</div>
 			<br />
 		</div>
+		<div class="mystatus-text">
+			<div><i class="fa fa-question fa-2x"></i></div>
+			<div data---="textbox__statusform.status__maxlength:70;placeholder:@(Type a current status)"></div>
+		</div>
+		<!-- 		<hr class="nmt nmb" /> -->
 		<div class="padding mt5">
 			<div class="row" data-bind="statusform.statusid__change:statusform/selected">
 				<div class="col-xs-6 col-sm-4 center">
@@ -86,10 +100,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<hr class="nmt nmb" />
-		<div class="padding mt5">
-			<div data---="textbox__statusform.status__maxlength:70;placeholder:@(Type a current status)" class="m">@(Note)</div>
 		</div>
 	</div>
 	<div>
