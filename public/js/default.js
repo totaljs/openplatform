@@ -136,7 +136,8 @@ Thelpers.encodedata = function(value) {
 };
 
 Thelpers.markdown_notifications = function(value) {
-	return (value || '').markdown(MD_NOTIFICATION);
+	// [+ means no responsive image
+	return (value || '').replace(/\[\+/g, '[').markdown(MD_NOTIFICATION);
 };
 
 Thelpers.markdown_status = function(value) {
@@ -323,6 +324,7 @@ $(window).on('message', function(e) {
 						a.type = ua.type;
 						a.favorite = ua.favorite;
 						a.icon = ua.icon;
+						a.id = ua.id;
 						a.responsive = ua.responsive;
 						a.version = ua.version;
 						a.online = ua.online;
