@@ -1,6 +1,10 @@
 var MD_LINE = { wrap: false, headlines: false, tables: false, code: false, ul: false, linetag: '', images: false };
 var MD_NOTIFICATION = { wrap: false, headlines: false };
 
+MD_NOTIFICATION.custom = function(val) {
+	return val.replace(/\[\+/g, '[');
+};
+
 COMPONENT('xs', function(self, config) {
 	var is = false;
 	self.readonly();
@@ -1940,6 +1944,7 @@ COMPONENT('processes', function(self, config) {
 	var clone;
 	var appdefs = CACHE('appdefs') || {};
 	var oldfocus;
+	var oldfocusel;
 	var oldpos = {};
 	var defsize = {};
 	var appminimized = {};
@@ -1983,6 +1988,7 @@ COMPONENT('processes', function(self, config) {
 	self.event('mousedown touchstart', '.ui-process-button,.ui-process-mainmenu', function(e) {
 		var el = $(this).closest('.ui-process');
 		var id = el.attrd('id');
+		el[0].scrollTop = -1;
 		switch (this.name) {
 			case 'menu':
 				var iframe = iframes.findItem('id', id);
@@ -2109,6 +2115,7 @@ COMPONENT('processes', function(self, config) {
 	self.event('mousedown', '.ui-process-header', function(e) {
 		var t = $(this);
 		var el = t.closest('.ui-process');
+		el[0].scrollTop = -1;
 		self.mdown_move(el, e.offsetX, e.offsetY + (e.target === t[0] ? 0 : e.offsetY + 14));
 		e.preventDefault();
 	});
@@ -2117,6 +2124,7 @@ COMPONENT('processes', function(self, config) {
 		var el = $(this).parent();
 		var o = e.touches[0];
 		var off = el.offset();
+		el[0].scrollTop = -1;
 		self.mdown_move(el, o.clientX - off.left, o.clientY - off.top);
 		e.preventDefault();
 	});
@@ -2124,6 +2132,7 @@ COMPONENT('processes', function(self, config) {
 	self.event('touchstart', '.ui-process-resize', function(e) {
 		var el = $(this).parent();
 		var o = e.touches[0];
+		el[0].scrollTop = -1;
 		self.mdown_resize(el, o.clientX, o.clientY);
 		e.preventDefault();
 	});
@@ -2135,6 +2144,8 @@ COMPONENT('processes', function(self, config) {
 	self.focus = function(id) {
 		SETTER('menu', 'hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
+		if (oldfocusel)
+			oldfocusel[0].scrollTop = -1;
 		if (oldfocus === id)
 			return;
 		order = order.remove(id);
@@ -2149,7 +2160,8 @@ COMPONENT('processes', function(self, config) {
 
 		SET('common.focused', id);
 		self.find('.ui-process-focus').rclass('ui-process-focus');
-		self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').rclass('hidden').rclass('ui-process-hidden');
+		oldfocusel = self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').rclass('hidden').rclass('ui-process-hidden');
+		oldfocus[0].scrollTop = 0;
 		setTimeout2(self.ID + 'focus', function() {
 			oldfocus = null;
 		}, 1000);
@@ -2420,7 +2432,11 @@ COMPONENT('processes', function(self, config) {
 		if (callbackid)
 			data.callback = callbackid;
 
-		item && item.element && item.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
+		if (item && item.element) {
+			item.element[0].scrollTop = -1;
+			item.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
+		}
+
 		return true;
 	};
 
@@ -2450,6 +2466,8 @@ COMPONENT('processes', function(self, config) {
 			var el = iframe.element;
 			var w = el.width();
 			var h = el.height() - iframe.element.find('.ui-process-header').height();
+
+			el[0].scrollTop = -1;
 
 			if (iframe.mobile) {
 				if (!skipNotify)
