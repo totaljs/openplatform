@@ -39,6 +39,7 @@ exports.install = function() {
 		ROUTE('GET    /api/profile/{id}/mute/           *App          --> @mute');
 		ROUTE('POST   /api/profile/logger/              *Logger       --> @insert');
 		ROUTE('GET    /api/profile/live/',              json_profile);
+		ROUTE('POST   /api/profile/apps/positions/      *AppPosition  --> @save');
 
 		ROUTE('GET    /api/sessions/',                  json_sessions);
 		ROUTE('DELETE /api/sessions/{id}/',             json_sessions_remove);

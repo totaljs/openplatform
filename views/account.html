@@ -36,14 +36,22 @@
 	@{else}
 	.volume .selected {background-color:#4285f4;color:white}
 	@{fi}
-
+	body { background-color: #@{if user.darkmode}303030@{else}E0E0E0@{fi}; }
+	.ui-scrollbar-y { width: 5px; }
+	@{if user.windows}
+	.centered { background-color: white;}
+	@{else}
+	.centered { max-width: 600px; width: 100%; border: 1px solid #E0E0E0; background-color: white; margin: 0 auto; }
+	@{fi}
 </style>
 
 <div data---="audio__account.volume"></div>
-
-<div class="row">
-	<div data---="scrollbar__account__margin:40;parent:window;track:changepassword,response">
-
+@{if !user.windows}
+<br />
+<br />
+@{fi}
+<div class="centered">
+	<div data---="scrollbar__account__margin:@{if user.windows}40@{else}130@{fi};parent:window;track:changepassword,response">
 		<div class="accountphoto">
 			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
 			<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
@@ -93,8 +101,13 @@
 				</div>
 				<div class="col-2">
 					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
+					<div data---="checkbox__account.windows">@(Multiple application interface)</div>
 					<div data---="checkbox__account.changepassword" class="b red">@(Change password)</div>
 				</div>
+			</div>
+
+			<div data-bind="account.windows__show:value!==backup.windows" class="hidden alert mt10">
+				<i class="fa fa-warning mr5"></i><b class="red">@(IMPORTANT)</b>: @(if you save this settings then the platform will be reloaded automatically because you have changed a layout.)
 			</div>
 
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
@@ -150,6 +163,7 @@
 	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
 	var timeformats = [{ id: 24, name: '@(24 hour clock)' }, { id: 12, name: '@(12 hour clock)' }];
 	var languages = PARSE('#languagesdata');
+	var backup;
 
 	OP.init(function(err, meta) {
 		if (err) {
@@ -160,7 +174,10 @@
 	});
 
 	function account_refresh() {
-		AJAX('GET /api/account/', 'account');
+		AJAX('GET /api/account/', function(response) {
+			backup = response;
+			SET('account', CLONE(response));
+		});
 	}
 
 	function account_submit() {
@@ -176,6 +193,8 @@
 				OP.send('refreshprofile');
 				OP.success('Your account has been updated successfully.');
 				OP.close();
+				if (backup.windows !== account.windows)
+					OP.send('$windows');
 			}
 		});
 	}

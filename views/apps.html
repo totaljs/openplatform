@@ -36,6 +36,13 @@
 	.apps .selected,.apps .item:hover{background-color:@{user.colorscheme}}
 	@{fi}
 
+	@{if user.windows}
+	.maxwidth { background-color: white; }
+	@{else}
+	.maxwidth { max-width: 900px; margin: 40px auto 0; background-color: white; border: 1px solid #D0D0D0; background-color: white; }
+	@{fi}
+	body { background-color: #@{if user.darkmode}303030@{else}E0E0E0@{fi}; }
+
 </style>
 
 <div data---="panel__common.form__if:apps;bg:true;width:420;title:@(Assign to users);icon:users" class="hidden">
@@ -77,221 +84,225 @@
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-sm-3 np">
-		<div class="panel">
-			<div class="search">
-				<div data---="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
-			</div>
-			<div data---="scrollbar__apps.items__margin:40;parent:window;offset:true">
-				<div data---="search__apps.search__selector:.item">
-					<div data---="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
-						<script type="text/html">
-							<div class="item{{ if blocked }} inactive{{ fi }}" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
-						</script>
+<div class="maxwidth">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-3 np">
+				<div class="panel">
+					<div class="search">
+						<div data---="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
 					</div>
+					<div data---="scrollbar__apps.items__margin:@{if user.windows}40@{else}79@{fi};parent:window;offset:true">
+						<div data---="search__apps.search__selector:.item">
+							<div data---="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
+								<script type="text/html">
+									<div class="item{{ if blocked }} inactive{{ fi }}" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+								</script>
+							</div>
+						</div>
+					</div>
+					<nav class="toolbar">
+						<button class="exec" data-exec="apps_create" title="@(Add app)"><i class="fa fa-plus"></i></button>
+						<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_remove" title="@(Remove app)"><i class="fa fa-minus"></i></button>
+						<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_assign" title="@(Assign selected app to users)"><i class="fa fa-users"></i></button>
+						@{if CONF.marketplace}
+						<button class="exec market" data-exec="apps_marketplace" title="@(Show Marketplace)" style="width:40%"><i class="fa fa-store-alt"></i></button>
+						@{fi}
+					</nav>
 				</div>
 			</div>
-			<nav class="toolbar">
-				<button class="exec" data-exec="apps_create" title="@(Add app)"><i class="fa fa-plus"></i></button>
-				<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_remove" title="@(Remove app)"><i class="fa fa-minus"></i></button>
-				<button data-bind="apps.selected__enabled" class="exec" data-exec="apps_assign" title="@(Assign selected app to users)"><i class="fa fa-users"></i></button>
+			<div class="col-sm-9 np" data---="xs__apps.detail__if:value!=null&&value==true;exec:resizelayout">
+
+				<nav class="nav visible-xs">
+					<span class="exec link" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
+				</nav>
+
 				@{if CONF.marketplace}
-				<button class="exec market" data-exec="apps_marketplace" title="@(Show Marketplace)" style="width:40%"><i class="fa fa-store-alt"></i></button>
+				<div class="marketplace invisible" data-bind="apps.form.show__invisible:value">
+					<iframe src="@{CONF.marketplace}" border="0" scrolling="yes"></iframe>
+				</div>
 				@{fi}
-			</nav>
-		</div>
-	</div>
-	<div class="col-sm-9 np" data---="xs__apps.detail__if:value!=null&&value==true;exec:resizelayout">
 
-		<nav class="nav visible-xs">
-			<span class="exec link" data-exec="apps_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
-		</nav>
+				<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
+					<div data---="scrollbar__apps.form__margin:@{if user.windows}40@{else}120@{fi};parent:window;marginxs:42;track:show,directories;$id:myscrollbar">
+						<div class="scroller-padding">
 
-		@{if CONF.marketplace}
-		<div class="marketplace invisible" data-bind="apps.form.show__invisible:value">
-			<iframe src="@{CONF.marketplace}" border="0" scrolling="yes"></iframe>
-		</div>
-		@{fi}
+							<div data---="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json);$id:firstinput">@(URL address to <b>openplatform.json</b>)</div>
+							<div data---="error__apps.form.data" class="ui-error-nm"></div>
 
-		<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
-			<div data---="scrollbar__apps.form__margin:40;parent:window;marginxs:42;track:show,directories;$id:myscrollbar">
-				<div class="scroller-padding">
+							<div data-bind="apps.form.data__template__show:value && value.name && value.url" style="margin-top:10px">
+								<script type="text/html">
 
-					<div data---="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json);$id:firstinput">@(URL address to <b>openplatform.json</b>)</div>
-					<div data---="error__apps.form.data" class="ui-error-nm"></div>
+									{{ if value.readme }}
+									<hr style="margin-bottom:12px" />
+									<div>
+										<h2>@(Read me)</h2>
+										{{ value.readme | markdown }}
+									</div>
+									{{ fi }}
 
-					<div data-bind="apps.form.data__template__show:value && value.name && value.url" style="margin-top:10px">
-						<script type="text/html">
+									<div class="padding bg-smoke radius">
+										<div class="b"><i class="{{ value.icon | icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
+										<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
 
-							{{ if value.readme }}
-							<hr style="margin-bottom:12px" />
-							<div>
-								<h2>@(Read me)</h2>
-								{{ value.readme | markdown }}
+										{{ if value.description }}
+											<div class="help m" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
+										{{ fi }}
+										{{ if value.roles && value.roles.length }}
+											<div class="b fs12" style="margin-bottom:5px">@(Supported roles:)</div>
+											<div class="m">
+											{{ foreach m in value.roles }}
+												<span class="badge badge-large badge-blue mr5">{{ m }}</span>
+											{{ end }}
+											</div>
+										{{ fi }}
+										{{ if value.origin && value.origin.length }}
+											<div class="b fs12" style="margin-bottom:5px">@(Allowed hosts:)</div>
+											<div class="m">
+											{{ foreach m in value.origin }}
+												<span class="badge badge-large badge-green mr5">{{ m }}</span>
+											{{ end }}
+											</div>
+										{{ fi }}
+										<table class="table table-small table-bordered nmb">
+											<tr>
+												<td>@(Notifications)</td>
+												<td class="center bg-white" style="width:30px">{{ value.allownotifications | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Optimized for mobile devices)</td>
+												<td class="center bg-white">{{ value.responsive | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Mobile menu)</td>
+												<td class="center bg-white">{{ value.mobilemenu | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Server-side verification)</td>
+												<td class="center bg-white">{{ value.serververify | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Optimized for guest user)</td>
+												<td class="center bg-white">{{ value.allowguestuser | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read meta information)</td>
+												<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read user profile){{ if value.allowreadprofile === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadprofile === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+												<td class="center bg-white">{{ value.allowreadprofile | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read users){{ if value.allowreadusers === 1 }} - <b>@(basic information of all users)</b>{{ else if value.allowreadusers === 2 }} - <b>@(all information of all users)</b>{{ else if value.allowreadusers === 3 }} - <b>@(basic information of all users which use this app)</b>{{ else if value.allowreadusers === 4 }} - <b>@(all information of all users which use this app)</b>{{ fi }}</td>
+												<td class="center bg-white">{{ value.allowreadusers | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read apps){{ if value.allowreadapps === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadapps === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+												<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
+											</tr>
+										</table>
+										<div class="help" style="margin-top:15px"><i class="fa fa-warning red"></i>@(Application can't change its own permissions when is installed.)</div>
+									</div>
+								</script>
 							</div>
-							{{ fi }}
 
-							<div class="padding bg-smoke radius">
-								<div class="b"><i class="{{ value.icon | icon }}"></i> {{ value.name }} - v{{ value.version }}</div>
-								<div class="fs11 mt10">@(Author: <b>{{ value.author }}</b>)<br />{{ value.email }}</div>
+							<div data-bind="apps.form__template__show:value && value.id" class="bg-yellow radius" style="margin-top:10px">
+								<script type="text/html">
+									<div class="padding">
 
-								{{ if value.description }}
-									<div class="help m" style="margin-top:15px"><i class="fa fa-info-circle"></i>{{ value.description }}</div>
-								{{ fi }}
-								{{ if value.roles && value.roles.length }}
-									<div class="b fs12" style="margin-bottom:5px">@(Supported roles:)</div>
-									<div class="m">
-									{{ foreach m in value.roles }}
-										<span class="badge badge-large badge-blue mr5">{{ m }}</span>
-									{{ end }}
+										<div class="b m"><i class="fa fa-lock mr5"></i>@(Current permissions)</div>
+
+										{{ if value.roles && value.roles.length }}
+											<div class="b fs12" style="margin-bottom:5px">@(Supported roles:)</div>
+											<div class="m">
+											{{ foreach m in value.roles }}
+												<span class="badge badge-large badge-blue mr5">{{ m }}</span>
+											{{ end }}
+											</div>
+										{{ fi }}
+										{{ if value.origin && value.origin.length }}
+											<div class="b fs12" style="margin-bottom:5px">@(Allowed hosts:)</div>
+											<div class="m">
+											{{ foreach m in value.origin }}
+												<span class="badge badge-large badge-green mr5">{{ m }}</span>
+											{{ end }}
+											</div>
+										{{ fi }}
+										{{ if value.hostname }}
+											<div class="b fs12" style="margin-bottom:5px">@(Current host:)</div>
+											<div class="m">
+												<span class="badge badge-large badge-yellow">{{ value.hostname }}</span>
+											</div>
+										{{ fi }}
+										<table class="table table-small table-bordered nmb">
+											<tr>
+												<td>@(Notifications)</td>
+												<td class="center bg-white" style="width:30px">{{ value.allownotifications | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Server-side verification)</td>
+												<td class="center bg-white">{{ value.serververify | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Optimized for guest user)</td>
+												<td class="center bg-white">{{ value.allowguestuser | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read meta information)</td>
+												<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read user profile){{ if value.allowreadprofile === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadprofile === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+												<td class="center bg-white">{{ value.allowreadprofile | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read users){{ if value.allowreadusers === 1 }} - <b>@(basic information of all users)</b>{{ else if value.allowreadusers === 2 }} - <b>@(all information of all users)</b>{{ else if value.allowreadusers === 3 }} - <b>@(basic information of all users which use this app)</b>{{ else if value.allowreadusers === 4 }} - <b>@(all information of all users which use this app)</b>{{ fi }}</td>
+												<td class="center bg-white">{{ value.allowreadusers | checked }}</td>
+											</tr>
+											<tr>
+												<td>@(Can read apps){{ if value.allowreadapps === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadapps === 2 }} - <b>@(all information)</b>{{ fi }}</td>
+												<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
+											</tr>
+										</table>
+
 									</div>
-								{{ fi }}
-								{{ if value.origin && value.origin.length }}
-									<div class="b fs12" style="margin-bottom:5px">@(Allowed hosts:)</div>
-									<div class="m">
-									{{ foreach m in value.origin }}
-										<span class="badge badge-large badge-green mr5">{{ m }}</span>
-									{{ end }}
-									</div>
-								{{ fi }}
-								<table class="table table-small table-bordered nmb">
-									<tr>
-										<td>@(Notifications)</td>
-										<td class="center bg-white" style="width:30px">{{ value.allownotifications | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Optimized for mobile devices)</td>
-										<td class="center bg-white">{{ value.responsive | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Mobile menu)</td>
-										<td class="center bg-white">{{ value.mobilemenu | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Server-side verification)</td>
-										<td class="center bg-white">{{ value.serververify | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Optimized for guest user)</td>
-										<td class="center bg-white">{{ value.allowguestuser | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read meta information)</td>
-										<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read user profile){{ if value.allowreadprofile === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadprofile === 2 }} - <b>@(all information)</b>{{ fi }}</td>
-										<td class="center bg-white">{{ value.allowreadprofile | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read users){{ if value.allowreadusers === 1 }} - <b>@(basic information of all users)</b>{{ else if value.allowreadusers === 2 }} - <b>@(all information of all users)</b>{{ else if value.allowreadusers === 3 }} - <b>@(basic information of all users which use this app)</b>{{ else if value.allowreadusers === 4 }} - <b>@(all information of all users which use this app)</b>{{ fi }}</td>
-										<td class="center bg-white">{{ value.allowreadusers | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read apps){{ if value.allowreadapps === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadapps === 2 }} - <b>@(all information)</b>{{ fi }}</td>
-										<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
-									</tr>
-								</table>
-								<div class="help" style="margin-top:15px"><i class="fa fa-warning red"></i>@(Application can't change its own permissions when is installed.)</div>
+								</script>
 							</div>
-						</script>
-					</div>
-
-					<div data-bind="apps.form__template__show:value && value.id" class="bg-yellow radius" style="margin-top:10px">
-						<script type="text/html">
-							<div class="padding">
-
-								<div class="b m"><i class="fa fa-lock mr5"></i>@(Current permissions)</div>
-
-								{{ if value.roles && value.roles.length }}
-									<div class="b fs12" style="margin-bottom:5px">@(Supported roles:)</div>
-									<div class="m">
-									{{ foreach m in value.roles }}
-										<span class="badge badge-large badge-blue mr5">{{ m }}</span>
-									{{ end }}
-									</div>
-								{{ fi }}
-								{{ if value.origin && value.origin.length }}
-									<div class="b fs12" style="margin-bottom:5px">@(Allowed hosts:)</div>
-									<div class="m">
-									{{ foreach m in value.origin }}
-										<span class="badge badge-large badge-green mr5">{{ m }}</span>
-									{{ end }}
-									</div>
-								{{ fi }}
-								{{ if value.hostname }}
-									<div class="b fs12" style="margin-bottom:5px">@(Current host:)</div>
-									<div class="m">
-										<span class="badge badge-large badge-yellow">{{ value.hostname }}</span>
-									</div>
-								{{ fi }}
-								<table class="table table-small table-bordered nmb">
-									<tr>
-										<td>@(Notifications)</td>
-										<td class="center bg-white" style="width:30px">{{ value.allownotifications | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Server-side verification)</td>
-										<td class="center bg-white">{{ value.serververify | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Optimized for guest user)</td>
-										<td class="center bg-white">{{ value.allowguestuser | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read meta information)</td>
-										<td class="center bg-white">{{ value.allowreadmeta | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read user profile){{ if value.allowreadprofile === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadprofile === 2 }} - <b>@(all information)</b>{{ fi }}</td>
-										<td class="center bg-white">{{ value.allowreadprofile | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read users){{ if value.allowreadusers === 1 }} - <b>@(basic information of all users)</b>{{ else if value.allowreadusers === 2 }} - <b>@(all information of all users)</b>{{ else if value.allowreadusers === 3 }} - <b>@(basic information of all users which use this app)</b>{{ else if value.allowreadusers === 4 }} - <b>@(all information of all users which use this app)</b>{{ fi }}</td>
-										<td class="center bg-white">{{ value.allowreadusers | checked }}</td>
-									</tr>
-									<tr>
-										<td>@(Can read apps){{ if value.allowreadapps === 1 }} - <b>@(basic information)</b>{{ else if value.allowreadapps === 2 }} - <b>@(all information)</b>{{ fi }}</td>
-										<td class="center bg-white">{{ value.allowreadapps | checked }}</td>
-									</tr>
-								</table>
-
+							<br />
+							<div data---="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
+							<div class="mt10 m b" data---="checkbox__apps.form.blocked">@(Application is blocked)</div>
+							<div class="m" data---="checkbox__apps.form.guest">@(Allow for guest user)</div>
+							<div class="m hidden" data-bind="apps.form.id__show" data---="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
+							<div class="m b red" data---="checkbox__apps.form.autorefresh">@(Application can refresh its permissions automatically)</div>
+							<div class="help m hidden" data-bind="apps.form.autorefresh__show"><i class="fa fa-warning red"></i>@(You need to know that this is very <b>dangerous step</b>.)</div>
+							<hr />
+							<div data-bind="apps.form.settings2__show:value && value.length" class="hidden padding bg-smoke m radius">
+								<h2 class="red"><i class="fa fa-cog fa-spin"></i>@(Custom application settings)</h2>
+								<div data---="parameters__apps.form.settings2__height:150;dateformat:@(yyyy-MM-dd)"></div>
 							</div>
-						</script>
-					</div>
-					<br />
-					<div data---="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
-					<div class="mt10 m b" data---="checkbox__apps.form.blocked">@(Application is blocked)</div>
-					<div class="m" data---="checkbox__apps.form.guest">@(Allow for guest user)</div>
-					<div class="m hidden" data-bind="apps.form.id__show" data---="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
-					<div class="m b red" data---="checkbox__apps.form.autorefresh">@(Application can refresh its permissions automatically)</div>
-					<div class="help m hidden" data-bind="apps.form.autorefresh__show"><i class="fa fa-warning red"></i>@(You need to know that this is very <b>dangerous step</b>.)</div>
-					<hr />
-					<div data-bind="apps.form.settings2__show:value && value.length" class="hidden padding bg-smoke m radius">
-						<h2 class="red"><i class="fa fa-cog fa-spin"></i>@(Custom application settings)</h2>
-						<div data---="parameters__apps.form.settings2__height:150;dateformat:@(yyyy-MM-dd)"></div>
-					</div>
 
-					<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
-					<div data---="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25;type:lower"></div>
-					<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
-					<hr />
+							<h3><i class="fa fa-sitemap"></i>@(Available for Directories)</h3>
+							<div data---="textboxlist__apps.form.directories__placeholder:@(Type a directory name and press enter);autocomplete:finddirectory;maxlength:25;type:lower"></div>
+							<div class="help"><i class="fa fa-warning"></i>@(Users with assigned apps won't be changed.)</div>
+							<hr />
 
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
-							<div class="help"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="textbox__apps.form.accesstoken__maxlength:50;required:true">@(Access token)</div>
+									<div class="help"><span class="link exec" data-exec="apps_generatetoken">@(Generate token)</span></div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__apps.form.serialnumber__maxlength:50">@(Serial number)</div>
+									<div class="help"><i class="fa fa-warning"></i>@(Enter a serial number if the author requires it)</div>
+								</div>
+							</div>
 						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__apps.form.serialnumber__maxlength:50">@(Serial number)</div>
-							<div class="help"><i class="fa fa-warning"></i>@(Enter a serial number if the author requires it)</div>
-						</div>
+					</div>
+					<div class="buttonbar" data---="validation__apps.form">
+						<button name="submit" class="button exec b" data-exec="apps_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SUBMIT)</button>
 					</div>
 				</div>
-			</div>
-			<div class="buttonbar" data---="validation__apps.form">
-				<button name="submit" class="button exec b" data-exec="apps_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SUBMIT)</button>
 			</div>
 		</div>
 	</div>

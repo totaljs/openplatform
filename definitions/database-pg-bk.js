@@ -95,7 +95,7 @@ FUNC.users.set = function(user, fields, callback, app, type) {
 					for (var i = 0; i < response.length; i++) {
 						var dbapp = response[i];
 						if (apps[dbapp.id]) {
-							db.modify('tbl_user_app', { settings: apps[dbapp.id].settings, roles: apps[dbapp.id].roles, dtupdated: NOW }).where('id', dbapp.id);
+							db.modify('tbl_user_app', { settings: apps[dbapp.id].settings, roles: apps[dbapp.id].roles, dtupdated: NOW, position: apps[dbapp.id].position }).where('id', dbapp.id);
 							delete apps[app.id];
 						} else
 							db.remove('tbl_user_app').where('id', dbapp.id);

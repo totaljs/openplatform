@@ -1,7 +1,9 @@
 exports.install = function() {
 
 	GROUP(['authorize'], function() {
-		ROUTE('GET /');
+		ROUTE('GET /', function() {
+			this.view(this.user.windows != false ? 'index' : 'fullscreen');
+		});
 		ROUTE('GET /users/');
 		ROUTE('GET /apps/');
 		ROUTE('GET /settings/');

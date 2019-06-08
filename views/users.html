@@ -54,334 +54,346 @@
 	.users .selected,.users .item:hover .customer, .users .selected .customer { color: white; }
 	@{fi}
 
+	@{if user.windows}
+	.maxwidth { background-color: white; }
+	@{else}
+	.maxwidth { max-width: 900px; margin: 40px auto 0; background-color: white; border: 1px solid #D0D0D0; background-color: white; }
+	@{fi}
+	body { background-color: #@{if user.darkmode}303030@{else}E0E0E0@{fi}; }
+
 </style>
 
-<div class="row">
-	<div class="col-sm-3 np">
-		<div class="panel">
-			<div class="search">
-				<div data---="textbox__users.filter.q__type:search;placeholder:@(Search users)"></div>
-			</div>
-			<div data---="scrollbar__users.items__margin:64;parent:window;offset:true">
-				<div data---="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
-					<script type="text/html">
-						<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ if customer }}<i class="fa fa-user-secret customer" title="@(Customer)"></i>{{ fi }}{{ statusid | status(true) }}{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
-					</script>
-				</div>
-			</div>
-			<div class="info" data-bind="users.response__template">
-				<script type="text/html">
-					<div class="b">{{ value.page }} / {{ value.pages | pluralize(@('# pages', '# page', '# pages', '# pages')) }}</div>
-					{{ value.count | pluralize(@('# users', '# user', '# users', '# users')) }}
-				</script>
-			</div>
-			<nav class="toolbar">
-				<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
-				<button data-bind="users.selected__disabled:!value" class="exec" data-exec="usersform_remove" title="@(Remove user)"><i class="fa fa-minus"></i></button>
-				<button data-bind="common.isfilter__.red" class="exec" data-exec="userform_filter" title="@(Filter)"><i class="fa fa-filter"></i></button>
-				<button data-bind="users.response__enabled:users_pagination" name="prev" class="exec" data-exec="users_page" title="@(Previous page)"><i class="fa fa-chevron-left"></i></button>
-				<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Next page)" style="border-right:0"><i class="fa fa-chevron-right"></i></button>
-			</nav>
-		</div>
-	</div>
-	<div class="col-sm-9 np" data---="xs__users.form.show__if:value!=null&&value==true;exec:resizelayout">
-		<nav class="nav visible-xs">
-			<span class="link exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
-		</nav>
-		<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
-			<div data---="scrollbar__users.form.show__margin:40;parent:window;marginxs:42">
-				<div class="userphoto">
-					<div data---="preview__users.form.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
-					<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
-				</div>
-				<div data-bind="users.form__track:id__template">
-					<script type="text/html">
-						{{ if value.id }}
-							<div class="scroller-padding">
-								<table class="table table-bordered table-small nmb bg-white">
-									<tbody>
-										<tr>
-											<td class="bg-smoke">@(ID)</td>
-											<td class="col-xs-6 right">{{ value.id }}</td>
-										</tr>
-										{{ if value.dtlogged }}
-										<tr>
-											<td class="bg-smoke">@(Logged)</td>
-											<td class="right">{{ if value.online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ value.dtlogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
-										</tr>
-										{{ fi }}
-										{{ if value.dtcreated }}
-										<tr>
-											<td class="bg-smoke">@(Created)</td>
-											<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
-										</tr>
-										{{ fi }}
-										{{ if value.dtmodified }}
-										<tr>
-											<td class="bg-smoke">@(Updated)</td>
-											<td class="right">{{ value.dtmodified | format('@(yyyy-MM-dd HH:mm)') }}</td>
-										</tr>
-										{{ fi }}
-										{{ if value.dtpassword }}
-										<tr>
-											<td class="bg-smoke">@(Password changed)</td>
-											<td class="right">{{ value.dtpassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
-										</tr>
-										{{ fi }}
-										{{ if value.dtnotified }}
-										<tr>
-											<td class="bg-smoke">@(Last notification)</td>
-											<td class="right">{{ value.dtnotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
-										</tr>
-										{{ fi }}
-										{{ if value.countnotifications }}
-										<tr>
-											<td class="bg-smoke">@(Undread notifications)</td>
-											<td class="right">{{ value.countnotifications }}x</td>
-										</tr>
-										{{ fi }}
-										{{ if value.countsessions }}
-										<tr>
-											<td class="bg-smoke">@(Open sessions)</td>
-											<td class="right">{{ value.countsessions }}x</td>
-										</tr>
-										{{ fi }}
-									</tbody>
-								</table>
-							</div>
-						{{ fi }}
-					</script>
-				</div>
-				<div class="scroller-padding bg-yellow npb">
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.firstname__maxlength:50;required:true;$id:firstinput">@(First name)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.lastname__maxlength:50;required:true">@(Last name)</div>
+<div class="maxwidth">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-3 np">
+				<div class="panel">
+					<div class="search">
+						<div data---="textbox__users.filter.q__type:search;placeholder:@(Search users)"></div>
+					</div>
+					<div data---="scrollbar__users.items__margin:@{if user.windows}64@{else}103@{fi};parent:window;offset:true;visibleX:false">
+						<div data---="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
+							<script type="text/html">
+								<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ if customer }}<i class="fa fa-user-secret customer" title="@(Customer)"></i>{{ fi }}{{ statusid | status(true) }}{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+							</script>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.email__icon2:envelope;maxlength:120;required:true;type:email__'@'">@(Email address)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.phone__icon2:phone;maxlength:30;type:phone">@(Phone number)</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="dropdown__users.form.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Meeting|4,Business trip|5,Holiday|6,Sick|7,Off work|8);type:number__0">@(Status)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.status__maxlength:70">@(Status note)</div>
-						</div>
-					</div>
-				</div>
-				<div class="scroller-padding">
-					<div class="row">
-						<div class="col-sm-4 m">
-							<div data---="dropdown__users.form.language__empty:;icon:language;items:Abkhaz|ab,Afar|aa,Afrikaans|af,Akan|ak,Albanian|sq,Amharic|am,Arabic|ar,Aragonese|an,Armenian|hy,Assamese|as,Avaric|av,Avestan|ae,Aymara|ay,Azerbaijani|az,Bambara|bm,Bashkir|ba,Basque|eu,Belarusian|be,Bengali|bn,Bihari|bh,Bislama|bi,Bosnian|bs,Breton|br,Bulgarian|bg,Burmese|my,Catalan|ca,Chamorro|ch,Chechen|ce,Chichewa|ny,Chinese|zh,Church Slavic|cu,Chuvash|cv,Cornish|kw,Corsican|co,Cree|cr,Croatian|hr,Czech|cs,Danish|da,Divehi|dv,Dutch|nl,Dzongkha|dz,English|en,Esperanto|eo,Estonian|et,Ewe|ee,Faroese|fo,Fijian|fj,Finnish|fi,French|fr,Fulah|ff,Gaelic|gd,Galician|gl,Ganda|lg,Georgian|ka,German|de,Greek|el,Guaraní|gn,Gujarati|gu,Haitian|ht,Hausa|ha,Hebrew|he,Herero|hz,Hindi|hi,Hiri Motu|ho,Hungarian|hu,Icelandic|is,Ido|io,Igbo|ig,Indonesian|id,Interlingua|ia,Interlingue|ie,Inuktitut|iu,Inupiaq|ik,Irish|ga,Italian|it,Japanese|ja,Javanese|jv,Kalaallisut|kl,Kannada|kn,Kanuri|kr,Kashmiri|ks,Kazakh|kk,Khmer|km,Kikuyu|ki,Kinyarwanda|rw,Kirghiz|ky,Kirundi|rn,Komi|kv,Kongo|kg,Korean|ko,Kuanyama|kj,Kurdish|ku,Lao|lo,latin|la,Latvian|lv,Limburgish|li,Lingala|ln,Lithuanian|lt,Luba-Katanga|lu,Luxembourgish|lb,Macedonian|mk,Malagasy|mg,Malay|ms,Malayalam|ml,Maltese|mt,Manx|gv,Māori|mi,Marathi|mr,Marshallese|mh,Moldavian|mo,Mongolian|mn,Nauru|na,Navajo|nv,Ndonga|ng,Nepali|ne,Northern Sami|se,North Ndebele|nd,Norwegian|no,Norwegian Bokmål|nb,Norwegian Nynorsk|nn,Occitan|oc,Ojibwa|oj,Oriya|or,Oromo|om,Ossetian|os,Pāli|pi,Panjabi|pa,Pashto|ps,Persian|fa,Polish|pl,Portuguese|pt,Quechua|qu,Raeto-Romance|rm,Romanian|ro,Russian|ru,Samoan|sm,Sango|sg,Sanskrit|sa,Sardinian|sc,Serbian|sr,Serbo-Croatian|sh,Shona|sn,Sichuan Yi|ii,Sindhi|sd,Sinhala|si,Slovak|sk,Slovenian|sl,Somali|so,Southern Sotho|st,South Ndebele|nr,Spanish|es,Sundanese|su,Swahili|sw,Swati|ss,Swedish|sv,Tagalog|tl,Tahitian|ty,Tajik|tg,Tamil|ta,Tatar|tt,Telugu|te,Thai|th,Tibetan|bo,Tigrinya|ti,Tonga|to,Tsonga|ts,Tswana|tn,Turkish|tr,Turkmen|tk,Twi|tw,Uighur|ug,Ukrainian|uk,Urdu|ur,Uzbek|uz,Venda|ve,Vietnamese|vi,Volapük|vo,Walloon|wa,Welsh|cy,Western Frisian|fy,Wolof|wo,Xhosa|xh,Yiddish|yi,Yoruba|yo,Zhuang|za,Zulu|zu">@(Language)</div>
-						</div>
-						<div class="col-sm-4 m">
-							<div data---="dropdown__users.form.gender__items:@(male)|male,@(female)|female">@(Gender)</div>
-						</div>
-						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.reference__align:center">@(Custom reference)</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.dtbirth__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
-						</div>
-						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.dtbeg__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
-						</div>
-						<div class="col-sm-4 m">
-							<div data---="textbox__users.form.dtend__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
-						</div>
-					</div>
-					<hr />
-					<div class="row">
-						<div class="col-sm-4 m">
-							<div data---="dropdown__users.form.dateformat__datasource:dateformats__1">@(Date format)</div>
-						</div>
-						<div class="col-sm-4 m">
-							<div data---="dropdown__users.form.timeformat__items:@(24 hour clock)|24,@(12 hour clock)|12;type:number__24">@(Time)</div>
-						</div>
-						<div class="col-sm-4 m">
-							<div data---="dropdown__users.form.numberformat__datasource:numberformats;type:number__1">@(Number format)</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="scroller-padding bg-smoke npb">
-
-					<div class="alert m">
-						<i class="fa fa-warning mr5"></i><b>@(IMPORTANT):</b>
-						<div class="mt5">@(Directory can restrict OpenPlatform API for obtaining of users according to <b>Directory</b> except of administrators. We don't recommend use numbers.)</div>
-					</div>
-
-					<div class="row" data-bind="user.directory__config [data-jc]:'disabled:' + (!!value)">
-						<div class="col-sm-6 m">
-							<div data---="dropdown__users.form.directory__empty:;datasource:users.meta.directories;icon:folder;value:name">@(Select existing Directory)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.directory__maxlength:25;type:lower">@(Directory)</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="scroller-padding npb">
-
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="dropdown__users.form.ou__empty:;datasource:users.meta.ou;value:name">@(Select existing Organization unit)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.ou__maxlength:100">@(Organization unit)</div>
-							<div class="help">@(For example <code>Developers / Node.js</code>)</div>
-						</div>
-					</div>
-				</div>
-				<hr class="nmt nmb" />
-				<div class="scroller-padding">
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="dropdown__users.form.locality__empty:;datasource:users.meta.localities;icon:map-marker;value:name">@(Select existing Locality)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.locality__maxlength:40">@(Locality)</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="dropdown__users.form.position__empty:;datasource:users.meta.positions;icon:suitcase;value:name">@(Select existing Position)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.position__maxlength:40">@(Position)</div>
-						</div>
-					</div>
-				</div>
-				<hr class="nmt nmb" />
-				<div class="scroller-padding">
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="dynamicvalue__users.form.supervisorid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Supervisor</b>)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="dynamicvalue__users.form.deputyid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Deputy</b>)</div>
-						</div>
-					</div>
-				</div>
-				<div class="scroller-padding bg-smoke npb">
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="dropdown__users.form.company__empty:;datasource:users.meta.companies;icon:building;value:name">@(Select existing Company)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.company__maxlength:40">@(Company)</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div class="alert">
-								<i class="fa fa-info-circle mr5"></i>@(<b>Group ID</b> is suitable for pairing of users from the same company or group.)
-							</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.groupid__maxlength:30;placeholder:@(Some identificator)">@(Group ID)</div>
-						</div>
-					</div>
-				</div>
-				<div class="scroller-padding">
-					<div class="row">
-						<div class="col-sm-6">
-							<div class="mt10 b red" data---="checkbox__users.form.blocked">@(User is blocked)</div>
-							<div class="red" data---="checkbox__users.form.inactive">@(User is inactive)</div>
-							<div data---="checkbox__users.form.customer">@(User is customer)</div>
-							<div data---="checkbox__users.form.sa">@(User is <b>administrator</b>)</div>
-							<div data---="checkbox__users.form.welcome">@(Send welcome email)</div>
-						</div>
-						<div class="col-sm-6">
-							<div class="mt10" data---="checkbox__users.form.sounds">@(Enable sounds)</div>
-							<div data---="checkbox__users.form.notifications">@(Enable notifications)</div>
-							<div data---="checkbox__users.form.notificationsemail">@(Enable email notifications)</div>
-							<div data---="checkbox__users.form.notificationsphone">@(Enable phone notifications)</div>
-							<div data-bind="users.form.id__show" class="hidden">
-								<div data---="checkbox__users.form.rebuildaccesstoken" class="b">@(Re-build access token)</div>
-								<div data---="checkbox__users.form.rebuildtoken" class="b">@(Re-build verification token)</div>
-							</div>
-						</div>
-					</div>
-					<br />
-					<div data---="range__users.form.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
-					<div class="row fs11 silver">
-						<div class="col-xs-6">
-							@(Low)
-						</div>
-						<div class="col-xs-6 right">
-							@(High)
-						</div>
-					</div>
-					<hr />
-					<div class="help" style="margin-top:30px"><i class="fa fa-info-circle"></i>@(User can change the password if is logged.)</div>
-					<br />
-					<div class="row">
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.login__icon2:user;maxlength:120;required:true">@(Login name)</div>
-							<div class="help"><i class="fa fa-envelope"></i>@(Login name can be an email address.)</div>
-						</div>
-						<div class="col-sm-6 m">
-							<div data---="textbox__users.form.password__icon2:lock;maxlength:30;required:true;type:password">@(Password)</div>
-							<div class="help"><span class="exec link" data-exec="userform_generatepassword">@(Generate password)</span></div>
-						</div>
-					</div>
-					<hr />
-					<h2><i class="fa fa-sitemap"></i>@(Custom roles)</h2>
-					<div class="fs12 red"><i class="fa fa-warning mr5"></i><b>@(IMPORTANT:)</b> @(Each application inherits these custom roles.)</div>
-					<div data---="textboxlist__users.form.roles__placeholder:@(Type a global role and press enter)" class="mt10"></div>
-					<div class="help m"><span class="link exec" data-exec="browseroles"><i class="fa fa-search"></i>@(Browse roles)</span></div>
-					<h2><i class="fa fa-sitemap"></i>@(Custom groups)</h2>
-					<div data---="textboxlist__users.form.groups__placeholder:@(Type a group name and press enter)"></div>
-					<div class="help m"><span class="link exec" data-exec="browsegroups"><i class="fa fa-search"></i>@(Browse groups)</span></div>
-					<hr />
-					<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
-					<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
-					<br />
-					<div data---="app-managment__users.form.apps__datasource:users.apps.items" class="m">
+					<div class="info" data-bind="users.response__template">
 						<script type="text/html">
-							<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
-								<div class="userapp-header">
-									<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
-									<i class="fa fa-{{ icon }}"></i><b>{{ title }}</b>
-									<div class="userapp-version">v{{ version }}</div>
-								</div>
-								{{ if roles && roles.length }}
-								<div class="userapp-roles">
-									{{ foreach m in roles }}
-										<div><label><input type="checkbox" value="{{ m }}" />{{ m }}</label></div>
-									{{ end }}
-								</div>
-								{{ fi }}
-								<div class="userapp-settings">
-									<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ id }}" placeholder="@(Custom settings for the application)" />
-								</div>
-								<div class="usersapp-info">@(Version:) <span class="userapp-user-version"></span> / @(Notifications:) <span class="userapp-user-notifications"></span> / @(Badges:) <span class="userapp-user-badges"></span></div>
-								<div class="usersapp-favorite"><label><input type="checkbox" name="favorite" /><span>@(Favorite)</span></label></div>
-							</div>
+							<div class="b">{{ value.page }} / {{ value.pages | pluralize(@('# pages', '# page', '# pages', '# pages')) }}</div>
+							{{ value.count | pluralize(@('# users', '# user', '# users', '# users')) }}
 						</script>
 					</div>
-					<div data---="error__users.form.response"></div>
+					<nav class="toolbar">
+						<button class="exec" data-exec="userform_create" title="@(Add user)"><i class="fa fa-plus"></i></button>
+						<button data-bind="users.selected__disabled:!value" class="exec" data-exec="usersform_remove" title="@(Remove user)"><i class="fa fa-minus"></i></button>
+						<button data-bind="common.isfilter__.red" class="exec" data-exec="userform_filter" title="@(Filter)"><i class="fa fa-filter"></i></button>
+						<button data-bind="users.response__enabled:users_pagination" name="prev" class="exec" data-exec="users_page" title="@(Previous page)"><i class="fa fa-chevron-left"></i></button>
+						<button data-bind="users.response__enabled:users_pagination" name="next" class="exec" data-exec="users_page" title="@(Next page)" style="border-right:0"><i class="fa fa-chevron-right"></i></button>
+					</nav>
 				</div>
 			</div>
-			<div class="buttonbar" data---="validation__users.form">
-				<button name="submit" class="button exec b" data-exec="userform_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SUBMIT)</button>
+			<div class="col-sm-9 np" data---="xs__users.form.show__if:value!=null&&value==true;exec:resizelayout">
+				<nav class="nav visible-xs">
+					<span class="link exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
+				</nav>
+				<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
+					<div data---="scrollbar__users.form.show__margin:@{if user.windows}40@{else}120@{fi};parent:window;marginxs:42">
+						<div class="userphoto">
+							<div data---="preview__users.form.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+							<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
+						</div>
+						<div data-bind="users.form__track:id__template">
+							<script type="text/html">
+								{{ if value.id }}
+									<div class="scroller-padding">
+										<table class="table table-bordered table-small nmb bg-white">
+											<tbody>
+												<tr>
+													<td class="bg-smoke">@(ID)</td>
+													<td class="col-xs-6 right">{{ value.id }}</td>
+												</tr>
+												{{ if value.dtlogged }}
+												<tr>
+													<td class="bg-smoke">@(Logged)</td>
+													<td class="right">{{ if value.online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ value.dtlogged | format('@(yyyy-MM-dd HH:mm)') }}</td>
+												</tr>
+												{{ fi }}
+												{{ if value.dtcreated }}
+												<tr>
+													<td class="bg-smoke">@(Created)</td>
+													<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</td>
+												</tr>
+												{{ fi }}
+												{{ if value.dtmodified }}
+												<tr>
+													<td class="bg-smoke">@(Updated)</td>
+													<td class="right">{{ value.dtmodified | format('@(yyyy-MM-dd HH:mm)') }}</td>
+												</tr>
+												{{ fi }}
+												{{ if value.dtpassword }}
+												<tr>
+													<td class="bg-smoke">@(Password changed)</td>
+													<td class="right">{{ value.dtpassword | format('@(yyyy-MM-dd HH:mm)') }}</td>
+												</tr>
+												{{ fi }}
+												{{ if value.dtnotified }}
+												<tr>
+													<td class="bg-smoke">@(Last notification)</td>
+													<td class="right">{{ value.dtnotified | format('@(yyyy-MM-dd HH:mm)') }}</td>
+												</tr>
+												{{ fi }}
+												{{ if value.countnotifications }}
+												<tr>
+													<td class="bg-smoke">@(Undread notifications)</td>
+													<td class="right">{{ value.countnotifications }}x</td>
+												</tr>
+												{{ fi }}
+												{{ if value.countsessions }}
+												<tr>
+													<td class="bg-smoke">@(Open sessions)</td>
+													<td class="right">{{ value.countsessions }}x</td>
+												</tr>
+												{{ fi }}
+											</tbody>
+										</table>
+									</div>
+								{{ fi }}
+							</script>
+						</div>
+						<div class="scroller-padding bg-yellow npb">
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.firstname__maxlength:50;required:true;$id:firstinput">@(First name)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.lastname__maxlength:50;required:true">@(Last name)</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.email__icon2:envelope;maxlength:120;required:true;type:email__'@'">@(Email address)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.phone__icon2:phone;maxlength:30;type:phone">@(Phone number)</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="dropdown__users.form.statusid__items:@(Available|0,Busy|1,Do not disturb|2,Be right back|3,Meeting|4,Business trip|5,Holiday|6,Sick|7,Off work|8);type:number__0">@(Status)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.status__maxlength:70">@(Status note)</div>
+								</div>
+							</div>
+						</div>
+						<div class="scroller-padding">
+							<div class="row">
+								<div class="col-sm-4 m">
+									<div data---="dropdown__users.form.language__empty:;icon:language;items:Abkhaz|ab,Afar|aa,Afrikaans|af,Akan|ak,Albanian|sq,Amharic|am,Arabic|ar,Aragonese|an,Armenian|hy,Assamese|as,Avaric|av,Avestan|ae,Aymara|ay,Azerbaijani|az,Bambara|bm,Bashkir|ba,Basque|eu,Belarusian|be,Bengali|bn,Bihari|bh,Bislama|bi,Bosnian|bs,Breton|br,Bulgarian|bg,Burmese|my,Catalan|ca,Chamorro|ch,Chechen|ce,Chichewa|ny,Chinese|zh,Church Slavic|cu,Chuvash|cv,Cornish|kw,Corsican|co,Cree|cr,Croatian|hr,Czech|cs,Danish|da,Divehi|dv,Dutch|nl,Dzongkha|dz,English|en,Esperanto|eo,Estonian|et,Ewe|ee,Faroese|fo,Fijian|fj,Finnish|fi,French|fr,Fulah|ff,Gaelic|gd,Galician|gl,Ganda|lg,Georgian|ka,German|de,Greek|el,Guaraní|gn,Gujarati|gu,Haitian|ht,Hausa|ha,Hebrew|he,Herero|hz,Hindi|hi,Hiri Motu|ho,Hungarian|hu,Icelandic|is,Ido|io,Igbo|ig,Indonesian|id,Interlingua|ia,Interlingue|ie,Inuktitut|iu,Inupiaq|ik,Irish|ga,Italian|it,Japanese|ja,Javanese|jv,Kalaallisut|kl,Kannada|kn,Kanuri|kr,Kashmiri|ks,Kazakh|kk,Khmer|km,Kikuyu|ki,Kinyarwanda|rw,Kirghiz|ky,Kirundi|rn,Komi|kv,Kongo|kg,Korean|ko,Kuanyama|kj,Kurdish|ku,Lao|lo,latin|la,Latvian|lv,Limburgish|li,Lingala|ln,Lithuanian|lt,Luba-Katanga|lu,Luxembourgish|lb,Macedonian|mk,Malagasy|mg,Malay|ms,Malayalam|ml,Maltese|mt,Manx|gv,Māori|mi,Marathi|mr,Marshallese|mh,Moldavian|mo,Mongolian|mn,Nauru|na,Navajo|nv,Ndonga|ng,Nepali|ne,Northern Sami|se,North Ndebele|nd,Norwegian|no,Norwegian Bokmål|nb,Norwegian Nynorsk|nn,Occitan|oc,Ojibwa|oj,Oriya|or,Oromo|om,Ossetian|os,Pāli|pi,Panjabi|pa,Pashto|ps,Persian|fa,Polish|pl,Portuguese|pt,Quechua|qu,Raeto-Romance|rm,Romanian|ro,Russian|ru,Samoan|sm,Sango|sg,Sanskrit|sa,Sardinian|sc,Serbian|sr,Serbo-Croatian|sh,Shona|sn,Sichuan Yi|ii,Sindhi|sd,Sinhala|si,Slovak|sk,Slovenian|sl,Somali|so,Southern Sotho|st,South Ndebele|nr,Spanish|es,Sundanese|su,Swahili|sw,Swati|ss,Swedish|sv,Tagalog|tl,Tahitian|ty,Tajik|tg,Tamil|ta,Tatar|tt,Telugu|te,Thai|th,Tibetan|bo,Tigrinya|ti,Tonga|to,Tsonga|ts,Tswana|tn,Turkish|tr,Turkmen|tk,Twi|tw,Uighur|ug,Ukrainian|uk,Urdu|ur,Uzbek|uz,Venda|ve,Vietnamese|vi,Volapük|vo,Walloon|wa,Welsh|cy,Western Frisian|fy,Wolof|wo,Xhosa|xh,Yiddish|yi,Yoruba|yo,Zhuang|za,Zulu|zu">@(Language)</div>
+								</div>
+								<div class="col-sm-4 m">
+									<div data---="dropdown__users.form.gender__items:@(male)|male,@(female)|female">@(Gender)</div>
+								</div>
+								<div class="col-sm-4 m">
+									<div data---="textbox__users.form.reference__align:center">@(Custom reference)</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4 m">
+									<div data---="textbox__users.form.dtbirth__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of birth)</div>
+								</div>
+								<div class="col-sm-4 m">
+									<div data---="textbox__users.form.dtbeg__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of start)</div>
+								</div>
+								<div class="col-sm-4 m">
+									<div data---="textbox__users.form.dtend__placeholder:@(yyyy-mm-dd);delay:2000;type:date;maxlength:10;align:center;format:@(yyyy-MM-dd)">@(Date of end)</div>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-sm-4 m">
+									<div data---="dropdown__users.form.dateformat__datasource:dateformats__1">@(Date format)</div>
+								</div>
+								<div class="col-sm-4 m">
+									<div data---="dropdown__users.form.timeformat__items:@(24 hour clock)|24,@(12 hour clock)|12;type:number__24">@(Time)</div>
+								</div>
+								<div class="col-sm-4 m">
+									<div data---="dropdown__users.form.numberformat__datasource:numberformats;type:number__1">@(Number format)</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="scroller-padding bg-smoke npb">
+
+							<div class="alert m">
+								<i class="fa fa-warning mr5"></i><b>@(IMPORTANT):</b>
+								<div class="mt5">@(Directory can restrict OpenPlatform API for obtaining of users according to <b>Directory</b> except of administrators. We don't recommend use numbers.)</div>
+							</div>
+
+							<div class="row" data-bind="user.directory__config [data-jc]:'disabled:' + (!!value)">
+								<div class="col-sm-6 m">
+									<div data---="dropdown__users.form.directory__empty:;datasource:users.meta.directories;icon:folder;value:name">@(Select existing Directory)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.directory__maxlength:25;type:lower">@(Directory)</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="scroller-padding npb">
+
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="dropdown__users.form.ou__empty:;datasource:users.meta.ou;value:name">@(Select existing Organization unit)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.ou__maxlength:100">@(Organization unit)</div>
+									<div class="help">@(For example <code>Developers / Node.js</code>)</div>
+								</div>
+							</div>
+						</div>
+						<hr class="nmt nmb" />
+						<div class="scroller-padding">
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="dropdown__users.form.locality__empty:;datasource:users.meta.localities;icon:map-marker;value:name">@(Select existing Locality)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.locality__maxlength:40">@(Locality)</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="dropdown__users.form.position__empty:;datasource:users.meta.positions;icon:suitcase;value:name">@(Select existing Position)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.position__maxlength:40">@(Position)</div>
+								</div>
+							</div>
+						</div>
+						<hr class="nmt nmb" />
+						<div class="scroller-padding">
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="dynamicvalue__users.form.supervisorid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Supervisor</b>)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="dynamicvalue__users.form.deputyid__url:/api/internal/users/{value}/;click:userform_search;placeholder:@(Choose a user)">@(Select <b>Deputy</b>)</div>
+								</div>
+							</div>
+						</div>
+						<div class="scroller-padding bg-smoke npb">
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="dropdown__users.form.company__empty:;datasource:users.meta.companies;icon:building;value:name">@(Select existing Company)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.company__maxlength:40">@(Company)</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div class="alert">
+										<i class="fa fa-info-circle mr5"></i>@(<b>Group ID</b> is suitable for pairing of users from the same company or group.)
+									</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.groupid__maxlength:30;placeholder:@(Some identificator)">@(Group ID)</div>
+								</div>
+							</div>
+						</div>
+						<div class="scroller-padding">
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="mt10 b red" data---="checkbox__users.form.blocked">@(User is blocked)</div>
+									<div class="red" data---="checkbox__users.form.inactive">@(User is inactive)</div>
+									<div data---="checkbox__users.form.customer">@(User is customer)</div>
+									<div data---="checkbox__users.form.sa">@(User is <b>administrator</b>)</div>
+									<div data---="checkbox__users.form.windows">@(Multiple document interface)</div>
+									<div data---="checkbox__users.form.welcome">@(Send welcome email)</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="mt10" data---="checkbox__users.form.sounds">@(Enable sounds)</div>
+									<div data---="checkbox__users.form.notifications">@(Enable notifications)</div>
+									<div data---="checkbox__users.form.notificationsemail">@(Enable email notifications)</div>
+									<div data---="checkbox__users.form.notificationsphone">@(Enable phone notifications)</div>
+									<div data-bind="users.form.id__show" class="hidden">
+										<div data---="checkbox__users.form.rebuildaccesstoken" class="b">@(Re-build access token)</div>
+										<div data---="checkbox__users.form.rebuildtoken" class="b">@(Re-build verification token)</div>
+									</div>
+								</div>
+							</div>
+							<br />
+							<div data---="range__users.form.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
+							<div class="row fs11 silver">
+								<div class="col-xs-6">
+									@(Low)
+								</div>
+								<div class="col-xs-6 right">
+									@(High)
+								</div>
+							</div>
+							<hr />
+							<div class="help" style="margin-top:30px"><i class="fa fa-info-circle"></i>@(User can change the password if is logged.)</div>
+							<br />
+							<div class="row">
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.login__icon2:user;maxlength:120;required:true">@(Login name)</div>
+									<div class="help"><i class="fa fa-envelope"></i>@(Login name can be an email address.)</div>
+								</div>
+								<div class="col-sm-6 m">
+									<div data---="textbox__users.form.password__icon2:lock;maxlength:30;required:true;type:password">@(Password)</div>
+									<div class="help"><span class="exec link" data-exec="userform_generatepassword">@(Generate password)</span></div>
+								</div>
+							</div>
+							<hr />
+							<h2><i class="fa fa-sitemap"></i>@(Custom roles)</h2>
+							<div class="fs12 red"><i class="fa fa-warning mr5"></i><b>@(IMPORTANT:)</b> @(Each application inherits these custom roles.)</div>
+							<div data---="textboxlist__users.form.roles__placeholder:@(Type a global role and press enter)" class="mt10"></div>
+							<div class="help m"><span class="link exec" data-exec="browseroles"><i class="fa fa-search"></i>@(Browse roles)</span></div>
+							<h2><i class="fa fa-sitemap"></i>@(Custom groups)</h2>
+							<div data---="textboxlist__users.form.groups__placeholder:@(Type a group name and press enter)"></div>
+							<div class="help m"><span class="link exec" data-exec="browsegroups"><i class="fa fa-search"></i>@(Browse groups)</span></div>
+							<hr />
+							<h2 class="nmb"><i class="fa fa-th"></i>@(Applications)</h2>
+							<div class="help">@(Enable access into the applications below for this user. Each application can have a specific permissions and the permissions are visibled when you allow the application.)</div>
+							<br />
+							<div data---="app-managment__users.form.apps__datasource:users.apps.items" class="m">
+								<script type="text/html">
+									<div class="userapp-container userapp-container-disabled" data-id="{{ id }}">
+										<div class="userapp-header">
+											<div class="userapp-checkbox"><i class="fa fa-check"></i></div>
+											<i class="fa fa-{{ icon }}"></i><b>{{ title }}</b>
+											<div class="userapp-version">v{{ version }}</div>
+										</div>
+										{{ if roles && roles.length }}
+										<div class="userapp-roles">
+											{{ foreach m in roles }}
+												<div><label><input type="checkbox" value="{{ m }}" />{{ m }}</label></div>
+											{{ end }}
+										</div>
+										{{ fi }}
+										<div class="userapp-settings">
+											<input type="text" maxlength="100" class="userapp-settings-input" data-id="{{ id }}" placeholder="@(Custom settings for the application)" />
+										</div>
+										<div class="usersapp-info">@(Version:) <span class="userapp-user-version"></span> / @(Notifications:) <span class="userapp-user-notifications"></span> / @(Badges:) <span class="userapp-user-badges"></span></div>
+										<div class="usersapp-favorite"><label><input type="checkbox" name="favorite" /><span>@(Favorite)</span></label></div>
+									</div>
+								</script>
+							</div>
+							<div data---="error__users.form.response"></div>
+						</div>
+					</div>
+					<div class="buttonbar" data---="validation__users.form">
+						<button name="submit" class="button exec b" data-exec="userform_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SUBMIT)</button>
+					</div>
+				</div>
+
 			</div>
+
 		</div>
-
 	</div>
-
 </div>
 
 @{json(user, 'userdata')}
@@ -548,7 +560,7 @@
 
 	function userform_create() {
 		SET('users.selected', '');
-		SET('users.form', { language: 'en', numberformat: 1, timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, dtbeg: NOW, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
+		SET('users.form', { windows: true, language: 'en', numberformat: 1, timeformat: 24, dateformat: 'yyyy-MM-dd', show: true, id: '', directory: user.directory, accesstoken: GUID(40), email: '@', gender: 'male', rebuildtoken: true, sounds: true, dtbeg: NOW, notifications: true, notificationsemail: true, notificationsphone: true, welcome: true, volume: 80, apps: [], statusid: 0 }, true);
 		if (!isMOBILE)
 			FIND('#firstinput').find('input').focus();
 	}

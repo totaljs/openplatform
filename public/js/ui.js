@@ -1936,6 +1936,720 @@ COMPONENT('repeater', 'hidden:true;check:true', function(self, config) {
 	};
 });
 
+COMPONENT('processes@2', function(self, config) {
+
+	var self = this;
+	var iframes = [];
+	var closing = {};
+	var clone;
+	var appdefs = CACHE('appdefs') || {};
+	var oldfocus;
+	var oldfocusel;
+	var oldpos = {};
+	var defsize = {};
+	var appminimized = {};
+	var order = [];
+	var ismobile = isMOBILE && screen.width <= 700;
+	var elpanel;
+
+	self.hidemenu = function() {
+		common.startmenu && TOGGLE('common.startmenu');
+	};
+
+	var theader = '<div class="ui-process-header"></div><span class="appprogress ap{{id}}"><span class="userbg"></span></span>';
+
+	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
+	self.readonly();
+	self.nocompile();
+
+	self.make = function() {
+		self.append('<div class="ui-process-panel hidden"></div><div class="ui-process-clone hidden"></div>');
+		clone = self.find('.ui-process-clone');
+		elpanel = self.find('.ui-process-panel');
+	};
+
+	var move = { is: false, x: 0, y: 0 };
+	var resize = { is: false, x: 0, y: 0 };
+	var w = $(window);
+
+	self.getSize = function() {
+		var w = $(window);
+		var obj = {};
+		obj.w = w.width();
+		obj.h = w.height() - $('header').height();
+		return obj;
+	};
+
+	self.getCache = function(el) {
+		var off = el.offset();
+		return el.width() + 'x' + el.height() + 'x' + off.left + 'x' + off.top;
+	};
+
+	$('#appmenu').on('click', function() {
+
+		var el = $('#dashboardapps').find('.focused');
+		if (!el.length)
+			return;
+
+		var opt = {};
+		opt.element = $(this);
+		opt.ready = false;
+		common.appoptions = opt;
+		var id = el.attrd('id');
+		var iframe = iframes.findItem('id', id);
+		self.message(iframe, 'options');
+		setTimeout(function() {
+
+			if (opt.ready)
+				return;
+
+			EXEC(config.options, opt, function() {
+				opt.ready = true;
+				opt.align = 'right';
+				opt.offsetY = -12;
+				opt.offsetX = -3;
+
+				if (isMOBILE)
+					opt.position = 'bottom';
+
+				opt.callback = function(selected) {
+
+					if (selected.callbackid) {
+						var callbackid = selected.callbackid;
+						selected.callbackid = undefined;
+						self.message(iframes.findItem('id', id), 'options', selected, callbackid);
+						return;
+					}
+
+					switch (selected.value) {
+						case 'favorite':
+							EXEC('Dashboard/favorite', id);
+							break;
+						case 'print':
+							self.message(iframes.findItem('id', id), 'print');
+							break;
+						case 'changelog':
+							var tmp = iframes.findItem('id', id);
+							self.message(tmp, 'changelog', tmp.oldversion);
+							break;
+						case 'close':
+							self.kill(id);
+							break;
+						case 'reset':
+							self.resetsize(id);
+							break;
+						case 'refresh':
+							self.reload(id);
+							break;
+						case 'mutesounds':
+							if (common.muted[id])
+								delete common.muted[id];
+							else
+								common.muted[id] = 1;
+							self.animateoptions(iframe);
+							break;
+						case 'mutenotifications':
+							AJAX('GET /api/profile/{0}/mute/'.format(id), function(response) {
+								iframe.meta.notifications = response.value;
+								$('.appnonotify[data-id="{0}"]'.format(id)).tclass('hidden', !!response.value);
+								self.animateoptions(iframe);
+							});
+							break;
+					}
+				};
+				SETTER('menu', 'show', opt);
+			}, iframe);
+		}, 300);
+	});
+
+	self.event('mousedown touchstart', '.ui-process-button,.ui-process-mainmenu', function(e) {
+		var el = $(this).closest('.ui-process');
+		var id = el.attrd('id');
+		el[0].scrollTop = -1;
+		switch (this.name) {
+			case 'menu':
+				var iframe = iframes.findItem('id', id);
+				self.message(iframe, 'menu');
+				break;
+			case 'screenshot':
+				SETTER('loading', 'show');
+				SETTER('loading', 'hide', 2000);
+				var iframe = iframes.findItem('id', id);
+				self.message(iframe, 'screenshotmake', common.cdn);
+				break;
+			case 'refresh':
+				var btn = $(this);
+				btn.aclass('fa-spin');
+				setTimeout(function() {
+					btn.rclass('fa-spin');
+				}, 2000);
+				self.reload(id);
+				break;
+			case 'help':
+				var iframe = iframes.findItem('id', id);
+				self.message(iframe, 'help');
+				break;
+			case 'maximize':
+				self.resize_maximize(id);
+				break;
+			case 'maximize-left':
+				self.resize_maximize(id, 2);
+				break;
+			case 'maximize-right':
+				self.resize_maximize(id, 1);
+				break;
+			case 'restore':
+				self.resize_maximize(id, 3);
+				break;
+			case 'minimize':
+				self.minimize(id);
+				break;
+			case 'close':
+				self.kill(id);
+				break;
+			case 'options':
+				break;
+		}
+
+		if (this.name !== 'menu')
+			SETTER('menu', 'hide');
+
+		self.hidemenu();
+		e.preventDefault();
+		e.stopPropagation();
+	});
+
+	self.focus = function(id) {
+		SETTER('menu', 'hide');
+		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
+		if (oldfocusel)
+			oldfocusel[0].scrollTop = -1;
+		if (oldfocus === id)
+			return;
+		order = order.remove(id);
+		order.push(id);
+		oldfocus = id;
+
+		var log = common.console['app' + id];
+		if (log && log.items && log.items.length)
+			SET('common.status', log.items[0]);
+		else
+			SET('common.status', null);
+
+		SET('common.focused', id);
+		self.find('.ui-process-focus').rclass('ui-process-focus');
+		oldfocusel = self.find('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').rclass('hidden').rclass('ui-process-hidden');
+		oldfocus[0].scrollTop = 0;
+		setTimeout2(self.ID + 'focus', function() {
+			oldfocus = null;
+		}, 1000);
+		self.reorder();
+	};
+
+	self.mup = function(e) {
+
+		if (move.is) {
+			var id = move.el.attrd('id');
+			move.is = false;
+			move.el.attrd('cache', '');
+			clone.aclass('hidden');
+			e.preventDefault();
+
+			if (move.pl) {
+				self.resize_maximize(id, 2);
+			} else if (move.pr)
+				self.resize_maximize(id, 1);
+			else
+				self.notifyresize(id, true);
+
+			move.plast && elpanel.aclass('hidden');
+			move.plast = null;
+			move.pl = false;
+			move.pr = false;
+		}
+
+		if (resize.is) {
+			resize.is = false;
+			resize.el.attrd('cache', '');
+			clone.aclass('hidden');
+			self.notifyresize(resize.el.attrd('id'));
+			e.preventDefault();
+		}
+	};
+
+	self.resetsize = function(id) {
+		for (var i = 0; i < iframes.length; i++) {
+
+			var iframe = iframes[i];
+			if (typeof(id) === 'string' && id !== iframe.id)
+				continue;
+
+			var internal = iframe.meta.internal;
+			var opt = { width: internal.width, height: internal.height };
+			var ol = iframe.element.css('left').parseInt();
+			var ot = +iframe.element.css('top').parseInt();
+
+			if (ol <= 0)
+				opt.left = '20px';
+			else if (ol + internal.width + 20 >= WW)
+				opt.left = (WW - internal.width - 20) + 'px';
+
+			if (ot <= 45)
+				opt.top = '45px';
+			else if (ot + internal.height >= WH) {
+				var tmp = (WH - internal.height - 80);
+				opt.top = (tmp < 45 ? 50 : tmp) + 'px';
+			}
+
+			var h = (internal.height || 0) - (resize.padding || 0);
+			if (h > WH - 70)
+				h = WH - 70;
+
+			opt.height = h;
+
+			iframe.element.css(opt);
+			iframe.iframe.css({ height: h });
+			self.notifyresize(iframe.id);
+		}
+
+	};
+
+	self.resize_maximize = function(id, align) {
+		var margin = iframe.element.find('.ui-process-header').height();
+		var iframe = iframes.findItem('id', id);
+		var el = iframe.element;
+		var size = self.getSize();
+		var h = WH - $('header').height() - 31;
+		var w = WW;
+		el.css({ width: w, height: h, left: 0, top: 45 });
+		iframe.iframe.css({ height: h - margin });
+		setTimeout(function(id) {
+			self.notifyresize(id);
+		}, 100, id);
+	};
+
+	w.on('resize', function() {
+		for (var i = 0; i < iframes.length; i++) {
+			var iframe = iframes[i];
+			var margin = iframe.element.find('.ui-process-header').height();
+			var el = iframe.element;
+			var size = self.getSize();
+			var h = WH - $('header').height() - 31;
+			var w = WW;
+			el.css({ width: w, height: h, left: 0, top: 45 });
+			iframe.iframe.css({ height: h - margin });
+			setTimeout(function(id) {
+				self.notifyresize(id);
+			}, 100, iframe.id);
+		}
+	});
+
+	self.emitevent = function(type, message) {
+		for (var i = 0; i < iframes.length; i++)
+			self.message(iframes[i], type, message);
+	};
+
+	self.message = function(item, type, message, callbackid, error) {
+
+		var data = {};
+
+		data.openplatform = true;
+		data.type = type;
+		data.body = message;
+
+		if (error)
+			data.error = error.toString();
+
+		if (callbackid)
+			data.callback = callbackid;
+
+		if (item && item.element) {
+			item.element[0].scrollTop = -1;
+			item.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
+		}
+
+		return true;
+	};
+
+	self.message2 = function(id, type, message, callbackid, error) {
+		var proc = self.findProcess(id);
+		if (proc) {
+			var data = {};
+			data.openplatform = true;
+			data.type = type;
+			data.body = message;
+			if (error)
+				data.error = error.toString();
+			if (callbackid)
+				data.callback = callbackid;
+			proc.element.find('iframe')[0].contentWindow.postMessage(JSON.stringify(data), '*');
+		}
+	};
+
+	self.findProcess = function(id) {
+		return iframes.findItem('id', id);
+	};
+
+	self.notifyresize = function(id, skipNotify) {
+		var iframe = self.findProcess(id);
+		if (iframe) {
+
+			var el = iframe.element;
+			var w = el.width();
+			var h = el.height() - iframe.element.find('.ui-process-header').height();
+
+			el[0].scrollTop = -1;
+
+			if (iframe.mobile) {
+				if (!skipNotify)
+					self.message(iframe, 'resize', { width: w, height: h });
+			} else {
+				if (!skipNotify) {
+					el.find('iframe').css('height', h);
+					self.message(iframe, 'resize', { width: w, height: h });
+				}
+			}
+		}
+	};
+
+	self.changelog = function(id, version) {
+		var iframe = self.findProcess(id);
+		iframe && self.message(iframe, 'changelog', version);
+	};
+
+	self.notifyresize2 = function(id) {
+		var iframe = self.findProcess(id);
+		if (iframe) {
+			var el = iframe.element;
+			var w = el.width();
+			var h = el.height() - iframe.element.find('.ui-process-header').height();
+			self.message(iframe, 'resize', { width: w, height: h });
+		}
+	};
+
+	self.minimize = function(id) {
+
+		if (id == null) {
+			for (var i = 0; i < iframes.length; i++)
+				self.minimize(iframes[i].id);
+			return;
+		}
+
+		var iframe = self.findProcess(id);
+		if (iframe) {
+			iframe.element.aclass('hidden');
+			$('.appprocess[data-id="{0}"]'.format(id)).rclass('focused');
+			self.message(iframe, 'minimize');
+		}
+		return self;
+	};
+
+	function rnd(max, min) {
+		max = (max || 100000);
+		min = (min || 0);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	self.highlight = function(iframe, type) {
+
+		if (typeof(iframe) === 'string') {
+			iframe = self.findProcess(iframe);
+			if (!iframe)
+				return false;
+		}
+
+		var el = iframe.element;
+		var cls = 'ui-process-highlight';
+		el.aclass(cls);
+		setTimeout(function() {
+			el.rclass(cls);
+		}, 200);
+	};
+
+	self.shake = function(iframe, type) {
+
+		if (typeof(iframe) === 'string') {
+			iframe = self.findProcess(iframe);
+			if (!iframe)
+				return false;
+		}
+
+		var el = iframe.element;
+		var focused = el.hclass('ui-process-focus');
+
+		if (type === true && focused)
+			return;
+
+		var def = {};
+		var max = 5;
+
+		def.left = el.css('left').parseInt();
+		def.top = el.css('top').parseInt();
+
+		el.animate({ index: 2 }, { duration: 80, step: function() {
+			var cur = {};
+			cur.left = rnd(def.left + max, def.left - max);
+			cur.top = rnd(def.top + max, def.top - max);
+			el.animate(cur, 50);
+		}, done: function() {
+			el.animate(def, 50);
+		}});
+	};
+
+	self.maximize = function(iframe) {
+
+		if (typeof(iframe) === 'string') {
+			iframe = self.findProcess(iframe);
+			if (!iframe)
+				return false;
+		}
+
+		iframe.element.rclass('hidden');
+		self.focus(iframe.id);
+		self.message(iframe, 'maximize');
+	};
+
+	self.sendnotifydata = function(iframe, data) {
+
+		if (typeof(iframe) === 'string') {
+			iframe = self.findProcess(iframe);
+			if (!iframe)
+				return false;
+		}
+
+		iframe.element.rclass('hidden');
+		self.focus(iframe.id);
+		self.message(iframe, 'notify', data);
+	};
+
+	self.reload = function(id) {
+		var iframe = self.findProcess(id);
+		self.message(iframe, 'reload');
+	};
+
+	self.reorder = function() {
+		for (var i = 0; i < iframes.length; i++) {
+			var iframe = iframes[i];
+			var index = order.indexOf(iframe.id);
+			iframe.element.rclass2('ui-process-priority-').aclass('ui-process-priority-' + (index + 1));
+		}
+	};
+
+	self.kill = function(id) {
+
+		if (id === undefined) {
+			GET(config.datasource).forEach(function(item) {
+				self.kill(item.id);
+			});
+			return;
+		}
+
+		var index = iframes.findIndex('id', id);
+		if (index === -1)
+			return self;
+
+		var iframe = iframes[index];
+
+		order = order.remove(id);
+
+		// if (!iframe.meta.internal.loaded)
+		// 	return;
+
+		iframes.splice(index, 1);
+		iframe.element.aclass('hidden');
+		iframe.meta.internal.loaded = false;
+
+		if (common.focused === id)
+			SET('common.focused', null);
+
+		self.reorder();
+		self.minimize(id, false);
+
+		$('.appclose[data-id="{0}"]'.format(id)).aclass('hidden');
+		$('.app[data-id="{0}"]'.format(id)).rclass('app-running');
+
+		closing[id] = true;
+
+		// Timeout for iframe cleaning scripts
+		setTimeout(function() {
+			iframe.iframe.attr('src', 'about:blank');
+			iframe.iframe.remove();
+			iframe.element.off();
+			iframe.element.remove();
+			delete closing[id];
+		}, 1000);
+
+		var apps = GET(config.datasource);
+		var item = apps.findItem('id', id);
+
+		if (item) {
+			item.internal.running = false;
+			item.running = false;
+			self.message(iframe, 'kill');
+		}
+
+		SET(config.datasource, apps.remove('id', id));
+		SETTER('processes', 'emitevent', 'app.close', id);
+		return self;
+	};
+
+	function makeurl(url, accesstoken) {
+
+		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
+
+		var index = url.indexOf('?');
+		if (index === -1)
+			return url + '?openplatform=' + accesstoken;
+		else
+			return url.substring(0, index + 1) + 'openplatform=' + accesstoken + '&' + url.substring(index + 1);
+	}
+
+	self.wait = function(app, callback, silent) {
+
+		if (typeof(app) === 'string') {
+			// id
+			app = user.apps.findItem('id', app);
+			if (!app) {
+				callback(null);
+				return;
+			}
+		}
+
+		if (app.running) {
+			var iframe = self.findProcess(app.id);
+			if (iframe) {
+				callback(iframe);
+			} else {
+				setTimeout(function() {
+					self.wait(app, callback);
+				}, 500);
+			}
+		} else {
+
+			// RUN APP
+			// MINIMIZED
+			appminimized[app.id] = silent === true;
+
+			$('.app[data-id="{0}"]'.format(app.id)).trigger('click');
+			WAIT(function() {
+				return app.loaded;
+			}, function() {
+				self.wait(app, callback);
+			});
+		}
+	};
+
+	self.setter = function(value) {
+
+		if (!value)
+			return;
+
+		if (closing[value.id]) {
+			setTimeout(function(value) {
+				self.setter(value);
+			}, 1000, value);
+			return;
+		}
+
+		var item = GET(config.datasource).findItem('id', value.id);
+		if (!item) {
+			WARN('Application {0} not found.'.format(value.id));
+			return;
+		}
+
+		var iframe = iframes.findItem('id', value.id);
+		if (iframe) {
+			self.maximize(iframe);
+			if (iframe.meta.href) {
+				self.message(iframe, 'redirect', iframe.meta.href);
+				iframe.meta.href = undefined;
+			}
+			return;
+		}
+
+		iframe = {};
+		iframe.mobile = WIDTH() === 'xs';
+		iframe.id = value.id;
+		iframe.width = value.internal.width;
+		iframe.hidden = appminimized[iframe.id];
+		iframe.user = user;
+		self.append(self.template(value, iframe));
+
+		if (appminimized[iframe.id])
+			delete appminimized[iframe.id];
+
+		value.internal.running = true;
+		item.running = true;
+		iframe.meta = value;
+
+		iframe.element = $('.ui-process[data-id="{0}"]'.format(value.id));
+		iframe.iframe = iframe.element.find('iframe');
+
+		iframe.iframe[0].$loaded = 0;
+		iframe.iframe.on('load', function() {
+			if (!this.$loaded) {
+				setTimeout(function() {
+					iframe.element.find('.ui-process-loading').aclass('hidden');
+					value.internal.notifydata && self.sendnotifydata(iframe, value.internal.notifydata);
+					value.internal.loaded = true;
+				}, 500);
+			}
+			this.$loaded++;
+		});
+
+		var margin = iframe.element.find('.ui-process-header').height();
+		var mm = iframe.element.find('.ui-process-mainmenu');
+
+		if (value.internal.mobilemenu === false)
+			mm.remove();
+		else
+			mm.rclass('hidden');
+
+		var h = WH - $('header').height() - 31;
+		var w = WW;
+		iframe.element.css({ width: w, height: h, left: 0, top: 45 });
+		iframe.iframe.css({ height: h - margin });
+		iframe.dateopen = new Date();
+		iframes.push(iframe);
+
+		setTimeout(function() {
+			var url = value.url;
+			if (value.href) {
+				if (value.href.substring(0, 1) === '/')
+					url = (url + value.href.substring(1));
+				else if (value.href.indexOf(url) !== -1)
+					url = value.href;
+			}
+			iframe.iframe.attr('src', makeurl(url, value.accesstoken));
+		}, 100);
+
+		setTimeout(function() {
+			iframe.element.rclass('ui-process-animation');
+			if (!iframe.hidden)
+				self.focus(iframe.id);
+		}, 500);
+
+		UPDATE(config.datasource);
+		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
+		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');
+
+		if (!value.notifications || common.muted[value.id])
+			self.animateoptions(iframe);
+
+	};
+
+	self.animateoptions = function(iframe) {
+		var icon = iframe.element.find('.fa-cog');
+		icon.aclass('fa-spin');
+		icon.parent().aclass('red');
+		setTimeout(function() {
+			icon.parent().rclass('red');
+			icon.rclass('fa-spin');
+		}, 2000);
+	};
+
+});
+
 COMPONENT('processes', function(self, config) {
 
 	var self = this;
@@ -2051,7 +2765,7 @@ COMPONENT('processes', function(self, config) {
 						opt.offsetX = 3;
 
 						if (isMOBILE)
-							opt.position = 'bottom';
+							opt.position = 'top';
 
 						opt.callback = function(selected) {
 

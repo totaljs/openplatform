@@ -15,6 +15,7 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('timeformat', [12, 24]); // 12 or 24
 	schema.define('numberformat', [1, 2, 3, 4]); // 1: "1 000.10", 2: "1 000,10", 3: "100,000.00", 4: "100.000,00"
 	schema.define('volume', Number);
+	schema.define('windows', Boolean);
 	schema.define('language', 'Lower(2)');
 	schema.define('pin', 'String(4)'); // Unlock pin
 	schema.define('locking', Number); // in minutes (0: disabled)
@@ -42,6 +43,7 @@ NEWSCHEMA('Account', function(schema) {
 				data.volume = user.volume;
 				data.language = user.language;
 				data.colorscheme = user.colorscheme;
+				data.windows = user.windows;
 				data.background = user.background;
 				data.locking = user.locking;
 				data.dateformat = user.dateformat;
@@ -115,6 +117,7 @@ NEWSCHEMA('Account', function(schema) {
 				user.background = model.background;
 				user.dtupdated = NOW;
 				user.locking = model.locking;
+				user.windows = model.windows;
 
 				var tmp = model.dateformat || 'yyyy-MM-dd';
 

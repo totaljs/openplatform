@@ -59,6 +59,9 @@ AUTH(function($) {
 			$.req.$language = profile.language;
 			$.req.locked = (meta.settings ? meta.settings.indexOf('locked:1') != -1 : false) || locked;
 
+			if (profile.windows == null)
+				profile.windows = true;
+
 			if (profile.online === false || locked) {
 				profile.online = true;
 				OP.session.set(meta.sessionid, meta.id, profile, opt.expire, meta.note, 'locked:' + (locked ? 1 : 0));

@@ -155,7 +155,6 @@ Thelpers.responsive = function(value) {
 $(window).on('message', function(e) {
 
 	var data = PARSE((e.originalEvent && e.originalEvent.data).toString() || '');
-
 	if (!data || !data.openplatform)
 		return;
 
@@ -169,9 +168,6 @@ $(window).on('message', function(e) {
 	var processes = FIND('processes');
 
 	switch (data.type) {
-
-		case '$windows':
-			break;
 
 		case 'install':
 

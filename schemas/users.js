@@ -37,6 +37,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('customer', Boolean);
 	schema.define('welcome', Boolean);
 	schema.define('darkmode', Boolean);
+	schema.define('windows', Boolean);
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
@@ -291,6 +292,7 @@ NEWSCHEMA('User', function(schema) {
 				item.apps = model.apps;
 				item.dtupdated = NOW;
 				item.volume = model.volume;
+				item.windows = model.windows !== false;
 
 				if (isdatemodified(item.dtbirth, model.dtbirth)) {
 					item.dtbirth = model.dtbirth;

@@ -243,6 +243,9 @@ NEWSCHEMA('App', function(schema) {
 						data.accesstoken = '0-0-0';
 					} else {
 						data.notifications = user.apps[$.id].notifications !== false;
+						user.countnotifications -= user.apps[$.id].countnotifications;
+						if (user.countnotifications < 0)
+							user.countnotifications = 0;
 						user.apps[$.id].countnotifications = 0;
 						user.apps[$.id].countbadges && FUNC.badges.rem(user.id, $.id);
 						user.apps[$.id].countbadges = 0;
@@ -334,3 +337,27 @@ function sync(item, model, meta, permissions) {
 	item.resize = model.resize;
 	item.guest = model.guest;
 }
+
+NEWSCHEMA('AppPosition', function(schema) {
+
+	schema.define('apps', '[Object]');
+	schema.setSave(function($) {
+		FUNC.users.get($.user.id, function(err, profile) {
+
+			if (err || !profile)
+				return;
+
+			var apps = $.model.apps;
+			for (var i = 0; i < apps.length; i++) {
+				var app = apps[i];
+				if (app == null || typeof(app) !== 'object')
+					continue;
+				profile.apps[app.id].position = app.position;
+			}
+			FUNC.users.set(profile, ['apps']);
+		});
+
+		$.success();
+	});
+
+});

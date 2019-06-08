@@ -8,84 +8,96 @@
 	.button{background-color:@{user.colorscheme}}
 	@{fi}
 
+	@{if user.windows}
+	.maxwidth { background-color: white; }
+	@{else}
+	.maxwidth { max-width: 700px; margin: 40px auto 0; background-color: white; border: 1px solid #D0D0D0; background-color: white; }
+	@{fi}
+	body { background-color: #@{if user.darkmode}303030@{else}E0E0E0@{fi}; }
+
 </style>
-<div class="row">
-	<div data---="scrollbar__account__margin:40;parent:window">
-		<div class="scroller-padding npb bg-smoke">
-			<div class="alert m"><i class="fa fa-warning mr5"></i><b>@(WARNING)</b><br />@(If you change URL address then you <b>loss data</b> in third-party apps. URL address is a unique identificator of OpenPlatform.)</div>
-			<div class="row">
-				<div class="col-2 m">
-					<div data---="textbox__settings.name__required:true">@(Openplatform name)</div>
-				</div>
-				<div class="col-2 m">
-					<div data---="textbox__settings.url__required:true">@(URL address)</div>
-				</div>
-			</div>
-			<div data---="checkbox__settings.test">@(This is <b>Test environment</b>)</div>
-			<div data---="checkbox__settings.guest">@(Allow <b>Guest user</b>)</div>
-			<br />
-		</div>
-		<div class="scroller-padding">
 
-			<div data---="colorselector__settings.colorscheme__null__'#4285f4'" class="m"></div>
-
-			<div style="font-size:12px">
-				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
-				<div data---="singleupload__settings.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
-			</div>
-			<div class="clearfix"></div>
-			<hr />
-			<div class="help m"><i class="fa fa-warning"></i>@(<b>Token for service account</b> can control the entire API of OpenPlatform as Super User.)</div>
-			<div class="row">
-				<div class="col-2 m">
-					<div data---="textbox__settings.accesstoken__maxlength:50;required:true;type:password">@(Token for service account)</div>
-					<div class="help"><span class="link exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
-				</div>
-
-				<div class="col-2 m">
-					<div data---="textbox__settings.email__type:email;required:true">@(Support email)</div>
-				</div>
-			</div>
-			<div class="alert m">@(<b>Verification token</b> is a simple fuse for Hijacking data of third-party apps. If you change it then you may <b>loss data</b> in third-party apps.)</div>
-			<div class="row">
-				<div class="col-2">
-					<div data---="textbox__settings.verifytoken__maxlength:20;type:password">@(Verification token)</div>
-					<div class="help"><span class="link exec" data-exec="settings_verifytoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
-				</div>
-			</div>
-			<hr />
-			<div class="row">
-				<div class="col-2 m">
-					<div data---="textbox__settings.marketplace__type:url;placeholder:https://domain.com/marketplace.html__''">@(Link to Marketplace)</div>
-				</div>
-				<div class="col-2 m">
-					<div data---="textbox__settings.welcome__type:url;placeholder:https://domain.com/welcome.html__''">@(Welcome page)</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="scroller-padding bg-yellow-fade">
-			<div data---="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
-			<div class="help m">@(The SMTP settings has to be according to the Total.js documentation in valid <b class="red">JSON format</b>.)</div>
-			<div class="row">
-				<div class="col-2 m">
-					<div data---="textbox__settings.smtp__icon:globe;maxlength:50;placeholder:@(e.g. smtp.yourdomain.com)__''">@(SMTP host)</div>
-					<div class="help nmb">
-						<span class="link exec" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</span>
+<div class="maxwidth">
+	<div class="container-fluid">
+		<div class="row">
+			<div data---="scrollbar__account__margin:@{if user.windows}40@{else}115@{fi};parent:window">
+				<div class="scroller-padding npb bg-smoke">
+					<div class="alert m"><i class="fa fa-warning mr5"></i><b>@(WARNING)</b><br />@(If you change URL address then you <b>loss data</b> in third-party apps. URL address is a unique identificator of OpenPlatform.)</div>
+					<div class="row">
+						<div class="col-2 m">
+							<div data---="textbox__settings.name__required:true">@(Openplatform name)</div>
+						</div>
+						<div class="col-2 m">
+							<div data---="textbox__settings.url__required:true">@(URL address)</div>
+						</div>
 					</div>
-					<div data---="error__%smtpsettings" class="hidden" style="padding-top:4px"></div>
+					<div data---="checkbox__settings.test">@(This is <b>Test environment</b>)</div>
+					<div data---="checkbox__settings.guest">@(Allow <b>Guest user</b>)</div>
+					<br />
 				</div>
-				<div class="col-2 m">
-					<div data---="textbox__settings.sender__icon:envelope-o;maxlength:120;type:email;placeholder:@(noreply@yourdomain.com)__''">@(Sender)</div>
-					<div class="help">@(A sender email address)</div>
+				<div class="scroller-padding">
+
+					<div data---="colorselector__settings.colorscheme__null__'#4285f4'" class="m"></div>
+
+					<div style="font-size:12px">
+						<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
+						<div data---="singleupload__settings.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+					</div>
+					<div class="clearfix"></div>
+					<hr />
+					<div class="help m"><i class="fa fa-warning"></i>@(<b>Token for service account</b> can control the entire API of OpenPlatform as Super User.)</div>
+					<div class="row">
+						<div class="col-2 m">
+							<div data---="textbox__settings.accesstoken__maxlength:50;required:true;type:password">@(Token for service account)</div>
+							<div class="help"><span class="link exec" data-exec="settings_generatetoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
+						</div>
+
+						<div class="col-2 m">
+							<div data---="textbox__settings.email__type:email;required:true">@(Support email)</div>
+						</div>
+					</div>
+					<div class="alert m">@(<b>Verification token</b> is a simple fuse for Hijacking data of third-party apps. If you change it then you may <b>loss data</b> in third-party apps.)</div>
+					<div class="row">
+						<div class="col-2">
+							<div data---="textbox__settings.verifytoken__maxlength:20;type:password">@(Verification token)</div>
+							<div class="help"><span class="link exec" data-exec="settings_verifytoken"><i class="fa fa-plus-circle"></i>@(Generate token)</span></div>
+						</div>
+					</div>
+					<hr />
+					<div class="row">
+						<div class="col-2 m">
+							<div data---="textbox__settings.marketplace__type:url;placeholder:https://domain.com/marketplace.html__''">@(Link to Marketplace)</div>
+						</div>
+						<div class="col-2 m">
+							<div data---="textbox__settings.welcome__type:url;placeholder:https://domain.com/welcome.html__''">@(Welcome page)</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="scroller-padding bg-yellow-fade">
+					<div data---="textbox__settings.smtpsettings__icon2:code;maxlength:300__''">@(SMTP settings)</div>
+					<div class="help m">@(The SMTP settings has to be according to the Total.js documentation in valid <b class="red">JSON format</b>.)</div>
+					<div class="row">
+						<div class="col-2 m">
+							<div data---="textbox__settings.smtp__icon:globe;maxlength:50;placeholder:@(e.g. smtp.yourdomain.com)__''">@(SMTP host)</div>
+							<div class="help nmb">
+								<span class="link exec" data-exec="settings_verify"><i class="fa fa-chevron-right mr5"></i>@(Verify your SMTP server)</span>
+							</div>
+							<div data---="error__%smtpsettings" class="hidden" style="padding-top:4px"></div>
+						</div>
+						<div class="col-2 m">
+							<div data---="textbox__settings.sender__icon:envelope-o;maxlength:120;type:email;placeholder:@(noreply@yourdomain.com)__''">@(Sender)</div>
+							<div class="help">@(A sender email address)</div>
+						</div>
+					</div>
+
+					<div data---="error__settings.response" class="hidden m"></div>
 				</div>
 			</div>
-
-			<div data---="error__settings.response" class="hidden m"></div>
+			<div class="buttonbar" data---="validation__settings">
+				<button name="submit" class="button exec b" data-exec="settings_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
+			</div>
 		</div>
-	</div>
-	<div class="buttonbar" data---="validation__settings">
-		<button name="submit" class="button exec b" data-exec="settings_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
 	</div>
 </div>
 

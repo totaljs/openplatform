@@ -8,10 +8,10 @@ NEWSCHEMA('Notification', function(schema) {
 
 		var user = $.user;
 
-		if (!user.countnotifications) {
-			$.callback(EMPTYARRAY);
-			return;
-		}
+		//if (!user.countnotifications) {
+		//	$.callback(EMPTYARRAY);
+		//	return;
+		//}
 
 		FUNC.notifications.get(user.id, function(err, data) {
 
