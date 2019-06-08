@@ -1975,8 +1975,9 @@ COMPONENT('processes@2', function(self, config) {
 	self.getSize = function() {
 		var w = $(window);
 		var obj = {};
+		var header = $('header');
 		obj.w = w.width();
-		obj.h = w.height() - $('header').height();
+		obj.h = w.height() - header.height() - common.electronpadding;
 		return obj;
 	};
 
@@ -2219,7 +2220,8 @@ COMPONENT('processes@2', function(self, config) {
 		var iframe = iframes.findItem('id', id);
 		var el = iframe.element;
 		var size = self.getSize();
-		var h = WH - $('header').height() - 31;
+		var header = $('header');
+		var h = WH - header.height() - 31 - common.electronpadding;
 		var w = WW;
 		el.css({ width: w, height: h, left: 0, top: 45 });
 		iframe.iframe.css({ height: h - margin });
@@ -2234,9 +2236,10 @@ COMPONENT('processes@2', function(self, config) {
 			var margin = iframe.element.find('.ui-process-header').height();
 			var el = iframe.element;
 			var size = self.getSize();
-			var h = WH - $('header').height() - 31;
+			var header = $('header');
+			var h = WH - header.height() - 31 - common.electronpadding;
 			var w = WW;
-			el.css({ width: w, height: h, left: 0, top: 45 });
+			el.css({ width: w, height: h, left: 0, top: 45 + common.electronpadding });
 			iframe.iframe.css({ height: h - margin });
 			setTimeout(function(id) {
 				self.notifyresize(id);
@@ -2605,9 +2608,10 @@ COMPONENT('processes@2', function(self, config) {
 		else
 			mm.rclass('hidden');
 
-		var h = WH - $('header').height() - 31;
+		var header = $('header');
+		var h = WH - header.height() - 31 - common.electronpadding;
 		var w = WW;
-		iframe.element.css({ width: w, height: h, left: 0, top: 45 });
+		iframe.element.css({ width: w, height: h, left: 0, top: 45 + common.electronpadding });
 		iframe.iframe.css({ height: h - margin });
 		iframe.dateopen = new Date();
 		iframes.push(iframe);
@@ -2690,7 +2694,8 @@ COMPONENT('processes', function(self, config) {
 		var w = $(window);
 		var obj = {};
 		obj.w = w.width();
-		obj.h = w.height() - $('header').height();
+		var header = $('header');
+		obj.h = w.height() - header.height() - common.electronpadding;
 		return obj;
 	};
 
@@ -3068,7 +3073,7 @@ COMPONENT('processes', function(self, config) {
 			el.css({ width: +a[0], height: +a[1], left: +a[2], top: +a[3] });
 			el.attrd('cache', '');
 		} else {
-			var w = size.w, h = size.h, l = 0, t = $('header').height();
+			var w = size.w, h = size.h, l = 0, t = $('header').height() - common.electronpadding;
 			switch (align) {
 				case 1:
 				case 2:
@@ -3495,7 +3500,7 @@ COMPONENT('processes', function(self, config) {
 			mm.rclass('hidden');
 
 		if (iframe.mobile) {
-			var h = WH - $('header').height() - 31;
+			var h = WH - $('header').height() - 31 - common.electronpadding;
 			var w = WW;
 			iframe.element.css({ width: w, height: h, left: 0, top: 45 });
 			iframe.iframe.css({ height: h - margin });
@@ -3630,7 +3635,7 @@ COMPONENT('notifications', function() {
 	};
 
 	self.resize = function() {
-		self.css('height', $(window).height() - $('header').height());
+		self.css('height', $(window).height() - $('header').height() - common.electronpadding);
 	};
 
 	self.append = function(value) {

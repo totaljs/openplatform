@@ -9,12 +9,11 @@ body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 .light #pincodewindow {}
 
 .hidden2 { display: none; }
-.launchpad *, header * { user-select: none; }
 
-header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; top: -50px; color: #909090; transition: all 0.3s; box-shadow: 0 5px 5px rgba(0,0,0,0.15); }
+header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; color: #909090; }
 header .nav { float: left; width: 70%; overflow: hidden; height: 45px; }
 header .nav > div { overflow-x: scroll; width: 100%; height: 80px; overflow-scrolling: touch; overflow-y: hidden }
-header nav { width: 5000px; height: 45px; }
+header nav { width: 5000px; height: 45px; -webkit-app-region: drag; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 50px; height: 44px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
 header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
@@ -43,7 +42,7 @@ header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 .button-status i { transition: all 0.3s; }
 .button-status:hover { opacity: 0.9; }
 .button-status:hover i { transform: scale(1.2); }
-.button-status-warning:before { content: '!'; color: white; background-color: red; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 15px; z-index: 5; }
+.button-status-warning:before { content: '!'; color: white; background-color: red; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 12px; z-index: 5; }
 
 .button-window { float: right; width: 35px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; color: #505050; }
 .light .button-window { color: gray; }
@@ -114,7 +113,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 
 .light .startmenu-status b { color: black; }
 .light .startmenu-nav nav button:hover { color: #404040; }
-.light header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); box-shadow: 0 5px 5px rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.15); }
+.light header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); border-color: rgba(0,0,0,0.15); }
 .light header nav button { color: black; border-right-color: rgba(0,0,0,0.1); }
 .light header nav button:first-child { border-left-color: rgba(0,0,0,0.1); }
 .light header nav button.focused { background-color: #D0D0D0; color: black; }
