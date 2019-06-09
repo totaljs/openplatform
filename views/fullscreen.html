@@ -46,18 +46,19 @@
 
 	<header data-bind="user__.header-show:value && value.name">
 
-		<div class="button-window exec" data-bind="common.focused__.red" data-exec="Dashboard/closefocused"><i class="fa fa-times"></i></div>
+		<div class="button-window exec" data-bind="common.focused__.red" data-exec="Dashboard/closefocused" title="@(Close application)"><i class="fa fa-times"></i></div>
 
 		<div class="datetime hidden-xs">
 			<div data---="time"></div>
 		</div>
 
-		<div class="button-window hidden-xs" id="appmenu" data-bind="common.focused__.usercolor"><i class="fa fa-chevron-down"></i></div>
+		<div class="button-window hidden-xs" id="appmenu" data-bind="common.focused__.usercolor" title="@(Application settings)"><i class="fa fa-cog"></i></div>
+
 		@{if !user.guest}
-		<div class="button-status exec" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
+		<div class="button-status exec" title="@(My current status)" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
 		@{fi}
 
-		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value">
+		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value" title="@(Start)">
 			<i class="fa fa-chevron-down"></i>
 		</div>
 
@@ -104,7 +105,7 @@
 	<div data---="processes@2__dashboard.current__datasource:dashboard.apps;options:Dashboard/appmenu"></div>
 
 	<div class="startmenu hidden" data-bind="common.startmenu__exec:togglemenu">
-		<div class="startmenu-nav" data---="xs__common.startmenuapps__if:!value">
+		<div class="startmenu-nav">
 			<div>
 				<nav>
 					@{if CONF.welcome}
@@ -353,9 +354,9 @@
 
 			self.resizeapps = function(value, path, el) {
 				setTimeout2('resizeapps', function() {
-					el.css('width', el.find('button').length * 50);
+					el.css('width', el.find('button').length * 45);
 					var parent = el.parent().parent();
-					var w = WW - (200 + (WIDTH() === 'xs' ? -34 : 220));
+					var w = WW - (200 + (WIDTH() === 'xs' ? -24 : 220));
 					parent.css('width', w);
 					$('.scrollerbuttons').tclass('hidden', isMOBILE || parent.find('nav').width() < w);
 				}, 100, el);
@@ -637,7 +638,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg{background-color:{0}}.ui-features .selected{background-color:{0}!important}.usercolor{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}.usercolor{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);

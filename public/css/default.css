@@ -5,9 +5,6 @@ body { height: 100%; background: #808080 linear-gradient(#5f5e50,#565656); backg
 body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 .ui-dark { color: #C0C0C0; }
 
-#pincodewindow { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 10000; background-color: rgba(255,255,255,0.8); }
-.light #pincodewindow {}
-
 .hidden2 { display: none; }
 .launchpad *, header * { user-select: none; }
 

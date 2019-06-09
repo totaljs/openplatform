@@ -48,6 +48,7 @@ document.addEventListener('click', function(e) {
 });
 
 document.onkeydown = function(e) {
+	// F5
 	if (e.keyCode === 116) {
 		e.returnValue = false;
 		e.keyCode = 0;
@@ -219,12 +220,19 @@ OP.init = function(callback) {
 	}, 5);
 };
 
+OP.$sendfocus = function() {
+	var dt = Date.now();
+	if (!OP.$focus || OP.$focus < dt)
+		OP.focus();
+	OP.$focus = dt + (1000 * 5);
+};
+
 document.addEventListener('click', function() {
-	OP && OP.focus();
+	OP && OP.$sendfocus();
 });
 
 document.addEventListener('touchstart', function() {
-	OP && OP.focus();
+	OP && OP.$sendfocus();
 }, { passive: true });
 
 OP.loading2 = function(visible, interval) {

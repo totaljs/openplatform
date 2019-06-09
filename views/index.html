@@ -47,7 +47,7 @@
 	<header data-bind="user__.header-show:value && value.name">
 
 		@{if !user.guest}
-		<div class="button-status exec" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
+		<div class="button-status exec" title="@(My current status)" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
 		@{fi}
 
 		<div class="datetime hidden-xs">
@@ -55,7 +55,7 @@
 			<div data---="time"></div>
 		</div>
 
-		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value">
+		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value" title="@(Start)">
 			<i class="fa fa-th"></i>
 		</div>
 

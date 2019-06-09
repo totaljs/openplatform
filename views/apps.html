@@ -28,6 +28,8 @@
 	.userapp-roles input { margin-right: 5px; vertical-align: middle; }
 	.userapp-settings input { background-color: white; border: 1px solid #E0E0E0; padding: 4px 10px; border-radius: 3px; width: 100%; font-size: 11px; outline: 0; appearance: none; }
 	.userapp-settings { margin-bottom: 15px; }
+	.fa-user-secret { font-size: 10px; float: left; margin: 0 5px 0 0; }
+	.fa-circle { float: right; margin: 2px 2px 0 0; }
 
 	@{if user.colorscheme}
 	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
@@ -96,7 +98,7 @@
 						<div data---="search__apps.search__selector:.item">
 							<div data---="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
 								<script type="text/html">
-									<div class="item{{ if blocked }} inactive{{ fi }}" data-search="{{ name }} {{ title }}">{{ title }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
+									<div class="item{{ if blocked }} inactive{{ fi }}" data-search="{{ name }} {{ title }}">{{ if guest }}<i class="fa fa-user-secret"></i>{{ fi }}{{ if online }}<i class="fa fa-circle green"></i>{{ fi }}{{ title }}</div>
 								</script>
 							</div>
 						</div>
@@ -272,7 +274,9 @@
 							<br />
 							<div data---="textbox__apps.form.title__maxlength:50;required:true" class="m">@(Title)</div>
 							<div class="mt10 m b" data---="checkbox__apps.form.blocked">@(Application is blocked)</div>
-							<div class="m" data---="checkbox__apps.form.guest">@(Allow for guest user)</div>
+							<div class="hidden" data-bind="apps.form.data.allowguestuser__show">
+								<div class="m" data---="checkbox__apps.form.guest">@(Allow for guest user)</div>
+							</div>
 							<div class="m hidden" data-bind="apps.form.id__show" data---="checkbox__apps.form.permissions">@(Refresh permissions according to the meta file)</div>
 							<div class="m b red" data---="checkbox__apps.form.autorefresh">@(Application can refresh its permissions automatically)</div>
 							<div class="help m hidden" data-bind="apps.form.autorefresh__show"><i class="fa fa-warning red"></i>@(You need to know that this is very <b>dangerous step</b>.)</div>

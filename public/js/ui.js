@@ -2149,6 +2149,8 @@ COMPONENT('processes@2', function(self, config) {
 
 	self.mup = function(e) {
 
+		events.unbind();
+
 		if (move.is) {
 			var id = move.el.attrd('id');
 			move.is = false;
@@ -2669,6 +2671,7 @@ COMPONENT('processes', function(self, config) {
 	var order = [];
 	var ismobile = isMOBILE && screen.width <= 700;
 	var elpanel;
+	var events = {};
 
 	self.hidemenu = function() {
 		common.startmenu && TOGGLE('common.startmenu');
@@ -2705,6 +2708,7 @@ COMPONENT('processes', function(self, config) {
 	};
 
 	self.event('mousedown touchstart', '.ui-process-button,.ui-process-mainmenu', function(e) {
+
 		var el = $(this).closest('.ui-process');
 		var id = el.attrd('id');
 		el[0].scrollTop = -1;
@@ -2836,6 +2840,7 @@ COMPONENT('processes', function(self, config) {
 		var el = t.closest('.ui-process');
 		el[0].scrollTop = -1;
 		self.mdown_move(el, e.offsetX, e.offsetY + (e.target === t[0] ? 0 : e.offsetY + 14));
+		events.bind();
 		e.preventDefault();
 	});
 
@@ -2845,6 +2850,7 @@ COMPONENT('processes', function(self, config) {
 		var off = el.offset();
 		el[0].scrollTop = -1;
 		self.mdown_move(el, o.clientX - off.left, o.clientY - off.top);
+		events.bind();
 		e.preventDefault();
 	});
 
@@ -2852,12 +2858,10 @@ COMPONENT('processes', function(self, config) {
 		var el = $(this).parent();
 		var o = e.touches[0];
 		el[0].scrollTop = -1;
+		events.bind();
 		self.mdown_resize(el, o.clientX, o.clientY);
+		events.bind();
 		e.preventDefault();
-	});
-
-	self.event('touchend', function(e) {
-		self.mup(e);
 	});
 
 	self.focus = function(id) {
@@ -2889,6 +2893,7 @@ COMPONENT('processes', function(self, config) {
 
 	self.event('mousedown', '.ui-process-resize', function(e) {
 		var el = $(this).parent();
+		events.bind();
 		self.mdown_resize(el, e.clientX, e.clientY);
 		e.preventDefault();
 	});
@@ -2927,6 +2932,8 @@ COMPONENT('processes', function(self, config) {
 	};
 
 	self.mup = function(e) {
+
+		events.unbind();
 
 		if (move.is) {
 			var id = move.el.attrd('id');
@@ -3117,19 +3124,33 @@ COMPONENT('processes', function(self, config) {
 		}, 100, id);
 	};
 
-	w.on('mouseup blur', self.mup);
+	events.bind = function() {
+		w.on('mouseup', self.mup);
+		w.on('blur', self.mup);
+		w.on('touchend', self.mup);
+		w.on('mousemove', events.onmove);
+		w.on('touchmove', events.ontouchmove);
+	};
 
-	w.on('mousemove', function(e) {
+	events.unbind = function() {
+		w.off('mouseup', self.mup);
+		w.off('blur', self.mup);
+		w.off('touchend', self.mup);
+		w.off('mousemove', events.onmove);
+		w.off('touchmove', events.ontouchmove);
+	};
+
+	events.onmove = function(e) {
 		if (move.is || resize.is)
 			self.mmove(e.clientX, e.clientY, e);
-	});
+	};
 
-	w.on('touchmove', function(e) {
+	events.ontouchmove = function(e) {
 		if (move.is || resize.is) {
 			var o = e.touches[0];
 			self.mmove(o.clientX, o.clientY, e);
 		}
-	});
+	};
 
 	self.emitevent = function(type, message) {
 		for (var i = 0; i < iframes.length; i++)

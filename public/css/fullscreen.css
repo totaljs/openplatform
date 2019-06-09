@@ -5,16 +5,13 @@ body { height: 100%; background: #808080 linear-gradient(#5f5e50,#565656); backg
 body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 .ui-dark { color: #C0C0C0; }
 
-#pincodewindow { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 10000; background-color: rgba(255,255,255,0.8); }
-.light #pincodewindow {}
-
 .hidden2 { display: none; }
 
 header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; color: #909090; }
 header .nav { float: left; width: 70%; overflow: hidden; height: 45px; }
 header .nav > div { overflow-x: scroll; width: 100%; height: 80px; overflow-scrolling: touch; overflow-y: hidden }
 header nav { width: 5000px; height: 45px; -webkit-app-region: drag; }
-header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 50px; height: 44px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
+header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 44px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
 header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
 header nav button:hover { background-color: rgba(0,0,0,0.1); }
@@ -37,18 +34,17 @@ header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 .light header .datetime > span { background-color: rgba(0,0,0,0.05); }
 .light header .datetime > span:hover { background-color: rgba(0,0,0,0.1); }
 
-.button-status { float: right; width: 35px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; }
+.button-status { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; }
 .ui-dark .button-status { border-left-color: #404040; }
 .button-status i { transition: all 0.3s; }
 .button-status:hover { opacity: 0.9; }
 .button-status:hover i { transform: scale(1.2); }
 .button-status-warning:before { content: '!'; color: white; background-color: red; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 12px; z-index: 5; }
 
-.button-window { float: right; width: 35px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; color: #505050; }
+.button-window { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; color: #505050; }
 .light .button-window { color: gray; }
 .ui-dark .button-window { border-left-color: #404040; }
-.button-window i { transition: all 0.3s; }
-.button-window:hover { opacity: 0.9; }
+.button-window:hover { background-color: rgba(0,0,0,0.03); }
 
 .status0 { color: #68B25B; }
 .status1 { color: #C55140; }
@@ -165,7 +161,7 @@ h3 i { margin-right: 5px; }
 
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.user { float: left; cursor: pointer; width: 24px; height: 25px; line-height: 25px; border-radius: 2px; color: white; margin: 9px 10px 0 10px; user-select: none; text-align: center; font-size: 20px; }
+.user { float: left; cursor: pointer; width: 24px; height: 25px; line-height: 25px; border-radius: 2px; color: white; margin: 9px 8px 0 8px; user-select: none; text-align: center; font-size: 16px; }
 .light .user { color: black; }
 .user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
 .user:hover { background-color: rgba(255,255,255,0.1); }
