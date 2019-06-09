@@ -48,6 +48,7 @@ document.addEventListener('click', function(e) {
 });
 
 document.onkeydown = function(e) {
+
 	// F5
 	if (e.keyCode === 116) {
 		e.returnValue = false;
@@ -56,7 +57,12 @@ document.onkeydown = function(e) {
 			location.href = OP.tokenizator(location.href);
 		else
 			location.reload(true);
+		return;
 	}
+
+	if (e.keyCode === 9 && (e.altKey || e.ctrlKey || e.metaKey))
+		OP.send('nextwindow');
+
 };
 
 OP.changelog = function(body) {

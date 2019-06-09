@@ -162,6 +162,21 @@ $(window).on('message', function(e) {
 	if (data.type === 'refreshprofile')
 		refresh_profile();
 
+	if (data.type === 'nextwindow') {
+		var index = dashboard.apps.findIndex('id', common.focused);
+		if (index === -1)
+			return;
+		index++;
+		app = dashboard.apps[index];
+		if (app == null) {
+			if (index >= dashboard.apps.length)
+				index = 0;
+			app = dashboard.apps[index];
+		}
+		app && SET('common.focused', app.id);
+		return;
+	}
+
 	var app = dashboard.apps.findItem('accesstoken', data.accesstoken);
 	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))
 		return;
@@ -586,7 +601,9 @@ FUNC.open = function(data) {
 
 	data.internal = user.apps.findItem('id', data.id);
 	data.progress = 0;
+	data.position = data.internal.position || 0;
 	dashboard.apps.push(data);
+	dashboard.apps.quicksort('position');
 
 	SET('dashboard.current', data);
 	$('.appunread[data-id="{0}"]'.format(data.id)).aclass('hidden');

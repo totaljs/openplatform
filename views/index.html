@@ -595,7 +595,12 @@
 			var nav = $('header').find('nav');
 			nav.find('button.focused').rclass('focused');
 			nav.find('button[data-id="{0}"]'.format(id)).aclass('focused');
-			if (!id) {
+			if (id) {
+				$('.ui-process-focus').rclass('ui-process-focus');
+				var iframe = $('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').find('iframe');
+				if (iframe.length)
+					iframe[0].contentWindow.focus();
+			} else {
 				common.statustimeout && clearTimeout(common.statustimeout);
 				common.statustimeout = null;
 				NULL('common.status');

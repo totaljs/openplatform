@@ -61,7 +61,7 @@ header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 .fs12 { font-size: 12px; }
 .gray { color: gray; }
 footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; background: #303030 linear-gradient(#303030,#353535); box-shadow: 0 5px -5px rgba(0,0,0,0.2); color: white; }
-.light footer { background: #E0E0E0 linear-gradient(#F0F0F0,#EAEAEA); box-shadow: 0 5px -5px rgba(0,0,0,0.02); color: black; border-top: 1px solid #E0E0E0; }
+.light footer { background: #E0E0E0 linear-gradient(#F0F0F0,#EAEAEA); box-shadow: 0 5px -5px rgba(0,0,0,0.02); color: black; border-top: 1px solid rgba(0,0,0,0.15); }
 
 .username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
 .username:hover { opacity: 0.7; }
