@@ -3051,7 +3051,6 @@ COMPONENT('processes', function(self, config) {
 				h = WH - 70;
 
 			opt.height = h;
-
 			iframe.element.css(opt);
 			iframe.iframe.css({ height: h });
 			self.notifyresize(iframe.id);
