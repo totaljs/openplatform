@@ -167,8 +167,15 @@ $(window).on('message', function(e) {
 		return;
 	}
 
-	if (data.type === 'refreshprofile')
+	if (data.type === 'quicksearch') {
+		SETTER('shortcuts', 'exec', 'F1');
+		return;
+	}
+
+	if (data.type === 'refreshprofile') {
 		refresh_profile();
+		return;
+	}
 
 	app = dashboard.apps.findItem('accesstoken', data.accesstoken);
 	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))

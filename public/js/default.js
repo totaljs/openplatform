@@ -159,8 +159,10 @@ $(window).on('message', function(e) {
 	if (!data || !data.openplatform)
 		return;
 
-	if (data.type === 'refreshprofile')
+	if (data.type === 'refreshprofile') {
 		refresh_profile();
+		return;
+	}
 
 	if (data.type === 'nextwindow') {
 		var index = dashboard.apps.findIndex('id', common.focused);
@@ -174,6 +176,11 @@ $(window).on('message', function(e) {
 			app = dashboard.apps[index];
 		}
 		app && SET('common.focused', app.id);
+		return;
+	}
+
+	if (data.type === 'quicksearch') {
+		SETTER('shortcuts', 'exec', 'F1');
 		return;
 	}
 

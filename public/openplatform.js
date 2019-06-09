@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 405;
+OP.version = 411;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -49,19 +49,30 @@ document.addEventListener('click', function(e) {
 
 document.onkeydown = function(e) {
 
-	// F5
-	if (e.keyCode === 116) {
-		e.returnValue = false;
-		e.keyCode = 0;
+	var is = false;
+
+	if (e.keyCode === 112) {
+		// F1
+		is = true;
+		OP.send('quicksearch');
+	} else if (e.keyCode === 116) {
+		// F5
 		if (location.href.indexOf('openplatform=') === -1)
 			location.href = OP.tokenizator(location.href);
 		else
 			location.reload(true);
-		return;
+		is = true;
+	} else if (e.keyCode === 9 && (e.altKey || e.ctrlKey || e.metaKey)) {
+		// CTRL/ALT/CMD + TAB
+		is = true;
+		OP.send('nextwindow');
 	}
 
-	if (e.keyCode === 9 && (e.altKey || e.ctrlKey || e.metaKey))
-		OP.send('nextwindow');
+	if (is) {
+		e.returnValue = false;
+		e.keyCode = 0;
+		return false;
+	}
 
 };
 
