@@ -1958,7 +1958,7 @@ COMPONENT('processes@2', function(self, config) {
 
 	var theader = '<div class="ui-process-header"></div><span class="appprogress ap{{id}}"><span class="userbg"></span></span>';
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
+	self.template = Tangular.compile('<div class="ui-process{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
 	self.nocompile();
 
@@ -2047,13 +2047,11 @@ COMPONENT('processes@2', function(self, config) {
 								delete common.muted[id];
 							else
 								common.muted[id] = 1;
-							self.animateoptions(iframe);
 							break;
 						case 'mutenotifications':
 							AJAX('GET /api/profile/{0}/mute/'.format(id), function(response) {
 								iframe.meta.notifications = response.value;
 								$('.appnonotify[data-id="{0}"]'.format(id)).tclass('hidden', !!response.value);
-								self.animateoptions(iframe);
 							});
 							break;
 					}
@@ -2638,20 +2636,6 @@ COMPONENT('processes@2', function(self, config) {
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
 		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');
-
-		if (!value.notifications || common.muted[value.id])
-			self.animateoptions(iframe);
-
-	};
-
-	self.animateoptions = function(iframe) {
-		var icon = iframe.element.find('.fa-cog');
-		icon.aclass('fa-spin');
-		icon.parent().aclass('red');
-		setTimeout(function() {
-			icon.parent().rclass('red');
-			icon.rclass('fa-spin');
-		}, 2000);
 	};
 
 });

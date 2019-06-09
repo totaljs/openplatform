@@ -25,6 +25,12 @@ header .datetime > span { width: 10px; height: 45px; float: left; background-col
 header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 .header-show { top: 0; }
 
+.titlemessage { position: absolute; top: 45px; height: 30px; z-index: 40; width: 100%; left: 0; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); line-height: 29px; }
+.titlemessage-success { background: #68B25B; }
+.titlemessage-warning { background: #D63B32; }
+.titlemessage i { float: left; width: 25px; text-align: center; line-height: 29px; height: 29px; text-align: right; }
+.titlemessage > div { margin-left: 32px; }
+
 .scrollerbuttons { float: right; }
 .scrollerbuttons button { height: 44px; width: 24px; border: 0; background: transparent; }
 .scrollerbuttons button:first-child {  }

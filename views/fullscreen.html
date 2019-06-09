@@ -139,6 +139,11 @@
 		</div>
 	</div>
 
+	<div class="titlemessage hidden" data-bind="null__click:hidetitlemessage">
+		<i class="fa"></i>
+		<div></div>
+	</div>
+
 	<div data---="console__common.consolewindow__datasource:common.console"></div>
 	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
@@ -150,6 +155,12 @@
 
 		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && window.require != null;
 		common.electronpadding = 0;
+
+		function hidetitlemessage(el) {
+			common.titlescache && clearTimeout(common.titlescache);
+			common.titlescache = null;
+			el.aclass('hidden');
+		}
 
 		if (common.electron) {
 			process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
