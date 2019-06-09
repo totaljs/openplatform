@@ -53,7 +53,7 @@ NEWSCHEMA('User', function(schema) {
 	schema.define('dtbirth', Date);
 	schema.define('dtbeg', Date);
 	schema.define('dtend', Date);
-	schema.define('apps', Object); // { "appid": { roles: [], options: '', favorite: false } }
+	schema.define('apps', Object); // { "appid": { roles: [], options: '', favorite: false, position: 0 }}
 
 	schema.setQuery(function($) {
 		OP.decodeAuthToken($.query.accesstoken || '', function(err, obj) {
@@ -285,6 +285,7 @@ NEWSCHEMA('User', function(schema) {
 						// app.favorite = appold.favorite;
 						app.countnotifications = appold.countnotifications;
 						app.countbadges = appold.countbadges;
+						app.position = appold.position;
 					}
 					app.id = key;
 				}
@@ -384,6 +385,7 @@ NEWSCHEMA('User', function(schema) {
 				var key = apps[i];
 				var app = model.apps[key];
 				app.id = key;
+				app.position = 0;
 			}
 
 			prepare(item, $.model);
