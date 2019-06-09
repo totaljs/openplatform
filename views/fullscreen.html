@@ -153,6 +153,7 @@
 		if (common.electron) {
 			process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 			common.META = require('electron').remote.getGlobal('META') || EMPTYOBJECT;
+			require('electron').ipcRenderer.send('setTitle', document.title);
 			if (common.META.version && navigator.userAgent.indexOf('Macintosh') !== -1)
 				$('body').aclass('electron');
 		}
@@ -702,6 +703,10 @@
 					if (user.countnotifications > old) {
 						user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
 						FUNC.faviconbadge(user.countnotifications);
+
+						if (common.electron)
+							require('electron').ipcRenderer.send('setBadge', { count: user.countnotifications });
+
 						SETTER('nativenotifications', 'append', '@(Alert!)', '@(You have {0}.)'.format(user.countnotifications.pluralize(@('# unread notifications', '# unread notification', '# unread notifications', '# unread notifications'))), function() {
 							SET('common.notifications', true);
 						}, '/icon.png');
