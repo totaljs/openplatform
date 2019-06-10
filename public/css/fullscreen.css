@@ -200,7 +200,7 @@ h3 i { margin-right: 5px; }
 .light .app-disabled .app-container { color: #A0A0A0; }
 .light .app-disabled .app-icon { color: #A0A0A0 !important; }
 
-#dashboardapps .isrunning { position: absolute; font-size: 6px; right: 3px; top: 3px; display: none; }
+#dashboardapps .isrunning { position: absolute; font-size: 9px; right: 3px; top: 3px; display: none; }
 #dashboardapps .app-running .isrunning { display: block; }
 #dashboardapps .appunread { left: auto; right: 3px; margin-top: 9px; }
 
