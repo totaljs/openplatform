@@ -494,6 +494,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'snackbar':
+			user.sounds && SETTER('audio', 'play', data.body.type === 'warning' ? 'alert' : 'success');
 			SETTER('snackbar', data.body.type || 'success', data.body.body.markdown(MD_LINE), data.body.button);
 			break;
 
@@ -517,10 +518,12 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'message':
+			user.sounds && SETTER('audio', 'play', data.body.type === 'warning' ? 'alert' : 'success');
 			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body.markdown(MD_LINE), null, null, data.body.button);
 			break;
 
 		case 'confirm':
+			user.sounds && SETTER('audio', 'play', 'confirm');
 			SETTER('confirm', 'show', data.body.body, data.body.buttons, function(index) {
 				var iframe = processes.findProcess(app.id);
 				iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
