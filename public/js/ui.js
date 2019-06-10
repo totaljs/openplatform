@@ -3616,9 +3616,7 @@ COMPONENT('notifications', function() {
 				EXEC('Dashboard/navigate', el);
 
 			el.aclass('ui-notifications-remove');
-			setTimeout(function() {
-				el.remove();
-			}, 300);
+			el.remove();
 
 			if (!count) {
 				button.aclass('hidden');

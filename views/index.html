@@ -64,7 +64,7 @@
 				<nav data-bind="dashboard.apps__exec:Dashboard/resizeapps__template:button" id="dashboardapps">
 					<script type="text/html">
 						{{ foreach m in value }}
-							<button title="{{ m.internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ m.id }}"><b class="appbadge{{ if !m.internal.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.internal.icon | icon }}"></i><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
+							<button title="{{ m.internal.title }}" class="exec appprocess" data-exec="Dashboard/open" data-id="{{ m.id }}"{{ if m.internal.color }} style="color:{{ m.internal.color }}"{{ fi }}><b class="appbadge{{ if !m.internal.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.internal.icon | icon }}"></i><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
 						{{ end }}
 					</script>
 				</nav>
@@ -141,7 +141,7 @@
 										<b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b>
 										<i class="fa fa-heart usercolor appfavorite{{ if !m.favorite }} hidden{{ fi }}"></i>
 										<div class="app-container">
-											<div class="app-icon"><i class="{{ m.icon | icon }}"></i></div>
+											<div class="app-icon"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}><i class="{{ m.icon | icon }}"></i></div>
 											<div class="app-meta">{{ m.title }}</div>
 										</div>
 									</div>
@@ -176,7 +176,7 @@
 							<div>
 								<i class="far fa-bell-slash appnonotify{{ if !m.mutenotifications }} hidden{{ fi }}" data-id="{{ m.id }}"></i>
 								<b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b>
-								<i class="{{ m.icon | icon }}"></i>
+								<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>
 								<span>{{ m.title }}<b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b></span>
 							</div>
 						</figure>

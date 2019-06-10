@@ -482,7 +482,7 @@ $(window).on('message', function(e) {
 					icon += ' fa';
 
 				if (data.body == true)
-					fa.rclass().aclass('fa fa-pulse fa-spinner usercolor');
+					fa.rclass().aclass('fa fa-pulse fa-spinner');
 				else
 					fa.rclass().aclass('fa-' + icon);
 			}

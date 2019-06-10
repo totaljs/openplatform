@@ -129,7 +129,7 @@ OP.profile = function(user, callback) {
 		for (var i = 0, length = apps.items.length; i < length; i++) {
 			var app = apps.items[i];
 			if (!app.blocked && user.apps && user.apps[app.id])
-				meta.apps.push({ id: app.id, favorite: user.apps[app.id].favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: user.apps[app.id].notifications === false, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: user.apps[app.id].position });
+				meta.apps.push({ id: app.id, favorite: user.apps[app.id].favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: user.apps[app.id].notifications === false, responsive: app.responsive, countnotifications: user.apps[app.id].countnotifications, countbadges: user.apps[app.id].countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: user.apps[app.id].position, color: app.color });
 		}
 
 		if (user.sa) {

@@ -106,7 +106,7 @@
 				</div>
 			</div>
 
-			<div data-bind="account.windows__show:value!==backup.windows" class="hidden alert mt10">
+			<div data-bind="account.windows__show:backupdata?value!==backupdata.windows:false" class="hidden alert mt10">
 				<i class="fa fa-warning mr5"></i><b class="red">@(IMPORTANT)</b>: @(if you save this settings then the platform will be reloaded automatically because you have changed a layout.)
 			</div>
 
@@ -163,7 +163,7 @@
 	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
 	var timeformats = [{ id: 24, name: '@(24 hour clock)' }, { id: 12, name: '@(12 hour clock)' }];
 	var languages = PARSE('#languagesdata');
-	var backup;
+	var backupdata = null;
 
 	OP.init(function(err, meta) {
 		if (err) {
@@ -175,7 +175,7 @@
 
 	function account_refresh() {
 		AJAX('GET /api/account/', function(response) {
-			backup = response;
+			backupdata = response;
 			SET('account', CLONE(response));
 		});
 	}
@@ -193,7 +193,7 @@
 				OP.send('refreshprofile');
 				OP.success('Your account has been updated successfully.');
 				OP.close();
-				if (backup.windows !== account.windows)
+				if (backupdata && backupdata.windows !== account.windows)
 					OP.send('$windows');
 			}
 		});

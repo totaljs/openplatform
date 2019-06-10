@@ -80,6 +80,7 @@ CREATE TABLE "public"."tbl_app" (
 	"author" varchar(50),
 	"type" varchar(30),
 	"icon" varchar(30),
+	"color" varchar(7),
 	"frame" varchar(500),
 	"email" varchar(120),
 	"roles" _varchar,

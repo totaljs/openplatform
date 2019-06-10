@@ -167,6 +167,7 @@ NEWSCHEMA('App', function(schema) {
 				model.mainmenu = response.mainmenu;
 				model.responsive = response.responsive;
 				model.readme = response.readme;
+				model.color = response.color;
 				model.online = true;
 				model.dtsync = NOW;
 				model.autorefresh = response.autorefresh;
@@ -336,6 +337,7 @@ function sync(item, model, meta, permissions) {
 	item.height = model.height;
 	item.resize = model.resize;
 	item.guest = model.guest;
+	item.color = model.color;
 }
 
 NEWSCHEMA('AppPosition', function(schema) {

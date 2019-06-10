@@ -68,7 +68,7 @@
 					<script type="text/html">
 						{{ foreach m in value }}
 							{{ if !m.internal }}
-								<button title="{{ m.title }}" class="appprocess app" draggable="true" data-id="{{ m.id }}"><b class="isrunning usercolor"><i class="fa fa-circle"></i></b><b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b><b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.icon | icon }}"></i><!--<span class="appname">{{ m.title }}</span>--><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
+								<button title="{{ m.title }}" class="appprocess app{{ if m.running }} app-running{{ fi }}" draggable="true" data-id="{{ m.id }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}><b class="isrunning usercolor"><i class="fa fa-circle"></i></b><b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b><b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.icon | icon }}"></i><!--<span class="appname">{{ m.title }}</span>--><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
 							{{ fi }}
 						{{ end }}
 					</script>

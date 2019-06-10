@@ -23,7 +23,7 @@ NEWSCHEMA('Notification', function(schema) {
 			});
 
 			// Returns notifications
-			$.callback(data);
+			$.callback(data || []);
 		});
 	});
 
