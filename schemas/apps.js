@@ -289,6 +289,21 @@ NEWSCHEMA('App', function(schema) {
 		$.success(true, user.apps[$.id].notifications == true);
 	});
 
+	schema.addWorkflow('reset', function($) {
+		var user = $.user;
+
+		if (!user.apps[$.id]) {
+			$.invalid('error-apps-404');
+			return;
+		}
+
+		user.apps[$.id].countnotifications = 0;
+		user.apps[$.id].countbadges = 0;
+		FUNC.users.set(user, ['apps'], null, { id: $.id }, 'reset');
+		session.set2(user.id, user);
+		$.success(true);
+	});
+
 });
 
 function sync(item, model, meta, permissions) {

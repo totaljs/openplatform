@@ -413,6 +413,16 @@
 					SET('common.page', 'dashboard');
 				self.hidemenu();
 				var id = el.attrd('id');
+				var app = dashboard.apps.findItem('id', id);
+				if (app == null)
+					return;
+
+				if (app.internal.countbadges || app.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					app.internal.countnotifications = 0;
+					app.internal.countbadges = 0;
+				}
+
 				SETTER('processes', 'maximize', id);
 				setTimeout(function() {
 					SETTER('processes', 'highlight', id);
@@ -763,6 +773,7 @@
 					if (app.countbadges !== ua.countbadges) {
 						app.countbadges = ua.countbadges;
 						app.countbadges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
+						$('#dashboardapps').find('.appbadge[data-id="{0}"]'.format(app.id)).rclass('hidden');
 						is = true;
 					}
 

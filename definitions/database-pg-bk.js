@@ -15,6 +15,7 @@ FUNC.configs = {};
 // ====================================
 
 var MODEL_FAVORITE = {};
+var MODEL_RESET = {};
 var MODEL_VERSION = {};
 var MODEL_NOTIFICATIONS = {};
 var MODEL_BADGES = {};
@@ -44,6 +45,14 @@ FUNC.users.set = function(user, fields, callback, app, type) {
 			if (type === 'favorite') {
 				MODEL_FAVORITE.favorite = app.favorite;
 				db.modify('tbl_user_app', MODEL_FAVORITE).where('id', user.id + app.id);
+				callback && db.callback(callback);
+				return;
+			}
+
+			if (type === 'reset') {
+				MODEL_RESET.countnotifications = 0;
+				MODEL_RESET.countbadges = 0;
+				db.modify('tbl_user_app', MODEL_RESET).where('id', user.id + app.id);
 				callback && db.callback(callback);
 				return;
 			}

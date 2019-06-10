@@ -304,12 +304,17 @@
 			if (el.hclass('app-offline') || el.hclass('app-disabled'))
 				return;
 
-			var id = el.attr('data-id');
+			var id = el.attrd('id');
 			var iframe = dashboard.apps.findItem('id', id);
 
-			if (iframe)
+			if (iframe) {
+				if (iframe.internal.countbadges || iframe.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					iframe.internal.countnotifications = 0;
+					iframe.internal.countbadges = 0;
+				}
 				SETTER('processes', 'maximize', id);
-			else
+			} else
 				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 
 			common.startmenu && SET('common.startmenu', false);
@@ -379,10 +384,15 @@
 					SET('common.page', 'dashboard');
 				self.hidemenu();
 				var id = el.attrd('id');
+				var app = dashboard.apps.findItem('id', id);
+				if (app == null)
+					return;
+				if (app.internal.countbadges || app.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					app.internal.countnotifications = 0;
+					app.internal.countbadges = 0;
+				}
 				SETTER('processes', 'maximize', id);
-				// setTimeout(function() {
-				// 	SETTER('processes', 'highlight', id);
-				// }, 200);
 			};
 
 			self.close = function(el, e) {
