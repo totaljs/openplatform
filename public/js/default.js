@@ -494,7 +494,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'snackbar':
-			user.sounds && SETTER('audio', 'play', data.body.type === 'warning' ? 'alert' : 'success');
+			user.sounds && SETTER('audio', 'play', data.body.type === 'warning' ? 'alert' : data.body.type === 'waiting' ? 'done' : 'success');
 			SETTER('snackbar', data.body.type || 'success', data.body.body.markdown(MD_LINE), data.body.button);
 			break;
 
@@ -518,7 +518,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'message':
-			user.sounds && SETTER('audio', 'play', data.body.type === 'warning' ? 'alert' : 'success');
+			user.sounds && SETTER('audio', 'play', data.body.type === 'warning' ? 'alert' : data.body.type === 'info' ? 'done' : 'success');
 			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body.markdown(MD_LINE), null, null, data.body.button);
 			break;
 
