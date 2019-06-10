@@ -489,7 +489,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'snackbar':
-			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'waiting' ? 'done' : 'success'));
+			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'waiting' ? 'done' : 'success');
 			SETTER('snackbar', data.body.type || 'success', data.body.body.markdown(MD_LINE), data.body.button);
 			break;
 
@@ -518,7 +518,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'confirm':
-			FUNC.playsound('audio', 'play', 'confirm');
+			FUNC.playsound('confirm');
 			SETTER('confirm', 'show', data.body.body, data.body.buttons, function(index) {
 				var iframe = processes.findProcess(app.id);
 				iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
