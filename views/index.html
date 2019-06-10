@@ -176,7 +176,7 @@
 							<div>
 								<i class="far fa-bell-slash appnonotify{{ if !m.mutenotifications }} hidden{{ fi }}" data-id="{{ m.id }}"></i>
 								<b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b>
-								<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>
+								<i class="{{ m.icon | icon }}"></i>
 								<span>{{ m.title }}<b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b></span>
 							</div>
 						</figure>
