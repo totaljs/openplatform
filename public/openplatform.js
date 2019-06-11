@@ -45,6 +45,8 @@ document.addEventListener('click', function(e) {
 			return false;
 		}
 	}
+
+	OP && OP.$sendfocus();
 });
 
 document.onkeydown = function(e) {
@@ -241,12 +243,8 @@ OP.$sendfocus = function() {
 	var dt = Date.now();
 	if (!OP.$focus || OP.$focus < dt)
 		OP.focus();
-	OP.$focus = dt + (1000 * 5);
+	OP.$focus = dt + (1000 * 3);
 };
-
-document.addEventListener('click', function() {
-	OP && OP.$sendfocus();
-});
 
 document.addEventListener('touchstart', function() {
 	OP && OP.$sendfocus();
