@@ -1007,7 +1007,8 @@
 					if (button.tagName !== 'BUTTON')
 						return;
 					dragdata.el = button;
-					//e.originalEvent..setData('text', '1');
+					var eo = e.originalEvent;
+					eo.dataTransfer && eo.dataTransfer.setData('text', '1');
 					return;
 				case 'drop':
 
@@ -1044,6 +1045,22 @@
 			}
 			e.preventDefault();
 			e.stopPropagation();
+		});
+
+		WATCH('user', function(path, value) {
+
+			if (!dashboard.apps.length)
+				return;
+
+			var keys = Object.keys(value.apps);
+			for (var i = 0; i < keys.length; i++) {
+				var app = value.apps[keys[i]];
+				var running = dashboard.apps.findItem('id', keys[i]);
+				if (running) {
+					running.internal.countbadges = app.countbadges;
+					running.internal.countnotifications = app.countnotifications;
+				}
+			}
 		});
 
 		Thelpers.type = function(val) {
