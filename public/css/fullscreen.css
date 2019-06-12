@@ -16,7 +16,7 @@ header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
 header nav button:hover { background-color: rgba(0,0,0,0.1); }
 header nav button.focused { background-color: #4c4c4c; }
-header nav button > i { font-size: 20px;; }
+header nav button > i { font-size: 20px; }
 header .appname { font-size: 10px; display: block; margin: 3px 0 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; line-height: 14px; }
 header nav > i { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
 header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; }
@@ -33,7 +33,6 @@ header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 
 .scrollerbuttons { float: right; }
 .scrollerbuttons button { height: 44px; width: 24px; border: 0; background: transparent; }
-.scrollerbuttons button:first-child {  }
 .scrollerbuttons button:hover { color: white; }
 .light .scrollerbuttons button:hover { color: black; }
 

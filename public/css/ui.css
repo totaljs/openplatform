@@ -578,7 +578,8 @@ input:invalid { box-shadow: none; }
 
 @media(max-width: 700px) {
 	.ui-snackbar > div { width: 100%; border: 0; border-radius: 0; }
-	.ui-process iframe { border-top-width: 1; border-bottom: 0; }
+	.ui-process { box-shadow: none !important; }
+	.ui-process iframe { border-bottom: 0; }
 	.ui-process-iframe-container { overflow: hidden; line-height: 0; }
 	.ui-process-header { height: 40px; }
 	.ui-process-header nav button { height: 22px; width: 22px; font-size: 16px; }
