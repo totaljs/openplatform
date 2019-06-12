@@ -64,7 +64,8 @@
 
 		<div class="nav">
 			<div>
-				<nav data-bind="user.apps__exec:Dashboard/resizeapps__template:button" id="dashboardapps">
+				<!-- __template:button -->
+				<nav data-bind="user.apps__exec:Dashboard/resizeapps__template" id="dashboardapps">
 					<script type="text/html">
 						{{ foreach m in value }}
 							{{ if !m.internal }}
