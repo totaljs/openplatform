@@ -87,6 +87,8 @@ ON('resize', function() {
 			tmp.resizeapps.call(el, null, null, el);
 	}
 
+	isMOBILE && SETTER('processes', 'resize');
+
 });
 
 $(window).on('resize', function() {

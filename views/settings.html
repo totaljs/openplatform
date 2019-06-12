@@ -8,7 +8,7 @@
 	.button{background-color:@{user.colorscheme}}
 	@{fi}
 
-	@{if user.windows}
+	@{if user.windows || mobile}
 	.maxwidth { background-color: white; }
 	@{else}
 	.maxwidth { max-width: 700px; margin: 40px auto 0; background-color: white; border: 1px solid #D0D0D0; background-color: white; }
@@ -20,7 +20,7 @@
 <div class="maxwidth">
 	<div class="container-fluid">
 		<div class="row">
-			<div data---="scrollbar__account__margin:@{if user.windows}40@{else}115@{fi};parent:window">
+			<div data---="scrollbar__account__margin:@{if user.windows || mobile}40@{else}115@{fi};parent:window">
 				<div class="scroller-padding npb bg-smoke">
 					<div class="alert m"><i class="fa fa-warning mr5"></i><b>@(WARNING)</b><br />@(If you change URL address then you <b>loss data</b> in third-party apps. URL address is a unique identificator of OpenPlatform.)</div>
 					<div class="row">

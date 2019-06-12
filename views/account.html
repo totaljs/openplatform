@@ -38,7 +38,7 @@
 	@{fi}
 	body { background-color: #@{if user.darkmode}303030@{else}E0E0E0@{fi}; }
 	.ui-scrollbar-y { width: 5px; }
-	@{if user.windows}
+	@{if user.windows || mobile}
 	.centered { background-color: white;}
 	@{else}
 	.centered { max-width: 600px; width: 100%; border: 1px solid #E0E0E0; background-color: white; margin: 0 auto; }
@@ -46,12 +46,12 @@
 </style>
 
 <div data---="audio__account.volume"></div>
-@{if !user.windows}
+@{if !user.windows && !mobile}
 <br />
 <br />
 @{fi}
 <div class="centered">
-	<div data---="scrollbar__account__margin:@{if user.windows}40@{else}130@{fi};parent:window;track:changepassword,response">
+	<div data---="scrollbar__account__margin:@{if user.windows || mobile}40@{else}130@{fi};parent:window;track:changepassword,response">
 		<div class="accountphoto">
 			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
 			<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>

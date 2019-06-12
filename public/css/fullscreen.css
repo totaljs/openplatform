@@ -120,7 +120,6 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light header nav button.focused { background-color: #D0D0D0; color: black; }
 .light header .datetime { color: black; background-color: rgba(0,0,0,0.05); }
 .light .button-notifications i { color: black; }
-.light .ui-process-header { }
 .light .ui-process-header nav button { color: #505050; }
 .ui-process, .light .ui-process { box-shadow: none;}
 

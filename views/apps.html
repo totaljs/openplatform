@@ -38,7 +38,7 @@
 	.apps .selected,.apps .item:hover{background-color:@{user.colorscheme}}
 	@{fi}
 
-	@{if user.windows}
+	@{if user.windows || mobile}
 	.maxwidth { background-color: white; }
 	@{else}
 	.maxwidth { max-width: 900px; margin: 40px auto 0; background-color: white; border: 1px solid #D0D0D0; background-color: white; }
@@ -94,7 +94,7 @@
 					<div class="search">
 						<div data---="textbox__apps.search__type:search;placeholder:@(Search apps)"></div>
 					</div>
-					<div data---="scrollbar__apps.items__margin:@{if user.windows}40@{else}79@{fi};parent:window;offset:true">
+					<div data---="scrollbar__apps.items__margin:@{if user.windows || mobile}40@{else}79@{fi};parent:window;offset:true">
 						<div data---="search__apps.search__selector:.item">
 							<div data---="listmenu__apps.selected__datasource:apps.items.items;selector:.item;exec:apps_load" class="apps">
 								<script type="text/html">
@@ -126,7 +126,7 @@
 				@{fi}
 
 				<div class="invisible" data-bind="apps.form.show__invisible:!value__exec:formscroll">
-					<div data---="scrollbar__apps.form__margin:@{if user.windows}40@{else}120@{fi};parent:window;marginxs:42;track:show,directories;$id:myscrollbar">
+					<div data---="scrollbar__apps.form__margin:@{if user.windows || mobile}40@{else}120@{fi};parent:window;marginxs:42;track:show,directories;$id:myscrollbar">
 						<div class="scroller-padding">
 
 							<div data---="textbox__apps.form.url__delay:2000;maxlength:500;required:true;type:url;icon2:globe;autofocus:true;placeholder:@(https\://www.yourdomain.com/openplatform.json);$id:firstinput">@(URL address to <b>openplatform.json</b>)</div>

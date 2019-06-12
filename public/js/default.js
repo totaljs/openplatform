@@ -86,7 +86,6 @@ ON('resize', function() {
 		if (tmp)
 			tmp.resizeapps.call(el, null, null, el);
 	}
-
 });
 
 $(window).on('resize', function() {

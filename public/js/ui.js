@@ -2473,12 +2473,19 @@ COMPONENT('processes@2', function(self, config) {
 		iframe.element.aclass('hidden');
 		iframe.meta.internal.loaded = false;
 
+		$('.ap' + id).find('span').rclass('usercolor').css('width', 0);
+
 		if (common.focused === id)
 			SET('common.focused', null);
 
 		self.reorder();
 		self.minimize(id, false);
 
+		var icon = iframe.meta.internal.icon;
+		if (icon.indexOf(' ') === -1)
+			icon += ' fa';
+
+		$('#dashboardapps').find('button[data-id="{0}"]'.format(id)).find('> i').rclass().aclass('fa-' + icon);
 		$('.appclose[data-id="{0}"]'.format(id)).aclass('hidden');
 		$('.app[data-id="{0}"]'.format(id)).rclass('app-running');
 
@@ -2674,7 +2681,7 @@ COMPONENT('processes', function(self, config) {
 
 	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div class="ui-process-meta"><span><i class="{{ internal.icon | icon }}"></i></span><div>{{ internal.title }}</div></div><nav>{{ if !internal.internal }}<button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="options" class="ui-process-menu ui-process-button"><span><i class="fa fa-cog"></i></span></button>{{ fi }}<button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize" class="ui-process-button"><i class="far fa-window-maximize"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
 
-	self.template = Tangular.compile('<div class="ui-process ui-process-animation{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
+	self.template = Tangular.compile('<div class="ui-process' + (isMOBILE ? '' : ' ui-process-animation') + '{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize"><span></span></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
 	self.nocompile();
 
@@ -2687,6 +2694,23 @@ COMPONENT('processes', function(self, config) {
 	var move = { is: false, x: 0, y: 0 };
 	var resize = { is: false, x: 0, y: 0 };
 	var w = $(window);
+
+	isMOBILE && w.on('resize', function() {
+		for (var i = 0; i < iframes.length; i++) {
+			var iframe = iframes[i];
+			var margin = iframe.element.find('.ui-process-header').height();
+			var el = iframe.element;
+			var size = self.getSize();
+			var header = $('header');
+			var h = WH - header.height() - 31 - common.electronpadding;
+			var w = WW;
+			el.css({ width: w, height: h, left: 0, top: 45 + common.electronpadding });
+			iframe.iframe.css({ height: h - margin });
+			setTimeout(function(id) {
+				self.notifyresize(id);
+			}, 100, iframe.id);
+		}
+	});
 
 	self.getSize = function() {
 		var w = $(window);

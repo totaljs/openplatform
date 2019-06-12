@@ -1,4 +1,3 @@
-
 <style>
 	/*auto*/
 	.users .name { font-size: 12px; font-weight: bold; }
@@ -54,11 +53,12 @@
 	.users .selected,.users .item:hover .customer, .users .selected .customer { color: white; }
 	@{fi}
 
-	@{if user.windows}
+	@{if user.windows || mobile}
 	.maxwidth { background-color: white; }
 	@{else}
 	.maxwidth { max-width: 900px; margin: 40px auto 0; background-color: white; border: 1px solid #D0D0D0; background-color: white; }
 	@{fi}
+
 	body { background-color: #@{if user.darkmode}303030@{else}E0E0E0@{fi}; }
 
 </style>
@@ -71,7 +71,7 @@
 					<div class="search">
 						<div data---="textbox__users.filter.q__type:search;placeholder:@(Search users)"></div>
 					</div>
-					<div data---="scrollbar__users.items__margin:@{if user.windows}64@{else}103@{fi};parent:window;offset:true;visibleX:false">
+					<div data---="scrollbar__users.items__margin:@{if user.windows || mobile}64@{else}103@{fi};parent:window;offset:true;visibleX:false">
 						<div data---="listmenu__users.selected__datasource:users.items;selector:.item;exec:usersform_load" class="users">
 							<script type="text/html">
 								<div class="item{{ if blocked || inactive }} inactive{{ fi }}" data-search="{{ lastname }} {{ firstname }}">{{ if customer }}<i class="fa fa-user-secret customer" title="@(Customer)"></i>{{ fi }}{{ statusid | status(true) }}{{ lastname }} {{ firstname }}{{ if online }} <i class="fa fa-circle green"></i>{{ fi }}</div>
@@ -98,7 +98,7 @@
 					<span class="link exec" data-exec="userform_cancel"><i class="fa fa-chevron-left"></i>@(Back)</span>
 				</nav>
 				<div class="invisible" data-bind="users.form.show__visible__exec:formscroll">
-					<div data---="scrollbar__users.form.show__margin:@{if user.windows}40@{else}120@{fi};parent:window;marginxs:42">
+					<div data---="scrollbar__users.form.show__margin:@{if user.windows || mobile}40@{else}120@{fi};parent:window;marginxs:42">
 						<div class="userphoto">
 							<div data---="preview__users.form.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
 							<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
