@@ -2119,12 +2119,23 @@ COMPONENT('processes@2', function(self, config) {
 	});
 
 	self.focus = function(id) {
+
 		SETTER('menu', 'hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
+
+		var iframe = iframes.findItem('id', id);
+		if (iframe && iframe.meta && (iframe.meta.internal.countbadges || iframe.meta.internal.countnotifications)) {
+			iframe.meta.internal.countbadges = 0;
+			iframe.meta.internal.countnotifications = 0;
+			AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+		}
+
 		if (oldfocusel)
 			oldfocusel[0].scrollTop = -1;
+
 		if (oldfocus === id)
 			return;
+
 		order = order.remove(id);
 		order.push(id);
 		oldfocus = id;
@@ -2849,8 +2860,17 @@ COMPONENT('processes', function(self, config) {
 	});
 
 	self.focus = function(id) {
+
 		SETTER('menu', 'hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
+
+		var iframe = iframes.findItem('id', id);
+		if (iframe && iframe.meta && (iframe.meta.internal.countbadges || iframe.meta.internal.countnotifications)) {
+			iframe.meta.internal.countbadges = 0;
+			iframe.meta.internal.countnotifications = 0;
+			AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+		}
+
 		if (oldfocusel)
 			oldfocusel[0].scrollTop = -1;
 		if (oldfocus === id)

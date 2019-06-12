@@ -176,7 +176,7 @@
 							<div>
 								<i class="far fa-bell-slash appnonotify{{ if !m.mutenotifications }} hidden{{ fi }}" data-id="{{ m.id }}"></i>
 								<b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b>
-								<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>
+								<i class="{{ m.icon | icon }}"></i>
 								<span>{{ m.title }}<b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b></span>
 							</div>
 						</figure>
@@ -413,6 +413,16 @@
 					SET('common.page', 'dashboard');
 				self.hidemenu();
 				var id = el.attrd('id');
+				var app = dashboard.apps.findItem('id', id);
+				if (app == null)
+					return;
+
+				if (app.internal.countbadges || app.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					app.internal.countnotifications = 0;
+					app.internal.countbadges = 0;
+				}
+
 				SETTER('processes', 'maximize', id);
 				setTimeout(function() {
 					SETTER('processes', 'highlight', id);
@@ -763,6 +773,7 @@
 					if (app.countbadges !== ua.countbadges) {
 						app.countbadges = ua.countbadges;
 						app.countbadges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
+						$('#dashboardapps').find('.appbadge[data-id="{0}"]'.format(app.id)).rclass('hidden');
 						is = true;
 					}
 
@@ -1013,6 +1024,22 @@
 					EXEC('Dashboard/showprofile');
 				}
 			});
+		});
+
+		WATCH('user', function(path, value) {
+
+			if (!dashboard.apps.length)
+				return;
+
+			var keys = Object.keys(value.apps);
+			for (var i = 0; i < keys.length; i++) {
+				var app = value.apps[keys[i]];
+				var running = dashboard.apps.findItem('id', keys[i]);
+				if (running) {
+					running.internal.countbadges = app.countbadges;
+					running.internal.countnotifications = app.countnotifications;
+				}
+			}
 		});
 
 		Thelpers.type = function(val) {

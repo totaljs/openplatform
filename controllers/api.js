@@ -36,6 +36,7 @@ exports.install = function() {
 		ROUTE('GET    /api/profile/                     *Profile      --> @read');
 		ROUTE('GET    /api/profile/{id}/                *App          --> @run');
 		ROUTE('GET    /api/profile/{id}/favorite/       *App          --> @favorite');
+		ROUTE('GET    /api/profile/{id}/reset/          *App          --> @reset');
 		ROUTE('GET    /api/profile/{id}/mute/           *App          --> @mute');
 		ROUTE('POST   /api/profile/logger/              *Logger       --> @insert');
 		ROUTE('GET    /api/profile/live/',              json_profile);

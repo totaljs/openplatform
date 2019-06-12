@@ -68,7 +68,7 @@
 					<script type="text/html">
 						{{ foreach m in value }}
 							{{ if !m.internal }}
-								<button title="{{ m.title }}" class="appprocess app{{ if m.running }} app-running{{ fi }}" draggable="true" data-id="{{ m.id }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}><b class="isrunning usercolor"><i class="fa fa-circle"></i></b><b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b><b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.icon | icon }}"></i><!--<span class="appname">{{ m.title }}</span>--><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
+								<button title="{{ m.title }}" class="appprocess app{{ if m.running }} app-running{{ fi }}" draggable="true" data-id="{{ m.id }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}><b class="isrunning"><i class="fa fa-running"></i></b><b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b><b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.icon | icon }}"></i><!--<span class="appname">{{ m.title }}</span>--><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
 							{{ fi }}
 						{{ end }}
 					</script>
@@ -304,12 +304,17 @@
 			if (el.hclass('app-offline') || el.hclass('app-disabled'))
 				return;
 
-			var id = el.attr('data-id');
+			var id = el.attrd('id');
 			var iframe = dashboard.apps.findItem('id', id);
 
-			if (iframe)
+			if (iframe) {
+				if (iframe.internal.countbadges || iframe.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					iframe.internal.countnotifications = 0;
+					iframe.internal.countbadges = 0;
+				}
 				SETTER('processes', 'maximize', id);
-			else
+			} else
 				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 
 			common.startmenu && SET('common.startmenu', false);
@@ -379,10 +384,15 @@
 					SET('common.page', 'dashboard');
 				self.hidemenu();
 				var id = el.attrd('id');
+				var app = dashboard.apps.findItem('id', id);
+				if (app == null)
+					return;
+				if (app.internal.countbadges || app.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					app.internal.countnotifications = 0;
+					app.internal.countbadges = 0;
+				}
 				SETTER('processes', 'maximize', id);
-				// setTimeout(function() {
-				// 	SETTER('processes', 'highlight', id);
-				// }, 200);
 			};
 
 			self.close = function(el, e) {
@@ -997,7 +1007,8 @@
 					if (button.tagName !== 'BUTTON')
 						return;
 					dragdata.el = button;
-					//e.originalEvent..setData('text', '1');
+					var eo = e.originalEvent;
+					eo.dataTransfer && eo.dataTransfer.setData('text', '1');
 					return;
 				case 'drop':
 
@@ -1034,6 +1045,22 @@
 			}
 			e.preventDefault();
 			e.stopPropagation();
+		});
+
+		WATCH('user', function(path, value) {
+
+			if (!dashboard.apps.length)
+				return;
+
+			var keys = Object.keys(value.apps);
+			for (var i = 0; i < keys.length; i++) {
+				var app = value.apps[keys[i]];
+				var running = dashboard.apps.findItem('id', keys[i]);
+				if (running) {
+					running.internal.countbadges = app.countbadges;
+					running.internal.countnotifications = app.countnotifications;
+				}
+			}
 		});
 
 		Thelpers.type = function(val) {
