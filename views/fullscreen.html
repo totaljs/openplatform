@@ -29,6 +29,7 @@
 	<div data---="LAZY confirm"></div>
 	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
 	<div data---="LAZY calendar"></div>
+	<div data---="LAZY tooltip"></div>
 	<div data---="LAZY message__null__button:@(Close)"></div>
 	<div data---="LAZY menu"></div>
 	<div data---="nativenotifications"></div>
@@ -54,8 +55,10 @@
 
 		<div class="button-window hidden-xs" id="appmenu" data-bind="common.focused__.usercolor" title="@(Application settings)"><i class="fa fa-cog"></i></div>
 
+		<div class="button-status exec visible-xs" title="@(App menu)" data-exec="Dashboard/showappmenu"><i class="fa fa-ellipsis-v"></i></div>
+
 		@{if !user.guest}
-		<div class="button-status exec" title="@(My current status)" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
+		<div class="button-status exec hidden-xs" title="@(My current status)" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
 		@{fi}
 
 		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value" title="@(Start)">
@@ -64,12 +67,11 @@
 
 		<div class="nav">
 			<div>
-				<!-- __template:button -->
-				<nav data-bind="user.apps__exec:Dashboard/resizeapps__template" id="dashboardapps">
+				<nav data-bind="user.apps__exec:Dashboard/resizeapps__template:button" id="dashboardapps">
 					<script type="text/html">
 						{{ foreach m in value }}
 							{{ if !m.internal }}
-								<button title="{{ m.title }}" class="appprocess app{{ if m.running }} app-running{{ fi }}" draggable="true" data-id="{{ m.id }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}><b class="isrunning"><i class="fa fa-running"></i></b><b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b><b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.icon | icon }}"></i><!--<span class="appname">{{ m.title }}</span>--><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
+								<button data-title="{{ m.title }}" class="appprocess tooltip app{{ if m.running }} app-running{{ fi }}" draggable="true" data-id="{{ m.id }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}><b class="isrunning"><i class="fa fa-running"></i></b><b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b><b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.icon | icon }}"></i><!--<span class="appname">{{ m.title }}</span>--><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
 							{{ fi }}
 						{{ end }}
 					</script>
@@ -181,6 +183,19 @@
 
 		WATCH('common.consolewindow', function() {
 			SET('common.consolecount', 0, 1000);
+		});
+
+		$(document).on('mouseenter mouseleave', '.tooltip', function(e) {
+			if (e.type === 'mouseenter') {
+				var el = $(this);
+				var opt = {};
+				opt.element = el;
+				opt.html = el.attrd('title');
+				opt.align = 'bottom';
+				opt.timeout = 2500;
+				SETTER('tooltip', 'show', opt);
+			} else
+				SETTER('tooltip', 'hide');
 		});
 
 		function togglemenu(value, path, el) {
@@ -374,7 +389,7 @@
 				setTimeout2('resizeapps', function() {
 					el.css('width', el.find('button').length * 45);
 					var parent = el.parent().parent();
-					var w = WW - (200 + (WIDTH() === 'xs' ? -24 : 220));
+					var w = WW - (200 + (isMOBILE && WIDTH() === 'xs' ? -24 : 220));
 					parent.css('width', w);
 					$('.scrollerbuttons').tclass('hidden', isMOBILE || parent.find('nav').width() < w);
 				}, 100, el);
@@ -474,6 +489,10 @@
 
 			self.saveState = function() {
 				CACHE('running', dashboard.apps.map(FN('n => n.id')), '1 year');
+			};
+
+			self.showappmenu = function() {
+				SETTER('processes', 'message2', common.focused, 'menu');
 			};
 
 			self.showstatusform = function() {
