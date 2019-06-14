@@ -116,6 +116,9 @@ NEWSCHEMA('User', function(schema) {
 		delete model.rebuildtoken;
 		delete model.welcome;
 
+		if (!model.apps)
+			model.apps = {};
+
 		model.search = (model.lastname + ' ' + model.firstname + ' ' + model.email).toSearch();
 		model.name = (model.firstname + ' ' + model.lastname).max(40);
 		model.linker = model.name.slug();
