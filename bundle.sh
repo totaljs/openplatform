@@ -26,8 +26,7 @@ cd ..
 mv definitions/op-database.js definitions/database.js
 rm definitions/op-database-pg-bk.js
 
-tpm create openplatform.package
-cp openplatform.package ../openplatform.bundle
+totaljs --bundle ../openplatform.bundle
 # cp openplatform.package ../openplatform@4.bundle
 
 cd ..
