@@ -426,6 +426,11 @@ function readuser(user, type, app, fields) {
 	// type 3: app users - basic info
 	// type 4: app users - all info
 
+	if (user.accesstoken == null && user.verifytoken == null) {
+		// REMOVED USER
+		return user;
+	}
+
 	if (type > 2 && (!user.apps || !user.apps[app.id]) || user.inactive)
 		return;
 
