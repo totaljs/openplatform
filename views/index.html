@@ -92,6 +92,19 @@
 		</script>
 	</div>
 
+	<div data---="quicknotifications" data-bind="common.notifications__.ui-quicknotifications-margin">
+		<script type="text/html">
+			<div class="ui-quicknotifications-message"{{ if data }} data-data="{{ data | encodedata }}" data-id="{{ appid }}"{{ fi }}>
+				<div class="ui-quicknotifications-close"><i class="fa fa-times"></i></div>
+				<div class="ui-quicknotifications-date"><i class="fa fa-clock-o"></i>{{ dtcreated | time }}</div>
+				<div class="ui-quicknotifications-title"><i class="{{ icon | icon }}"></i><b>{{ title }}</b></div>
+				<div class="ui-quicknotifications-padding">
+					<div class="ui-quicknotifications-body">{{ body | markdown_notifications }}</div>
+				</div>
+			</div>
+		</script>
+	</div>
+
 	<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
 	<div data---="processes__dashboard.current__datasource:dashboard.apps;options:Dashboard/appmenu"></div>
 
@@ -757,6 +770,9 @@
 					is = true;
 					user.sa = response.sa;
 				}
+
+				if (response.notifications)
+					SETTER('quicknotifications', 'append', response.notifications);
 
 				var keys = [];
 

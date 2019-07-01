@@ -3628,9 +3628,8 @@ COMPONENT('processes', function(self, config) {
 
 });
 
-COMPONENT('notifications', function() {
+COMPONENT('notifications', function(self) {
 
-	var self = this;
 	var container, button;
 	var count = 0;
 	var sw = SCROLLBARWIDTH();
@@ -3705,6 +3704,70 @@ COMPONENT('notifications', function() {
 		container.prepend(builder.join(''));
 		button.tclass('hidden', count === 0);
 		refresh_markdown(container);
+	};
+});
+
+COMPONENT('quicknotifications', 'clean:4000', function(self, config) {
+
+	var cls = 'ui-quicknotifications';
+	var cls2 = '.' + cls;
+	var timer = null;
+
+	self.readonly();
+	self.singleton();
+	self.nocompile();
+
+	self.clean = function() {
+
+		timer && clearTimeout(timer);
+
+		var el = self.element.find(cls2 + '-message');
+		if (el.length > 0)
+			el.eq(0).remove();
+
+		if (el.length > 1) {
+			clearTimeout(timer);
+			timer = setTimeout(self.clean, config.clean);
+		} else
+			timer = null;
+	};
+
+	self.make = function() {
+		var scr = self.find('script');
+		self.aclass(cls);
+		self.template = Tangular.compile(scr.html());
+		scr.remove();
+
+		self.event('click', cls2 + '-message', function(e) {
+			var el = $(this);
+			var target = $(e.target);
+			var hide = target.hclass(cls2 + '-close') || target.hclass('fa-times');
+			if (el.attrd('data') && !hide)
+				EXEC('Dashboard/navigate', el);
+			el.remove();
+		});
+	};
+
+	self.append = function(value) {
+		var builder = [];
+		for (var i = 0, length = value.length; i < length; i++) {
+			var item = value[i];
+			if (item.appid) {
+				var app = user.apps.findItem('id', item.appid);
+				if (app) {
+					item.icon = app.icon;
+					item.title = app.title;
+					builder.push(self.template(item));
+				}
+			} else if (item.title)
+				builder.push(self.template(item));
+		}
+
+		self.element.prepend(builder.join(''));
+		refresh_markdown(self.element);
+
+		if (!timer)
+			timer = setTimeout(self.clean, config.clean);
 	};
 });
 

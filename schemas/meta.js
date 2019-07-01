@@ -31,9 +31,9 @@ NEWSCHEMA('Meta', function(schema) {
 			}
 
 			if (user.directory)
-				$.callback(G.metadirectories[user.directory] || EMPTYOBJECT);
+				$.callback(MAIN.metadirectories[user.directory] || EMPTYOBJECT);
 			else
-				$.callback(G.meta);
+				$.callback(MAIN.meta);
 		});
 	});
 

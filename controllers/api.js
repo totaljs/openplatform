@@ -153,9 +153,9 @@ function json_users_query() {
 function json_meta_query() {
 	var self = this;
 	if (self.user.directory)
-		self.json(G.metadirectories[self.user.directory] || EMPTYOBJECT);
+		self.json(MAIN.metadirectories[self.user.directory] || EMPTYOBJECT);
 	else
-		self.json(G.meta, false);
+		self.json(MAIN.meta, false);
 }
 
 function json_apps_meta(id) {

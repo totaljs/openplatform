@@ -75,7 +75,7 @@ NEWSCHEMA('App', function(schema) {
 			return;
 		}
 
-		var model = $.model.$clean();
+		var model = $.clean();
 		var permissions = model.permissions;
 
 		model.search = (model.name + ' ' + model.title).toSearch();

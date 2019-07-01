@@ -2,8 +2,9 @@ const Fs = require('fs');
 const OP = global.OP = {};
 
 OP.version = 4200;
-G.meta = {};
-G.metadirectories = {};
+MAIN.meta = {};
+MAIN.metadirectories = {};
+MAIN.quicknotifications = {};
 
 // Total.js session management
 OP.session = SESSION();
@@ -201,6 +202,11 @@ OP.profilelive = function(user) {
 
 	// meta.directoryid = user.directoryid || 0;
 	meta.apps = user.apps;
+
+	if (MAIN.quicknotifications[user.id]) {
+		meta.notifications = MAIN.quicknotifications[user.id];
+		delete MAIN.quicknotifications[user.id];
+	}
 
 	return meta;
 };

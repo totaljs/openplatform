@@ -60,11 +60,19 @@ NEWSCHEMA('Notification', function(schema) {
 				return;
 			}
 
-			var model = $.model.$clean();
+			var model = $.clean();
+			model.id = UID('notifications');
 			model.userid = user.id;
 			model.appid = app.id;
-			model.dtcreated = F.datetime;
+			model.dtcreated = NOW;
 			model.ip = $.ip;
+
+			if (user.online) {
+				if (MAIN.quicknotifications[model.userid])
+					MAIN.quicknotifications[model.userid].push(model);
+				else
+					MAIN.quicknotifications[model.userid] = [model];
+			}
 
 			var can = true;
 
@@ -80,6 +88,7 @@ NEWSCHEMA('Notification', function(schema) {
 					ua.countnotifications++;
 				else
 					ua.countnotifications = 1;
+
 				if (ua.countnotifications > 15)
 					can = false;
 			}
@@ -98,6 +107,9 @@ NEWSCHEMA('Notification', function(schema) {
 
 				// Updates session
 				OP.session.set2(user.id, user);
+
+				// LAST NOTIFICATIONS
+
 
 				// Updates profile
 				FUNC.users.set(user, ['countnotifications', 'apps', 'dtnotified'], () => FUNC.emit('users.notify', user.id, app.id), app, 'notify');

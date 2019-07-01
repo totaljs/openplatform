@@ -386,7 +386,7 @@ FUNC.users.meta = function(callback, directory) {
 		}
 	}
 
-	// G.meta === important, is used as a cache
+	// MAIN.meta === important, is used as a cache
 
 	var meta = {};
 	meta.companies = toArray(companies);
@@ -403,11 +403,11 @@ FUNC.users.meta = function(callback, directory) {
 	});
 
 	if (directory) {
-		G.metadirectories[directory] = meta;
+		MAIN.metadirectories[directory] = meta;
 		callback && callback(null, meta);
 	} else {
-		G.metadirectories = {};
-		G.meta = meta;
+		MAIN.metadirectories = {};
+		MAIN.meta = meta;
 		meta.directories.wait(function(item, next) {
 			FUNC.users.meta(next, item.name);
 		}, function() {
