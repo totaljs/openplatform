@@ -83,7 +83,7 @@
 		<script type="text/html">
 			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}"{{ if data }} data-data="{{ data | encodedata }}" data-id="{{ appid }}"{{ fi }}>
 				<div class="ui-notifications-close"><i class="fa fa-times"></i></div>
-				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ dtcreated | time }}</div>
+				<div class="ui-notifications-date"><i class="far fa-clock-o"></i>{{ dtcreated | time }}</div>
 				<div class="ui-notifications-title"><i class="{{ icon | icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-notifications-padding">
 					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
@@ -96,7 +96,7 @@
 		<script type="text/html">
 			<div class="ui-quicknotifications-message"{{ if data }} data-data="{{ data | encodedata }}" data-id="{{ appid }}"{{ fi }}>
 				<div class="ui-quicknotifications-close"><i class="fa fa-times"></i></div>
-				<div class="ui-quicknotifications-date"><i class="fa fa-clock-o"></i>{{ dtcreated | time }}</div>
+				<div class="ui-quicknotifications-date"><i class="far fa-clock-o"></i>{{ dtcreated | time }}</div>
 				<div class="ui-quicknotifications-title"><i class="{{ icon | icon }}"></i><b>{{ title }}</b></div>
 				<div class="ui-quicknotifications-padding">
 					<div class="ui-quicknotifications-body">{{ body | markdown_notifications }}</div>

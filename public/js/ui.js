@@ -3749,6 +3749,11 @@ COMPONENT('quicknotifications', 'clean:4000', function(self, config) {
 	};
 
 	self.append = function(value) {
+
+		// hidden for mobile devices
+		if (isMOBILE)
+			return;
+
 		var builder = [];
 		for (var i = 0, length = value.length; i < length; i++) {
 			var item = value[i];
