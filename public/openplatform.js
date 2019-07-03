@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 411;
+OP.version = 412;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -11,6 +11,7 @@ OP.interval = setInterval(function() {
 	if (OP.ready) {
 		clearInterval(OP.interval);
 		OP.pending.forEach(OP.$process);
+		OP.pending = [];
 	}
 }, 500);
 
