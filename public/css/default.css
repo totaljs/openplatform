@@ -273,7 +273,7 @@ h3 i { margin-right: 5px; }
 .ui-notifications-title { height: 26px; font-size: 11px; border-bottom: 1px solid #505050; padding: 0 10px; line-height: 24px; color: white; border-radius: 3px 3px 0 0; }
 .light .ui-notifications-title { border-bottom-color: #E0E0E0; color: black; background-color: #F8F8F8; }
 .ui-notifications-padding { padding: 0 10px; }
-.ui-notifications-body { line-height: 16px; font-size: 14px; margin-top: 10px; }
+.ui-notifications-body { line-height: 16px; font-size: 14px; margin-top: 10px; word-break: break-word; }
 .light .ui-notifications-body { line-height: 16px; font-size: 14px; margin-top: 10px; }
 .ui-notifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
 .ui-notifications button:hover { opacity: 0.9; }
@@ -303,7 +303,7 @@ h3 i { margin-right: 5px; }
 .ui-quicknotifications-title { height: 26px; font-size: 11px; border-bottom: 1px solid #505050; padding: 0 10px; line-height: 24px; color: white; border-radius: 3px 3px 0 0; }
 .light .ui-quicknotifications-title { border-bottom-color: #E0E0E0; color: black; background-color: white; }
 .ui-quicknotifications-padding { padding: 0 10px; }
-.ui-quicknotifications-body { line-height: 16px; font-size: 14px; color: silver; display: inline-block; }
+.ui-quicknotifications-body { line-height: 16px; font-size: 14px; color: silver; display: inline-block; word-break: break-word; }
 .light .ui-quicknotifications-body { color: #777777; }
 .ui-quicknotifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
 .ui-quicknotifications button:hover { opacity: 0.9; }
