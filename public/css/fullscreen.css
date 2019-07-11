@@ -165,7 +165,7 @@ h3 i { margin-right: 5px; }
 
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.user { float: left; cursor: pointer; width: 24px; height: 25px; line-height: 25px; border-radius: 2px; color: white; margin: 9px 8px 0 8px; user-select: none; text-align: center; font-size: 16px; }
+.user { float: left; cursor: pointer; width: 44px; height: 43px; line-height: 43px; border-radius: 2px; color: white; user-select: none; text-align: center; font-size: 16px; }
 .light .user { color: black; }
 .user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
 .user:hover { background-color: rgba(255,255,255,0.1); }
