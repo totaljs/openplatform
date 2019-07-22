@@ -33,9 +33,9 @@ AUTH(function($) {
 	var opt = {};
 	opt.key = CONF.cookie_key || 'auth';
 	opt.name = CONF.cookie;
-	opt.expire = CONF.cookie_expiration || '3 days';
+	opt.expire = CONF.cookie_expiration == null ? '3 days' : CONF.cookie_expiration === 'session' ? '' : CONF.cookie_expiration;
 
-	OP.session.getcookie($, opt, function(err, profile, meta, init) {
+	OP.session.getcookie($, opt, function(err, profile, meta) {
 
 		if (profile == null) {
 

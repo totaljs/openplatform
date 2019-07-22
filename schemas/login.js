@@ -24,7 +24,7 @@ NEWSCHEMA('Login', function(schema) {
 				opt.key = CONF.cookie_key || 'auth';
 				opt.sessionid = UID();
 				opt.id = user.id;
-				opt.expire = CONF.cookie_expiration || '1 month';
+				opt.expire = CONF.cookie_expiration == null ? '3 days' : CONF.cookie_expiration === 'session' ? '' : CONF.cookie_expiration;
 				opt.data = user;
 				opt.note = ($.headers['user-agent'] || '').parseUA() + ' (' + $.ip + ')';
 				opt.settings = 'locked:0';

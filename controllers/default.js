@@ -124,7 +124,8 @@ function lock() {
 		meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
 		if (meta.settings.indexOf('locked:1') === -1)
 			meta.settings = (meta.settings ? ';' : '') + 'locked:1';
-		OP.session.set(meta.sessionid, meta.id, profile, CONF.cookie_expiration || '1 month', meta.note, meta.settings);
+		var expire = CONF.cookie_expiration == null ? '3 days' : CONF.cookie_expiration === 'session' ? '' : CONF.cookie_expiration;
+		OP.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
 		self.redirect('/');
 	});
 }

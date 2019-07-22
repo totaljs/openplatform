@@ -198,7 +198,8 @@ NEWSCHEMA('Account', function(schema) {
 
 		OP.session.get($.sessionid, function(err, profile, meta) {
 			meta.settings = (meta.settings || '').replace('locked:1', 'locked:0');
-			OP.session.set($.sessionid, profile.id, profile, CONF.cookie_expiration || '1 month', meta.note, meta.settings, $.done());
+			var expire = CONF.cookie_expiration == null ? '3 days' : CONF.cookie_expiration === 'session' ? '' : CONF.cookie_expiration;
+			OP.session.set($.sessionid, profile.id, profile, expire, meta.note, meta.settings, $.done());
 			delete DDOS[id];
 		});
 	});
