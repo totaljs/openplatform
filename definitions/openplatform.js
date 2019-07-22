@@ -61,7 +61,7 @@ OP.cookie = function(req, user, sessionid, callback, note) {
 	opt.key = CONF.cookie_key || 'auth';
 	opt.sessionid = sessionid || UID();
 	opt.id = user.id;
-	opt.expire = CONF.cookie_expiration || '1 month';
+	opt.expire = CONF.cookie_expiration == null ? '1 month' : CONF.cookie_expiration === 'session' ? '' : CONF.cookie_expiration;
 	opt.data = user;
 	opt.note = note;
 
