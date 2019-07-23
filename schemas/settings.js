@@ -14,6 +14,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('sender', 'Email');
 	schema.define('test', Boolean);
 	schema.define('guest', Boolean);
+	schema.define('cookie_expiration', 'String(20)');
 
 	schema.setGet(function($) {
 
@@ -39,6 +40,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.marketplace = response.marketplace;
 			model.welcome = response.welcome;
 			model.guest = response.guest;
+			model.cookie_expiration = response.cookie_expiration || '3 days';
 			OP.id = response.url.crc32(true);
 			$.callback();
 		});
@@ -78,6 +80,7 @@ NEWSCHEMA('Settings', function(schema) {
 			CONF.marketplace = model.marketplace;
 			CONF.welcome = model.welcome;
 			CONF.guest = model.guest;
+			CONF.cookie_expiration = model.cookie_expiration || '3 days';
 
 			OP.id = CONF.url.crc32(true);
 
@@ -107,6 +110,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.verifytoken = response.verifytoken;
 				CONF.welcome = response.welcome;
 				CONF.guest = response.guest;
+				CONF.cookie_expiration = response.cookie_expiration || '3 days';
 				OP.id = CONF.url.crc32(true);
 			}
 
