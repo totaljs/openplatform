@@ -124,7 +124,7 @@ function lock() {
 		meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
 		if (meta.settings.indexOf('locked:1') === -1)
 			meta.settings = (meta.settings ? ';' : '') + 'locked:1';
-		var expire = CONF.cookie_expiration == null ? '3 days' : CONF.cookie_expiration === 'session' ? '' : CONF.cookie_expiration;
+		var expire = CONF.cookie_expiration || '3 days';
 		OP.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
 		self.redirect('/');
 	});

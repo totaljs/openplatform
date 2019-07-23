@@ -198,7 +198,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		OP.session.get($.sessionid, function(err, profile, meta) {
 			meta.settings = (meta.settings || '').replace('locked:1', 'locked:0');
-			var expire = CONF.cookie_expiration == null ? '3 days' : CONF.cookie_expiration === 'session' ? '' : CONF.cookie_expiration;
+			var expire = CONF.cookie_expiration || '3 days';
 			OP.session.set($.sessionid, profile.id, profile, expire, meta.note, meta.settings, $.done());
 			delete DDOS[id];
 		});
