@@ -361,7 +361,7 @@ NEWSCHEMA('User', function(schema) {
 					FUNC.emit('users.update', item.id);
 					FUNC.emit('users.refresh', item.id, item.blocked || item.inactive ? true : undefined);
 					FUNC.logger('users', 'update: ' + item.id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || '127.0.0.1');
-					$.success();
+					$.success(item.id);
 				});
 			});
 
