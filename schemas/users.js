@@ -398,7 +398,7 @@ NEWSCHEMA('User', function(schema) {
 				FUNC.emit('users.create', id);
 				FUNC.emit('users.refresh', id, item.blocked || item.inactive ? true : undefined);
 				FUNC.logger('users', 'create: ' + id + ' - ' + item.name, '@' + ($.user ? $.user.name : 'root'), $.ip || '127.0.0.1');
-				$.success();
+				$.success(id);
 			});
 		}
 	});
