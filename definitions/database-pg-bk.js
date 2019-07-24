@@ -668,7 +668,9 @@ FUNC.files.removebackground = function(id) {
 // ====================================
 
 FUNC.init = function(callback) {
-	DBMS().modify('tbl_user', { online: false }).where('online', true);
+	var db = DBMS();
+	db.modify('tbl_user', { online: false }).where('online', true);
+	db.modify('tbl_user', { id: UID(), dtcreated: NOW, dtupdated: NOW }).where('id', '-');
 	FUNC.users.meta();
 	callback && callback();
 	refresh_apps();

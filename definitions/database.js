@@ -745,10 +745,18 @@ FUNC.files.removebackground = function(id) {
 
 FUNC.init = function(callback) {
 	Fs.readFile(F.path.databases('users.json'), function(err, response) {
-		G.users = response ? response.toString('utf8').parseJSON(true) : [];
 
-		for (var i = 0, length = G.users.length; i < length; i++)
-			G.users[i].online = false;
+		G.users = response ? response.toString('utf8').parseJSON(true) : [];
+		var changed = false;
+
+		for (var i = 0, length = G.users.length; i < length; i++) {
+			var user = G.users[i];
+			user.online = false;
+			if (!user.id) {
+				user.id = UID();
+				changed = true;
+			}
+		}
 
 		Fs.readFile(F.path.databases('apps.json'), function(err, response) {
 			G.apps = response ? response.toString('utf8').parseJSON(true) : [];
@@ -759,6 +767,7 @@ FUNC.init = function(callback) {
 			G.apps.quicksort('title');
 			FUNC.users.meta();
 			callback && callback();
+			changed && save(2);
 			refresh_apps();
 		});
 	});
