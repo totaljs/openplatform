@@ -180,6 +180,11 @@ NEWSCHEMA('User', function(schema) {
 					modified = true;
 				}
 
+				if (item.reference !== model.reference) {
+					item.reference = model.reference;
+					modified = true;
+				}
+
 				item.search = model.search;
 
 				if (item.blocked !== model.blocked) {
