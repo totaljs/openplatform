@@ -207,6 +207,7 @@ NEWSCHEMA('App', function(schema) {
 			case '_users':
 			case '_apps':
 			case '_info':
+			case '_database':
 			case '_settings':
 			case '_account':
 			case '_welcome':

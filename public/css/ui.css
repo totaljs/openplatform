@@ -862,3 +862,24 @@ input:invalid { box-shadow: none; }
 
 .ui-dark .ui-tooltip-body { background:rgba(255,255,255,0.9); color: black; }
 .ui-dark .ui-tooltip-body::before { border-color: rgba(255,255,255,0.9) transparent transparent transparent; }
+
+.ui-layout { border: 0; position: absolute; }
+.ui-layout > section { position: absolute; overflow: hidden; }
+.ui-layout > div { position: absolute; }
+.ui-layout-resize-top { height: 2px; cursor: row-resize; }
+.ui-layout-resize-bottom { height: 2px; cursor: row-resize; }
+.ui-layout-resize-left { width: 2px; cursor: col-resize; }
+.ui-layout-resize-right { width: 2px; cursor: col-resize; }
+.ui-layout-resize { z-index: 2; user-select: none; }
+.ui-layout-resize:hover { background-color: #C0C0C0; }
+.ui-layout-drag { background-color: #C0C0C0; }
+.ui-layout-section { background-color: #F0F0F0; }
+.ui-layout-lock { background-color: rgba(222,222,222,0.8); z-index: 100; }
+
+.ui-dark .ui-layout-section { background-color: #282828; }
+.ui-dark .ui-layout-resize:hover { background-color: #505050; }
+.ui-dark .ui-layout-lock { background-color: rgba(34,34,34,0.8); }
+
+.ui-viewbox { overflow: hidden; -ms-overflow-style: none; box-sizing: content-box }
+.ui-viewbox-disabled { z-index: 5; position: absolute; background-color: rgba(255,255,255,0.8); }
+.ui-viewbox-hidden { visibility: hidden; }

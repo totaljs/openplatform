@@ -7,6 +7,7 @@ exports.install = function() {
 		ROUTE('GET /users/');
 		ROUTE('GET /apps/');
 		ROUTE('GET /settings/');
+		ROUTE('GET /database/', database);
 		ROUTE('GET /info/', info);
 		ROUTE('GET /account/');
 		ROUTE('GET /welcome/');
@@ -128,4 +129,12 @@ function lock() {
 		OP.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
 		self.redirect('/');
 	});
+}
+
+function database() {
+	var self = this;
+	if (self.user.sa)
+		self.view('database');
+	else
+		self.throw401();
 }

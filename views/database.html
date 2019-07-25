@@ -1,0 +1,57 @@
+<div data---="layout__mylayout__parent:parent" class="invisible">
+
+	<!-- META DATA OF THE LAYOUT -->
+	<!-- VERY IMPORTANT -->
+	<script type="text/plain">
+		{
+			top: { size: 45 },
+			left: { size: 223 },
+			main: {}
+		}
+	</script>
+
+	<!-- PANEL IN LAYOUT -->
+	<section data-type="top2">
+	</section>
+
+	<!-- PANEL IN LAYOUT -->
+	<section data-type="main">
+		<div data---="viewbox__null__parent:.ui-layout-section;height:100;scrollbar:1">
+			<div data-scope="schema">
+
+				<div class="padding npb">
+					<div data---="input__?.name__innerlabel:1;maxlength:50;required:1">@(Schema name)</div>
+				</div>
+				<hr />
+
+				<div class="padding">
+					<div class="row">
+						<div class="col-sm-8">
+							<div class="caption"><i class="fa fa-list"></i>@(Fields)</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="caption"><i class="far fa-check-circle"></i>@(States)</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- PANEL IN LAYOUT -->
+	<section data-type="left">
+		<div data---="viewbox__null__parent:.ui-layout-section;height:100;scrollbar:1">
+			MENU
+		</div>
+	</section>
+
+</div>
+
+
+<script>
+	var form = [];
+	form.push({ name: 'user.firstname', type: 'string', value: 'Peter Sirka' });
+	form.push({ name: 'user.age', type: 'number', value: 33 });
+	form.push({ name: 'user.birth', type: 'date', value: NOW });
+	form.push({ name: 'user.newsletter', type: 'boolean', value: true });
+</script>
