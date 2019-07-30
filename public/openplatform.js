@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 412;
+OP.version = 413;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -557,6 +557,27 @@ OP.emit = function(name, a, b, c, d, e) {
 		for (var i = 0; i < events.length; i++)
 			events[i](a, b, c, d, e);
 	}
+};
+
+OP.done = function(message, callback) {
+
+	if (typeof(message) === 'function') {
+		callback = message;
+		message = null;
+	}
+
+	return function(response, err) {
+
+		if (!response && err)
+			response = [{ name: 'network', error: err }];
+
+		if (response instanceof Array) {
+			OP.send('done', response);
+		} else {
+			message && OP.send('done', message);
+			callback && callback(response, err);
+		}
+	};
 };
 
 window.addEventListener('message', function(e) {
