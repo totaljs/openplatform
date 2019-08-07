@@ -270,7 +270,7 @@ $(window).on('message', function(e) {
 				common.console[id].items.unshift(data.body);
 
 			if (common.console[id].items.length > 100)
-				common.console[id].items = common.console[app.id].items.splice(0, 100);
+				common.console[id].items = common.console[id].items.splice(0, 100);
 
 			if (app.id === common.focused)
 				SET('common.status', data.body);
