@@ -1147,7 +1147,7 @@ ON('ready', function() {
 function readuser(id, callback) {
 	var db = DBMS();
 	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE');
-	db.query('SELECT a.appid as id,a.notifications,a.countnotifications,a.countbadges,b.roles,a.favorite,a.position,a.inherited FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
+	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 	db.callback(function(err, response) {
 
 		if (err || !response) {
@@ -1164,6 +1164,8 @@ function readuser(id, callback) {
 		for (var i = 0; i < user.apps.length; i++) {
 			var app = user.apps[i];
 			app.appid = app.id;
+			if (!app.roles)
+				app.roles = EMPTYARRAY;
 			apps[app.id] = app;
 		}
 

@@ -206,10 +206,10 @@
 			self.aclass(cls);
 			self.event('click', cls2 + '-checkbox', function() {
 				var el = $(this);
-				var id = el.attrd('id');
+				var id = decodeURIComponent(el.attrd('id'));
 				var type = el.attrd('type');
 				var appid = type === 'role' ? el.parent().attrd('id') : null;
-				var is = self.check(type, decodeURIComponent(id), null, appid);
+				var is = self.check(type, id, null, appid);
 				var model = self.get();
 
 				if (is) {

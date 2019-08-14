@@ -576,6 +576,7 @@ NEWSCHEMA('Users', function(schema) {
 
 			response.dbms.save(function() {
 				if (!keys || keys.apps) {
+					model.id = response.id;
 					processapps(model, function() {
 						$.success(response.id);
 						FUNC.log('users/update', response.id, model.name, $);
