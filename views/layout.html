@@ -12,17 +12,31 @@
 	<script src="@{'%cdn'}/spa.min@17.js"></script>
 	@{import('meta', 'head', 'app.css', 'app.js', 'favicon.ico')}
 </head>
-<body data-jc="exec">
+<body data---="exec" class="invisible@{if user.darkmode} ui-dark@{fi}">
 
-	<div data-jc="LAZY calendar"></div>
-	<div data-jc="LAZY suggestion__null__placeholder:@(Search)"></div>
-	<div data-jc="LAZY autocomplete"></div>
-
-	<div class="container-fluid">
-		@{body}
-	</div>
 	<script>
-		AJAX('GET /api/profile/', 'user');
+		OP.ready = true;
+		OP.init(function(err, meta) {
+			if (meta) {
+				resizelayout();
+				setTimeout(function() {
+					$('body').rclass('invisible');
+				}, 100);
+			} else
+				W.close();
+		});
 	</script>
+
+	<div data---="LAZY datepicker"></div>
+	<div data---="LAZY suggestion__null__placeholder:@(Search)"></div>
+	<div data---="LAZY autocomplete"></div>
+	<div data---="LAZY directory"></div>
+	<div data---="LAZY menu"></div>
+	<div data---="LAZY filter"></div>
+	<div data---="LAZY colorpicker"></div>
+	<div data---="LAZY emoji"></div>
+
+	@{body}
+
 </body>
 </html>

@@ -1,63 +1,95 @@
-const SKIP = { password: true, search: true, verifytoken: true };
-const ONLINE = { online: true, datelogged: null };
-const USERS_LIST_FIELDS = { id: 1, firstname: 1, lastname: 1, online: 1, sa: 1, blocked: 1, inactive: 1, company: 1, name: 1, items: 1, count: 1, page: 1, pages: 1, limit: 1 };
+const ONLINE = { online: true, dtlogged: null };
+const USERS_PROFILE_SKIP = { roles: 1 };
+const REQUEST_FLAGS = ['post', 'keepalive', 'json'];
 
 exports.install = function() {
 
-	GROUP(['authorize'], function() {
+	// Users
+	ROUTE('+GET     /api/op/users/                 *Users              --> @query');
+	ROUTE('+GET     /api/op/users/{id}/            *Users              --> @read');
+	ROUTE('+POST    /api/op/users/                 *Users              --> @insert');
+	ROUTE('+POST    /api/op/users/{id}/            *Users              --> @patch');
+	ROUTE('+PATCH   /api/op/users/{id}/            *Users              --> @patch');
+	ROUTE('+DELETE  /api/op/users/{id}/            *Users              --> @remove');
+	ROUTE('+POST    /api/op/users/assign/          *Users/Assign       --> @exec');
 
-		// Internal
-		ROUTE('POST   /api/internal/apps/               *App          --> @refresh @save (response)');
-		ROUTE('DELETE /api/internal/apps/{id}/          *App          --> @remove', [10000]);
-		ROUTE('POST   /api/internal/apps/meta/          *AppMeta      --> @exec');
-		ROUTE('POST   /api/internal/users/              *User         --> @save');
-		ROUTE('DELETE /api/internal/users/{id}/         *User         --> @remove');
+	// Users/Groups
+	ROUTE('+GET     /api/op/groups/                *Users/Groups       --> @query');
+	ROUTE('+POST    /api/op/groups/                *Users/Groups       --> @save');
+	ROUTE('+DELETE  /api/op/groups/                *Users/Groups       --> @remove');
 
-		ROUTE('POST   /api/internal/users/rename/       *UserRename   --> @exec');
-		ROUTE('POST   /api/internal/users/notify/       *UserNotify   --> @exec');
-		ROUTE('POST   /api/internal/users/apps/         *UserApps     --> @exec');
+	// Codelists
+	ROUTE('+GET     /api/op/companies/             *Users              --> @companies');
+	ROUTE('+GET     /api/op/locations/             *Users              --> @locations');
+	ROUTE('+GET     /api/op/positions/             *Users              --> @positions');
+	ROUTE('+GET     /api/op/groupids/              *Users              --> @groupids');
 
-		ROUTE('GET    /api/internal/apps/{id}/',        json_apps_meta);
-		ROUTE('GET    /api/internal/apps/',             json_apps_query);
-		ROUTE('GET    /api/internal/users/{id}/',       json_users_read);
-		ROUTE('GET    /api/internal/users/',            json_users_query);
-		ROUTE('GET    /api/internal/meta/',             json_meta_query);
+	// Apps
+	ROUTE('+GET     /api/op/apps/                  *Apps               --> @query');
+	ROUTE('+GET     /api/op/apps/meta/             *Apps               --> @meta');
+	ROUTE('+POST    /api/op/apps/                  *Apps               --> @check @refresh @insert (response)');
+	ROUTE('+POST    /api/op/apps/{id}/             *Apps               --> @check @refresh @update (response)');
+	ROUTE('+DELETE  /api/op/apps/{id}/             *Apps               --> @remove');
 
-		ROUTE('GET    /api/account/                     *Account      --> @read');
-		ROUTE('POST   /api/account/                     *Account      --> @save');
-		ROUTE('POST   /api/account/status/              *Status       --> @save');
-		ROUTE('GET    /api/notifications/               *Notification --> @query');
+	// Settings
+	ROUTE('+GET     /api/op/settings/              *Settings           --> @read');
+	ROUTE('+POST    /api/op/settings/              *Settings           --> @save');
+	ROUTE('+POST    /api/op/settings/smtp/         *Settings/SMTP      --> @exec');
 
-		ROUTE('GET    /api/internal/settings/           *Settings     --> @read');
-		ROUTE('POST   /api/internal/settings/           *Settings     --> @save');
-		ROUTE('POST   /api/internal/settings/smtp/      *SettingsSMTP --> @exec', [10000]);
+	// For unauthorized
+	ROUTE('-POST    /api/login/                    *Users/Login        --> @exec');
+	ROUTE('-POST    /api/login/otp/                *Users/Login        --> @otp');
+	ROUTE('-POST    /api/password/                 *Users/Password     --> @exec');
 
-		// Real-time operation
-		ROUTE('GET    /api/profile/                     *Profile      --> @get');
-		ROUTE('GET    /api/profile/{id}/                *App          --> @run');
-		ROUTE('GET    /api/profile/{id}/mute/           *App          --> @mute');
-		ROUTE('POST   /api/profile/logger/              *Logger       --> @insert');
+	// Acount
+	ROUTE('+GET     /api/account/                  *Account            --> @read');
+	ROUTE('+POST    /api/account/                  *Account            --> @save');
+	ROUTE('+GET     /api/account/totp/             *Account/Totp       --> @generate');
+	ROUTE('+POST    /api/account/totp/verify/      *Account/Totp       --> @verify');
+	ROUTE('+POST    /api/account/status/           *Account/Status     --> @save');
 
-		ROUTE('/api/upload/photo/',                     json_upload_photo, ['post'], 1024 * 2);
-		ROUTE('/api/upload/background/',                json_upload_background, ['post', 'upload'], 1024 * 5);
-	});
+	ROUTE('+GET     /api/notifications/            *Apps/Notifications --> @query');
 
-	GROUP(['unauthorize'], function() {
-		ROUTE('POST   /api/login/                       *Login        --> @exec');
-		ROUTE('POST   /api/password/                    *Password     --> @exec');
-	});
+	// Profile
+	ROUTE('+GET     /api/profile/',                json_profile_full);
+	ROUTE('+GET     /api/profile/{id}/             *Apps               --> @run');
+	ROUTE('+GET     /api/profile/{id}/favorite/    *Apps               --> @favorite');
+	ROUTE('+GET     /api/profile/{id}/reset/       *Apps               --> @reset');
+	ROUTE('+GET     /api/profile/{id}/mute/        *Apps               --> @mute');
+	ROUTE('+POST    /api/profile/logger/           *Apps/Logs          --> @insert');
+	ROUTE('+POST    /api/profile/apps/positions/   *Apps/Position      --> @save');
+	ROUTE('+GET     /api/profile/live/',           json_profile);
+
+	ROUTE('+POST    /api/upload/photo/',           json_upload_photo, 1024 * 2);
+	ROUTE('+POST    /api/upload/background/',      json_upload_background, ['upload'], 1024 * 5);
+
+	ROUTE('+GET     /api/op/meta/',                json_meta_query);
+	ROUTE('+GET     /api/op/sessions/',            json_sessions);
+	ROUTE('+DELETE  /api/op/sessions/{id}/',       json_sessions_remove);
+
+	ROUTE('+POST    /api/op/config/                *Apps/Config        --> @save');
+	ROUTE('+GET     /api/op/config/                *Apps/Config        --> @read');
+
+	ROUTE('+GET     /api/op/schemas/                           *Schema            --> @query');
+	ROUTE('+POST    /api/op/schemas/                           *Schema            --> @insert');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/fields/         *Schema/Field      --> @insert');
+	ROUTE('+PATCH   /api/op/schemas/{schemaid}/fields/{id}/    *Schema/Field      --> @update');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/states/         *Schema/State      --> @insert');
+	ROUTE('+PATCH   /api/op/schemas/{schemaid}/states/{id}/    *Schema/State      --> @patch');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/position/       *Schema/Position   --> @update');
 
 	// External
-	ROUTE('GET    /api/verify/',                        json_verify);
-	ROUTE('GET    /verify/',                            json_verify);
-	ROUTE('GET    /api/online/{id}/',                   json_online);
-	ROUTE('GET    /api/users/                           *User         --> @query');
-	ROUTE('GET    /api/apps/                            *App          --> @query');
-	ROUTE('GET    /api/badges/                          *Badge        --> @exec');
-	ROUTE('POST   /api/notify/                          *Notification --> @save');
-	ROUTE('POST   /api/config/                          *Config       --> @save');
-	ROUTE('GET    /api/config/                          *Config       --> @get');
-	ROUTE('GET    /api/meta/                            *Meta         --> @get');
+	ROUTE('GET      /verify/',                            json_verify);
+	ROUTE('GET      /api/verify/',                        json_verify);
+	ROUTE('POST     /api/services/',                      json_service, ['raw']);
+	ROUTE('GET      /api/online/{id}/',                   json_online);
+	ROUTE('GET      /api/users/                           *Users               --> @public');
+	ROUTE('GET      /api/apps/                            *Apps                --> @public');
+	ROUTE('GET      /api/badges/                          *Apps/Badges         --> @exec');
+	ROUTE('POST     /api/notify/                          *Apps/Notifications  --> @save');
+	ROUTE('GET      /api/meta/                            *Meta                --> @read');
+	ROUTE('GET      /api/unlock/                          *Account             --> @unlock');
+	ROUTE('GET      /guest/',                             redirect_guest);
 
 	// CORS
 	CORS();
@@ -65,125 +97,186 @@ exports.install = function() {
 
 function json_verify() {
 	var self = this;
-	OP.decodeAuthToken(self.query.accesstoken, function(err, obj) {
 
-		if (!obj) {
-			self.invalid('error-invalid-accesstoken');
-			return;
-		}
+	if (CONF.guest && MAIN.guest && self.query.accesstoken.endsWith('0-0-0')) {
+		self.json(MAIN.metaguest());
+		return;
+	}
 
+	FUNC.decodeauthtoken(self, function(obj) {
 		var app = obj.app;
 		var user = obj.user;
-
-		if (!user.online) {
+		if (user.online)
+			self.json(FUNC.meta(app, user, true));
+		else
 			self.invalid('error-offline');
-			return;
-		}
-
-		if (app.origin) {
-			if (app.origin.indexOf(self.ip) == -1 && app.hostname !== self.ip) {
-				self.invalid('error-invalid-origin');
-				return;
-			}
-		} else if (app.hostname !== self.ip) {
-			self.invalid('error-invalid-origin');
-			return;
-		} else if (user.inactive || user.blocked) {
-			self.invalid('error-accessible');
-			return;
-		}
-
-		self.json(OP.meta(app, user, true));
 	});
-}
-
-function json_apps_query() {
-	var self = this;
-	if (self.user.sa) {
-		FUNC.apps.query(self.query, self.callback());
-	} else
-		self.invalid('error-permissions');
-}
-
-function json_users_read(id) {
-	var self = this;
-	if (self.user.sa) {
-		FUNC.users.get(id, function(err, user) {
-			if (user)
-				self.json(user, false, (k, v) => SKIP[k] ? undefined : v);
-			else
-				self.json(null);
-		});
-	} else
-		self.invalid('error-permissions');
-}
-
-function json_users_query() {
-	var self = this;
-	if (self.user.sa) {
-		if (self.user.directory)
-			self.query.directory = self.user.directory;
-
-		FUNC.users.query(self.query, function(err, users) {
-			if (users)
-				self.json(users, false, (k, v) => k >= 0 || USERS_LIST_FIELDS[k] ? v : undefined);
-			else
-				self.invalid(err);
-		});
-
-	} else
-		self.invalid('error-permissions');
 }
 
 function json_meta_query() {
 	var self = this;
-	if (self.user.directory)
-		self.json(G.metadirectories[self.user.directory] || EMPTYOBJECT);
-	else
-		self.json(G.meta, false);
-}
-
-function json_apps_meta(id) {
-	var self = this;
-	FUNC.apps.get(id, function(err, app) {
-		if (app)
-			self.json(OP.meta(app, self.user));
-		else
-			self.invalid('error-app-404');
-	});
+	if (self.user.directory) {
+		var obj = MAIN.metadirectories[self.user.directory];
+		self.json(obj ? obj : EMPTYOBJECT);
+	} else
+		self.json(MAIN.meta);
 }
 
 function json_upload_photo() {
 	var self = this;
-	FUNC.files.uploadphoto(self.body.file, function(err, id) {
-		if (err)
-			self.invalid(err);
-		else
-			self.json(id);
-	});
+	var base64 = self.body.file;
+
+	if (!base64) {
+		$.invalid('error-file-type');
+		return;
+	}
+
+	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
+	var path = PATH.public('photos');
+	PATH.mkdir(path);
+	base64.base64ToFile(U.join(path, id), () => self.json(id));
 }
 
 function json_upload_background() {
 	var self = this;
 	var file = self.files[0];
-	FUNC.files.uploadbackground(file, function(err, id) {
-		if (err)
-			self.invalid(err);
-		else
-			self.json(id);
-	});
+
+	if (file == null) {
+		self.invalid('error-file-type');
+		return;
+	}
+
+	var path = PATH.public('backgrounds');
+	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
+
+	PATH.mkdir(path);
+	file.move(U.join(path, id), () => self.json(id));
 }
 
 function json_online(id) {
 	var self = this;
-	FUNC.users.get(id, function(err, user) {
+	MAIN.session.contains2(id, function(err, user) {
 		if (user) {
 			ONLINE.online = user.online;
-			ONLINE.datelogged = user.datelogged;
+			ONLINE.dtlogged = user.dtlogged;
 		} else {
 			ONLINE.online = false;
-			ONLINE.datelogged = null;
+			ONLINE.dtlogged = null;
 		}
 		self.json(ONLINE);
+	});
+}
+
+function json_profile() {
+	this.json(FUNC.profilelive(this.user), null, null, skip);
+}
+
+function json_profile_full() {
+	var self = this;
+	FUNC.profile(self.user, function(err, data) {
+		data && (data.ip = self.ip);
+		self.json(data);
+	});
+}
+
+function skip(k, v) {
+	return USERS_PROFILE_SKIP[k] ? undefined : v;
+}
+
+function json_sessions() {
+	var self = this;
+	MAIN.session.list(self.user.id, function(err, sessions) {
+		var data = [];
+		for (var i = 0; i < sessions.length; i++) {
+			var item = sessions[i];
+			data.push({ id: item.sessionid, note: item.note, used: item.used, created: item.created, current: item.sessionid === self.sessionid });
+		}
+		self.json(data);
+	});
+}
+
+function json_sessions_remove(id) {
+	var self = this;
+	MAIN.session.get(id, function(err, item, meta) {
+		if (meta && meta.id === self.user.id) {
+			MAIN.session.remove(meta.sessionid);
+			self.success(true, meta.sessionid === self.sessionid);
+		} else
+			self.invalid('error-session');
+	});
+}
+
+function redirect_guest() {
+	var self = this;
+	CONF.guest && self.cookie(CONF.cookie, 'guest', '1 day');
+	self.redirect('/');
+}
+
+function json_service() {
+
+	var self = this;
+
+	var serviceid = self.query.service;
+	if (!serviceid) {
+		self.invalid('error-services-invalid');
+		return;
+	}
+
+	var appid = self.query.app; // can be {String} or {UID}
+	if (!appid) {
+		self.invalid('error-services-app');
+		return;
+	}
+
+	FUNC.decodetoken(self, function(obj) {
+
+		var app = null;
+		var is = false;
+
+		for (var i = 0; i < MAIN.apps.length; i++) {
+			app = MAIN.apps[i];
+			if (app.id === appid || app.reference === appid || app.name === appid) {
+				is = true;
+				break;
+			}
+		}
+
+		if (!is) {
+			self.invalid('error-apps-404');
+			return;
+		}
+
+		if (!app.online) {
+			self.invalid('error-apps-offline');
+			return;
+		}
+
+		if (!app.services) {
+			self.invalid('error-services-notsupported');
+			return;
+		}
+
+		var endpoint = app.services[serviceid];
+		if (!endpoint) {
+			self.invalid('error-services-endpoint').replace('@', service);
+			return;
+		}
+
+		var headers = {};
+		headers['X-OpenPlatform'] = MAIN.id + '-' + obj.user.directoryid + '-' + CONF.verifytoken + '-' + obj.user.id + '-' + app.servicetoken;
+		headers['Content-Type'] = self.headers['content-type'];
+
+		REQUEST(endpoint, REQUEST_FLAGS, self.body, function(err, response, status, headers) {
+
+			if (err) {
+				self.status = status < 400 ? 500 : status;
+				self.invalid(err);
+			} else {
+				self.status = status;
+				self.content(response, headers['content-type']);
+			}
+
+			console.log(response, endpoint);
+		}, null, headers);
 	});
 }

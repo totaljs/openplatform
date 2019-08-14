@@ -1,86 +1,80 @@
-const SERVICEACCOUNT = { id: '0000000000000000000', name: 'Service Account', sa: true };
 var DDOS = {};
 
-AUTH(function(req, res, flags, next) {
+AUTH(function($) {
 
-	var key = (req.ip + (req.headers['user-agent'] || '')).substring(0, 50);
+	var key = ($.ip + ($.headers['user-agent'] || '')).substring(0, 50);
 
 	// Acccess Token
-	var token = req.headers['x-token'];
+	var token = $.headers['x-token'];
 	if (token) {
 
 		if (DDOS[key] > 5) {
-			FUNC.logger('protection', key);
-			return next(false);
+			// FUNC.logger('protection', key);
+			return $.invalid();
 		}
 
-		if (token === CONF.accesstoken)
-			return next(true, SERVICEACCOUNT);
-
 		if (DDOS[key])
 			DDOS[key]++;
 		else
 			DDOS[key] = 1;
 
-		return next(false);
+		return $.invalid();
 	}
 
-	var cookie = req.cookie(CONF.cookie);
-	if (!cookie)
-		return next(false);
-
-	if (DDOS[key] > 5) {
-		FUNC.logger('protection', key);
-		return next(false);
+	if (CONF.guest && $.cookie(CONF.cookie) === 'guest') {
+		$.success(MAIN.guest);
+		return;
 	}
 
-	cookie = F.decrypt(cookie);
+	var opt = {};
+	opt.key = CONF.cookie_key || 'auth';
+	opt.name = CONF.cookie;
+	opt.expire = CONF.cookie_expiration || '3 days';
 
-	if (cookie) {
+	MAIN.session.getcookie($, opt, function(err, profile, meta, init) {
 
-		var sessionkey = cookie.id;
+		if (profile == null) {
 
-		// Reads session
-		FUNC.sessions.get(sessionkey, function(err, user) {
+			if (DDOS[key])
+				DDOS[key]++;
+			else
+				DDOS[key] = 1;
 
-			if (user) {
-				next((user.inactive || user.blocked) ? false : true, user);
-				return;
+			// @TODO: done
+			//if (DDOS[key] > 5)
+			//	FUNC.logger('protection', key);
+
+			$.invalid();
+
+		} else {
+
+			var locked = false;
+
+			if (profile.locking && profile.pin && meta.used && !$.req.mobile && meta.used < NOW.add('-' + profile.locking + ' minutes'))
+				locked = true;
+
+			$.req.$language = profile.language;
+			$.req.locked = (meta.settings ? meta.settings.indexOf('locked:1') != -1 : false) || locked;
+
+			profile.ip = $.ip;
+
+			if (profile.windows == null)
+				profile.windows = true;
+
+			if (profile.online === false || locked) {
+				profile.online = true;
+				MAIN.session.set(meta.sessionid, meta.id, profile, opt.expire, meta.note, 'locked:' + (locked ? 1 : 0));
 			}
 
-			// Reads a user from DB
-			FUNC.users.get(cookie.id, function(err, user) {
-				if (user && !user.inactive && !user.blocked) {
+			if (init)
+				profile.ua = ($.headers['user-agent'] || '').parseUA();
 
-					user.datelogged = NOW;
-					user.online = true;
-
-					if (user.language && user.language !== 'en')
-						req.$language = user.language;
-
-					// Write session
-					FUNC.sessions.set(sessionkey, user);
-
-					// Write info
-					FUNC.users.set(user, ['datelogged', 'online']);
-
-					// Continue
-					next(true, user);
-
-				} else
-					next(false);
-			});
-		});
-
-	} else {
-
-		if (DDOS[key])
-			DDOS[key]++;
-		else
-			DDOS[key] = 1;
-
-		next(false);
-	}
+			if ($.req.locked)
+				$.invalid(profile);
+			else
+				$.success(profile);
+		}
+	});
 });
 
 ON('service', function(counter) {

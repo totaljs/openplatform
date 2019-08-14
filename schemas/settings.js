@@ -1,24 +1,31 @@
+const Fs = require('fs');
+
 NEWSCHEMA('Settings', function(schema) {
 
 	schema.define('name', 'String(100)', true);
 	schema.define('url', 'String(500)', true);
+	schema.define('verifytoken', 'String(20)');
+	schema.define('marketplace', 'String(500)'); // URL
+	schema.define('welcome', 'String(500)'); // URL
 	schema.define('email', 'Email', true);
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('background', 'String(150)');
 	schema.define('accesstoken', 'String(50)', true);
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
+	schema.define('sender', 'Email');
 	schema.define('test', Boolean);
+	schema.define('guest', Boolean);
+	schema.define('cookie_expiration', 'String(20)');
 
 	schema.setGet(function($) {
 
-		if (!$.user.sa) {
-			$.invalid('error-permissions');
+		if ($.controller && FUNC.notadmin($))
 			return;
-		}
 
-		FUNC.settings.get(function(err, response) {
-			var model = $.model;
+		DBMS().one('tbl_settings').where('id', 'openplatform').callback(function(err, response) {
+			response = response.body;
+			var model = $.clean();
 			var options = response.smtpsettings;
 			model.accesstoken = response.accesstoken;
 			model.url = response.url;
@@ -27,56 +34,64 @@ NEWSCHEMA('Settings', function(schema) {
 			model.email = response.email;
 			model.smtp = response.smtp;
 			model.smtpsettings = typeof(options) === 'string' ? options : JSON.stringify(options);
+			model.sender = response.sender;
 			model.test = response.test;
 			model.name = response.name;
-			OP.id = response.url.crc32(true);
-			$.callback();
+			model.verifytoken = response.verifytoken;
+			model.marketplace = response.marketplace;
+			model.welcome = response.welcome;
+			model.guest = response.guest;
+			model.cookie_expiration = response.cookie_expiration || '3 days';
+			MAIN.id = response.url.crc32(true);
+			$.callback(model);
 		});
 	});
 
 	schema.setSave(function($) {
 
-		if (!$.user.sa) {
-			$.error.invalid('error-permissions');
+		if ($.controller && FUNC.notadmin($))
 			return;
-		}
 
 		var model = $.clean();
 
-		FUNC.settings.set(model, function() {
+		// Removing older background
+		if (CONF.background && model.background !== CONF.background) {
+			var path = 'backgrounds/' + CONF.background;
+			Fs.unlink(PATH.public(path), NOOP);
+			F.touch('/' + path);
+		}
 
-			FUNC.emit('settings.update', F.id);
+		CONF.name = model.name;
+		CONF.url = model.url;
+		CONF.email = model.email;
+		CONF.colorscheme = model.colorscheme;
+		CONF.background = model.background;
+		CONF.mail_smtp = model.smtp;
+		CONF.mail_smtp_options = model.smtpsettings.parseJSON();
+		CONF.mail_address_from = model.sender;
+		CONF.accesstoken = model.accesstoken;
+		CONF.test = model.test;
+		CONF.verifytoken = model.verifytoken;
+		CONF.marketplace = model.marketplace;
+		CONF.welcome = model.welcome;
+		CONF.guest = model.guest;
+		CONF.cookie_expiration = model.cookie_expiration || '3 days';
 
-			if (model.url.endsWith('/'))
-				model.url = model.url.substring(0, model.url.length - 1);
+		MAIN.id = CONF.url.crc32(true);
 
-			// Removing older background
-			if (CONF.background && model.background !== CONF.background)
-				FUNC.files.removebackground(CONF.background);
+		if (model.url.endsWith('/'))
+			model.url = model.url.substring(0, model.url.length - 1);
 
-			CONF.name = model.name;
-			CONF.url = model.url;
-			CONF.email = model.email;
-			CONF.colorscheme = model.colorscheme;
-			CONF.background = model.background;
-			CONF.mail_smtp = model.smtp;
-			CONF.mail_smtp_options = model.smtpsettings.parseJSON();
-			CONF.accesstoken = model.accesstoken;
-			CONF.test = model.test;
-
-			OP.id = CONF.url.crc32(true);
-
-			$.success();
-			FUNC.logger('settings', 'update: ' + JSON.stringify(model), '@' + $.user.name, $.ip);
-		});
-
+		DBMS().modify('tbl_settings', { body: model }).where('id', 'openplatform');
+		EMIT('settings/update');
+		FUNC.log('settings/update', null, '', $);
+		$.success();
 	});
 
 	schema.addWorkflow('init', function($) {
-
-		FUNC.settings.get(function(err, response) {
-
+		DBMS().one('tbl_settings').where('id', 'openplatform').callback(function(err, response) {
 			if (response) {
+				response = response.body;
 				response.name && (CONF.name = response.name);
 				CONF.url = response.url || '';
 				CONF.author = response.author || '';
@@ -86,38 +101,39 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.background = response.background || '';
 				CONF.mail_smtp = response.smtp || '';
 				CONF.mail_smtp_options = typeof(response.smtpsettings) === 'string' ? response.smtpsettings.parseJSON() : response.smtpsettings;
+				CONF.mail_address_from = response.sender;
 				CONF.test = response.test;
-				OP.id = CONF.url.crc32(true);
+				CONF.marketplace = response.marketplace;
+				CONF.verifytoken = response.verifytoken;
+				CONF.welcome = response.welcome;
+				CONF.guest = response.guest;
+				CONF.cookie_expiration = response.cookie_expiration || '3 days';
+				MAIN.id = CONF.url.crc32(true);
 			}
-
 			$.success(true);
 		});
 	});
 });
 
-NEWSCHEMA('SettingsSMTP').make(function(schema) {
+NEWSCHEMA('Settings/SMTP').make(function(schema) {
 
 	schema.define('smtp', 'String(100)', true);
 	schema.define('smtpsettings', 'JSON');
 
 	schema.addWorkflow('exec', function($) {
 
-		if (!$.user.sa) {
-			$.invalid('error-permissions');
+		if ($.controller && FUNC.notadmin($))
 			return;
-		}
 
 		var model = $.model;
 		var options = model.smtpsettings.parseJSON();
 
 		Mail.try(model.smtp, options, function(err) {
-
 			if (err) {
-				$.error.push('error-settings-smtp');
 				$.error.replace('@', err.toString());
-			}
-
-			$.success();
+				$.invalid('error-settings-smtp');
+			} else
+				$.success();
 		});
 	});
 });

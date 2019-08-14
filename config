@@ -1,13 +1,11 @@
-name                            : OpenPlatform
-author                          : Peter Širka
-version                         : 4.0.0
+name                     : OpenPlatform v4
+author                   : Peter Širka
+version                  : 4.0.0
 
-allow_custom_titles             : true
+allow_custom_titles      : true
+cookie                   : __opu
+cookie_expiration        : 1 week
+secretpassword           : PASSwordXX007
 
-url                             : http://127.0.0.1:8000
-languages       (Array)         : ['en']
-
-cookie                          : __opu
-cookie_expiration               : 1 month
-
-cdn                             : //cdn.componentator.com
+cdn                      : //cdn.componentator.com
+database                 : postgresql://user:pass@localhost:5432/openplatform
