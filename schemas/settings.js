@@ -15,7 +15,15 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('smtpsettings', 'JSON');
 	schema.define('sender', 'Email');
 	schema.define('test', Boolean);
+	schema.define('defaultappid', 'UID');
 	schema.define('guest', Boolean);
+	schema.define('allowstatus', Boolean);
+	schema.define('allowdesktop', Boolean);
+	schema.define('allowclock', Boolean);
+	schema.define('allowbackground', Boolean);
+	schema.define('allowtheme', Boolean);
+	schema.define('allowprofile', Boolean);
+	schema.define('allowdesktopfluid', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
 
 	schema.setGet(function($) {
@@ -41,6 +49,14 @@ NEWSCHEMA('Settings', function(schema) {
 			model.marketplace = response.marketplace;
 			model.welcome = response.welcome;
 			model.guest = response.guest;
+			model.defaultappid = response.defaultappid;
+			model.allowstatus = response.allowstatus != false;
+			model.allowclock = response.allowclock != false;
+			model.allowdesktop = response.allowdesktop != false;
+			model.allowbackground = response.allowbackground != false;
+			model.allowtheme = response.allowtheme != false;
+			model.allowprofile = response.allowprofile != false;
+			model.allowdesktopfluid = response.allowdesktopfluid != false;
 			model.cookie_expiration = response.cookie_expiration || '3 days';
 			MAIN.id = response.url.crc32(true);
 			$.callback(model);
@@ -75,7 +91,15 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.marketplace = model.marketplace;
 		CONF.welcome = model.welcome;
 		CONF.guest = model.guest;
+		CONF.allowstatus = model.allowstatus != false;
+		CONF.allowclock = model.allowclock != false;
+		CONF.allowdesktop = model.allowdesktop != false;
 		CONF.cookie_expiration = model.cookie_expiration || '3 days';
+		CONF.allowbackground = model.allowbackground != false;
+		CONF.allowtheme = model.allowtheme != false;
+		CONF.allowprofile = model.allowprofile != false;
+		CONF.allowdesktopfluid = model.allowdesktopfluid != false;
+		CONF.defaultappid = model.defaultappid;
 
 		MAIN.id = CONF.url.crc32(true);
 
@@ -107,7 +131,15 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.verifytoken = response.verifytoken;
 				CONF.welcome = response.welcome;
 				CONF.guest = response.guest;
+				CONF.allowstatus = response.allowstatus != false;
+				CONF.allowclock = response.allowclock != false;
+				CONF.allowdesktop = response.allowdesktop != false;
+				CONF.allowbackground = response.allowbackground != false;
+				CONF.allowtheme = response.allowtheme != false;
+				CONF.allowprofile = response.allowprofile != false;
+				CONF.allowdesktopfluid = response.allowdesktopfluid != false;
 				CONF.cookie_expiration = response.cookie_expiration || '3 days';
+				CONF.defaultappid = response.defaultappid;
 				MAIN.id = CONF.url.crc32(true);
 			}
 			$.success(true);

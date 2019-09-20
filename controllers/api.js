@@ -7,11 +7,12 @@ exports.install = function() {
 	// Users
 	ROUTE('+GET     /api/op/users/                 *Users              --> @query');
 	ROUTE('+GET     /api/op/users/{id}/            *Users              --> @read');
-	ROUTE('+POST    /api/op/users/                 *Users              --> @insert');
-	ROUTE('+POST    /api/op/users/{id}/            *Users              --> @patch');
-	ROUTE('+PATCH   /api/op/users/{id}/            *Users              --> @patch');
+	ROUTE('+POST    /api/op/users/                 *Users              --> @check @insert (response)');
+	ROUTE('+POST    /api/op/users/{id}/            *Users              --> @check @patch (response)');
+	ROUTE('+PATCH   /api/op/users/{id}/            *Users              --> @check @patch (response)');
 	ROUTE('+DELETE  /api/op/users/{id}/            *Users              --> @remove');
 	ROUTE('+POST    /api/op/users/assign/          *Users/Assign       --> @exec');
+	ROUTE('+POST    /api/op/reports/               *Users/Reports      --> @insert', 1024 * 2); // 2 MB
 
 	// Users/Groups
 	ROUTE('+GET     /api/op/groups/                *Users/Groups       --> @query');
@@ -43,7 +44,7 @@ exports.install = function() {
 
 	// Acount
 	ROUTE('+GET     /api/account/                  *Account            --> @read');
-	ROUTE('+POST    /api/account/                  *Account            --> @save');
+	ROUTE('+POST    /api/account/                  *Account            --> @check @save (response)');
 	ROUTE('+GET     /api/account/totp/             *Account/Totp       --> @generate');
 	ROUTE('+POST    /api/account/totp/verify/      *Account/Totp       --> @verify');
 	ROUTE('+POST    /api/account/status/           *Account/Status     --> @save');
@@ -69,14 +70,24 @@ exports.install = function() {
 
 	ROUTE('+POST    /api/op/config/                *Apps/Config        --> @save');
 	ROUTE('+GET     /api/op/config/                *Apps/Config        --> @read');
+	ROUTE('+POST    /api/op/mail/                  *Mail               --> @send');
 
 	ROUTE('+GET     /api/op/schemas/                           *Schema            --> @query');
 	ROUTE('+POST    /api/op/schemas/                           *Schema            --> @insert');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/                *Schema            --> @update');
 	ROUTE('+POST    /api/op/schemas/{schemaid}/fields/         *Schema/Field      --> @insert');
-	ROUTE('+PATCH   /api/op/schemas/{schemaid}/fields/{id}/    *Schema/Field      --> @update');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/fields/{id}/    *Schema/Field      --> @update');
 	ROUTE('+POST    /api/op/schemas/{schemaid}/states/         *Schema/State      --> @insert');
-	ROUTE('+PATCH   /api/op/schemas/{schemaid}/states/{id}/    *Schema/State      --> @patch');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/states/{id}/    *Schema/State      --> @patch');
 	ROUTE('+POST    /api/op/schemas/{schemaid}/position/       *Schema/Position   --> @update');
+
+	ROUTE('+GET     /api/op/workshop/plugins/refresh/          *Workshop          --> @pluginsrefresh');
+	ROUTE('+GET     /api/op/workshop/plugins/                  *Workshop          --> @plugins');
+	ROUTE('+GET     /api/op/workshop/                          *Workshop          --> @query');
+	ROUTE('+GET     /api/op/workshop/{id}/                     *Workshop          --> @read');
+	ROUTE('+POST    /api/op/workshop/                          *Workshop          --> @insert');
+	ROUTE('+POST    /api/op/workshop/{id}/                     *Workshop          --> @update');
+	ROUTE('+DELETE  /api/op/workshop/{id}/                     *Workshop          --> @remove');
 
 	// External
 	ROUTE('GET      /verify/',                            json_verify);
@@ -276,7 +287,6 @@ function json_service() {
 				self.content(response, headers['content-type']);
 			}
 
-			console.log(response, endpoint);
 		}, null, headers);
 	});
 }

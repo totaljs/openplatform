@@ -1,0 +1,43 @@
+<style>
+	.wc-readonly { height: 20px; font-size: 14px; }
+	.wc-readonly > label { float: left; width: 110px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: #B0B0B0; }
+	.wc-readonly > div { margin-left: 110px; }
+</style>
+
+<div class="wc-readonly">
+	<label>Label name</label>
+	<div class="readonly">---</div>
+</div>
+
+<script meta>
+	exports.icon = 'glasses';
+	exports.author = 'Peter Širka';
+	exports.name = 'Readonly';
+	exports.version = '1';
+</script>
+
+<script editor>
+
+	exports.options = [];
+	exports.options.push({ name: 'label', text: 'Label', type: 'string', value: 'Label name' });
+	exports.options.push({ name: 'field', text: 'Field', type: 'readonly' });
+	exports.options.push({ name: 'currency', text: 'Currency', type: 'String', hidden: true });
+
+	exports.make = function(el, opt) {
+	};
+
+	exports.settings = function(el, opt, changed, rebind) {
+		switch (changed) {
+			case 'label':
+				el.find('label').text(opt[changed]);
+				break;
+		}
+	};
+
+</script>
+
+<script>
+	exports.make = function(el, opt) {
+
+	};
+</script>

@@ -17,7 +17,8 @@ exports.install = function() {
 };
 
 function index() {
-	this.view(this.user.windows != false ? 'index' : 'fullscreen');
+	var desktop = this.user.desktop;
+	this.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
 }
 
 function manifest(req, res) {

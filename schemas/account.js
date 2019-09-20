@@ -16,7 +16,7 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('timeformat', [12, 24]); // 12 or 24
 	schema.define('numberformat', [1, 2, 3, 4]); // 1: "1 000.10", 2: "1 000,10", 3: "100,000.00", 4: "100.000,00"
 	schema.define('volume', Number);
-	schema.define('windows', Boolean);
+	schema.define('desktop', [1, 2, 3]);
 	schema.define('otp', Boolean);
 	schema.define('otpsecret', 'String(80)');
 	schema.define('language', 'Lower(2)');
@@ -32,7 +32,24 @@ NEWSCHEMA('Account', function(schema) {
 			return;
 		}
 
-		DBMS().read('tbl_user').error('error-users-404').fields('email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,windows,background,otp,locking,dateformat,timeformat,numberformat').where('id', $.user.id).callback($.callback);
+		DBMS().read('tbl_user').error('error-users-404').fields('email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat').where('id', $.user.id).callback($.callback);
+	});
+
+
+	schema.addWorkflow('check', function($) {
+
+		if ($.user.guest) {
+			$.invalid('error-permissions');
+			return;
+		}
+
+		if (!$.model.email)
+			return $.success();
+
+		var db = DBMS();
+		db.check('tbl_user').query('email=$1 AND id<>$2', [$.model.email, $.user.id]);
+		db.err('error-users-email', true);
+		db.callback($.done());
 	});
 
 	schema.setSave(function($) {
@@ -106,7 +123,7 @@ NEWSCHEMA('Account', function(schema) {
 		user.background = model.background;
 		user.dtupdated = NOW;
 		user.locking = model.locking;
-		user.windows = model.windows;
+		user.desktop = model.desktop;
 
 		var tmp = model.dateformat || 'yyyy-MM-dd';
 
@@ -140,6 +157,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		DBMS().modify('tbl_user', model).where('id', $.user.id).error('error-users-404').callback(function(err, response) {
 			if (response) {
+				MAIN.session.update2($.user.id, user);
 				FUNC.log('account/update', $.user.id, 'Updated account: ' + $.user.name, $);
 				EMIT('users/update', user.id, 'account');
 				$.success();

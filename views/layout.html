@@ -8,8 +8,9 @@
 	<meta name="robots" content="all,follow" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@17.css" />
-	<script src="@{'%cdn'}/spa.min@17.js"></script>
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<script src="@{'%cdn'}/spa.min@18.js"></script>
+	<link rel="stylesheet" href="/plugins.css" />
 	@{import('meta', 'head', 'app.css', 'app.js', 'favicon.ico')}
 </head>
 <body data---="exec" class="invisible@{if user.darkmode} ui-dark@{fi}">
@@ -31,10 +32,12 @@
 	<div data---="LAZY suggestion__null__placeholder:@(Search)"></div>
 	<div data---="LAZY autocomplete"></div>
 	<div data---="LAZY directory"></div>
+	<div data---="LAZY tooltip"></div>
 	<div data---="LAZY menu"></div>
 	<div data---="LAZY filter"></div>
 	<div data---="LAZY colorpicker"></div>
-	<div data---="LAZY emoji"></div>
+	<div data---="LAZY emoji__null__search:@(Search)"></div>
+	<div data---="LAZY faicons__null__search:@(Search)"></div>
 
 	@{body}
 

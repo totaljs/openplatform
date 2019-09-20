@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 414;
+OP.version = 415;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -135,7 +135,7 @@ OP.console = function(type, msg, show, text) {
 		OP.send('console', { type: type, msg: (text || '') + msg, show: show });
 };
 
-OP.screenshot = function(cdn) {
+OP.screenshot = function(cdn, callback) {
 
 	if (!OP.$screenshot) {
 
@@ -159,7 +159,10 @@ OP.screenshot = function(cdn) {
 	var make = function() {
 		OP.loading(true);
 		html2canvas(document.body).then(function(canvas) {
-			OP.send('screenshot', canvas.toDataURL('image/jpeg', 0.85));
+			if (callback)
+				callback(canvas.toDataURL('image/jpeg', 0.85));
+			else
+				OP.send('screenshot', canvas.toDataURL('image/jpeg', 0.85));
 			OP.loading(false);
 		});
 	};
@@ -420,8 +423,12 @@ OP.share = function(app, type, body, silent) {
 	return OP;
 };
 
-OP.email = function(subject, body) {
-	return OP.send('email', { subject: subject, body: body, dtcreated: new Date() });
+OP.report = function(type, body, high) {
+	return OP.send('report', { type: type, body: body, high: high });
+};
+
+OP.mail = function(email, subject, body, type) {
+	return OP.send('mail', { email: email, subject: subject, body: body, dtcreated: new Date(), type: type || 'html' });
 };
 
 OP.shake = function(type) {
@@ -488,7 +495,6 @@ OP.$process = function(data) {
 	if (data.type === 'link') {
 		var events = OP.events[data.type];
 		if (events) {
-			var d = {};
 			for (var i = 0; i < events.length; i++)
 				events[i](data.body.path, data.body.data);
 		}

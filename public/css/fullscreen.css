@@ -7,14 +7,14 @@ body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 
 .hidden2 { display: none; }
 
-header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #303030 linear-gradient(#303030,#353535); position: fixed; z-index: 35; width: 100%; color: #909090; }
+header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #333333 linear-gradient(#333333,#383838); position: fixed; z-index: 35; width: 100%; color: #909090; border-bottom: 1px solid rgba(255,255,255,0.1); }
 header .nav { float: left; width: 70%; overflow: hidden; height: 45px; }
 header .nav > div { overflow-x: scroll; width: 100%; height: 80px; overflow-scrolling: touch; overflow-y: hidden }
 header nav { width: 5000px; height: 45px; -webkit-app-region: drag; }
 header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 44px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
 header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
 header nav button img { width: 25px; height: 25px; border-radius: 3px; }
-header nav button:hover { background-color: rgba(0,0,0,0.05); }
+header nav button:hover { background-color: rgba(255,255,255,0.05); }
 header nav button:disabled { background-color: rgba(0,0,0,0.08) !important; color: gray !important; }
 header nav button.focused { background-color: #4c4c4c; }
 header nav button > i { font-size: 20px; }
@@ -46,7 +46,7 @@ header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 .button-status i { transition: all 0.3s; }
 .button-status:hover { opacity: 0.9; }
 .button-status:hover i { transform: scale(1.2); }
-.button-status-warning:before { content: '!'; color: white; background-color: red; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 12px; z-index: 5; }
+.button-status-warning:before { content: '\f071'; font-family: 'Font Awesome 5 Free'; font-weight: 400; color: #ff7a00; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 15px; z-index: 5; }
 
 .button-window { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; color: #505050; }
 .light .button-window { color: gray; }
@@ -94,7 +94,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .startmenu-nav nav button:hover { text-decoration: none; color: white; }
 .startmenu-nav nav button:last-child { border-bottom: 0; }
 .startmenu-nav i { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
-.startmenu-nav > div { height: 100%; background-color: rgba(120,120,120,0.1); padding: 8px 15px 10px; }
+.startmenu-nav > div { height: 100%; padding: 8px 15px 10px; }
 .startmenu-search { padding: 5px; background-color: #404040; border-bottom: 1px solid rgba(0,0,0,0.05); }
 .startmenu-status { color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 38px; cursor: pointer; border-radius: 0 0 3px 0; }
 .startmenu-status:hover { background-color: rgba(255,255,255,0.1); }
@@ -116,10 +116,11 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 
 .light .startmenu-status b { color: black; }
 .light .startmenu-nav nav button:hover { color: #404040; }
-.light header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); border-color: rgba(0,0,0,0.15); }
+.light header { background: #E0E0E0 linear-gradient(#F0F0F0,#F9F9F9); border-color: rgba(0,0,0,0.15); }
 .light header nav button { color: black; border-right-color: rgba(0,0,0,0.1); }
 .light header nav button:first-child { border-left-color: rgba(0,0,0,0.1); }
-.light header nav button.focused { background-color: #D0D0D0; color: black; }
+.light header nav button.focused { background-color: #E0E0E0; color: black; }
+.light header nav button:hover { background-color: #E8E8E8; }
 .light header .datetime { color: black; background-color: rgba(0,0,0,0.05); border-left-color: #C9C9C9; }
 .light .button-notifications i { color: black; }
 .light .ui-process-header nav button { color: #505050; }
@@ -132,7 +133,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light { background-color: #505050; }
 .light .startmenu { background-color: #E0E0E0; }
 .light .startmenu-title { color: black; }
-.light .startmenu-nav { background-color: #D0D0D0; }
+.light .startmenu-nav { background-color: #E0E0E0; }
 .light .startmenu-nav nav button { color: black; }
 .light .app-container { color: black; background-color: rgba(0,0,0,0.05); }
 .light .app-container:hover .app-icon { color: black; background-color: rgba(0,0,0,0.07); }
@@ -175,7 +176,7 @@ h3 i { margin-right: 5px; }
 .user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }
 .user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
 .user.selected { background-color: rgba(255,255,255,0.1); }
-.light .user.selected { background-color: rgba(0,0,0,0.1); }
+.light .user.selected { background-color: #E0E0E0; }
 
 .button-notifications { float: right; font-size: 22px; padding: 0; width: 45px; height: 44px; line-height: 44px; cursor: pointer; text-align: center; }
 .button-notifications span { font-size: 10px; width: 20px; height: 20px; line-height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 0; margin: 2px 0 0 9px; font-weight: bold; }
@@ -276,36 +277,6 @@ h3 i { margin-right: 5px; }
 .ui-process-header { transition: background 0.3s; height: 0; color: white; cursor: default; position: relative; }
 .ui-process .appprogress { z-index: 10; }
 
-.ui-notifications { position: fixed; width: 340px; top: 45px; right: 0; background: rgba(20,20,20,0.97); padding: 0; overflow-y: scroll; overflow-x: hidden; z-index: 33; box-shadow: -5px 0 20px rgba(0,0,0,0.03); border-left: 1px solid #303030; overflow-scrolling: touch; }
-.light .ui-notifications { background-color: rgba(255,255,255,0.97); border-left-color: #E0E0E0; }
-.ui-notifications i { margin-right: 3px; }
-.ui-notifications-clear { margin: 15px 0 10px 10px; font-size: 11px; cursor: pointer; color: silver; }
-.light .ui-notifications-clear { color: black; }
-.ui-notifications-clear:hover { text-decoration: underline; }
-/*border-top-width: 2px; border-top-color: #3BAFDA;*/
-.ui-notifications-message { background-color: #424242; margin: 10px 10px 15px; padding: 0; border-radius: 3px; font-size: 12px; cursor: pointer; transition: all 0.3s; border: 1px solid #505050; }
-.light .ui-notifications-message { background-color: white; border-color: #E0E0E0; }
-
-.bk-ui-notifications-success { border-top-color: #8CC152 !important; }
-.bk-ui-notifications-error { border-top-color: #E60000 !important; }
-
-.ui-notifications-close { float: right; width: 26px; height: 26px; line-height: 26px; text-align: center; border-left: 1px solid #505050; cursor: pointer; padding: 0 0 0 3px; color: #777777; }
-.ui-notifications-close:hover { color: red; }
-.light .ui-notifications-close { color: gray; border-left-color: #E0E0E0; }
-.light .ui-notifications-close:hover { color: red; }
-.ui-notifications-date { float: right; font-size: 10px; margin: 0 10px 0 0; line-height: 26px; color: white; }
-.light .ui-notifications-date { color: black; }
-.ui-notifications-title img { border: 1px solid #3BAFDA; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
-.ui-notifications-title { height: 26px; font-size: 11px; border-bottom: 1px solid #505050; padding: 0 10px; line-height: 24px; color: white; border-radius: 3px 3px 0 0; }
-.light .ui-notifications-title { border-bottom-color: #E0E0E0; color: black; background-color: #F8F8F8; }
-.ui-notifications-padding { padding: 0 10px; }
-.ui-notifications-body { line-height: 16px; font-size: 14px; margin-top: 10px; word-break: break-word; overflow: hidden; max-height: 100px; }
-.light .ui-notifications-body { line-height: 16px; font-size: 14px; margin-top: 10px; }
-.ui-notifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
-.ui-notifications button:hover { opacity: 0.9; }
-.ui-notifications-remove {}
-
-.light .ui-notifications button { color: black; border-color: black; }
 .ui-quicknotifications-margin { margin-right: 325px; }
 
 .ui-quicknotifications { position: absolute; right: 0; width: 320px; top: 45px; z-index: 100; }

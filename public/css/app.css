@@ -15,6 +15,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .ui-dark .ui-layout-section .dg-footer { border-top-color: #404040; }
 .ui-layout-section .dg-h-container { border: 0 !important; }
 .ui-layout-right { background-color: white; }
+.ui-layout-bottom { background-color: white; }
 .ui-layout-main .ui-layout-left { background-color: #F8F8F8; }
 .ui-dark .ui-layout-right { background-color: #202020; }
 .tbgcolor { border-radius: 2px; color: white; padding: 1px 3px; }
@@ -26,9 +27,9 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .cancelmodified { display: none; }
 .ui-validation-modified .cancelmodified { display: inline-block; }
 
-.header { height: 50px; padding: 0 10px 0 0; border-bottom: 1px solid #E0E0E0; text-align: right; }
+.header { height: 45px; padding: 0 10px 0 0; border-bottom: 1px solid #E0E0E0; text-align: right; }
 .ui-dark .header { border-color: #303030; }
-.header button, .toolbar button { outline: 0; background: linear-gradient(white,#F8F8F8); border: 1px solid #E0E0E0; border-left: 0; font-size: 11px; height: 28px; padding: 0 8px; margin: 0; color: black; min-width: 80px; vertical-align: top; text-align: center; }
+.header button, .toolbar button { outline: 0; background: linear-gradient(white,#F8F8F8); border: 1px solid #E0E0E0; border-left: 0; font-size: 11px; height: 24px; padding: 0 8px; margin: 0; color: black; min-width: 80px; vertical-align: top; text-align: center; }
 .header button i, .toolbar button i { margin-right: 5px; }
 .header button .fa-plus-circle, .header button .fa-check-circle, .toolbar button .fa-plus-circle, .toolbar button .fa-check-circle { color: #68B25B; }
 .header button:hover, .toolbar button:hover { border-color: #D0D0D0; }
@@ -41,30 +42,33 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 
 .ui-dark .header button, .ui-dark  .toolbar button { background: linear-gradient(#323232,#353535); border-color: #404040; color: white; }
 .ui-dark .header button:hover, .ui-dark  .toolbar button:hover { border-top-color: #505050; border-bottom-color: #505050; }
-.ui-dark .header button:first-child, .ui-dark .toolbar button:first-child { border-left-color: #353535; }
 .ui-dark .header button:disabled, .ui-dark .toolbar button:disabled { color: #505050; border-color: #353535 !important; background: linear-gradient(#202020,#252525); }
 .ui-dark .header button:disabled i, .ui-dark .toolbar button:disabled i { color: #505050 !important; }
 
-
-.header > div { height: 49px; padding: 10px 0 0; }
+.header > div { height: 44px; padding: 10px 0 0; }
 .header .highlight { background-color: #FFFFD5; }
-.header .back { float: left; height: 49px; line-height: 49px; width: 45px; border-right: 1px solid #E0E0E0; text-align: center; cursor: pointer; color: black; }
+.header .back { float: left; height: 44px; line-height: 44px; width: 45px; border-right: 1px solid #E0E0E0; text-align: center; cursor: pointer; color: black; }
 .header .back i { margin: 0; }
 .header .back:hover { color: white; }
-.header label { float: left; height: 50px; line-height: 50px; font-weight: bold; margin-left: 10px; }
+.header label { float: left; line-height: 44px; font-weight: bold; margin-left: 10px; }
 .header label i { margin-right: 5px; }
 .header2 { text-align: left !important; padding: 0; border-bottom: 0; }
+
+.iconmenu-bg { background-color: white; border-radius: 2px; padding: 5px; border: 1px solid #E0E0E0; }
+.iconmenu span { width: 32px; display: inline-block; line-height: 30px; text-align: center; cursor: pointer; border-radius: 2px; margin-left: 5px; }
+.iconmenu span:first-child { margin-left: 0; }
+.iconmenu span:hover { background-color: #F0F0F0; }
+.iconmenu .selected { color: white; }
 
 .menu { padding: 12px 0 0; }
 .menu .item { color: #303030; display: block; padding: 3px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; margin: 0 10px 2px; border-radius: 2px; font-size: 14px; }
 .menu .item .options { float: right; cursor: pointer; font-size: 12px; margin: 2px 0 0; }
-.menu .item > i { width: 20px; text-align: center; margin: 2px 5px 0 0; float: left; }
+.menu .item > i { width: 20px; text-align: center; margin: 3px 5px 0 0; float: left; }
+.menu .item > .fa-trash-o { float: right; text-align: center; margin: 4px 0 0; font-size: 12px; }
+.menu .selected { color: white; }
+.menu .selected > .fa-trash-o { color: white !important; }
 .menu .item .name { margin: 0 25px; display: block; height: 16px; }
-.menu .item .name input { width: 100%; border: 0; background: transparent; padding: 0; margin: 0; height: 20px; outline: 0; }
-.menu .item.complete { color: gray; }
-.menu .item.canceled { color: gray; }
-.menu .item.complete > i { color: #68B25B; }
-.menu .item.selected { color: white !important; }
+.menu .item:hover { background-color: rgba(0,0,0,0.05); }
 .menu hr { border-color: #D0D0D0; }
 .ui-dark .menu hr { border-color: #404040; }
 
@@ -100,6 +104,14 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .ui-scrollbar-y { width: 5px; }
 .ui-scrollbar-x { height: 5px; }
 
+.tabmenu2 { padding: 0 10px; margin: 0; display: block; position: relative; font-size: 12px; border: 0; list-style-type: none; height: 45px; overflow: hidden; background-color: white; border-bottom: 1px solid #E0E0E0; user-select: none; }
+.tabmenu2 li { background-color: #F0F0F0; margin: 10px 0 0 0; text-align: center; padding: 0 7px; line-height: 24px; height: 24px; color: #6d6d6d; cursor: pointer; min-width: 90px; max-width: 150px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; width: 33%; }
+.tabmenu2 li:hover { color: #252525; }
+.tabmenu2 li:first-child { border-radius: 2px 0 0 2px; }
+.tabmenu2 li:last-child { border-radius: 0 2px 2px 0; }
+.tabmenu2 .selected { color: white !important; }
+.tabmenu2 i { margin-right: 8px; }
+
 .inactive { color: #A0A0A0; }
 
 .caption { font–size: 16px; border-bottom: 2px solid #E0E0E0; font-weight: bold; margin-bottom: 15px; padding: 5px 0; }
@@ -111,6 +123,9 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .ui-layout { background-color: #D0D0D0; }
 .ui-dark .ui-layout { background-color: #404040; }
 .ui-layout-main { background-color: white; }
+.ui-layout-top { background-color: white; }
+.ui-layout-right .tabmenu { height: 49px; padding: 16px 20px 0; }
+.ui-layout-right .tabmenu li { height: 32px; }
 
 .fs11 { font-size: 11px !important; line-height: 13px; }
 .fs12 { font-size: 12px; }
@@ -126,7 +141,7 @@ h3 .fa { margin-right: 5px; }
 .ui-dark h2 { color: white; }
 .ui-dark h3 { color: white; }
 
-.buttons { padding: 14px 15px 0; border-top: 1px solid #E0E0E0; height: 55px; }
+.buttons { padding: 11px 15px 0; border-top: 1px solid #E0E0E0; height: 50px; }
 .buttons .link { margin-left: 10px; font-size: 12px; color: gray; }
 .ui-layout-bottom .buttons { border-top: 0; }
 .ui-dark .buttons { border-top-color: #404040; }
@@ -143,11 +158,6 @@ h3 .fa { margin-right: 5px; }
 .button:disabled { opacity: 1; background-color: #D0D0D0; color: #A0A0A0; cursor: not-allowed; }
 .ui-dark .button:disabled { background-color: #404040; }
 .button .fa { margin-right: 5px; }
-
-.alert { color: #856404; background-color: #FFFFD5; border: 1px solid #e8e6bd; border-radius: 3px; padding: 10px 15px; font-size: 12px; line-height: 16px; }
-.ui-dark .alert { background-color: #4a4a38; border-color: #656450; color: #a59a7a; }
-.ui-dark .bg-yellow { background-color: #2b2c31; }
-.ui-dark .bg-yellow hr { border-color: #333540; }
 
 .accountphoto { background-color: #F0F0F0; padding: 20px 0; }
 .accountphoto img { max-width: 110px; }
@@ -175,6 +185,7 @@ h3 .fa { margin-right: 5px; }
 .buttonbar .button i { margin-right: 8px; }
 .buttonbar span.cancel { line-height: 39px; display: inline-block; color: gray; font-size: 12px; cursor: pointer; }
 .buttonbar span.cancel:hover { text-decoration: underline; }
+.pointer { cursor: pointer; }
 
 @media(max-width: 767px) {
 	.panel { border-right: 0; }
@@ -235,3 +246,6 @@ h3 .fa { margin-right: 5px; }
 .keyvalue .key i { margin-right: 4px; }
 .keyvalue .value { font-size: 12px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 .keyvalue .value .tbgcolor { font-size: 11px; }
+
+
+.ui-directory .selected { color: white; }

@@ -43,7 +43,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('blocked', Boolean);
 	schema.define('welcome', Boolean);
 	schema.define('darkmode', Boolean);
-	schema.define('windows', Boolean);
+	schema.define('desktop', Number);
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
@@ -164,11 +164,11 @@ NEWSCHEMA('Users', function(schema) {
 		opt.language && builder.gridfilter('language', opt, String);
 		opt.supervisor && builder.gridfilter('supervisor', opt, String);
 		opt.deputy && builder.gridfilter('deputy', opt, String);
+		opt.desktop && builder.gridfilter('desktop', opt, Number);
 		opt.inactive && builder.query('inactive=' + (BOOL[opt.inactive] || 'false'));
 		opt.active && builder.query('inactive={0} AND blocked={0}'.format(BOOL[opt.active] || 'false'));
 		opt.blocked && builder.query('blocked=' + (BOOL[opt.blocked] || 'false'));
 		opt.darkmode && builder.query('darkmode=' + (BOOL[opt.darkmode] || 'false'));
-		opt.windows && builder.query('windows=' + (BOOL[opt.windows] || 'false'));
 		opt.sa && builder.query('sa=' + (BOOL[opt.sa] || 'false'));
 		opt.otp && builder.query('otp=' + (BOOL[opt.otp] || 'false'));
 		opt.online && builder.query('online=' + (BOOL[opt.online] || 'false'));
@@ -207,9 +207,33 @@ NEWSCHEMA('Users', function(schema) {
 
 	}, 'statusid:Number,contractid:Number,page:Number,limit:Number,statusid:Number');
 
+	schema.addWorkflow('check', function($) {
+
+		if (!$.model.email && !$.model.login)
+			return $.success();
+
+		var internal = $.options ? $.options.internal : false;
+		var id = ($.controller == null && model.previd ? model.previd : (internal ? $.options.id : '') || $.id) || 'x';
+		var db = DBMS();
+
+		if ($.model.email) {
+			db.check('tbl_user').query('email=$1 AND id<>$2', [$.model.email, id]);
+			db.err('error-users-email', true);
+		}
+
+		if ($.model.login) {
+			db.check('tbl_user').query('login=$1 AND id<>$2', [$.model.login, id]);
+			db.err('error-users-login', true);
+		}
+
+		db.callback($.done());
+	});
+
 	schema.setInsert(function($) {
 
-		if ($.controller && FUNC.notadmin($))
+		var internal = $.options ? $.options.internal : false;
+
+		if (!internal && $.controller && FUNC.notadmin($))
 			return;
 
 		var model = $.clean();
@@ -463,9 +487,15 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			if (!keys || keys.groups) {
+
 				if (model.groups)
 					model.groups.sort();
-				response.groupshash = model.groups ? (model.groups.join(',').crc32(true) + '') : '';
+
+				var grouphash = model.groups ? (model.groups.join(',').crc32(true) + '') : '';
+				if (response.grouphash !== grouphash)
+					modified = true;
+
+				response.groupshash = grouphash;
 				response.groups = model.groups;
 			}
 
@@ -506,8 +536,8 @@ NEWSCHEMA('Users', function(schema) {
 			if (!keys || keys.volume)
 				response.volume = model.volume;
 
-			if (!keys || keys.windows)
-				response.windows = model.windows !== false;
+			if (!keys || keys.desktop)
+				response.desktop = model.desktop;
 
 			if (isdatemodified(response.dtbirth, model.dtbirth)) {
 				response.dtbirth = model.dtbirth;
@@ -700,7 +730,7 @@ NEWSCHEMA('Users', function(schema) {
 			opt.active && builder.query('inactive={0} AND blocked={0}'.format(BOOL[opt.active] || 'false'));
 			opt.blocked && builder.query('blocked=' + (BOOL[opt.blocked] || 'false'));
 			opt.darkmode && builder.query('darkmode=' + (BOOL[opt.darkmode] || 'false'));
-			opt.windows && builder.query('windows=' + (BOOL[opt.windows] || 'false'));
+			opt.desktop && builder.gridfilter('desktop', opt, Number);
 			opt.sa && builder.query('sa=' + (BOOL[opt.sa] || 'false'));
 			opt.otp && builder.query('otp=' + (BOOL[opt.otp] || 'false'));
 			opt.online && builder.query('online=' + (BOOL[opt.online] || 'false'));

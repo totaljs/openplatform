@@ -31,15 +31,17 @@
 
 	@{if user.colorscheme}
 	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
+	.ui-radiobutton-selected i {border-color:@{user.colorscheme}!important}
+	.ui-radiobutton-selected i:before {background-color:@{user.colorscheme}!important}
 	.button,.submit{background-color:@{user.colorscheme}}
 	.volume .selected {background-color:@{user.colorscheme};color:white}
 	.ui-singleupload{color:@{user.colorscheme}!important}
 	@{else}
 	.volume .selected {background-color:#4285f4;color:white}
 	@{fi}
-	body { background-color: #@{if user.darkmode}303030@{else}E0E0E0@{fi}; }
+	body { background-color: #@{if user.darkmode}303030@{else}F9F9F9@{fi}; }
 	.ui-scrollbar-y { width: 5px; }
-	@{if user.windows || mobile}
+	@{if user.desktop === 1 || mobile}
 	.centered { background-color: white;}
 	@{else}
 	.centered { max-width: 600px; width: 100%; border: 1px solid #E0E0E0; background-color: white; margin: 0 auto; }
@@ -49,12 +51,12 @@
 </style>
 
 <div data---="audio__account.volume"></div>
-@{if !user.windows && !mobile}
+@{if user.desktop !== 1 && !mobile}
 <br />
 <br />
 @{fi}
 <div class="centered">
-	<div data---="scrollbar__account__margin:@{if user.windows || mobile}55@{else}130@{fi};parent:window;track:changepassword,response">
+	<div data---="scrollbar__account__margin:@{if user.desktop === 1 || mobile}55@{else}130@{fi};parent:window;track:changepassword,response">
 		<div class="accountphoto">
 			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
 			<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
@@ -69,12 +71,17 @@
 					<div data---="input__account.phone__innerlabel:1">@(Phone number)</div>
 				</div>
 			</div>
+			@{if CONF.allowtheme}
 			<div data---="colorselector__account.colorscheme__null" style="margin-bottom:5px"></div>
+			@{fi}
+
+			@{if CONF.allowbackground}
 			<div style="font-size:12px">
 				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
 				<div data---="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
 			</div>
 			<div class="clearfix"></div>
+			@{fi}
 			<hr />
 			<div class="ui-appearance" data---="appearance__account.darkmode">
 				<div class="ui-appearance-label">
@@ -101,19 +108,22 @@
 					<div data---="checkbox__account.notifications">@(Enable notifications)</div>
 					<div data---="checkbox__account.notificationsemail">@(Enable email notifications)</div>
 					<div data---="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
-					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
 				</div>
 				<div class="col-2">
-					<div data---="checkbox__account.windows">@(Multiple application interface)</div>
+					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
 					<div data---="checkbox__account.otp" class="b">@(Enable 2FA one-time password)</div>
 					<div data---="checkbox__account.changepassword" class="b red">@(Change password)</div>
 				</div>
 			</div>
 
-			<div data-bind="account.windows__show:backupdata?value!==backupdata.windows:false" class="hidden alert mt10">
+			@{if CONF.allowdesktop}
+			<div data---="radiobutton__account.desktop__items:@(Windowed mode)|1,@(Tabbed mode)|2,@(Portal mode)|3;type:number__1" class="mt10"><b>@(Desktop mode)</b></div>
+			<div data-bind="account.desktop__show:backupdata?value!==backupdata.desktop:false" class="hidden alert mt10">
 				<i class="fa fa-warning mr5"></i><b class="red">@(IMPORTANT)</b>: @(if you save this settings then the platform will be reloaded automatically because you have changed a layout.)
 			</div>
+			@{fi}
 		</div>
+
 		<div data-bind="account.otp2__show" class="padding bg-smoke hidden" style="margin:20px 0">
 			<div data-bind="%totpqrcode__template">
 				<script type="text/html">
@@ -150,7 +160,7 @@
 		<div class="scroller-padding npt">
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<div class="padding">
-					<div data---="input__account.password__maxlength:30;type:password;required:1;innerlabel:1">@(Login password)</div>
+					<div data---="input__account.password__maxlength:30;type:password;required:1;innerlabel:1">@(New password)</div>
 					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
 				</div>
 			</div>
@@ -193,14 +203,11 @@
 	</div>
 </div>
 
-@{json(CONF.languages, 'languagesdata')}
-
 <script>
 
 	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
 	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
 	var timeformats = [{ id: 24, name: '@(24 hour clock)' }, { id: 12, name: '@(12 hour clock)' }];
-	var languages = PARSE('#languagesdata');
 	var backupdata = null;
 
 	OP.init(function(err, meta) {
@@ -209,6 +216,10 @@
 			window.close();
 		} else
 			account_refresh();
+	});
+
+	OP.on('appearance', function(profile) {
+		CSS('.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
 	});
 
 	function account_refresh() {
@@ -235,8 +246,6 @@
 				OP.message('@(Your account has been updated successfully.)');
 				OP.send('refreshprofile');
 				OP.close();
-				if (backupdata && backupdata.windows !== account.windows)
-					OP.send('$windows');
 			} else
 				OP.message(response, 'warning');
 		});

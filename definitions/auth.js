@@ -30,6 +30,7 @@ AUTH(function($) {
 	opt.key = CONF.cookie_key || 'auth';
 	opt.name = CONF.cookie;
 	opt.expire = CONF.cookie_expiration || '3 days';
+	opt.ddos = 5;
 
 	MAIN.session.getcookie($, opt, function(err, profile, meta, init) {
 
@@ -39,10 +40,6 @@ AUTH(function($) {
 				DDOS[key]++;
 			else
 				DDOS[key] = 1;
-
-			// @TODO: done
-			//if (DDOS[key] > 5)
-			//	FUNC.logger('protection', key);
 
 			$.invalid();
 
@@ -58,8 +55,8 @@ AUTH(function($) {
 
 			profile.ip = $.ip;
 
-			if (profile.windows == null)
-				profile.windows = true;
+			if (profile.desktop == null)
+				profile.desktop = 1;
 
 			if (profile.online === false || locked) {
 				profile.online = true;

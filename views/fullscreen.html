@@ -14,11 +14,11 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@17.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
 	@{if user && (user.background || CONF.background)}
 	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
 	@{fi}
-	<script src="@{'%cdn'}/spa.min@17.js"></script>
+	<script src="@{'%cdn'}/spa.min@18.js"></script>
 	@{import('meta', 'head', 'fullscreen.css', 'fullscreen.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
@@ -30,12 +30,13 @@
 	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
 	<div data---="LAZY calendar"></div>
 	<div data---="LAZY tooltip"></div>
-	<div data---="LAZY message__null__button:@(Close)"></div>
 	<div data---="LAZY menu"></div>
+	<div data---="message__null__button:@(Close)"></div>
 	<div data---="nativenotifications"></div>
 	<div data---="audio__user.volume"></div>
 	<div data---="loading" class="hidden"></div>
 	<div data---="shortcuts"></div>
+	<div data---="markdown"></div>
 
 	<footer>
 		<div class="samode hidden userbg" data-bind="user.sa__show__delay:200" title="@(Super Administrator)"><i class="fa fa-unlock mr5"></i>@(SA)</div>
@@ -49,14 +50,16 @@
 
 		<div class="button-window exec tooltip" data-bind="common.focused__.red" data-exec="Dashboard/closefocused" data-title="@(Close)"><i class="fa fa-times"></i></div>
 
+		@{if CONF.allowclock}
 		<div class="datetime hidden-xs">
 			<div data---="time"></div>
 		</div>
+		@{fi}
 
 		<div class="button-window hidden-xs exec tooltip" data-exec="Dashboard/showappsettings" id="appmenu" data-bind="common.focused__.usercolor" data-title="@(Application settings)"><i class="fa fa-cog"></i></div>
 		<div class="button-status exec visible-xs" title="@(App menu)" data-exec="Dashboard/showappmenu"><i class="fa fa-ellipsis-v"></i></div>
 
-		@{if !user.guest}
+		@{if !user.guest && CONF.allowstatus}
 		<div class="button-status exec hidden-xs tooltip" data-title="@(My status)" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
 		@{fi}
 
@@ -78,32 +81,18 @@
 			</div>
 		</div>
 		@{if !user.guest}
-		<div class="button-notifications exec tooltip" data-title="@(Notifications)" data-path="common.notifications" data-value="!common.notifications">
+		<div class="button-notifications exec tooltip" data-title="@(Notifications)" data-path="common.form" data-value="'notifications'">
 			<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
-			<i class="far fa-bell" data-bind="common.notifications__.fa:!!value__.far:!value"></i>
+			<i class="far fa-bell"></i>
 		</div>
 		@{fi}
-		<div class="scrollerbuttons">
+		<div class="scrollerbuttons hidden">
 			<button class="exec" data-exec="Dashboard/scrollapps" name="left"><i class="fa fa-angle-left"></i></button>
 			<button class="exec" data-exec="Dashboard/scrollapps" name="right"><i class="fa fa-angle-right"></i></button>
 		</div>
 	</header>
 
-	<div data---="notifications__common.notifications" data-bind="common.notifications__show" class="hidden">
-		<div class="ui-notifications-clear hidden"><i class="fa fa-trash"></i>@(Remove all notifications)</div>
-		<script type="text/html">
-			<div class="ui-notifications-message{{ if type === 1 }} ui-notifications-success{{ else if type === 2 }} ui-notifications-error{{ fi }}"{{ if data }} data-data="{{ data | encodedata }}" data-id="{{ appid }}"{{ fi }}>
-				<div class="ui-notifications-close"><i class="fa fa-times"></i></div>
-				<div class="ui-notifications-date"><i class="fa fa-clock-o"></i>{{ dtcreated | time }}</div>
-				<div class="ui-notifications-title"><i class="{{ icon | icon }}"></i><b>{{ title }}</b></div>
-				<div class="ui-notifications-padding">
-					<div class="ui-notifications-body">{{ body | markdown_notifications }}</div>
-				</div>
-			</div>
-		</script>
-	</div>
-
-	<div data---="quicknotifications" data-bind="common.notifications__.ui-quicknotifications-margin">
+	<div data---="quicknotifications">
 		<script type="text/html">
 			<div class="ui-quicknotifications-message"{{ if data }} data-data="{{ data | encodedata }}" data-id="{{ appid }}"{{ fi }}>
 				<div class="ui-quicknotifications-close"><i class="fa fa-times"></i></div>
@@ -155,9 +144,11 @@
 	</div>
 
 	<div data---="console__common.consolewindow__datasource:common.console"></div>
+	<div data---="importer__common.form__if:reportbug;url:/forms/report.html"></div>
 	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
 	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
+	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
 
 	<script>
 
@@ -165,6 +156,7 @@
 
 		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && window.require != null;
 		common.electronpadding = 0;
+		common.defaultappid = '@{'%defaultappid'}';
 
 		function hidetitlemessage(el) {
 			common.titlescache && clearTimeout(common.titlescache);
@@ -193,17 +185,27 @@
 		});
 
 		if (!isMOBILE) {
-			$(document).on('mouseenter mouseleave', '.tooltip', function(e) {
-				if (e.type === 'mouseenter') {
-					var el = $(this);
-					var opt = {};
-					opt.element = el;
-					opt.html = el.attrd('title');
-					opt.align = 'bottom';
-					opt.timeout = 1500;
-					SETTER('tooltip', 'show', opt);
-				} else
-					SETTER('tooltip', 'hide');
+
+			var hidetooltip = function() {
+				clearTimeout2('tooltip');
+				SETTER('tooltip', 'hide', true);
+			};
+
+			$(document).on('mouseenter', '.tooltip', function(e) {
+				clearTimeout2('tooltiphide');
+				var el = $(this);
+				var opt = {};
+				opt.element = el;
+				opt.html = el.attrd('title');
+				opt.align = 'bottom';
+				opt.timeout = 1500;
+				SETTER('tooltip', 'show', opt);
+			}).on('mousemove', function(e) {
+				if (e.pageY > 50)
+					setTimeout2('tooltiphide', hidetooltip, 200);
+			}).on('click', function() {
+				clearTimeout2('tooltip');
+				SETTER('!tooltip', 'hide');
 			});
 		}
 
@@ -212,9 +214,7 @@
 				el.rclass('hidden');
 				setTimeout(function() {
 					el.aclass('startmenu-visible');
-					if (isMOBILE)
-						SET('common.notifications', false);
-					else
+					if (!isMOBILE)
 						$('.startmenu-search').find('input').focus();
 					el.find('.noscrollbar').noscrollbar();
 				}, 10);
@@ -238,22 +238,6 @@
 		function mainmenu(el) {
 			SET('common.startmenuapps', true);
 			TOGGLE('common.startmenu');
-		}
-
-		WATCH('dashboard.apps', function() {
-			EXEC('Dashboard/saveState');
-		});
-
-		WATCH('common.notifications', function(path, value) {
-			value && refresh_notifications();
-		});
-
-		function refresh_notifications() {
-			AJAX('GET /api/notifications/', function(arr) {
-				SETTER('notifications', 'append', arr.take(50));
-			});
-			FUNC.faviconbadge(false);
-			SET('user.countnotifications', 0);
 		}
 
 		function internalapp(el) {
@@ -396,9 +380,10 @@
 
 			self.resizeapps = function(value, path, el) {
 				setTimeout2('resizeapps', function() {
+					var size = ($('.datetime').length ? 160 : 0) + ($('.button-status').length ? 50 : 0);
 					el.css('width', el.find('button').length * 45);
 					var parent = el.parent().parent();
-					var w = WW - (204 + (isMOBILE && WIDTH() === 'xs' ? -24 : 220));
+					var w = WW - (204 + (isMOBILE && WIDTH() === 'xs' ? -24 : (size + 10)));
 					parent.css('width', w);
 					$('.scrollerbuttons').tclass('hidden', isMOBILE || parent.find('nav').width() < w);
 				}, 100, el);
@@ -408,7 +393,7 @@
 				if (common.page !== 'dashboard')
 					SET('common.page', 'dashboard');
 				self.hidemenu();
-				var id = el.attrd('id');
+				var id = el instanceof jQuery ? el.attrd('id') : el;
 				var app = dashboard.apps.findItem('id', id);
 				if (app == null)
 					return;
@@ -446,8 +431,15 @@
 
 			self.navigate = function(el) {
 
-				var id = el.attrd('id');
-				var data = decodeURIComponent(el.attrd('data'));
+				var id, data;
+
+				if (el instanceof jQuery) {
+					id = el.attrd('id');
+					data = decodeURIComponent(el.attrd('data'));
+				} else {
+					id = el.id;
+					data = el.data;
+				}
 
 				var app = user.apps.findItem('id', id);
 				if (!app)
@@ -455,8 +447,10 @@
 
 				var iframe = dashboard.apps.findItem('id', app.id);
 				if (iframe) {
-					self.open(el);
-					// SETTER('processes', 'sendnotifydata', app.id, data);
+					self.open(el instanceof jQuery ? el : el.id);
+					setTimeout(function() {
+						SETTER('processes', 'sendnotifydata', app.id, data);
+					}, 500);
 				} else {
 					app.notifydata = data;
 					AJAX('GET /api/profile/{0}/'.format(app.id), { href: app.url }, FUNC.open);
@@ -497,7 +491,7 @@
 			};
 
 			self.saveState = function() {
-				CACHE('running', dashboard.apps.map(FN('n => n.id')), '1 year');
+				CACHE('focused', common.focused, '1 year');
 			};
 
 			self.showappmenu = function() {
@@ -515,33 +509,36 @@
 
 			self.init = function() {
 				self.init = null;
-				var running = CACHE('running');
-				if (running && running.length) {
-					running.wait(function(id, next) {
-						var app = user.apps.findItem('id', id);
-						if (app) {
-							var el = $('.app[data-id="{0}"]'.format(app.id));
-							if (!el.length)
-								el = $('.internal[data-id="{0}"]'.format(app.id));
-							if (el.length) {
-								internalapp(el);
-								setTimeout(next, 800);
-								return;
-							}
-						}
-						next();
-					});
+				var running = CACHE('focused');
+				if (running) {
+					var app = user.apps.findItem('id', running);
+					if (app) {
+						var el = $('.app[data-id="{0}"]'.format(app.id));
+						if (!el.length)
+							el = $('.internal[data-id="{0}"]'.format(app.id));
+						if (el.length)
+							internalapp(el);
+					}
 				} else {
 
 					var skip = false;
-					var wa = $('#welcomeapp');
 
-					if (wa.length) {
-						var ls = localStorage;
-						if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
-							ls.setItem('welcome', '1');
+					if (common.defaultappid) {
+						if (user.apps.findItem('id', common.defaultappid)) {
+							internalapp(common.defaultappid);
 							skip = true;
-							internalapp(wa);
+						}
+					}
+
+					if (!skip) {
+						var wa = $('#welcomeapp');
+						if (wa.length) {
+							var ls = localStorage;
+							if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
+								ls.setItem('welcome', '1');
+								skip = true;
+								internalapp(wa);
+							}
 						}
 					}
 
@@ -563,9 +560,10 @@
 				opt.items.push({ name: common.muted[iframe.id] ? '<strong>@(Enable sounds)</strong>' : '@(Mute sounds)', icon: common.muted[iframe.id] ? 'volume-up red' : 'volume-mute', value: 'mutesounds' });
 				opt.items.push({ name: iframe.meta.notifications ? '@(Mute notifications)' : '<strong>@(Enable notifications)</strong>', icon: (iframe.meta.notifications ? '!far fa-bell-slash' : 'bell red'), value: 'mutenotifications' });
 				opt.items.push('-');
-				opt.items.push({ name: '@(Print)', icon: 'print', value: 'print' });
+				opt.items.push({ name: '@(Print screen)', icon: 'print', value: 'print' });
 				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'refresh' });
 				opt.items.push({ name: '@(Changelog)', icon: 'history', value: 'changelog' });
+				opt.items.push({ name: '@(Report a bug)', icon: 'bug', value: 'report' });
 				opt.items.push('-');
 				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
 				next();
@@ -628,6 +626,14 @@
 			e.stopPropagation();
 		}, true);
 
+		SETTER(true, 'shortcuts', 'register', 'esc', function(e) {
+			if (common.form) {
+				NUL('common.form');
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		}, true);
+
 		WATCH('common.focused', function(path, id) {
 			var nav = $('header').find('nav');
 			nav.find('button.focused').rclass('focused');
@@ -642,6 +648,7 @@
 				common.statustimeout = null;
 				NULL('common.status');
 			}
+			EXEC('Dashboard/saveState');
 		});
 
 		Thelpers.status = function(value, icon) {
@@ -719,7 +726,7 @@
 					return;
 				}
 
-				if (response.windows !== user.windows) {
+				if (response.desktop !== user.desktop) {
 					// layout changed
 					location.reload(true);
 					return;
@@ -767,10 +774,11 @@
 							require('electron').ipcRenderer.send('setBadge', { count: user.countnotifications });
 
 						SETTER('nativenotifications', 'append', '@(Alert!)', '@(You have {0}.)'.format(user.countnotifications.pluralize(@('# unread notifications', '# unread notification', '# unread notifications', '# unread notifications'))), function() {
-							SET('common.notifications', true);
+							SET('common.form', 'notifications');
 						}, '/icon.png');
 
-						common.notifications && refresh_notifications();
+						if (common.form === 'notifications')
+							EXEC('notifications/refresh');
 
 					} else
 						FUNC.faviconbadge(false);
@@ -847,7 +855,7 @@
 					return;
 				}
 
-				if (window.user && window.user.windows != null && window.user.windows !== profile.windows) {
+				if (window.user && window.user.desktop != null && window.user.desktop !== profile.desktop) {
 					location.reload(true);
 					return;
 				}
@@ -984,10 +992,15 @@
 			if (!hidden)
 				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
 
+			opt.items.push({ name: '@(Report a bug)', icon: 'bug', value: 'report' });
+			opt.items.push('-');
 			opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
 
 			opt.callback = function(item) {
-				SETTER('processes', item.value, id);
+				if (item.value === 'report')
+					FUNC.reportbug(id);
+				else
+					SETTER('processes', item.value, id);
 			};
 
 			SETTER('menu', 'show', opt);
@@ -1034,7 +1047,7 @@
 
 		ON('ready', function() {
 			WAIT('user.openplatformid', function() {
-				NAV.query.notifications && SET('common.notifications', true, 2000);
+				NAV.query.notifications && SET('common.form', 'notifications', 2000);
 				if (NAV.query.password && !user.guest)
 					EXEC('Dashboard/showprofile');
 
@@ -1137,7 +1150,7 @@
 
 	</script>
 
-	@{components('openplatform')}
+	@{components('openplatform_tabbed')}
 
 </body>
 </html>

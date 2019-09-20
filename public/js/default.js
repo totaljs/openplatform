@@ -83,8 +83,7 @@ ON('resize', function() {
 	var el = $('#dashboardapps');
 	if (el) {
 		var tmp = PLUGIN('Dashboard');
-		if (tmp)
-			tmp.resizeapps.call(el, null, null, el);
+		tmp && tmp.resizeapps.call(el, null, null, el);
 	}
 });
 
@@ -288,9 +287,7 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'screenshot':
-			SET('screenshot.data', data.body);
-			// screenshot.app = app ? app.internal : null;
-			SET('common.form', 'screenshot');
+			SET('reportbug.screenshot', data.body);
 			break;
 
 		case 'appearance':
@@ -451,14 +448,15 @@ $(window).on('message', function(e) {
 			break;
 		case 'done':
 			if (data.body instanceof Array) {
-				FUNC.playsound('alert');
+				FUNC.playsound('alert', app.id);
 				SETTER('message', 'warning', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body[0].error.markdown(MD_LINE));
 			} else {
-				FUNC.playsound('done');
+				FUNC.playsound('done', app.id);
 				FUNC.titlechange('success', app.id, data.body);
 			}
 			break;
 		case 'focus':
+			SETTER('!tooltip', 'hide');
 			common.startmenu && SET('common.startmenu', false);
 			app && processes.focus(app.id);
 			break;
@@ -508,7 +506,7 @@ $(window).on('message', function(e) {
 				data.body.body = data.body.body[0].error;
 			}
 
-			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'waiting' ? 'done' : 'success');
+			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'waiting' ? 'done' : 'success', app.id);
 			SETTER('snackbar', data.body.type || 'success', data.body.body.markdown(MD_LINE), data.body.button);
 			break;
 
@@ -538,16 +536,22 @@ $(window).on('message', function(e) {
 				data.body.body = data.body.body[0].error;
 			}
 
-			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'info' ? 'done' : 'success');
+			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'info' ? 'done' : 'success', app.id);
 			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body.markdown(MD_LINE), null, null, data.body.button);
 			break;
 
 		case 'confirm':
-			FUNC.playsound('confirm');
+			FUNC.playsound('confirm', app.id);
 			SETTER('confirm', 'show', data.body.body, data.body.buttons, function(index) {
 				var iframe = processes.findProcess(app.id);
 				iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
 			});
+			break;
+		case 'mail':
+			AJAX('POST /api/op/mail/', data.body, NOOP);
+			break;
+		case 'report':
+			FUNC.reportbug(app.id, data.body.type, data.body.body, data.body.high);
 			break;
 
 		case 'play':
@@ -620,8 +624,9 @@ $(window).on('message', function(e) {
 	}
 });
 
-FUNC.playsound = function(name) {
-	user.sounds && SETTER('audio', 'play', '/sounds/' + name + '.mp3');
+FUNC.playsound = function(name, appid) {
+	if ((!appid || !common.muted[appid]) && user.sounds)
+		SETTER('audio', 'play', '/sounds/' + name + '.mp3');
 };
 
 FUNC.open = function(data) {

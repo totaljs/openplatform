@@ -57,7 +57,7 @@ CREATE TABLE "public"."tbl_user" (
 	"darkmode" bool DEFAULT false,
 	"inactive" bool DEFAULT false,
 	"sounds" bool DEFAULT true,
-	"windows" bool DEFAULT false,
+	"desktop" int2 DEFAULT '1'::smallint,
 	"otp" bool DEFAULT false,
 	"online" bool DEFAULT false,
 	"dtbirth" timestamp,
@@ -85,7 +85,7 @@ CREATE TABLE "public"."tbl_app" (
 	"servicetoken" varchar(40),
 	"search" varchar(40),
 	"description" varchar(100),
-	"serialnumber" varchar(50),
+	"sn" varchar(50),
 	"author" varchar(50),
 	"type" varchar(30),
 	"icon" varchar(30),
@@ -138,6 +138,7 @@ CREATE TABLE "public"."tbl_user_app" (
 	"countnotifications" int4 DEFAULT 0,
 	"countbadges" int4 DEFAULT 0,
 	"countopen" int4 DEFAULT 0,
+	"dtopen" timestamp,
 	"dtcreated" timestamp,
 	"dtupdated" timestamp,
 	CONSTRAINT "tbl_user_app_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
@@ -200,10 +201,29 @@ CREATE TABLE "public"."tbl_user_notification" (
 	"body" varchar(1000),
 	"data" varchar(1000),
 	"ip" cidr,
+	"unread" boolean DEFAULT TRUE,
 	"dtcreated" timestamp DEFAULT now(),
 	CONSTRAINT "tbl_notification_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
 	CONSTRAINT "tbl_notification_userappid_fkey" FOREIGN KEY ("userappid") REFERENCES "public"."tbl_user_app"("id") ON DELETE CASCADE,
 	CONSTRAINT "tbl_notification_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE
+);
+
+CREATE TABLE "public"."tbl_user_report" (
+	"id" varchar(25) NOT NULL,
+	"userid" varchar(25),
+	"appid" varchar(25),
+	"type" varchar(30),
+	"subject" varchar(100),
+	"body" text,
+	"ip" cidr,
+	"issolved" bool DEFAULT false,
+	"ispriority" bool DEFAULT false,
+	"isremoved" bool DEFAULT false,
+	"dtsolved" bool,
+	"dtcreated" timestamp DEFAULT now(),
+	CONSTRAINT "tbl_report_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
+	CONSTRAINT "tbl_report_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
+	PRIMARY KEY ("id")
 );
 
 CREATE TABLE "public"."tbl_settings" (
@@ -266,6 +286,9 @@ CREATE TABLE "public"."tbl_schema_field" (
 	"note" varchar(500),
 	"required" bool DEFAULT false,
 	"position" int2 DEFAULT '0'::smallint,
+	"width" int2,
+	"height" int2,
+	"items" _varchar,
 	"readers" _varchar,
 	"writers" _varchar,
 	"islinked" bool DEFAULT false,
@@ -274,7 +297,7 @@ CREATE TABLE "public"."tbl_schema_field" (
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE "public"."tbl_schema_state" (
+CREATE TABLE "public"."tbl_schema_status" (
 	"id" varchar(25) NOT NULL,
 	"schemaid" varchar(25),
 	"nextid" _varchar,
@@ -340,7 +363,7 @@ CREATE VIEW view_user AS
 		a.colorscheme,
 		a.darkmode,
 		a.background,
-		a.windows,
+		a.desktop,
 		a.dateformat,
 		a.timeformat,
 		a.numberformat,

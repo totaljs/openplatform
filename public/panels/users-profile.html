@@ -1,6 +1,6 @@
 <div data---="panel__common.panel__if:usersprofile;reload:usersprofilepanel/reload;icon:user;scrollbar:false;autofocus:1;width:500" class="hidden">
 	<div data-scope="usersprofilepanel">
-		<div data---="viewbox__common.panel__height:100;margin:55;scrollbar:1;parent:.ui-panel-body;scrolltop:true">
+		<div data---="viewbox__common.panel__height:100;margin:50;scrollbar:1;parent:.ui-panel-body;scrolltop:true">
 
 			<div class="accountphoto">
 				<div data---="preview__?.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
@@ -168,7 +168,6 @@
 						</div>
 					</div>
 					<div class="col-sm-6 m">
-						<div data---="checkbox__?.windows__null__true">@(Multiple document interface)</div>
 						<div data---="checkbox__?.sounds__checkicon:volume-up__true">@(Enable sounds)</div>
 						<div data---="checkbox__?.notifications__checkicon:bell__true">@(Enable notifications)</div>
 						<div data---="checkbox__?.notificationsemail__checkicon:bell__true">@(Enable email notifications)</div>
@@ -178,10 +177,11 @@
 						</div>
 					</div>
 				</div>
-
+				<br />
+				<div data---="radiobutton__?.desktop__items:@(Windowed mode)|1,@(Tabbed mode)|2,@(Portal mode)|3;type:number__1" class="m"><b>@(Desktop mode)</b></div>
 				<div class="caption"><i class="fa fa-lock"></i>@(Appearance)</div>
-				<div data---="radiobutton__?.darkmode__items:@(Light mode)|false,@(Dark mode)|true__'false'" class="m"></div>
-				<div data---="colorselector__?.colorscheme__null__'#4285f4'" style="margin-bottom:5px"></div>
+				<div data---="radiobutton__?.darkmode__items:@(Light mode)|false,@(Dark mode)|true__'false'"></div>
+				<div data---="colorselector__?.colorscheme__null__'#4285f4'" style="margin-bottom:15px"></div>
 
 				<div class="caption"><i class="fa fa-lock"></i>@(Login data)</div>
 				<div class="row">
@@ -189,7 +189,7 @@
 						<div data---="input__?.login__maxlength:50;required:1__''">@(Login name)</div>
 					</div>
 					<div class="col-sm-6 m">
-						<div data---="input__?.password__maxlength:30;required:1__GUID(20)">@(Login password)</div>
+						<div data---="input__?.password__maxlength:30;required:1__GUID(20)">@(Password)</div>
 						<div class="help">
 							<span class="link exec" data-exec="?/password">@(Generate password)</span>
 						</div>
@@ -202,7 +202,7 @@
 			</div>
 			<div class="padding">
 				<div class="caption"><i class="fa fa-rocket"></i>@(Explicitly allowed apps)</div>
-				<div data---="apps__?.appsroles__datasource:main.apps"></div>
+				<div data---="apps__?.appsroles__datasource:main.apps__{}"></div>
 			</div>
 		</div>
 		<div class="buttons" data---="validation__?">
@@ -223,7 +223,7 @@
 		exports.submit = function() {
 			var model = CLONE(GETR('?'));
 			model.darkmode = model.darkmode === 'true';
-			var keys = Object.keys(model.appsroles);
+			var keys = Object.keys(model.appsroles || EMPTYOBJECT);
 
 			model.apps = [];
 
@@ -240,6 +240,7 @@
 				roles = roles.remove(function(role) {
 					return app.roles.indexOf(role) === -1;
 				});
+
 				model.apps.push({ id: key, roles: roles });
 			}
 

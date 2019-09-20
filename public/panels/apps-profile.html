@@ -1,6 +1,6 @@
 <div data---="panel__common.panel__if:appsprofile;reload:appsprofilepanel/reload;icon:rocket;scrollbar:false;autofocus:1;width:500" class="hidden">
 	<div data-scope="appsprofilepanel">
-		<div data---="viewbox__common.panel__height:100;margin:55;scrollbar:1;parent:.ui-panel-body">
+		<div data---="viewbox__common.panel__height:100;margin:50;scrollbar:1;parent:.ui-panel-body">
 			<div class="padding npb">
 				<div data---="input__?.url__required:1;type:url;$delay:1000">@(URL address)</div>
 				<div class="help"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
@@ -35,11 +35,11 @@
 					</div>
 					<div class="keyvalue">
 						<div class="key">@(Supported roles)</div>
-						<div class="value">{{ value.meta.roles | joinbgcolor(' ') | def }}</div>
+						<div class="value">{{ value.meta.roles | joinbgcolor(' ') }}</div>
 					</div>
 					<div class="keyvalue">
 						<div class="key">@(Allowed origin)</div>
-						<div class="value">{{ value.meta.origin | join | def }}</div>
+						<div class="value">{{ value.meta.origin | join }}</div>
 					</div>
 					<br />
 					<table class="table table-small nmb table-bordered">
@@ -98,7 +98,7 @@
 			<div class="padding">
 				<div class="caption">@(Main settings)</div>
 				<div data---="input__?.title__required:1;maxlength:40" class="m">@(Title)</div>
-				<div data---="input__?.serialnumber__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX">@(Serial number)</div>
+				<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX">@(Serial number)</div>
 				<div class="help"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
 				<hr />
 				<div data---="checkbox__?.blocked__checkicon:lock">@(Application is blocked)</div>

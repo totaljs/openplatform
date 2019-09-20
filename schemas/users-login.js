@@ -1,3 +1,5 @@
+var DDOS = {};
+
 NEWSCHEMA('Users/Login', function(schema) {
 
 	schema.define('name', 'String(120)', true);
@@ -5,9 +7,20 @@ NEWSCHEMA('Users/Login', function(schema) {
 
 	schema.addWorkflow('exec', function($) {
 
+		if (DDOS[$.ip] > 5) {
+			$.invalid('error-blocked-ip');
+			return;
+		}
+
 		FUNC.login($.model.name, $.model.password, function(err, userid) {
 
 			if (!userid) {
+
+				if (DDOS[$.ip])
+					DDOS[$.ip]++;
+				else
+					DDOS[$.ip] = 1;
+
 				$.invalid('error-credentials');
 				return;
 			}
@@ -21,6 +34,12 @@ NEWSCHEMA('Users/Login', function(schema) {
 			DBMS().one('tbl_user').where('id', userid).fields('id,name,blocked,inactive').callback(function(err, response) {
 
 				if (response == null) {
+
+					if (DDOS[$.ip])
+						DDOS[$.ip]++;
+					else
+						DDOS[$.ip] = 1;
+
 					$.invalid('error-credentials');
 					return;
 				}
@@ -103,4 +122,9 @@ NEWSCHEMA('Users/Login', function(schema) {
 		});
 	});
 
+});
+
+ON('service', function(counter) {
+	if (counter % 15 === 0)
+		DDOS = {};
 });

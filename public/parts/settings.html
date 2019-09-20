@@ -2,7 +2,7 @@
 	<div class="header">
 		<label><i class="fa fa-cog"></i>@(Settings)</label>
 	</div>
-	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:105;$class:invisible" class="invisible">
+	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:100;$class:invisible" class="invisible">
 		<div class="maxwidthleft">
 			<div class="padding">
 
@@ -47,11 +47,27 @@
 				<div class="clearfix"></div>
 
 				<hr />
-				<div data---="checkbox__?.test">@(This is <b>Test environment</b>)</div>
-				<div data---="checkbox__?.guest">@(Allow <b>Guest user</b>)</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<div data---="checkbox__?.test">@(This is <b>Test environment</b>)</div>
+						<div data---="checkbox__?.guest">@(Allow <b>Guest user</b>)</div>
+						<div data---="checkbox__?.allowclock__checkicon:clock-o">@(Show clock)</div>
+						<div data---="checkbox__?.allowstatus__checkicon:smile">@(Allow custom users statuses)</div>
+						<div data---="checkbox__?.allowprofile">@(Users can change their profile)</div>
+					</div>
+					<div class="col-sm-4">
+						<div data---="checkbox__?.allowdesktop">@(Allow to change desktop mode)</div>
+						<div data---="checkbox__?.allowbackground">@(Allow to change backgrounds)</div>
+						<div data---="checkbox__?.allowtheme">@(Allow to change color themes)</div>
+						<div data---="checkbox__?.allowdesktopfluid">@(Enable fluid desktop mode)</div>
+					</div>
+				</div>
 				<hr />
 
 				<div class="row">
+					<div class="col-sm-4 m">
+						<div data---="input__?.defaultappid__dirsource:main.apps;dirkey:title;dirempty:@(No application)">@(Default application)</div>
+					</div>
 					<div class="col-sm-4 m">
 						<div data---="input__?.marketplace__maxlength:500;type:url;placeholder:https://domain.com/marketplace.html">@(Link to Marketplace)</div>
 					</div>
@@ -69,7 +85,7 @@
 						<div data---="input__?.sender__type:email;forcevalidation:0__'@'">@(Sender email address)</div>
 					</div>
 				</div>
-				<div data---="input__?.smtpsettings__maxlength:200;placeholder:localhost">@(SMTP settings)</div>
+				<div data---="input__?.smtpsettings__maxlength:200;dirplaceholder:@(Search application);placeholder:localhost">@(SMTP settings)</div>
 				<div class="help">@(SMTP settings have to be in valid <b>JSON format</b>, according to the Total.js documentation.) <a href="https://docs.totaljs.com/latest/en.html#pages~Troubleshooting~(smtp-settings-for-gmail-office-and-zoho)" target="_blank">@(Documentation)</a></div>
 				<hr />
 				<div data-bind="%settingssmtpresponse__template">

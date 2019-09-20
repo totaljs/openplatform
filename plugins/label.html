@@ -1,0 +1,30 @@
+<style>
+	.wc-label { height: 40px; font-size: 18px; font-weight: bold; }
+</style>
+
+<div class="wc-label">
+	<label>Label name</label>
+</div>
+
+<script meta>
+	exports.icon = 'heading';
+	exports.author = 'Peter Širka';
+	exports.name = 'Label';
+	exports.version = '1';
+</script>
+
+<script editor>
+
+	exports.options = [];
+	exports.options.push({ name: 'label', text: 'Label', type: 'string', value: 'Label name' });
+	exports.options.push({ name: 'field', text: 'Field', type: 'field' });
+
+	exports.settings = function(el, opt, changed) {
+		switch (changed) {
+			case 'label':
+				el.find('label').text(opt[changed]);
+				break;
+		}
+	};
+
+</script>

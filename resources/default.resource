@@ -27,3 +27,6 @@ error-totp                   : Token is invalid.
 smtp                         : You need to define a SMTP hostname.
 error-otp-code               : One-Time password code is invalid.
 error-otp-session            : One-Time password session is expired.
+error-blocked-ip             : Your IP has been blocked.
+error-users-email            : Email address is already used by another user.
+error-users-login            : Login name is already used by another user.

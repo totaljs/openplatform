@@ -2,8 +2,14 @@
 	<div data-scope="databasefield">
 		<div class="padding npb">
 			<div class="caption"><i class="fa fa-square"></i>@(Field settings)</div>
+
+			<!--
 			<div data---="input__?.name__maxlength:50;required:1;type:lower;placeholder:@(e.g. firstname)__''">@(Name)</div>
-			<div class="help m"><i class="fa fa-warning"></i>@(Keep name in lowercase without interruptions and special characters.)</div>
+			<div class="help m"><i class="fa fa-warning"></i>@(Keep name in lowercase without spaces, interruptions and special characters.)</div>
+			-->
+
+			<div data---="input__?.label__maxlength:50;required:1;placeholder:@(e.g. First name)__''" class="m">@(Name)</div>
+
 			<div data---="input__?.type__dirsource:databasetypes;required:1;dirplaceholder:@(Search type);placeholder:@(Enter a field type)__''" class="m">@(Type)</div>
 			<div data-bind="?.type__show:value==='text'||value==='capitalize'">
 				<div class="row">
@@ -33,6 +39,16 @@
 		exports.submit = function() {
 			var model = GETR('?');
 			AJAX('POST /api/op/schemas/{0}/fields/{1}'.format(model.schemaid, model.id), model, OP.done('@(Field has been addded successfully)', function(response) {
+
+				switch (model.type) {
+					case 'capitalize':
+					case 'text':
+						break;
+					default:
+						model.length = 0;
+						break;
+				}
+
 				if (model.id) {
 					var index = database.items[model.schemaid].fields.findIndex('id', model.id);
 					database.items[model.schemaid].fields[index] = model;

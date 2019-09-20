@@ -1,0 +1,21 @@
+{
+	"photo": "",
+	"name": "Guest",
+	"firstname": "Guest",
+	"lastname": "User",
+	"email": "info@totaljs.com",
+	"phone": "",
+	"company": "",
+	"language": "en",
+	"reference": "",
+	"sounds": true,
+	"desktop": 3,
+	"gender": "female",
+	"volume": 50,
+	"dtbirth": "1984-06-11T12:00:00.000Z",
+	"supervisorid": "",
+	"locality": "",
+	"dateformat": "yyyy-MM-dd",
+	"timeformat": 24,
+	"numberformat": 1
+}

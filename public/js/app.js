@@ -15,11 +15,11 @@ Thelpers.bgcolor = function(val) {
 };
 
 Thelpers.icon = function(val) {
-	return 'fa-' + ((/\sfar$/).test(val) ? val : (val + ' fa'));
+	return Thelpers.encode('fa-' + ((/\sfar$/).test(val) ? val : (val + ' fa')));
 };
 
 Thelpers.join = function(val, divider) {
-	return val ? val.join(divider == null ? ', ' : divider) : '';
+	return val ? Thelpers.encode(val.join(divider == null ? ', ' : divider)) : '';
 };
 
 Thelpers.joinbgcolor = function(val, divider) {
@@ -29,7 +29,7 @@ Thelpers.joinbgcolor = function(val, divider) {
 
 	var builder = [];
 	for (var i = 0; i < val.length; i++)
-		builder.push(Thelpers.bgcolor(val[i]));
+		builder.push(Thelpers.bgcolor(Thelpers.encode(val[i])));
 	return builder ? builder.join(divider == null ? ', ' : divider) : '';
 };
 

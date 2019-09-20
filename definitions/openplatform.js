@@ -14,7 +14,7 @@ var SIMPLECACHE = {};
 var DDOS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4300;           // Current version of OpenPlatform
+MAIN.version = 4400;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -64,7 +64,7 @@ FUNC.loginotp = function(login, code, callback) {
 		return;
 	}
 
-	if (MODULE('totp').totpverify(meta.otpsecret, code)) {
+	if (MODULE('totp').totpverify(meta.otpsecret, code) != null) {
 		OTPCOUNT--;
 		delete OTP[login];
 		callback(null, meta.id);
@@ -157,7 +157,7 @@ FUNC.profile = function(user, callback) {
 	meta.dateformat = user.dateformat;
 	meta.numberformat = user.numberformat;
 	meta.language = user.language;
-	meta.windows = user.windows;
+	meta.desktop = user.desktop;
 	// meta.repo = user.repo;
 
 	if (user.guest)
@@ -184,16 +184,13 @@ FUNC.profile = function(user, callback) {
 			meta.apps.push({ id: app.id, favorite: userapp.favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: userapp.notifications === false, responsive: app.responsive, countnotifications: userapp.countnotifications, countbadges: userapp.countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: userapp.position, color: app.color });
 	}
 
-	if (user.sa) {
-		//if (!user.directory) {
-			//meta.apps.push({ id: '_database', icon: 'database', title: 'Database', name: 'Database', online: true, internal: true, linker: '_database', width: 900, height: 700, resize: true, mobilemenu: false });
-			//meta.apps.push({ id: '_workshop', icon: 'rocket', title: 'Workshop', name: 'Workshop', online: true, internal: true, linker: '_workshop', width: 900, height: 700, resize: true, mobilemenu: false });
-		//}
+	if (user.sa)
 		meta.apps.push({ id: '_admin', icon: 'cog', title: 'Control panel', name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: false });
-	}
 
 	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: 'Welcome', name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false });
-	meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });
+
+	if (!user.guest)
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });
 
 	callback(null, meta);
 };
@@ -216,7 +213,7 @@ FUNC.profilelive = function(user) {
 	meta.status = user.status;
 	meta.volume = user.volume;
 	meta.darkmode = user.darkmode;
-	meta.windows = user.windows;
+	meta.desktop = user.desktop;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
 
 	if (user.guest)
@@ -281,8 +278,8 @@ FUNC.meta = function(app, user, serverside) {
 	} else
 		meta.serverside = serverside === true;
 
-	if (app.serialnumber)
-		meta.serialnumber = app.serialnumber;
+	if (app.sn)
+		meta.sn = app.sn;
 
 	if (app.allowreadmeta)
 		meta.meta = CONF.url + '/api/meta/?accesstoken=' + tokenapp;
@@ -1147,7 +1144,7 @@ ON('ready', function() {
 function readuser(id, callback) {
 	var db = DBMS();
 	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE');
-	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
+	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 	db.callback(function(err, response) {
 
 		if (err || !response) {

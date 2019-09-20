@@ -1,6 +1,7 @@
 const DB_VERSION = {};
 const DB_BADGES_RESET = { countbadges: 0 };
 const DB_BADGESNOTIFICATIONS_RESET = { countbadges: 0, countnotifications: 0 };
+const DB_OPEN = { '+countopen': 1 };
 
 NEWSCHEMA('Apps', function(schema) {
 
@@ -8,7 +9,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(40)', true);
-	schema.define('serialnumber', 'String(50)');
+	schema.define('sn', 'String(50)');
 	schema.define('permissions', Boolean);
 	schema.define('autorefresh', Boolean);
 	schema.define('blocked', Boolean);
@@ -37,7 +38,7 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.allownotifications = app.allownotifications;
 			obj.allowreadprofile = app.allowreadprofile;
 			obj.allowreadmeta = app.allowreadmeta;
-			obj.serialnumber = app.serialnumber;
+			obj.sn = app.sn;
 			obj.roles = app.roles;
 			obj.type = app.type;
 			obj.version = app.version;
@@ -272,16 +273,21 @@ NEWSCHEMA('Apps', function(schema) {
 				data.newversion = user.apps[$.id].version !== app.version;
 				data.version = user.apps[$.id].version || '';
 
+				var db = DBMS();
+
 				if (data.newversion) {
-					DB_VERSION.version = data.version;
-					DBMS().upd('tbl_user_app', DB_VERSION).where('id', user.id + $.id);
+					DB_VERSION.version = app.version;
+					user.apps[$.id].version = app.version;
+					db.mod('tbl_user_app', DB_VERSION).where('id', user.id + $.id);
 				}
+
+				DB_OPEN.dtopen = NOW;
+				db.mod('tbl_user_app', DB_OPEN).where('id', user.id + $.id);
 
 				MAIN.session.set2(user.id, user);
 			}
 
 			$.callback(data);
-			// @TODO: missing stats (count of running)
 		}
 
 	});
