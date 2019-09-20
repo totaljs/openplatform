@@ -1109,6 +1109,14 @@ function checkuser(next) {
 			model.password = 'admin';
 			model.gender = 'male';
 			model.sa = true;
+			model.desktop = 1;
+			model.notifications = true;
+			model.notificationsemail = true;
+			model.notificationsphone = true;
+			model.dateformat = 'yyyy-MM-dd';
+			model.timeformat = 24;
+			model.volume = 50;
+			model.sounds = true;
 			model.colorscheme = '#4285f4';
 			model.language = 'en';
 			model.dtbeg = NOW;

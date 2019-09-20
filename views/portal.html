@@ -78,7 +78,7 @@
 						{{ end }}
 					</script>
 				</nav>
-				<hr data-bind="user.apps__show:value && value.length" class="hidden" />
+				<hr data-bind="user.noapps__hide" class="hidden" />
 
 				@{part('middle')}
 
@@ -867,6 +867,16 @@
 				}
 
 				profile.apps.quicksort('title');
+				var noapps = true;
+
+				for (var i = 0; i < profile.apps.length; i++) {
+					if (!profile.apps[i].internal) {
+						noapps = false;
+						break;
+					}
+				}
+
+				profile.noapps = noapps;
 				SET('user', profile);
 				refresh_color(user);
 				EXEC('Dashboard/sync');

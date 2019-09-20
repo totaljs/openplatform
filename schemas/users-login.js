@@ -55,7 +55,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 				}
 
 				var opt = {};
-				opt.name = CONF.cookie;
+				opt.name = CONF.cookie || '__opu';
 				opt.key = CONF.cookie_key || 'auth';
 				opt.sessionid = UID();
 				opt.id = response.id;
@@ -105,7 +105,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 				}
 
 				var opt = {};
-				opt.name = CONF.cookie;
+				opt.name = CONF.cookie || '__opu';
 				opt.key = CONF.cookie_key || 'auth';
 				opt.sessionid = UID();
 				opt.id = response.id;

@@ -30,7 +30,7 @@
 					<i class="fa fa-rocket"></i>
 					<span>@(Applications)</span>
 				</div>
-
+<!--
 				<div class="item exec" data-exec="main/show" data-if="database">
 					<i class="fa fa-database"></i>
 					<span>@(Database)</span>
@@ -40,7 +40,7 @@
 					<i class="far fa-object-group"></i>
 					<span>@(Workshop)</span>
 				</div>
-
+-->
 				<div class="item exec hidden" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
 					<i class="fa fa-shopping-bag"></i>
 					<span>@(Marketplace)</span>
@@ -97,7 +97,7 @@
 
 	AJAX('GET /api/profile/', function(response) {
 		SET('user', response);
-		SET('common.page', 'workshop');
+		SET('common.page', 'users');
 	});
 
 	OP.on('link', function(path, data) {

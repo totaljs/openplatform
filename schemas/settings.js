@@ -10,7 +10,6 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('email', 'Email', true);
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('background', 'String(150)');
-	schema.define('accesstoken', 'String(50)', true);
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
 	schema.define('sender', 'Email');
