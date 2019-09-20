@@ -97,7 +97,7 @@
 
 	AJAX('GET /api/profile/', function(response) {
 		SET('user', response);
-		SET('common.page', 'users');
+		SET('common.page', 'workshop');
 	});
 
 	OP.on('link', function(path, data) {

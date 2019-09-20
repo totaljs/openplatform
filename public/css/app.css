@@ -55,7 +55,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .header2 { text-align: left !important; padding: 0; border-bottom: 0; }
 
 .iconmenu-bg { background-color: white; border-radius: 2px; padding: 5px; border: 1px solid #E0E0E0; }
-.iconmenu span { width: 32px; display: inline-block; line-height: 30px; text-align: center; cursor: pointer; border-radius: 2px; margin-left: 5px; }
+.iconmenu span { width: 24px; display: inline-block; line-height: 24px; text-align: center; cursor: pointer; border-radius: 2px; margin-left: 5px; font-size: 12px; }
 .iconmenu span:first-child { margin-left: 0; }
 .iconmenu span:hover { background-color: #F0F0F0; }
 .iconmenu .selected { color: white; }
