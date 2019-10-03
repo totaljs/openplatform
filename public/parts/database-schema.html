@@ -4,7 +4,13 @@
 			<div class="caption"><i class="fa fa-database"></i>@(Database settings)</div>
 			<div data---="input__?.label__maxlength:50;required:1;placeholder:@(Contacts)" class="m">@(Name)</div>
 			<div data---="input__?.note__maxlength:500;placeholder:@(Type a description)" class="m">@(Description)</div>
-			<div data---="permissions__?.permissions__dirsource:database/users;empty:@(Allowed for everyone)__[]">@(Permissions)</div>
+			<div data-bind="?.id__show" class="hidden">
+				<div data---="input__?.fieldid__dirsource:?.fields;dirkey:label">@(Default field)</div>
+				<div class="help">@(Default field will be displayed in controls as label.)</div>
+			</div>
+			<!--
+			<div data---="permissionsop__?.permissions__dirsource:database/users;empty:@(Allowed for everyone)__[]">@(Permissions)</div>
+			-->
 		</div>
 	</div>
 </div>
@@ -19,30 +25,6 @@
 	PLUGIN('databaseschema', function(exports) {
 		exports.submit = function() {
 			var model = CLONE(GETR('?'));
-
-			model.readers = [];
-			model.writers = [];
-
-			if (model.permissions) {
-				for (var i = 0; i < model.permissions.length; i++) {
-					var item = model.permissions[i];
-					var val = (item.type === 'role' ? '@' : item.type === 'group' ? '#' : '') + item.id;
-					switch (item.value) {
-						case 'R':
-							model.readers.push(val);
-							break;
-						case 'W':
-							model.writers.push(val);
-							break;
-						default:
-							model.readers.push(val);
-							model.writers.push(val);
-							break;
-					}
-				}
-			}
-
-			delete model.permissions;
 			AJAX('POST /api/op/schemas/' + (model.id || ''), model, OP.done('@(Schema has been saved succesfully)', EXEC2('database/refresh')));
 		};
 	});

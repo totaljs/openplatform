@@ -11,6 +11,8 @@ exports.install = function() {
 	ROUTE('GET /logout/', logout);
 	ROUTE('GET /lock/', lock);
 
+	ROUTE('GET /workshop/{id}/', workshop);
+
 	FILE('/manifest.json', manifest);
 
 	ROUTE('#404', process404);
@@ -19,6 +21,10 @@ exports.install = function() {
 function index() {
 	var desktop = this.user.desktop;
 	this.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
+}
+
+function workshop(id) {
+	this.view('workshop');
 }
 
 function manifest(req, res) {

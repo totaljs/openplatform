@@ -100,10 +100,6 @@
 		SET('common.page', 'users');
 	});
 
-	OP.on('link', function(path, data) {
-		console.log('link', path, data);
-	});
-
 	PLUGIN('main', function(exports) {
 
 		exports.refreshmeta = function() {

@@ -72,22 +72,26 @@ exports.install = function() {
 	ROUTE('+GET     /api/op/config/                *Apps/Config        --> @read');
 	ROUTE('+POST    /api/op/mail/                  *Mail               --> @send');
 
-	ROUTE('+GET     /api/op/schemas/                           *Schema            --> @query');
-	ROUTE('+POST    /api/op/schemas/                           *Schema            --> @insert');
-	ROUTE('+POST    /api/op/schemas/{schemaid}/                *Schema            --> @update');
-	ROUTE('+POST    /api/op/schemas/{schemaid}/fields/         *Schema/Field      --> @insert');
-	ROUTE('+POST    /api/op/schemas/{schemaid}/fields/{id}/    *Schema/Field      --> @update');
-	ROUTE('+POST    /api/op/schemas/{schemaid}/states/         *Schema/State      --> @insert');
-	ROUTE('+POST    /api/op/schemas/{schemaid}/states/{id}/    *Schema/State      --> @patch');
-	ROUTE('+POST    /api/op/schemas/{schemaid}/position/       *Schema/Position   --> @update');
+	ROUTE('+GET     /api/op/schemas/                           *Schema              --> @query');
+	ROUTE('+POST    /api/op/schemas/                           *Schema              --> @insert');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/                *Schema              --> @update');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/fields/         *Schema/Field        --> @insert');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/fields/{id}/    *Schema/Field        --> @update');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/states/         *Schema/State        --> @insert');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/states/{id}/    *Schema/State        --> @patch');
+	ROUTE('+POST    /api/op/schemas/{schemaid}/position/       *Schema/Position     --> @update');
 
-	ROUTE('+GET     /api/op/workshop/plugins/refresh/          *Workshop          --> @pluginsrefresh');
-	ROUTE('+GET     /api/op/workshop/plugins/                  *Workshop          --> @plugins');
-	ROUTE('+GET     /api/op/workshop/                          *Workshop          --> @query');
-	ROUTE('+GET     /api/op/workshop/{id}/                     *Workshop          --> @read');
-	ROUTE('+POST    /api/op/workshop/                          *Workshop          --> @insert');
-	ROUTE('+POST    /api/op/workshop/{id}/                     *Workshop          --> @update');
-	ROUTE('+DELETE  /api/op/workshop/{id}/                     *Workshop          --> @remove');
+	ROUTE('+GET     /api/op/workshop/plugins/refresh/          *Workshop            --> @pluginsrefresh');
+	ROUTE('+GET     /api/op/workshop/plugins/                  *Workshop            --> @plugins');
+	ROUTE('+GET     /api/op/workshop/                          *Workshop            --> @query');
+	ROUTE('+GET     /api/op/workshop/{id}/                     *Workshop            --> @read');
+	ROUTE('+POST    /api/op/workshop/                          *Workshop            --> @insert');
+	ROUTE('+POST    /api/op/workshop/{id}/                     *Workshop            --> @update');
+	ROUTE('+DELETE  /api/op/workshop/{id}/                     *Workshop            --> @remove');
+	ROUTE('+POST    /api/op/notify/{id}/                       *Apps/Notifications  --> @internal');
+	ROUTE('+GET     /api/op/badges/{id}/                       *Apps/Badges         --> @internal');
+
+	ROUTE('+GET     /api/op/data/{id}/                         *Workshop/Data       --> @query');
 
 	// External
 	ROUTE('GET      /verify/',                            json_verify);

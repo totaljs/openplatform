@@ -73,6 +73,7 @@ NEWSCHEMA('Account', function(schema) {
 		// Removing older photo
 		if (user.photo && model.photo !== user.photo) {
 			path = 'photos/' + user.photo;
+			// @TODO: removing photo must be posponed
 			Fs.unlink(PATH.public(path), NOOP);
 			F.touch('/' + path);
 		}

@@ -414,7 +414,7 @@
 				e.stopPropagation();
 				e.preventDefault();
 				self.hidemenu();
-				SETTER('processes', 'kill', el.attrd('id'));
+				SETTER('processes', 'kill', el instanceof jQuery ? el.attrd('id') : el);
 			};
 
 			self.closefocused = function() {
@@ -584,8 +584,9 @@
 				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: app.icon, keywords: app.name });
 			}
 
-			items.push({ name: '@(Reset windows)', icon: 'window-restore', TYPE: 'reset' });
-			items.push({ name: '@(Lock screen)', icon: 'lock', TYPE: 'lock' });
+			if (user.locking)
+				items.push({ name: '@(Lock screen)', icon: 'lock', TYPE: 'lock' });
+
 			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
 
 			SETTER('features', 'show', items, function(item) {
@@ -644,6 +645,9 @@
 			nav.find('button.focused').rclass('focused');
 			nav.find('button[data-id="{0}"]'.format(id)).aclass('focused');
 			if (id) {
+				var app = dashboard.apps.findItem('id', id);
+				if (app)
+					app.dtfocused = NOW;
 				$('.ui-process-focus').rclass('ui-process-focus');
 				var iframe = $('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').find('iframe');
 				if (iframe.length)
@@ -708,7 +712,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}.usercolor{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
@@ -970,6 +974,20 @@
 				var el = $(this);
 				el.html(Thelpers.time(new Date(+el.attrd('time'))));
 			});
+
+			var dt = NOW.add('-30 minutes');
+			var close = [];
+
+			for (var i = 0; i < dashboard.apps.length; i++) {
+				var app = dashboard.apps[i];
+				if (app.id === common.focused)
+					continue;
+				if (dt > app.dtfocused)
+					close.push(app.id);
+			}
+
+			for (var i = 0; i < close.length; i++)
+				EXEC('Dashboard/close', close[i]);
 		});
 
 		$(document).on('contextmenu', '.appprocess', function(e) {
@@ -1058,10 +1076,12 @@
 
 				var share = NAV.query.share;
 				if (share) {
-					var diff = 4 - (share.length % 4);
-					for (var i = 0; i < diff; i++)
-						share += '=';
-
+					var diff = share.length % 4;
+					if (diff) {
+						diff = 4 - diff;
+						for (var i = 0; i < diff; i++)
+							share += '=';
+					}
 					try {
 						var val = decodeURIComponent(atob(share));
 						share = PARSE('{' + val + '}');

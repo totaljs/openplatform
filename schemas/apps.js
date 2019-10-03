@@ -57,6 +57,7 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.serververify = app.serververify;
 			obj.settings = app.settings;
 			obj.reference = app.reference;
+			obj.workshopid = app.workshopid;
 			arr.push(obj);
 		}
 
@@ -195,9 +196,12 @@ NEWSCHEMA('Apps', function(schema) {
 
 			var arr = [];
 			for (var i = 0; i < MAIN.apps.length; i++) {
-				var app = FUNC.makeapp(MAIN.apps[i], obj.allowreadapps);
-				if (app)
-					arr.push(obj);
+				var item = MAIN.apps[i];
+				if (!item.workshopid) {
+					var app = FUNC.makeapp(item, obj.allowreadapps);
+					if (app)
+						arr.push(obj);
+				}
 			}
 			$.callback(arr);
 		});

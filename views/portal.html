@@ -49,10 +49,14 @@
 	</div>
 
 	<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
+	<div class="menubutton exec" data-exec="Dashboard/mainmenu"><i class="fa fa-align-justify"></i></div>
 
 	<div class="container@{if CONF.allowdesktopfluid != false}-fluid@{fi} invisible" data-bind="common.ready__.invisible:!value">
 		<div class="menu">
 			<header>
+				@{if CONF.allowdesktopfluid != false}
+					<span class="menu-minimize exec" data-exec="Dashboard/minimizemenu"><i class="fa"></i></span>
+				@{fi}
 				@{if !user.guest}
 				<div class="button-notifications exec tooltip" data-title="@(Notifications)" data-path="common.form" data-value="'notifications'">
 					<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
@@ -310,6 +314,7 @@
 			} else
 				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 
+			$(document.body).rclass('menushow');
 			common.startmenu && SET('common.startmenu', false);
 		});
 
@@ -325,29 +330,6 @@
 				});
 			};
 
-			self.showdesktop = function() {
-
-				if (common.hiddenwindows)
-					return;
-
-				SET('common.hiddenwindows', true);
-
-				var back = function() {
-					SET('common.hiddenwindows', false);
-					$('.ui-process').rclass('hidden2');
-					$(document).off('click', back);
-				};
-
-				$('.ui-process').aclass('hidden2');
-				setTimeout(function() {
-					$(document).on('click', back);
-				}, 10);
-			};
-
-			self.hidemenu = function() {
-				SET('common.startmenu', false);
-			};
-
 			self.showconsole = function() {
 				TOGGLE('common.consolewindow');
 			};
@@ -355,6 +337,14 @@
 			self.showprofile = function() {
 				if (!user.guest)
 					internalapp('_account');
+			};
+
+			self.minimizemenu = function() {
+				$(document.body).tclass('menuminimized');
+				$(window).trigger('resize');
+			};
+
+			self.hidemenu = function() {
 			};
 
 			self.showsessions = function() {
@@ -390,10 +380,16 @@
 			};
 
 			self.close = function(el, e) {
-				e.stopPropagation();
-				e.preventDefault();
+				if (e) {
+					e.stopPropagation();
+					e.preventDefault();
+				}
 				self.hidemenu();
-				SETTER('processes', 'kill', el.attrd('id'));
+				SETTER('processes', 'kill', el instanceof jQuery ? el.attrd('id') : el);
+			};
+
+			self.mainmenu = function() {
+				$(document.body).tclass('menushow');
 			};
 
 			self.closefocused = function() {
@@ -415,6 +411,7 @@
 
 			self.navigate = function(el) {
 
+				$(document.body).rclass('menushow');
 				var id, data;
 
 				if (el instanceof jQuery) {
@@ -562,8 +559,9 @@
 				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: app.icon, keywords: app.name });
 			}
 
-			items.push({ name: '@(Reset windows)', icon: 'window-restore', TYPE: 'reset' });
-			items.push({ name: '@(Lock screen)', icon: 'lock', TYPE: 'lock' });
+			if (user.locking)
+				items.push({ name: '@(Lock screen)', icon: 'lock', TYPE: 'lock' });
+
 			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
 
 			SETTER('features', 'show', items, function(item) {
@@ -622,6 +620,9 @@
 			nav.find('.app.focused').rclass('focused');
 			nav.find('.app[data-id="{0}"]'.format(id)).aclass('focused');
 			if (id) {
+				var app = dashboard.apps.findItem('id', id);
+				if (app)
+					app.dtfocused = NOW;
 				$('.ui-process-focus').rclass('ui-process-focus');
 				var iframe = $('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').find('iframe');
 				if (iframe.length)
@@ -686,7 +687,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
@@ -953,11 +954,26 @@
 			return value ? '<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(), Thelpers.time2(value), value.format(null)) : value;
 		};
 
-		ON('knockknock', function() {
+		ON('knockknock', function(counter) {
+
 			$('.ta-time').each(function() {
 				var el = $(this);
 				el.html(Thelpers.time(new Date(+el.attrd('time'))));
 			});
+
+			var dt = NOW.add('-30 minutes');
+			var close = [];
+
+			for (var i = 0; i < dashboard.apps.length; i++) {
+				var app = dashboard.apps[i];
+				if (app.id === common.focused)
+					continue;
+				if (dt > app.dtfocused)
+					close.push(app.id);
+			}
+
+			for (var i = 0; i < close.length; i++)
+				EXEC('Dashboard/close', close[i]);
 		});
 
 		$(document).on('contextmenu', '.appprocess,.app-running', function(e) {
@@ -1043,14 +1059,18 @@
 		ON('ready', function() {
 			WAIT('user.openplatformid', function() {
 				NAV.query.notifications && SET('common.form', 'notifications', 2000);
+
 				if (NAV.query.password && !user.guest)
 					EXEC('Dashboard/showprofile');
 
 				var share = NAV.query.share;
 				if (share) {
-					var diff = 4 - (share.length % 4);
-					for (var i = 0; i < diff; i++)
-						share += '=';
+					var diff = share.length % 4;
+					if (diff) {
+						diff = 4 - diff;
+						for (var i = 0; i < diff; i++)
+							share += '=';
+					}
 
 					try {
 						var val = decodeURIComponent(atob(share));
@@ -1069,8 +1089,6 @@
 
 			});
 		});
-
-		var dragdata = {};
 
 		WATCH('user', function(path, value) {
 
@@ -1098,7 +1116,7 @@
 
 		Thelpers.appprogress = function(id) {
 			var app = dashboard.apps.findIndex('id', id);
-			return app ? (!app.progress || app.progress <= 0 || app.progress >= 0) ? ' style="width: {0}px"'.format(app.progress) : '' : '';
+			return app ? (!app.progress || app.progress <= 0 || app.progress >= 0) ? ' style="width:{0}px"'.format(app.progress) : '' : '';
 		};
 
 	</script>

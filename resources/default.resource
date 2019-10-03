@@ -22,7 +22,6 @@ error-services-app           : Invalid application.
 error-services-notsupported  : Application doesn't support services.
 error-services-endpoint      : Application doesn't support "@" endpoint.
 error-services-invalid       : Services is not defined.
-error-blocked                : Your IP has been blocked.
 error-totp                   : Token is invalid.
 smtp                         : You need to define a SMTP hostname.
 error-otp-code               : One-Time password code is invalid.

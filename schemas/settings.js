@@ -23,6 +23,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allowtheme', Boolean);
 	schema.define('allowprofile', Boolean);
 	schema.define('allowdesktopfluid', Boolean);
+	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
 
 	schema.setGet(function($) {
@@ -34,7 +35,6 @@ NEWSCHEMA('Settings', function(schema) {
 			response = response.body;
 			var model = $.clean();
 			var options = response.smtpsettings;
-			model.accesstoken = response.accesstoken;
 			model.url = response.url;
 			model.colorscheme = response.colorscheme;
 			model.background = response.background;
@@ -84,7 +84,14 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.mail_smtp = model.smtp;
 		CONF.mail_smtp_options = model.smtpsettings.parseJSON();
 		CONF.mail_address_from = model.sender;
-		CONF.accesstoken = model.accesstoken;
+
+		if (model.rebuildaccesstoken)
+			CONF.accesstoken = model.accesstoken = GUID(30);
+		else
+			model.accesstoken = CONF.accesstoken;
+
+		delete model.rebuildaccesstoken;
+
 		CONF.test = model.test;
 		CONF.verifytoken = model.verifytoken;
 		CONF.marketplace = model.marketplace;
@@ -119,7 +126,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.url = response.url || '';
 				CONF.author = response.author || '';
 				CONF.email = response.email || '';
-				CONF.accesstoken = response.accesstoken || '';
+				CONF.accesstoken = response.accesstoken || GUID(30);
 				CONF.colorscheme = response.colorscheme || '';
 				CONF.background = response.background || '';
 				CONF.mail_smtp = response.smtp || '';

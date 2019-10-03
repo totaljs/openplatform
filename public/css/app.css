@@ -101,8 +101,6 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .search { padding: 5px; background-color: white; border-bottom: 1px solid #D0D0D0; }
 .search .ui-textbox { border: 0; }
 .search .ui-textbox-control { border-left: 0; }
-.ui-scrollbar-y { width: 5px; }
-.ui-scrollbar-x { height: 5px; }
 
 .tabmenu2 { padding: 0 10px; margin: 0; display: block; position: relative; font-size: 12px; border: 0; list-style-type: none; height: 45px; overflow: hidden; background-color: white; border-bottom: 1px solid #E0E0E0; user-select: none; }
 .tabmenu2 li { background-color: #F0F0F0; margin: 10px 0 0 0; text-align: center; padding: 0 7px; line-height: 24px; height: 24px; color: #6d6d6d; cursor: pointer; min-width: 90px; max-width: 150px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; width: 33%; }

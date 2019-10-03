@@ -181,7 +181,7 @@ FUNC.profile = function(user, callback) {
 		var app = MAIN.apps[i];
 		var userapp = user.apps[app.id];
 		if (app && !app.blocked && userapp)
-			meta.apps.push({ id: app.id, favorite: userapp.favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: userapp.notifications === false, responsive: app.responsive, countnotifications: userapp.countnotifications, countbadges: userapp.countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: userapp.position, color: app.color });
+			meta.apps.push({ id: app.id, favorite: userapp.favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: userapp.notifications === false, responsive: app.responsive, countnotifications: userapp.countnotifications, countbadges: userapp.countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: userapp.position, color: app.color, workshopid: app.workshopid });
 	}
 
 	if (user.sa)
@@ -201,10 +201,7 @@ FUNC.profilelive = function(user) {
 	var meta = {};
 
 	meta.name = user.name;
-
-	if (user.photo)
-		meta.photo = user.photo;
-
+	meta.photo = user.photo;
 	meta.sa = user.sa;
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
@@ -215,6 +212,9 @@ FUNC.profilelive = function(user) {
 	meta.darkmode = user.darkmode;
 	meta.desktop = user.desktop;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
+
+	if (user.locking)
+		meta.locking = user.locking;
 
 	if (user.guest)
 		meta.guest = true;
@@ -343,13 +343,14 @@ FUNC.encodetoken = function(app, user) {
 FUNC.decodetoken = function($, callback) {
 
 	if (DDOS[$.ip] > DDOS_MAX_ATTEMPS) {
-		$.invalid('error-blocked');
+		$.invalid('error-blocked-ip');
 		return;
 	}
 
 	var sign = $.query.accesstoken;
 	if (!sign || sign.length < 30) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+		AUDIT('tokens', $, 'FUNC.decodetoken:sign==empty', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -372,11 +373,13 @@ FUNC.decodetoken = function($, callback) {
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
+
 	var app = MAIN.apps.findItem('id', arr[0]);
 	var user = USERS[arr[1]];
 
 	if (app == null) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+		AUDIT('tokens', $, 'FUNC.decodetoken:app==null', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -456,7 +459,7 @@ FUNC.encodeauthtoken = function(app, user) {
 FUNC.decodeauthtoken = function($, callback) {
 
 	if (DDOS[$.ip] > DDOS_MAX_ATTEMPS) {
-		$.invalid('error-blocked');
+		$.invalid('error-blocked-ip');
 		return;
 	}
 
@@ -464,6 +467,7 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (!sign || sign.length < 30) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+		AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==empty', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -477,6 +481,7 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (!sign) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+		AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==null', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -490,6 +495,7 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (app == null) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+		AUDIT('tokens', $, 'FUNC.decodeauthtoken:app==null', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -581,7 +587,8 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	// type 3: app users - basic info
 	// type 4: app users - all info
 
-	if (type > 2 && (!user.apps || !user.apps[app.id]) || user.inactive)
+	// if (type > 2 && (!user.apps || !user.apps[app.id]) || user.inactive)
+	if (type > 2 && user.inactive)
 		return;
 
 	var obj = {};
@@ -1014,7 +1021,20 @@ FUNC.refreshgroupsroles = function(callback) {
 };
 
 FUNC.refreshapps = function(callback) {
-	DBMS().find('tbl_app').sort('dtcreated', true).callback(function(err, response) {
+	DBMS().find('tbl_app').callback(function(err, response) {
+
+		var fa = { fa: 1, fas: 1, far: 1, fab: 1, fal: 1 };
+
+		for (var i = 0; i < response.length; i++) {
+			var item = response[i];
+			item.icon = item.icon.replace('fa-', '');
+			if (item.icon.indexOf(' ') !== -1) {
+				var tmp = item.icon.split(' ');
+				if (fa[tmp[0]])
+					item.icon = tmp[1] + ' ' + tmp[0];
+			}
+		}
+
 		MAIN.apps = response || EMPTYARRAY;
 		callback && callback();
 	});
@@ -1332,6 +1352,10 @@ FUNC.log = function(type, rowid, message, $) {
 
 function refresh_apps() {
 	MAIN.apps.wait(function(app, next) {
+
+		if (app.workshopid)
+			return next();
+
 		FUNC.refreshapp(app, function(err, item, update) {
 			if (update) {
 				DBMS().modify('tbl_app', item).where('id', item.id).callback(function() {
@@ -1343,6 +1367,7 @@ function refresh_apps() {
 				next();
 			}
 		});
+
 	}, FUNC.updateroles);
 }
 

@@ -680,7 +680,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg,.user{background-color:{0}}.ui-features .selected{background-color:{0}!important}.usercolor{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.userbg,.user{background-color:{0}}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
@@ -1055,10 +1055,12 @@
 
 				var share = NAV.query.share;
 				if (share) {
-					var diff = 4 - (share.length % 4);
-					for (var i = 0; i < diff; i++)
-						share += '=';
-
+					var diff = share.length % 4;
+					if (diff) {
+						diff = 4 - diff;
+						for (var i = 0; i < diff; i++)
+							share += '=';
+					}
 					try {
 						var val = decodeURIComponent(atob(share));
 						share = PARSE('{' + val + '}');

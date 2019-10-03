@@ -1,4 +1,4 @@
-const BLACKLIST_FIELDS = { id: 1, schemaid: 1, creatorid: 1, updaterid: 1, removerid: 1, readers: 1, writers: 1, isremoved: 1, isinactive: 1, dtcreated: 1, dtupdated: 1, dtremoved: 1 };
+const BLACKLIST_FIELDS = { id: 1, schemaid: 1, creatorid: 1, updaterid: 1, removerid: 1, permissions: 1, isremoved: 1, isinactive: 1, dtcreated: 1, dtupdated: 1, dtremoved: 1 };
 
 NEWSCHEMA('Schema', function(schema) {
 
@@ -7,8 +7,8 @@ NEWSCHEMA('Schema', function(schema) {
 	schema.define('note', 'String(500)');
 	schema.define('icon', 'String(20)');
 	schema.define('color', 'String(7)');
-	schema.define('readers', '[String]');
-	schema.define('writers', '[String]');
+	schema.define('permissions', '[String]');
+	schema.define('fieldid', 'UID')(null);
 	schema.define('x', Number);
 	schema.define('y', Number);
 
@@ -26,13 +26,10 @@ NEWSCHEMA('Schema', function(schema) {
 		model.dtcreated = NOW;
 		model.isremoved = false;
 
-		if (!model.readers.length)
-			model.readers = null;
+		if (!model.permissions.length)
+			model.permissions = null;
 
-		if (!model.writers.length)
-			model.writers = null;
-
-		var query = 'CREATE TABLE t_{0} (id varchar(25), schemaid varchar(25), statusid varchar(25), creatorid varchar(25), updaterid varchar(25), removerid varchar(25), readers _varchar, writers _varchar, istest BOOLEAN DEFAULT FALSE, isremoved BOOLEAN DEFAULT FALSE, isinactive BOOLEAN DEFAULT FALSE, dtcreated timestamp, dtstatus timestamp, dtupdated timestamp, dtremoved timestamp, PRIMARY KEY(id))'.format(model.name);
+		var query = 'CREATE TABLE t_{0} (id varchar(25), schemaid varchar(25), statusid varchar(25), creatorid varchar(25), updaterid varchar(25), removerid varchar(25), permissions _varchar, istest BOOLEAN DEFAULT FALSE, isremoved BOOLEAN DEFAULT FALSE, isinactive BOOLEAN DEFAULT FALSE, dtcreated timestamp, dtstatus timestamp, dtupdated timestamp, dtremoved timestamp, PRIMARY KEY(id))'.format(model.name);
 		db.query(query);
 		db.error();
 		db.insert('tbl_schema', model);
@@ -56,11 +53,8 @@ NEWSCHEMA('Schema', function(schema) {
 
 		model.dtupdated = NOW;
 
-		if (!model.readers.length)
-			model.readers = null;
-
-		if (!model.writers.length)
-			model.writers = null;
+		if (!model.permissions.length)
+			model.permissions = null;
 
 		DBMS().modify('tbl_schema', model).where('id', $.id).error('error-schemas-404').callback(function(err, response) {
 			if (response) {
@@ -116,10 +110,10 @@ NEWSCHEMA('Schema/Field', function(schema) {
 	schema.define('note', 'String(500)');
 	schema.define('length', Number);
 	schema.define('position', Number);
-	schema.define('readers', '[String]');
-	schema.define('writers', '[String]');
+	schema.define('permissions', '[String]');
 	schema.define('items', '[String]');
 	schema.define('required', Boolean);
+	schema.define('default', Boolean);
 
 	// For image type only
 	schema.define('width', Number);
@@ -161,11 +155,15 @@ NEWSCHEMA('Schema/Field', function(schema) {
 			return;
 		}
 
+		var defaultid = model.default;
+		model.default = undefined;
+
 		var db = DBMS();
 		db.begin();
 		db.query('ALTER TABLE t_{0} ADD COLUMN "{1}" {2}'.format(schema.name, model.name, type));
 		db.query('comment on column t_{0}.{1} is {2}'.format(schema.name, model.name, PG_ESCAPE(model.label + ' --> ' + model.type)));
 		db.insert('tbl_schema_field', model);
+		defaultid && db.modify('tbl_schema', { fieldid: model.id }).where('id', schema.id);
 		db.commit();
 		db.callback(function(err) {
 			if (err) {
@@ -209,6 +207,9 @@ NEWSCHEMA('Schema/Field', function(schema) {
 		var field = schema.fields.findItem('id', $.params.id);
 		// var isrename = field.name !== model.name;
 
+		var defaultid = model.default;
+		model.default = undefined;
+
 		var db = DBMS();
 
 		db.query('ALTER TABLE t_{0} ALTER COLUMN "{1}" TYPE {2}'.format(schema.name, field.name, type));
@@ -218,6 +219,7 @@ NEWSCHEMA('Schema/Field', function(schema) {
 		//	db.query('ALTER TABLE t_{0} RENAME "{1}" TO "{2}"'.format(schema.name, field.name, model.name));
 
 		db.modify('tbl_schema_field', model).where('id', $.params.id);
+		defaultid && db.modify('tbl_schema', { fieldid: $.params.id }).where('id', schema.id);
 		db.callback(function(err) {
 			if (err) {
 				$.invalid(err);
@@ -316,8 +318,7 @@ NEWSCHEMA('Schema/State', function(schema) {
 	schema.define('position', Number);
 	schema.define('isprev', Boolean);
 	schema.define('ismain', Boolean);
-	schema.define('readers', '[String]');
-	schema.define('writers', '[String]');
+	schema.define('permissions', '[String]');
 });
 
 function refreshmeta() {
@@ -334,8 +335,10 @@ function refreshmeta() {
 
 			for (var j = 0; j < response.fields.length; j++) {
 				var item = response.fields[j];
-				if (item.schemaid === schema.id)
+				if (item.schemaid === schema.id) {
+					item.default = schema.fieldid === item.id;
 					schema.fields.push(response.fields[j]);
+				}
 			}
 
 			for (var j = 0; j < response.statuses.length; j++) {

@@ -76,6 +76,7 @@ CREATE TABLE "public"."tbl_user" (
 
 CREATE TABLE "public"."tbl_app" (
 	"id" varchar(25) NOT NULL,
+	"workshopid" varchar(25),
 	"url" varchar(500),
 	"accesstoken" varchar(50),
 	"name" varchar(30),
@@ -268,8 +269,7 @@ CREATE TABLE "public"."tbl_schema" (
 	"endpoint" varchar(500),
 	"x" int2 DEFAULT '0'::smallint,
 	"y" int2 DEFAULT '0'::smallint,
-	"readers" _varchar,
-	"writers" _varchar,
+	"permissiosn" _varchar,
 	"isremoved" bool DEFAULT false,
 	"dtcreated" timestamp,
 	"dtupdated" timestamp,
@@ -289,8 +289,7 @@ CREATE TABLE "public"."tbl_schema_field" (
 	"width" int2,
 	"height" int2,
 	"items" _varchar,
-	"readers" _varchar,
-	"writers" _varchar,
+	"permissions" _varchar,
 	"islinked" bool DEFAULT false,
 	"dtcreated" timestamp,
 	"dtupdated" timestamp,
@@ -306,8 +305,7 @@ CREATE TABLE "public"."tbl_schema_status" (
 	"position" int2 DEFAULT '0'::smallint,
 	"ismain" bool DEFAULT true,
 	"isprev" bool DEFAULT true,
-	"readers" _varchar,
-	"writers" _varchar,
+	"permissions" _varchar,
 	"dtcreated" timestamp,
 	"dtupdated" timestamp,
 	PRIMARY KEY ("id")
@@ -403,4 +401,4 @@ COMMENT ON COLUMN "public"."tbl_app"."frame" IS 'Frame URL address';
 -- ==============================
 
 -- MAIN SETTINGS
-INSERT INTO "public"."tbl_settings" ("id", "body", "dtupdated", "dtcreated") VALUES ('openplatform', '{"url": "https://YOURDOMAIN.com", "name": "OpenPlatform", "smtp": "localhost", "test": true, "email": "petersirka@gmail.com", "guest": true, "welcome": "", "background": "", "accesstoken": "", "colorscheme": "#4285f4", "marketplace": "", "verifytoken": "", "smtpsettings": ""}', NULL, NOW());
+INSERT INTO "public"."tbl_settings" ("id", "body", "dtupdated", "dtcreated") VALUES ('openplatform', ('{"url": "https://YOURDOMAIN.com", "name": "OpenPlatform", "smtp": "localhost", "test": true, "email": "petersirka@gmail.com", "guest": true, "welcome": "", "background": "", "accesstoken": "' || (SELECT md5(random()::text)) || '", "colorscheme": "#4285f4", "marketplace": "", "verifytoken": "", "smtpsettings": ""}')::jsonb, NULL, NOW());

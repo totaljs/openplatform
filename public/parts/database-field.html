@@ -20,12 +20,17 @@
 				<div class="help m">@(Type a maximum characters for this field)</div>
 			</div>
 			<div data---="checkbox__?.required__null__false" class="b">@(The field is required)</div>
+			<div data-bind="?.type__show:value && value!=='user' && value.charCodeAt(0)>64" class="hidden">
+				<div data---="checkbox__?.default__null__false">@(Set the field as the main field of schema)</div>
+			</div>
 		</div>
+		<!--
 		<hr />
 		<div class="padding npt">
 			<div data---="input__?.note__maxlength:500;placeholder:@(Type a description)__''" class="m">@(Description)</div>
-			<div data---="permissions__?.permissions__empty:@(Allowed for everyone);dirsource:database/users__[]">@(Permissions)</div>
+			<div data---="permissions__?.permissions__empty:@(Allowed for everyone);find:database/users__[]">@(Permissions)</div>
 		</div>
+		-->
 	</div>
 </div>
 
