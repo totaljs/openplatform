@@ -810,7 +810,7 @@ function processapps(model, callback) {
 			if (item)
 				db.update('tbl_user_app', { roles: app.roles, appid: id, inherited: false, dtupdated: NOW }).where('id', model.id + id);
 			else
-				db.insert('tbl_user_app', { id: model.id + id, userid: model.id, appid: id, dtcreated: NOW, inherited: false });
+				db.insert('tbl_user_app', { id: model.id + id, userid: model.id, appid: id, dtcreated: NOW, inherited: false, rols: app.roles });
 
 			tmp[id] = 1;
 		}
