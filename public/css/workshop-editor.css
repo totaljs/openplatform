@@ -1,0 +1,40 @@
+.ui-wsettings-item { min-height: 23px; font-size: 12px; border-bottom: 1px solid #E0E0E0; margin-bottom: 5px; }
+.ui-wsettings-item label { float: left; width: 80px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin: 2px 0 0; color: gray; }
+.ui-wsettings-item > div { margin-left: 100px; }
+.ui-wsettings-item-string input { width: 100%; outline: 0; border: 0; background-color: transparent; line-height: 16px; font-size: 12px; }
+.ui-wsettings-item-string > div { padding: 1px 2px; }
+.ui-wsettings-item-editable i { float: right; margin: 2px 0 0; }
+.ui-wsettings-item-editable { padding: 1px 2px; cursor: pointer; }
+.ui-wsettings-item-readonly i { float: right; margin: 2px 0 0; }
+.ui-wsettings-item-readonly { padding: 1px 2px; cursor: pointer; }
+
+.ui-wsettings-remove { margin: 0 0 20px; }
+.ui-wsettings-remove button { border-radius: 2px; border: 2px solid #e73323; background-color: white; outline: 0; font-size: 12px; height: 28px; line-height: 24px; padding: 0; width: 100%; text-align: center; color: #e73323; }
+.ui-wsettings-remove button:hover { background-color: #e73323; color: white; }
+.ui-wsettings-remove i { margin-right: 5px; }
+
+.dview-component { font-size: 14px; padding: 2px 5px; border-radius: 2px; cursor: pointer; }
+.dview-component span { float: right; font-size: 12px; margin: 2px 10px 0 0; }
+.dview-component span:first-child { margin-right: 0; }
+.dview-component em { color: silver; font-size: 12px; }
+.dview-component.selected .red { color: white !important; }
+.dview-component.selected { color: white; }
+
+.dworkshop-component { padding: 4px 15px; border-bottom: 1px solid #E0E0E0; line-height: 22px; cursor: pointer; font-size: 12px; }
+.dworkshop-component i { width: 22px; }
+.dworkshop-component:hover { background-color: #F8F8F8; }
+
+.dworkshop-field { padding: 3px 15px; border-bottom: 1px solid #E0E0E0; line-height: 22px; cursor: pointer; font-size: 12px; }
+.dworkshop-field i { width: 22px; }
+.dworkshop-field:hover { background-color: #F8F8F8; }
+
+.w-editor-list { margin: 20px; }
+.w-editor-list > div { height: 100%; border-right: 1px solid #D0D0D0; border-top: 1px solid #D0D0D0; border-bottom: 1px solid #D0D0D0; float: left; width: 120px; cursor: pointer; }
+.w-editor-list > div:first-child { border-left: 1px solid #D0D0D0; }
+.w-editor-list > div > div { border-bottom: 1px solid #D0D0D0; padding: 5px 8px; display: block; background-color: #F8F8F8; font-size: 12px; line-height: 14px; }
+.w-editor-list > div > div > * { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: block; }
+.w-editor-list > div > div > div { font-size: 11px; }
+.w-editor-list > div > div > span { font-weight: bold; }
+
+.ui-wcolumns-selected { background-color: #F8F8F8; }
+.w-editor-list > .w-editor-list-selected span { background-color: #E0E0E0; }

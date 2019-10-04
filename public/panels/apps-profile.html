@@ -1,0 +1,212 @@
+<div data---="panel__common.panel__if:appsprofile;reload:appsprofilepanel/reload;icon:rocket;scrollbar:false;autofocus:1;width:500" class="hidden">
+	<div data-scope="appsprofilepanel">
+		<div data---="viewbox__common.panel__height:100;margin:50;scrollbar:1;parent:.ui-panel-body">
+			<div class="padding npb">
+				<div data---="input__?.url__required:1;type:url;$delay:1000">@(URL address)</div>
+				<div class="help"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
+			</div>
+			<hr class="nmb" />
+			<div class="bg-yellow padding" data-bind="?__template__track:meta__show:value && value.meta">
+				<script type="text/html">
+					<div class="caption"><i class="fa fa-book-open"></i>@(Downloaded meta data)</div>
+
+					{{ if value.readme }}
+					<div>
+						<h2>@(Read me)</h2>
+						{{ value.readme | markdown }}
+					</div>
+					{{ fi }}
+
+					<div class="keyvalue">
+						<div class="key">@(Name)</div>
+						<div class="value">{{ value.meta.name | def }}</div>
+					</div>
+					<div class="keyvalue">
+						<div class="key">@(Description)</div>
+						<div class="value">{{ value.meta.description | def }}</div>
+					</div>
+					<div class="keyvalue">
+						<div class="key">@(Author)</div>
+						<div class="value">{{ value.meta.author | def }}</div>
+					</div>
+					<div class="keyvalue">
+						<div class="key">@(Email address)</div>
+						<div class="value">{{ value.meta.email | def }}</div>
+					</div>
+					<div class="keyvalue">
+						<div class="key">@(Supported roles)</div>
+						<div class="value">{{ value.meta.roles | joinbgcolor(' ') }}</div>
+					</div>
+					<div class="keyvalue">
+						<div class="key">@(Allowed origin)</div>
+						<div class="value">{{ value.meta.origin | join }}</div>
+					</div>
+					<br />
+					<table class="table table-small nmb table-bordered">
+						<thead>
+							<tr>
+								<th>@(Permissions)</th>
+								<th style="width:30px" class="center" title="@(Requirements)">@(R)</th>
+								<th style="width:30px" class="center" title="@(Used requirements)">@(C)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>@(Notifications)</td>
+								<td class="center">{{ value.meta.allownotifications | checkbox }}</td>
+								<td class="center">{{ value.allownotifications | checkbox }}</td>
+							</tr>
+							<tr>
+								<td>@(Server-side verification)</td>
+								<td class="center">{{ value.meta.serververify | checkbox }}</td>
+								<td class="center">{{ value.serververify | checkbox }}</td>
+							</tr>
+							<tr>
+								<td>@(Optimized for mobile devices)</td>
+								<td class="center">{{ value.meta.responsive | checkbox }}</td>
+								<td class="center">{{ value.responsive | checkbox }}</td>
+							</tr>
+							<tr>
+								<td>@(Optimized for guest user	)</td>
+								<td class="center">{{ value.meta.allowguest | checkbox }}</td>
+								<td class="center">{{ value.allowguest | checkbox }}</td>
+							</tr>
+							<tr>
+								<td>@(Can read meta information)</td>
+								<td class="center">{{ value.meta.allowreadmeta | checkbox }}</td>
+								<td class="center">{{ value.allowreadmeta | checkbox }}</td>
+							</tr>
+							<tr>
+								<td>@(Can read user profile)</td>
+								<td class="center">{{ value.meta.allowreadprofile | checkbox }}</td>
+								<td class="center">{{ value.allowreadprofile | checkbox }}</td>
+							</tr>
+							<tr>
+								<td>@(Can read users)</td>
+								<td class="center">{{ value.meta.allowreadusers | checkbox }}</td>
+								<td class="center">{{ value.allowreadusers | checkbox }}</td>
+							</tr>
+							<tr>
+								<td>@(Can read apps)</td>
+								<td class="center">{{ value.meta.allowreadapps | checkbox }}</td>
+								<td class="center">{{ value.allowreadapps | checkbox }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</script>
+			</div>
+			<div class="padding">
+				<div class="caption">@(Main settings)</div>
+				<div data---="input__?.title__required:1;maxlength:40" class="m">@(Title)</div>
+				<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX">@(Serial number)</div>
+				<div class="help"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
+				<hr />
+				<div data---="checkbox__?.blocked__checkicon:lock">@(Application is blocked)</div>
+				<div data-bind="?.id__show" class="hidden">
+					<div data---="checkbox__?.rebuildaccesstoken__checkicon:refresh">@(Re-build access token)</div>
+					<div data---="checkbox__?.rebuildservicetoken__checkicon:refresh">@(Re-build service token)</div>
+				</div>
+				<div data---="checkbox__?.permissions__checkicon:refresh">@(Refresh permissions according to the meta file)</div>
+				<div data---="checkbox__?.autorefresh__checkicon:refresh">@(Application can refresh its permissions automatically)</div>
+				<div class="alert hidden mt10" data-bind="?.autorefresh__show">
+					<i class="fa fa-warning"></i> @(You need to know that allowing refresh permissions automatically <b>is very dangerous step</b>.)
+				</div>
+			</div>
+			<div data-bind="?.settings2__show:value && value.length__strict" class="hidden padding bg-smoke m radius">
+				<h2 class="red"><i class="fa fa-cog fa-spin"></i>@(Custom application settings)</h2>
+				<div data---="parameters__?.settings2__height:150;dateformat:@(yyyy-MM-dd)__[]"></div>
+			</div>
+		</div>
+		<div class="buttons" data---="validation__?">
+			<button name="submit" class="submit exec" data-exec="?/submit" disabled>@(SAVE)</button>
+			<span class="link cancel">@(Cancel)</span>
+		</div>
+	</div>
+</div>
+
+<script>
+	PLUGIN('appsprofilepanel', function(exports) {
+
+		exports.reload = function(com) {
+			var model = GET('?');
+			com.reconfigure({ title: model.id ? '@(Edit app)' : '@(Create app)' });
+		};
+
+		exports.submit = function() {
+			var model = CLONE(GETR('?'));
+			model.settings = model.settings2.length ? {} : null;
+			for (var i = 0; i < model.settings2.length; i++) {
+				var item = model.settings2[i];
+				model.settings[item.name] = item.value;
+			}
+			model.settings2 = undefined;
+			AJAX('POST /api/op/apps/' + (model.id || ''), model, OP.done('@(Application has been saved successfully)', function() {
+				NULL('common.panel');
+				EXEC('appsgrid/refresh');
+				EXEC('usersroles/refresh');
+				EXEC('main/refreshmeta');
+			}));
+		};
+
+		WATCH('?.url', function(path, value, type) {
+
+			if (!value || !value.isURL()) {
+				if (type) {
+					INVALID('?.url');
+					NULL('?.meta');
+				}
+				return;
+			}
+
+			AJAX('GET /api/op/apps/meta/', { url: value }, function(response) {
+				var meta = response.value;
+
+				if (meta == null || !meta.name) {
+					INVALID('?.url');
+					NULL('?.meta');
+					return;
+				}
+
+				var model = GET('?');
+				SET('?.meta', meta);
+
+				if (!model.title)
+					SET('?.title', meta.title || meta.name);
+
+				if (meta && !meta.settings)
+					meta.settings = {};
+
+				var settings = meta.settings;
+				var newsettings = [];
+				var keys = Object.keys(settings);
+
+				for (var i = 0; i < keys.length; i++) {
+					var key = keys[i];
+					var type = settings[key].toLowerCase();
+					var v = model.settings ? model.settings[key] : null;
+					var vt = typeof(v);
+					if (v == null || type !== vt) {
+						switch (type) {
+							case 'number':
+								v = 0;
+								break;
+							case 'string':
+								v = '';
+								break;
+							case 'boolean':
+								v = false;
+								break;
+							case 'date':
+								if (!(v instanceof Date))
+									v = null;
+								break;
+						}
+					}
+					newsettings.push({ name: key, type: type, value: v });
+				}
+
+				SET('?.settings2', newsettings);
+			});
+		}, true);
+	});
+</script>

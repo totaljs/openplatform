@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 402;
+OP.version = 416;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -11,18 +11,78 @@ OP.interval = setInterval(function() {
 	if (OP.ready) {
 		clearInterval(OP.interval);
 		OP.pending.forEach(OP.$process);
+		OP.pending = [];
 	}
 }, 500);
 
+document.addEventListener('click', function(e) {
+
+	var target = e.target;
+
+	if (target.tagName === 'A') {
+
+		if (target.href.substring(0, 15) === 'openplatform://') {
+
+			var app = target.href.substring(15);
+			var index = app.indexOf('?');
+			var data = index === - 1 ? '' : app.substring(index + 1);
+
+			if (index !== -1)
+				app = app.substring(0, index);
+
+			e.preventDefault();
+
+			if (data) {
+				var arr = data.split('&');
+				data = {};
+				for (var i = 0; i < arr.length; i++) {
+					var arg = arr[i].split('=');
+					if (arg[0])
+						data[arg[0]] = arg[1] && decodeURIComponent(arg[1]);
+				}
+			}
+
+			OP.share(app, 'link', data);
+			return false;
+		}
+	}
+
+	OP && OP.$sendfocus();
+});
+
 document.onkeydown = function(e) {
-	if (e.keyCode === 116) {
-		e.returnValue = false;
-		e.keyCode = 0;
+
+	var is = false;
+
+	if (e.keyCode === 112) {
+		// F1
+		is = true;
+		OP.send('quicksearch');
+	} else if (e.keyCode === 116) {
+		// F5
+		OP.loading(false);
+		OP.progress(0);
 		if (location.href.indexOf('openplatform=') === -1)
 			location.href = OP.tokenizator(location.href);
 		else
 			location.reload(true);
+		is = true;
+	} else if (e.keyCode === 9 && (e.altKey || e.ctrlKey || e.metaKey)) {
+		// CTRL/ALT/CMD + TAB
+		is = true;
+		OP.send('nextwindow');
 	}
+
+	if (is) {
+		e.returnValue = false;
+		e.keyCode = 0;
+		return false;
+	}
+
+};
+
+OP.changelog = function(body) {
+	OP.send('changelog', { body: body });
 };
 
 OP.help = function(body) {
@@ -31,6 +91,16 @@ OP.help = function(body) {
 
 OP.success2 = function(msg, show, plus) {
 	OP.console('success', msg, show, plus);
+};
+
+OP.titlesuccess = function(msg) {
+	OP.send('titlesuccess', msg);
+};
+
+OP.titlewarning = function(msg) {
+	if (msg instanceof Array)
+		msg = msg[0].error;
+	OP.send('titlewarning', msg);
 };
 
 OP.warning2 = function(msg, show, plus) {
@@ -43,6 +113,10 @@ OP.error2 = function(msg, show, plus) {
 
 OP.info2 = function(msg, show, plus) {
 	OP.console('info', msg, show, plus);
+};
+
+OP.busy = function(is) {
+	OP.send('busy', is);
 };
 
 OP.appearance = function() {
@@ -63,7 +137,7 @@ OP.console = function(type, msg, show, text) {
 		OP.send('console', { type: type, msg: (text || '') + msg, show: show });
 };
 
-OP.screenshot = function(cdn) {
+OP.screenshot = function(cdn, callback) {
 
 	if (!OP.$screenshot) {
 
@@ -87,7 +161,10 @@ OP.screenshot = function(cdn) {
 	var make = function() {
 		OP.loading(true);
 		html2canvas(document.body).then(function(canvas) {
-			OP.send('screenshot', canvas.toDataURL('image/jpeg', 0.85));
+			if (callback)
+				callback(canvas.toDataURL('image/jpeg', 0.85));
+			else
+				OP.send('screenshot', canvas.toDataURL('image/jpeg', 0.85));
 			OP.loading(false);
 		});
 	};
@@ -154,26 +231,32 @@ OP.init = function(callback) {
 		document.body.innerHTML = '401: Unauthorized';
 	}, 2000);
 
-	OP.send('verify', data, function(err, response) {
-		if (timeout) {
-			clearTimeout(timeout);
-			OP.ready = !err;
-			callback(null, response, setTimeout(function() {
-				response.href && (location.href = response.href);
-			}, 100));
-		}
-		timeout = null;
-	});
+	setTimeout(function() {
+		OP.send('verify', data, function(err, response) {
+			if (timeout) {
+				clearTimeout(timeout);
+				OP.ready = !err;
+				callback(null, response, setTimeout(function() {
+					response.href && (location.href = response.href);
+				}, 100));
+			}
+			timeout = null;
+			OP.id = response.id;
+			OP.openplatformurl = response.openplatformurl;
+		});
+	}, 5);
 };
 
-
-document.addEventListener('click', function() {
-	OP && OP.focus();
-});
+OP.$sendfocus = function() {
+	var dt = Date.now();
+	if (!OP.$focus || OP.$focus < dt)
+		OP.focus();
+	OP.$focus = dt + (1000 * 2);
+};
 
 document.addEventListener('touchstart', function() {
-	OP && OP.focus();
-});
+	OP && OP.$sendfocus();
+}, { passive: true });
 
 OP.loading2 = function(visible, interval) {
 
@@ -226,10 +309,16 @@ OP.message = function(message, type, button) {
 	return OP.send('message', data);
 };
 
+OP.confirm2 = function(message, buttons, callback) {
+	OP.confirm(message, buttons instanceof Array ? buttons : buttons.split(',').trim(), function(index) {
+		!index && callback();
+	});
+};
+
 OP.confirm = function(message, buttons, callback) {
 	var data = {};
 	data.body = message;
-	data.buttons = buttons;
+	data.buttons = buttons instanceof Array ? buttons : buttons.split(',').trim();
 	return OP.send('confirm', data, function(err, button) {
 		callback(button ? button.index : -1);
 	});
@@ -332,18 +421,22 @@ OP.notify = function(type, body, data) {
 		type = 0;
 	}
 
-	return OP.send('notify', { type: type, body: body, data: data || '', datecreated: new Date() });
+	return OP.send('notify', { type: type, body: body, data: data || '', dtcreated: new Date() });
 };
 
 OP.share = function(app, type, body, silent) {
 	setTimeout(function() {
-		OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, datecreated: new Date(), silent: silent });
+		OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, dtcreated: new Date(), silent: silent });
 	}, 100);
 	return OP;
 };
 
-OP.email = function(subject, body) {
-	return OP.send('email', { subject: subject, body: body, datecreated: new Date() });
+OP.report = function(type, body, high) {
+	return OP.send('report', { type: type, body: body, high: high });
+};
+
+OP.mail = function(email, subject, body, type) {
+	return OP.send('mail', { email: email, subject: subject, body: body, dtcreated: new Date(), type: type || 'html' });
 };
 
 OP.shake = function(type) {
@@ -407,15 +500,27 @@ OP.$process = function(data) {
 	if (data.sender)
 		return;
 
+	if (data.type === 'link') {
+		var events = OP.events[data.type];
+		if (events) {
+			for (var i = 0; i < events.length; i++)
+				events[i](data.body.path, data.body.data);
+		}
+		return;
+	}
+
 	if (data.type === 'appearance' && OP.$appearance) {
 
 		var head = document.head || document.getElementsByTagName('head')[0];
 		var style = document.createElement('style');
+		var tmp;
 
 		if (OP.$appearance === 1) {
 			OP.$appearance = 2;
-		} else
-			document.getElementById('opstyle').remove();
+		} else {
+			tmp = document.getElementById('opstyle');
+			tmp && tmp.parentNode.removeChild(tmp);
+		}
 
 		var d = data.body;
 		var b = document.body.classList;
@@ -465,9 +570,40 @@ OP.$process = function(data) {
 	}
 
 	var events = OP.events[data.type];
-	events && events.forEach(function(e) {
-		e(data.body || {});
-	});
+	if (events) {
+		var d = {};
+		for (var i = 0; i < events.length; i++)
+			events[i](data.body || d);
+	}
+};
+
+OP.emit = function(name, a, b, c, d, e) {
+	var events = OP.events[name];
+	if (events && events.length) {
+		for (var i = 0; i < events.length; i++)
+			events[i](a, b, c, d, e);
+	}
+};
+
+OP.done = function(message, callback) {
+
+	if (typeof(message) === 'function') {
+		callback = message;
+		message = null;
+	}
+
+	return function(response, err) {
+
+		if (!response && err)
+			response = [{ name: 'network', error: err }];
+
+		if (response instanceof Array) {
+			OP.send('done', response);
+		} else {
+			message && OP.send('done', message);
+			callback && callback(response, err);
+		}
+	};
 };
 
 window.addEventListener('message', function(e) {
@@ -482,8 +618,35 @@ window.addEventListener('message', function(e) {
 		else
 			OP.$process(data);
 
-	} catch (e) {}
+	} catch (e) {
+		// unhandled error
+	}
 }, false);
+
+OP.link = function(path, data) {
+
+	var key = 'OPLINKINPUT';
+	var input = window[key];
+	if (!input) {
+		input = document.createElement('INPUT');
+		input.style = 'position:absolute;left:-100px;top:-100px;opacity:0';
+		document.body.appendChild(input);
+		window[key] = input;
+	}
+
+	var data = JSON.stringify({ id: OP.id, path: path, data: data });
+	data = data.substring(1, data.length - 1);
+
+	var v = OP.openplatformurl + '?share=' + btoa(encodeURIComponent(data)).replace(/=/g, '');
+	setTimeout(function() {
+		input.value = v;
+		input.focus();
+		input.select();
+		document.execCommand('copy');
+	}, 100);
+
+	return v;
+};
 
 OP.tokenizator = function(url) {
 	var index = url.indexOf('?');

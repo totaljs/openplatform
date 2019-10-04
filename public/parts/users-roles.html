@@ -1,0 +1,71 @@
+<div data-scope="usersroles">
+
+	<div class="header">
+		<label><i class="fa fa-key"></i>@(Roles (read-only))</label>
+	</div>
+
+	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:45;scroll:false">
+		<div data---="datagrid__?.items__height:parent;bottom:65;checkbox:0">
+			<script type="text/plain">
+				[
+					{ name: 'name', text: '@(Name)', width: 200, template: '{{ name | bgcolor }}' },
+					{ name: 'roles', text: '@(Groups)', width: 350, template: '{{ groups | join }}', search: true, sort: false },
+					{ name: 'apps', text: '@(Applications)', width: 350, template: '{{ apps | join }}', search: true, sort: false }
+				]
+			</script>
+		</div>
+	</div>
+</div>
+
+<div data---="importer__common.panel__if:group;url:/panels/users-group.html"></div>
+
+<script>
+
+	PLUGIN('usersroles', function(exports) {
+
+		exports.refresh = function() {
+			AJAX('GET /api/op/groups/', function(groups) {
+
+				var arr = [];
+				var roles = main.meta.roles;
+				var apps = main.apps;
+
+				for (var i = 0; i < roles.length; i++) {
+					var item = roles[i];
+					var obj = {};
+					obj.id = item.id;
+					obj.name = item.name;
+					obj.groups = [];
+					obj.apps = [];
+
+					for (var j = 0; j < groups.length; j++) {
+						var group = groups[j];
+						for (var k = 0; k < group.apps.length; k++) {
+							var r = group.apps[k];
+							if (r.roles.indexOf(item.id) !== -1) {
+								obj.groups.push(group.name);
+								break;
+							}
+						}
+					}
+
+					for (var j = 0; j < apps.length; j++) {
+						var app = apps[j];
+						if (app.roles && app.roles.indexOf(obj.id) !== -1)
+							obj.apps.push(app.title);
+					}
+
+					obj.groups.quicksort();
+					obj.apps.quicksort();
+					arr.push(obj);
+				}
+
+				SET('?.items', arr);
+			});
+		};
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+	});
+</script>

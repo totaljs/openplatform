@@ -1,0 +1,136 @@
+<div data-scope="usersgrid">
+
+	<div class="header">
+		<label><i class="fa fa-users"></i>@(Users)</label>
+		<div>
+			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
+			<button data-bind="?.items__enabled:value && value.items.length" disabled class="exec" data-exec="?/assign"><i class="fa fa-folder"></i>@(Assign)</button>
+			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
+			<button data-bind="?.checked__enabled:value && value.length" class="exec" data-exec="?/menu" disabled><i class="fa fa-check-circle green"></i>@(Options)</button>
+		</div>
+	</div>
+
+	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:45">
+		<div data---="datagrid__?.items__height:parent;exec:?/filter;bottom:65;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked">
+			<script type="text/plain">
+				[
+					{ name: 'online', text: '@(Online)', width: 70, template: '{{ if online }}<span class="badge badge-small badge-green">@(online)</span>{{ fi }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'sa', text: '@(Admin)', width: 70, template: '{{ sa | boolean }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'gender', text: '@(Gender)', width: 100, options: [{ text: '@(Male)', value: 'male' }, { text: '@(Female)', value: 'female' }], sort: false },
+					{ name: 'name', text: '@(Name)', width: 200, template: '{{ name }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}' },
+					{ name: 'groups', text: '@(Groups)', width: 250, template: '{{ groups | groups }}', sort: false, options: 'main.meta.groups' },
+					{ name: 'statusid', text: '@(Status)', width: 120, template: '{{ statusid | status }}', sort: false, options: 'statuses', otext: 'name', ovalue: 'id' },
+					{ name: 'reference', text: '@(Reference)', width: 150 },
+					{ name: 'contractid', text: '@(Contract)', width: 150, template: '{{ contractid | contract }}', sort: false, options: 'contracts', otext: 'name', ovalue: 'id' },
+					{ name: 'email', text: '@(Email)', width: 200 },
+					{ name: 'phone', text: '@(Phone)', width: 150 },
+					{ name: 'company', text: '@(Company)', width: 200 },
+					{ name: 'locality', text: '@(Locality)', width: 200 },
+					{ name: 'language', text: '@(Language)', width: 80, template: '{{ language | language }}', align: 1, sort: false, options: 'languages' },
+					{ name: 'dtbirth', text: '@(Age)', width: 100, sort: false, filter: false, template: '{{ dtbirth | age }}', align: 1 },
+					{ name: 'blocked', text: '@(Blocked)', width: 80, template: '{{ blocked | boolean(\'red\') }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'inactive', text: '@(Inactive)', width: 80, template: '{{ inactive | boolean(\'red\') }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'deputy', text: '@(Deputy)', width: 200 },
+					{ name: 'supervisor', text: '@(Supervisor)', width: 200 },
+					{ name: 'dtlogged', text: '@(Logged)', width: 120, align: 1, format: '[.user.dateformat]' },
+					{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]' },
+					{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]' }
+				]
+			</script>
+		</div>
+	</div>
+</div>
+
+<div data---="importer__common.panel__if:usersprofile;url:/panels/users-profile.html"></div>
+<div data---="importer__common.panel__if:usersassign;url:/panels/users-assign.html"></div>
+
+<script>
+
+	Thelpers.age = function(val) {
+		return val ? '@({0} years old)'.format((NOW.getFullYear() - val.getFullYear())) : '';
+	};
+
+	PLUGIN('usersgrid', function(exports) {
+
+		exports.refresh = function() {
+			NULL('?.items');
+		};
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.filter = function(type, filter, sort, page) {
+			if (filter == null)
+				filter = {};
+			filter.page = page;
+			filter.sort = sort;
+			AJAX('GET /api/op/users/', filter, '?.items');
+		};
+
+		exports.edit = function(row) {
+
+			if (row instanceof jQuery)
+				row = GET('?.selected');
+
+			AJAX('GET /api/op/users/' + row.id, function(response) {
+				if (response && response.id) {
+					response.darkmode = response.darkmode ? 'true' : 'false';
+					response.welcome = false;
+					response.appsroles = {};
+
+					for (var i = 0; i < response.apps.length; i++) {
+						var app = response.apps[i];
+						response.appsroles[app.id] = app.roles;
+					}
+
+					SETR('usersprofilepanel', response);
+					SET('common.panel', 'usersprofile');
+				}
+			});
+		};
+
+		exports.create = function() {
+			DEFAULT('usersprofilepanel__{}');
+			SET('common.panel', 'usersprofile');
+		};
+
+		exports.assign = function() {
+			DEFAULT('usersassignpanel__{}');
+			SET('common.panel', 'usersassign');
+		};
+
+		exports.menu = function(el) {
+
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'trash-o red' });
+
+			SETTER('menu', 'show', opt);
+
+			opt.callback = function(item) {
+
+				var checked = GET('?.checked');
+
+				if (item.id === 'remove') {
+					OP.confirm('@(Are you sure you want to remove selected users?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
+						if (index)
+							return;
+						OP.loading(true);
+						checked.wait(function(item, next, index) {
+							OP.progress((index / checked.length) * 100);
+							AJAX('DELETE /api/op/users/' + item.id, next);
+						}, function() {
+							OP.progress(100);
+							OP.loading(false, 500);
+							exports.refresh();
+						});
+					});
+				}
+			};
+		};
+
+	});
+</script>

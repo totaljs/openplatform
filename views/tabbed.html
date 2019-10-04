@@ -1,0 +1,1181 @@
+@{layout('')}
+@{title(config.name)}
+
+<!DOCTYPE html>
+<html class="noscroll">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
+	<meta name="robots" content="all,follow" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="apple-touch-icon" href="/icon.png" />
+	<link rel="manifest" href="/manifest.json" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	@{if user && (user.background || CONF.background)}
+	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
+	@{fi}
+	<script src="@{'%cdn'}/spa.min@18.js"></script>
+	@{import('meta', 'head', 'tabbed.css', 'tabbed.js', 'favicon.ico')}
+	<script>var user = EMPTYOBJECT</script>
+</head>
+<body data---="exec" class="noscroll @{if user.darkmode}ui-dark@{else}light@{fi}">
+
+	<div data---="LAZY features__null__placeholder:@(What are you looking for?)"></div>
+	<div data---="LAZY contextmenu"></div>
+	<div data---="LAZY confirm"></div>
+	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
+	<div data---="LAZY calendar"></div>
+	<div data---="LAZY tooltip"></div>
+	<div data---="LAZY menu"></div>
+	<div data---="message__null__button:@(Close)"></div>
+	<div data---="nativenotifications"></div>
+	<div data---="audio__user.volume"></div>
+	<div data---="loading" class="hidden"></div>
+	<div data---="shortcuts"></div>
+	<div data---="markdown"></div>
+
+	<footer>
+		<div class="samode hidden userbg" data-bind="user.sa__show__delay:200" title="@(Super Administrator)"><i class="fa fa-unlock mr5"></i>@(SA)</div>
+		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
+		<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
+		<div class="username hidden" data-bind="user__html span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
+		<div class="status hidden" data-bind="common.status__show__exec:renderstatus"></div>
+	</footer>
+
+	<header data-bind="user__.header-show:value && value.name">
+
+		<div class="button-window exec tooltip" data-bind="common.focused__.red" data-exec="Dashboard/closefocused" data-title="@(Close)"><i class="fa fa-times"></i></div>
+
+		@{if CONF.allowclock}
+		<div class="datetime hidden-xs">
+			<div data---="time"></div>
+		</div>
+		@{fi}
+
+		<div class="button-window hidden-xs exec tooltip" data-exec="Dashboard/showappsettings" id="appmenu" data-bind="common.focused__.usercolor" data-title="@(Application settings)"><i class="fa fa-cog"></i></div>
+		<div class="button-status exec visible-xs" title="@(App menu)" data-exec="Dashboard/showappmenu"><i class="fa fa-ellipsis-v"></i></div>
+
+		@{if !user.guest && CONF.allowstatus}
+		<div class="button-status exec hidden-xs tooltip" data-title="@(My status)" data-exec="Dashboard/showstatusform" data-bind="user.statusid__html:Thelpers.status(value, true)__|__common.statusid__.button-status-warning:value==null"></div>
+		@{fi}
+
+		<div class="user exec" data-exec="mainmenu" data-bind="common.startmenu__.selected:value" title="@(Start)">
+			<i class="fa fa-chevron-down"></i>
+		</div>
+
+		<div class="nav">
+			<div>
+				<nav data-bind="user.apps__exec:Dashboard/resizeapps__template:button" id="dashboardapps">
+					<script type="text/html">
+						{{ foreach m in value }}
+							{{ if !m.internal }}
+							<button data-title="{{ m.title }}"{{ if !m.online }} disabled{{ fi }} class="appprocess tooltip app{{ if m.running }} app-running{{ fi }}" draggable="true" data-id="{{ m.id }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}>{{ if !m.online }}<i class="offline fa fa-power-off"></i>{{ fi }}<b class="isrunning"><i class="fa fa-running"></i></b><b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b><b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b><i class="{{ m.icon | icon }}"></i><!--<span class="appname">{{ m.title }}</span>--><span class="appprogress ap{{ m.id }}"><span class="userbg"></span></span></button>
+							{{ fi }}
+						{{ end }}
+					</script>
+				</nav>
+			</div>
+		</div>
+		@{if !user.guest}
+		<div class="button-notifications exec tooltip" data-title="@(Notifications)" data-path="common.form" data-value="'notifications'">
+			<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
+			<i class="far fa-bell"></i>
+		</div>
+		@{fi}
+		<div class="scrollerbuttons hidden">
+			<button class="exec" data-exec="Dashboard/scrollapps" name="left"><i class="fa fa-angle-left"></i></button>
+			<button class="exec" data-exec="Dashboard/scrollapps" name="right"><i class="fa fa-angle-right"></i></button>
+		</div>
+	</header>
+
+	<div data---="quicknotifications">
+		<script type="text/html">
+			<div class="ui-quicknotifications-message"{{ if data }} data-data="{{ data | encodedata }}" data-id="{{ appid }}"{{ fi }}>
+				<div class="ui-quicknotifications-close"><i class="fa fa-times"></i></div>
+				<div class="ui-quicknotifications-date"><i class="far fa-clock-o"></i>{{ dtcreated | time }}</div>
+				<div class="ui-quicknotifications-title"><i class="{{ icon | icon }}"></i><b>{{ title }}</b></div>
+				<div class="ui-quicknotifications-padding">
+					<div class="ui-quicknotifications-body">{{ body | markdown_notifications }}</div>
+				</div>
+			</div>
+		</script>
+	</div>
+
+	<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
+	<div data---="processes@2__dashboard.current__datasource:dashboard.apps;options:Dashboard/appmenu"></div>
+
+	<div class="startmenu hidden" data-bind="common.startmenu__exec:togglemenu">
+		<div class="startmenu-nav">
+			<div>
+				<nav>
+					@{if CONF.welcome}
+					<button class="exec" data-exec="internalapp" data-id="_welcome" id="welcomeapp"><i class="fa fa-flag"></i>@(Welcome)</button>
+					@{fi}
+					@{if !user.guest && user.sa}
+						<button class="exec internal" data-exec="internalapp" data-id="_admin"><i class="fa fa-cog"></i>@(Control panel)</button>
+					@{fi}
+
+					@{if !user.guest && CONF.allowprofile}
+					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
+					@{fi }
+
+					@{if !user.guest}
+					<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
+					@{fi}
+
+					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
+					@{if !user.guest && user.pin}
+					<button class="exec internal" data-exec="internallock"><i class="fa fa-lock"></i>@(Lock screen)</button>
+					@{fi}
+					<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off red"></i>@(Sign out)</button>
+				</nav>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="startmenu-title">
+			@{if !user.guest}
+			<div class="startmenu-status exec" data-exec="Dashboard/showstatusform" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
+			@{fi}
+		</div>
+	</div>
+
+	<div class="titlemessage hidden" data-bind="null__click:hidetitlemessage">
+		<i class="fa"></i>
+		<div></div>
+	</div>
+
+	<div data---="console__common.consolewindow__datasource:common.console"></div>
+	<div data---="importer__common.form__if:reportbug;url:/forms/report.html"></div>
+	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
+	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
+	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
+	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
+
+	<script>
+
+		var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
+
+		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && window.require != null;
+		common.electronpadding = 0;
+		common.defaultappid = '@{'%defaultappid'}';
+
+		function hidetitlemessage(el) {
+			common.titlescache && clearTimeout(common.titlescache);
+			common.titlescache = null;
+			el.aclass('hidden');
+		}
+
+		if (common.electron) {
+			process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+			common.META = require('electron').remote.getGlobal('META') || EMPTYOBJECT;
+			require('electron').ipcRenderer.send('setTitle', document.title);
+			if (common.META.version && navigator.userAgent.indexOf('Macintosh') !== -1)
+				$('body').aclass('electron');
+		}
+
+		// For screenshots
+		common.cdn = '@{'%cdn'}';
+		common.cluster = '@{F.id}';
+		common.livecounter = 0;
+		common.liverefreshing = false;
+
+		CACHEPATH('common.statusid', '6 hours');
+
+		WATCH('common.consolewindow', function() {
+			SET('common.consolecount', 0, 1000);
+		});
+
+		if (!isMOBILE) {
+
+			var hidetooltip = function() {
+				clearTimeout2('tooltip');
+				SETTER('tooltip', 'hide', true);
+			};
+
+			$(document).on('mouseenter', '.tooltip', function(e) {
+				clearTimeout2('tooltiphide');
+				var el = $(this);
+				var opt = {};
+				opt.element = el;
+				opt.html = el.attrd('title');
+				opt.align = 'bottom';
+				opt.timeout = 1500;
+				SETTER('tooltip', 'show', opt);
+			}).on('mousemove', function(e) {
+				if (e.pageY > 50)
+					setTimeout2('tooltiphide', hidetooltip, 200);
+			}).on('click', function() {
+				clearTimeout2('tooltip');
+				SETTER('!tooltip', 'hide');
+			});
+		}
+
+		function togglemenu(value, path, el) {
+			if (value) {
+				el.rclass('hidden');
+				setTimeout(function() {
+					el.aclass('startmenu-visible');
+					if (!isMOBILE)
+						$('.startmenu-search').find('input').focus();
+					el.find('.noscrollbar').noscrollbar();
+				}, 10);
+			} else {
+				el.rclass('startmenu-visible');
+				setTimeout(function() {
+					el.aclass('hidden');
+				}, 300);
+			}
+		}
+
+		$('body').on('click touchstart', function(e) {
+			if (common.startmenu) {
+				var t = e.target;
+				var el = $(t);
+				if (t.tagName === 'BODY' || el.closest('.launchpad').length)
+					TOGGLE('common.startmenu');
+			}
+		});
+
+		function mainmenu(el) {
+			SET('common.startmenuapps', true);
+			TOGGLE('common.startmenu');
+		}
+
+		function internalapp(el) {
+			var id = typeof(el) === 'string' ? el : el.attrd('id');
+			var iframe = dashboard.apps.findItem('id', id);
+			if (iframe)
+				SETTER('processes', 'maximize', id);
+			else
+				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
+			common.startmenu && SET('common.startmenu', false);
+		}
+
+		function internalreset() {
+			common.startmenu && SET('common.startmenu', false);
+			SETTER('processes', 'resetsize');
+		}
+
+		function internallock() {
+			SETTER('loading', 'show');
+			setTimeout(function() {
+				location.href = '/lock/';
+			}, 500);
+		}
+
+		function internallogoff() {
+			SETTER('loading', 'show');
+			SETTER('processes', 'kill');
+			setTimeout(function() {
+				location.href = '/logout/';
+			}, 1000);
+		}
+
+		ON('message', function(message) {
+			switch (message.TYPE) {
+				case 'logoff':
+				case 'logout':
+					COOKIES.set('@{'%cookie'}', '', '-1 day');
+					location.href = '/';
+					break;
+				case 'settings':
+					document.title = message.body.name;
+					SET('user.test', message.body.test === true);
+					break;
+			}
+		});
+
+		var LOADINGSKIP = true;
+
+		ON('online', function(is) {
+			if (LOADINGSKIP)
+				LOADINGSKIP = false;
+			else
+				SETTER('loading', is ? 'hide' : 'show');
+		});
+
+		$(document).on('dblclick', '.appprocess', function() {
+			if (user.sa) {
+				var id = $(this).attrd('id');
+				setTimeout(function() {
+					SETTER('processes', 'reload', id);
+				}, 500);
+			}
+		});
+
+		var dashboard = {};
+
+		dashboard.current = null;
+		dashboard.apps = [];
+
+		$(document).on('click', '.app', function() {
+			var el = $(this);
+
+			if (el.hclass('app-offline') || el.hclass('app-disabled'))
+				return;
+
+			var id = el.attrd('id');
+			var iframe = dashboard.apps.findItem('id', id);
+
+			if (iframe) {
+				if (iframe.internal.countbadges || iframe.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					iframe.internal.countnotifications = 0;
+					iframe.internal.countbadges = 0;
+				}
+				SETTER('processes', 'maximize', id);
+			} else
+				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
+
+			common.startmenu && SET('common.startmenu', false);
+		});
+
+		PLUGIN('Dashboard', function(self) {
+
+			self.favorite = function(id) {
+				AJAX('GET /api/profile/{0}/favorite/'.format(id), function(response) {
+					var app = user.apps.findItem('id', id);
+					app.favorite = response.value;
+					$('.app[data-id="{0}"]'.format(id)).find('.appfavorite').tclass('hidden', !app.favorite);
+					user.apps.quicksort('title');
+					UPD('user.apps');
+				});
+			};
+
+			self.showdesktop = function() {
+
+				if (common.hiddenwindows)
+					return;
+
+				SET('common.hiddenwindows', true);
+
+				var back = function() {
+					SET('common.hiddenwindows', false);
+					$('.ui-process').rclass('hidden2');
+					$(document).off('click', back);
+				};
+
+				$('.ui-process').aclass('hidden2');
+				setTimeout(function() {
+					$(document).on('click', back);
+				}, 10);
+			};
+
+			self.hidemenu = function() {
+				SET('common.startmenu', false);
+			};
+
+			self.showconsole = function() {
+				TOGGLE('common.consolewindow');
+			};
+
+			self.showprofile = function() {
+				if (!user.guest)
+					internalapp('_account');
+			};
+
+			self.showsessions = function() {
+				SET('common.form', 'sessionsform');
+				SET('common.startmenu', false);
+			};
+
+			self.resizeapps = function(value, path, el) {
+				setTimeout2('resizeapps', function() {
+					var size = ($('.datetime').length ? 160 : 0) + ($('.button-status').length ? 50 : 0);
+					el.css('width', el.find('button').length * 45);
+					var parent = el.parent().parent();
+					var w = WW - (204 + (isMOBILE && WIDTH() === 'xs' ? -24 : (size + 10)));
+					parent.css('width', w);
+					$('.scrollerbuttons').tclass('hidden', isMOBILE || parent.find('nav').width() < w);
+				}, 100, el);
+			};
+
+			self.open = function(el) {
+				if (common.page !== 'dashboard')
+					SET('common.page', 'dashboard');
+				self.hidemenu();
+				var id = el instanceof jQuery ? el.attrd('id') : el;
+				var app = dashboard.apps.findItem('id', id);
+				if (app == null)
+					return;
+				if (app.internal.countbadges || app.internal.countnotifications) {
+					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
+					app.internal.countnotifications = 0;
+					app.internal.countbadges = 0;
+				}
+				SETTER('processes', 'maximize', id);
+			};
+
+			self.close = function(el, e) {
+				e.stopPropagation();
+				e.preventDefault();
+				self.hidemenu();
+				SETTER('processes', 'kill', el instanceof jQuery ? el.attrd('id') : el);
+			};
+
+			self.closefocused = function() {
+				common.focused && SETTER('processes', 'kill', common.focused);
+				setTimeout(function() {
+					var arr = $('.ui-process');
+					for (var i = 0; i < arr.length; i++) {
+						var el = $(arr[i]);
+						if (el.hclass('hidden'))
+							continue;
+						var id = el.attrd('id');
+						if (id) {
+							SET('common.focused', id);
+							break;
+						}
+					}
+				}, 100);
+			};
+
+			self.navigate = function(el) {
+
+				var id, data;
+
+				if (el instanceof jQuery) {
+					id = el.attrd('id');
+					data = decodeURIComponent(el.attrd('data'));
+				} else {
+					id = el.id;
+					data = el.data;
+				}
+
+				var app = user.apps.findItem('id', id);
+				if (!app)
+					return;
+
+				var iframe = dashboard.apps.findItem('id', app.id);
+				if (iframe) {
+					self.open(el instanceof jQuery ? el : el.id);
+					setTimeout(function() {
+						SETTER('processes', 'sendnotifydata', app.id, data);
+					}, 500);
+				} else {
+					app.notifydata = data;
+					AJAX('GET /api/profile/{0}/'.format(app.id), { href: app.url }, FUNC.open);
+				}
+			};
+
+			self.sync = function() {
+				var is = false;
+				var is2 = false;
+				dashboard.apps = dashboard.apps.remove(function(item) {
+					var app = user.apps.findItem('id', item.id);
+					var rem = app == null || !app.online;
+					if (rem) {
+						SETTER('processes', 'kill', item.id);
+						is = true;
+					} else {
+						item.running = item.internal.running = app.running = true;
+						is2 = true;
+					}
+					return rem;
+				});
+
+				is && UPD('dashboard.apps');
+				UPD('user.apps');
+
+			};
+
+			self.scrollapps = function(el) {
+				var scroll = $('.nav > div');
+				var value = 150;
+				switch (el[0].name) {
+					case 'left':
+						value = -150;
+						break;
+				}
+				scroll.stop().animate({ scrollLeft: scroll[0].scrollLeft + value }, 200);
+
+			};
+
+			self.saveState = function() {
+				CACHE('focused', common.focused, '1 year');
+			};
+
+			self.showappmenu = function() {
+				SETTER('processes', 'message2', common.focused, 'menu');
+			};
+
+			self.showappsettings = function() {
+
+			};
+
+			self.showstatusform = function() {
+				SET('common.form', 'status');
+				self.hidemenu();
+			};
+
+			self.init = function() {
+				self.init = null;
+				var running = CACHE('focused');
+				if (running) {
+					var app = user.apps.findItem('id', running);
+					if (app) {
+						var el = $('.app[data-id="{0}"]'.format(app.id));
+						if (!el.length)
+							el = $('.internal[data-id="{0}"]'.format(app.id));
+						if (el.length)
+							internalapp(el);
+					}
+				} else {
+
+					var skip = false;
+
+					if (common.defaultappid) {
+						if (user.apps.findItem('id', common.defaultappid)) {
+							internalapp(common.defaultappid);
+							skip = true;
+						}
+					}
+
+					if (!skip) {
+						var wa = $('#welcomeapp');
+						if (wa.length) {
+							var ls = localStorage;
+							if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
+								ls.setItem('welcome', '1');
+								skip = true;
+								internalapp(wa);
+							}
+						}
+					}
+
+					if (!skip && !user.apps.findItem('favorite', true))
+						SET('common.startmenu', true, 500);
+				}
+			};
+
+			self.appmenu = function(opt, next, iframe) {
+
+				opt.items = [];
+
+				if (opt.appitems) {
+					for (var i = 0; i < opt.appitems.length; i++)
+						opt.items.push(opt.appitems[i]);
+					opt.items.push('-');
+				}
+
+				opt.items.push({ name: common.muted[iframe.id] ? '<strong>@(Enable sounds)</strong>' : '@(Mute sounds)', icon: common.muted[iframe.id] ? 'volume-up red' : 'volume-mute', value: 'mutesounds' });
+				opt.items.push({ name: iframe.meta.notifications ? '@(Mute notifications)' : '<strong>@(Enable notifications)</strong>', icon: (iframe.meta.notifications ? '!far fa-bell-slash' : 'bell red'), value: 'mutenotifications' });
+				opt.items.push('-');
+				opt.items.push({ name: '@(Print screen)', icon: 'print', value: 'print' });
+				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'refresh' });
+				opt.items.push({ name: '@(Changelog)', icon: 'history', value: 'changelog' });
+				opt.items.push({ name: '@(Report a bug)', icon: 'bug', value: 'report' });
+				opt.items.push('-');
+				opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
+				next();
+			};
+
+		});
+
+		SETTER(true, 'shortcuts', 'register', 'F1', function() {
+			var items = [];
+
+			for (var i = 0; i < user.apps.length; i++) {
+				var app = user.apps[i];
+				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: app.icon, keywords: app.name });
+			}
+
+			if (user.locking)
+				items.push({ name: '@(Lock screen)', icon: 'lock', TYPE: 'lock' });
+
+			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
+
+			SETTER('features', 'show', items, function(item) {
+				switch (item.TYPE) {
+					case 'app':
+						internalapp($('.app[data-id="{0}"],.internal[data-id="{0}"]'.format(item.id)));
+						break;
+					case 'logoff':
+						internallogoff();
+						break;
+					case 'lock':
+						internallock();
+						break;
+					case 'reset':
+						internalreset();
+						break;
+				}
+			}, true);
+
+		}, true);
+
+		SETTER(true, 'shortcuts', 'register', 'alt+tab,cmd+tab,ctrl+tab', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}, true);
+
+		SETTER(true, 'shortcuts', 'register', 'alt+w,cmd+w,alt+F3', function(e) {
+
+			if (dashboard.current) {
+				SETTER('processes', 'kill', dashboard.current.id);
+				dashboard.current = null;
+			} else if (dashboard.apps.length)
+				SETTER('processes', 'kill', dashboard.apps[0].id);
+
+			e.preventDefault();
+			e.stopPropagation();
+		}, true);
+
+		SETTER(true, 'shortcuts', 'register', 'alt+r,F5', function(e) {
+			var id = $('.ui-process-focus').attrd('id');
+			id && SETTER('processes', 'reload', id);
+			e.preventDefault();
+			e.stopPropagation();
+		}, true);
+
+		SETTER(true, 'shortcuts', 'register', 'esc', function(e) {
+			if (common.form) {
+				NUL('common.form');
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		}, true);
+
+		WATCH('common.focused', function(path, id) {
+			var nav = $('header').find('nav');
+			nav.find('button.focused').rclass('focused');
+			nav.find('button[data-id="{0}"]'.format(id)).aclass('focused');
+			if (id) {
+				var app = dashboard.apps.findItem('id', id);
+				if (app)
+					app.dtfocused = NOW;
+				$('.ui-process-focus').rclass('ui-process-focus');
+				var iframe = $('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').find('iframe');
+				if (iframe.length)
+					iframe[0].contentWindow.focus();
+			} else {
+				common.statustimeout && clearTimeout(common.statustimeout);
+				common.statustimeout = null;
+				NULL('common.status');
+			}
+			EXEC('Dashboard/saveState');
+		});
+
+		Thelpers.status = function(value, icon) {
+			var str;
+			switch (value) {
+				case 1:
+					str = 'spinner fa-spin status1"></i>@(Busy)';
+					break;
+				case 2:
+					str = 'moon status2"></i>@(Do not disturb)';
+					break;
+				case 3:
+					str = 'door-open status3"></i>@(Be right back)';
+					break;
+				case 4:
+					str = 'brain status4"></i>@(Meeting)';
+					break;
+				case 5:
+					str = 'car status5"></i>@(Business trip)';
+					break;
+				case 6:
+					str = 'umbrella-beach status6"></i>@(Holiday)';
+					break;
+				case 7:
+					str = 'heartbeat status7"></i>@(Sick)';
+					break;
+				case 8:
+					str = 'home status8"></i>@(Off work)';
+					break;
+				default:
+					str = 'smile status0"></i>@(Available)';
+					break;
+			}
+
+			var index = str.indexOf('</i>');
+			var title = str.substring(index + 4);
+
+			return '<i title="' + title + '" class="fa fa-' + (icon ? str.substring(0, index + 4) : str);
+		};
+
+		Thelpers.icon = function(val) {
+			return 'fa-' + ((/\sfar$/).test(val) ? val : (val + ' fa'));
+		};
+
+		ON('response', function(response) {
+			// unauthorized
+			if (response.status === 401) {
+				location.href = '/';
+				response.cancel = true;
+				return;
+			}
+		});
+
+		function refresh_color(user) {
+			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			var b = $(document.body);
+			b.tclass('light', !user.darkmode);
+			b.tclass('ui-dark', !!user.darkmode);
+			SETTER('processes', 'emitevent', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme, background: user.background ? (location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '') + '/backgrounds/' + user.background) : '' });
+		}
+
+		function refresh_profiledata() {
+
+			if (common.liverefreshing)
+				return;
+
+			common.liverefreshing = true;
+			AJAX('GET /api/profile/live', function(response) {
+
+				common.liverefreshing = false;
+
+				if (response == null || typeof(response) === 'string') {
+					// maybe blocked
+					location.reload(true);
+					return;
+				}
+
+				if (response.desktop !== user.desktop) {
+					// layout changed
+					location.reload(true);
+					return;
+				}
+
+				var isui = user.darkmode !== response.darkmode || user.colorscheme !== response.colorscheme || user.background !== response.background;
+				if (isui) {
+					user.darkmode = response.darkmode;
+					user.colorscheme = response.colorscheme;
+					user.background = response.background;
+					refresh_color(user);
+				}
+
+				var is = false;
+
+				if (user.name !== response.name) {
+					is = true;
+					user.name = response.name;
+				}
+
+				if (user.photo !== response.photo) {
+					is = true;
+					user.photo = response.photo;
+				}
+
+				if (user.test !== response.test) {
+					is = true;
+					user.test = response.test;
+				}
+
+				if (user.volume !== response.volume) {
+					is = true;
+					user.volume = response.value;
+				}
+
+				if (user.countnotifications !== response.countnotifications) {
+					is = true;
+					var old = user.countnotifications;
+					user.countnotifications = response.countnotifications;
+					if (user.countnotifications > old) {
+						user.sounds && SETTER('audio', 'play', '/sounds/notifications.mp3');
+						FUNC.faviconbadge(user.countnotifications);
+
+						if (common.electron)
+							require('electron').ipcRenderer.send('setBadge', { count: user.countnotifications });
+
+						SETTER('nativenotifications', 'append', '@(Alert!)', '@(You have {0}.)'.format(user.countnotifications.pluralize(@('# unread notifications', '# unread notification', '# unread notifications', '# unread notifications'))), function() {
+							SET('common.form', 'notifications');
+						}, '/icon.png');
+
+						if (common.form === 'notifications')
+							EXEC('notifications/refresh');
+
+					} else
+						FUNC.faviconbadge(false);
+				}
+
+				if (user.statusid !== response.statusid || user.status !== response.status) {
+					is = true;
+					user.statusid = response.statusid;
+					user.status = response.status;
+				}
+
+				if (user.sa !== response.sa) {
+					is = true;
+					user.sa = response.sa;
+				}
+
+				if (response.notifications)
+					SETTER('quicknotifications', 'append', response.notifications);
+
+				var keys = [];
+				var removed = is;
+
+				for (var i = 0; i < user.apps.length; i++) {
+					var app = user.apps[i];
+					var ua = response.apps[app.id];
+
+					if (app.id.charAt(0) !== '_') {
+						keys.push(app.id);
+						if (ua == null) {
+							removed = true;
+							continue;
+						}
+					} else if (ua == null)
+						continue;
+
+					if (app.countbadges !== ua.countbadges) {
+						app.countbadges = ua.countbadges;
+						app.countbadges && user.sounds && SETTER('audio', 'play', '/sounds/badges.mp3');
+						is = true;
+					}
+
+					if (app.countnotifications !== ua.countnotifications) {
+						app.countnotifications = ua.countnotifications;
+						is = true;
+					}
+
+					if (app.notifications != null && ua.notifications != null && app.notifications !== ua.notifications) {
+						app.notifications = ua.notifications;
+						is = true;
+					}
+				}
+
+				if (removed)
+					keys.push('!');
+
+				var keysnew = Object.keys(response.apps);
+
+				keys.sort();
+				keysnew.sort();
+
+				if (keys.join('') !== keysnew.join(''))
+					refresh_profile();
+				else if (is)
+					UPD('user');
+			});
+		}
+
+		function refresh_profile() {
+			AJAX('GET /api/profile/', function(profile) {
+
+				if (profile == null || typeof(profile) === 'string') {
+					// refresh (maybe locked / logged out)
+					location.reload(true);
+					return;
+				}
+
+				if (window.user && window.user.desktop != null && window.user.desktop !== profile.desktop) {
+					location.reload(true);
+					return;
+				}
+
+				if (window.user && window.user.apps) {
+					var apps = profile.apps;
+					var removed = [];
+					for (var i = 0; i < apps.length; i++) {
+						var app = apps[i];
+						var ua = user.apps.findItem('id', app.id);
+						if (ua)
+							COPY(app, ua);
+					}
+					user.apps = user.apps.remove(function(item) {
+						return apps.findItem('id', item.id) == null;
+					});
+				}
+
+				profile.datefdow = FIRSTDATEOFWEEK[profile.language || 'en'] || 0;
+
+				if (!common.ready) {
+					SET('common.ready', true);
+					setTimeout(function() {
+						$('.launchpad').aclass('launchpad-visible');
+					}, 1000);
+				}
+
+				profile.apps.quicksort('position');
+				SET('user', profile);
+				refresh_color(user);
+				EXEC('Dashboard/sync');
+				EXEC('Dashboard/init');
+				SET('common.startmenusearch', '');
+			});
+		}
+
+		setTimeout(refresh_profile, 1000);
+
+		setInterval(function() {
+			common.livecounter++;
+ 			if (common.livecounter % 24 === 0)
+				refresh_profile();
+			if (document.hasFocus())
+				refresh_profiledata();
+			else if (common.livecounter % 5 === 0)
+				refresh_profiledata();
+
+			if (common.livecounter > 99999999)
+				common.livecounter = 0;
+
+		}, 5000);
+
+		function renderstatus(value, path, el) {
+			if (value && !value.status) {
+				value.status = 1;
+				common.statustimeout && clearTimeout(common.statustimeout);
+				el.tclass('green', value.type === 'success');
+				el.tclass('orange', value.type === 'warning');
+				el.tclass('red', value.type === 'error');
+				el.tclass('blue', value.type === 'info');
+				el.html(Thelpers.markdown_status(value));
+				el.attr('title', el.text());
+				common.statustimeout = setTimeout(function() {
+					common.statustimeout = null;
+					el.empty();
+				}, 10000);
+			} else
+				el.empty();
+		}
+
+		Thelpers.time2 = function(value) {
+
+			if (!value)
+				return;
+
+			var diff = Date.now() - (value instanceof Date ? value : value.parseDate()).getTime();
+
+			var minutes = ((diff / 1000) / 60) >> 0;
+			if (minutes < 60) {
+				if (minutes < 3)
+					return '@(now)';
+				return @(minutes + ' minutes ago');
+			}
+
+			var hours = (minutes / 60) >> 0;
+			if (hours < 24)
+				return @(hours + ' ' + Thelpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
+
+			var days = (hours / 24) >> 0;
+			if (days < 30)
+				return @(days + ' ' + Thelpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
+
+			var months = (days / 29) >> 0;
+			if (months < 12)
+				return @(months + ' ' + Thelpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
+
+			var years = (months / 12) >> 0;
+			return @(years + ' ' + Thelpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
+		};
+
+		Thelpers.time = function(value) {
+			return value ? '<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(), Thelpers.time2(value), value.format(null)) : value;
+		};
+
+		ON('knockknock', function() {
+			$('.ta-time').each(function() {
+				var el = $(this);
+				el.html(Thelpers.time(new Date(+el.attrd('time'))));
+			});
+
+			var dt = NOW.add('-30 minutes');
+			var close = [];
+
+			for (var i = 0; i < dashboard.apps.length; i++) {
+				var app = dashboard.apps[i];
+				if (app.id === common.focused)
+					continue;
+				if (dt > app.dtfocused)
+					close.push(app.id);
+			}
+
+			for (var i = 0; i < close.length; i++)
+				EXEC('Dashboard/close', close[i]);
+		});
+
+		$(document).on('contextmenu', '.appprocess', function(e) {
+
+			e.stopPropagation();
+			e.preventDefault();
+
+			var opt = {};
+			opt.element = $(this);
+
+			if (!opt.element.hclass('app-running'))
+				return;
+
+			var id = opt.element.attrd('id');
+			var app = user.apps.findItem('id', id);
+
+			if (app == null)
+				return;
+
+			var hidden = $('.ui-process[data-id="{0}"]'.format(id)).hclass('hidden');
+
+			opt.items = [];
+			opt.items.push(app.title);
+
+			if (!hidden)
+				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
+
+			opt.items.push({ name: '@(Report a bug)', icon: 'bug', value: 'report' });
+			opt.items.push('-');
+			opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
+
+			opt.callback = function(item) {
+				if (item.value === 'report')
+					FUNC.reportbug(id);
+				else
+					SETTER('processes', item.value, id);
+			};
+
+			SETTER('menu', 'show', opt);
+		});
+
+		$(document).on('contextmenu', '.launchpadapp', function(e) {
+
+			e.stopPropagation();
+			e.preventDefault();
+
+			var opt = {};
+			var el = $(this);
+
+			opt.x = e.pageX;
+			opt.y = e.pageY;
+
+			var id = el.attrd('id');
+			var app = user.apps.findItem('id', id);
+
+			if (app == null)
+				return;
+
+			var appel = $('.ui-process[data-id="{0}"]'.format(id));
+			var hidden = appel.hclass('hidden');
+			var running = !!appel.length;
+
+			opt.items = [];
+			opt.items.push(app.title);
+
+			if (running) {
+				if (!hidden)
+					opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'reload' });
+				opt.items.push({ name: '@(Show window)', icon: '!far fa-window-maximize', value: 'maximize' });
+			}
+
+			running && opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'kill' });
+
+			opt.callback = function(item) {
+				SETTER('processes', item.value, id);
+			};
+
+			SETTER('menu', 'show', opt);
+		});
+
+		ON('ready', function() {
+			WAIT('user.openplatformid', function() {
+				NAV.query.notifications && SET('common.form', 'notifications', 2000);
+				if (NAV.query.password && !user.guest)
+					EXEC('Dashboard/showprofile');
+
+				var share = NAV.query.share;
+				if (share) {
+					var diff = share.length % 4;
+					if (diff) {
+						diff = 4 - diff;
+						for (var i = 0; i < diff; i++)
+							share += '=';
+					}
+					try {
+						var val = decodeURIComponent(atob(share));
+						share = PARSE('{' + val + '}');
+					} catch (e) {
+						return;
+					}
+
+					setTimeout(function() {
+						SETTER('processes', 'wait', share.id, function(iframe) {
+							share.id = undefined;
+							iframe && SETTER('processes', 'sendlinkdata', iframe, share);
+						});
+					}, 1000);
+				}
+
+			});
+		});
+
+		var dragdata = {};
+
+		$('#dashboardapps').on('dragstart dragover drop dragleave dragenter', function(e) {
+			switch (e.type) {
+				case 'dragstart':
+					var button = e.target;
+					if (button.tagName !== 'BUTTON')
+						button = button.parentNode;
+					if (button.tagName !== 'BUTTON')
+						button = button.parentNode;
+					if (button.tagName !== 'BUTTON')
+						return;
+					dragdata.el = button;
+					var eo = e.originalEvent;
+					eo.dataTransfer && eo.dataTransfer.setData('text', '1');
+					return;
+				case 'drop':
+
+					var button = e.target;
+					if (button.tagName !== 'BUTTON')
+						button = button.parentNode;
+					if (button.tagName !== 'BUTTON')
+						button = button.parentNode;
+					if (button.tagName !== 'BUTTON')
+						return;
+
+					var parent = button.parentNode;
+					if (dragdata.el === button)
+						return;
+
+					parent.removeChild(dragdata.el);
+					parent.insertBefore(dragdata.el, button);
+
+					var data = [];
+
+					$('#dashboardapps').find('button').each(function(index) {
+						var id = $(this).attrd('id');
+						var app = user.apps.findItem('id', id);
+						app.position = index;
+						data.push({ id: app.id, position: index });
+					});
+
+					dragdata.save && clearTimeout(dragdata.save);
+					dragdata.save = setTimeout(function(data) {
+						dragdata.save = null;
+						AJAX('POST /api/profile/apps/positions/', { apps: data });
+					}, 1000, data);
+					break;
+			}
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		WATCH('user', function(path, value) {
+
+			if (!dashboard.apps.length)
+				return;
+
+			var keys = Object.keys(value.apps);
+			for (var i = 0; i < keys.length; i++) {
+				var app = value.apps[keys[i]];
+				var running = dashboard.apps.findItem('id', keys[i]);
+				if (running) {
+					running.internal.countbadges = app.countbadges;
+					running.internal.countnotifications = app.countnotifications;
+				}
+			}
+		});
+
+		Thelpers.type = function(val) {
+			return val === undefined ? 'undefined' : val == null ? 'null' : val.toString();
+		}
+
+	</script>
+
+	@{components('openplatform_tabbed')}
+
+</body>
+</html>

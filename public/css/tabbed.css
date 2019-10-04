@@ -1,0 +1,395 @@
+/*auto*/
+
+html,body { height: 100%; overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto; }
+body { height: 100%; background: #808080 linear-gradient(#5f5e50,#565656); background-size: cover; }
+body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
+.ui-dark { color: #C0C0C0; }
+
+.hidden2 { display: none; }
+
+header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #333333 linear-gradient(#333333,#383838); position: fixed; z-index: 35; width: 100%; color: #909090; border-bottom: 1px solid rgba(255,255,255,0.1); }
+header .nav { float: left; width: 70%; overflow: hidden; height: 45px; }
+header .nav > div { overflow-x: scroll; width: 100%; height: 80px; overflow-scrolling: touch; overflow-y: hidden }
+header nav { width: 5000px; height: 45px; -webkit-app-region: drag; }
+header nav button { outline: 0; background-color: transparent; border: 0; padding: 0; margin: 0; width: 45px; height: 44px; border-right: 1px solid rgba(0,0,0,0.2); cursor: pointer; vertical-align: top; color: white; line-height: 0; }
+header nav button:first-child { border-left: 1px solid rgba(0,0,0,0.2);  }
+header nav button img { width: 25px; height: 25px; border-radius: 3px; }
+header nav button:hover { background-color: rgba(255,255,255,0.05); }
+header nav button:disabled { background-color: rgba(0,0,0,0.08) !important; color: gray !important; }
+header nav button.focused { background-color: #4c4c4c; }
+header nav button > i { font-size: 20px; }
+header .appname { font-size: 10px; display: block; margin: 3px 0 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; line-height: 14px; }
+header nav > i { position: absolute; margin: 5px 35px; color: red; cursor: pointer; }
+header .datetime { background-color: rgba(0,0,0,0.15); height: 45px; float: right; width: 150px; padding: 0; text-align: center; font-size: 12px; line-height: 15px; color: white; cursor: default; border-left: 1px solid #404040; }
+header .datetime > div { padding: 7px 0 0; }
+header .datetime > span { width: 10px; height: 45px; float: left; background-color: rgba(0,0,0,0.2); cursor: pointer; line-height: 45px; font-size: 10px; text-align: center; color: gray; }
+header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
+.header-show { top: 0; }
+
+.titlemessage { position: absolute; top: 45px; height: 30px; z-index: 40; width: 100%; left: 0; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); line-height: 29px; }
+.titlemessage-success { background: #68B25B; }
+.titlemessage-warning { background: #D63B32; }
+.titlemessage i { float: left; width: 25px; text-align: center; line-height: 29px; height: 29px; text-align: right; }
+.titlemessage > div { margin-left: 32px; }
+
+.scrollerbuttons { float: right; }
+.scrollerbuttons button { height: 44px; width: 24px; border: 0; background: transparent; }
+.scrollerbuttons button:hover { color: white; }
+.light .scrollerbuttons button:hover { color: black; }
+
+.light header .datetime > span { background-color: rgba(0,0,0,0.05); }
+.light header .datetime > span:hover { background-color: rgba(0,0,0,0.1); }
+.appprocess .offline { position: absolute; color: red; font-size: 9px; margin: 21px 0 0 7px; }
+
+.button-status { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; }
+.ui-dark .button-status { border-left-color: #404040; }
+.button-status i { transition: all 0.3s; }
+.button-status:hover { opacity: 0.9; }
+.button-status:hover i { transform: scale(1.2); }
+.button-status-warning:before { content: '\f071'; font-family: 'Font Awesome 5 Free'; font-weight: 400; color: #ff7a00; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 15px; z-index: 5; }
+
+.button-window { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; color: #505050; }
+.light .button-window { color: gray; }
+.ui-dark .button-window { border-left-color: #404040; }
+.button-window:hover { background-color: rgba(0,0,0,0.03); }
+
+.status0 { color: #68B25B; }
+.status1 { color: #C55140; }
+.status2 { color: #EAB34C; }
+.status3 { color: #B76DCF; }
+.status4 { color: #6DCFA8; }
+.status5 { color: #6DAFCF; }
+.status6 { color: #A1CF6D; }
+.status7 { color: #D06D6D; animation: large 1s forwards infinite; }
+.status8 { color: #D60000; }
+
+.black { color: black; }
+.yellow { color: yellow; }
+.fs12 { font-size: 12px; }
+.gray { color: gray; }
+footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; background: #303030 linear-gradient(#303030,#353535); box-shadow: 0 5px -5px rgba(0,0,0,0.2); color: white; border-top: 1px solid #282828; }
+.light footer { background: #E0E0E0 linear-gradient(#F0F0F0,#EAEAEA); box-shadow: 0 5px -5px rgba(0,0,0,0.02); color: black; border-top: 1px solid rgba(0,0,0,0.15); }
+
+.username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
+.username:hover { opacity: 0.7; }
+.username i { margin-right: 5px; }
+.console { font-size: 12px; cursor: pointer; margin: 7px 0 0 10px; float: left; }
+.console i { margin-right: 5px; }
+.console:hover { opacity: 0.7; }
+.testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; margin: 8px 10px 0 0; border-radius: 2px; vertical-align: middle; }
+.samode { float: right; color: white; font-size: 10px; font-weight: bold; padding: 0 8px; height: 30px; line-height: 16px; margin: 0; line-height: 30px; width: 45px; }
+
+footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px; line-height: 30px; padding-right: 10px; border-right: 1px solid #404040; max-width: 400px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.light footer .status { border-right-color: #E0E0E0; }
+
+.startmenu .ui-xs { height: 348px !important; }
+.startmenu { position: fixed; top: 45px; height: 380px; background-color: #404040; width: 300px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
+.startmenu-title { height: 40px; border-top: 1px solid rgba(0,0,0,0.15); color: white; font-size: 16px; padding: 0; font-weight: bold; }
+.startmenu-profile { cursor: pointer; font-weight: normal; }
+.startmenu-profile img { width: 28px; height: 28px; border-radius: 100px; float: left; margin: 5px 0 0 8px; }
+.startmenu-profile > span { float: left; margin: 11px 0 0 8px; font-size: 13px; }
+.startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
+.startmenu-nav { height: 341px; }
+.startmenu-nav nav button { display: block; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
+.startmenu-nav nav button:hover { text-decoration: none; color: white; }
+.startmenu-nav nav button:last-child { border-bottom: 0; }
+.startmenu-nav i { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
+.startmenu-nav > div { height: 100%; padding: 8px 15px 10px; }
+.startmenu-search { padding: 5px; background-color: #404040; border-bottom: 1px solid rgba(0,0,0,0.05); }
+.startmenu-status { color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 38px; cursor: pointer; border-radius: 0 0 3px 0; }
+.startmenu-status:hover { background-color: rgba(255,255,255,0.1); }
+.startmenu-status b { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: white; font-size: 13px; line-height: 14px; }
+.startmenu-status i { font-size: 10px; float: left; margin: 3px 4px 0 0; }
+.startmenu-status span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; }
+.startmenu-search .ui-textbox { height: 30px; background-color: #404040; }
+.startmenu-search .ui-textbox-input { padding: 7px 4px 0 10px; }
+.startmenu-search .ui-textbox input { font-size: 16px; background-color: #404040; color: white; }
+.startmenu-search .ui-textbox-control { width: 40px; border-left: 0; color: gray; }
+.startmenu-search input:-webkit-autofill, .startmenu-search input:-webkit-autofill:hover, .startmenu-search input:-webkit-autofill:active, .startmenu-search input:-webkit-autofill:focus { background-color: #303030 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #303030 inset !important; -webkit-text-fill-color: white !important; }
+
+.appnonotify { font-size: 10px; position: absolute; top: 3px; left: 36px; color: white; }
+.light .appnonotify { color: black; }
+
+.startmenu-visible { opacity: 1; transform: translate(0px, 0px); }
+.startmenu .ui-textbox { border: 0; }
+.startmenu .ui-textbox-input { padding-left: 10px; padding-left: 10px; }
+
+.light .startmenu-status b { color: black; }
+.light .startmenu-nav nav button:hover { color: #404040; }
+.light header { background: #E0E0E0 linear-gradient(#F0F0F0,#F9F9F9); border-color: rgba(0,0,0,0.15); }
+.light header nav button { color: black; border-right-color: rgba(0,0,0,0.1); }
+.light header nav button:first-child { border-left-color: rgba(0,0,0,0.1); }
+.light header nav button.focused { background-color: #E0E0E0; color: black; }
+.light header nav button:hover { background-color: #E8E8E8; }
+.light header .datetime { color: black; background-color: rgba(0,0,0,0.05); border-left-color: #C9C9C9; }
+.light .button-notifications i { color: black; }
+.light .ui-process-header nav button { color: #505050; }
+.ui-process, .light .ui-process { box-shadow: none;}
+
+.light .ui-process-header-success, .ui-process-header-success { background: #68B25B; color: white !important; }
+.light .ui-process-header-warning, .ui-process-header-warning { background: #D63B32; color: white !important; }
+.light .ui-process-header-warning nav button, .light .ui-process-header-success nav button, .ui-process-header-warning nav button, .ui-process-header-success nav button { color: white; }
+
+.light { background-color: #505050; }
+.light .startmenu { background-color: #E0E0E0; }
+.light .startmenu-title { color: black; }
+.light .startmenu-nav { background-color: #E0E0E0; }
+.light .startmenu-nav nav button { color: black; }
+.light .app-container { color: black; background-color: rgba(0,0,0,0.05); }
+.light .app-container:hover .app-icon { color: black; background-color: rgba(0,0,0,0.07); }
+.light .app-container:hover { background-color: rgba(0,0,0,0.1); }
+.light .app-icon { color: #505050; background-color: rgba(0,0,0,0.07); }
+.light .startmenu-search .ui-textbox { background-color: transparent; }
+.light .startmenu-search { background-color: #E0E0E0; }
+.light .startmenu-search .ui-textbox input { background-color: transparent; color: black; }
+.app-running .app-meta { font-weight: bold; color: white; }
+.light .app-running .app-meta { color: black; }
+.app-running .app-icon { color: white; }
+.light .app-running .app-icon { color: black; }
+.light .startmenu-title button { color: black; }
+
+h1 { font-weight: bold; margin: 0 0 15px; padding: 0 0 5px; color: black; font-size: 18px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; border-bottom: 2px solid black; }
+h1 b { font-weight: 700; }
+
+h2 { font-weight: 400; margin: 0 0 12px 0; padding: 0; color: black; font-size: 20px; }
+h2 b { font-weight: 700; }
+h2 i { margin-right: 10px; }
+.ui-dark h2 { color: white; }
+
+h3 { font-weight: 700; margin: 0 0 5px 0; padding: 0; color: black; font-size: 16px; }
+h3 i { margin-right: 5px; }
+.ui-dark h3 { color: white; }
+
+.orange { color: orange; }
+
+.bg-smoke { background-color: #F8F8F8; }
+.ui-dark .bg-smoke { background-color: #303030; }
+.bg-yellow { background-color: #FFF8D8; }
+
+.singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.user { float: left; cursor: pointer; width: 44px; height: 44px; line-height: 44px; color: white; user-select: none; text-align: center; font-size: 16px; }
+.light .user { color: black; }
+.user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
+.user:hover { background-color: rgba(255,255,255,0.1); }
+.light .user:hover { background-color: rgba(0,0,0,0.1); }
+.user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }
+.user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
+.user.selected { background-color: rgba(255,255,255,0.1); }
+.light .user.selected { background-color: #E0E0E0; }
+
+.button-notifications { float: right; font-size: 22px; padding: 0; width: 45px; height: 44px; line-height: 44px; cursor: pointer; text-align: center; }
+.button-notifications span { font-size: 10px; width: 20px; height: 20px; line-height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 0; margin: 2px 0 0 9px; font-weight: bold; }
+.button-notifications .fa { color: white; }
+.button-notifications .far { color: #606060; }
+
+.startmenu-apps .app { padding: 0; display: block; vertical-align: top; margin: 0 30px 0 0; position: relative; }
+.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: #E0E0E0; background-color: rgba(0,0,0,0.08); margin-bottom: 1px; }
+.app-container:hover { background-color: rgba(0,0,0,0.15); }
+.app-container:hover .app-icon { color: white;  background-color: rgba(0,0,0,0.25); }
+.startmenu-apps .app-offline { cursor: not-allowed; box-shadow: none !important; }
+.startmenu-apps .app-offline .app-name { border-color: #E0E0E0 !important; color: silver; }
+.startmenu-apps .app-offline .app-version { color: silver; }
+.startmenu-apps .app-offline img { opacity: 0.4; }
+.startmenu-apps .app-disabled .app-container { background-color: rgba(0,0,0,0.04) !important; cursor: not-allowed; box-shadow: none !important; color: #606060; }
+.startmenu-apps .app-disabled .app-icon { color: #606060 !important; }
+.startmenu-apps .app-disabled .app-name { border-color: #E0E0E0 !important; color: silver; }
+.startmenu-apps .app-disabled .app-version { color: silver; }
+.startmenu-apps .app-disabled img { opacity: 0.4; }
+.appfavorite { position: absolute; font-size: 6px; margin: 28px 0 0 18px; z-index: 1; }
+
+.light .app-disabled .app-container { color: #A0A0A0; }
+.light .app-disabled .app-icon { color: #A0A0A0 !important; }
+
+#dashboardapps .isrunning { position: absolute; font-size: 9px; right: 2px; top: 2px; display: none; color: #777777; }
+.light #dashboardapps .isrunning { color: gray; }
+#dashboardapps .app-running .isrunning { display: block; }
+#dashboardapps .appunread { left: auto; right: 3px; margin-top: 9px; }
+
+.startmenu-apps .app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 9px; }
+.startmenu-apps .app > span i { margin-right: 5px; }
+.startmenu-apps .app-offline > span { display: block; }
+.startmenu-apps .app img { width: 120px; height: 120px; border-radius: 4px; }
+.startmenu-apps .app-name { font-size: 14px; line-height: 14px; font-weight: bold; }
+.startmenu-apps .app-version { color: #A0A0A0; font-size: 11px; }
+.startmenu-apps .app .fa-times { position: absolute; right: 10px; top: 9px; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s; background-color: red; width: 18px; height: 18px; text-align: center; border-radius: 3px; padding: 2px 0 0 0; }
+.startmenu-apps .app .fa-times:hover { opacity: 0.8; }
+.appunread { position: absolute; background-color: #D23B3B; color: white; width: 18px; border-radius: 100%; height: 18px; font-size: 10px; line-height: 18px; margin-top: 1px; left: 1px; overflow: hidden; text-align: center; }
+.startmenu-apps .app .appbadge { position: absolute; margin: 14px 0 0 37px; font-size: 7px; }
+.appbadge i { color: red; font-size: 7px; }
+.launchpadapp .appbadge i { font-size: 7px; }
+
+.appprocess { position: relative; }
+.appprocess .appbadge { position: absolute; margin: 20px 0 0 7px; font-size: 7px; }
+.appprocess .appbadge i { font-size: 7px; }
+
+.appprogress { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 3px; padding: 0; }
+.appprocess .appprogress { bottom: 5px; top: auto; padding: 0 8px; }
+
+.appprogress span { height: 3px; display: block; border-radius: 3px; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
+.light .appprogress span { box-shadow: none; }
+
+.app-icon { float: left; width: 40px; font-size: 16px; text-align: center; height: 38px; padding: 7px 0 0 0; background-color: rgba(0,0,0,0.2); color: #A0A0A0; }
+.app-meta { margin-left: 50px; padding: 7px 0 0 0; font-size: 16px; }
+
+.form-border { border-left: 1px solid #F0F0F0; }
+
+.centered { height: 100%; width: 100%; display: table-cell; vertical-align: middle; text-align: center; }
+.centered-container { display: table; width: 100%; height: 100%; }
+
+.emptyspace { height: 45px; }
+.fullheight { overflow: hidden; }
+.color { color: #017CCA; }
+
+.fs11 { font-size: 11px !important; }
+.help { font-size: 11px; color: #A0A0A0; margin-top: 7px; line-height: 13px; }
+.help .fa, .help .fal, .help .far { margin-right: 5px; }
+.help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
+
+.approle { font-size: 14px; text-align: center; width: 34px; border-left: 1px solid #E0E0E0; padding: 3px 0; }
+.approle:first-child { border-left: 0; }
+
+.toolbar { margin-bottom: 15px; }
+.toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
+.toolbar button i { margin-right: 5px; }
+.toolbar button:hover { background-color: white; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
+.toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #D5D7DB; box-shadow: none; }
+.toolbar button:disabled i { color: silver; }
+.toolbar button.right { float: right; margin-left: 5px; margin-right: 0; }
+.toolbar > span { margin: 2px 6px 0; border-left: 1px solid #D0D0D0; height: 20px; padding: 0 2px 0 0; vertical-align: middle; display: inline-block; position: relative; }
+.toolbar .selected { background-color: #FFE7A1 !important; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
+
+.uppercase { text-transform: uppercase; }
+.inline { position: relative; display: inline-block; }
+
+.keyvalue { border-bottom: 1px solid #F0F0F0; padding: 5px 0; margin-bottom: 10px; transition: all 0.3s; }
+.keyvalue:hover { background-color: #F8F8F8; padding-left: 10px; padding-right: 10px; }
+.keyvalue .key { font-size: 11px; font-weight: bold; margin-bottom: 2px; color: black; }
+.keyvalue .value { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 14px; color: #A0A0A0; }
+.keyvalue i { margin-right: 5px; }
+.upper { text-transform: uppercase; }
+.w100p { width: 100%; }
+.img-application { border-radius: 25px; border: 1px solid #E0E0E0; }
+.silver { color: #A0A0A0; }
+.caption { font-size: 14px; margin-bottom: 15px; color: black; text-transform: uppercase; font-weight: bold; }
+.caption i { margin-right: 5px; }
+
+.ui-process-header { transition: background 0.3s; height: 0; color: white; cursor: default; position: relative; }
+.ui-process .appprogress { z-index: 10; }
+
+.ui-quicknotifications-margin { margin-right: 325px; }
+
+.ui-quicknotifications { position: absolute; right: 0; width: 320px; top: 45px; z-index: 100; }
+.ui-quicknotifications i { margin-right: 3px; }
+.ui-quicknotifications-message { background-color: rgba(60,60,60,0.9); margin: 10px; padding: 0; border-radius: 3px; font-size: 12px; cursor: pointer; transition: all 0.3s;  box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+.light .ui-quicknotifications-message { background-color: rgba(255,255,255,0.9); }
+
+.bk-ui-quicknotifications-success { border-top-color: #8CC152 !important; }
+.bk-ui-quicknotifications-error { border-top-color: #E60000 !important; }
+
+.ui-quicknotifications-close { float: right; width: 26px; height: 26px; line-height: 26px; text-align: center; cursor: pointer; padding: 0; color: #777777; border-left: 1px solid #505050; }
+.ui-quicknotifications-close i { margin: 0; }
+.ui-quicknotifications-close:hover { color: red; }
+
+.light .ui-quicknotifications-close { color: gray; border-left-color: #E0E0E0; }
+.light .ui-quicknotifications-close:hover { color: red; }
+
+.ui-quicknotifications-date { float: right; font-size: 10px; margin: 0 10px 0 0; line-height: 26px; color: white; }
+.light .ui-quicknotifications-date { color: black; }
+.ui-quicknotifications-title img { border: 1px solid #3BAFDA; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
+.ui-quicknotifications-title { height: 26px; font-size: 11px; border-bottom: 1px solid #505050; padding: 0 10px; line-height: 24px; color: white; border-radius: 3px 3px 0 0; }
+.light .ui-quicknotifications-title { border-bottom-color: #E0E0E0; color: black; background-color: white; }
+.ui-quicknotifications-padding { padding: 0 10px; }
+.ui-quicknotifications-body { line-height: 16px; font-size: 14px; color: silver; display: inline-block; word-break: break-word; }
+.light .ui-quicknotifications-body { color: #777777; }
+.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
+.ui-quicknotifications button:hover { opacity: 0.9; }
+
+.panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
+.panel > label { display: block; padding: 15px 20px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: black; font-weight: bold; }
+.panel > label i { margin-right: 5px; }
+
+.button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
+.button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
+.button:disabled { background-color: #F0F0F0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+.button i { margin-right: 5px; }
+
+.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
+.success i { margin-right: 8px; }
+
+.buttons > div { position: relative; display: inline-block; width: 33.33%; vertical-align: top; padding: 5px; }
+.buttons button { width: 100%; margin: 0; padding: 0; font-size: 11px; height: 60px; background-color: #F0F0F0; border: 0; border-radius: 4px; overflow: hidden; text-transform: overflow; white-space: nowrap; }
+.buttons button i { font-size: 25px; display: block; }
+.buttons button:hover { background-color: #E0E0E0; }
+
+@media(max-width: 700px) {
+	header { box-shadow: none; }
+	.ui-notifications { width: auto; left: 0; }
+	.startmenu-profile { display: none; }
+	.form-border { border-left: 0; }
+	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
+	.startmenu { width: 100%; border-radius: 0; top: 45px; height: auto; }
+	.startmenu-nav { width: 100%; bottom: 50px; }
+	.startmenu-apps { margin-right: 0; height: 318px; }
+	.startmenu-apps-container { width: 100%; position: relative; height: 272px; }
+	.startmenu-version { display: none; }
+	.startmenu-apps .app { margin-right: 0; }
+	.startmenu-apps .app-icon { width: 42px; }
+	.startmenu-apps .app-meta { margin-left: 50px; }
+	.startmenu-apps .app-name { font-size: 16px; margin-bottom: 3px; }
+	.startmenu-search { padding: 2px 5px; }
+	.startmenu-search .ui-textbox { height: 40px; }
+	.startmenu-search .ui-textbox-input { padding: 11px 4px 0 10px; }
+	.startmenu-search .ui-textbox input { font-size: 16px; }
+	.startmenu-search .ui-textbox-control { width: 40px; }
+	.startmenu-title button { display: block; outline: 0; width: 25px; height: 25px; padding: 0; margin-top: 5px; }
+	.startmenu-nav nav button { padding: 6px 0; font-size: 15px; }
+	.startmenu-nav i { width: 34px; }
+	.startmenu-apps .app .appbadge { position: absolute; margin: 27px 0 0 22px; }
+	.username { right: 0; left: 0; text-align: center; }
+	.startmenu-title img { display: none; }
+	.startmenu-title > span { display: none; }
+	.startmenu-status { float: left; width: 60%; background-color: transparent; border-left: 0; }
+	.ui-notifications { border-left: 0; }
+	.ui-process-header { border-bottom: 0 }
+	.light .ui-process { border-bottom: 1px solid #C0C0C0; }
+	.ui-process { border: 0 !important; }
+	.button-status { color: white; }
+	.light .button-status { color: black; }
+}
+
+@keyframes large {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.2); }
+	100% { transform: scale(1); }
+}
+
+.launchpad { position: absolute; overflow: hidden; opacity: 0; transform: scale(1.3); transition: transform 0.3s; }
+.launchpad figure { width: 20%; text-align: center; position: relative; display: inline-block; font-size: 12px; margin-bottom: 40px; }
+.launchpad figure div { max-width: 120px; margin: 0 auto; width: 100%; color: rgba(255,255,255,0.5); cursor: pointer; transition: color 0.3s text-align: center; }
+.launchpad figure i { display: block; font-size: 50px; margin-bottom: 10px; }
+.launchpad figure div:hover { color: white; }
+.launchpad figure span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.launchpad .appunread { margin: 5px 0 0 -30px; left: 50%; }
+.launchpad .appbadge { margin-left: 6px; position: relative; display: inline-block; vertical-align: top; }
+.launchpad .app.app-running div { color: white; }
+.launchpad .app-disabled { opacity: 0.5; cursor: not-allowed; }
+.launchpad .app-disabled div:hover { color: rgba(255,255,255,0.5); }
+.launchpad-visible { transform: scale(1); opacity: 1; }
+
+.light .launchpad figure div { color: rgba(0,0,0,0.4); }
+.light .launchpad .app.app-running div { color: black; }
+.light .launchpad figure div:hover { color: black; }
+.light .launchpad .app-disabled div:hover { color: rgba(0,0,0,0.4); }
+
+@media(min-width: 1500px) {
+	.launchpad figure { width: 15%; }
+}
+
+@media(max-width: 1150px) {
+	.launchpad figure { width: 33%; }
+}
+
+@media(max-width: 768px) {
+	.launchpad figure i { font-size: 35px; margin-bottom: 6px; }
+}

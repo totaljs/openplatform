@@ -1,0 +1,79 @@
+<div data---="window__common.form__if:notifications;title:@(Notifications);icon:bell;reload:notifications/reload;autofocus:true;zindex:46;scrollbar:1;onhide:notifications/readall" class="hidden">
+	<div data-bind="notifications__template">
+		<script type="text/html">
+		{{ foreach m in value }}
+		<div class="exec notification{{ if m.unread }} notification-unread{{ fi }}" data-data="{{ m.data | encodedata }}" data-id="{{ m.appid }}" data-exec="notifications/open" data-notifyid="{{ m.id }}">
+			<div class="notification-icon">{{ if m.type === 3 }}&nbsp;{{ else }}<i class="fa {{ if m.type === 0 }}fa-info-circle blue{{ else if m.type === 1 }}fa-check-circle green{{ else if m.type === 2 }}fa-warning red{{ fi }}"></i>{{ fi }}</div>
+			<div class="notification-date">{{ m.dtcreated | ndate }}</div>
+			<div class="notification-app"><i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>{{ m.title }}</div>
+			<div class="notification-body opfg">{{ m.body | markdown_notifications }}</div>
+		</div>
+		{{ end }}
+		</script>
+	</div>
+</div>
+
+<script>
+	PLUGIN('notifications', function(exports) {
+
+		var cache = 'session';
+
+		exports.reload = function() {
+			if (!W.notifications || user.countnotifications)
+				exports.refresh();
+		};
+
+		exports.open = function(el) {
+			EXEC('Dashboard/navigate', el);
+			NUL('common.form');
+			SET('common.startmenu', false);
+			var unread = CACHE('unread');
+			var id = el.attrd('notifyid');
+			if (unread[id]) {
+				delete unread[id];
+				CACHE('unread', unread, cache);
+			}
+			el.rclass('notification-unread');
+		};
+
+		exports.readall = function() {
+			$('.notification-unread').rclass('notification-unread');
+			CACHE('unread', {}, cache);
+		};
+
+		exports.refresh = function() {
+			var unread = CACHE('unread') || {};
+			var is = false;
+			FUNC.faviconbadge(false);
+			SET('user.countnotifications', 0);
+			AJAX('GET /api/notifications/', function(response) {
+				for (var i = 0; i < response.length; i++) {
+					var item = response[i];
+					if (item.appid) {
+						var app = user.apps.findItem('id', item.appid);
+						if (app) {
+							item.icon = app.icon;
+							item.title = app.title;
+							item.color = app.color;
+							if (item.unread)
+								unread[item.id] = 1;
+							else
+								item.unread = unread[item.id] === 1;
+						}
+					}
+				}
+				CACHE('unread', unread, cache);
+				SET('?', response);
+			});
+		};
+
+	});
+
+	Thelpers.ndate = function(value) {
+		var today = value.format('yyyyMMdd');
+		if (today === NOW.format('yyyyMMdd'))
+			return '<span class="badge badge-green badge-small b">@(TODAY)</span> ' + value.format('HH:mm');
+		else
+			return value.format('dd.MMM. HH:mm');
+	};
+</script>

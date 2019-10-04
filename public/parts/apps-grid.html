@@ -1,0 +1,103 @@
+<div data-scope="appsgrid">
+	<div class="header">
+		<label><i class="fa fa-rocket"></i>@(Apps)</label>
+		<div>
+			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
+			<button data-bind="?.selected__enabled:value && !value.workshopid" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
+			<button data-bind="?.checked__enabled:value && value.length" class="exec" data-exec="?/menu" disabled><i class="fa fa-check-circle green"></i>@(Options)</button>
+		</div>
+	</div>
+
+	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:45">
+		<div data---="datagrid__main.apps__height:parent;bottom:65;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked">
+			<script type="text/plain">
+				[
+					{ name: 'online', text: '@(Online)', width: 70, template: '{{ if online }}<span class="badge badge-small badge-green">@(online)</span>{{ fi }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'blocked', text: '@(Blocked)', width: 100, template: '{{ blocked | boolean(\'red\') }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'title', text: '@(Title)', width: 200, template: '{{ if workshopid }}<span class="badge badge-blue mr5">@(workshop)</span>{{ fi }}{{ title }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}' },
+					{ name: 'version', text: '@(Version)', width: 100, align: 1 },
+					{ name: 'email', text: '@(Email)', width: 200 },
+					{ name: 'author', text: '@(Author)', width: 200 },
+					{ name: 'roles', text: '@(Roles)', width: 250, template: '{{ if roles && roles.length }}<i class="fa fa-key"></i> {{ fi }}{{ roles | joinbgcolor(\' \') }}', sort: false, search: '{{ roles | join }}' },
+					{ name: 'allowreadusers', text: '@(Users)', width: 100, template: '{{ allowreadusers | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'allowreadapps', text: '@(Apps)', width: 100, template: '{{ allowreadusers | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'allowreadprofile', text: '@(Profile)', width: 100, template: '{{ allowreadprofile | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'allowreadmeta', text: '@(Meta)', width: 100, template: '{{ allowreadmeta | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'services', text: '@(Services)', width: 100, template: '{{ services | boolean }}', align: 1, filter: false, sort: false },
+					{ name: 'responsive', text: '@(Mobile)', width: 100, template: '{{ responsive | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'dtsync', text: '@(Refreshed)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
+					{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
+					{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]', filter: false }
+				]
+			</script>
+		</div>
+	</div>
+</div>
+
+<div data---="importer__common.panel__if:appsprofile;url:/panels/apps-profile.html"></div>
+
+<script>
+
+	PLUGIN('appsgrid', function(exports) {
+
+		exports.edit = function(row) {
+
+			if (row instanceof jQuery)
+				row = GET('?.selected');
+
+			if (row.workshopid)
+				return;
+
+			SETR('appsprofilepanel', CLONE(row));
+			SET('common.panel', 'appsprofile');
+		};
+
+		exports.create = function() {
+			SETR('appsprofilepanel', {});
+			SET('common.panel', 'appsprofile');
+		};
+
+		exports.refresh = exports.reload = function() {
+			EXEC('main/refreshapps');
+		};
+
+		exports.menu = function(el) {
+
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'trash-o red' });
+
+			SETTER('menu', 'show', opt);
+
+			opt.callback = function(item) {
+
+				exports.scope();
+				var checked = GET('?.checked');
+
+				if (item.id === 'remove') {
+					OP.confirm('@(Are you sure you want to remove selected apps?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
+						if (index)
+							return;
+						OP.loading(true);
+						checked.wait(function(item, next, index) {
+							if (item.workshopid) {
+								setTimeout(next, 200);
+								return;
+							}
+							OP.progress((index / checked.length) * 100);
+							AJAX('DELETE /api/op/apps/' + item.id, next);
+						}, function() {
+							OP.progress(100);
+							OP.loading(false, 500);
+							exports.refresh();
+							EXEC('usersroles/refresh');
+						});
+					});
+				}
+			};
+		};
+
+	});
+</script>

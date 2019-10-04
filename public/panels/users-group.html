@@ -1,0 +1,64 @@
+<div data---="panel__common.panel__if:group;reload:usersgroupspanel/reload;icon:folder;scrollbar:false;autofocus:1" class="hidden">
+	<div data-scope="usersgroupspanel">
+		<div data---="viewbox__common.panel__height:100;margin:50;scrollbar:1;parent:.ui-panel-body">
+			<div class="padding npb">
+
+				<div data---="input__?.name__required:true;maxlength:50">@(Group name)</div>
+				<div class="help m">@(Type a group name)</div>
+
+				<div data-bind="?.dtcreated__config div:'disabled:' + (value ? '1' : '0')">
+					<div data---="input__?.id__required:true;maxlength:50">@(Group ID)</div>
+				</div>
+				<div class="help m">@(You can type your own identificator without white spaces. Identificator can't be changed after creation.)</div>
+
+				<div data---="input__?.note__maxlength:200">@(Note)</div>
+				<div class="help m">@(You can define a simple note for this group)</div>
+			</div>
+			<div class="padding">
+				<div class="caption"><i class="fa fa-rocket"></i>@(Allowed apps)</div>
+				<div data---="apps__?.appsroles__datasource:main.apps"></div>
+			</div>
+		</div>
+		<div class="buttons" data---="validation__?">
+			<button name="submit" class="submit exec" data-exec="?/submit" disabled>@(SAVE)</button>
+			<span class="link cancel">@(Cancel)</span>
+		</div>
+	</div>
+</div>
+
+<script>
+	PLUGIN('usersgroupspanel', function(exports) {
+		exports.reload = function(com) {
+			var model = GET('?');
+			com.reconfigure({ title: model.id ? '@(Edit group)' : '@(Create group)' });
+		};
+
+		exports.submit = function() {
+			OP.loading(true);
+			var model = CLONE(GETR('?'));
+			var keys = Object.keys(model.appsroles);
+
+			model.apps = [];
+			for (var i = 0; i < keys.length; i++)
+				model.apps.push({ id: keys[i], roles: model.appsroles[keys[i]] });
+
+			model.appsroles = undefined;
+			model.apps2 = undefined;
+			model.$apps2 = undefined;
+			model.$roles = undefined;
+			model.ROW = undefined;
+
+			AJAX('PATCH /api/op/groups/', model, OP.done('@(Group has been saved successfully)', function() {
+				NULL('common.panel');
+				EXEC('usersgroups/refresh');
+				EXEC('main/refreshmeta');
+				OP.loading(false, 1000);
+			}));
+		};
+
+		WATCH('?.name', function(path, value) {
+			if (!usersgroupspanel.id && value)
+				SET('?.id', value.slug().replace(/-/g, ''));
+		});
+	});
+</script>

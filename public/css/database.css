@@ -1,0 +1,89 @@
+/*auto*/
+
+.section { background-color: white; border-radius: 3px; border: 1px solid #E9E9E9; }
+.section > label { display: block; padding: 10px 20px; border-bottom: 1px solid #E0E0E0; font-size: 14px; font-weight: bold; }
+.section > label > i { margin-right: 7px; }
+.section > label > span { float: right; }
+.section > .padding { padding: 15px 20px; }
+
+.fr { float: right; }
+
+.componentschema { width: 250px; }
+.componentschema > label { height: 40px; border-bottom: 1px solid #E0E0E0; display: block; line-height: 40px; padding: 0 8px; background-color: #F8F8F8; font-weight: bold; cursor: grab; }
+.componentschema-note { font-size: 11px; padding: 10px 8px; color: gray; }
+.componentschema-fields { border-top: 1px solid #E0E0E0; padding: 5px 0; background-color: #FFFEE6; }
+.componentschema-fields .item { padding: 0 0 0 8px; font-size: 12px; cursor: pointer; }
+.componentschema-fields .item:last-child { margin-bottom: 5px; }
+.componentschema-fields .item > div { margin-right: 30px; line-height: 16px; }
+.componentschema-fields .item > div i { font-size: 9px; vertical-align: middle; }
+.componentschema-fields .remove { float: right; width: 15px; text-align: right; font-size: 11px; color: red; padding: 1px 0 0 0; margin-right: 8px; }
+.componentschema-fields .item:hover { background-color: rgba(0,0,0,0.05); }
+.componentschema-fields > .link { display: block; font-size: 11px; padding: 2px 7px 0 8px; }
+.componentschema-fields em { color: #A0A0A0; }
+.componentschema-states { border-top: 1px solid #E0E0E0; padding: 5px 0; }
+.componentschema-states > .link { display: block; font-size: 11px; padding: 2px 7px 0 8px; }
+.componentschema-states em { color: #A0A0A0; }
+.componentschema-states .item { padding: 0 0 0 8px; font-size: 12px; cursor: pointer; }
+.componentschema-states .item:last-child { margin-bottom: 5px; }
+.componentschema-states .item > div { margin-right: 30px; }
+.componentschema-states .remove { float: right; width: 15px; text-align: right; font-size: 11px; color: red; padding: 1px 0 0 0; margin-right: 8px; }
+.componentschema-states .item:hover { background-color: rgba(0,0,0,0.05); }
+
+.ui-permissionsop-header { height: 36px; cursor: pointer; color: gray; }
+.ui-permissionsop-header:hover { color: black; }
+.ui-permissionsop-header .green { float: right; width: 30px; line-height: 35px; text-align: right; }
+.ui-permissionsop-header span { margin: 0 30px 0 0; display: block; line-height: 35px; }
+.ui-permissionsop table { width: 100%; table-layout: fixed; font-size: 12px; }
+.ui-permissionsop tr { border-top: 1px solid #E0E0E0; }
+.ui-permissionsop td { border-left: 1px solid #E0E0E0; padding: 4px 8px; }
+.ui-permissionsop tr:first-child { border-top: 0; }
+.ui-permissionsop td:first-child { border-left: 0; }
+.ui-permissionsop .fa-times { margin-right: 5px; cursor: pointer; }
+.ui-permissionsop-type { width: 40px; color: #A0A0A0; font-size: 10px; cursor: pointer; text-align: center; padding-left: 0 !important; padding-right: 0 !important; }
+.ui-permissionsop-type i { margin-right: 3px; color: #E0E0E0; }
+.ui-permissionsop-type i:before { content: '\f111'; }
+.ui-permissionsop-checked { background-color: #FFFED5; color: black; }
+.ui-permissionsop-checked i { color: #68B25B; }
+.ui-permissionsop-empty { color: #A0A0A0; padding: 10px 20px !important; text-align: center; }
+.ui-permissionsop-empty i { margin-right: 5px; }
+.ui-permissionsop-type.ui-permissionsop-checked i:before { content: '\f058'; }
+.ui-permissionsop-container { border: 1px solid #E0E0E0; border-radius: 2px; }
+.ui-permissionsop-disabled .green { display: none; }
+.ui-permissionsop-disabled .ui-permissionsop-header:hover { cursor: default; color: gray; }
+.ui-permissionsop-disabled .ui-permissionsop-type { cursor: not-allowed; }
+.ui-permissionsop-disabled .fa-times { display: none; }
+.ui-dark .ui-permissionsop-container { border-color: #404040; }
+.ui-dark .ui-permissionsop tr { border-color: #404040; background-color: #252525; }
+.ui-dark .ui-permissionsop td { border-color: #404040; }
+.ui-dark .ui-permissionsop-checked { background-color: #313131; color: #ffffff; }
+.ui-dark .ui-permissionsop-header:hover { color: white; }
+
+.ui-schema { position: relative; transform-origin: top left; transition: transform 0.3s; }
+.ui-schema .component { position: absolute; left: 150px; top: 150px; border: 1px solid #E0E0E0; background-color: white; border-radius: 2px; box-shadow: 1px 1px 10px rgba(0,0,0,0.03); }
+.ui-schema .inputs { position: absolute; width: 100%; top: -8px; left: 4px; }
+.ui-schema .input { float: left; font-size: 11px; color: #A0A0A0; margin-right: 5px; }
+.ui-schema .outputs { position: absolute; width: 100%; margin: -13px 0 0 10px; }
+.ui-schema .output { float: left; border-radius: 2px; background-color: white; padding: 2px 5px; font-size: 11px; border: 1px solid #E0E0E0; margin-right: 5px; color: gray; }
+.ui-schema .output i { margin-right: 5px; }
+.ui-schema .content { padding: 10px 12px 10px; min-width: 200px; min-height: 30px; cursor: default; }
+.ui-schema .output.connected { border-color: black; color: black; }
+.ui-schema .output.connected i { color: #68B25B; }
+.ui-schema .input.connected i { color: #68B25B; }
+.ui-schema .connection { stroke-width: 1; stroke: #D0D0D0; fill: none; }
+.ui-schema .connection-draft { stroke: #4285F4; }
+.ui-schema .component-selected { border-color: #4285F4 !important; }
+.ui-schema .connection-selected { stroke: #4285F4; }
+.ui-schema .area { position: relative; }
+.ui-schema .hasoutputs .content { padding-bottom: 20px; }
+.ui-schema path.highlight { stroke: #4285F4; }
+.ui-schema svg { margin: -1px 0 0 -1px; }
+.ui-schema-grid { stroke: #F8F8F8; stroke-width: 2; }
+
+.ui-dark .ui-schema-grid { stroke: #303030; }
+.ui-dark .ui-schema .component { border-color: #404040; background-color: #303030; }
+.ui-dark .ui-schema .output { background-color: #303030; color: white; border-color: #151515; }
+.ui-dark .ui-schema .connection { stroke: gray; }
+.ui-dark .ui-schema .connection-draft { stroke: #4285F4; }
+.ui-dark .ui-schema path.highlight { stroke: #4285F4; }
+.ui-dark .ui-schema .component-selected { border-color: #4285F4; }
+.ui-dark .ui-schema .connection-selected { stroke: #4285F4; }

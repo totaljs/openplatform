@@ -1,0 +1,32 @@
+<div data---="form__common.form__if:reportbug;icon:bug;width:500;title:@(Report a bug);submit:reportbug/submit;reload:reportbug/reload" class="hidden">
+	<div class="padding" data-scope="reportbug">
+		<div data---="radiobutton__?.type__items:@(Bug)|Bug,@(Feature request)|Feature,@(Improvement)|Improvement__'Bug'" class="m"></div>
+		<div data---="textarea__?.body__height:100;required:true;autofocus:true__''">@(Summary)</div>
+		<div class="help m">@(Provide more information about your issue)</div>
+		<div class="alert m"><i class="fa fa-camera"></i> @(Screenshot can't show the same view as you see and in most cases it doesn't contain all of UI elements.)</div>
+		<div data---="checkbox__?.isscreenshot__null__true" class="b">@(Make a screenshot from the app)</div>
+		<div data---="checkbox__?.ispriority__null__false" class="red">@(High priority)</div>
+	</div>
+	<div class="ui-form-buttons" data---="validation__reportbug">
+		<button name="submit" class="userbg" style="width:100%" disabled>@(SUBMIT)</button>
+	</div>
+</div>
+
+<script>
+	SET('%reporttypes', [{ id: 'Bug', name: '@(Bug)' }, { id: 'Feature', name: '@(Feature request)' }, { id: 'Improvement', name: '@(Improvement)' }]);
+	PLUGIN('reportbug', function(exports) {
+
+		exports.reload = function(com) {
+			com.reconfigure({ title: reportbug.app.name });
+		};
+
+		exports.submit = function(com) {
+			var model = CLONE(GETR('?'));
+			model.app = undefined;
+			if (!model.isscreenshot)
+				model.screenshot = '';
+			AJAX('POST /api/op/reports/', model, FUNC.messageresponse('@(Report has been sent successfully.)'));
+			com.hide();
+		};
+	});
+</script>

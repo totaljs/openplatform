@@ -1,31 +1,31 @@
-const WSPROFILE =  { TYPE: 'profile' };
-const WSSETTINGS =  { TYPE: 'settings', body: {} };
-const WSNOTIFY = { TYPE: 'notify', body: { count: 0, app: { id: null, count: 0 }}};
-const WSLOGOFF = { TYPE: 'logoff' };
-const COOKIES = { security: 1, httponly: true };
-
-var WS;
-
 exports.install = function() {
 
-	GROUP(['authorize'], function() {
-		ROUTE('GET /');
-		ROUTE('GET /users/');
-		ROUTE('GET /apps/');
-		ROUTE('GET /settings/');
-		ROUTE('GET /info/', info);
-		ROUTE('GET /account/');
-		WEBSOCKET('/', realtime, ['json']);
-	});
+	ROUTE('+GET  /', index);
+	ROUTE('+GET  /admin/');
+	ROUTE('+GET  /database/', database);
+	ROUTE('+GET  /account/');
+	ROUTE('+GET  /welcome/');
 
 	ROUTE('GET /*', login, ['unauthorize']);
-	ROUTE('GET /logoff/', logoff);
+	ROUTE('GET /marketplace/');
+	ROUTE('GET /logout/', logout);
+	ROUTE('GET /lock/', lock);
 
-	LOCALIZE('/pages/*.html');
-	LOCALIZE('/forms/*.html');
+	ROUTE('GET /workshop/{id}/', workshop);
 
 	FILE('/manifest.json', manifest);
+
+	ROUTE('#404', process404);
 };
+
+function index() {
+	var desktop = this.user.desktop;
+	this.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
+}
+
+function workshop(id) {
+	this.view('workshop');
+}
 
 function manifest(req, res) {
 	var meta = {};
@@ -38,174 +38,66 @@ function manifest(req, res) {
 }
 
 function login() {
+
 	var self = this;
 
+	if (self.req.locked) {
+		// locked
+		self.view('locked');
+		return;
+	}
+
 	if (self.query.token) {
-		var data = F.decrypt(self.query.token, CONF.secret_password);
+		var data = DECRYPTREQ(self.req, self.query.token, CONF.secretpassword);
 		if (data && data.date.add('2 days') > NOW) {
-			var cookie = {};
-			cookie.id = data.id;
-			cookie.date = NOW;
-			cookie.ua = (self.req.headers['user-agent'] || '').substring(0, 20);
-			self.cookie(CONF.cookie, F.encrypt(cookie), CONF.cookie_expiration, COOKIES);
-			self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
+			FUNC.cookie(self, data.id, null, function() {
+				self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
+			}, (self.headers['user-agent'] || '').parseUA() + ' ({0})'.format(self.ip));
 			return;
 		}
 	}
+
+	if (self.url !== '/')
+		self.status = 401;
 
 	self.view('login');
 }
 
-function logoff() {
+function logout() {
 	var self = this;
-	self.cookie(CONF.cookie, '', '-5 days');
-	FUNC.users.logout(self.user, self);
+	if (self.user)
+		FUNC.logout(self);
+	else
+		self.redirect('/');
 }
 
-function realtime() {
+function lock() {
 	var self = this;
-
-	WS = self;
-
-	self.autodestroy(() => WS = null);
-
-	self.on('open', function(client) {
-
-		if (client.user.blocked) {
-			client.close('blocked');
-			return;
-		}
-
-		client.id = client.user.id;
-		FUNC.users.online(client.user, true);
-		client.send(WSPROFILE);
-	});
-
-	self.on('close', function(client) {
-		FUNC.users.online(client.user, false);
+	MAIN.session.get(self.sessionid, function(err, profile, meta) {
+		meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
+		if (meta.settings.indexOf('locked:1') === -1)
+			meta.settings = (meta.settings ? ';' : '') + 'locked:1';
+		var expire = CONF.cookie_expiration || '3 days';
+		MAIN.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
+		self.redirect('/');
 	});
 }
 
-ON('apps.refresh', function() {
-	WS && WS.send(WSPROFILE);
-});
+function database() {
+	var self = this;
+	if (self.user.sa)
+		self.view('database');
+	else
+		self.throw401();
+}
 
-ON('users.refresh', function(userid, removed) {
-
-	if (!WS)
-		return;
-
-	if (!userid) {
-
-		// Refresh all connections
-		var processed = new Set();
-
-		WS.all().wait(function(client, next) {
-
-			if (!client || !client.user || processed.has(client.user))
-				return next();
-
-			processed.add(client.user);
-			FUNC.users.get(client.user.id, function(err, user) {
-				if (err || !user)
-					return next();
-				FUNC.sessions.set(user.id, user, function() {
-					client.user = user;
-					client.send(WSPROFILE);
-				});
-				next();
-			});
-
-		});
-
+function process404() {
+	var self = this;
+	if (self.url.indexOf('/photos/') !== -1 && self.url.lastIndexOf('.jpg') !== -1) {
+		self.file('img//photo.jpg');
 		return;
 	}
 
-	var clients;
-
-	WS.all(function(client) {
-		if (client.id === userid) {
-			if (clients)
-				clients.push(client);
-			else
-				clients = [client];
-		}
-	});
-
-	if (!clients || !clients.length)
-		return;
-
-	FUNC.users.get(userid, function(err, user) {
-		user && FUNC.sessions.set(user.id, user);
-		for (var i = 0; i < clients.length; i++)
-			clients[i].send(user ? WSPROFILE : WSLOGOFF);
-	});
-});
-
-ON('settings.update', function() {
-	WS && FUNC.settings.get(function(err, response) {
-		if (response) {
-			var body = WSSETTINGS.body;
-			body.name = response.name;
-			body.url = response.url;
-			body.email = response.email;
-			body.test = response.test;
-			body.background = response.background;
-			body.colorscheme = response.colorscheme;
-			WS.send(WSSETTINGS);
-		}
-	});
-});
-
-function notify(userid, appid, clear) {
-
-	if (!WS)
-		return;
-
-	var clients;
-
-	WS.all(function(client) {
-		if (client.user.id === userid) {
-			if (clients)
-				clients.push(client);
-			else
-				clients = [client];
-		}
-	});
-
-	if (!clients || !clients.length)
-		return;
-
-	FUNC.users.get(userid, function(err, user) {
-		if (user) {
-			for (var i = 0; i < clients.length; i++) {
-				var client = clients[i];
-				WSNOTIFY.body.count = clear ? 0 : user.countnotifications;
-				WSNOTIFY.body.app.id = appid;
-				WSNOTIFY.body.app.count = clear ? 0 : appid ? user.apps[appid].countnotifications : 0;
-				WSNOTIFY.body.app.badges = clear ? 0 : appid ? user.apps[appid].countbadges : 0;
-				client.send(WSNOTIFY);
-			}
-		}
-	});
-}
-
-ON('users.notify', notify);
-ON('users.badge', notify);
-
-function info() {
-	var memory = process.memoryUsage();
-	var model = {};
-	model.memoryTotal = (memory.heapTotal / 1024 / 1024).floor(2);
-	model.memoryUsage = (memory.heapUsed / 1024 / 1024).floor(2);
-	model.memoryRss = (memory.rss / 1024 / 1024).floor(2);
-	model.node = process.version;
-	model.version = 'v' + F.version_header;
-	model.platform = process.platform;
-	model.processor = process.arch;
-	model.uptime = Math.floor(process.uptime() / 60);
-	var conn = F.connections['/#get-authorize'];
-	model.connections = conn ? conn.online : 0;
-	model.ip = this.ip;
-	this.view('info', model);
+	self.status = 404;
+	self.plain('404: The resource not found');
 }

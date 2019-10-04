@@ -1,7 +1,5 @@
 <style>
 	/*auto*/
-	.accountphoto { background-color: #F0F0F0; padding: 20px 0; }
-	.accountphoto img { max-width: 130px; }
 	.ui-appearance { height: 55px; }
 	.ui-appearance-label { float: left; padding: 5px 0 0 0; font-size: 12px; width: 250px; }
 	.ui-appearance-label i { margin-right: 5px; }
@@ -10,8 +8,9 @@
 	.ui-appearance-light { background-position: -7px 0; background-size: 175px 51px; color: black; }
 	.ui-appearance-dark { background-position: 80px 0; background-size: 175px 51px; color: white; }
 	.col-2 { float: left; width: 50%; padding-left: 15px; padding-right: 15px; }
+	.col-4 { float: left; width: 33.33%; padding-left: 15px; padding-right: 15px; }
 
-	.ui-dark .accountphoto { background: #333333 linear-gradient(0deg,#000,#404040); }
+	.ui-dark .accountphoto { background: #333333 linear-gradient(0deg,#202020,#404040); }
 	.ui-dark .ui-appearance-option { border-color: #404040; }
 
 	@media(max-width: 450px) {
@@ -21,94 +20,195 @@
 		.ui-appearance { height: 110px; }
 	}
 
+	.volume { height: 20px; padding: 0; font-size: 11px; border: 1px solid #E0E0E0; border-radius: 2px; margin: 8px 0 0; }
+	.volume > div { margin-left: 20px; }
+	.volume span { width: 33.33%; float: left; border-left: 1px solid #E0E0E0; text-align: center; line-height: 18px; cursor: pointer; }
+	.volume span:first-child { border-left: 0; }
+	.volume i { float: left; line-height: 18px; height: 18px; width: 20px; background-color: #F0F0F0; border-radius: 2px 0 0 2px; text-align: center; font-size: 10px; }
+	.ui-dark .volume { border-color: #404040; }
+	.ui-dark .volume span { border-color: #404040; }
+	.ui-dark .volume i { background-color: #404040; }
+
 	@{if user.colorscheme}
 	.ui-checkbox-checked div{background-color:@{user.colorscheme}!important;border-color:@{user.colorscheme}!important}
-	.button{background-color:@{user.colorscheme}}
+	.ui-radiobutton-selected i {border-color:@{user.colorscheme}!important}
+	.ui-radiobutton-selected i:before {background-color:@{user.colorscheme}!important}
+	.button,.submit{background-color:@{user.colorscheme}}
+	.volume .selected {background-color:@{user.colorscheme};color:white}
+	.ui-singleupload{color:@{user.colorscheme}!important}
+	@{else}
+	.volume .selected {background-color:#4285f4;color:white}
 	@{fi}
-
+	body { background-color: #@{if user.darkmode}303030@{else}F9F9F9@{fi}; }
+	.ui-scrollbar-y { width: 5px; }
+	@{if user.desktop === 1 || mobile}
+	.centered { background-color: white;}
+	@{else}
+	.centered { max-width: 600px; width: 100%; border: 1px solid #E0E0E0; background-color: white; margin: 0 auto; }
+	@{fi}
+	.ui-dark .centered { border-color: #404040; background-color: #282828; }
+	.ui-dark .bg-smoke { background-color: #323232; }
 </style>
 
-<div data-jc="audio__account.volume"></div>
-
-<div class="row">
-	<div data-jc="scrollbar__account__margin:40;parent:window;track:changepassword,response">
-
+<div data---="audio__account.volume"></div>
+@{if user.desktop !== 1 && !mobile}
+<br />
+<br />
+@{fi}
+<div class="centered">
+	<div data---="scrollbar__account__margin:@{if user.desktop === 1 || mobile}55@{else}130@{fi};parent:window;track:changepassword,response">
 		<div class="accountphoto">
-			<div data-jc="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+			<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
 		</div>
 
-		<div class="scroller-padding">
-
+		<div class="scroller-padding npb">
 			<div class="row">
 				<div class="col-2 m">
-					<div data-jc="textbox__account.email__type:email;required:true">@(Email address)</div>
+					<div data---="input__account.email__type:email;innerlabel:1;required:1">@(Email address)</div>
 				</div>
 				<div class="col-2 m">
-					<div data-jc="textbox__account.phone">@(Phone number)</div>
+					<div data---="input__account.phone__innerlabel:1">@(Phone number)</div>
 				</div>
 			</div>
+			@{if CONF.allowtheme}
+			<div data---="colorselector__account.colorscheme__null" style="margin-bottom:5px"></div>
+			@{fi}
 
-			<div class="ui-appearance" data-jc="appearance__account.darkmode">
+			@{if CONF.allowbackground}
+			<div style="font-size:12px">
+				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
+				<div data---="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+			</div>
+			<div class="clearfix"></div>
+			@{fi}
+			<hr />
+			<div class="ui-appearance" data---="appearance__account.darkmode">
 				<div class="ui-appearance-label">
 					<i class="fa fa-paint-brush"></i>@(Appearance):
-					<div class="help" style="margin-top:2px">@(You can choose light or dark mode. <b>IMPORTANT</b>: not all apps support changing of appearance.)</div>
+					<div class="help" style="margin-top:2px">@(You can choose light or dark mode. Not all apps support appearance.)</div>
 				</div>
 				<div class="ui-appearance-option ui-appearance-dark">@(Dark)</div>
 				<div class="ui-appearance-option ui-appearance-light ui-appearance-selected">@(Light)</div>
 			</div>
-
 			<hr />
 
-			<div data-jc="colorselector__account.colorscheme__null" class="m"></div>
-
-			<div style="font-size:12px">
-				<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
-				<div data-jc="singleupload__account.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
-			</div>
-			<div class="clearfix"></div>
-
-			<hr style="margin-top:8px" />
-
-			<div class="row">
-				<div class="col-2">
-					<div data-jc="checkbox__account.sounds">@(Enable sounds)</div>
-					<div data-jc="checkbox__account.notifications">@(Enable notifications)</div>
-				</div>
-				<div class="col-2">
-					<div data-jc="checkbox__account.notificationsemail">@(Enable email notifications)</div>
-					<div data-jc="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
+			<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
+				<i class="fa fa-volume-up"></i>
+				<div>
+					<span data-volume="15">@(low)</span>
+					<span data-volume="50">@(medium)</span>
+					<span data-volume="100">@(loud)</span>
 				</div>
 			</div>
 			<br />
 
-			<div data-jc="range__account.volume__icon:volume-up;min:10;max:100;type:number">@(Volume)</div>
-			<div class="row fs11 silver m">
-				<div class="col-xs-6">
-					@(Low)
+			<div class="row">
+				<div class="col-2">
+					<div data---="checkbox__account.notifications">@(Enable notifications)</div>
+					<div data---="checkbox__account.notificationsemail">@(Enable email notifications)</div>
+					<div data---="checkbox__account.notificationsphone">@(Enable phone notifications)</div>
 				</div>
-				<div class="col-xs-6 right">
-					@(High)
+				<div class="col-2">
+					<div data---="checkbox__account.sounds">@(Enable sounds)</div>
+					<div data---="checkbox__account.otp" class="b">@(Enable 2FA one-time password)</div>
+					<div data---="checkbox__account.changepassword" class="b red">@(Change password)</div>
 				</div>
 			</div>
-			<hr />
-			<div data-jc="checkbox__account.changepassword" class="b red">@(Change password)</div>
 
+			@{if CONF.allowdesktop}
+			<div data---="radiobutton__account.desktop__items:@(Windowed mode)|1,@(Tabbed mode)|2,@(Portal mode)|3;type:number__1" class="mt10"><b>@(Desktop mode)</b></div>
+			<div data-bind="account.desktop__show:backupdata?value!==backupdata.desktop:false" class="hidden alert mt10">
+				<i class="fa fa-warning mr5"></i><b class="red">@(IMPORTANT)</b>: @(if you save this settings then the platform will be reloaded automatically because you have changed a layout.)
+			</div>
+			@{fi}
+		</div>
+
+		<div data-bind="account.otp2__show" class="padding bg-smoke hidden" style="margin:20px 0">
+			<div data-bind="%totpqrcode__template">
+				<script type="text/html">
+					<div class="caption"><i class="fa fa-qrcode"></i>@(Scan QR Code for 2FA)</div>
+					<div class="help m">@(First of all, you need to download an application for Android or iOS, and then you need to scan this QR Code into it. The application will generate a different password before you sign-in each time.)</div>
+					<table class="table table-small table-bordered">
+						<tr>
+							<td class="b">Google Authenticator</td>
+							<td style="width:80px" class="center"><a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank"><i class="fab fa-android"></i> Android</a></td>
+							<td style="width:80px" class="center"><a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank"><i class="fab fa-apple"></i> iOS</a></td>
+						</tr>
+						<tr>
+							<td class="b">Microsoft Authenticator</td>
+							<td class="center"><a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank"><i class="fab fa-android"></i> Android</a></td>
+							<td class="center"><a href="https://apps.apple.com/us/app/microsoft-authenticator/id983156458" target="_blank"><i class="fab fa-apple"></i> iOS</a></td>
+						</tr>
+					</table>
+					<br />
+					<div class="center">
+						<div style="position:relative;display:inline-block;padding:15px;border-radius:3px;background-color:white;margin-bottom:10px">
+							<img src="{{ value.qrcode }}" border="0" alt="@(One-Time password)" />
+						</div>
+						<div class="help"><i class="fa fa-key"></i><b>@(Your private key:)</b><div class="mt5"><code>{{ value.secret }}</code></div></div>
+						<hr />
+					</div>
+				</script>
+			</div>
+			<div class="center">
+				<h3><i class="fa fa-keyboard-o"></i>@(Enter the code from the app here:)</h3>
+				<div data---="pin__%totpcode__mask:false"></div>
+			</div>
+		</div>
+
+		<div class="scroller-padding npt">
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<div class="padding">
-					<div data-jc="textbox__account.password__maxlength:30;required:true">@(Login password)</div>
+					<div data---="input__account.password__maxlength:30;type:password;required:1;innerlabel:1">@(New password)</div>
 					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
 				</div>
 			</div>
+			<br />
+			<div class="row">
+				<div class="col-2 m">
+					<div data---="input__account.dateformat__innerlabel:1;dirsource:dateformats;dirsearch:false">@(Date format)</div>
+				</div>
+				<div class="col-2 m">
+					<div data---="input__account.timeformat__innerlabel:1;dirsource:timeformats;dirsearch:false">@(Time)</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-2 m">
+					<div data---="input__account.numberformat__innerlabel:1;dirsource:numberformats;dirsearch:false">@(Number format)</div>
+				</div>
+				<div class="col-2 m">
+					<div data---="input__account.language__innerlabel:1;dirsource:languages;dirsearch:false">@(Language)</div>
+				</div>
+			</div>
+		</div>
 
-			<div data-jc="error__account.response" class="hidde m"></div>
+		<div class="scroller-padding bg-yellow-fade npb">
+			<h2><i class="fa fa-lock"></i>@(Screen locking)</h2>
+			<div class="fs12 m">@(Screen will be locked only on desktop computers. )</div>
+			<div class="row">
+				<div class="col-xs-6">
+					<div data---="input__account.locking__maxlength:30;type:number;innerlabel:1;placeholder:@(In minutes)">@(Idle time)</div>
+					<div class="help m"><i class="fa fa-clock"></i>@(Must be defined in minutes.)</div>
+				</div>
+				<div class="col-xs-6">
+					<div data---="input__account.pin__maxlength:4;innerlabel:1;mask:####;maskregexp:\d,\d,\d,\d;placeholder:@(In minutes)">@(PIN code)</div>
+					<div class="help m"><i class="fa fa-calculator"></i>@(Only 4 numbers.)</div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="buttonbar" data-jc="validation__account">
-		<button name="submit" class="button exec b" data-exec="account_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
+	<div class="buttons" data---="validation__account">
+		<button name="submit" class="submit exec b" style="width:100%" data-exec="account_submit" disabled="disabled"><i class="fa fa-floppy-o"></i>@(SAVE SETTINGS)</button>
 	</div>
 </div>
 
 <script>
+
+	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
+	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
+	var timeformats = [{ id: 24, name: '@(24 hour clock)' }, { id: 12, name: '@(12 hour clock)' }];
+	var backupdata = null;
 
 	OP.init(function(err, meta) {
 		if (err) {
@@ -118,19 +218,36 @@
 			account_refresh();
 	});
 
+	OP.on('appearance', function(profile) {
+		CSS('.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
+	});
+
 	function account_refresh() {
-		AJAX('GET /api/account/', 'account');
+		AJAX('GET /api/account/', function(response) {
+			backupdata = response;
+			SET('account', CLONE(response));
+		});
+	}
+
+	function account_totp() {
+		AJAX('GET /api/account/totp/', function(response) {
+			SET('account.otpsecret', response.secret);
+			SET('%totpqrcode', response);
+			var pin = FIND('pin');
+			pin && pin.find('input').eq(0).focus();
+		});
 	}
 
 	function account_submit() {
 		OP.loading(true);
 		AJAX('POST /api/account/', GETR('account'), function(response) {
 			OP.loading(false);
-			SET('account.response', response);
 			if (response.success) {
-				OP.success('Your account has been updated successfully.');
+				OP.message('@(Your account has been updated successfully.)');
+				OP.send('refreshprofile');
 				OP.close();
-			}
+			} else
+				OP.message(response, 'warning');
 		});
 	}
 
@@ -150,12 +267,57 @@
 		};
 	});
 
+	WATCH('account.locking', function(path, value, type) {
+		if (value <= 0)
+			SET('account.locking', '@(disabled)');
+	});
+
 	WATCH('account.volume', function(path, value, type) {
 		if (type === 2) {
 			setTimeout2('volume', function() {
 				SETTER('audio', 'play', '/sounds/success.mp3');
 			}, 500);
 		}
+	});
+
+	WATCH('account.otp', function(path, value, type) {
+		if (value && type === 2) {
+			// regenerate TOTP
+			SET('account.otp2', true);
+			account_totp();
+		} else {
+			SET('account.otp2', false);
+			SET('account.otpsecret', '');
+		}
+	});
+
+	WATCH('%totpcode', function(path, value, type) {
+		if (value.trim().length === 6) {
+			AJAX('POST /api/account/totp/verify/', { code: value, secret: account.otpsecret }, function(response) {
+				if (response instanceof Array)
+					OP.message(response, 'warning');
+				else
+					OP.message('@(Your code is valid. __Do not forget to save settings__.)');
+			});
+		}
+	});
+
+	function account_volume_set(el) {
+		SET('account.volume', +el.attrd('volume'), 2);
+	}
+
+	function account_volume(value, path, el) {
+		var cls = 'selected';
+		el.find('.' + cls).rclass(cls);
+		el.find('span[data-volume="{0}"]'.format(value)).aclass('selected');
+		CHANGE('account.email');
+	}
+
+	ON('resize', function() {
+		setTimeout2('resize', function() {
+			resizelayout();
+			SETTER('scrollbar', 'resize');
+		}, 100);
 	});
 
 </script>

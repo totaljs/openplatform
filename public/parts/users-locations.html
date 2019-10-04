@@ -1,0 +1,65 @@
+<div data-scope="userslocations">
+
+	<div class="header">
+		<label><i class="fa fa-map-marker"></i>@(Locations)</label>
+		<div>
+			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
+			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
+			<button data-bind="?.checked__enabled:value && value.length" class="exec" data-exec="?/menu" disabled><i class="fa fa-check-circle green"></i>@(Options)</button>
+		</div>
+	</div>
+
+	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:45;scroll:false">
+		<div data---="datagrid__?.items__height:parent;bottom:65;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked">
+			<script type="text/plain">
+				[
+					{ name: 'id', text: '@(ID)', width: 200 },
+					{ name: 'name', text: '@(Name)', width: 200 }
+				]
+			</script>
+		</div>
+	</div>
+</div>
+
+<div data---="importer__common.panel__if:location;url:/panels/users-location.html"></div>
+
+<script>
+
+	PLUGIN('userslocations', function(exports) {
+
+		exports.refresh = function() {
+			AJAX('GET /api/op/locations/', '?.items');
+		};
+
+		exports.edit = function(row) {
+
+			if (row instanceof jQuery)
+				row = GET('?.selected');
+
+			SETR('userslocationspanel', CLONE(row));
+			SET('common.panel', 'group');
+		};
+
+		exports.create = function(row) {
+			SETR('userslocationspanel', {});
+			SET('common.panel', 'group');
+		};
+
+		exports.menu = function(el) {
+
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'trash-o red' });
+
+			SETTER('menu', 'show', opt);
+
+			opt.callback = function(item) {
+
+			};
+		};
+
+		exports.refresh();
+	});
+</script>
