@@ -9,5 +9,21 @@
 
 OpenPlatform is a simple enterprise-ready platform for running, integrating and managing multiple web applications.
 
+## Install instructions
+
+- download `openplatform`
+- perform `npm install`
+- create a database
+- execute `database.sql`
+- update connection strings in `/config` file
+- run openplatform `$ node debug.js`
+
+## Requirements
+
+- Total.js `+v3.3`
+- PostgreSQL `+v10`
+- DBMS module - lastest version
+- PostgreSQL module - latest version
+
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: license.txt
