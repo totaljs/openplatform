@@ -16,7 +16,7 @@ exports.install = function() {
 
 	// Users/Groups
 	ROUTE('+GET     /api/op/groups/                *Users/Groups       --> @query');
-	ROUTE('+POST    /api/op/groups/                *Users/Groups       --> @save');
+	ROUTE('+PATCH   /api/op/groups/                *Users/Groups       --> @patch');
 	ROUTE('+DELETE  /api/op/groups/                *Users/Groups       --> @remove');
 
 	// Codelists

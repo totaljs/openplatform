@@ -7,7 +7,7 @@ const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 
 function isdatemodified(dt1, dt2) {
 	if (dt1 instanceof Date && dt2 instanceof Date)
 		return dt1.getTime() !== dt2.getTime();
-	return dt1 === dt2;
+	return dt1 !== dt2;
 }
 
 NEWSCHEMA('Users', function(schema) {
@@ -810,7 +810,7 @@ function processapps(model, callback) {
 			if (item)
 				db.update('tbl_user_app', { roles: app.roles, appid: id, inherited: false, dtupdated: NOW }).where('id', model.id + id);
 			else
-				db.insert('tbl_user_app', { id: model.id + id, userid: model.id, appid: id, dtcreated: NOW, inherited: false, rols: app.roles });
+				db.insert('tbl_user_app', { id: model.id + id, userid: model.id, appid: id, dtcreated: NOW, inherited: false, roles: app.roles });
 
 			tmp[id] = 1;
 		}

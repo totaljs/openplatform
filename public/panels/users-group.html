@@ -48,7 +48,7 @@
 			model.$roles = undefined;
 			model.ROW = undefined;
 
-			AJAX('POST /api/op/groups/', model, OP.done('@(Group has been saved successfully)', function() {
+			AJAX('PATCH /api/op/groups/', model, OP.done('@(Group has been saved successfully)', function() {
 				NULL('common.panel');
 				EXEC('usersgroups/refresh');
 				EXEC('main/refreshmeta');

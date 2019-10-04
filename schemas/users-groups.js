@@ -33,7 +33,7 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		$.callback(arr);
 	});
 
-	schema.setSave(function($) {
+	schema.setPatch(function($) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
@@ -56,17 +56,19 @@ NEWSCHEMA('Users/Groups', function(schema) {
 			insert = true;
 		});
 
-		if (!insert)
-			db.remove('tbl_group_app').where('groupid', id);
+		if (apps) {
+			if (!insert)
+				db.remove('tbl_group_app').where('groupid', id);
 
-		for (var i = 0; i < apps.length; i++) {
-			var appmeta = apps[i];
-			if (appmeta == null || !appmeta.id)
-				continue;
-			var appid = appmeta.id;
-			var app = MAIN.apps.findItem('id', appmeta.id);
-			if (app)
-				db.insert('tbl_group_app', { id: id + appid, groupid: id, appid: appid, roles: appmeta.roles });
+			for (var i = 0; i < apps.length; i++) {
+				var appmeta = apps[i];
+				if (appmeta == null || !appmeta.id)
+					continue;
+				var appid = appmeta.id;
+				var app = MAIN.apps.findItem('id', appmeta.id);
+				if (app)
+					db.insert('tbl_group_app', { id: id + appid, groupid: id, appid: appid, roles: appmeta.roles });
+			}
 		}
 
 		db.callback(function() {
