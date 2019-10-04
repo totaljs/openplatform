@@ -9,8 +9,8 @@ NEWSCHEMA('Workshop/Data', function(schema) {
 		var select = ['id'];
 
 		for (var i = 0; i < fields.length; i++) {
-			var field = fields[i].split('.');
 
+			var field = fields[i].split('.');
 			if (field.length === 1) {
 				if (schema.fields.findItem('name', field[0]));
 					select.push(field[0]);

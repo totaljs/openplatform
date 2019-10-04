@@ -352,4 +352,4 @@ function refreshmeta() {
 	});
 }
 
-//ON('ready', refreshmeta);
+ON('ready', refreshmeta);

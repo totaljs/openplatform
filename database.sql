@@ -259,6 +259,59 @@ CREATE TABLE "public"."tbl_group_app" (
 	PRIMARY KEY ("id")
 );
 
+CREATE TABLE "public"."tbl_schema" (
+	"id" varchar(25) NOT NULL,
+	"name" varchar(50),
+	"label" varchar(50),
+	"note" varchar(500),
+	"group" varchar(50),
+	"icon" varchar(20),
+	"color" varchar(7),
+	"endpoint" varchar(500),
+	"x" int2 DEFAULT '0'::smallint,
+	"y" int2 DEFAULT '0'::smallint,
+	"permissiosn" _varchar,
+	"isremoved" bool DEFAULT false,
+	"dtcreated" timestamp,
+	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_schema_field" (
+	"id" varchar(25) NOT NULL,
+	"schemaid" varchar(25),
+	"name" varchar(50),
+	"label" varchar(50),
+	"type" varchar(20),
+	"length" int2 DEFAULT '0'::smallint,
+	"note" varchar(500),
+	"required" bool DEFAULT false,
+	"position" int2 DEFAULT '0'::smallint,
+	"width" int2,
+	"height" int2,
+	"items" _varchar,
+	"permissions" _varchar,
+	"islinked" bool DEFAULT false,
+	"dtcreated" timestamp,
+	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_schema_status" (
+	"id" varchar(25) NOT NULL,
+	"schemaid" varchar(25),
+	"nextid" _varchar,
+	"name" varchar(50),
+	"note" varchar(500),
+	"position" int2 DEFAULT '0'::smallint,
+	"ismain" bool DEFAULT true,
+	"isprev" bool DEFAULT true,
+	"permissions" _varchar,
+	"dtcreated" timestamp,
+	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
 -- ==============================
 -- VIEWS
 -- ==============================

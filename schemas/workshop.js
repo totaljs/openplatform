@@ -68,6 +68,7 @@ NEWSCHEMA('Workshop', function(schema) {
 		app.email = $.user.email;
 		app.resize = true;
 		app.online = true;
+
 		db.insert('tbl_app', app);
 
 		db.callback(function() {
