@@ -19,6 +19,7 @@ NEWSCHEMA('Workshop', function(schema) {
 	schema.define('name', 'String(50)', true);
 	schema.define('icon', 'String(30)', true);
 	schema.define('views', '[Workshop/View]', true);
+	schema.define('roles', '[String]');
 
 	schema.setInsert(function($) {
 
@@ -45,7 +46,35 @@ NEWSCHEMA('Workshop', function(schema) {
 			db.insert('tbl_workshop_view', view);
 		}
 
-		db.callback($.done(model.id));
+		var app = {};
+		app.id = app.workshopid = model.id;
+		app.responsive = true;
+		app.online = true;
+		app.roles = model.roles;
+		app.dtsync = app.dtcreated = NOW;
+		app.mobilemenu = true;
+		app.responsive = true;
+		app.accesstoken = GUID(30);
+		app.allowreadusers = 1;
+		app.allowreadapps = 1;
+		app.allowreadprofile = 1;
+		app.allownotifications = true;
+		app.frame = '/workshop/' + model.id + '/';
+		app.name = app.title = model.name;
+		app.linker = model.name.slug();
+		app.search = model.name.toSearch();
+		app.icon = prepare_icon(model.icon);
+		app.author = $.user.company || $.user.name;
+		app.email = $.user.email;
+		app.resize = true;
+		app.online = true;
+		db.insert('tbl_app', app);
+
+		db.callback(function() {
+			FUNC.refreshapps(function() {
+				FUNC.updateroles($.done(model.id));
+			});
+		});
 	});
 
 	schema.setUpdate(function($) {
@@ -58,6 +87,15 @@ NEWSCHEMA('Workshop', function(schema) {
 		model.dtupdated = NOW;
 
 		db.modify('tbl_workshop', model).where('id', $.id);
+
+		var app = {};
+		app.roles = model.roles;
+		app.dtsync = app.dtupdated = NOW;
+		app.name = app.title = model.name;
+		app.linker = model.name.slug();
+		app.search = model.name.toSearch();
+		app.icon = prepare_icon(model.icon);
+		db.modify('tbl_app', app).where('id', $.id);
 
 		var ids = [];
 
@@ -79,7 +117,11 @@ NEWSCHEMA('Workshop', function(schema) {
 		}
 
 		db.modify('tbl_workshop_view', { isremoved: true }).where('workshopid', $.id).notin('id', ids);
-		db.callback($.done(model.id));
+		db.callback(function() {
+			FUNC.refreshapps(function() {
+				FUNC.updateroles($.done(model.id));
+			});
+		});
 	});
 
 	schema.setRead(function($) {
@@ -95,7 +137,10 @@ NEWSCHEMA('Workshop', function(schema) {
 	});
 
 	schema.setRemove(function($) {
-		DBMS().modify('tbl_workshop', { isremoved: true, dtupdated: NOW }).where('id', $.id).callback($.done());
+		var db = DBMS();
+		db.remove('tbl_app').where('id', $.id);
+		db.modify('tbl_workshop', { isremoved: true, dtupdated: NOW }).where('id', $.id);
+		db.callback($.done());
 	});
 
 	schema.addWorkflow('plugins', function($) {
@@ -120,3 +165,7 @@ NEWSCHEMA('Workshop', function(schema) {
 	});
 
 });
+
+function prepare_icon(icon) {
+	return icon.replace('fa-', '');
+}

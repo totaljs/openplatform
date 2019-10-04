@@ -60,6 +60,8 @@ document.onkeydown = function(e) {
 		OP.send('quicksearch');
 	} else if (e.keyCode === 116) {
 		// F5
+		OP.loading(false);
+		OP.progress(0);
 		if (location.href.indexOf('openplatform=') === -1)
 			location.href = OP.tokenizator(location.href);
 		else

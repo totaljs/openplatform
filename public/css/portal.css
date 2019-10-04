@@ -87,7 +87,7 @@ header span { margin-left: 15px; font-weight: bold; vertical-align: top; }
 .username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
 .username:hover { opacity: 0.7; }
 .username i { margin-right: 5px; }
-footer { border-top: 1px solid #404040; height: 25px; line-height: 25px; padding: 0 5px 0 10px; }
+footer { border-top: 1px solid #404040; height: 32px; line-height: 32px; padding: 0 5px 0 10px; }
 .light footer { border-top-color: #E0E0E0; }
 .console { font-size: 12px; cursor: pointer; float: left; }
 .console i { margin-right: 5px; }
@@ -272,8 +272,12 @@ h3 i { margin-right: 5px; }
 .buttons button:hover { background-color: #E0E0E0; }
 
 .menubutton { display: none; left: 0; bottom: 0; position: absolute; height: 40px; line-height: 38px; background-color: #202020; color: white; z-index: 50; text-align: center; transition: all 0.1s; right: 0; border-top: 1px solid #404040; }
+.menubuttonapp { display: none; left: 0; bottom: 0; position: absolute; height: 40px; line-height: 38px; background-color: #202020; color: white; z-index: 50; text-align: center; transition: all 0.1s; right: 0; border-top: 1px solid #404040; border-left: 1px solid #404040; }
 .light .menubutton { background-color: white; border-top-color: #E0E0E0; color: black; }
-.menushow .menubutton { bottom: -40px; }
+.light .menubuttonapp { background-color: white; border-top-color: #E0E0E0; color: black; border-left-color: #E0E0E0; }
+.menushow .menubutton, .menushow .menubuttonapp { bottom: -40px; }
+.appbutton .menubutton { right: 50%; }
+.appbutton .menubuttonapp { left: 50%; right: 0; }
 
 @media(max-width: 700px) {
 	.menubutton { display: block; }
@@ -288,6 +292,7 @@ h3 i { margin-right: 5px; }
 	.form-border { border-left: 0; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
 	.ui-notifications { border-left: 0; }
+	.appbutton .menubuttonapp { display: block; }
 }
 
 .menushow .menu { display: block; }
@@ -300,7 +305,6 @@ h3 i { margin-right: 5px; }
 
 .ui-process { left: auto !important; top: auto !important; }
 .ui-wiki { top: 0; }
-
 
 .menu-minimize { float: right; background-color: #202020; z-index: 51; border-left: 1px solid #404040; width: 10px; line-height: 44px; font-size: 8px; text-align: center; cursor: pointer; margin-left: 0; color: gray; }
 .menu-minimize:hover { background-color: #303030; }

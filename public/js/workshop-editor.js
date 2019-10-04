@@ -32,10 +32,19 @@ COMPONENT('wcolumns', function(self, config) {
 			value.el.find('span').text(value.label || '---');
 			setTimeout2(self.ID, self.save, 500);
 		});
+
+		self.event('click', function(e) {
+			if (!$(e.target).hclass('w-editor-col')) {
+				prev && prev.rclass(cls + '-selected');
+				prev = null;
+				SEEX(self.makepath(config.selected), null);
+				SET('workshop.rtab', 'properties', 500);
+			}
+		});
 	};
 
 	self.save = function() {
-		var arr = container.find('div');
+		var arr = container.find('.w-editor-col');
 		var items = [];
 		for (var i = 0; i < arr.length; i++) {
 			var el = $(arr[i]);
@@ -55,10 +64,41 @@ COMPONENT('wcolumns', function(self, config) {
 
 		switch (e.type) {
 			case 'drop':
+
+				if (drag.el.hclass('w-editor-col')) {
+					var a = drag.el[0];
+					var b = e.target;
+					var c = container[0];
+					var ai = -1;
+					var bi = -1;
+					for (var i = 0; i < c.children.length; i++) {
+						var child = c.children[i];
+						if (a === child)
+							ai = i;
+						else if (b === child)
+							bi = i;
+						if (bi !== -1 && ai !== -1)
+							break;
+					}
+
+					if (ai > bi)
+						c.insertBefore(a, b);
+					else
+						c.insertBefore(a, b.nextSibling);
+
+					self.save();
+					return;
+				}
+
 				var id = drag.el.attrd('id');
 				var name = drag.el.text();
 				var label = drag.el.attrd('label');
-				container.append('<div data-id="{0}" data-path="{1}"><div><span>{2}</span><div>{3}</div></div></div>'.format('f' + Date.now(), id, name, label));
+				var el = $('<div data-id="{0}" data-path="{1}" draggable="true" class="w-editor-col"><div><span>{2}</span><div>{3}</div></div></div>'.format('f' + Date.now(), id, name, label))[0];
+				var next = e.target;
+				if (next && $(next).hclass('w-editor-col'))
+					container[0].insertBefore(el, next);
+				else
+					container[0].appendChild(el);
 				self.save();
 				break;
 
@@ -72,16 +112,16 @@ COMPONENT('wcolumns', function(self, config) {
 		}
 	};
 
-	events.ondown = function() {
+	events.ondown = function(e) {
 		drag.el = $(this);
 	};
 
-	$(document).on('dragenter dragover dragexit drop dragleave', '.w-editor-list', events.ondrag);
-	$(document).on('mousedown', '.dworkshop-field', events.ondown);
+	$(document).on('dragenter dragover dragexit drop dragleave', '.w-editor-list,.w-editor-col', events.ondrag);
+	$(document).on('mousedown', '.dworkshop-field,.w-editor-col', events.ondown);
 
 	self.destroy = function() {
-		$(document).off('dragenter dragover dragexit drop dragleave', '.w-editor-list', events.ondrag);
-		$(document).off('mousedown', '.dworkshop-field', events.ondown);
+		$(document).off('dragenter dragover dragexit drop dragleave', '.w-editor-list,.w-editor-col', events.ondrag);
+		$(document).off('mousedown', '.dworkshop-field,.w-editor-col', events.ondown);
 	};
 
 	self.setter = function() {

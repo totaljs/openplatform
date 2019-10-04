@@ -1,0 +1,302 @@
+@{layout('')}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>@{config.name}</title>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="robots" content="all,follow" />
+	@{head}
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<script src="@{'%cdn'}/spa.min@18.js"></script>
+	<style type="text/css">
+		/*auto*/
+		html,body { overflow: hidden; height: 100%; }
+		body { background-color: white; color: #D0D0D0; }
+
+		.panel { max-width: 260px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -150px 0 0 -130px; background-color: white; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 1px solid #D0D0D0; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+		.padding { padding: 30px 20px; }
+		.panelshow { transform: scale(1); }
+
+		.links { font-size: 12px; }
+		.links a { display: block; }
+
+		h1 { color: black; margin: 0; padding: 20px 0; font-family: Arial; text-align: center; font-size: 16px; border-bottom: 1px solid rgba(0,0,0,0.1); color: black; }
+		h1 .fa { margin-right: 10px; }
+		.ui-error { margin: 10px 0 0; list-style-type: none; padding: 10px 0 0; color: #BE3A48; font-family: Arial; font-size: 14px; border-top: 1px solid #E0E0E0; }
+		.ui-error .fa { width: 20px; }
+		.fs12 { font-size: 12px; }
+
+		.ui-pin-input { width: 44px; border: 2px solid black; position: relative; display: inline-block; margin: 0 8px 8px 0; border-radius: 4px; padding: 8px 2px; background-color: white; }
+		.ui-pin-input input { width: 100%; border: 0; background-color: white; outline: 0; font-size: 20px; text-align: center; font-weight: bold; border-radius: 0; appearance: none; color: black; }
+		.ui-pin-invalid .ui-pin-input, .ui-pin-invalid input { background-color: #FFF3F3; }
+		.ui-disabled .ui-pin-input { background-color: #F0F0F0; border-color: #D0D0D0; }
+		.ui-disabled .ui-pin-input input { background-color: #F0F0F0; cursor: not-allowed; color: gray; }
+		.ui-dark .ui-pin-input { background-color: #252525; border-color: #353535; }
+		.ui-dark .ui-pin-input input { background-color: #252525; color: white; }
+		.ui-disabled .ui-pin-input { background-color: #282828; border-color: #282828; }
+		.ui-disabled .ui-pin-input input { background-color: #282828; cursor: not-allowed; color: gray; }
+
+		.hidden { display: none; }
+		.m { margin-bottom: 15px; }
+
+		.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
+		.success .fa { margin-right: 8px; }
+
+		header { height: 120px; border-bottom: 1px solid #E0E0E0; text-align: center; font-size: 12px; color: gray; background-color: #F0F0F0; border-radius: 3px 3px 0 0; }
+		header img { height: 100px; width: 100px; border-radius: 100px; margin: 0 auto; display: block; border: 1px solid #E0E0E0; position: absolute; left: 50%; margin-left: -50px; margin-top: -50px; }
+		header .photo { height: 100px; width: 100px; line-height: 100px; font-size: 40px; border-radius: 100px; margin: 0 auto; display: block; border: 1px solid #E0E0E0; position: absolute; left: 50%; margin-left: -50px; margin-top: -50px; background-color: white; color: @{user.colorscheme}; }
+		header .username { padding-top: 60px; font-weight: bold; color: black; font-size: 14px; }
+
+		.ui-dark .panel { background-color: #303030; border-color: #404040; }
+		.ui-dark header { background-color: #252525; color: gray; border-bottom-color: #404040; }
+		.ui-dark .username { color: white; }
+		.ui-dark .ui-error { border-top-color: #404040; color: red; }
+
+		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
+		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
+		button:disabled { background-color: #101010; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+		button .fa { margin-right: 5px; }
+		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 20px 0 0 0; }
+
+	</style>
+</head>
+<body data---="exec"@{if user.darkmode} class="ui-dark"@{fi}>
+
+	<div class="panel">
+		<header>
+			@{if user.photo}<img src="/photos/@{user.photo}" alt="@{user.name}" border="0" />@{else}<div class="photo"><i class="fa fa-user"></i></div>@{fi}
+			<div class="username">@{user.name}</div>
+			<i class="fa fa-unlock"></i> @(Unlock your screen)
+		</header>
+		<div class="padding">
+			<div class="center">
+				<div data---="pin__form.pin__count:4;hide:1;autofocus:1"></div>
+				<div class="help">
+					@(Or you can) &nbsp;<a href="/logout/" class="red b"><i class="fa fa-sign-out" style="margin-right:3px"></i>@(Sign out)</a>
+				</div>
+				<div data---="error__form.response" class="nmb"></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+
+	var common = {};
+
+	WATCH('form.pin', function(path, value) {
+		value && AJAXCACHE('GET /api/unlock/', { pin: value }, function(response) {
+
+			if (typeof(response) === 'string') {
+				// authorize
+				location.reload(true);
+				return;
+			}
+
+			if (response.success) {
+				location.href = '/';
+			} else {
+				SET('form.response', response);
+				SET('form.response', null, 1500);
+			}
+
+		}, 'session');
+	});
+
+	COMPONENT('error', function(self, config) {
+
+		self.readonly();
+
+		self.make = function() {
+			self.aclass('ui-error hidden');
+		};
+
+		self.setter = function(value) {
+
+			if (!(value instanceof Array) || !value.length) {
+				self.tclass('hidden', true);
+				return;
+			}
+
+			var builder = [];
+			for (var i = 0, length = value.length; i < length; i++)
+				builder.push('<div><span class="fa {1}"></span>{0}</div>'.format(value[i].error, 'fa-' + (config.icon || 'times-circle')));
+
+			self.html(builder.join(''));
+			self.tclass('hidden', false);
+		};
+	});
+
+	COMPONENT('exec', function(self, config) {
+		self.readonly();
+		self.blind();
+		self.make = function() {
+			self.event('click', config.selector || '.exec', function(e) {
+				var el = $(this);
+				var attr = el.attr('data-exec');
+				var path = el.attr('data-path');
+				attr && EXEC(attr, el, e);
+				path && SET(path, new Function('return ' + el.attr('data-value'))());
+			});
+		};
+	});
+
+	setTimeout(function() {
+		$('.panel').aclass('panelshow');
+	}, 200);
+
+	COMPONENT('pin', 'blank:●;count:6;hide:false', function(self, config) {
+
+		var reg_validation = /[0-9]/;
+		var inputs = null;
+		var skip = false;
+		var count = 0;
+
+		self.nocompile();
+
+		self.validate = function(value, init) {
+			return init ? true : config.required || config.disabled ? !!(value && value.indexOf(' ') === -1) : true;
+		};
+
+		self.configure = function(key, value, init) {
+			switch (key) {
+				case 'count':
+					!init && self.redraw();
+					break;
+				case 'disabled':
+					self.find('input').prop('disabled', value);
+					self.tclass('ui-disabled', value);
+					!init && !value && self.state(1, 1);
+					break;
+			}
+		};
+
+		self.redraw = function() {
+			var builder = [];
+			count = config.count;
+			for (var i = 0; i < count; i++)
+				builder.push('<div data-index="{0}" class="ui-pin-input"><input type="{1}" maxlength="1" autocomplete="pin{2}" name="pin{2}" pattern="[0-9]" /></div>'.format(i, isMOBILE ? 'tel' : 'text', Date.now() + i));
+			self.html(builder.join(''));
+		};
+
+		self.make = function() {
+
+			self.aclass('ui-pin');
+			self.redraw();
+
+			self.event('keypress', 'input', function(e) {
+				var c = e.which;
+				var t = this;
+				if (c >= 48 && c <= 57) {
+					var c = String.fromCharCode(e.charCode);
+					if (t.value !== c)
+						t.value = c;
+
+					if (config.hide)
+						self.maskforce(t);
+					else
+						self.mask();
+
+					setTimeout(function(el) {
+						var next = el.parent().next().find('input');
+						next.length && next.focus();
+					}, 50, $(t));
+				} else if (c > 30)
+					e.preventDefault();
+			});
+
+			self.event('keydown', 'input', function(e) {
+				e.which === 8 && setTimeout(function(el) {
+					if (!el.val()) {
+						el.attrd('value', '');
+						var prev = el.parent().prev().find('input');
+						prev.val() && prev.focus();
+						self.mask();
+					}
+				}, 50, $(this));
+			});
+
+			inputs = self.find('input');
+
+			config.autofocus && setTimeout(function() {
+				inputs.eq(0).focus();
+			}, 500);
+		};
+
+		self.maskforce2 = function() {
+			self.maskforce(this, true);
+		};
+
+		self.maskforce = function(input, nogetter) {
+			if (input.value && reg_validation.test(input.value)) {
+				input.setAttribute('data-value', input.value);
+				input.value = config.blank;
+				!nogetter && self.getter();
+			}
+		};
+
+		self.mask = function() {
+			setTimeout2(self.id + '.mask', function() {
+				inputs.each(self.maskforce2);
+				self.getter();
+			}, 300);
+		};
+
+		self.getter = function() {
+			setTimeout2(self.id + '.getter', function() {
+				var value = '';
+				var count = 0;
+
+				inputs.each(function() {
+					var v = this.getAttribute('data-value');
+					value += v || ' ';
+					if (v)
+						count++;
+				});
+
+				if (self.get() !== value && count === config.count) {
+					self.change(true);
+					skip = true;
+					self.set(value);
+				}
+
+			}, 100);
+		};
+
+		self.setter = function(value) {
+
+			if (skip) {
+				skip = false;
+				return;
+			}
+
+			if (value == null)
+				value = '';
+
+			inputs.each(function(index) {
+				this.setAttribute('data-value', value.substring(index, index + 1));
+				this.value = value ? config.blank : '';
+			});
+		};
+
+		self.state = function(type) {
+			if (!type)
+				return;
+			var invalid = config.required ? self.isInvalid() : false;
+			if (invalid === self.$oldstate)
+				return;
+			self.$oldstate = invalid;
+			self.tclass('ui-pin-invalid', invalid);
+		};
+	});
+
+	</script>
+
+</body>
+</html>

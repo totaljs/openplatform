@@ -83,8 +83,12 @@ ON('resize', function() {
 	var el = $('#dashboardapps');
 	if (el) {
 		var tmp = PLUGIN('Dashboard');
-		tmp && tmp.resizeapps.call(el, null, null, el);
+		if (tmp)
+			tmp.resizeapps.call(el, null, null, el);
 	}
+
+	isMOBILE && SETTER('processes', 'resize');
+
 });
 
 $(window).on('resize', function() {
@@ -99,27 +103,19 @@ common.titlescache = {};
 
 FUNC.titlechange = function(type, id, text) {
 
-	if (common.titlescache[id])
-		return;
+	var el = $('.titlemessage');
+	var title = el.find('> div');
+	var icon = el.find('> i');
 
-	var el = $('.ui-process[data-id="{0}"]'.format(id));
-	var header = el.find('.ui-process-header');
-	var meta = header.find('.ui-process-meta');
-	var title = meta.find('div');
-	var icon = meta.find('i');
-	var bk = {};
-	bk.icon = icon.attr('class');
-	bk.name = title.text();
-
-	header.aclass('ui-process-header-' + type);
-	icon.rclass().aclass('fa fa-' + (type === 'success' ? 'check-circle' : 'warning'));
+	el.rclass2('titlemessage-').aclass('titlemessage-' + type);
+	icon.rclass2('fa-').aclass('fa-' + (type === 'success' ? 'check-circle' : 'warning'));
 	title.html(text);
+	el.rclass('hidden');
 
-	common.titlescache[id] = setTimeout(function() {
-		header.rclass('ui-process-header-' + type);
-		icon.rclass().aclass(bk.icon);
-		title.html(bk.name);
-		common.titlescache[id] = null;
+	common.titlescache && clearTimeout(common.titlescache);
+	common.titlescache = setTimeout(function() {
+		el.aclass('hidden');
+		common.titlescache = null;
 	}, 2500);
 };
 
@@ -153,14 +149,10 @@ Thelpers.responsive = function(value) {
 $(window).on('message', function(e) {
 
 	var data = PARSE((e.originalEvent && e.originalEvent.data).toString() || '');
-
 	if (!data || !data.openplatform)
 		return;
 
-	if (data.type === 'refreshprofile') {
-		refresh_profile();
-		return;
-	}
+	var app;
 
 	if (data.type === 'nextwindow') {
 		var index = dashboard.apps.findIndex('id', common.focused);
@@ -182,16 +174,18 @@ $(window).on('message', function(e) {
 		return;
 	}
 
-	var app = dashboard.apps.findItem('accesstoken', data.accesstoken);
-	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))
+	if (data.type === 'refreshprofile') {
+		refresh_profile();
+		return;
+	}
+
+	app = dashboard.apps.findItem('accesstoken', data.accesstoken);
+	if (!app || (!app.internal.internal && !app.internal.workshopid && app.url.indexOf(data.origin) === -1))
 		return;
 
 	var processes = FIND('processes');
 
 	switch (data.type) {
-
-		case '$windows':
-			break;
 
 		case 'install':
 
@@ -284,6 +278,10 @@ $(window).on('message', function(e) {
 			if (!common.consolewindow)
 				INC('common.consolecount');
 
+			break;
+
+		case 'mail':
+			AJAX('POST /api/op/mail/', data.body, NOOP);
 			break;
 
 		case 'screenshot':
@@ -443,9 +441,11 @@ $(window).on('message', function(e) {
 		case 'titlesuccess':
 			FUNC.titlechange('success', app.id, data.body);
 			break;
+
 		case 'titlewarning':
 			FUNC.titlechange('warning', app.id, data.body);
 			break;
+
 		case 'done':
 			if (data.body instanceof Array) {
 				FUNC.playsound('alert', app.id);
@@ -455,6 +455,7 @@ $(window).on('message', function(e) {
 				FUNC.titlechange('success', app.id, data.body);
 			}
 			break;
+
 		case 'focus':
 			SETTER('!tooltip', 'hide');
 			common.startmenu && SET('common.startmenu', false);
@@ -490,12 +491,17 @@ $(window).on('message', function(e) {
 		case 'loading2':
 			var iframe = processes.findProcess(app.id);
 			if (iframe) {
-				var fa = iframe.element.find('.ui-process-header').find('div .fa');
+				var btn = $('.app[data-id="{0}"]'.format(iframe.id));
+				var fa = btn.find('> i');
 				var icon = iframe.meta.internal.icon;
+
+				if (icon.indexOf(' ') === -1)
+					icon += ' fa';
+
 				if (data.body == true)
-					fa.rclass('fa-' + icon).aclass('fa-pulse fa-spinner usercolor');
+					fa.rclass().aclass('fa fa-pulse fa-spinner');
 				else
-					fa.rclass('fa-pulse fa-spinner usercolor').aclass('fa-' + icon);
+					fa.rclass().aclass('fa-' + icon);
 			}
 			break;
 
@@ -547,9 +553,7 @@ $(window).on('message', function(e) {
 				iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
 			});
 			break;
-		case 'mail':
-			AJAX('POST /api/op/mail/', data.body, NOOP);
-			break;
+
 		case 'report':
 			FUNC.reportbug(app.id, data.body.type, data.body.body, data.body.high);
 			break;
@@ -592,12 +596,12 @@ $(window).on('message', function(e) {
 			if (app) {
 				if (data.body == null && app.id === common.focused)
 					return;
-				AJAX('GET /api/badges/?' + app.profile.badge.substring(app.profile.badge.indexOf('accesstoken=')), NOOP);
+				AJAX('GET /api/op/badges/' + app.id, NOOP);
 			}
 			break;
 
 		case 'notify':
-			app && app.internal.notifications && AJAX('POST /api/notify/?' + app.profile.notify.substring(app.profile.notify.indexOf('accesstoken=')), data.body, NOOP);
+			app && app.internal.notifications && AJAX('POST /api/op/notify/' + app.id, data.body, NOOP);
 			break;
 
 		case 'minimize':

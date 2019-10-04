@@ -49,7 +49,9 @@
 	</div>
 
 	<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
+
 	<div class="menubutton exec" data-exec="Dashboard/mainmenu"><i class="fa fa-align-justify"></i></div>
+	<div class="menubuttonapp exec" data-exec="Dashboard/mainmenu2"><i class="fas fa-list-ul"></i></div>
 
 	<div class="container@{if CONF.allowdesktopfluid != false}-fluid@{fi} invisible" data-bind="common.ready__.invisible:!value">
 		<div class="menu">
@@ -66,7 +68,7 @@
 				<span>@{CONF.name}</span>
 				<span class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</span>
 			</header>
-			<div data---="viewbox__null__margin:70;parent:window">
+			<div data---="viewbox__null__margin:77;parent:window">
 
 				@{part('top')}
 
@@ -392,6 +394,10 @@
 				$(document.body).tclass('menushow');
 			};
 
+			self.mainmenu2 = function() {
+				SETTER('processes', 'showmenu', common.focused);
+			};
+
 			self.closefocused = function() {
 				common.focused && SETTER('processes', 'kill', common.focused);
 				setTimeout(function() {
@@ -619,10 +625,13 @@
 			var nav = $('.menu').find('nav');
 			nav.find('.app.focused').rclass('focused');
 			nav.find('.app[data-id="{0}"]'.format(id)).aclass('focused');
+			var b = $(document.body).rclass('appbutton');
 			if (id) {
 				var app = dashboard.apps.findItem('id', id);
-				if (app)
+				if (app) {
 					app.dtfocused = NOW;
+					b.tclass('appbutton', app.internal.mobilemenu === true);
+				}
 				$('.ui-process-focus').rclass('ui-process-focus');
 				var iframe = $('.ui-process[data-id="{0}"]'.format(id)).aclass('ui-process-focus').find('iframe');
 				if (iframe.length)

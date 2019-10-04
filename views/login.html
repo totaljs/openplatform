@@ -13,96 +13,123 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="robots" content="all,follow" />
 	@{head}
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@17.css" />
-	<script src="@{'%cdn'}/spa.min@17.js"></script>
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<script src="@{'%cdn'}/spa.min@18.js"></script>
 	<style type="text/css">
 		/*auto*/
-		html,body { overflow: hidden; height: 100%; }
-		body { background-color: #303030; color: #D0D0D0; }
 
-		.panel { max-width: 300px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -170px 0 0 -140px; background-color: #252525; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 2px solid #202020; }
+		html,body { overflow: hidden; height: 100%; }
+		body { background-color: #F0F0F0; color: black; background: radial-gradient(#FFFFFF, #A1BBC2); }
+
+		.panel { max-width: 330px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -240px 0 0 -140px; background-color: white; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 1px solid #D0D0D0; box-shadow: 0 0 30px rgba(0,0,0,0.05); }
+		.ui-pin-input { width: 34px !important; padding-top: 5px !important; padding-bottom: 5px !important; }
 		.padding { padding: 20px; }
 		.panelshow { transform: scale(1); }
-		a { color: white; }
-		h1 { color: black; margin: 0; padding: 20px 0; font-family: Arial; text-align: center; font-size: 16px; border-bottom: 1px solid #101010; color: white }
+		a { color: black; }
+		h1 { color: black; margin: 0; padding: 22px 0 20px; font-family: Arial; text-align: center; font-size: 16px; border-bottom: 1px solid #E0E0E0; color: black }
 		h1 .fa { margin-right: 10px; }
-		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: silver; }
-		input[type="text"]:disabled, input[type="password"]:disabled, select:disabled { background-color: #F0F0F0; cursor: not-allowed; color: silver; }
-		input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:active, input:-webkit-autofill:focus { background-color: #181818 !important; color: white !important; -webkit-box-shadow: 0 0 0 1000px #181818 inset !important; -webkit-text-fill-color: white !important; }
-		.ui-textbox { border: 1px solid #101010; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: #181818; display: table; }
-		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: white; width: 100%; background-color: #181818; }
-		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #101010; width: 30px; color: gray; }
+
+		input:-ms-input-placeholder, input:-webkit-input-placeholder, input:-moz-input-placeholder { color: gray; }
+		input[type="text"]:disabled, input[type="password"]:disabled { background-color: #F0F0F0; cursor: not-allowed; color: gray; }
+		.ui-textbox { border: 1px solid #E0E0E0; padding: 5px 2px 5px 5px; border-radius: 2px; position: relative; width: 100%; background-color: white; display: table; }
+		.ui-textbox input { display: table-cell; border: 0; outline: 0; font: normal 14px Arial; color: black; width: 100%; background-color: white; }
+		.ui-textbox div { width: 1%; position: relative; vertical-align: middle; display: table-cell; text-align: center; white-space: nowrap; text-overflow: clip; border-left: 1px solid #E0E0E0; width: 30px; color: gray; }
 		.ui-textbox .fa-times { color: red; cursor: pointer; }
 		.ui-textbox-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
 		.ui-textbox-label .fa { margin-right: 5px; }
 		.ui-textbox-label-required:before { color: red; content: '***'; margin-right: 5px; }
-		.ui-textbox-invalid { border-color: #96322C !important; background-color: #96322C !important; }
-		.ui-textbox-invalid input { background-color: #96322C !important; }
-		.ui-textbox-invalid div { border-color: #871C15; color: white; }
+		.ui-textbox-invalid { border-color: red !important; }
+		.ui-textbox-invalid div { border-color: red; color: red; }
 		.ui-textbox .fa-caret-up, .ui-textbox .fa-caret-down { display: block; line-height: 9px; cursor: pointer; }
 		.ui-textbox .fa-calendar { cursor: pointer; }
 		.ui-textbox-helper { margin-top: 8px; font-size: 11px; color: red; text-align: left; display: none; }
 		.ui-textbox-helper-show { display: block; }
 		.ui-textbox-container.ui-disabled .ui-textbox { background-color: #F0F0F0; cursor: not-allowed; }
 		.ui-textbox-container.ui-disabled .ui-textbox input { background-color: #F0F0F0; }
-		.ui-error { margin: 0 0 15px; padding: 0; list-style-type: none; padding: 10px 0; color: #BE3A48; font-family: Arial; font-size: 14px }
+		.ui-error { margin: 0 0 15px; padding: 0; list-style-type: none; padding: 10px 0; color: #BE3A48; font-family: Arial; font-size: 12px; border-top: 1px solid #E0E0E0; }
 		.ui-error .fa { width: 16px; }
 		.fs12 { font-size: 12px; }
+
+		.ui-pin-input { width: 44px; border: 2px solid black; position: relative; display: inline-block; margin: 0 8px 8px 0; border-radius: 4px; padding: 8px 2px; background-color: white; }
+		.ui-pin-input input { width: 100%; border: 0; background-color: white; outline: 0; font-size: 20px; text-align: center; font-weight: bold; border-radius: 0; appearance: none; color: black; }
+		.ui-pin-invalid .ui-pin-input, .ui-pin-invalid input { background-color: #FFF3F3; }
+		.ui-disabled .ui-pin-input { background-color: #F0F0F0; border-color: #D0D0D0; }
+		.ui-disabled .ui-pin-input input { background-color: #F0F0F0; cursor: not-allowed; color: gray; }
 
 		.hidden { display: none; }
 		.m { margin-bottom: 15px; }
 
-		.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
+		.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; line-height: 14px; }
 		.success .fa { margin-right: 8px; }
 
-		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
+		button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 40px; text-transform: uppercase; font-size: 14px; }
 		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
-		button:disabled { background-color: #101010; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+		button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
 		button .fa { margin-right: 5px; }
-		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 20px 0 0 0; }
+		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 15px 0 0 0; border-top: 1px solid #E0E0E0; padding: 10px 0 0; }
 
 		@media(max-width: 768px) {
 			.panel { margin: 20px; left: 0; position: relative; top: 50%; margin-top: -200px; width: auto; max-width: 1000px; }
 		}
 
+		.alert { color: #856404; background-color: #FFFFD5; border: 1px solid #e8e6bd; border-radius: 3px; padding: 10px 15px; font-size: 12px; line-height: 16px; }
+		.gray { color: gray; }
+
 	</style>
 </head>
-<body data-jc="exec">
+<body data---="exec">
 
 	<div class="panel">
-		<h1><i class="fa fa-lock"></i>@{config.name}</h1>
-		<div data-bind="password.response__show:value && value.success === true" class="success hidden">@(We sent you email with instructions for resetting of your password.)</div>
+		<h1><i class="fa fa-lock"></i>@{CONF.name}</h1>
+		<div data-bind="password.response__show:value && value.success === true" class="success hidden"><i class="fa fa-check-circle mr5"></i>@(We sent you email with instructions for resetting of your password.)</div>
 		<div class="padding">
 
-			<div data-bind="common.type__show:value !== 'password'">
+			<div data-bind="common.type__show:value === 'login'" class="hidden">
 				<form method="POST" onsubmit="return false">
-					<div class="m" data-jc="textbox__form.name__icon2:user;required:true;autofocus:true;autofill:true" data-jc-id="formname">@(Login name)</div>
-					<div class="m" data-jc="textbox__form.password__icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
-					<div data-jc="error__form.response"></div>
-					<div class="m fs12">
-						<div><a href="#password" class="exec" data-exec="toggletype">@(I forgot my password)</a></div>
+					<div class="m" data---="textbox__form.name__icon2:user;required:true;autofocus:true;autofill:true;$id:formname">@(Login name)</div>
+					<div class="m" data---="textbox__form.password__icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
+					<div data---="error__form.response"></div>
+					<div class="m fs12" style="line-height:16px">
+						<div><a href="#password" class="exec gray" data-exec="toggletype"><i class="fa fa-angle-right mr5"></i>@(Reset password)</a></div>
+						@{if CONF.guest}
+						<div><a href="/guest/" class="b"><i class="fa fa-angle-right mr5"></i>@(Sign-in as a guest)</a></div>
+						@{fi}
 					</div>
-					<div data-jc="validation__form">
-						<button type="button" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
+					<div data---="validation__form">
+						<button type="button" class="b" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
 					</div>
 				</form>
 			</div>
 
-			<div data-bind="common.type__show:value === 'password'">
+			<div data-bind="common.type__show:value === 'otp'" class="hidden">
+				<div class="center">
+					<div class="help">@(<b>Your profile has enabled two factor authorization.</b> Please type a code from your mobile application:)</div>
+					<div class="m mt10" data---="pin__otp.password__mask:false__''"></div>
+				</div>
+				<div data---="error__otp.response"></div>
+				<div data---="validation__otp">
+					<button type="button" class="b otpsubmit" name="submit" disabled="disabled"><i class="fa fa-unlock"></i>@(Confirm)</button>
+				</div>
+				<div class="m fs12 mt5">
+					<a href="#login" class="exec" data-exec="toggletype"><i class="fa fa-angle-right mr5"></i>@(Back to Sign-in form)</a>
+				</div>
+			</div>
+
+			<div data-bind="common.type__show:value === 'password'" class="hidden">
 				<form method="POST" onsubmit="return false">
-					<div class="m" data-jc="textbox__password.name__icon2:user;required:true;autofill:true" data-jc-id="passwordname">@(Login name)</div>
-					<div data-jc="error__password.response"></div>
-					<div class="m fs12">
-						<div><a href="#password" class="exec" data-exec="toggletype">@(Back to sign-in)</a></div>
+					<div class="m" data---="textbox__password.name__icon2:user;required:true;autofill:true;$id:passwordname;placeholder:@(Login name or email address)">@(Login name)</div>
+					<div data---="error__password.response"></div>
+					<div data---="validation__password">
+						<button type="button" class="b" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset)</button>
 					</div>
-					<div data-jc="validation__password">
-						<button type="button" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset password)</button>
+					<div class="mt5 m fs12">
+						<div><a href="#login" class="exec" data-exec="toggletype"><i class="fa fa-angle-right mr5"></i>@(Back to Sign-in form)</a></div>
 					</div>
 				</form>
 			</div>
 
 			<footer>
-				<div>All rights reserved &copy; 2017-2019</div>
+				<div>All rights reserved &copy; 2017-@{NOW.getFullYear()}</div>
 				<a href="https://www.totaljs.com" target="_blank">www.totaljs.com</a>
 			</footer>
 		</div>
@@ -112,7 +139,7 @@
 
 	$('form').submit(false);
 
-	var common = {};
+	var common = { type: 'login' };
 
 	COMPONENT('validation', function(self, config) {
 
@@ -410,9 +437,17 @@
 		$('.panel').aclass('panelshow');
 	}, 200);
 
+	WATCH('otp.password', function(path, value) {
+		if (value && value.length === 6 && value.indexOf(' ') === -1) {
+			setTimeout(function() {
+				$('.otpsubmit').trigger('click');
+			}, 500);
+		}
+	});
+
 	function toggletype() {
-		if (common.type === 'password') {
-			SET('common.type', '');
+		if (common.type === 'password' || common.type === 'otp') {
+			SET('common.type', 'login');
 			SET('password.response', null);
 			setTimeout(function() {
 				FIND('#formname').find('input').focus();
@@ -434,6 +469,9 @@
 		if (common.type === 'password')	{
 			if (!CAN('password.*'))
 				return;
+		} else if (common.type === 'otp') {
+			if (!CAN('otp.*'))
+				return;
 		} else {
 			if (!CAN('form.*'))
 				return;
@@ -444,20 +482,175 @@
 
 		RESET('password.*');
 		RESET('form.*');
+		RESET('otp.*');
 
 		if (common.type === 'password')	{
 			AJAX('POST /api/password/', password, function(response) {
 				SET('password.response', response);
 				response.success && SET('password.name', '', true);
 			});
+		} else if (common.type === 'otp') {
+			otp.name = form.name;
+			AJAX('POST /api/login/otp/', otp, function(response) {
+				SET('otp.response', response);
+				response.success && location.reload(true);
+			});
 		} else {
 			AJAX('POST /api/login/', form, function(response) {
-				SET('form.response', response);
-				response.success && location.reload(true);
+				if (response.value === 'otp') {
+					SET('common.type', 'otp');
+					setTimeout(function() {
+						$('.ui-pin-input:first-child').find('input').focus();
+					}, 200);
+				} else {
+					SET('form.response', response);
+					response.success && location.reload(true);
+				}
 			});
 		}
 	});
 
+	COMPONENT('pin', 'blank:●;count:6;hide:false;mask:true', function(self, config) {
+
+		var reg_validation = /[0-9]/;
+		var inputs = null;
+		var skip = false;
+		var count = 0;
+
+		self.nocompile && self.nocompile();
+
+		self.validate = function(value, init) {
+			return init ? true : config.required || config.disabled ? !!(value && value.indexOf(' ') === -1) : true;
+		};
+
+		self.configure = function(key, value, init) {
+			switch (key) {
+				case 'count':
+					!init && self.redraw();
+					break;
+				case 'disabled':
+					self.find('input').prop('disabled', value);
+					self.tclass('ui-disabled', value);
+					!init && !value && self.state(1, 1);
+					break;
+			}
+		};
+
+		self.redraw = function() {
+			var builder = [];
+			count = config.count;
+			for (var i = 0; i < count; i++)
+				builder.push('<div data-index="{0}" class="ui-pin-input"><input type="{1}" maxlength="1" autocomplete="pin{2}" name="pin{2}" pattern="[0-9]" /></div>'.format(i, isMOBILE ? 'tel' : 'text', Date.now() + i));
+			self.html(builder.join(''));
+		};
+
+		self.make = function() {
+
+			self.aclass('ui-pin');
+			self.redraw();
+
+			self.event('keypress', 'input', function(e) {
+				var c = e.which;
+				var t = this;
+				if (c >= 48 && c <= 57) {
+					var c = String.fromCharCode(e.charCode);
+					if (t.value !== c)
+						t.value = c;
+
+					if (config.mask) {
+						if (config.hide) {
+							self.maskforce(t);
+						} else
+							self.mask();
+					}
+					else {
+						t.setAttribute('data-value', t.value);
+						self.getter();
+					}
+
+					setTimeout(function(el) {
+						var next = el.parent().next().find('input');
+						next.length && next.focus();
+					}, 50, $(t));
+				} else if (c > 30)
+					e.preventDefault();
+			});
+
+			self.event('keydown', 'input', function(e) {
+				e.which === 8 && setTimeout(function(el) {
+					if (!el.val()) {
+						el.attrd('value', '');
+						var prev = el.parent().prev().find('input');
+						prev.val() && prev.focus();
+						self.mask();
+					}
+				}, 50, $(this));
+			});
+
+			inputs = self.find('input');
+		};
+
+		self.maskforce2 = function() {
+			self.maskforce(this);
+		};
+
+		self.maskforce = function(input) {
+			if (input.value && reg_validation.test(input.value)) {
+				input.setAttribute('data-value', input.value);
+				input.value = config.blank;
+				self.getter();
+			}
+		};
+
+		self.mask = function() {
+			setTimeout2(self.id + '.mask', function() {
+				inputs.each(self.maskforce2);
+			}, 300);
+		};
+
+		self.getter = function() {
+			setTimeout2(self.id + '.getter', function() {
+				var value = '';
+
+				inputs.each(function() {
+					value += this.getAttribute('data-value') || ' ';
+				});
+
+				if (self.get() !== value) {
+					self.change(true);
+					skip = true;
+					self.set(value);
+				}
+
+			}, 100);
+		};
+
+		self.setter = function(value) {
+
+			if (skip) {
+				skip = false;
+				return;
+			}
+
+			if (value == null)
+				value = '';
+
+			inputs.each(function(index) {
+				this.setAttribute('data-value', value.substring(index, index + 1));
+				this.value = value ? config.blank : '';
+			});
+		};
+
+		self.state = function(type) {
+			if (!type)
+				return;
+			var invalid = config.required ? self.isInvalid() : false;
+			if (invalid === self.$oldstate)
+				return;
+			self.$oldstate = invalid;
+			self.tclass('ui-pin-invalid', invalid);
+		};
+	});
 	</script>
 
 </body>

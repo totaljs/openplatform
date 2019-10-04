@@ -103,4 +103,85 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 				$.success();
 		});
 	});
+
+	schema.addWorkflow('internal', function($) {
+
+		var user = $.user;
+		var app = MAIN.apps.findItem('id', $.id);
+
+		if (!app) {
+			$.invalid('error-apps-404');
+			return;
+		}
+
+		if (!app.allownotifications) {
+			$.invalid('error-permissions');
+			return;
+		}
+
+		if (!user.notifications) {
+			$.invalid('error-accessible');
+			return;
+		}
+
+		var model = $.clean();
+		model.id = UID('notifications');
+		model.userid = user.id;
+		model.appid = app.id;
+		model.dtcreated = NOW;
+		model.ip = $.ip;
+		model.userappid = user.id + app.id;
+
+		if (user.online) {
+			if (MAIN.notifications[model.userid])
+				MAIN.notifications[model.userid].push(model);
+			else
+				MAIN.notifications[model.userid] = [model];
+		}
+
+		var can = true;
+		var ua;
+
+		if (app && user.apps[app.id]) {
+
+			ua = user.apps[app.id];
+
+			if (ua.notifications === false) {
+				$.invalid('error-notifications-muted');
+				return;
+			}
+
+			if (ua.countnotifications)
+				ua.countnotifications++;
+			else
+				ua.countnotifications = 1;
+
+			if (ua.countnotifications > 15)
+				can = false;
+		}
+
+		if (user.countnotifications)
+			user.countnotifications++;
+		else
+			user.countnotifications = 1;
+
+		user.dtnotified = NOW;
+
+		if (can) {
+
+			// Updates session
+			MAIN.session.set2(user.id, user);
+
+			DB_NOTIFICATION_USER.dtnotified = NOW;
+			DB_NOTIFICATION_USER.countnotifications = user.countnotifications;
+			DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;
+
+			var db = DBMS();
+			db.mod('tbl_user', DB_NOTIFICATION_USER).where('id', user.id);
+			db.mod('tbl_user_app', DB_NOTIFICATION_APP).where('id', user.id + app.id);
+			db.add('tbl_user_notification', model);
+			db.callback($.done());
+		} else
+			$.success();
+	});
 });

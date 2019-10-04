@@ -162,7 +162,7 @@ $(window).on('message', function(e) {
 	}
 
 	app = dashboard.apps.findItem('accesstoken', data.accesstoken);
-	if (!app || (!app.internal.internal && app.url.indexOf(data.origin) === -1))
+	if (!app || (!app.internal.internal && !app.internal.workshopid && app.url.indexOf(data.origin) === -1))
 		return;
 
 	var processes = FIND('processes');
@@ -581,12 +581,12 @@ $(window).on('message', function(e) {
 			if (app) {
 				if (data.body == null && app.id === common.focused)
 					return;
-				AJAX('GET /api/badges/?' + app.profile.badge.substring(app.profile.badge.indexOf('accesstoken=')), NOOP);
+				AJAX('GET /api/op/badges/' + app.id, NOOP);
 			}
 			break;
 
 		case 'notify':
-			app && app.internal.notifications && AJAX('POST /api/notify/?' + app.profile.notify.substring(app.profile.notify.indexOf('accesstoken=')), data.body, NOOP);
+			app && app.internal.notifications && AJAX('POST /api/op/notify/' + app.id, data.body, NOOP);
 			break;
 
 		case 'minimize':

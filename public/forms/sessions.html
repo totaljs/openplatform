@@ -1,0 +1,44 @@
+<div data---="form__common.form__if:sessionsform;icon:history;width:600;title:@(My open sessions);reload:sessionsform/reload" class="hidden">
+	<div class="padding">
+
+		<div data---="table__sessionsform.items__highlight:false" class="mt5">
+			<script type="text/html" data-size="0,120px,120px">
+				<tr>
+					<td class="fs12 {{ if current }}b opfg{{ else }}gray{{ fi }}"><i class="fa fa-desktop color mr5"></i> {{ note }}</td>
+					<td class="fs12 right silver">{{ used | time }}</td>
+					<td class="fs12 right"><span class="link red ml5 exec" data-exec="sessionsform/cancel"><i class="fa fa-times mr5"></i>@(Cancel)</span></td>
+				</tr>
+			</script>
+
+			<script type="text/html" data-size="0,120px" data-display="xs">
+				<tr>
+					<td class="fs12 {{ if current }}b opfg{{ else }}gray{{ fi }}"><i class="fa fa-desktop color mr5"></i> {{ note }}</td>
+					<td class="fs12 right"><span class="link red fs11 ml5 exec" data-exec="sessionsform/cancel"><i class="fa fa-times mr5"></i>@(Cancel)</span></td>
+				</tr>
+			</script>
+		</div>
+		<br />
+	</div>
+	<div class="ui-form-buttons">
+		<button name="cancel" class="userbg" style="width:100%">@(Close)</button>
+	</div>
+</div>
+
+<script>
+	PLUGIN('sessionsform', function(exports) {
+
+		exports.reload = function() {
+			AJAX('GET /api/op/sessions/', 'sessionsform.items');
+		};
+
+		exports.cancel = function(el) {
+			var row = el.closest('tr');
+			var indexer = +row.attrd('index');
+			var sessions = GET('?.items');
+			var session = sessions[indexer];
+			SETTER('confirm', 'show', '@(Are you sure you want to cancel selected session?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
+				!index && AJAX('DELETE /api/op/sessions/{id}'.arg(session), exports.reload);
+			});
+		};
+	});
+</script>

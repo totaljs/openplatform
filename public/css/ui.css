@@ -580,7 +580,7 @@ input:invalid { box-shadow: none; }
 	.ui-process-iframe-container { overflow: hidden; line-height: 0; }
 	.ui-process-header { height: 40px; }
 	.ui-process-header nav button { height: 22px; width: 22px; font-size: 16px; }
-	.ui-process-header nav button:last-child { width: 45px; height: 39px; border-radius: 0; margin-left: 10px; font-size: 16px; }
+	.ui-process-header nav button:last-child { width: 44px; height: 39px; border-radius: 0; margin-left: 10px; font-size: 16px; }
 	.ui-process-mainmenu { height: 39px; width: 45px; }
 	.ui-process-header div { margin-top: 3px; font-size: 12px; }
 	.ui-process-header nav { margin: 0; }

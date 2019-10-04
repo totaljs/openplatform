@@ -467,7 +467,7 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (!sign || sign.length < 30) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==empty', sign);
+		// AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==empty', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -481,7 +481,7 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (!sign) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==null', sign);
+		// AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==null', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -495,7 +495,7 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (app == null) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		AUDIT('tokens', $, 'FUNC.decodeauthtoken:app==null', sign);
+		// AUDIT('tokens', $, 'FUNC.decodeauthtoken:app==null', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -1009,7 +1009,7 @@ FUNC.refreshgroupsroles = function(callback) {
 				// Repairs bad group hash
 				var hashes = Object.keys(groupshashes);
 				var db = DBMS();
-				db.update('tbl_user', { groupshash: '' }).notin('groupshash', hashes);
+				hashes.length && db.update('tbl_user', { groupshash: '' }).notin('groupshash', hashes);
 				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash IS NULL OR tbl_user.groupshash=\'\')');
 
 				// Releases all sessions

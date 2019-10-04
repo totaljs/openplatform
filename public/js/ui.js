@@ -2437,6 +2437,11 @@ COMPONENT('processes@2', function(self, config) {
 		}
 	};
 
+	self.showmenu = function(id) {
+		var iframe = iframes.findItem('id', id);
+		iframe && self.message(iframe, 'menu');
+	};
+
 	self.findProcess = function(id) {
 		return iframes.findItem('id', id);
 	};
