@@ -1,0 +1,32 @@
+<div data---="viewbox__database.panel__parent:.ui-layout-section;height:100;scrollbar:1;margin:55">
+	<div data-scope="databaseschema">
+		<div class="padding">
+			<div class="caption"><i class="fa fa-database"></i>@(Database settings)</div>
+			<div data---="input__?.label__maxlength:50;required:1;placeholder:@(Contacts)" class="m">@(Name)</div>
+			<div data---="input__?.note__maxlength:500;placeholder:@(Type a description)" class="m">@(Description)</div>
+			<div data-bind="?.id__show" class="hidden">
+				<div data---="input__?.fieldid__dirsource:?.fields;dirkey:label">@(Default field)</div>
+				<div class="help">@(Default field will be displayed in controls as label.)</div>
+			</div>
+			<!--
+			<div data---="permissionsop__?.permissions__dirsource:database/users;empty:@(Allowed for everyone)__[]">@(Permissions)</div>
+			-->
+		</div>
+	</div>
+</div>
+
+<div class="buttons" data---="validation__databaseschema">
+	<button name="submit" class="submit exec" data-exec="databaseschema/submit" disabled>@(APPLY)</button>
+	<span class="link">@(Cancel)</span>
+</div>
+
+<script>
+
+	PLUGIN('databaseschema', function(exports) {
+		exports.submit = function() {
+			var model = CLONE(GETR('?'));
+			AJAX('POST /api/op/schemas/' + (model.id || ''), model, OP.done('@(Schema has been saved succesfully)', EXEC2('database/refresh')));
+		};
+	});
+
+</script>

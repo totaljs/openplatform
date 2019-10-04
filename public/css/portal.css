@@ -1,0 +1,316 @@
+/*auto*/
+
+html,body { height: 100%; overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto; }
+body { height: 100%; background: #808080; }
+body.light { background: white; }
+
+.ui-dark { color: #C0C0C0; }
+.hidden2 { display: none; }
+.container-fluid { padding-left: 0; padding-right: 0; }
+
+header { height: 45px; border-bottom: 1px solid #404040; line-height: 44px; font-size: 16px; }
+header span { margin-left: 15px; font-weight: bold; vertical-align: top; }
+
+.light header { border-bottom: 1px solid #E0E0E0; }
+
+.caption { font-size: 12px; font-weight: 700; margin-bottom: 10px; color: black; border-bottom: 1px solid #E0E0E0; padding: 0 0 5px 0; }
+.caption i { margin-right: 5px; }
+
+.menu .caption { margin: 0 10px; margin-top: 20px; }
+.links { padding: 10px 10px 0 10px; }
+.links a, .links button { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 2px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; user-select: none; height: 25px; background-color: transparent; }
+.links .selected { font-weight: bold; color: white; }
+.links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin-right: 6px; float: left; line-height: 20px; }
+.links .app:hover, .links a:hover, .links button:hover { text-decoration: none; background-color: #303030; }
+.links b { position: absolute; font-size: 10px; left: 2px; color: white; width: 17px; height: 17px; line-height: 17px; border-radius: 100px; text-align: center; margin: 1px 0 0; background-color: #D33534; }
+.links .app { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 2px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; cursor: pointer; user-select: none; height: 25px; background-color: transparent; }
+.links .app-progress{}
+.links .close { float: right; color: #D33534; display: none; margin-top: 0; }
+.links .app-running .close { display: block; }
+.links .focused > i { color: white !important; }
+.links .focused .close { color: white !important; }
+
+.light .links .app:hover, .light .links a:hover, .light .links button:hover { background-color: #F0F0F0; }
+.light .links .app { color: black; }
+.light .links a, .light .links button { color: black; }
+
+.menu hr { margin: 10px 0; border-color: #303030; }
+.light .menu hr { border-color: #F0F0F0; }
+.menu { width: 220px; float: left; }
+.container .menu { border-left: 1px solid #404040; }
+.light .container .menu { border-left-color: #D0D0D0; }
+.main { margin-left: 220px; border-left: 1px solid #404040; position: relative; }
+.container .main { border-right: 1px solid #404040; }
+.light .container .main { border-right-color: #D0D0D0; }
+.light .main { border-left-color: #D0D0D0; }
+
+.titlemessage { position: absolute; top: 0; height: 45px; z-index: 40; width: 100%; left: 0; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); line-height: 44px; font-size: 16px; }
+.titlemessage-success { background: #68B25B; }
+.titlemessage-warning { background: #D63B32; }
+.titlemessage i { float: left; width: 40px; text-align: center; line-height: 44px; height: 44px; font-size: 20px; }
+.titlemessage > div { margin-left: 32px; }
+
+.scrollerbuttons { float: right; }
+.scrollerbuttons button { height: 44px; width: 24px; border: 0; background: transparent; }
+.scrollerbuttons button:hover { color: white; }
+.light .scrollerbuttons button:hover { color: black; }
+
+.appprocess .offline { position: absolute; color: red; font-size: 9px; margin: 21px 0 0 7px; }
+
+.button-status { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; }
+.ui-dark .button-status { border-left-color: #404040; }
+.button-status i { transition: all 0.3s; }
+.button-status:hover { opacity: 0.9; }
+.button-status:hover i { transform: scale(1.2); }
+.button-status-warning:before { content: '\f071'; font-family: 'Font Awesome 5 Free'; font-weight: 400; color: #ff7a00; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 15px; z-index: 5; }
+
+.button-window { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; color: #505050; }
+.light .button-window { color: gray; }
+.ui-dark .button-window { border-left-color: #404040; }
+.button-window:hover { background-color: rgba(0,0,0,0.03); }
+
+.status0 { color: #68B25B; }
+.status1 { color: #C55140; }
+.status2 { color: #EAB34C; }
+.status3 { color: #B76DCF; }
+.status4 { color: #6DCFA8; }
+.status5 { color: #6DAFCF; }
+.status6 { color: #A1CF6D; }
+.status7 { color: #D06D6D; animation: large 1s forwards infinite; }
+.status8 { color: #D60000; }
+
+.black { color: black; }
+.yellow { color: yellow; }
+.fs12 { font-size: 12px; }
+.gray { color: gray; }
+
+.username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
+.username:hover { opacity: 0.7; }
+.username i { margin-right: 5px; }
+footer { border-top: 1px solid #404040; height: 32px; line-height: 32px; padding: 0 5px 0 10px; }
+.light footer { border-top-color: #E0E0E0; }
+.console { font-size: 12px; cursor: pointer; float: left; }
+.console i { margin-right: 5px; }
+.console:hover { opacity: 0.7; }
+.testmode { position: relative; display: inline-block; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; margin: 8px 0 0 5px; border-radius: 2px; vertical-align: middle; line-height: 14px; vertical-align: top; }
+
+.appnonotify { font-size: 10px; position: absolute; top: 3px; left: 36px; color: white; }
+.light .appnonotify { color: black; }
+
+.light .button-notifications i { color: black; }
+.light .ui-process-header nav button { color: #505050; }
+.ui-process, .light .ui-process { box-shadow: none;}
+
+.light .ui-process-header-success, .ui-process-header-success { background: #68B25B; color: white !important; }
+.light .ui-process-header-warning, .ui-process-header-warning { background: #D63B32; color: white !important; }
+.light .ui-process-header-warning nav button, .light .ui-process-header-success nav button, .ui-process-header-warning nav button, .ui-process-header-success nav button { color: white; }
+
+.light { background-color: #505050; }
+.light .app-container { color: black; background-color: rgba(0,0,0,0.05); }
+.light .app-container:hover .app-icon { color: black; background-color: rgba(0,0,0,0.07); }
+.light .app-container:hover { background-color: rgba(0,0,0,0.1); }
+.light .app-icon { color: #505050; background-color: rgba(0,0,0,0.07); }
+.app-running .app-meta { font-weight: bold; color: white; }
+.light .app-running .app-meta { color: black; }
+.app-running .app-icon { color: white; }
+.light .app-running .app-icon { color: black; }
+.light .startmenu-title button { color: black; }
+
+h1 { font-weight: bold; margin: 0 0 15px; padding: 0 0 5px; color: black; font-size: 18px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; border-bottom: 2px solid black; }
+h1 b { font-weight: 700; }
+
+h2 { font-weight: 400; margin: 0 0 12px 0; padding: 0; color: black; font-size: 20px; }
+h2 b { font-weight: 700; }
+h2 i { margin-right: 10px; }
+.ui-dark h2 { color: white; }
+
+h3 { font-weight: 700; margin: 0 0 5px 0; padding: 0; color: black; font-size: 16px; }
+h3 i { margin-right: 5px; }
+.ui-dark h3 { color: white; }
+
+.orange { color: orange; }
+
+.bg-smoke { background-color: #F8F8F8; }
+.ui-dark .bg-smoke { background-color: #303030; }
+.bg-yellow { background-color: #FFF8D8; }
+
+.singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.user { float: left; cursor: pointer; width: 44px; height: 44px; line-height: 44px; color: white; user-select: none; text-align: center; font-size: 16px; }
+.light .user { color: black; }
+.user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
+.user:hover { background-color: rgba(255,255,255,0.1); }
+.light .user:hover { background-color: rgba(0,0,0,0.1); }
+.user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }
+.user img { float: left; height: 35px; width: auto; margin: 7px 10px 0 10px; }
+.user.selected { background-color: rgba(255,255,255,0.1); }
+.light .user.selected { background-color: #E0E0E0; }
+
+.button-notifications { float: right; font-size: 18px; padding: 0; width: 45px; height: 44px; line-height: 44px; cursor: pointer; text-align: center; }
+.button-notifications span { font-size: 10px; width: 20px; height: 20px; line-height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 0; margin: 2px 0 0 7px; font-weight: bold; }
+.button-notifications .fa { color: white; }
+.button-notifications .far { color: #606060; }
+
+.app-container { cursor: pointer; transition: all 0.2s; height: 38px; color: #E0E0E0; background-color: rgba(0,0,0,0.08); margin-bottom: 1px; }
+.app-container:hover { background-color: rgba(0,0,0,0.15); }
+.app-container:hover .app-icon { color: white;  background-color: rgba(0,0,0,0.25); }
+.appfavorite { position: absolute; font-size: 6px; margin: 28px 0 0 18px; z-index: 1; }
+
+.light .app-disabled .app-container { color: #A0A0A0; }
+.light .app-disabled .app-icon { color: #A0A0A0 !important; }
+
+#dashboardapps .isrunning { position: absolute; font-size: 9px; right: 2px; top: 2px; display: none; color: #777777; }
+.light #dashboardapps .isrunning { color: gray; }
+#dashboardapps .app-running .isrunning { display: block; }
+.menu .app-running { font-weight: bold; }
+#dashboardapps .appunread { left: auto; right: 3px; margin-top: 9px; }
+
+.appunread { position: absolute; background-color: #D23B3B; color: white; width: 18px; border-radius: 100%; height: 18px; font-size: 10px; line-height: 18px; margin-top: 1px; left: 1px; overflow: hidden; text-align: center; }
+.appbadge i { color: red; font-size: 7px; }
+
+.appprocess { position: relative; }
+.appprocess .appbadge { position: absolute; margin: 20px 0 0 7px; font-size: 7px; }
+.appprocess .appbadge i { font-size: 7px; }
+
+.appprogress span { height: 3px; display: block; border-radius: 0; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
+.light .appprogress span { box-shadow: none; }
+
+.app-icon { float: left; width: 40px; font-size: 16px; text-align: center; height: 38px; padding: 7px 0 0 0; background-color: rgba(0,0,0,0.2); color: #A0A0A0; }
+.app-meta { margin-left: 50px; padding: 7px 0 0 0; font-size: 16px; }
+
+.form-border { border-left: 1px solid #F0F0F0; }
+
+.centered { height: 100%; width: 100%; display: table-cell; vertical-align: middle; text-align: center; }
+.centered-container { display: table; width: 100%; height: 100%; }
+
+.emptyspace { height: 45px; }
+.fullheight { overflow: hidden; }
+.color { color: #017CCA; }
+
+.fs11 { font-size: 11px !important; }
+.help { font-size: 11px; color: #A0A0A0; margin-top: 7px; line-height: 13px; }
+.help .fa, .help .fal, .help .far { margin-right: 5px; }
+.help code { font: normal normal 11px Arial; background-color: #F0F0F0; padding: 2px 5px; border-radius: 4px; }
+
+.approle { font-size: 14px; text-align: center; width: 34px; border-left: 1px solid #E0E0E0; padding: 3px 0; }
+.approle:first-child { border-left: 0; }
+.app .appprogress { float: right; width: 20px; height: 7px; border: 1px solid #505050; margin: 6px 5px 0 0; border-radius: 2px; padding: 1px; }
+.app .appprogress > span { height 2px; display: block; }
+.light .app .appprogress { border-color: #D0D0D0; }
+.focused .appprogress { border-color: white !important; }
+.focused .appprogress > span { background-color: white !important; }
+
+.toolbar { margin-bottom: 15px; }
+.toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
+.toolbar button i { margin-right: 5px; }
+.toolbar button:hover { background-color: white; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
+.toolbar button:disabled { color: silver; cursor: not-allowed; background-color: #D5D7DB; box-shadow: none; }
+.toolbar button:disabled i { color: silver; }
+.toolbar button.right { float: right; margin-left: 5px; margin-right: 0; }
+.toolbar > span { margin: 2px 6px 0; border-left: 1px solid #D0D0D0; height: 20px; padding: 0 2px 0 0; vertical-align: middle; display: inline-block; position: relative; }
+.toolbar .selected { background-color: #FFE7A1 !important; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
+
+.uppercase { text-transform: uppercase; }
+.inline { position: relative; display: inline-block; }
+
+.keyvalue { border-bottom: 1px solid #F0F0F0; padding: 5px 0; margin-bottom: 10px; transition: all 0.3s; }
+.keyvalue:hover { background-color: #F8F8F8; padding-left: 10px; padding-right: 10px; }
+.keyvalue .key { font-size: 11px; font-weight: bold; margin-bottom: 2px; color: black; }
+.keyvalue .value { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 14px; color: #A0A0A0; }
+.keyvalue i { margin-right: 5px; }
+.upper { text-transform: uppercase; }
+.w100p { width: 100%; }
+.img-application { border-radius: 25px; border: 1px solid #E0E0E0; }
+.silver { color: #A0A0A0; }
+
+.ui-process-header { transition: background 0.3s; height: 0; color: white; cursor: default; position: relative; }
+.ui-process .appprogress { z-index: 10; position: absolute; left: 0; right: 0; height: 3px; }
+
+.ui-quicknotifications-margin { margin-right: 325px; }
+
+.ui-quicknotifications { position: absolute; right: 0; width: 320px; top: 45px; z-index: 100; }
+.ui-quicknotifications i { margin-right: 3px; }
+.ui-quicknotifications-message { background-color: rgba(60,60,60,0.9); margin: 10px; padding: 0; border-radius: 3px; font-size: 12px; cursor: pointer; transition: all 0.3s;  box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+.light .ui-quicknotifications-message { background-color: rgba(255,255,255,0.9); }
+
+.bk-ui-quicknotifications-success { border-top-color: #8CC152 !important; }
+.bk-ui-quicknotifications-error { border-top-color: #E60000 !important; }
+
+.ui-quicknotifications-close { float: right; width: 26px; height: 26px; line-height: 26px; text-align: center; cursor: pointer; padding: 0; color: #777777; border-left: 1px solid #505050; }
+.ui-quicknotifications-close i { margin: 0; }
+.ui-quicknotifications-close:hover { color: red; }
+
+.light .ui-quicknotifications-close { color: gray; border-left-color: #E0E0E0; }
+.light .ui-quicknotifications-close:hover { color: red; }
+
+.ui-quicknotifications-date { float: right; font-size: 10px; margin: 0 10px 0 0; line-height: 26px; color: white; }
+.light .ui-quicknotifications-date { color: black; }
+.ui-quicknotifications-title img { border: 1px solid #3BAFDA; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
+.ui-quicknotifications-title { height: 26px; font-size: 11px; border-bottom: 1px solid #505050; padding: 0 10px; line-height: 24px; color: white; border-radius: 3px 3px 0 0; }
+.light .ui-quicknotifications-title { border-bottom-color: #E0E0E0; color: black; background-color: white; }
+.ui-quicknotifications-padding { padding: 0 10px; }
+.ui-quicknotifications-body { line-height: 16px; font-size: 14px; color: silver; display: inline-block; word-break: break-word; }
+.light .ui-quicknotifications-body { color: #777777; }
+.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
+.ui-quicknotifications button:hover { opacity: 0.9; }
+
+.panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
+.panel > label { display: block; padding: 15px 20px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: black; font-weight: bold; }
+.panel > label i { margin-right: 5px; }
+
+.button { background-color: #4285F4; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 4px; height: 50px; text-transform: uppercase; }
+.button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
+.button:disabled { background-color: #F0F0F0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+.button i { margin-right: 5px; }
+
+.success { background-color: #8CC152; color: white; padding: 10px 20px; font-size: 12px; text-align: center; }
+.success i { margin-right: 8px; }
+
+.buttons > div { position: relative; display: inline-block; width: 33.33%; vertical-align: top; padding: 5px; }
+.buttons button { width: 100%; margin: 0; padding: 0; font-size: 11px; height: 60px; background-color: #F0F0F0; border: 0; border-radius: 4px; overflow: hidden; text-transform: overflow; white-space: nowrap; }
+.buttons button i { font-size: 25px; display: block; }
+.buttons button:hover { background-color: #E0E0E0; }
+
+.menubutton { display: none; left: 0; bottom: 0; position: absolute; height: 40px; line-height: 38px; background-color: #202020; color: white; z-index: 50; text-align: center; transition: all 0.1s; right: 0; border-top: 1px solid #404040; }
+.menubuttonapp { display: none; left: 0; bottom: 0; position: absolute; height: 40px; line-height: 38px; background-color: #202020; color: white; z-index: 50; text-align: center; transition: all 0.1s; right: 0; border-top: 1px solid #404040; border-left: 1px solid #404040; }
+.light .menubutton { background-color: white; border-top-color: #E0E0E0; color: black; }
+.light .menubuttonapp { background-color: white; border-top-color: #E0E0E0; color: black; border-left-color: #E0E0E0; }
+.menushow .menubutton, .menushow .menubuttonapp { bottom: -40px; }
+.appbutton .menubutton { right: 50%; }
+.appbutton .menubuttonapp { left: 50%; right: 0; }
+
+@media(max-width: 700px) {
+	.menubutton { display: block; }
+	.menu { position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%; z-index: 36; background-color: #202020; display: none; }
+	.light .menu { background-color: white; }
+	.main { margin-left: 0; border-left: 0; }
+	.links .app > i, .links a > i, .links button > i { line-height: 24px; }
+	.links a, .links button { font-size: 16px; height: 28px; }
+	.links .app { font-size: 16px; height: 28px; }
+	header { box-shadow: none; }
+	.ui-notifications { width: auto; left: 0; }
+	.form-border { border-left: 0; }
+	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
+	.ui-notifications { border-left: 0; }
+	.appbutton .menubuttonapp { display: block; }
+}
+
+.menushow .menu { display: block; }
+
+@keyframes large {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.2); }
+	100% { transform: scale(1); }
+}
+
+.ui-process { left: auto !important; top: auto !important; }
+.ui-wiki { top: 0; }
+
+.menu-minimize { float: right; background-color: #202020; z-index: 51; border-left: 1px solid #404040; width: 10px; line-height: 44px; font-size: 8px; text-align: center; cursor: pointer; margin-left: 0; color: gray; }
+.menu-minimize:hover { background-color: #303030; }
+.light .menu-minimize { background-color: white; border-left-color: #E0E0E0; color: gray; }
+.light .menu-minimize:hover { background-color: #F0F0F0; }
+.menu-minimize i:before { content: '\f104'; }
+.menuminimized .menu-minimize i:before { content: '\f105'; }
+.menuminimized .menu { margin-left: -211px; }
+.menuminimized .main { margin-left: 9px; }

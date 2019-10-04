@@ -1,0 +1,298 @@
+<div data---="panel__common.panel__if:usersprofile;reload:usersprofilepanel/reload;icon:user;scrollbar:false;autofocus:1;width:500" class="hidden">
+	<div data-scope="usersprofilepanel">
+		<div data---="viewbox__common.panel__height:100;margin:50;scrollbar:1;parent:.ui-panel-body;scrolltop:true">
+
+			<div class="accountphoto">
+				<div data---="preview__?.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+				<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
+			</div>
+
+			<div class="padding">
+
+				<div data-bind="?__track:id__template">
+					<script type="text/html">
+						{{ if value.id }}
+							<div class="caption">@(Internal data)</div>
+							<table class="table table-bordered table-small">
+								<tbody>
+									<tr>
+										<td class="bg-smoke">@(ID)</td>
+										<td class="col-xs-6 right">{{ value.id }}</td>
+									</tr>
+									<tr>
+										<td class="bg-smoke">@(Logged)</td>
+										<td class="right">{{ if value.online }}<span class="badge badge-green mr5">@(online)</span>{{ fi }}{{ value.dtlogged | format('@(yyyy-MM-dd HH:mm)') | def }}</td>
+									</tr>
+									<tr>
+										<td class="bg-smoke">@(Created)</td>
+										<td class="right">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') | def }}</td>
+									</tr>
+									<tr>
+										<td class="bg-smoke">@(Updated)</td>
+										<td class="right">{{ value.dtmodified | format('@(yyyy-MM-dd HH:mm)') | def }}</td>
+									</tr>
+									<tr>
+										<td class="bg-smoke">@(Password changed)</td>
+										<td class="right">{{ value.dtpassword | format('@(yyyy-MM-dd HH:mm)') | def }}</td>
+									</tr>
+									<tr>
+										<td class="bg-smoke">@(Last notification)</td>
+										<td class="right">{{ value.dtnotified | format('@(yyyy-MM-dd HH:mm)') | def }}</td>
+									</tr>
+									<tr>
+										<td class="bg-smoke">@(Unread notifications)</td>
+										<td class="right">{{ value.countnotifications | def }}</td>
+									</tr>
+									<tr>
+										<td class="bg-smoke">@(Open sessions)</td>
+										<td class="right">{{ if value.session }}<b>{{ value.session.used }}</b> / {{ value.session.free }}{{ else }}---{{ fi }}</td>
+									</tr>
+								</tbody>
+							</table>
+						{{ fi }}
+					</script>
+				</div>
+
+				<div class="caption">@(Personal data)</div>
+				<div data---="radiobutton__?.gender__items:@(Male)|male,@(Female)|female__'male'" class="m"></div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.firstname__required:1;maxlength:40__''">@(First name)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="input__?.lastname__required:1;maxlength:40__''">@(Last name)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.middlename__maxlength:40__''">@(Middle name)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="input__?.contractid__dirsource:contracts;dirsearch:false;placeholder:@(Choose a contract type)__0">@(Contract type)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.email__required:1;type:email;icon:envelope-o__'@'">@(Email)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="input__?.phone__type:phone__''">@(Phone number)</div>
+					</div>
+				</div>
+			</div>
+			<div class="bg-yellow">
+				<div class="padding" style="padding-bottom:10px">
+					<div class="row">
+						<div class="col-sm-6 m">
+							<div data---="input__?.dtbeg__type:date;maxlength:10;placeholder:@(yyyy-MM-dd)__null">@(Start of employment)</div>
+						</div>
+						<div class="col-sm-6 m">
+							<div data---="input__?.dtend__type:date;maxlength:10;placeholder:@(yyyy-MM-dd)__null">@(End of employment)</div>
+						</div>
+					</div>
+				</div>
+				<hr class="nmt" />
+				<div class="padding npt" style="padding-bottom:10px">
+					<div class="row">
+						<div class="col-sm-6 m">
+							<div data---="input__?.dtbirth__type:date;maxlength:10;placeholder:@(yyyy-MM-dd)__null">@(Date of birth)</div>
+						</div>
+						<div class="col-sm-6 m">
+							<div data---="input__?.language__dirsource:languages;dirplaceholder:@(Search language);icon:language__'en'">@(Language)</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6 m">
+							<div data---="input__?.statusid__dirsource:statuses;dirsearch:false__0">@(Status)</div>
+						</div>
+						<div class="col-sm-6 m">
+							<div data---="input__?.status__placeholder:@(Custom defined user status)__''">@(User defined status)</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="padding npb">
+				<div class="caption">@(Employee data)</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.company__maxlength:40;autosource:?/searchcompany__''">@(Company)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="input__?.locality__maxlength:40;autosource:?/searchlocality__''">@(Location)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.position__maxlength:40;autosource:?/searchposition__''">@(Position)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="dynamicvalue__?.supervisorid__url:/api/op/users/{value}/?skipme=1;click:?/searchuser;placeholder:@(Choose a user)__''">@(Select <b>Supervisor</b>)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="dynamicvalue__?.deputyid__url:/api/op/users/{value}/?skipme=1;click:?/searchuser;placeholder:@(Choose a user)__''">@(Select <b>Deputy</b>)</div>
+					</div>
+				</div>
+				<div class="caption">@(Internal data)</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.reference__maxlength:100__''">@(Custom reference)</div>
+						<div class="help">@(<b>Custom reference</b> can contain an external idenficator of user.)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="input__?.groupid__maxlength:30;autosource:?/searchgroupid__''">@(Group ID)</div>
+						<div class="help">@(<b>Group ID</b> is suitable for pairing of users from the same company or group.)</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.dateformat__dirsource:dateformats;dirsearch:false__'yyyy-MM-dd'">@(Date format)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="input__?.numberformat__dirsource:numberformats;dirsearch:false__1">@(Number format)</div>
+					</div>
+				</div>
+				<div data---="radiobutton__?.timeformat__items:@(24 hour clock)|24,@(12 hour clock)|12;type:number__24" class="m"></div>
+
+				<div class="caption">@(Behaviour)</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<div data---="checkbox__?.blocked__checkicon:lock__false">@(User is blocked)</div>
+						<div data---="checkbox__?.inactive__checkicon:power-off__false">@(User is inactive)</div>
+						<div data---="checkbox__?.sa__false">@(User is <b>administrator</b>)</div>
+						<div data---="checkbox__?.otp__null__false" data-bind="?.otp__enabled">@(Enabled 2FA authorization)</div>
+						<div data---="checkbox__?.welcome__checkicon:envelope-o__true">@(Send welcome email)</div>
+						<div data-bind="?.id__show" class="hidden">
+							<div data---="checkbox__?.rebuildaccesstoken__checkicon:refresh__false">@(Re-build access token)</div>
+						</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="checkbox__?.sounds__checkicon:volume-up__true">@(Enable sounds)</div>
+						<div data---="checkbox__?.notifications__checkicon:bell__true">@(Enable notifications)</div>
+						<div data---="checkbox__?.notificationsemail__checkicon:bell__true">@(Enable email notifications)</div>
+						<div data---="checkbox__?.notificationsphone__checkicon:bell__true">@(Enable phone notifications)</div>
+						<div data-bind="?.id__show" class="hidden">
+							<div data---="checkbox__?.rebuildtoken__checkicon:refresh__false">@(Re-build verification token)</div>
+						</div>
+					</div>
+				</div>
+				<br />
+				<div data---="radiobutton__?.desktop__items:@(Windowed mode)|1,@(Tabbed mode)|2,@(Portal mode)|3;type:number__1" class="m"><b>@(Desktop mode)</b></div>
+				<div class="caption"><i class="fa fa-lock"></i>@(Appearance)</div>
+				<div data---="radiobutton__?.darkmode__items:@(Light mode)|false,@(Dark mode)|true__'false'"></div>
+				<div data---="colorselector__?.colorscheme__null__'#4285f4'" style="margin-bottom:15px"></div>
+
+				<div class="caption"><i class="fa fa-lock"></i>@(Login data)</div>
+				<div class="row">
+					<div class="col-sm-6 m">
+						<div data---="input__?.login__maxlength:50;required:1__''">@(Login name)</div>
+					</div>
+					<div class="col-sm-6 m">
+						<div data---="input__?.password__maxlength:30;required:1;camouflage:1__GUID(20)">@(Password)</div>
+						<div class="help">
+							<span class="link exec" data-exec="?/password">@(Generate password)</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="padding bg-smoke">
+				<div class="caption"><i class="fa fa-folder"></i>@(Groups)</div>
+				<div data---="checkboxlist__?.groups__datasource:main.meta.groups__[]"></div>
+			</div>
+			<div class="padding">
+				<div class="caption"><i class="fa fa-rocket"></i>@(Explicitly allowed apps)</div>
+				<div data---="apps__?.appsroles__datasource:main.apps__{}"></div>
+			</div>
+		</div>
+		<div class="buttons" data---="validation__?">
+			<button name="submit" class="submit exec" data-exec="?/submit" disabled>@(SAVE)</button>
+			<span class="link cancel">@(Cancel)</span>
+		</div>
+	</div>
+</div>
+
+<script>
+	PLUGIN('usersprofilepanel', function(exports) {
+
+		exports.reload = function(com) {
+			var model = GET('?');
+			com.reconfigure({ title: model.id ? '@(Edit user)' : '@(Create user)' });
+		};
+
+		exports.submit = function() {
+			var model = CLONE(GETR('?'));
+			model.darkmode = model.darkmode === 'true';
+			var keys = Object.keys(model.appsroles || EMPTYOBJECT);
+
+			model.apps = [];
+
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				var roles = model.appsroles[key];
+				var app = main.apps.findItem('id', key);
+
+				// Check if the app really exist
+				if (!app)
+					continue;
+
+				// Clear non-exist roles
+				roles = roles.remove(function(role) {
+					return app.roles.indexOf(role) === -1;
+				});
+
+				model.apps.push({ id: key, roles: roles });
+			}
+
+			model.appsroles = undefined;
+
+			AJAX('POST /api/op/users/' + (model.id || ''), model, OP.done('@(User has been saved successfully)', function() {
+				NULL('common.panel');
+				EXEC('usersgrid/refresh');
+			}));
+		};
+
+		exports.password = function() {
+			var model = GET('?');
+			if (!model.otp)
+				SET('?.password', GUID(20));
+		};
+
+		exports.searchcompany = function(q, next) {
+			AJAX('GET /api/op/companies/', { q: q }, next);
+		};
+
+		exports.searchlocality = function(q, next) {
+			AJAX('GET /api/op/locations/', { q: q }, next);
+		};
+
+		exports.searchposition = function(q, next) {
+			AJAX('GET /api/op/positions/', { q: q }, next);
+		};
+
+		exports.searchgroupid = function(q, next) {
+			AJAX('GET /api/op/groupids/', { q: q }, next);
+		};
+
+		exports.searchuser = function(el, next) {
+			var opt = {};
+			opt.element = el;
+			opt.offsetY = 20;
+			opt.placeholder = '@(Search users)';
+			opt.items = function(q, next) {
+				AJAX('GET /api/op/users/', { q: q, limit: 10, fields: 'id,name', skipme: 1 }, function(response) {
+					next(response.items);
+				});
+			};
+			opt.callback = function(val) {
+				next(val.id);
+			};
+			SETTER('directory', 'show', opt);
+		};
+
+		WATCH('?.email', function(path, value) {
+			if (value && value.length > 5 && !usersprofilepanel.login)
+				SET('?.login', value);
+		}, true);
+	});
+</script>

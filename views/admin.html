@@ -1,0 +1,353 @@
+<div data---="layout__mylayout__parent:parent" class="invisible">
+
+	<script type="text/plain">
+		{
+			left: { size: 223 },
+			main: {}
+		}
+	</script>
+
+	<section data-type="left">
+		<div data---="viewbox__null__parent:.ui-layout-section;height:100;scrollbar:0">
+			<div class="menu" data---="selected__common.page__selector:.item">
+				<div class="caption">@(Users)</div>
+				<div class="item exec" data-exec="main/show" data-if="users">
+					<i class="fa fa-users"></i>
+					<span>@(Users)</span>
+				</div>
+				<div class="item exec" data-exec="main/show" data-if="groups">
+					<i class="fa fa-folder"></i>
+					<span>@(Groups)</span>
+				</div>
+				<div class="item exec" data-exec="main/show" data-if="roles">
+					<i class="fa fa-key"></i>
+					<span>@(Roles)</span>
+				</div>
+				<hr />
+				<div class="caption">@(Applications)</div>
+
+				<div class="item exec" data-exec="main/show" data-if="apps">
+					<i class="fa fa-rocket"></i>
+					<span>@(Applications)</span>
+				</div>
+<!--
+				<div class="item exec" data-exec="main/show" data-if="database">
+					<i class="fa fa-database"></i>
+					<span>@(Database)</span>
+				</div>
+
+				<div class="item exec" data-exec="main/show" data-if="workshop">
+					<i class="far fa-object-group"></i>
+					<span>@(Workshop)</span>
+				</div>
+-->
+				<div class="item exec hidden" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
+					<i class="fa fa-shopping-bag"></i>
+					<span>@(Marketplace)</span>
+				</div>
+
+				<hr />
+				<div class="caption">@(More)</div>
+				<div class="item exec" data-exec="main/show" data-if="dashboard">
+					<i class="fa fa-dashboard"></i>
+					<span>@(Dashboard)</span>
+				</div>
+				<div class="item exec" data-exec="main/show" data-if="wiki">
+					<i class="far fa-life-ring"></i>
+					<span>@(Documentation)</span>
+				</div>
+				<div class="item exec" data-exec="main/show" data-if="settings">
+					<i class="fa fa-sliders-h"></i>
+					<span>@(Settings)</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section data-type="main">
+		<div data---="part__common.page__if:users;url:/parts/users-grid.html;reload:usersgrid/reload;cleaner:5" class="hidden"></div>
+		<div data---="part__common.page__if:groups;url:/parts/users-groups.html;reload:usersgroups/reload;cleaner:5" class="hidden"></div>
+		<div data---="part__common.page__if:roles;url:/parts/users-roles.html;reload:usersroles/reload;cleaner:5" class="hidden"></div>
+		<div data---="part__common.page__if:apps;url:/parts/apps-grid.html;reload:appsgrid/reload;cleaner:5" class="hidden"></div>
+		<div data---="part__common.page__if:marketplace;url:/parts/marketplace.html;reload:marketplace/reload;cleaner:5" class="hidden invisible"></div>
+		<div data---="part__common.page__if:database;url:/parts/database.html;reload:database/reload;cleaner:5" class="hidden invisible"></div>
+		<div data---="part__common.page__if:workshop;url:/parts/workshop.html;reload:workshop/reload;cleaner:5" class="hidden invisible"></div>
+		<div data---="part__common.page__if:wiki;url:/parts/wiki.html;cleaner:5" class="hidden invisible"></div>
+		<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;cleaner:5;delay:500" class="hidden invisible"></div>
+	</section>
+
+</div>
+
+<script>
+
+	var common = {};
+	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
+	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
+	var statusestemplate = '{{ id | status }}';
+	var statuses = [{ id: 0, name: '@(Available)', template: statusestemplate }, { id: 1, name: '@(Busy)', template: statusestemplate }, { id: 2, name: '@(Do not disturb)', template: statusestemplate }, { id: 3, name: '@(Be right back)', template: statusestemplate }, { id: 4, name: '@(Meeting)', template: statusestemplate }, { id: 5, name: '@(Business trip)', template: statusestemplate }, { id: 6, name: '@(Holiday)', template: statusestemplate }, { id: 7, name: '@(Sick)', template: statusestemplate }, { id: 8, name: '@(Off work)', template: statusestemplate }];
+	var contracts = [{ id: 1, name: '@(Permanent)' }, { id: 2, name: '@(Contractor)' }, { id: 3, name: '@(Intern)' }, { id: 4, name: '@(Part-time)' }, { id: 5, name: '@(Customer)' }];
+
+	common.marketplace = '@{CONF.marketplace}';
+
+	OP.appearance();
+
+	OP.on('appearance', function(profile) {
+		CSS('.button,.submit{background-color:{0}}.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
+	});
+
+	AJAX('GET /api/profile/', function(response) {
+		SET('user', response);
+		SET('common.page', 'users');
+	});
+
+	PLUGIN('main', function(exports) {
+
+		exports.refreshmeta = function() {
+			AJAX('GET /api/op/meta/', function(response) {
+
+				for (var i = 0; i < response.groups.length; i++) {
+					var item = response.groups[i];
+					item.text = item.name;
+					item.value = item.id;
+				}
+
+				SET('?.meta', response);
+			});
+		};
+
+		exports.refreshapps = function() {
+			AJAX('GET /api/op/apps/', function(response) {
+				for (var i = 0; i < response.length; i++)
+					response[i].roles.quicksort();
+				SET('?.apps', response);
+			});
+		};
+
+		exports.show = function(el) {
+			SET('common.page', el.attrd('if'));
+		};
+
+		exports.refreshmeta();
+		exports.refreshapps();
+	});
+
+	Thelpers.groups = function(value) {
+
+		if (!value.length)
+			return '';
+
+		var arr = [];
+		for (var i = 0; i < value.length; i++) {
+			var group = main.meta.groups.findItem('id', value[i]);
+			if (group)
+				arr.push(group.name);
+		}
+
+		return arr.join(', ');
+	};
+
+	Thelpers.boolean = function(value, color) {
+		return value ? ('<b class="' + (color || 'green') + '">@(yes)</b>') : 'no';
+	};
+
+	Thelpers.status = function(value, icon) {
+		var str;
+		switch (value) {
+			case 1:
+				str = 'spinner status1"></i>@(Busy)';
+				break;
+			case 2:
+				str = 'moon status2"></i>@(Do not disturb)';
+				break;
+			case 3:
+				str = 'door-open status3"></i>@(Be right back)';
+				break;
+			case 4:
+				str = 'brain status4"></i>@(Meeting)';
+				break;
+			case 5:
+				str = 'car status5"></i>@(Business trip)';
+				break;
+			case 6:
+				str = 'umbrella-beach status6"></i>@(Holiday)';
+				break;
+			case 7:
+				str = 'heartbeat status7"></i>@(Sick)';
+				break;
+			case 8:
+				str = 'home status8"></i>@(Off work)';
+				break;
+			default:
+				str = 'smile status0"></i>@(Available)';
+				break;
+		}
+
+		var index = str.indexOf('</i>');
+		var title = str.substring(index + 4);
+
+		return '<i title="' + title + '" class="si fa fa-' + (icon ? str.substring(0, index + 4) : str);
+	};
+
+	COMPONENT('apps', 'toggle:Toggle all', function(self, config) {
+
+		var cls = 'ui-apps';
+		var cls2 = '.' + cls;
+		var apps = [];
+		var checkbox = '<div data-id="{0}" data-type="{1}" class="' + cls + '-checkbox"><i class="fa"></i><span>{2}</span></div>';
+		var skip = false;
+		var cache;
+		var cachearr;
+
+		self.make = function() {
+			self.aclass(cls);
+			self.event('click', cls2 + '-checkbox', function() {
+				var el = $(this);
+				var id = decodeURIComponent(el.attrd('id'));
+				var type = el.attrd('type');
+				var appid = type === 'role' ? el.parent().attrd('id') : null;
+				var is = self.check(type, id, null, appid);
+				var model = self.get();
+
+				if (is) {
+					if (appid)
+						model[appid].push(id);
+					else
+						model[id] = [];
+				} else {
+					if (appid)
+						model[appid] = model[appid].remove(id);
+					else {
+						delete model[id];
+						var next = el.next();
+						if (next.hclass(cls + '-roles'))
+							next.find(cls2 + '-checked').rclass(cls + '-checked').find('i').rclass('fa-check');
+					}
+				}
+
+				skip = true;
+				self.set(model);
+				self.change(true);
+			});
+
+			self.event('click', '.link', function() {
+				var arr = $(this).parent().find(cls2 + '-checkbox').toArray();
+				if (arr.length > 3)
+					OP.loading(true);
+				arr.wait(function(el, next) {
+					$(el).trigger('click');
+					setTimeout(next, 50);
+				}, function() {
+					OP.loading(false);
+				});
+			});
+		};
+
+		self.check = function(type, id, is, appid) {
+
+			var key = appid ? (appid + '_' + id) : id;
+			var el = cache[key];
+			if (el == null)
+				return;
+			if (is == null)
+				is = !el.hclass(cls + '-checked');
+			el.tclass(cls + '-checked', is).find('i').tclass('fa-check', is);
+			if (type === 'app') {
+				var next = el.next();
+				if (next.hclass(cls + '-roles'))
+					next.tclass('hidden', !is);
+			}
+			return is;
+		};
+
+		self.configure = function(key, value) {
+			switch (key) {
+				case 'datasource':
+					self.datasource(config.datasource, function(path, value) {
+						apps = CLONE(value);
+						apps.quicksort('title');
+						self.redraw();
+					});
+					break;
+			}
+		};
+
+		self.redraw = function() {
+			var builder = [];
+			for (var i = 0; i < apps.length; i++) {
+				var item = apps[i];
+				builder.push(checkbox.format(item.id, 'app', item.name));
+				if (item.roles.length) {
+					builder.push('<div class="{0}-roles hidden" data-id="{1}">'.format(cls, item.id));
+					for (var j = 0; j < item.roles.length; j++)
+						builder.push(checkbox.format(encodeURIComponent(item.roles[j]), 'role', Thelpers.encode(item.roles[j]), item.id));
+					builder.push('<span class="link">{0}</span>'.format(config.toggle));
+					builder.push('</div>');
+				}
+			}
+
+			self.html(builder.join(''));
+
+			cache = {};
+			cachearr = [];
+
+			self.find(cls2 + '-checkbox').each(function() {
+				var el = $(this);
+				var type = el.attrd('type');
+				var id = decodeURIComponent(el.attrd('id'));
+				if (type === 'role') {
+					var appid = el.parent().attrd('id');
+					cache[appid + '_' + id] = el;
+				} else
+					cache[id] = el;
+				cachearr.push(el);
+			});
+
+			self.refresh();
+		};
+
+		self.setter = function(value) {
+
+			if (skip || !value) {
+				skip = false;
+				return;
+			}
+
+			for (var i = 0; i < cachearr.length; i++) {
+				var el = cachearr[i];
+				el.rclass(cls + '-checked');
+				el.find('i').rclass('fa-check');
+				if (el.attrd('type') === 'app') {
+					var next = el.next();
+					if (next.hclass(cls + '-roles'))
+						next.aclass('hidden');
+				}
+			}
+
+			var keys = Object.keys(value);
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				self.check('app', key, true);
+				var roles = value[key];
+				for (var j = 0; j < roles.length; j++)
+					self.check('role', roles[j], true, key);
+			}
+		};
+
+	});
+
+	if (!isMOBILE) {
+		$(document).on('mouseenter mouseleave', '.tooltip', function(e) {
+			if (e.type === 'mouseenter') {
+				var el = $(this);
+				var opt = {};
+				opt.element = el;
+				opt.html = el.attrd('title');
+				opt.align = 'bottom';
+				opt.timeout = 1500;
+				SETTER('tooltip', 'show', opt);
+			} else
+				SETTER('tooltip', 'hide');
+		});
+	}
+
+</script>
