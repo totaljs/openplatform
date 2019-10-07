@@ -6,7 +6,7 @@ allow_custom_titles      : true
 cookie                   : __opu
 cookie_expiration        : 1 week
 secretpassword           : PASSwordXX007
-// hashpassword             : sha256
+// hashmode                 : sha256
 // mode_portal_fluid        : false
 
 cdn                      : //cdn.componentator.com

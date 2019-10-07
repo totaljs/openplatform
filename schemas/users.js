@@ -260,7 +260,7 @@ NEWSCHEMA('Users', function(schema) {
 		model.apps = undefined;
 
 		model.dtcreated = NOW;
-		model.password = $.controller == null && model.previd ? model.password : model.password.hash(CONF.hashpassword || 'sha256');
+		model.password = $.controller == null && model.previd ? model.password : model.password.hash(CONF.hashmode || 'sha256');
 		model.verifytoken = U.GUID(15);
 		model.accesstoken = U.GUID(40);
 		model.dtupdated = NOW;
@@ -388,7 +388,7 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			if ((!keys || keys.password) && model.password && !model.password.startsWith('***'))
-				response.password = model.password.hash(CONF.hashpassword || 'sha256');
+				response.password = model.password.hash(CONF.hashmode || 'sha256');
 
 			var modified = false;
 
