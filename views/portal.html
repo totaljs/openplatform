@@ -72,18 +72,20 @@
 
 				@{part('top')}
 
-				<nav data-bind="user.apps__template:.app" class="links" id="dashboardapps">
-					<script type="text/html">
-						{{ foreach m in value }}
-							{{ if !m.internal }}
-							<div class="appprocess app{{ if !m.online}} disabled{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.id | appfocused }}" data-id="{{ m.id }}">
-								<span class="close exec" data-exec="Dashboard/close" data-id="{{ m.id }}"><i class="fa fa-times-circle"></i></span>{{ if m.countnotifications }}<b>{{ if m.countnotifications > 99 }}99{{ else }}{{ m.countnotifications}}{{ fi }}</b>{{ fi }}<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}></i>{{ m.title }}
-								<span class="appprogress hidden ap{{ m.id }}"><span class="userbg"{{ m.id | appprogress }}></span></span>
-							</div>
-							{{ fi }}
-						{{ end }}
-					</script>
-				</nav>
+				<div data---="movable__null__selector:.appprocess;exec:Dashboard/sortindex">
+					<nav data-bind="user.apps__template:.app" class="links" id="dashboardapps">
+						<script type="text/html">
+							{{ foreach m in value }}
+								{{ if !m.internal }}
+								<div class="appprocess app{{ if !m.online}} disabled{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.id | appfocused }}" data-id="{{ m.id }}" draggable="true">
+									<span class="close exec" data-exec="Dashboard/close" data-id="{{ m.id }}"><i class="fa fa-times-circle"></i></span>{{ if m.countnotifications }}<b>{{ if m.countnotifications > 99 }}99{{ else }}{{ m.countnotifications}}{{ fi }}</b>{{ fi }}<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}></i>{{ m.title }}
+									<span class="appprogress hidden ap{{ m.id }}"><span class="userbg"{{ m.id | appprogress }}></span></span>
+								</div>
+								{{ fi }}
+							{{ end }}
+						</script>
+					</nav>
+				</div>
 				<hr data-bind="user.noapps__hide" class="hidden" />
 
 				@{part('middle')}
@@ -412,6 +414,19 @@
 						}
 					}
 				}, 100);
+			};
+
+			self.sortindex = function(list) {
+				var data = [];
+				list.each(function(index) {
+					var id = $(this).attrd('id');
+					var app = user.apps.findItem('id', id);
+					if (app) {
+						app.position = index;
+						data.push({ id: app.id, position: index });
+					}
+				});
+				data.length && AJAX('POST /api/profile/apps/positions/', { apps: data });
 			};
 
 			self.navigate = function(el) {
@@ -875,9 +890,12 @@
 					}, 1000);
 				}
 
-				profile.apps.quicksort('title');
-				var noapps = true;
+				if (profile.apps[0] && profile.apps[0].position && profile.apps[1] && profile.apps[1].position)
+					profile.apps.quicksort('position');
+				else
+					profile.apps.quicksort('title');
 
+				var noapps = true;
 				for (var i = 0; i < profile.apps.length; i++) {
 					if (!profile.apps[i].internal) {
 						noapps = false;
