@@ -293,6 +293,7 @@ h3 i { margin-right: 5px; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
 	.ui-notifications { border-left: 0; }
 	.appbutton .menubuttonapp { display: block; }
+	.menu-minimize { display: none; }
 }
 
 .menushow .menu { display: block; }
