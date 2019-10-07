@@ -158,7 +158,7 @@ FUNC.profile = function(user, callback) {
 	meta.numberformat = user.numberformat;
 	meta.language = user.language;
 	meta.desktop = user.desktop;
-	// meta.repo = user.repo;
+	meta.repo = user.repo;
 
 	if (user.guest)
 		meta.guest = true;
@@ -212,6 +212,7 @@ FUNC.profilelive = function(user) {
 	meta.darkmode = user.darkmode;
 	meta.desktop = user.desktop;
 	meta.colorscheme = user.colorscheme || CONF.colorscheme;
+	meta.repo = user.repo;
 
 	if (user.locking)
 		meta.locking = user.locking;

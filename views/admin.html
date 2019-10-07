@@ -23,6 +23,9 @@
 					<i class="fa fa-key"></i>
 					<span>@(Roles)</span>
 				</div>
+
+				@{part('users')}
+
 				<hr />
 				<div class="caption">@(Applications)</div>
 
@@ -41,6 +44,8 @@
 					<span>@(Workshop)</span>
 				</div>
 -->
+				@{part('applications')}
+
 				<div class="item exec hidden" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
 					<i class="fa fa-shopping-bag"></i>
 					<span>@(Marketplace)</span>
@@ -48,12 +53,11 @@
 
 				<hr />
 				<div class="caption">@(More)</div>
-				<!--
 				<div class="item exec" data-exec="main/show" data-if="dashboard">
 					<i class="fa fa-dashboard"></i>
 					<span>@(Dashboard)</span>
 				</div>
-				-->
+				@{part('more')}
 				<div class="item exec" data-exec="main/show" data-if="wiki">
 					<i class="far fa-life-ring"></i>
 					<span>@(Documentation)</span>
@@ -76,6 +80,7 @@
 		<div data---="part__common.page__if:workshop;url:/parts/workshop.html;reload:workshop/reload;cleaner:5" class="hidden invisible"></div>
 		<div data---="part__common.page__if:wiki;url:/parts/wiki.html;cleaner:5" class="hidden invisible"></div>
 		<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;cleaner:5;delay:500" class="hidden invisible"></div>
+		@{part('main')}
 	</section>
 
 </div>
@@ -353,3 +358,5 @@
 	}
 
 </script>
+
+@{components('openplatform_admin')}

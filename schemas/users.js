@@ -2,7 +2,7 @@ MAIN.fields = ['id', 'supervisorid', 'deputyid', 'groupid', 'directory', 'direct
 
 const Fs = require('fs');
 const BOOL = { '1': 'true', 'true': 'true' };
-const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1 };
+const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1, repo: 1 };
 
 function isdatemodified(dt1, dt2) {
 	if (dt1 instanceof Date && dt2 instanceof Date)
@@ -52,6 +52,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('numberformat', [1, 2, 3, 4])(1); // 1: "1 000.10", 2: "1 000,10", 3: "100,000.00", 4: "100.000,00"
 	schema.define('volume', Number)(50);
 	schema.define('sa', Boolean);
+	schema.define('repo', 'JSON');
 	schema.define('inactive', Boolean);
 	schema.define('otp', Boolean);
 	schema.define('sounds', Boolean);
@@ -254,17 +255,17 @@ NEWSCHEMA('Users', function(schema) {
 		model.search = model.name.toSearch();
 		model.linker = model.name.slug();
 
-		model.rebuildaccesstoken = undefined;
-		model.rebuildtoken = undefined;
-		model.welcome = undefined;
-		model.apps = undefined;
-
 		model.dtcreated = NOW;
 		model.password = $.controller == null && model.previd ? model.password : model.password.hash(CONF.hashmode || 'sha256');
 		model.verifytoken = U.GUID(15);
 		model.accesstoken = U.GUID(40);
 		model.dtupdated = NOW;
 		model.dtmodified = NOW;
+
+		model.rebuildaccesstoken = undefined;
+		model.rebuildtoken = undefined;
+		model.welcome = undefined;
+		model.apps = undefined;
 		model.previd = undefined;
 
 		if (model.groups)
@@ -364,8 +365,9 @@ NEWSCHEMA('Users', function(schema) {
 				return;
 			}
 
-			var keys = (internal ? $.options.keys : null) || $.keys;
 			var tmp;
+			var data = {};
+			var keys = (internal ? $.options.keys : null) || $.keys;
 
 			if (keys) {
 				tmp = {};
@@ -376,7 +378,7 @@ NEWSCHEMA('Users', function(schema) {
 
 			if (model.firstname && model.lastname) {
 				model.name = (model.firstname + ' ' + model.lastname).max(40);
-				response.search = model.search = model.name.toSearch();
+				data.search = model.search = model.name.toSearch();
 				model.linker = model.name.slug();
 			}
 
@@ -388,101 +390,110 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			if ((!keys || keys.password) && model.password && !model.password.startsWith('***'))
-				response.password = model.password.hash(CONF.hashmode || 'sha256');
+				data.password = model.password.hash(CONF.hashmode || 'sha256');
 
 			var modified = false;
 
 			if ((!keys || keys.supervisorid) && response.supervisorid !== model.supervisorid) {
-				response.supervisorid = model.supervisorid;
+				data.supervisorid = model.supervisorid;
 				modified = true;
 			}
 
 			if ((!keys || keys.deputyid) && response.deputyid !== model.deputyid) {
-				response.deputyid = model.deputyid;
+				data.deputyid = model.deputyid;
 				modified = true;
 			}
 
 			if ((!keys || keys.sa) && response.sa !== model.sa) {
-				response.sa = model.sa;
+				data.sa = model.sa;
 				modified = true;
 			}
 
 			if ((!keys || keys.reference) && response.reference !== model.reference) {
-				response.reference = model.reference;
+				data.reference = model.reference;
 				modified = true;
 			}
 
+			if (!keys || keys.repo) {
+				if (response.repo && typeof(response.repo) === 'object')
+					response.repo = JSON.stringify(response.repo);
+				if (response.repo && model.repo && response.repo !== model.repo) {
+					data.repo = model.repo;
+					modified = true;
+				}
+			}
+
 			if ((!keys || keys.blocked) && response.blocked !== model.blocked) {
-				response.blocked = model.blocked;
+				data.blocked = model.blocked;
 				modified = true;
 			}
 
 			if ((!keys || keys.phone) && response.phone !== model.phone) {
-				response.phone = model.phone;
+				data.phone = model.phone;
 				modified = true;
 			}
 
 			if ((!keys || keys.photo) && response.photo !== model.photo) {
-				response.photo = model.photo;
+				data.photo = model.photo;
 				modified = true;
 			}
 
 			if ((!keys || keys.statusid) && response.statusid !== model.statusid) {
-				response.statusid = model.statusid;
+				data.statusid = model.statusid;
 				modified = true;
 			}
 
 			if ((!keys || keys.status) && response.status !== model.status) {
-				response.status = model.status;
+				data.status = model.status;
 				modified = true;
 			}
 
 			if ((!keys || keys.otp) && response.otp && !model.otp) {
-				response.otp = false;
+				data.otp = false;
 				response.otpsecret = null;
 			}
 
 			if (!keys || keys.locking)
-				response.locking = model.locking;
+				data.locking = model.locking;
 
 			if ((!keys || keys.firstname) && response.firstname !== model.firstname) {
-				response.firstname = model.firstname;
+				data.firstname = model.firstname;
 				modified = true;
 			}
 
 			if ((!keys || keys.lastname) && response.lastname !== model.lastname) {
-				response.lastname = model.lastname;
+				data.lastname = model.lastname;
 				modified = true;
 			}
 
 			if ((!keys || keys.middlename) && response.middlename !== model.middlename) {
-				response.middlename = model.middlename;
+				data.middlename = model.middlename;
 				modified = true;
 			}
 
 			if ((!keys || keys.directory) && response.directory !== model.directory) {
-				response.directory = model.directory;
-				response.directoryid = response.directory ? response.directory.crc32(true) : 0;
+				data.directory = model.directory;
+				data.directoryid = data.directory ? data.directory.crc32(true) : 0;
 				modified = true;
 			}
 
 			if ((!keys || keys.email) && response.email !== model.email) {
-				response.email = model.email;
+				data.email = model.email;
 				modified = true;
 			}
 
 			if (model.name && response.name !== model.name) {
-				response.name = model.name;
+				data.name = model.name;
 				modified = true;
 			}
 
 			if ((!keys || keys.company) && response.company !== model.company) {
-				response.company = model.company;
+				data.company = model.company;
 				modified = true;
 			}
 
 			if ((!keys || keys.gender) && response.gender !== model.gender) {
-				response.gender = model.gender;
+				data.gender = model.gender;
 				modified = true;
 			}
 
@@ -495,83 +506,83 @@ NEWSCHEMA('Users', function(schema) {
 				if (response.grouphash !== grouphash)
 					modified = true;
 
-				response.groupshash = grouphash;
-				response.groups = model.groups;
+				data.groupshash = grouphash;
+				data.groups = model.groups;
 			}
 
 			if (!keys || keys.roles)
-				response.roles = model.roles;
+				data.roles = model.roles;
 
 			if ((!keys || keys.language) && response.language !== model.language) {
-				response.language = model.language;
+				data.language = model.language;
 				modified = true;
 			}
 
 			if ((!keys || keys.locality) && response.locality !== model.locality) {
-				response.locality = model.locality;
+				data.locality = model.locality;
 				modified = true;
 			}
 
 			if ((!keys || keys.position) && response.position !== model.position) {
-				response.position = model.position;
+				data.position = model.position;
 				modified = true;
 			}
 
 			if (!keys || keys.login)
-				response.login = model.login;
+				data.login = model.login;
 
 			if ((!keys || keys.contractid) && response.contractid !== model.contractid) {
-				response.contractid = model.contractid;
+				data.contractid = model.contractid;
 				modified = true;
 			}
 
 			if (!keys || keys.notifications)
-				response.notifications = model.notifications;
+				data.notifications = model.notifications;
 
 			if (!keys || keys.sounds)
-				response.sounds = model.sounds;
+				data.sounds = model.sounds;
 
-			response.dtupdated = NOW;
+			data.dtupdated = NOW;
 
 			if (!keys || keys.volume)
-				response.volume = model.volume;
+				data.volume = model.volume;
 
 			if (!keys || keys.desktop)
-				response.desktop = model.desktop;
+				data.desktop = model.desktop;
 
-			if (isdatemodified(response.dtbirth, model.dtbirth)) {
-				response.dtbirth = model.dtbirth;
+			if ((!keys || keys.dtbirth) && isdatemodified(response.dtbirth, model.dtbirth)) {
+				data.dtbirth = model.dtbirth;
 				modified = true;
 			}
 
 			if ((!keys || keys.dtbeg) && isdatemodified(response.dtbeg, model.dtbeg)) {
-				response.dtbeg = model.dtbeg;
+				data.dtbeg = model.dtbeg;
 				modified = true;
 			}
 
 			if ((!keys || keys.dtend) && isdatemodified(response.dtend, model.dtend)) {
-				response.dtend = model.dtend;
+				data.dtend = model.dtend;
 				modified = true;
 			}
 
 			if ((!keys || keys.inactive) && response.inactive != model.inactive) {
-				response.inactive = model.inactive;
+				data.inactive = model.inactive;
 				modified = true;
 			}
 
 			if (!keys || keys.notificationsphone)
-				response.notificationsphone = model.notificationsphone;
+				data.notificationsphone = model.notificationsphone;
 
 			if (!keys || keys.notificationsemail)
-				response.notificationsemail = model.notificationsemail;
+				data.notificationsemail = model.notificationsemail;
 
 			if (!keys || keys.darkmode)
-				response.darkmode = model.darkmode;
+				data.darkmode = model.darkmode;
 
 			if (!keys || keys.dateformat) {
 				tmp = model.dateformat || 'yyyy-MM-dd';
 				if (response.dateformat !== tmp) {
-					response.dateformat = tmp;
+					data.dateformat = tmp;
 					modified = true;
 				}
 			}
@@ -579,7 +590,7 @@ NEWSCHEMA('Users', function(schema) {
 			if (!keys || keys.timeformat) {
 				tmp = model.timeformat || 24;
 				if (response.timeformat !== tmp) {
-					response.timeformat = tmp;
+					data.timeformat = tmp;
 					modified = true;
 				}
 			}
@@ -587,39 +598,40 @@ NEWSCHEMA('Users', function(schema) {
 			if (!keys || keys.numberformat) {
 				tmp = model.numberformat || 1;
 				if (response.numberformat !== tmp) {
-					response.numberformat = tmp;
+					data.numberformat = tmp;
 					modified = true;
 				}
 			}
 
-			if (rebuildtoken || !response.verifytoken)
-				response.verifytoken = GUID(15);
+			if (rebuildtoken || (!keys && rebuildtoken))
+				data.verifytoken = GUID(15);
 
-			if (rebuildaccesstoken || !response.accesstoken)
-				response.accesstoken = GUID(40);
+			if (rebuildaccesstoken || (!keys && rebuildaccesstoken))
+				data.accesstoken = GUID(40);
 
 			if (modified)
-				response.dtmodified = NOW;
+				data.dtmodified = NOW;
 
 			if ((!keys || keys.colorscheme) && response.colorscheme !== model.colorscheme)
-				response.colorscheme = model.colorscheme;
+				data.colorscheme = model.colorscheme;
 
-			response.dbms.save(function() {
+			var id = response.id;
+			response.dbms.replace(data).save(function() {
 				if (!keys || keys.apps) {
-					model.id = response.id;
+					model.id = id;
 					processapps(model, function() {
-						$.success(response.id);
-						FUNC.log('users/update', response.id, model.name, $);
-						EMIT('users/update', response.id);
-						MAIN.session.release2(response.id);
+						$.success(id);
+						FUNC.log('users/update', id, model.name, $);
+						EMIT('users/update', id);
+						MAIN.session.release2(id);
 						FUNC.refreshgroupsrolesdelay();
 						FUNC.refreshmetadelay();
 					});
 				} else {
-					$.success(response.id);
-					FUNC.log('users/update', response.id, model.name, $);
-					EMIT('users/update', response.id);
-					MAIN.session.release2(response.id);
+					$.success(id);
+					FUNC.log('users/update', id, model.name, $);
+					EMIT('users/update', id);
+					MAIN.session.release2(id);
 					FUNC.refreshgroupsrolesdelay();
 					FUNC.refreshmetadelay();
 				}

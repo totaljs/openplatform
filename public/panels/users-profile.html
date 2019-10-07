@@ -202,7 +202,12 @@
 			</div>
 			<div class="padding">
 				<div class="caption"><i class="fa fa-rocket"></i>@(Explicitly allowed apps)</div>
-				<div data---="apps__?.appsroles__datasource:main.apps__{}"></div>
+				<div data---="apps__?.appsroles__datasource:main.apps__{}" class="m"></div>
+				<div data-bind="?.repo__show" class="hidden">
+					<hr />
+					<div class="m b"><i class="fa fa-box mr5"></i>@(Dynamic repository)</div>
+					<div data---="objecteditor__?.repo"></div>
+				</div>
 			</div>
 		</div>
 		<div class="buttons" data---="validation__?">
@@ -245,6 +250,9 @@
 			}
 
 			model.appsroles = undefined;
+
+			if (model.repo)
+				model.repo = STRINGIFY(model.repo);
 
 			AJAX('POST /api/op/users/' + (model.id || ''), model, OP.done('@(User has been saved successfully)', function() {
 				NULL('common.panel');
