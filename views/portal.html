@@ -204,9 +204,7 @@
 				el.rclass('hidden');
 				setTimeout(function() {
 					el.aclass('startmenu-visible');
-					if (!isMOBILE)
-						$('.startmenu-search').find('input').focus();
-					el.find('.noscrollbar').noscrollbar();
+					$('.noscrollbar').noscrollbar();
 				}, 10);
 			} else {
 				el.rclass('startmenu-visible');
@@ -392,6 +390,7 @@
 
 			self.mainmenu = function() {
 				$(document.body).tclass('menushow');
+				$('.noscrollbar').noscrollbar();
 			};
 
 			self.mainmenu2 = function() {

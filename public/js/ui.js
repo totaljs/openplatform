@@ -9460,7 +9460,7 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 					self.aclass(cls + '-scroll');
 			} else {
 				self.aclass(cls + '-scroll');
-				self.find(cls2 + '-body').aclass('noscrollbar');
+				elb.aclass('noscrollbar');
 			}
 		}
 		self.resize();
@@ -9505,10 +9505,14 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 		scrollbar && scrollbar.resize();
 		scrolltop && self.scrolltop(0);
 
+		if (elb.hclass('noscrollbar'))
+			elb.noscrollbar();
+
 		if (!init) {
 			self.rclass('invisible', 250);
 			init = true;
 		}
+
 	};
 
 	self.resizescrollbar = function() {
