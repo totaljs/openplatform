@@ -818,11 +818,13 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 // Refreshes a guest apps
 FUNC.refreshguest = function() {
-	MAIN.guest.apps = {};
-	for (var i = 0; i < MAIN.apps.length; i++) {
-		var app = MAIN.apps[i];
-		if (app.guest && !app.blocked)
-			MAIN.guest.apps[app.id] = { roles: [], countnotifications: 0, countbadges: 0 };
+	if (MAIN.guest) {
+		MAIN.guest.apps = {};
+		for (var i = 0; i < MAIN.apps.length; i++) {
+			var app = MAIN.apps[i];
+			if (app.guest && !app.blocked)
+				MAIN.guest.apps[app.id] = { roles: [], countnotifications: 0, countbadges: 0 };
+		}
 	}
 };
 
