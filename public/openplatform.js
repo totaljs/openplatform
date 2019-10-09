@@ -18,6 +18,20 @@ OP.interval = setInterval(function() {
 document.addEventListener('click', function(e) {
 
 	var target = e.target;
+	var tmp = target;
+
+	if (tmp.tagName !== 'A') {
+		var index = 3;
+		while (--index >= 0) {
+			tmp = tmp.parentNode;
+			if (!tmp || tmp.tagName === 'BODY' || tmp.tagName === 'HTML')
+				break;
+			if (tmp.tagName === 'A') {
+				target = tmp;
+				break;
+			}
+		}
+	}
 
 	if (target.tagName === 'A') {
 
