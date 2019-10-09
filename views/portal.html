@@ -922,11 +922,9 @@
 				refresh_profiledata();
 			else if (common.livecounter % 5 === 0)
 				refresh_profiledata();
-
 			if (common.livecounter > 99999999)
 				common.livecounter = 0;
-
-		}, 5000);
+		}, 8000);
 
 		function renderstatus(value, path, el) {
 			if (value && !value.status) {

@@ -87,8 +87,7 @@ header .title { margin-left: 10px; font-weight: bold; vertical-align: top; displ
 .username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
 .username:hover { opacity: 0.7; }
 .username i { margin-right: 5px; }
-footer { border-top: 1px solid #404040; height: 32px; line-height: 32px; padding: 0 5px 0 10px; }
-.light footer { border-top-color: #E0E0E0; }
+footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; }
 .console { font-size: 12px; cursor: pointer; float: left; }
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
