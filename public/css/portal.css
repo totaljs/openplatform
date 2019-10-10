@@ -87,8 +87,8 @@ header .title { margin-left: 10px; font-weight: bold; vertical-align: top; displ
 .username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
 .username:hover { opacity: 0.7; }
 .username i { margin-right: 5px; }
-footer { border-top: 1px solid #404040; height: 32px; line-height: 32px; padding: 0 5px 0 10px; }
-.light footer { border-top-color: #E0E0E0; }
+footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; background: linear-gradient(0deg,#191919,#202020); }
+.light footer { background: linear-gradient(0deg,#F8F8F8,white); }
 .console { font-size: 12px; cursor: pointer; float: left; }
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
@@ -294,6 +294,8 @@ h3 i { margin-right: 5px; }
 	.ui-notifications { border-left: 0; }
 	.appbutton .menubuttonapp { display: block; }
 	.menu-minimize { display: none; }
+	footer { border-top: 1px solid #404040; }
+	.light footer { border-top-color: #E0E0E0; }
 }
 
 .menushow .menu { display: block; }

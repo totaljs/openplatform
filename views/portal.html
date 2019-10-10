@@ -78,7 +78,7 @@
 							{{ foreach m in value }}
 								{{ if !m.internal }}
 								<div class="appprocess app{{ if !m.online}} disabled{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.id | appfocused }}" data-id="{{ m.id }}" draggable="true">
-									<span class="close exec" data-exec="Dashboard/close" data-id="{{ m.id }}"><i class="fa fa-times-circle"></i></span>{{ if m.countnotifications }}<b>{{ if m.countnotifications > 99 }}99{{ else }}{{ m.countnotifications}}{{ fi }}</b>{{ fi }}<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}></i>{{ m.title }}
+									<span class="close exec" data-exec="Dashboard/close" data-id="{{ m.id }}"><i class="fa fa-times"></i></span>{{ if m.countnotifications }}<b>{{ if m.countnotifications > 99 }}99{{ else }}{{ m.countnotifications}}{{ fi }}</b>{{ fi }}<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}></i>{{ m.title }}
 									<span class="appprogress hidden ap{{ m.id }}"><span class="userbg"{{ m.id | appprogress }}></span></span>
 								</div>
 								{{ fi }}
@@ -922,11 +922,9 @@
 				refresh_profiledata();
 			else if (common.livecounter % 5 === 0)
 				refresh_profiledata();
-
 			if (common.livecounter > 99999999)
 				common.livecounter = 0;
-
-		}, 5000);
+		}, 8000);
 
 		function renderstatus(value, path, el) {
 			if (value && !value.status) {
