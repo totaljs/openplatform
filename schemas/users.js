@@ -266,6 +266,7 @@ NEWSCHEMA('Users', function(schema) {
 		model.rebuildtoken = undefined;
 		model.welcome = undefined;
 		model.apps = undefined;
+		model.repo = undefined;
 		model.previd = undefined;
 
 		if (model.groups)

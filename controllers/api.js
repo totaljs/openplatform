@@ -245,6 +245,12 @@ function json_service() {
 
 	FUNC.decodetoken(self, function(obj) {
 
+		if (appid === 'openplatform') {
+			self.user = obj.user;
+			OPERATION('api_' + serviceid, obj.app, self.callback(), self);
+			return;
+		}
+
 		var app = null;
 		var is = false;
 

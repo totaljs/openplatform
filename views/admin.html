@@ -33,17 +33,7 @@
 					<i class="fa fa-rocket"></i>
 					<span>@(Applications)</span>
 				</div>
-<!--
-				<div class="item exec" data-exec="main/show" data-if="database">
-					<i class="fa fa-database"></i>
-					<span>@(Database)</span>
-				</div>
 
-				<div class="item exec" data-exec="main/show" data-if="workshop">
-					<i class="far fa-object-group"></i>
-					<span>@(Workshop)</span>
-				</div>
--->
 				@{part('applications')}
 
 				<div class="item exec hidden" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
@@ -53,10 +43,12 @@
 
 				<hr />
 				<div class="caption">@(More)</div>
+				<!--
 				<div class="item exec" data-exec="main/show" data-if="dashboard">
 					<i class="fa fa-dashboard"></i>
 					<span>@(Dashboard)</span>
 				</div>
+				-->
 				@{part('more')}
 				<div class="item exec" data-exec="main/show" data-if="wiki">
 					<i class="far fa-life-ring"></i>
