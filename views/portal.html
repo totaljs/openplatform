@@ -93,19 +93,19 @@
 				<nav class="links npt">
 					@{if CONF.welcome}
 					<button class="app exec" data-exec="internalapp" data-id="_welcome" id="welcomeapp">
-						<span class="close exec" data-exec="Dashboard/close" data-id="welcomeapp"><i class="fa fa-times-circle"></i></span>
+						<span class="close exec" data-exec="Dashboard/close" data-id="welcomeapp"><i class="fa fa-times"></i></span>
 						<i class="fa fa-flag"></i>@(Welcome)
 					</button>
 					@{fi}
 					@{if !user.guest && user.sa}
 						<button class="app exec internal" data-exec="internalapp" data-id="_admin">
-							<span class="close exec" data-exec="Dashboard/close" data-id="_admin"><i class="fa fa-times-circle"></i></span>
+							<span class="close exec" data-exec="Dashboard/close" data-id="_admin"><i class="fa fa-times"></i></span>
 							<i class="fa fa-cog"></i>@(Control panel)
 						</button>
 					@{fi}
 					@{if !user.guest && CONF.allowprofile}
 					<button class="app exec internal" data-exec="internalapp" data-id="_account">
-						<span class="close exec" data-exec="Dashboard/close" data-id="_account"><i class="fa fa-times-circle"></i></span>
+						<span class="close exec" data-exec="Dashboard/close" data-id="_account"><i class="fa fa-times"></i></span>
 						<i class="fa fa-user-circle"></i>@(My account)
 					</button>
 					@{fi }
