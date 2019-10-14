@@ -7,12 +7,12 @@ var languages = 'Abkhaz|ab,Afar|aa,Afrikaans|af,Akan|ak,Albanian|sq,Amharic|am,A
 	return { id: arr[1], value: arr[1], text: arr[0], name: arr[0] };
 });
 
-ON('custom', function(data) {
+window.SENDCOMMAND = function(type, body) {
 	for (var i = 0; i < dashboard.apps.length; i++) {
 		var app = dashboard.apps[i];
-		SETTER('processes', 'sendcustomdata', app.id, data);
+		SETTER('processes', 'sendcommanddata', app.id, { type: type, body: body });
 	}
-});
+};
 
 MD_NOTIFICATION.custom = function(val) {
 	return val.replace(/\[\+/g, '[');
@@ -2591,13 +2591,13 @@ COMPONENT('processes@2', function(self, config) {
 		self.message(iframe, 'link', data);
 	};
 
-	self.sendcustomdata = function(iframe, data) {
+	self.sendcommanddata = function(iframe, data) {
 		if (typeof(iframe) === 'string') {
 			iframe = self.findProcess(iframe);
 			if (!iframe)
 				return false;
 		}
-		self.message(iframe, 'custom', data);
+		self.message(iframe, 'command', data);
 	};
 
 	self.reload = function(id) {
@@ -3616,13 +3616,13 @@ COMPONENT('processes', function(self, config) {
 		self.message(iframe, 'link', data);
 	};
 
-	self.sendcustomdata = function(iframe, data) {
+	self.sendcommanddata = function(iframe, data) {
 		if (typeof(iframe) === 'string') {
 			iframe = self.findProcess(iframe);
 			if (!iframe)
 				return false;
 		}
-		self.message(iframe, 'custom', data);
+		self.message(iframe, 'command', data);
 	};
 
 	self.reload = function(id) {

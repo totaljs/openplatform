@@ -187,6 +187,10 @@ $(window).on('message', function(e) {
 
 	switch (data.type) {
 
+		case 'command':
+			EMIT('command', data.body.type, data.body.body, app);
+			break;
+
 		case 'install':
 
 			if (user.sa) {

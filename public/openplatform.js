@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 416;
+OP.version = 417;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -149,6 +149,10 @@ OP.console = function(type, msg, show, text) {
 		}
 	} else
 		OP.send('console', { type: type, msg: (text || '') + msg, show: show });
+};
+
+OP.command = function(type, body) {
+	OP.send('command', { type: type, body: body });
 };
 
 OP.screenshot = function(cdn, callback) {
@@ -440,7 +444,7 @@ OP.notify = function(type, body, data) {
 
 OP.share = function(app, type, body, silent) {
 	setTimeout(function() {
-		OP.send('share', { app: typeof(app) === 'object' ? app.id : app, type: type, body: body, dtcreated: new Date(), silent: silent });
+		OP.send('share', { app: app && typeof(app) === 'object' ? app.id : app, type: type, body: body, dtcreated: new Date(), silent: silent });
 	}, 100);
 	return OP;
 };
@@ -519,6 +523,15 @@ OP.$process = function(data) {
 		if (events) {
 			for (var i = 0; i < events.length; i++)
 				events[i](data.body.path, data.body.data);
+		}
+		return;
+	}
+
+	if (data.type === 'command') {
+		var events = OP.events[data.type];
+		if (events) {
+			for (var i = 0; i < events.length; i++)
+				events[i](data.body.type, data.body.body);
 		}
 		return;
 	}
