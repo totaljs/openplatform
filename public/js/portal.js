@@ -297,7 +297,6 @@ $(window).on('message', function(e) {
 			if (app && navigator.userAgent === data.body.ua) {
 
 				var iframe = processes.findProcess(app.id);
-
 				if (!iframe.meta.internal && (iframe.meta.verify.indexOf(app.accesstoken) === -1 || iframe.iframe.attr('src').indexOf(iframe.meta.url) === -1))
 					return;
 

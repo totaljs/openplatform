@@ -255,35 +255,31 @@ FUNC.meta = function(app, user, serverside) {
 		meta.verify = CONF.url + '/api/verify/?accesstoken=' + token;
 	}
 
-	meta.openplatform = CONF.url;
-	meta.openplatformid = MAIN.id;
+	if (serverside) {
+		meta.openplatform = CONF.url;
+		meta.openplatformid = MAIN.id;
+
+		if (CONF.email)
+			meta.email = CONF.email;
+
+		if (CONF.verifytoken)
+			meta.verifytoken = CONF.verifytoken;
+	}
+
 	meta.name = CONF.name;
 	meta.version = MAIN.version;
-
-	if (CONF.email)
-		meta.email = CONF.email;
-
-	if (CONF.verifytoken)
-		meta.verifytoken = CONF.verifytoken;
 
 	meta.colorscheme = CONF.colorscheme;
 	meta.background = CONF.background;
 
 	if (app.serververify && !serverside) {
 		var tmp = FUNC.makeprofile(user, app.allowreadprofile, app);
-		meta.serverside = true;
+		meta.serververify = true;
 		meta.profile = {};
 		meta.profile.badge = tmp.badge;
 		meta.profile.notify = tmp.notify;
 		return meta;
-	} else
-		meta.serverside = serverside === true;
-
-	if (app.sn)
-		meta.sn = app.sn;
-
-	if (app.allowreadmeta)
-		meta.meta = CONF.url + '/api/meta/?accesstoken=' + tokenapp;
+	}
 
 	if (app.allowreadprofile) {
 		meta.profile = FUNC.makeprofile(user, app.allowreadprofile, app);
@@ -300,16 +296,24 @@ FUNC.meta = function(app, user, serverside) {
 	if (user.repo)
 		meta.profile.repo = user.repo;
 
-	if (app.allowreadapps)
-		meta.apps = CONF.url + '/api/apps/?accesstoken=' + tokenapp;
+	if (serverside) {
 
-	if (app.allowreadusers)
-		meta.users = CONF.url + '/api/users/?accesstoken=' + tokenapp;
+		if (app.sn)
+			meta.sn = app.sn;
 
-	meta.services = CONF.url + '/api/services/?accesstoken=' + tokenapp;
+		meta.meta = CONF.url + '/api/meta/?accesstoken=' + tokenapp;
 
-	if (app.services)
-		meta.servicetoken = app.servicetoken;
+		if (app.allowreadapps)
+			meta.apps = CONF.url + '/api/apps/?accesstoken=' + tokenapp;
+
+		if (app.allowreadusers)
+			meta.users = CONF.url + '/api/users/?accesstoken=' + tokenapp;
+
+		meta.services = CONF.url + '/api/services/?accesstoken=' + tokenapp;
+
+		if (app.services)
+			meta.servicetoken = app.servicetoken;
+	}
 
 	return meta;
 };
