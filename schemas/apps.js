@@ -38,7 +38,7 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.allownotifications = app.allownotifications;
 			obj.allowreadprofile = app.allowreadprofile;
 			obj.allowreadmeta = app.allowreadmeta;
-			obj.sn = app.sn;
+			// obj.sn = app.sn;
 			obj.roles = app.roles;
 			obj.type = app.type;
 			obj.version = app.version;
