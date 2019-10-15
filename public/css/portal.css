@@ -10,11 +10,15 @@ body.light { background: white; }
 
 header { height: 45px; border-bottom: 1px solid #404040; line-height: 44px; font-size: 16px; }
 header .title { margin-left: 10px; font-weight: bold; vertical-align: top; display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+header img { width: 28px; float: left; border-radius: 100px; margin: 7px 8px 0 8px; cursor: pointer; }
 
 .light header { border-bottom: 1px solid #E0E0E0; }
 
 .caption { font-size: 12px; font-weight: 700; margin-bottom: 10px; color: black; border-bottom: 1px solid #E0E0E0; padding: 0 0 5px 0; }
 .caption i { margin-right: 5px; }
+
+.initials { width: 37px; line-height: 37px; text-align: center; color: white; display: block; padding: 0; font-weight: bold; border-radius: 100px; cursor: default; }
+header .initials { float: left; line-height: 28px; width: 28px; font-size: 12px; margin: 4px 10px 0 3px; cursor: pointer; }
 
 .menu .caption { margin: 0 10px; margin-top: 20px; }
 .links { padding: 10px 10px 0 10px; }
@@ -92,7 +96,7 @@ footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; background: lin
 .console { font-size: 12px; cursor: pointer; float: left; }
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
-.testmode { position: absolute; background-color: red; color: white; font-size: 8px; font-weight: bold; padding: 0 3px; margin: 4px 0 0 10px; border-radius: 2px; vertical-align: middle; line-height: 10px; vertical-align: top; top: 35px; }
+.testmode { position: absolute; background-color: red; color: white; font-size: 8px; font-weight: bold; padding: 0 3px; margin: 4px 0 0 8px; border-radius: 2px; vertical-align: middle; line-height: 10px; vertical-align: top; top: 35px; }
 
 .appnonotify { font-size: 10px; position: absolute; top: 3px; left: 36px; color: white; }
 .light .appnonotify { color: black; }

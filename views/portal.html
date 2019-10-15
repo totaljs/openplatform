@@ -67,6 +67,11 @@
 				</div>
 				@{fi}
 				<span class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</span>
+				@{if user.photo}
+				<img src="/photos/@{user.photo}" class="exec" data-exec="internalapp" data-id="_account" />
+				@{else}
+				<span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span>
+				@{fi}
 				<span class="title">@{CONF.name}</span>
 			</header>
 			<div data---="viewbox__null__margin:77;parent:window">
