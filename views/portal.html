@@ -67,11 +67,14 @@
 				</div>
 				@{fi}
 				<span class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</span>
+				<!--
 				@{if user.photo}
 				<img src="/photos/@{user.photo}" class="exec" data-exec="internalapp" data-id="_account" />
 				@{else}
 				<span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span>
 				@{fi}
+				-->
+				<span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span>
 				<span class="title">@{CONF.name}</span>
 			</header>
 			<div data---="viewbox__null__margin:77;parent:window">
@@ -152,6 +155,7 @@
 
 		var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
 
+		DEF.languagehtml = '@{user.language}';
 		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && window.require != null;
 		common.electronpadding = 0;
 

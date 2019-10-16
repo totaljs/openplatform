@@ -178,7 +178,7 @@
 					<div data---="input__account.numberformat__innerlabel:1;dirsource:numberformats;dirsearch:false">@(Number format)</div>
 				</div>
 				<div class="col-2 m">
-					<div data---="input__account.language__innerlabel:1;dirsource:languages;dirsearch:false">@(Language)</div>
+					<div data---="input__account.language__innerlabel:1;dirsource:languages">@(Language)</div>
 				</div>
 			</div>
 		</div>
@@ -217,6 +217,8 @@
 		} else
 			account_refresh();
 	});
+
+	OP.appearance();
 
 	OP.on('appearance', function(profile) {
 		CSS('.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');

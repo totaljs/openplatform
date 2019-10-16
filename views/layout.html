@@ -16,6 +16,7 @@
 <body data---="exec" class="invisible@{if user.darkmode} ui-dark@{fi}">
 
 	<script>
+		DEF.languagehtml = '@{user.language}';
 		OP.ready = true;
 		OP.init(function(err, meta) {
 			if (meta) {
