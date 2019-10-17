@@ -27,6 +27,7 @@ exports.install = function() {
 
 	// Apps
 	ROUTE('+GET     /api/op/apps/                  *Apps               --> @query');
+	ROUTE('+GET     /api/op/apps/{id}/             *Apps               --> @read');
 	ROUTE('+GET     /api/op/apps/meta/             *Apps               --> @meta');
 	ROUTE('+POST    /api/op/apps/                  *Apps               --> @check @refresh @insert (response)');
 	ROUTE('+POST    /api/op/apps/{id}/             *Apps               --> @check @refresh @update (response)');

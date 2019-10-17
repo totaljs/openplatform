@@ -48,8 +48,10 @@
 			if (row.workshopid)
 				return;
 
-			SETR('appsprofilepanel', CLONE(row));
-			SET('common.panel', 'appsprofile');
+			AJAX('GET /api/op/apps/{id}/'.arg(row), function(response) {
+				SETR('appsprofilepanel', CLONE(response));
+				SET('common.panel', 'appsprofile');
+			});
 		};
 
 		exports.create = function() {

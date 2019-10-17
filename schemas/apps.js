@@ -9,6 +9,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(40)', true);
+	schema.define('titles', Object); // localized title
 	schema.define('sn', 'String(50)');
 	schema.define('permissions', Boolean);
 	schema.define('autorefresh', Boolean);
@@ -29,7 +30,7 @@ NEWSCHEMA('Apps', function(schema) {
 			var obj = {};
 			obj.id = app.id;
 			obj.name = app.name;
-			obj.title = app.title;
+			obj.title = $.user && app.titles ? (app.titles[$.user.language] || app.title) : app.title;
 			obj.url = app.url;
 			obj.reference = app.reference;
 			obj.allowguestuser = app.allowguestuser;
@@ -62,6 +63,26 @@ NEWSCHEMA('Apps', function(schema) {
 		}
 
 		$.callback(arr);
+	});
+
+	schema.setGet(function($) {
+
+		if ($.controller && FUNC.notadmin($))
+			return;
+
+		var item = MAIN.apps.findItem('id', $.id);
+		if (item) {
+			var obj = {};
+			obj.name = item.name;
+			obj.title = item.title;
+			obj.titles = item.titles;
+			obj.sn = item.sn;
+			obj.blocked = item.blocked;
+			obj.autorefresh = item.autorefresh;
+			obj.settings = item.settings;
+			$.callback(item);
+		} else
+			$.invalid('error-apps-404');
 	});
 
 	schema.addWorkflow('check', function($) {
