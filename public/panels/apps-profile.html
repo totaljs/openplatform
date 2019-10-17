@@ -117,7 +117,13 @@
 				<div class="m help"><span class="exec link" data-exec="?/localize"><i class="fa fa-language"></i>@(Add localization)</span></div>
 
 				<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX">@(Serial number)</div>
-				<div class="help"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
+				<div class="help m"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<div data---="input__?.position__maxlength:3;type:number__main.apps.length">@(Position index)</div>
+					</div>
+				</div>
+				<div class="help">@(Lower index means higher position in the list of applications).</div>
 				<hr />
 				<div data---="checkbox__?.blocked__checkicon:lock">@(Application is blocked)</div>
 				<div data-bind="?.id__show" class="hidden">

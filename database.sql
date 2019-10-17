@@ -101,6 +101,7 @@ CREATE TABLE "public"."tbl_app" (
 	"custom" varchar(1000),
 	"hostname" varchar(80),
 	"version" varchar(20),
+	"position" int2 DEFAULT '0'::smallint,
 	"width" int2,
 	"height" int2,
 	"settings" jsonb,

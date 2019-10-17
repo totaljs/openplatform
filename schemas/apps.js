@@ -17,6 +17,7 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('guest', Boolean);
 	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('rebuildservicetoken', Boolean);
+	schema.define('position', Number);
 	schema.define('settings', Object);
 
 	schema.setQuery(function($) {
@@ -42,6 +43,7 @@ NEWSCHEMA('Apps', function(schema) {
 			// obj.sn = app.sn;
 			obj.roles = app.roles;
 			obj.type = app.type;
+			obj.position = app.position;
 			obj.version = app.version;
 			obj.responsive = app.responsive;
 			obj.icon = app.icon;
@@ -80,6 +82,7 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.blocked = item.blocked;
 			obj.autorefresh = item.autorefresh;
 			obj.settings = item.settings;
+			obj.position = item.position;
 			$.callback(item);
 		} else
 			$.invalid('error-apps-404');
