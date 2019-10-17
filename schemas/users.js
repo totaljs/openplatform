@@ -267,8 +267,8 @@ NEWSCHEMA('Users', function(schema) {
 		model.welcome = undefined;
 		model.apps = undefined;
 
-		if (model.repo == null)
-			model.repo = undefined;
+		if (!model.repo)
+			model.repo = null;
 
 		model.previd = undefined;
 
@@ -422,7 +422,10 @@ NEWSCHEMA('Users', function(schema) {
 				if (response.repo && typeof(response.repo) === 'object')
 					response.repo = JSON.stringify(response.repo);
 				if (response.repo && model.repo && response.repo !== model.repo) {
-					data.repo = model.repo;
+					if (model.repo)
+						data.repo = model.repo;
+					else
+						data.repo = null;
 					modified = true;
 				}
 			}

@@ -136,6 +136,9 @@ NEWSCHEMA('Apps', function(schema) {
 		if (!model.settings)
 			delete model.settings;
 
+		if (!model.titles)
+			model.titles = null;
+
 		DBMS().insert('tbl_app', model).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
@@ -162,6 +165,9 @@ NEWSCHEMA('Apps', function(schema) {
 
 		if (model.rebuildservicetoken)
 			model.servicetoken = GUID(15);
+
+		if (!model.titles)
+			model.titles = null;
 
 		model.permissions = undefined;
 		model.rebuildaccesstoken = undefined;
