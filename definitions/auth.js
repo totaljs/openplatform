@@ -31,6 +31,7 @@ AUTH(function($) {
 		$.req.$language = profile.language;
 		$.req.locked = (meta.settings ? meta.settings.indexOf('locked:1') != -1 : false) || locked;
 
+		console.log($.req.$language);
 		profile.ip = $.ip;
 
 		if (profile.desktop == null)
