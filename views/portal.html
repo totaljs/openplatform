@@ -509,7 +509,6 @@
 			};
 
 			self.showappsettings = function() {
-
 			};
 
 			self.showstatusform = function() {
@@ -900,7 +899,7 @@
 					}, 1000);
 				}
 
-				if (profile.apps[0] && profile.apps[0].position && profile.apps[1] && profile.apps[1].position)
+				if (profile.apps[0] && profile.apps[0].position != null && profile.apps[1] && profile.apps[1].position != null)
 					profile.apps.quicksort('position');
 				else
 					profile.apps.quicksort('title');

@@ -25,6 +25,7 @@
 					{ name: 'allowreadmeta', text: '@(Meta)', width: 100, template: '{{ allowreadmeta | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 					{ name: 'services', text: '@(Services)', width: 100, template: '{{ services | boolean }}', align: 1, filter: false, sort: false },
 					{ name: 'responsive', text: '@(Mobile)', width: 100, template: '{{ responsive | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+					{ name: 'position', text: '@(Position)', width: 100, align: 1 },
 					{ name: 'dtsync', text: '@(Refreshed)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
 					{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
 					{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]', filter: false }
@@ -48,8 +49,10 @@
 			if (row.workshopid)
 				return;
 
-			SETR('appsprofilepanel', CLONE(row));
-			SET('common.panel', 'appsprofile');
+			AJAX('GET /api/op/apps/{id}/'.arg(row), function(response) {
+				SETR('appsprofilepanel', CLONE(response));
+				SET('common.panel', 'appsprofile');
+			});
 		};
 
 		exports.create = function() {

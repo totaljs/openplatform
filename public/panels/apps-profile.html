@@ -97,9 +97,33 @@
 			</div>
 			<div class="padding">
 				<div class="caption">@(Main settings)</div>
-				<div data---="input__?.title__required:1;maxlength:40" class="m">@(Title)</div>
+				<div data---="input__?.title__required:1;maxlength:40">@(Title)</div>
+
+				<div data-bind="?.titles2__show:value && value.length" class="hidden" style="margin-top:10px">
+					<div class="caption">@(Localized titles)</div>
+					<div data-bind="?.titles2__template" div data---="editable__?.titles" class="multilanguages">
+						<script type="text/html">
+						{{ foreach m in value }}
+							<div class="multilanguage" data-id="{{ m.id }}">
+								<div class="key"><i class="fa fa-times red exec" data-exec="?/localizeremove"></i>{{ m.id }}</div>
+								<div class="value">
+									<div class="editable" data-editable="maxlength:30" bind="?.titles.{{ m.id }}__text__empty"></div>
+								</div>
+							</div>
+						{{ end }}
+						</script>
+					</div>
+				</div>
+				<div class="m help"><span class="exec link" data-exec="?/localize"><i class="fa fa-language"></i>@(Add localization)</span></div>
+
 				<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX">@(Serial number)</div>
-				<div class="help"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
+				<div class="help m"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<div data---="input__?.position__maxlength:3;type:number__main.apps.length">@(Position index)</div>
+					</div>
+				</div>
+				<div class="help">@(Lower index means higher position in the list of applications).</div>
 				<hr />
 				<div data---="checkbox__?.blocked__checkicon:lock">@(Application is blocked)</div>
 				<div data-bind="?.id__show" class="hidden">
@@ -129,7 +153,36 @@
 
 		exports.reload = function(com) {
 			var model = GET('?');
-			com.reconfigure({ title: model.id ? '@(Edit app)' : '@(Create app)' });
+			com.reconfigure({ title: model.id ? '@(Edit app)' : '@(Add app)' });
+		};
+
+		exports.localize = function(el) {
+			var opt = {};
+			opt.element = el;
+			opt.items = languages;
+			opt.placeholder = '@(Search language)';
+			opt.callback = function(item) {
+
+				var model = GET('?');
+				if (!model.titles)
+					model.titles = {};
+
+				if (model.titles[item.id] == null) {
+					model.titles[item.id] = model.title;
+					model.titles2.push({ id: item.id, value: model.title || '@(Title)' });
+					BIND('?.titles2');
+				}
+
+			};
+			SETTER('directory', 'show', opt);
+		};
+
+		exports.localizeremove = function(el) {
+			var model = GET('?');
+			var id = el.closest('.multilanguage').attrd('id');
+			delete model.titles[id];
+			model.titles2 = model.titles2.remove('id', id);
+			BIND('?.titles2');
 		};
 
 		exports.submit = function() {
@@ -139,6 +192,7 @@
 				var item = model.settings2[i];
 				model.settings[item.name] = item.value;
 			}
+			model.titles2 = undefined;
 			model.settings2 = undefined;
 			AJAX('POST /api/op/apps/' + (model.id || ''), model, OP.done('@(Application has been saved successfully)', function() {
 				NULL('common.panel');
@@ -147,6 +201,19 @@
 				EXEC('main/refreshmeta');
 			}));
 		};
+
+		WATCH('?.titles', function(path, value) {
+
+			if (value == null)
+				GET('?').titles = value = {};
+
+			var arr = [];
+			var keys = Object.keys(value);
+			for (var i = 0; i < keys.length; i++)
+				arr.push({ id: keys[i], value: value[keys[i]] });
+
+			SET('?.titles2', arr);
+		}, true);
 
 		WATCH('?.url', function(path, value, type) {
 

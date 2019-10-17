@@ -178,6 +178,15 @@ h3 .fa { margin-right: 5px; }
 .nav .right { float: right; }
 .radius { border-radius: 3px; }
 
+.multilanguages { border: 1px solid #E0E0E0; border-radius: 2px; }
+.multilanguage { height: 28px; border-top: 1px solid #E0E0E0; }
+.multilanguage:first-child { border-top: 0; }
+.multilanguage:first-child .key { line-height: 28px; }
+.multilanguage .key { width: 34px; border-right: 1px solid #E0E0E0; float: left; line-height: 27px; font-size: 11px; color: gray; padding: 0 0 0 5px; }
+.multilanguage .key i { margin-right: 3px; cursor: pointer; }
+.multilanguage .value { margin-left: 34px; line-height: 26px; padding: 0 5px; }
+.multilanguage .editable { border-bottom: 0; min-height: auto; background-color: white; padding: 0; }
+
 .buttonbar { background-color: #F0F0F0; height: 40px; }
 .buttonbar .button { height: 40px; border-radius: 0; font-size: 12px; }
 .buttonbar .button i { margin-right: 8px; }

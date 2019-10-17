@@ -9,6 +9,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(40)', true);
+	schema.define('titles', Object); // localized title
 	schema.define('sn', 'String(50)');
 	schema.define('permissions', Boolean);
 	schema.define('autorefresh', Boolean);
@@ -16,6 +17,7 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('guest', Boolean);
 	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('rebuildservicetoken', Boolean);
+	schema.define('position', Number);
 	schema.define('settings', Object);
 
 	schema.setQuery(function($) {
@@ -29,7 +31,7 @@ NEWSCHEMA('Apps', function(schema) {
 			var obj = {};
 			obj.id = app.id;
 			obj.name = app.name;
-			obj.title = app.title;
+			obj.title = $.user && app.titles ? (app.titles[$.user.language] || app.title) : app.title;
 			obj.url = app.url;
 			obj.reference = app.reference;
 			obj.allowguestuser = app.allowguestuser;
@@ -41,6 +43,7 @@ NEWSCHEMA('Apps', function(schema) {
 			// obj.sn = app.sn;
 			obj.roles = app.roles;
 			obj.type = app.type;
+			obj.position = app.position;
 			obj.version = app.version;
 			obj.responsive = app.responsive;
 			obj.icon = app.icon;
@@ -62,6 +65,27 @@ NEWSCHEMA('Apps', function(schema) {
 		}
 
 		$.callback(arr);
+	});
+
+	schema.setGet(function($) {
+
+		if ($.controller && FUNC.notadmin($))
+			return;
+
+		var item = MAIN.apps.findItem('id', $.id);
+		if (item) {
+			var obj = {};
+			obj.name = item.name;
+			obj.title = item.title;
+			obj.titles = item.titles;
+			obj.sn = item.sn;
+			obj.blocked = item.blocked;
+			obj.autorefresh = item.autorefresh;
+			obj.settings = item.settings;
+			obj.position = item.position;
+			$.callback(item);
+		} else
+			$.invalid('error-apps-404');
 	});
 
 	schema.addWorkflow('check', function($) {
@@ -115,6 +139,9 @@ NEWSCHEMA('Apps', function(schema) {
 		if (!model.settings)
 			delete model.settings;
 
+		if (!model.titles)
+			model.titles = null;
+
 		DBMS().insert('tbl_app', model).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
@@ -141,6 +168,9 @@ NEWSCHEMA('Apps', function(schema) {
 
 		if (model.rebuildservicetoken)
 			model.servicetoken = GUID(15);
+
+		if (!model.titles)
+			model.titles = null;
 
 		model.permissions = undefined;
 		model.rebuildaccesstoken = undefined;
