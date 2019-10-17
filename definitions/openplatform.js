@@ -181,7 +181,7 @@ FUNC.profile = function(user, callback) {
 		var app = MAIN.apps[i];
 		var userapp = user.apps[app.id];
 		if (app && !app.blocked && userapp)
-			meta.apps.push({ id: app.id, favorite: userapp.favorite, icon: app.icon, title: app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: userapp.notifications === false, responsive: app.responsive, countnotifications: userapp.countnotifications, countbadges: userapp.countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: userapp.position, color: app.color, workshopid: app.workshopid });
+			meta.apps.push({ id: app.id, favorite: userapp.favorite, icon: app.icon, title: app.titles ? (app.titles[user.language] || app.title) : app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: userapp.notifications === false, responsive: app.responsive, countnotifications: userapp.countnotifications, countbadges: userapp.countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: userapp.position, color: app.color, workshopid: app.workshopid });
 	}
 
 	if (user.sa)

@@ -107,7 +107,7 @@
 							<div class="multilanguage" data-id="{{ m.id }}">
 								<div class="key"><i class="fa fa-times red exec" data-exec="?/localizeremove"></i>{{ m.id }}</div>
 								<div class="value">
-									<div class="editable" data-editable="maxlength:30" bind="?.titles.{{ m.id }}__text"></div>
+									<div class="editable" data-editable="maxlength:30" bind="?.titles.{{ m.id }}__text__empty"></div>
 								</div>
 							</div>
 						{{ end }}
@@ -147,17 +147,6 @@
 
 		exports.reload = function(com) {
 			var model = GET('?');
-			var titles = model.titles;
-
-			if (titles == null)
-				model.titles = titles = {};
-
-			var arr = [];
-			var keys = Object.keys(titles);
-			for (var i = 0; i < keys.length; i++)
-				arr.push({ id: keys[i], value: titles[keys[i]] });
-
-			SET('?.titles2', arr);
 			com.reconfigure({ title: model.id ? '@(Edit app)' : '@(Add app)' });
 		};
 
@@ -167,12 +156,17 @@
 			opt.items = languages;
 			opt.placeholder = '@(Search language)';
 			opt.callback = function(item) {
+
 				var model = GET('?');
+				if (!model.titles)
+					model.titles = {};
+
 				if (model.titles[item.id] == null) {
 					model.titles[item.id] = model.title;
 					model.titles2.push({ id: item.id, value: model.title || '@(Title)' });
 					BIND('?.titles2');
 				}
+
 			};
 			SETTER('directory', 'show', opt);
 		};
@@ -201,6 +195,19 @@
 				EXEC('main/refreshmeta');
 			}));
 		};
+
+		WATCH('?.titles', function(path, value) {
+
+			if (value == null)
+				GET('?').titles = value = {};
+
+			var arr = [];
+			var keys = Object.keys(value);
+			for (var i = 0; i < keys.length; i++)
+				arr.push({ id: keys[i], value: value[keys[i]] });
+
+			SET('?.titles2', arr);
+		}, true);
 
 		WATCH('?.url', function(path, value, type) {
 

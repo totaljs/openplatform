@@ -214,7 +214,12 @@ OP.init = function(callback) {
 				OP.ready = true;
 				return;
 			}
-			document.body.innerHTML = '401: Unauthorized';
+
+			if (document.body)
+				document.body.innerHTML = '401: Unauthorized';
+			else
+				throw new Error('401: Unauthorized');
+
 			setTimeout(function() {
 				window.close();
 			}, 2000);
