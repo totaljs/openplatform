@@ -50,3 +50,5 @@ AUTH(function($) {
 			$.success(profile);
 	});
 });
+
+LOCALIZE(req => req.query.language);
