@@ -267,8 +267,8 @@ NEWSCHEMA('Users', function(schema) {
 		model.welcome = undefined;
 		model.apps = undefined;
 
-		if (model.repo == null)
-			model.repo = undefined;
+		if (!model.repo)
+			model.repo = null;
 
 		model.previd = undefined;
 
@@ -422,7 +422,10 @@ NEWSCHEMA('Users', function(schema) {
 				if (response.repo && typeof(response.repo) === 'object')
 					response.repo = JSON.stringify(response.repo);
 				if (response.repo && model.repo && response.repo !== model.repo) {
-					data.repo = model.repo;
+					if (model.repo)
+						data.repo = model.repo;
+					else
+						data.repo = null;
 					modified = true;
 				}
 			}
@@ -825,8 +828,10 @@ function processapps(model, callback) {
 			var item = response.findItem('appid', id);
 			if (item)
 				db.update('tbl_user_app', { roles: app.roles, appid: id, inherited: false, dtupdated: NOW }).where('id', model.id + id);
-			else
-				db.insert('tbl_user_app', { id: model.id + id, userid: model.id, appid: id, dtcreated: NOW, inherited: false, roles: app.roles });
+			else {
+				var appdata = MAIN.apps.findItem('id', id);
+				db.insert('tbl_user_app', { id: model.id + id, userid: model.id, appid: id, dtcreated: NOW, inherited: false, roles: app.roles, position: appdata.position || 0 });
+			}
 
 			tmp[id] = 1;
 		}
