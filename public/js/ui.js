@@ -2730,7 +2730,7 @@ COMPONENT('processes@2', function(self, config) {
 
 		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
-		var language = user.language && user.language != 'en' ? ('&language=' + user.language) : '';
+		var language = '&language=' + (user.language || 'en');
 		var index = url.indexOf('?');
 		if (index === -1)
 			return url + '?openplatform=' + accesstoken + language;
@@ -3746,7 +3746,7 @@ COMPONENT('processes', function(self, config) {
 
 		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
-		var language = user.language && user.language != 'en' ? ('&language=' + user.language) : '';
+		var language = '&language=' + (user.language || 'en');
 		var index = url.indexOf('?');
 		if (index === -1)
 			return url + '?openplatform=' + accesstoken + language;
