@@ -18,7 +18,7 @@ header img { width: 28px; float: left; border-radius: 100px; margin: 7px 8px 0 8
 .caption i { margin-right: 5px; }
 
 .initials { width: 37px; line-height: 37px; text-align: center; color: white; display: block; padding: 0; font-weight: bold; border-radius: 100px; cursor: default; }
-header .initials { float: left; line-height: 28px; width: 28px; font-size: 12px; margin: 4px 10px 0 3px; cursor: pointer; }
+header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px; margin: 5px 13px 0 5px; cursor: pointer; }
 
 .menu .caption { margin: 0 10px; margin-top: 20px; }
 .links { padding: 10px 10px 0 10px; }
