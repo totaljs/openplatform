@@ -719,7 +719,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', ''), 'usertheme');
+			CSS('.userborder{border-color:{0}}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
