@@ -2429,7 +2429,7 @@ COMPONENT('processes@2', function(self, config) {
 			if (user.desktop === 3) {
 				var footer = WIDTH() === 'xs' ? 40 : 0;
 				el.css({ width: main, height: WH - footer });
-				iframe.iframe.css({ height: WH });
+				iframe.iframe.css({ height: WH - footer });
 			} else {
 				el.css({ width: w, height: h, left: 0, top: 45 + common.electronpadding });
 				iframe.iframe.css({ height: h - margin });
@@ -2844,8 +2844,9 @@ COMPONENT('processes@2', function(self, config) {
 		var h = WH - header.height() - 31 - common.electronpadding;
 		var w = WW;
 		if (user.desktop === 3) {
+			var xs = WIDTH() === 'xs';
 			w = self.closest('.main').width();
-			h = WH - (WIDTH() === 'xs' ? 40 : 0);
+			h = WH - (xs ? 40 : 0);
 			margin = 0;
 			iframe.element.css({ width: w, height: h });
 		} else
