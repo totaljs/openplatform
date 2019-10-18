@@ -2730,11 +2730,12 @@ COMPONENT('processes@2', function(self, config) {
 
 		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
+		var language = user.language && user.language != 'en' ? ('&language=' + user.language) : '';
 		var index = url.indexOf('?');
 		if (index === -1)
-			return url + '?openplatform=' + accesstoken;
+			return url + '?openplatform=' + accesstoken + language;
 		else
-			return url.substring(0, index + 1) + 'openplatform=' + accesstoken + '&' + url.substring(index + 1);
+			return url.substring(0, index + 1) + 'openplatform=' + accesstoken + language + '&' + url.substring(index + 1);
 	}
 
 	self.wait = function(app, callback, silent) {
@@ -3745,11 +3746,12 @@ COMPONENT('processes', function(self, config) {
 
 		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
+		var language = user.language && user.language != 'en' ? ('&language=' + user.language) : '';
 		var index = url.indexOf('?');
 		if (index === -1)
-			return url + '?openplatform=' + accesstoken;
+			return url + '?openplatform=' + accesstoken + language;
 		else
-			return url.substring(0, index + 1) + 'openplatform=' + accesstoken + '&' + url.substring(index + 1);
+			return url.substring(0, index + 1) + 'openplatform=' + accesstoken + language + '&' + url.substring(index + 1);
 	}
 
 	self.wait = function(app, callback, silent) {
@@ -7823,6 +7825,11 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 			}
 		});
 
+		self.event('focus', 'input', function() {
+			if (self.opt.search === false)
+				$(this).blur();
+		});
+
 		self.event('click', cls2 + '-button', function(e) {
 			skipclear = false;
 			input.val('');
@@ -8182,7 +8189,8 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 
 		!isMOBILE && setTimeout(function() {
 			ready = true;
-			input.focus();
+			if (opt.search !== false)
+				input.focus();
 		}, 200);
 
 		setTimeout(function() {
