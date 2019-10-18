@@ -528,15 +528,16 @@ $(window).on('message', function(e) {
 			if (data.body.body instanceof Array) {
 				// error
 				data.body.body = data.body.body[0].error;
-			}
+			} else
+				data.body.body = data.body.body.markdown(MD_NOTIFICATION);
 
 			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'info' ? 'done' : 'success', app.id);
-			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body.markdown(MD_LINE), null, null, data.body.button);
+			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body, null, null, data.body.button);
 			break;
 
 		case 'confirm':
 			FUNC.playsound('confirm', app.id);
-			SETTER('confirm', 'show', data.body.body, data.body.buttons, function(index) {
+			SETTER('confirm', 'show', data.body.body.markdown(MD_NOTIFICATION), data.body.buttons, function(index) {
 				var iframe = processes.findProcess(app.id);
 				iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
 			});
