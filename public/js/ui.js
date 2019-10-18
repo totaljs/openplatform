@@ -5583,11 +5583,12 @@ COMPONENT('colorselector', 'colors:#000000,#4285f4,#00a8ff,#16a085,#27ae60,#8e44
 	};
 
 	self.setter = function(value) {
+		var cls = 'ui-colorselector-selected';
 		var index = colors.indexOf(value);
-		selected && selected.rclass('selected');
+		selected && selected.rclass(cls);
 		if (index !== -1) {
 			selected = list.eq(index);
-			selected.aclass('selected');
+			selected.aclass(cls);
 		}
 	};
 });

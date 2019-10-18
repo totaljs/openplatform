@@ -10,7 +10,6 @@ AUTH(function($) {
 		return;
 	}
 
-
 	var opt = {};
 	opt.key = CONF.cookie_key || 'auth';
 	opt.name = CONF.cookie || '__opu';
