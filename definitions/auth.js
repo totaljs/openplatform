@@ -10,6 +10,7 @@ AUTH(function($) {
 		return;
 	}
 
+
 	var opt = {};
 	opt.key = CONF.cookie_key || 'auth';
 	opt.name = CONF.cookie || '__opu';
@@ -31,7 +32,6 @@ AUTH(function($) {
 		$.req.$language = profile.language;
 		$.req.locked = (meta.settings ? meta.settings.indexOf('locked:1') != -1 : false) || locked;
 
-		console.log($.req.$language);
 		profile.ip = $.ip;
 
 		if (profile.desktop == null)
