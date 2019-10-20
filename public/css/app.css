@@ -32,10 +32,10 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .header button, .toolbar button { outline: 0; background: linear-gradient(white,#F8F8F8); border: 1px solid #E0E0E0; border-left: 0; font-size: 11px; height: 24px; padding: 0 8px; margin: 0; color: black; min-width: 80px; vertical-align: top; text-align: center; }
 .header button i, .toolbar button i { margin-right: 5px; }
 .header button .fa-plus-circle, .header button .fa-check-circle, .toolbar button .fa-plus-circle, .toolbar button .fa-check-circle { color: #68B25B; }
-.header button:hover, .toolbar button:hover { border-color: #D0D0D0; }
 .header button:active, .toolbar button:active { background: #E9E9E9; }
 .header button:first-child, .toolbar button:first-child { border-left: 1px solid #E0E0E0; border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
 .header button:last-child, .toolbar button:last-child  { border-top-right-radius: 2px; border-bottom-right-radius: 2px; }
+.header button:hover, .toolbar button:hover { border-color: #D0D0D0; }
 .header button:disabled, .toolbar button:disabled { color: silver; cursor: not-allowed; border-color: #E0E0E0 !important; background: linear-gradient(#F8F8F8,#F0F0F0); }
 .header button:disabled i, .toolbar button:disabled i { color: silver !important; }
 .header button.right, .toolbar button.right { float: right; margin-left: 5px; margin-right: 0; text-align: center; }
