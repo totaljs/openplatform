@@ -819,6 +819,7 @@ input:invalid { box-shadow: none; }
 .ui-input-inner .ui-input-increment { padding: 8px 0 0; }
 .ui-input-inner .ui-input-increment i { line-height: 10px; }
 .ui-input-masked input { letter-spacing: 1px; font-family: Menlo,Consolas,monospace; }
+.ui-input-camouflaged input { font-weight: bold; }
 
 .ui-dark .ui-input-required .ui-input-control { border-color: #404040; }
 .ui-dark .ui-input-control { border-color: #303030; background-color: #202020; }
