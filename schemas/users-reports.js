@@ -35,18 +35,30 @@ NEWSCHEMA('Users/Reports', function(schema) {
 			db.insert('tbl_user_report', model).callback($.done());
 
 			var app = MAIN.apps.findItem('id', model.appid);
-
 			var builder = [];
+			var hr = '<div style="margin:15px 0 0;height:5px;border:0;border-top:1px solid #E0E0E0"></div>';
 
 			builder.push('<b>OpenPlatform:</b> ' + CONF.name);
+			builder.push('<b>URL:</b> ' + CONF.url);
 			builder.push('<b>Application:</b> ' + app.name);
-			builder.push('<b>Device:</b> ' + $.req.headers['user-agent'].parseUA());
+			builder.push('<b>Device:</b> ' + $.req.headers['user-agent'].parseUA() + ' (IP: ' + $.ip + ')');
+			builder.push('<b>Date</b> ' + NOW.format('yyyy-MM-dd HH:mm'));
 			builder.push('<b>Type:</b> ' + model.type);
-			builder.push('<b>User:</b> ' + $.user.name);
-			builder.push('<b>IP address:</b> ' + $.ip);
+			builder.push('<b>Mode:</b> ' + ($.user.desktop === 3 ? 'Desktop mode' : $.user.desktop === 2 ? 'Tabbed mode' : 'Windowed mode'));
+			builder.push(hr);
+			builder.push('<b>User:</b> ' + $.user.name + ($.user.sa ? ' <em>(sa)</em>' : ''));
 			builder.push('<b>Email:</b> ' + $.user.email);
 			$.user.phone && builder.push('<b>Phone:</b> ' + $.user.phone);
-			builder.push('');
+
+			var roles = [];
+			var appdata = $.user.apps[app.id];
+
+			if (appdata)
+				roles = appdata.roles;
+
+			builder.push('<b>Groups:</b> ' + $.user.groups.join(', '));
+			builder.push('<b>Roles:</b> ' + roles.join(', '));
+			builder.push(hr);
 			builder.push(model.body);
 
 			// Send email

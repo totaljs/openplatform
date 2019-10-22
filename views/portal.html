@@ -387,6 +387,7 @@
 					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
 					app.internal.countnotifications = 0;
 					app.internal.countbadges = 0;
+					BIND('user.apps');
 				}
 				SETTER('processes', 'maximize', id);
 			};
@@ -736,14 +737,8 @@
 
 				common.liverefreshing = false;
 
-				if (response == null || typeof(response) === 'string') {
-					// maybe blocked
-					location.reload(true);
-					return;
-				}
-
-				if (response.desktop !== user.desktop) {
-					// layout changed
+				if (response == null || typeof(response) === 'string' || response.desktop !== user.desktop) {
+					// maybe locked or layout changed
 					location.reload(true);
 					return;
 				}
