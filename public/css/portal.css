@@ -232,9 +232,9 @@ h3 i { margin-right: 5px; }
 
 .ui-quicknotifications-margin { margin-right: 325px; }
 
-.ui-quicknotifications { position: absolute; right: 0; width: 320px; top: 45px; z-index: 100; }
+.ui-quicknotifications { position: absolute; right: 0; width: 320px; top: 5px; z-index: 100; }
 .ui-quicknotifications i { margin-right: 3px; }
-.ui-quicknotifications-message { background-color: rgba(60,60,60,0.9); margin: 10px; padding: 0; border-radius: 3px; font-size: 12px; cursor: pointer; transition: all 0.3s;  box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+.ui-quicknotifications-message { background-color: rgba(60,60,60,0.9); margin: 10px; padding: 0; border-radius: 3px; font-size: 12px; cursor: pointer; transition: all 0.3s; box-shadow: 0 3px 10px rgba(0,0,0,0.08);  border: 1px solid rgba(100,100,100,0.2); }
 .light .ui-quicknotifications-message { background-color: rgba(255,255,255,0.9); }
 
 .bk-ui-quicknotifications-success { border-top-color: #8CC152 !important; }
