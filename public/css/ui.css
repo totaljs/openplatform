@@ -1168,7 +1168,7 @@ input:invalid { box-shadow: none; }
 
 .ui-apps .ui-apps-checkbox:first-child { border-top: 0; }
 .ui-apps-checkbox { font-size: 14px; margin-bottom: 2px; cursor: pointer; height: 22px; padding-top: 2px; }
-.ui-apps-checkbox i { width: 16px; height: 16px; border: 1px solid #E0E0E0; border-radius: 2px; float: left; color: white; margin: 2px 0 0; font-size: 11px; text-align: center; line-height: 16px; }
+.ui-apps-checkbox i { width: 16px; height: 16px; border: 1px solid #D0D0D0; border-radius: 2px; float: left; color: white; margin: 2px 0 0; font-size: 11px; text-align: center; line-height: 16px; }
 .ui-apps-checked i { background-color: #4285F3; border-color: #4285F3; }
 .ui-apps-checkbox span { display: block; margin: 0 0 0 22px; }
 .ui-apps-roles { padding: 0 0 8px 22px; margin: 5px 0 0; }

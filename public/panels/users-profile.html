@@ -84,7 +84,7 @@
 				<div class="padding" style="padding-bottom:10px">
 					<div class="row">
 						<div class="col-sm-6 m">
-							<div data---="input__?.dtbeg__type:date;maxlength:10;placeholder:@(yyyy-MM-dd)__null">@(Start of employment)</div>
+							<div data---="input__?.dtbeg__type:date;maxlength:10;placeholder:@(yyyy-MM-dd)__NOW">@(Start of employment)</div>
 						</div>
 						<div class="col-sm-6 m">
 							<div data---="input__?.dtend__type:date;maxlength:10;placeholder:@(yyyy-MM-dd)__null">@(End of employment)</div>
@@ -145,6 +145,9 @@
 						<div class="help">@(<b>Group ID</b> is suitable for pairing of users from the same company or group.)</div>
 					</div>
 				</div>
+				<div data---="input__?.note__maxlength:80__''">@(Note)</div>
+				<div class="help m">@(Internal custom note for the user.)</div>
+
 				<div class="row">
 					<div class="col-sm-6 m">
 						<div data---="input__?.dateformat__dirsource:dateformats;dirsearch:false__'yyyy-MM-dd'">@(Date format)</div>
@@ -183,18 +186,22 @@
 				<div data---="radiobutton__?.darkmode__items:@(Light mode)|false,@(Dark mode)|true__'false'"></div>
 				<div data---="colorselector__?.colorscheme__null__'#4285f4'" style="margin-bottom:15px"></div>
 
-				<div class="caption"><i class="fa fa-lock"></i>@(Login data)</div>
+				<div class="caption"><i class="fa fa-lock"></i>@(Login)</div>
 				<div class="row">
 					<div class="col-sm-6 m">
-						<div data---="input__?.login__maxlength:50;required:1__''">@(Login name)</div>
+						<div data---="input__?.login__maxlength:50;required:1__''">@(Name)</div>
+						<div class="help">
+							<span class="link exec" data-exec="?/loginemail"><i class="far fa-envelope-o"></i>@(Assign email)</span>
+						</div>
 					</div>
 					<div class="col-sm-6 m">
-						<div data---="input__?.password__maxlength:30;required:1;camouflage:1__GUID(20)">@(Password)</div>
+						<div data---="input__?.password__maxlength:30;required:1;camouflage:•;placeholder:@(Type a new password)" data-bind="?.id__config:'required:'+(value?0:1)">@(Password)</div>
 						<div class="help">
-							<span class="link exec" data-exec="?/password">@(Generate password)</span>
+							<span class="link exec" data-exec="?/password"><i class="fas fa-key"></i>@(Generate password)</span>
 						</div>
 					</div>
 				</div>
+
 			</div>
 			<div class="padding bg-smoke">
 				<div class="caption"><i class="fa fa-folder"></i>@(Groups)</div>
@@ -282,6 +289,10 @@
 			AJAX('GET /api/op/groupids/', { q: q }, next);
 		};
 
+		exports.loginemail = function() {
+			SET('?.login', GET('?.email'));
+		};
+
 		exports.searchuser = function(el, next) {
 			var opt = {};
 			opt.element = el;
@@ -297,10 +308,6 @@
 			};
 			SETTER('directory', 'show', opt);
 		};
-
-		WATCH('?.email', function(path, value) {
-			if (value && value.length > 5 && !usersprofilepanel.login)
-				SET('?.login', value);
-		}, true);
 	});
+
 </script>

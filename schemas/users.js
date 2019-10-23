@@ -34,6 +34,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('reference', 'String(100)');
 	schema.define('position', 'String(40)');
 	schema.define('locality', 'String(40)');
+	schema.define('note', 'String(80)');
 	schema.define('login', 'String(120)');
 	schema.define('locking', Number); // in minutes (0 = disabled)
 	schema.define('password', 'String(70)'); // optional 30, but 70 is because of backward compatibility
@@ -64,7 +65,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('apps', '[Object]');  // [{ id: UID, roles: [] }]
 
 	var fields = { id: 1, name: 1, online: 1, dtcreated: 1, dtupdated: 1, dtmodified: 1, dtlogged: 1 };
-	var fieldsall = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged'];
+	var fieldsall = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged', 'note'];
 	var fieldsallpublic = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged', 'verifytoken', 'accesstoken'];
 
 	(function() {
@@ -164,6 +165,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.gender && builder.gridfilter('gender', opt, String);
 		opt.language && builder.gridfilter('language', opt, String);
 		opt.supervisor && builder.gridfilter('supervisor', opt, String);
+		opt.note && builder.gridfilter('note', opt, String);
 		opt.deputy && builder.gridfilter('deputy', opt, String);
 		opt.desktop && builder.gridfilter('desktop', opt, Number);
 		opt.inactive && builder.query('inactive=' + (BOOL[opt.inactive] || 'false'));
@@ -256,7 +258,7 @@ NEWSCHEMA('Users', function(schema) {
 		model.linker = model.name.slug();
 
 		model.dtcreated = NOW;
-		model.password = $.controller == null && model.previd ? model.password : model.password.hash(CONF.hashmode || 'sha256');
+		model.password = $.controller == null && model.previd ? model.password : model.password.hash(CONF.hashmode || 'sha256', CONF.hashsalt);
 		model.verifytoken = U.GUID(15);
 		model.accesstoken = U.GUID(40);
 		model.dtupdated = NOW;
@@ -394,7 +396,7 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			if ((!keys || keys.password) && model.password && !model.password.startsWith('***'))
-				data.password = model.password.hash(CONF.hashmode || 'sha256');
+				data.password = model.password.hash(CONF.hashmode || 'sha256', CONF.hashsalt);
 
 			var modified = false;
 
@@ -434,6 +436,9 @@ NEWSCHEMA('Users', function(schema) {
 				data.blocked = model.blocked;
 				modified = true;
 			}
+
+			if ((!keys || keys.note) && response.note !== model.note)
+				data.note = model.note;
 
 			if ((!keys || keys.phone) && response.phone !== model.phone) {
 				data.phone = model.phone;
@@ -865,8 +870,11 @@ FUNC.users_read = function(id, callback) {
 			return;
 		}
 
-		response.otpsecret = response.verifytoken = response.accesstoken = response.password = '******';
-		response.pin = '****';
+		delete response.otpsecret;
+		delete response.password;
+		delete response.verifytoken;
+		delete response.accesstoken;
+		delete response.pin;
 
 		for (var i = 0; i < response.apps.length; i++) {
 			if (!response.apps[i].roles)

@@ -79,7 +79,7 @@ NEWSCHEMA('Account', function(schema) {
 		}
 
 		if (model.password && !model.password.startsWith('***')) {
-			user.password = model.password = model.password.sha256();
+			user.password = model.password = model.password.hash(CONF.hashmode || 'sha256', CONF.hashsalt);
 			model.dtpassword = NOW;
 			user.dtpassword = NOW;
 		} else
@@ -154,7 +154,9 @@ NEWSCHEMA('Account', function(schema) {
 		}
 
 		if (model.pin && model.pin.length === 4 && model.pin && model.pin != '0000')
-			user.pin = model.pin.sha256().hash() + '';
+			model.pin = user.pin = model.pin.hash(CONF.hashmode || 'sha256', CONF.hashsalt).hash(true) + '';
+		else
+			model.pin = undefined;
 
 		DBMS().modify('tbl_user', model).where('id', $.user.id).error('error-users-404').callback(function(err, response) {
 			if (response) {
@@ -197,7 +199,7 @@ NEWSCHEMA('Account', function(schema) {
 			return;
 		}
 
-		var pin = pin.sha256().hash() + '';
+		var pin = pin.hash(CONF.hashmode || 'sha256', CONF.hashsalt).hash(true) + '';
 		if ($.user.pin !== pin) {
 			$.invalid('error-pin');
 			return;

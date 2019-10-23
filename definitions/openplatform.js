@@ -81,10 +81,12 @@ FUNC.login = function(login, password, callback) {
 				OTP[login] = { date: NOW.add('2 minutes'), id: response.id, otpsecret: response.otpsecret };
 				callback(null, 'otp');
 			} else {
-				if (response.password === password.sha256()) {
+
+				if (response.password === password.hash(CONF.hashmode || 'sha256', CONF.hashsalt)) {
 					callback(null, response.id);
 					return;
 				}
+
 			}
 		}
 		callback();
