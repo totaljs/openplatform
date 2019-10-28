@@ -97,7 +97,7 @@
 			</div>
 			<div class="padding">
 				<div class="caption">@(Main settings)</div>
-				<div data---="input__?.title__required:1;maxlength:40">@(Title)</div>
+				<div data---="input__?.title__required:1;maxlength:40__''">@(Title)</div>
 
 				<div data-bind="?.titles2__show:value && value.length" class="hidden" style="margin-top:10px">
 					<div class="caption">@(Localized titles)</div>
@@ -116,7 +116,7 @@
 				</div>
 				<div class="m help"><span class="exec link" data-exec="?/localize"><i class="fa fa-language"></i>@(Add localization)</span></div>
 
-				<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX;camouflage:•">@(Serial number)</div>
+				<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX;camouflage:•__''">@(Serial number)</div>
 				<div class="help m"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
 				<div class="row">
 					<div class="col-sm-6">
@@ -125,7 +125,7 @@
 				</div>
 				<div class="help">@(Lower index means higher position in the list of applications).</div>
 				<hr />
-				<div data---="checkbox__?.blocked__checkicon:lock">@(Application is blocked)</div>
+				<div data---="checkbox__?.blocked__checkicon:lock__false">@(Application is blocked)</div>
 				<div data-bind="?.id__show" class="hidden">
 					<div data---="checkbox__?.rebuildaccesstoken__checkicon:refresh">@(Re-build access token)</div>
 					<div data---="checkbox__?.rebuildservicetoken__checkicon:refresh">@(Re-build service token)</div>
