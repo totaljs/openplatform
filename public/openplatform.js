@@ -111,6 +111,10 @@ OP.titlesuccess = function(msg) {
 	OP.send('titlesuccess', msg);
 };
 
+OP.install = function(url) {
+	OP.send('install', { type: 'install', url: url });
+};
+
 OP.titlewarning = function(msg) {
 	if (msg instanceof Array)
 		msg = msg[0].error;

@@ -55,8 +55,8 @@
 			});
 		};
 
-		exports.create = function() {
-			SETR('appsprofilepanel', { sn: '', title: '' });
+		exports.create = function(url) {
+			SETR('appsprofilepanel', { sn: '', title: '', url: url || '' });
 			SET('common.panel', 'appsprofile');
 		};
 

@@ -16,8 +16,8 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .ui-layout-section .dg-h-container { border: 0 !important; }
 .ui-layout-right { background-color: white; }
 .ui-layout-bottom { background-color: white; }
-.ui-layout-main .ui-layout-left { background-color: #F8F8F8; }
-.ui-dark .ui-layout-right { background-color: #202020; }
+.ui-layout-left { background-color: #F8F8F8; }
+.ui-dark .ui-layout-left { background-color: #202020; }
 .tbgcolor { border-radius: 2px; color: white; padding: 1px 3px; }
 
 .inline-message { padding: 5px; border: 2px solid #68B25B; border-radius: 2px; font-size: 12px; color: #68B25B; margin-bottom: 10px; }

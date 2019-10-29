@@ -50,6 +50,7 @@
 				</div>
 				-->
 				@{part('more')}
+
 				<div class="item exec" data-exec="main/show" data-if="wiki">
 					<i class="far fa-life-ring"></i>
 					<span>@(Documentation)</span>
@@ -68,8 +69,6 @@
 		<div data---="part__common.page__if:roles;url:/parts/users-roles.html;reload:usersroles/reload;cleaner:5" class="hidden"></div>
 		<div data---="part__common.page__if:apps;url:/parts/apps-grid.html;reload:appsgrid/reload;cleaner:5" class="hidden"></div>
 		<div data---="part__common.page__if:marketplace;url:/parts/marketplace.html;reload:marketplace/reload;cleaner:5" class="hidden invisible"></div>
-		<div data---="part__common.page__if:database;url:/parts/database.html;reload:database/reload;cleaner:5" class="hidden invisible"></div>
-		<div data---="part__common.page__if:workshop;url:/parts/workshop.html;reload:workshop/reload;cleaner:5" class="hidden invisible"></div>
 		<div data---="part__common.page__if:wiki;url:/parts/wiki.html;cleaner:5" class="hidden invisible"></div>
 		<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;cleaner:5;delay:500" class="hidden invisible"></div>
 		@{part('main')}
@@ -97,6 +96,15 @@
 	AJAX('GET /api/profile/', function(response) {
 		SET('user', response);
 		SET('common.page', 'users');
+	});
+
+	OP.on('share', function(data) {
+		if (data && data.type === 'install') {
+			OP.loading(true);
+			OP.loading(false, 3000);
+			SET('common.page', 'apps');
+			EXEC(true, 'appsgrid/create', data.url);
+		}
 	});
 
 	PLUGIN('main', function(exports) {

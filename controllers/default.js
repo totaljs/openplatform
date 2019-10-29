@@ -2,7 +2,6 @@ exports.install = function() {
 
 	ROUTE('+GET  /', index);
 	ROUTE('+GET  /admin/');
-	ROUTE('+GET  /database/', database);
 	ROUTE('+GET  /account/');
 	ROUTE('+GET  /welcome/');
 
@@ -11,14 +10,13 @@ exports.install = function() {
 	ROUTE('GET /logout/', logout);
 	ROUTE('GET /lock/', lock);
 
-	ROUTE('GET /workshop/{id}/', workshop);
-
 	FILE('/manifest.json', manifest);
 
 	ROUTE('#404', process404);
 };
 
 function index() {
+
 	var desktop = this.user.desktop;
 	this.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
 }
@@ -81,14 +79,6 @@ function lock() {
 		MAIN.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
 		self.redirect('/');
 	});
-}
-
-function database() {
-	var self = this;
-	if (self.user.sa)
-		self.view('database');
-	else
-		self.throw401();
 }
 
 function process404() {
