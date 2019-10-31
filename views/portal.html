@@ -205,6 +205,8 @@
 			}).on('mousemove', function(e) {
 				if (e.pageY > 50)
 					setTimeout2('tooltiphide', hidetooltip, 200);
+			}).on('mouseleave', function() {
+				setTimeout2('tooltiphide', hidetooltip, 200);
 			}).on('click', function() {
 				clearTimeout2('tooltip');
 				SETTER('!tooltip', 'hide');
