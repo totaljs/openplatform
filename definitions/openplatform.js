@@ -1030,7 +1030,7 @@ FUNC.refreshgroupsroles = function(callback) {
 };
 
 FUNC.refreshapps = function(callback) {
-	DBMS().find('tbl_app').callback(function(err, response) {
+	DBMS().find('tbl_app').sort('dtcreated', true).callback(function(err, response) {
 
 		var fa = { fa: 1, fas: 1, far: 1, fab: 1, fal: 1 };
 
