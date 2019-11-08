@@ -332,6 +332,7 @@ CREATE VIEW view_user AS
 		a.name,
 		a.linker,
 		a.search,
+		a.note,
 		a.firstname,
 		a.lastname,
 		a.middlename,
