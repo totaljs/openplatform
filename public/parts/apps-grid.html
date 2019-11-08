@@ -56,6 +56,10 @@
 		};
 
 		exports.create = function(url) {
+
+			if (typeof(url) !== 'string')
+				url = '';
+
 			SETR('appsprofilepanel', { sn: '', title: '', url: url || '' });
 			SET('common.panel', 'appsprofile');
 		};
