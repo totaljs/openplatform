@@ -60,7 +60,7 @@
 			if (typeof(url) !== 'string')
 				url = '';
 
-			SETR('appsprofilepanel', { sn: '', title: '', url: url || '' });
+			SETR('appsprofilepanel', { sn: '', title: '', url: url || '', position: (main.apps.length + 1) });
 			SET('common.panel', 'appsprofile');
 		};
 
