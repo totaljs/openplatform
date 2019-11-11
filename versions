@@ -1,0 +1,11 @@
+// JS
+/js/windowed.js    : auto
+/js/portal.js      : auto
+/js/tabbed.js      : auto
+/js/app.js         : auto
+
+// CSS
+/css/tabbed.css    : auto
+/css/windowed.css  : auto
+/css/portal.css    : auto
+/css/app.css       : auto
