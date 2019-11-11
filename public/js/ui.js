@@ -2648,6 +2648,7 @@ COMPONENT('processes@2', function(self, config) {
 
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
+		iframe.element.find('.ui-process-loading').aclass('hidden');
 		self.message(iframe, 'reload');
 	};
 
@@ -3675,6 +3676,7 @@ COMPONENT('processes', function(self, config) {
 
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
+		iframe.element.find('.ui-process-loading').aclass('hidden');
 		self.message(iframe, 'reload');
 	};
 

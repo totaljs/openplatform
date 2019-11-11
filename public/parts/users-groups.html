@@ -99,16 +99,15 @@
 			opt.callback = function(item) {
 				var checked = GET('?.checked');
 				if (item.id === 'remove') {
-					OP.confirm('@(Are you sure you want to remove selected groups?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
-						if (index)
-							return;
+					OP.confirm2('@(Are you sure you want to remove selected groups?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
 						OP.loading(true);
-						checked.wait(function(item, next) {
+						checked.wait(function(item, next, index) {
 							OP.progress((index / checked.length) * 100);
-							AJAX('DELETE /api/op/groups/?id=' + encodeURIComponent(item.id), null, next);
+							AJAX('DELETE /api/op/groups/?id=' + encodeURIComponent(item.id), next);
 						}, function() {
 							OP.progress(100);
 							OP.loading(false, 500);
+							exports.scope();
 							exports.refresh();
 						});
 					});
