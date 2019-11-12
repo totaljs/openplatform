@@ -175,6 +175,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.sa && builder.query('sa=' + (BOOL[opt.sa] || 'false'));
 		opt.otp && builder.query('otp=' + (BOOL[opt.otp] || 'false'));
 		opt.online && builder.query('online=' + (BOOL[opt.online] || 'false'));
+		opt.customer && builder.query('customer=' + (BOOL[opt.customer] || 'false'));
 		opt.q && builder.search('search', opt.q);
 		opt.name && builder.gridfilter('name', opt, String);
 		opt.firstname && builder.gridfilter('firstname', opt, String);
@@ -545,6 +546,7 @@ NEWSCHEMA('Users', function(schema) {
 
 			if ((!keys || keys.contractid) && response.contractid !== model.contractid) {
 				data.contractid = model.contractid;
+				data.customer = model.contractid === 5;
 				modified = true;
 			}
 

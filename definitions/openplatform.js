@@ -671,6 +671,9 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	if (user.meta && (!fields || fields.meta))
 		obj.meta = user.meta;
 
+	if (user.customer && (!fields || fields.customer))
+		obj.customer = user.customer;
+
 	if (!fields || fields.notifications)
 		obj.notifications = user.notifications;
 
@@ -869,6 +872,7 @@ FUNC.loadguest = function(callback) {
 
 			if (!user.reference)
 				user.reference = undefined;
+
 			if (!user.dateformat)
 				user.dateformat = 'yyyy-MM-dd';
 
