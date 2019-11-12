@@ -1287,7 +1287,7 @@ function recovery(next) {
 
 			var groups = Object.keys(groups);
 			groups.wait(function(item, next) {
-				$SAVE('Users/Groups', { id: item, name: item, note: 'Re-imported' }, function(err) {
+				$PATCH('Users/Groups', { id: item, name: item, note: 'Re-imported' }, function(err) {
 					if (err)
 						console.log('Error re-import group:', err, item);
 					next();
