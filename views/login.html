@@ -85,7 +85,7 @@
 		<div class="padding">
 
 			<div data-bind="common.type__show:value === 'login'" class="hidden">
-				<form method="POST" onsubmit="return false">
+				<form method="POST" action="/" id="login">
 					<div class="m" data---="textbox__form.name__icon2:user;required:true;autofocus:true;autofill:true;$id:formname">@(Login name)</div>
 					<div class="m" data---="textbox__form.password__icon2:lock;required:true;type:password;autofill:true">@(Password)</div>
 					<div data---="error__form.response"></div>
@@ -96,7 +96,7 @@
 						@{fi}
 					</div>
 					<div data---="validation__form">
-						<button type="button" class="b" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
+						<button type="submit" class="b" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Login)</button>
 					</div>
 				</form>
 			</div>
@@ -116,7 +116,7 @@
 			</div>
 
 			<div data-bind="common.type__show:value === 'password'" class="hidden">
-				<form method="POST" onsubmit="return false">
+				<form method="POST" onsubmit="return false" action="/">
 					<div class="m" data---="textbox__password.name__icon2:user;required:true;autofill:true;$id:passwordname;placeholder:@(Login name or email address)">@(Login name)</div>
 					<div data---="error__password.response"></div>
 					<div data---="validation__password">
@@ -137,9 +137,11 @@
 
 	<script>
 
-	$('form').submit(false);
-
 	var common = { type: 'login' };
+
+	$('#login').submit(function(e) {
+		e.preventDefault();
+	});
 
 	COMPONENT('validation', function(self, config) {
 
@@ -272,6 +274,7 @@
 
 			if (config.autofill) {
 				attrs.attr('name', self.path.replace(/\./g, '_'));
+				attrs.attr('autocomplete', 'on');
 				self.autofill();
 			}
 
@@ -499,6 +502,7 @@
 			AJAX('POST /api/login/', form, function(response) {
 				if (response.value === 'otp') {
 					SET('common.type', 'otp');
+					$('#login').submit();
 					setTimeout(function() {
 						$('.ui-pin-input:first-child').find('input').focus();
 					}, 200);
