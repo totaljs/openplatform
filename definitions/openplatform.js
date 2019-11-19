@@ -799,7 +799,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.type = meta.type;
 			app.responsive = meta.responsive;
 			app.mobilemenu = meta.mobilemenu;
-			app.serververify = meta.serververify;
+			app.serververify = meta.serververify !== false;
 			app.services = response.services || null;
 			app.reference = meta.reference;
 
