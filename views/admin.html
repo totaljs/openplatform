@@ -1,9 +1,17 @@
-<div data---="layout__null__parent:parent" class="invisible">
+<div data---="layout__common.layout__parent:parent" class="invisible">
 
 	<script type="text/plain">
 		{
 			left: { size: 223 },
-			main: {}
+			main: {},
+			xs: {
+				left: { show: false },
+				main: {}
+			},
+			menu: {
+				left: { show: true, size: '100%' },
+				main: { show: false }
+			}
 		}
 	</script>
 
@@ -86,6 +94,15 @@
 	var contracts = [{ id: 1, name: '@(Permanent)' }, { id: 2, name: '@(Contractor)' }, { id: 3, name: '@(Intern)' }, { id: 4, name: '@(Part-time)' }, { id: 5, name: '@(Customer)' }];
 
 	common.marketplace = '@{CONF.marketplace}';
+
+	OP.on('menu', function() {
+		SET('common.layout', common.layout === 'menu' ? '' : 'menu');
+	});
+
+	WATCH('common.page', function() {
+		if (common.layout)
+			SET('common.layout', '');
+	});
 
 	OP.appearance();
 

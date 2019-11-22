@@ -4,7 +4,7 @@
 		<label><i class="fa fa-users"></i>@(Users)</label>
 		<div>
 			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
-			<button data-bind="?.items__enabled:value && value.items.length" disabled class="exec" data-exec="?/assign"><i class="fa fa-folder"></i>@(Assign)</button>
+			<button data-bind="?.items__enabled:value && value.items.length" disabled class="exec hidden-xs" data-exec="?/assign"><i class="fa fa-folder"></i>@(Assign)</button>
 			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
 			<button data-bind="?.checked__enabled:value && value.length" class="exec" data-exec="?/menu" disabled><i class="fa fa-check-circle green"></i>@(Options)</button>
 		</div>

@@ -187,7 +187,7 @@ FUNC.profile = function(user, callback) {
 	}
 
 	if (user.sa)
-		meta.apps.push({ id: '_admin', icon: 'cog', title: 'Control panel', name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: false });
+		meta.apps.push({ id: '_admin', icon: 'cog', title: 'Control panel', name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: true });
 
 	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: 'Welcome', name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false });
 
