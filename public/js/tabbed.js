@@ -452,6 +452,7 @@ $(window).on('message', function(e) {
 
 		case 'done':
 			if (data.body instanceof Array) {
+				FUNC.focus();
 				FUNC.playsound('alert', app.id);
 				SETTER('message', 'warning', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body[0].error.markdown(MD_LINE));
 			} else {
@@ -489,6 +490,8 @@ $(window).on('message', function(e) {
 					el.tclass('hidden', !data.body.show);
 				} else
 					el.tclass('hidden', data.body !== true); // backward compatibility
+				if (!el.hclass('hidden'))
+					FUNC.focus();
 			}
 			break;
 
@@ -546,12 +549,13 @@ $(window).on('message', function(e) {
 				data.body.body = data.body.body[0].error;
 			} else
 				data.body.body = data.body.body.markdown(MD_NOTIFICATION);
-
+			FUNC.focus();
 			FUNC.playsound(data.body.type === 'warning' ? 'alert' : data.body.type === 'info' ? 'done' : 'success', app.id);
 			SETTER('message', data.body.type || 'success', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="fa fa-{0} mr5"></i>{1}</div>'.format(app.internal.icon, app.internal.title) + data.body.body, null, null, data.body.button);
 			break;
 
 		case 'confirm':
+			FUNC.focus();
 			FUNC.playsound('confirm', app.id);
 			SETTER('confirm', 'show', data.body.body.markdown(MD_NOTIFICATION), data.body.buttons, function(index) {
 				var iframe = processes.findProcess(app.id);

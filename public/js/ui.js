@@ -1,7 +1,10 @@
 screen.lockOrientation && screen.lockOrientation('portrait');
 
 // var TTIC = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#34495e','#16a085','#2980b9','#8e44ad','#2c3e50','#f1c40f','#e67e22','#e74c3c','#d35400','#c0392b'];
-
+FUNC.focus = function() {
+	$(W).focus();
+	document.body.focus();
+};
 
 Thelpers.initials = function(value) {
 	var index = value.indexOf('.');
