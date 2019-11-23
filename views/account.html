@@ -160,8 +160,11 @@
 		<div class="scroller-padding npt">
 			<div data-bind="account.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<div class="padding">
-					<div data---="input__account.password__maxlength:30;type:password;required:1;innerlabel:1">@(New password)</div>
-					<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
+					<div data---="input__account.password__maxlength:30;type:password;required:1;innerlabel:1;$id:password">@(New password)</div>
+					<div class="help">
+						<span class="link pull-right exec" data-exec="account_password">@(Generate)</span>
+						<i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)
+					</div>
 				</div>
 			</div>
 			<br />
@@ -313,6 +316,11 @@
 		el.find('.' + cls).rclass(cls);
 		el.find('span[data-volume="{0}"]'.format(value)).aclass('selected');
 		CHANGE('account.email');
+	}
+
+	function account_password() {
+		SET('account.password', GUID(7) + '-' + GUID(7) + '-' + GUID(7));
+		SETTER('#password', 'password', false);
 	}
 
 	ON('resize', function() {
