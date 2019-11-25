@@ -1104,7 +1104,7 @@ COMPONENT('form', 'zindex:52', function(self, config) {
 		}
 
 		if (self.template) {
-			var is = self.template.isCOMPILABLE();
+			var is = self.template.COMPILABLE();
 			self.find('div[data-jc-replaced]').html(self.template);
 			self.template = null;
 			is && COMPILE();
