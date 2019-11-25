@@ -954,7 +954,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 	};
 });
 
-COMPONENT('form', 'zindex:52', function(self, config) {
+COMPONENT('form', 'zindex:12', function(self, config) {
 
 	var cls = 'ui-form';
 	var cls2 = '.' + cls;
@@ -1034,7 +1034,9 @@ COMPONENT('form', 'zindex:52', function(self, config) {
 		$(document.body).append('<div id="{0}" class="hidden {4}-container invisible noscrollbar"><div class="{4}-container-padding"><div class="{4}" style="max-width:{1}px"><div data-bind="@config__html span:value.title__change .{4}-icon:@icon" class="{4}-title"><button name="cancel" class="{4}-button-close{3}" data-path="{2}"><i class="fa fa-times"></i></button><i class="{4}-icon"></i><span></span></div></div></div>'.format(self.ID, config.width || 800, self.path, config.closebutton == false ? ' hidden' : '', cls));
 
 		var scr = self.find('> script');
-		self.template = scr.length ? scr.html() : '';
+		self.template = scr.length ? scr.html().trim() : '';
+		if (scr.length)
+			scr.remove();
 
 		var el = $('#' + self.ID);
 		var body = el.find(cls2)[0];
@@ -1105,7 +1107,7 @@ COMPONENT('form', 'zindex:52', function(self, config) {
 
 		if (self.template) {
 			var is = self.template.COMPILABLE();
-			self.find('div[data-jc-replaced]').html(self.template);
+			self.find(cls2).append(self.template);
 			self.template = null;
 			is && COMPILE();
 		}
