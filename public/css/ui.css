@@ -396,7 +396,7 @@ input:invalid { box-shadow: none; }
 
 .ui-process-loading-text { position: absolute; top: 44%; left: 50%; width: 250px; margin: 64px 0 0 -125px; text-align: center; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 12px; color: white; line-height: 16px; }
 .light .ui-process-loading-text { color: black; }
-.ui-process { position: fixed; left: 100px; top: 120px; width: 800px; height: 500px; z-index: 10; overflow: hidden; box-shadow: 0 5px 30px rgba(0,0,0,0.2); opacity: 1; transition: transform 0.2s, opacity 0.3s; transform: scale(1); }
+.ui-process { position: absolute; left: 100px; top: 120px; width: 800px; height: 500px; z-index: 10; overflow: hidden; box-shadow: 0 5px 30px rgba(0,0,0,0.2); opacity: 1; transition: transform 0.2s, opacity 0.3s; transform: scale(1); }
 .ui-process .loading { background-position: 50% 44%; }
 .ui-process-iframe-container { background-color: #202020; position: relative; }
 .light .ui-process-iframe-container { background-color: white; position: relative; }

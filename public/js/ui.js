@@ -954,7 +954,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 	};
 });
 
-COMPONENT('form', 'zindex:12', function(self, config) {
+COMPONENT('form', 'zindex:30', function(self, config) {
 
 	var cls = 'ui-form';
 	var cls2 = '.' + cls;
