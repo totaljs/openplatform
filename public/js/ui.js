@@ -954,8 +954,10 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 	};
 });
 
-COMPONENT('form', function(self, config) {
+COMPONENT('form', 'zindex:52', function(self, config) {
 
+	var cls = 'ui-form';
+	var cls2 = '.' + cls;
 	var W = window;
 	var csspos = {};
 
@@ -964,23 +966,32 @@ COMPONENT('form', function(self, config) {
 		W.$$form_level = W.$$form_level || 1;
 		W.$$form = true;
 
-		$(document).on('click', '.ui-form-button-close', function() {
+		$(document).on('click', cls2 + '-button-close', function() {
 			SET($(this).attrd('path'), '');
 		});
 
-		$(W).on('resize', function() {
-			SETTER('form', 'resize');
-		});
+		var resize = function() {
+			for (var i = 0; i < M.components.length; i++) {
+				var com = M.components[i];
+				if (com.name === 'form' && com.dom.offsetParent && com.$ready && !com.$removed)
+					com.resize();
+			}
+		};
 
-		$(document).on('click', '.ui-form-container', function(e) {
+		if (W.OP)
+			W.OP.on('resize', resize);
+		else
+			$(W).on('resize', resize);
+
+		$(document).on('click', cls2 + '-container', function(e) {
 			var el = $(e.target);
-			if (!(el.hclass('ui-form-container-padding') || el.hclass('ui-form-container')))
+			if (!(el.hclass(cls + '-container-padding') || el.hclass(cls + '-container')))
 				return;
 			var form = $(this).find('.ui-form');
-			var cls = 'ui-form-animate-click';
-			form.aclass(cls);
+			var c = cls + '-animate-click';
+			form.aclass(c);
 			setTimeout(function() {
-				form.rclass(cls);
+				form.rclass(c);
 			}, 300);
 		});
 	}
@@ -988,13 +999,13 @@ COMPONENT('form', function(self, config) {
 	self.readonly();
 	self.submit = function() {
 		if (config.submit)
-			EXEC(config.submit, self);
+			EXEC(config.submit, self.hide);
 		else
 			self.hide();
 	};
 
 	self.cancel = function() {
-		config.cancel && EXEC(config.cancel, self);
+		config.cancel && EXEC(config.cancel, self.hide);
 		self.hide();
 	};
 
@@ -1010,7 +1021,7 @@ COMPONENT('form', function(self, config) {
 	self.resize = function() {
 		if (!config.center || self.hclass('hidden'))
 			return;
-		var ui = self.find('.ui-form');
+		var ui = self.find(cls2);
 		var fh = ui.innerHeight();
 		var wh = $(W).height();
 		var r = (wh / 2) - (fh / 2);
@@ -1020,10 +1031,18 @@ COMPONENT('form', function(self, config) {
 
 	self.make = function() {
 
-		$(document.body).append('<div id="{0}" class="hidden ui-form-container"><div class="ui-form-container-padding"><div class="ui-form" style="max-width:{1}px"><div data-bind="@config__html span:value.title__change .ui-form-icon:@icon" class="ui-form-title"><button class="ui-form-button-close{3}" data-path="{2}"><i class="fa fa-times"></i></button><i class="ui-form-icon"></i><span></span></div></div></div>'.format(self.ID, config.width || 800, self.path, config.closebutton == false ? ' hidden' : ''));
+		$(document.body).append('<div id="{0}" class="hidden {4}-container invisible noscrollbar"><div class="{4}-container-padding"><div class="{4}" style="max-width:{1}px"><div data-bind="@config__html span:value.title__change .{4}-icon:@icon" class="{4}-title"><button name="cancel" class="{4}-button-close{3}" data-path="{2}"><i class="fa fa-times"></i></button><i class="{4}-icon"></i><span></span></div></div></div>'.format(self.ID, config.width || 800, self.path, config.closebutton == false ? ' hidden' : '', cls));
+
+		var scr = self.find('> script');
+		self.template = scr.length ? scr.html() : '';
+
 		var el = $('#' + self.ID);
-		el.find('.ui-form')[0].appendChild(self.dom);
-		self.rclass('hidden');
+		var body = el.find(cls2)[0];
+
+		while (self.dom.children.length)
+			body.appendChild(self.dom.children[0]);
+
+		self.rclass('hidden invisible');
 		self.replace(el);
 
 		self.event('scroll', function() {
@@ -1031,21 +1050,20 @@ COMPONENT('form', function(self, config) {
 			EMIT('reflow', self.name);
 		});
 
-		self.find('button').on('click', function() {
-			switch (this.name) {
+		self.event('click', 'button[name]', function() {
+			var t = this;
+			switch (t.name) {
 				case 'submit':
 					self.submit(self.hide);
 					break;
 				case 'cancel':
-					!this.disabled && self[this.name](self.hide);
+					!t.disabled && self[t.name](self.hide);
 					break;
 			}
 		});
 
 		config.enter && self.event('keydown', 'input', function(e) {
-			e.which === 13 && !self.find('button[name="submit"]')[0].disabled && setTimeout(function() {
-				self.submit(self);
-			}, 800);
+			e.which === 13 && !self.find('button[name="submit"]')[0].disabled && setTimeout(self.submit, 800);
 		});
 	};
 
@@ -1054,18 +1072,18 @@ COMPONENT('form', function(self, config) {
 			return;
 		switch (key) {
 			case 'width':
-				value !== prev && self.find('.ui-form').css('max-width', value + 'px');
+				value !== prev && self.find(cls2).css('max-width', value + 'px');
 				break;
 			case 'closebutton':
-				self.find('.ui-form-button-close').tclass(value !== true);
+				self.find(cls2 + '-button-close').tclass('hidden', value !== true);
 				break;
 		}
 	};
 
 	self.setter = function(value) {
 
-		setTimeout2('ui-form-noscroll', function() {
-			$('html').tclass('ui-form-noscroll', !!$('.ui-form-container').not('.hidden').length);
+		setTimeout2(cls + '-noscroll', function() {
+			$('html').tclass(cls + '-noscroll', !!$(cls2 + '-container').not('.hidden').length);
 		}, 50);
 
 		var isHidden = value !== config.if;
@@ -1073,16 +1091,23 @@ COMPONENT('form', function(self, config) {
 		if (self.hclass('hidden') === isHidden)
 			return;
 
-		setTimeout2('formreflow', function() {
+		setTimeout2(cls, function() {
 			EMIT('reflow', self.name);
 		}, 10);
 
 		if (isHidden) {
 			self.aclass('hidden');
 			self.release(true);
-			self.find('.ui-form').rclass('ui-form-animate');
+			self.find(cls2).rclass(cls + '-animate');
 			W.$$form_level--;
 			return;
+		}
+
+		if (self.template) {
+			var is = self.template.isCOMPILABLE();
+			self.find('div[data-jc-replaced]').html(self.template);
+			self.template = null;
+			is && COMPILE();
 		}
 
 		if (W.$$form_level < 1)
@@ -1090,7 +1115,7 @@ COMPONENT('form', function(self, config) {
 
 		W.$$form_level++;
 
-		self.css('z-index', (W.$$form_level * 10) + 30);
+		self.css('z-index', W.$$form_level * config.zindex);
 		self.element.scrollTop(0);
 		self.rclass('hidden');
 
@@ -1101,18 +1126,19 @@ COMPONENT('form', function(self, config) {
 		config.default && DEFAULT(config.default, true);
 
 		if (!isMOBILE && config.autofocus) {
-			var el = self.find(config.autofocus === true ? 'input[type="text"],select,textarea' : config.autofocus);
+			var el = self.find(config.autofocus ? 'input[type="text"],select,textarea' : config.autofocus);
 			el.length && el[0].focus();
 		}
 
 		setTimeout(function() {
+			self.rclass('invisible');
 			self.element.scrollTop(0);
-			self.find('.ui-form').aclass('ui-form-animate');
+			self.find(cls2).aclass(cls + '-animate');
 		}, 300);
 
 		// Fixes a problem with freezing of scrolling in Chrome
 		setTimeout2(self.ID, function() {
-			self.css('z-index', (W.$$form_level * 10) + 31);
+			self.css('z-index', (W.$$form_level * config.zindex) + 1);
 		}, 500);
 	};
 });

@@ -709,7 +709,7 @@
 		};
 
 		Thelpers.icon = function(val) {
-			return 'fa-' + ((/\sfar$/).test(val) ? val : (val + ' fa'));
+			return 'fa-' + ((/\sfar|fab|fas|fal$/).test(val) ? val : (val + ' fa'));
 		};
 
 		ON('response', function(response) {
