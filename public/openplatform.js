@@ -76,10 +76,12 @@ document.onkeydown = function(e) {
 		// F5
 		OP.loading(false);
 		OP.progress(0);
-		if (location.href.indexOf('openplatform=') === -1)
-			location.href = OP.tokenizator(location.href);
-		else
-			location.reload(true);
+		setTimeout(function() {
+			if (location.href.indexOf('openplatform=') === -1)
+				location.href = OP.tokenizator(location.href);
+			else
+				location.reload(true);
+		}, 200);
 		is = true;
 	} else if (e.keyCode === 9 && (e.altKey || e.ctrlKey || e.metaKey)) {
 		// CTRL/ALT/CMD + TAB
