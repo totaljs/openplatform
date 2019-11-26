@@ -2681,7 +2681,31 @@ COMPONENT('processes@2', function(self, config) {
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
 		iframe.element.find('.ui-process-loading').aclass('hidden');
+		self.progress(id, 0);
 		self.message(iframe, 'reload');
+	};
+
+	self.progress = function(id, val) {
+		var app = dashboard.apps.findItem('id', id);
+		if (!app)
+			return;
+		var p = val || 0;
+		if (p >= 100 || p < 0)
+			p = 0;
+		if (app.progress === p)
+			return;
+		var appwindow = $('.ap' + app.id);
+		appwindow.find('span').animate({ width: p + '%' }, 100);
+		appwindow.tclass('hidden', !p || p <= 0 || p >= 100);
+		appwindow = appwindow.parent();
+		if (user.desktop === 2) {
+			var icon = appwindow.find('> div > .fa');
+			if (p)
+				!app.progress && icon.rclass2('fa-').rclass('usercolor').aclass('fa-spinner fa-pulse usercolor');
+			else
+				icon.rclass2('fa-').rclass('usercolor').aclass('fa-' + app.internal.icon);
+		}
+		app.progress = p;
 	};
 
 	self.reorder = function() {
@@ -3709,6 +3733,7 @@ COMPONENT('processes', function(self, config) {
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
 		iframe.element.find('.ui-process-loading').aclass('hidden');
+		self.progress(id, 0);
 		self.message(iframe, 'reload');
 	};
 
@@ -3718,6 +3743,29 @@ COMPONENT('processes', function(self, config) {
 			var index = order.indexOf(iframe.id);
 			iframe.element.rclass2('ui-process-priority-').aclass('ui-process-priority-' + (index + 1));
 		}
+	};
+
+	self.progress = function(id, val) {
+		var app = dashboard.apps.findItem('id', id);
+		if (!app)
+			return;
+		var p = val || 0;
+		if (p >= 100 || p < 0)
+			p = 0;
+		if (app.progress === p)
+			return;
+		var appwindow = $('.ap' + app.id);
+		appwindow.find('span').animate({ width: p + '%' }, 100);
+		appwindow.tclass('hidden', !p || p <= 0 || p >= 100);
+		appwindow = appwindow.parent();
+		if (user.desktop === 2) {
+			var icon = appwindow.find('> div > .fa');
+			if (p)
+				!app.progress && icon.rclass2('fa-').rclass('usercolor').aclass('fa-spinner fa-pulse usercolor');
+			else
+				icon.rclass2('fa-').rclass('usercolor').aclass('fa-' + app.internal.icon);
+		}
+		app.progress = p;
 	};
 
 	self.kill = function(id) {
