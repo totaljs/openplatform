@@ -43,7 +43,7 @@ header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px;
 .menu { width: 220px; float: left; }
 .container .menu { border-left: 1px solid #404040; }
 .light .container .menu { border-left-color: #D0D0D0; }
-.main { margin-left: 220px; border-left: 1px solid #404040; position: relative; }
+.main { margin-left: 220px; border-left: 1px solid #404040; position: relative; overflow: hidden; }
 .container .main { border-right: 1px solid #404040; }
 .light .container .main { border-right-color: #D0D0D0; }
 .light .main { border-left-color: #D0D0D0; }
@@ -310,7 +310,7 @@ h3 i { margin-right: 5px; }
 	100% { transform: scale(1); }
 }
 
-.ui-process { left: auto !important; top: auto !important; }
+.ui-process { left: auto; top: auto; }
 .ui-wiki { top: 0; }
 
 .menu-minimize { float: right; background-color: #202020; z-index: 51; border-left: 1px solid #404040; width: 10px; line-height: 44px; font-size: 8px; text-align: center; cursor: pointer; margin-left: 0; color: gray; }
