@@ -626,9 +626,23 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'open':
-			common.data[data.body.id] = data.body.data;
-			var el = $('.app[data-id="{0}"]'.format(data.body.id));
-			el.length && el.trigger('click');
+
+			var target = user.apps.findItem('id', data.body.id);
+			if (target == null) {
+				data.body.id = data.body.id.toLowerCase();
+				for (var i = 0; i < user.apps.length; i++) {
+					if (user.apps[i].name.toLowerCase() === data.body.id) {
+						target = user.apps[i];
+						break;
+					}
+				}
+			}
+
+			if (target) {
+				var el = $('.app[data-id="{0}"]'.format(target.id));
+				el.length && el.trigger('click');
+			}
+
 			break;
 
 		case 'kill':
