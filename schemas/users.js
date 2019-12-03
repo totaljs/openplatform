@@ -91,6 +91,8 @@ NEWSCHEMA('Users', function(schema) {
 				return;
 			}
 
+			$.extend && $.extend(response);
+
 			MAIN.session.count($.id, function(err, meta) {
 				response.session = meta;
 				$.callback(response);
@@ -209,6 +211,8 @@ NEWSCHEMA('Users', function(schema) {
 		builder.paginate(opt.page, opt.limit);
 		builder.callback($.callback);
 
+		$.extend && $.extend(builder);
+
 	}, 'statusid:Number,contractid:Number,page:Number,limit:Number,statusid:Number');
 
 	schema.addWorkflow('check', function($) {
@@ -290,6 +294,8 @@ NEWSCHEMA('Users', function(schema) {
 			$.model.token = ENCRYPTREQ($.req, { id: model.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
 			MAIL(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, model.language);
 		}
+
+		$.extend && $.extend(model);
 
 		DBMS().add('tbl_user', model).callback(function(err) {
 
@@ -629,6 +635,8 @@ NEWSCHEMA('Users', function(schema) {
 			if ((!keys || keys.colorscheme) && response.colorscheme !== model.colorscheme)
 				data.colorscheme = model.colorscheme;
 
+			$.extend && $.extend(data);
+
 			var id = response.id;
 			response.dbms.replace(data).save(function() {
 				if (!keys || keys.apps) {
@@ -669,6 +677,8 @@ NEWSCHEMA('Users', function(schema) {
 				// Updates data
 				db.modify('tbl_user', { supervisorid: response.supervisorid || null }).where('supervisorid', id);
 				db.modify('tbl_user', { deputyid: response.deputyid || null }).where('deputyid', id);
+
+				$.extend && $.extend();
 
 				// Removes data
 				db.remove('tbl_user').where('id', id).callback(function() {
@@ -796,6 +806,8 @@ NEWSCHEMA('Users', function(schema) {
 					response.items[i] = FUNC.makeprofile(response.items[i], obj.app.allowreadusers, obj.app, fields);
 				$.callback(response);
 			});
+
+			$.extend && $.extend(builder);
 		});
 
 	}, 'statusid:Number,contractid:Number,page:Number,limit:Number,statusid:Number');

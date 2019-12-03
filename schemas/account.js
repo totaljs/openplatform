@@ -32,7 +32,12 @@ NEWSCHEMA('Account', function(schema) {
 			return;
 		}
 
-		DBMS().read('tbl_user').error('error-users-404').fields('email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat').where('id', $.user.id).callback($.callback);
+		var builder = DBMS().read('tbl_user');
+		builder.error('error-users-404');
+		builder.fields('email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat');
+		builder.where('id', $.user.id);
+		builder.callback($.callback);
+		$.extend && $.extend(builder);
 	});
 
 
@@ -157,6 +162,8 @@ NEWSCHEMA('Account', function(schema) {
 			model.pin = user.pin = model.pin.hash(CONF.hashmode || 'sha256', CONF.hashsalt).hash(true) + '';
 		else
 			model.pin = undefined;
+
+		$.extend && $.extend(model);
 
 		DBMS().modify('tbl_user', model).where('id', $.user.id).error('error-users-404').callback(function(err, response) {
 			if (response) {

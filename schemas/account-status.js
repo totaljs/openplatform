@@ -17,6 +17,8 @@ NEWSCHEMA('Account/Status', function(schema) {
 		$.user.status = model.status;
 		$.user.dtupdated = NOW;
 		$.user.dtmodified = NOW;
+
+		$.extend && $.extend(model);
 		DBMS().modify('tbl_user', model).where('id', $.user.id);
 		FUNC.log('account/status', $.user.id, model.statusid + ': ' + model.status, $);
 		EMIT('account/update', $.user.id);

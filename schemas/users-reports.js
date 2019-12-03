@@ -32,6 +32,7 @@ NEWSCHEMA('Users/Reports', function(schema) {
 				return;
 			}
 
+			$.extend && $.extend(model);
 			db.insert('tbl_user_report', model).callback($.done());
 
 			var app = MAIN.apps.findItem('id', model.appid);

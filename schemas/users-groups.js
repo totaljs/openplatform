@@ -49,6 +49,8 @@ NEWSCHEMA('Users/Groups', function(schema) {
 
 		var db = DBMS();
 
+		$.extend && $.extend(model);
+
 		db.upd('tbl_group', model, true).where('id', id).insert(function(doc) {
 			doc.dtcreated = NOW;
 			doc.dtupdated = undefined;

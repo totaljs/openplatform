@@ -64,6 +64,7 @@ NEWSCHEMA('Apps', function(schema) {
 			arr.push(obj);
 		}
 
+		$.extend && $.extend(arr);
 		$.callback(arr);
 	});
 
@@ -83,7 +84,8 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.autorefresh = item.autorefresh;
 			obj.settings = item.settings;
 			obj.position = item.position;
-			$.callback(item);
+			$.extend && $.extend(obj);
+			$.callback(obj);
 		} else
 			$.invalid('error-apps-404');
 	});
@@ -142,6 +144,8 @@ NEWSCHEMA('Apps', function(schema) {
 		if (!model.titles)
 			model.titles = null;
 
+		$.extend && $.extend(model);
+
 		DBMS().insert('tbl_app', model).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
@@ -179,6 +183,8 @@ NEWSCHEMA('Apps', function(schema) {
 		model.linker = model.name.slug(40);
 		model.search = (model.name + ' ' + model.title).toSearch().max(40);
 
+		$.extend && $.extend(model);
+
 		DBMS().modify('tbl_app', model).where('id', $.id).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
@@ -199,6 +205,9 @@ NEWSCHEMA('Apps', function(schema) {
 
 		var app = MAIN.apps.findItem('id');
 		FUNC.log('apps/remove', $.id, app ? app.name : '', $);
+
+		$.extend && $.extend(app);
+
 		DBMS().remove('tbl_app').where('id', $.id).callback(function() {
 			FUNC.refreshapps(function() {
 				FUNC.updateroles($.done());
