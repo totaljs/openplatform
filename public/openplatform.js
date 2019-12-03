@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 417;
+OP.version = 418;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -254,13 +254,14 @@ OP.init = function(callback) {
 	data.ua = navigator.userAgent;
 	OP.accesstoken = accesstoken;
 
-	var timeout = setTimeout(function() {
-		timeout = null;
-		callback('timeout');
-		document.body.innerHTML = '401: Unauthorized';
-	}, 2000);
+	$(document).ready(function() {
 
-	setTimeout(function() {
+		var timeout = setTimeout(function() {
+			timeout = null;
+			callback('timeout');
+			document.body.innerHTML = '401: Unauthorized';
+		}, 2000);
+
 		OP.send('verify', data, function(err, response) {
 			if (timeout) {
 				clearTimeout(timeout);
@@ -273,7 +274,8 @@ OP.init = function(callback) {
 			OP.id = response.id;
 			OP.openplatformurl = response.openplatformurl;
 		});
-	}, 5);
+
+	});
 };
 
 OP.$sendfocus = function() {
