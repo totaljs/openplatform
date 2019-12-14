@@ -4,16 +4,14 @@
 		<label><i class="fa fa-key"></i>@(Roles (read-only))</label>
 	</div>
 
-	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:45;scroll:false">
-		<div data---="datagrid__?.items__height:parent;bottom:65;checkbox:0">
-			<script type="text/plain">
-				[
-					{ name: 'name', text: '@(Name)', width: 200, template: '{{ name | bgcolor }}' },
-					{ name: 'roles', text: '@(Groups)', width: 350, template: '{{ groups | join }}', search: true, sort: false },
-					{ name: 'apps', text: '@(Applications)', width: 350, template: '{{ apps | join }}', search: true, sort: false }
-				]
-			</script>
-		</div>
+	<div data---="datagrid__?.items__height:.ui-layout-section;noborder:1;checkbox:0;margin:45">
+		<script type="text/plain">
+			[
+				{ name: 'name', text: '@(Name)', width: 200, template: '{{ name | bgcolor }}' },
+				{ name: 'roles', text: '@(Groups)', width: 350, template: '{{ groups | join }}', search: true, sort: false },
+				{ name: 'apps', text: '@(Applications)', width: 350, template: '{{ apps | join }}', search: true, sort: false }
+			]
+		</script>
 	</div>
 </div>
 

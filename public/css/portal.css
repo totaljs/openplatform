@@ -321,6 +321,7 @@ h3 i { margin-right: 5px; }
 .menuminimized .menu-minimize i:before { content: '\f105'; }
 .menuminimized .menu { margin-left: -211px; }
 .menuminimized .main { margin-left: 9px; }
+.menuminimized .testmode { display: none; }
 
 .ui-dark .ui-console { border-color: rgba(40,40,40,0.95); }
 .ui-dark .ui-console-tabs { background-color: rgba(40,40,40,0.95); }

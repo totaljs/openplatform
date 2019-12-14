@@ -101,30 +101,30 @@
 
 				<nav class="links npt">
 					@{if CONF.welcome}
-					<button class="app exec" data-exec="internalapp" data-id="_welcome" id="welcomeapp">
+					<div class="app exec" data-exec="internalapp" data-id="_welcome" id="welcomeapp">
 						<span class="close exec" data-exec="Dashboard/close" data-id="welcomeapp"><i class="fa fa-times"></i></span>
 						<i class="fa fa-flag"></i>@(Welcome)
-					</button>
+					</div>
 					@{fi}
 					@{if !user.guest && user.sa}
-						<button class="app exec internal" data-exec="internalapp" data-id="_admin">
+						<div class="app exec internal" data-exec="internalapp" data-id="_admin">
 							<span class="close exec" data-exec="Dashboard/close" data-id="_admin"><i class="fa fa-times"></i></span>
 							<i class="fa fa-cog"></i>@(Control panel)
-						</button>
+						</div>
 					@{fi}
 					@{if !user.guest && CONF.allowprofile}
-					<button class="app exec internal" data-exec="internalapp" data-id="_account">
+					<div class="app exec internal" data-exec="internalapp" data-id="_account">
 						<span class="close exec" data-exec="Dashboard/close" data-id="_account"><i class="fa fa-times"></i></span>
 						<i class="fa fa-user-circle"></i>@(My account)
-					</button>
+					</div>
 					@{fi }
 					@{if !user.guest}
-					<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
+					<div class="app exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</div>
 					@{fi}
 					@{if !user.guest && user.pin}
-					<button class="exec internal" data-exec="internallock"><i class="fa fa-lock"></i>@(Lock screen)</button>
+					<div class="app exec internal" data-exec="internallock"><i class="fa fa-lock"></i>@(Lock screen)</div>
 					@{fi}
-					<button class="exec" data-exec="internallogoff"><i class="fa fa-power-off red"></i>@(Sign out)</button>
+					<div class="app exec" data-exec="internallogoff"><i class="fa fa-power-off red"></i>@(Sign out)</div>
 				</nav>
 
 				@{part('bottom')}
@@ -395,10 +395,12 @@
 			};
 
 			self.close = function(el, e) {
+
 				if (e) {
 					e.stopPropagation();
 					e.preventDefault();
 				}
+
 				self.hidemenu();
 				SETTER('processes', 'kill', el instanceof jQuery ? el.attrd('id') : el);
 			};

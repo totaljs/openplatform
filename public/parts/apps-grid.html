@@ -8,30 +8,28 @@
 		</div>
 	</div>
 
-	<div data---="viewbox__null__height:100;scrollbar:0;parent:.ui-layout-section;margin:45">
-		<div data---="datagrid__main.apps__height:parent;bottom:65;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked">
-			<script type="text/plain">
-				[
-					{ name: 'online', text: '@(Online)', width: 70, template: '{{ if online }}<span class="badge badge-small badge-green">@(online)</span>{{ fi }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
-					{ name: 'blocked', text: '@(Blocked)', width: 100, template: '{{ blocked | boolean(\'red\') }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
-					{ name: 'title', text: '@(Title)', width: 200, template: '{{ if workshopid }}<span class="badge badge-blue mr5">@(workshop)</span>{{ fi }}{{ title }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}' },
-					{ name: 'version', text: '@(Version)', width: 100, align: 1 },
-					{ name: 'email', text: '@(Email)', width: 200 },
-					{ name: 'author', text: '@(Author)', width: 200 },
-					{ name: 'roles', text: '@(Roles)', width: 250, template: '{{ if roles && roles.length }}<i class="fa fa-key"></i> {{ fi }}{{ roles | joinbgcolor(\' \') }}', sort: false, search: '{{ roles | join }}' },
-					{ name: 'allowreadusers', text: '@(Users)', width: 100, template: '{{ allowreadusers | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
-					{ name: 'allowreadapps', text: '@(Apps)', width: 100, template: '{{ allowreadusers | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
-					{ name: 'allowreadprofile', text: '@(Profile)', width: 100, template: '{{ allowreadprofile | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
-					{ name: 'allowreadmeta', text: '@(Meta)', width: 100, template: '{{ allowreadmeta | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
-					{ name: 'services', text: '@(Services)', width: 100, template: '{{ services | boolean }}', align: 1, filter: false, sort: false },
-					{ name: 'responsive', text: '@(Mobile)', width: 100, template: '{{ responsive | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
-					{ name: 'position', text: '@(Position)', width: 100, align: 1 },
-					{ name: 'dtsync', text: '@(Refreshed)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
-					{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
-					{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]', filter: false }
-				]
-			</script>
-		</div>
+	<div data---="datagrid__main.apps__height:.ui-layout-section;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;noborder:1;margin:45">
+		<script type="text/plain">
+			[
+				{ name: 'online', text: '@(Online)', width: 70, template: '{{ if online }}<span class="badge badge-small badge-green">@(online)</span>{{ fi }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'blocked', text: '@(Blocked)', width: 100, template: '{{ blocked | boolean(\'red\') }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'title', text: '@(Title)', width: 200, template: '{{ if workshopid }}<span class="badge badge-blue mr5">@(workshop)</span>{{ fi }}{{ title }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}' },
+				{ name: 'version', text: '@(Version)', width: 100, align: 1 },
+				{ name: 'email', text: '@(Email)', width: 200 },
+				{ name: 'author', text: '@(Author)', width: 200 },
+				{ name: 'roles', text: '@(Roles)', width: 250, template: '{{ if roles && roles.length }}<i class="fa fa-key"></i> {{ fi }}{{ roles | joinbgcolor(\' \') }}', sort: false, search: '{{ roles | join }}' },
+				{ name: 'allowreadusers', text: '@(Users)', width: 100, template: '{{ allowreadusers | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'allowreadapps', text: '@(Apps)', width: 100, template: '{{ allowreadusers | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'allowreadprofile', text: '@(Profile)', width: 100, template: '{{ allowreadprofile | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'allowreadmeta', text: '@(Meta)', width: 100, template: '{{ allowreadmeta | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'services', text: '@(Services)', width: 100, template: '{{ services | boolean }}', align: 1, filter: false, sort: false },
+				{ name: 'responsive', text: '@(Mobile)', width: 100, template: '{{ responsive | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'position', text: '@(Position)', width: 100, align: 1 },
+				{ name: 'dtsync', text: '@(Refreshed)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
+				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
+				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]', filter: false }
+			]
+		</script>
 	</div>
 </div>
 
