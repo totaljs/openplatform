@@ -11732,6 +11732,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		return opt.rows.slice(0);
 	};
 
+	var resizecache = {};
+
 	self.resize = function() {
 
 		if (!opt.cols || self.dom.offsetParent == null)
@@ -11763,8 +11765,18 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		var h = opt.height - footerh;
 		var sh = SCROLLBARWIDTH();
 
-		sheader.css('height', h);
-		sbody.css('height', h - (sh ? (sh + self.scrollbarX.size.thicknessH - 2) : (footerh - 2)));
+		var ismobile = isMOBILE && isTOUCH;
+
+		if (resizecache.mobile !== ismobile && !config.noborder) {
+			resizecache.mobile = ismobile;
+			self.tclass('dg-mobile', ismobile);
+		}
+
+		if (resizecache.h !== h) {
+			resizecache.h = h;
+			sheader.css('height', h);
+			sbody.css('height', h - (sh ? (sh + self.scrollbarX.size.thicknessH - 2) : (footerh - 2)));
+		}
 
 		var w;
 
@@ -11777,7 +11789,10 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			}
 			if (isfrm) {
 				w = screen.width - (self.element.offset().left * 2);
-				self.css('width', w);
+				if (resizecache.wmd !== w) {
+					resizecache.wmd = w;
+					self.css('width', w);
+				}
 			}
 		}
 
@@ -11799,14 +11814,21 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		if (w > width)
 			width = w - 2;
 
-		container.css('height', h);
-		header.css('width', width);
-		vbody.css('width', width);
-		self.find('.dg-body-scrollbar').css('width', width);
+		if (resizecache.hc !== h) {
+			resizecache.hc = h;
+			container.css('height', h);
+		}
 
-		opt.width2 = w;
-		self.scrollbarX.resize();
-		self.scrollbarY.resize();
+		if (resizecache.w !== width) {
+			resizecache.w = width;
+			header.css('width', width);
+			vbody.css('width', width);
+			self.find('.dg-body-scrollbar').css('width', width);
+			opt.width2 = w;
+			self.scrollbarX.resize();
+			self.scrollbarY.resize();
+		}
+
 		// header.parent().css('width', self.scrollbar.area.width());
 	};
 
