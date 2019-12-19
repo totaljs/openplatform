@@ -9563,6 +9563,10 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 				break;
 			case 'minheight':
 			case 'margin':
+			case 'marginxs':
+			case 'marginsm':
+			case 'marginmd':
+			case 'marginlg':
 				!init && self.resize();
 				break;
 			case 'selector': // backward compatibility
@@ -9596,14 +9600,14 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 		if (config.scroll) {
 			if (config.scrollbar) {
 				if (MAIN.version > 17) {
-					scrollbar = window.SCROLLBAR(self.find(cls2 + '-body'), { visibleY: config.visibleY, visibleX: config.visibleX, parent: self.element });
+					scrollbar = W.SCROLLBAR(self.find(cls2 + '-body'), { visibleY: config.visibleY, visibleX: config.visibleX, orientation: config.visibleX ? null : 'y', parent: self.element });
 					self.scrolltop = scrollbar.scrollTop;
 					self.scrollbottom = scrollbar.scrollBottom;
 				} else
 					self.aclass(cls + '-scroll');
 			} else {
 				self.aclass(cls + '-scroll');
-				elb.aclass('noscrollbar');
+				self.find(cls2 + '-body').aclass('noscrollbar');
 			}
 		}
 		self.resize();
@@ -9620,9 +9624,15 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 		if (self.release())
 			return;
 
-		var el = config.parent ? config.parent === 'window' ? $(W) : config.parent === 'parent' ? self.parent() : self.element.closest(config.parent) : self.parent();
+		var el = self.parent(config.parent);
 		var h = el.height();
 		var w = el.width();
+		var width = WIDTH();
+		var margin = config.margin;
+		var responsivemargin = config['margin' + width];
+
+		if (responsivemargin != null)
+			margin = responsivemargin;
 
 		if (h === 0 || w === 0) {
 			self.$waiting && clearTimeout(self.$waiting);
@@ -9630,7 +9640,7 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 			return;
 		}
 
-		h = ((h / 100) * config.height) - config.margin;
+		h = ((h / 100) * config.height) - margin;
 
 		if (config.minheight && h < config.minheight)
 			h = config.minheight;
@@ -9648,14 +9658,10 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 		scrollbar && scrollbar.resize();
 		scrolltop && self.scrolltop(0);
 
-		if (elb.hclass('noscrollbar'))
-			elb.noscrollbar();
-
 		if (!init) {
 			self.rclass('invisible', 250);
 			init = true;
 		}
-
 	};
 
 	self.resizescrollbar = function() {
@@ -10361,7 +10367,7 @@ COMPONENT('layout', 'space:1;border:0;parent:window;margin:0;remember:1', functi
 COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;limit:80;filterlabel:Filter;height:auto;margin:0;resize:true;reorder:true;sorting:true;boolean:true,on,yes;pluralizepages:# pages,# page,# pages,# pages;pluralizeitems:# items,# item,# items,# items;remember:true;highlight:false;unhighlight:true;autoselect:false;buttonapply:Apply;buttonreset:Reset;allowtitles:false;fullwidth_xs:true;clickid:id;dirplaceholder:Search', function(self, config) {
 
 	var opt = { filter: {}, filtercache: {}, filtercl: {}, filtervalues: {}, scroll: false, selected: {}, operation: '' };
-	var header, vbody, footer, container, ecolumns, isecolumns = false;
+	var header, vbody, footer, container, ecolumns, isecolumns = false, ready = false;
 	var sheader, sbody;
 	var Theadercol = Tangular.compile('<div class="dg-hcol dg-col-{{ index }}{{ if sorting }} dg-sorting{{ fi }}" data-index="{{ index }}">{{ if sorting }}<i class="dg-sort fa fa-sort"></i>{{ fi }}<div class="dg-label{{ alignheader }}"{{ if labeltitle }} title="{{ labeltitle }}"{{ fi }}{{ if reorder }} draggable="true"{{ fi }}>{{ label | raw }}</div>{{ if filter }}<div class="dg-filter{{ alignfilter }}{{ if filterval != null && filterval !== \'\' }} dg-filter-selected{{ fi }}"><i class="fa dg-filter-cancel fa-times"></i>{{ if options }}<label data-name="{{ name }}">{{ if filterval }}{{ filterval }}{{ else }}{{ filter }}{{ fi }}</label>{{ else }}<input autocomplete="new-password" type="text" placeholder="{{ filter }}" class="dg-filter-input" name="{{ name }}{{ ts }}" data-name="{{ name }}" value="{{ filterval }}" />{{ fi }}</div>{{ else }}<div class="dg-filter-empty">&nbsp;</div>{{ fi }}</div>');
 	var isIE = (/msie|trident/i).test(navigator.userAgent);
@@ -10402,9 +10408,10 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			var b = (self.rows.length * self.row) - (self.frame * 2) - t;
 			var pos = self.pos * self.limit;
 			var posto = pos + (self.limit * 2);
+			var sh = SCROLLBARWIDTH();
 
 			set.css('height', t);
-			seb.css('height', b < 2 ? isMOBILE && isTOUCH ? (self.row * 2.23) >> 0 : 2 : b);
+			seb.css('height', b < 2 ? isMOBILE ? (config.exec ? (self.row + 1) : (self.row * 2.25)) >> 0 : 3 : b);
 
 			var tmp = self.scrollbar[0].scrollTop;
 			var node = self.el[0];
@@ -10696,11 +10703,11 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		};
 
 		events.unbind = function() {
-			$(window).off('mouseup', events.mouseup).off('mousemove', events.mousemove);
+			$(W).off('mouseup', events.mouseup).off('mousemove', events.mousemove);
 		};
 
 		events.bind = function() {
-			$(window).on('mouseup', events.mouseup).on('mousemove', events.mousemove);
+			$(W).on('mouseup', events.mouseup).on('mousemove', events.mousemove);
 		};
 
 		var hidedir = function() {
@@ -11514,8 +11521,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		if (index !== -1) {
 			var el = vbody.find('.dg-row[data-index="{0}"]'.format(index));
 			if (el.length) {
-				opt.render[index] = self.renderrow(index, row);
-				el.replaceWith(opt.render[index]);
+				opt.render[index] = $(self.renderrow(index, row))[0];
+				el[0].parentNode.replaceChild(opt.render[index], el[0]);
 			}
 		}
 	};
@@ -11697,7 +11704,6 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		self.rebindcss();
 		self.rendercols();
 		self.renderrows(opt.rows);
-
 		opt.sort && opt.sort.sort && self.redrawsorting();
 		opt.cluster && opt.cluster.update(opt.render, true);
 		self.scrolling();
@@ -11736,16 +11742,19 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 	self.resize = function() {
 
-		if (!opt.cols || self.dom.offsetParent == null)
+		if (!opt.cols || HIDDEN(self.dom))
 			return;
 
 		var el;
-		var footerh = footer.length ? footer.height() : 0;
+		var footerh = opt.footer = footer.length ? footer.height() : 0;
 
 		switch (config.height) {
 			case 'auto':
 				el = self.element;
 				opt.height = (WH - (el.offset().top + config.margin));
+				break;
+			case 'window':
+				opt.height = WH - config.margin;
 				break;
 			case 'parent':
 				el = self.element.parent();
@@ -11775,7 +11784,13 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		if (resizecache.h !== h) {
 			resizecache.h = h;
 			sheader.css('height', h);
-			sbody.css('height', h - (sh ? (sh + self.scrollbarX.size.thicknessH - 2) : (footerh - 2)));
+		}
+
+		var tmpsh = h - (sh ? (sh + self.scrollbarX.thinknessX - 2) : (footerh - 2));
+
+		if (resizecache.tmpsh !== h) {
+			resizecache.tmpsh = tmpsh;
+			sbody.css('height', tmpsh + self.scrollbarX.marginY);
 		}
 
 		var w;
@@ -11819,16 +11834,18 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			container.css('height', h);
 		}
 
-		if (resizecache.w !== width) {
-			resizecache.w = width;
+		if (resizecache.width !== width) {
+			resizecache.width = width;
 			header.css('width', width);
 			vbody.css('width', width);
 			self.find('.dg-body-scrollbar').css('width', width);
 			opt.width2 = w;
-			self.scrollbarX.resize();
-			self.scrollbarY.resize();
 		}
 
+		self.scrollbarX.resize();
+		self.scrollbarY.resize();
+
+		ready = true;
 		// header.parent().css('width', self.scrollbar.area.width());
 	};
 
@@ -12020,6 +12037,11 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 	};
 
 	self.setter = function(value, path, type) {
+
+		if (!ready) {
+			setTimeout(self.setter, 100, value, path, type);
+			return;
+		}
 
 		if (config.exec && value == null) {
 			self.operation('refresh');

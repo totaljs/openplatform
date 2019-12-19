@@ -51,8 +51,8 @@
 
 	<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
 
-	<div class="menubutton exec" data-exec="Dashboard/mainmenu"><i class="fa fa-align-justify"></i></div>
-	<div class="menubuttonapp exec" data-exec="Dashboard/mainmenu2"><i class="fas fa-list-ul"></i></div>
+	<div class="menubutton exec" data-exec="Dashboard/mainmenu"><i class="far fa-list-alt"></i></div>
+	<div class="menubuttonapp exec" data-exec="Dashboard/mainmenu2"><i class="fas fa-align-justify"></i></div>
 
 	<div class="container@{if CONF.allowdesktopfluid != false}-fluid@{fi} invisible" data-bind="common.ready__.invisible:!value">
 		<div class="menu">
@@ -67,14 +67,12 @@
 				</div>
 				@{fi}
 				<span class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</span>
-				<!--
-				@{if user.photo}
+				@{if user.photo && user.photo.indexOf('empty') === -1}
 				<img src="/photos/@{user.photo}" class="exec" data-exec="internalapp" data-id="_account" />
 				@{else}
 				<span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span>
 				@{fi}
-				-->
-				<span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span>
+				<!-- <span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span> -->
 				<span class="title">@{CONF.name}</span>
 			</header>
 			<div data---="viewbox__null__margin:77;parent:window">
@@ -406,7 +404,7 @@
 			};
 
 			self.mainmenu = function() {
-				$(document.body).tclass('menushow');
+				$('body').tclass('menushow');
 				$('.noscrollbar').noscrollbar();
 			};
 
@@ -556,8 +554,9 @@
 						}
 					}
 
-					if (!skip && !user.apps.findItem('favorite', true))
-						SET('common.startmenu', true, 500);
+					if (!skip && !user.apps.findItem('favorite', true)) {
+						isMOBILE && setTimeout(self.mainmenu, 100);
+					}
 				}
 			};
 
