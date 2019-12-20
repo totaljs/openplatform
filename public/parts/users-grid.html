@@ -60,9 +60,14 @@
 		};
 
 		exports.filter = function(type, filter, sort, page) {
+
+			if (type === 'init')
+				return;
+
 			if (filter == null)
 				filter = {};
-			filter.page = page;
+
+			filter.page = page || 1;
 			filter.sort = sort;
 			AJAX('GET /api/op/users/', filter, '?.items');
 		};

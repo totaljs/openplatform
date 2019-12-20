@@ -21,13 +21,13 @@
 			com.reconfigure({ title: reportbug.app.name });
 		};
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 			var model = CLONE(GETR('?'));
 			model.app = undefined;
 			if (!model.isscreenshot)
 				model.screenshot = '';
 			AJAX('POST /api/op/reports/', model, FUNC.messageresponse('@(Report has been sent successfully.)'));
-			com.hide();
+			hide();
 		};
 	});
 </script>

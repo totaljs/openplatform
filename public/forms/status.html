@@ -95,12 +95,12 @@
 			SET('statusform', { statusid: user.statusid, status: user.status }, true);
 		};
 
-		exports.submit = function(com) {
+		exports.submit = function(hide) {
 
 			var model = GETR('?');
 
 			if (user.statusid === model.statusid && user.status === model.status) {
-				com.hide();
+				hide();
 				return;
 			}
 
@@ -111,7 +111,7 @@
 				UPDATE('user');
 			});
 
-			com.hide();
+			hide();
 		};
 
 		exports.selected = function(value, path, el) {

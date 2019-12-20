@@ -10408,7 +10408,6 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			var b = (self.rows.length * self.row) - (self.frame * 2) - t;
 			var pos = self.pos * self.limit;
 			var posto = pos + (self.limit * 2);
-			var sh = SCROLLBARWIDTH();
 
 			set.css('height', t);
 			seb.css('height', b < 2 ? isMOBILE ? (config.exec ? (self.row + 1) : (self.row * 2.25)) >> 0 : 3 : b);
@@ -11151,7 +11150,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			isecolumns && self.applycolumns();
 		});
 
-		config.exec && self.operation('init');
+		// config.exec && self.operation('init');
 	};
 
 	self.operation = function(type) {
@@ -11788,10 +11787,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 		var tmpsh = h - (sh ? (sh + self.scrollbarX.thinknessX - 2) : (footerh - 2));
 
-		if (resizecache.tmpsh !== h) {
-			resizecache.tmpsh = tmpsh;
-			sbody.css('height', tmpsh + self.scrollbarX.marginY);
-		}
+		resizecache.tmpsh = h;
+		sbody.css('height', tmpsh + self.scrollbarX.marginY + (config.exec && self.scrollbarX.size.empty ? footerh : 0));
 
 		var w;
 
