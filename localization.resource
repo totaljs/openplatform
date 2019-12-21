@@ -1,5 +1,5 @@
 // Total.js localization file
-// Created by Peter Širka: 2019-12-21 08:34
+// Created by Peter Širka: 2019-12-21 08:40
 
 // schemas/users-password.js
 T-907041958      : Password recovery
@@ -240,7 +240,7 @@ T-1515789758     : High priority
 T-1838205928     : SUBMIT
 T-466519807      : Report has been sent successfully.
 
-// public/forms/report.html, public/forms/sessions.html, public/panels/apps-profile.html, public/panels/users-assign.html, public/panels/users-group.html, public/panels/users-profile.html, public/panels/workshop-view.html, public/parts/apps-grid.html, public/parts/settings.html, public/parts/users-grid.html, public/parts/users-groups.html
+// public/forms/report.html, public/forms/sessions.html, public/panels/apps-profile.html, public/panels/users-assign.html, public/panels/users-group.html, public/panels/users-profile.html, public/parts/apps-grid.html, public/parts/settings.html, public/parts/users-grid.html, public/parts/users-groups.html
 T2011110042      : Cancel
 
 // public/forms/screenshot.html
@@ -298,7 +298,7 @@ T-264919974      : Edit application
 T-1990199247     : Add application
 T-311812962      : Application has been saved successfully
 
-// public/panels/apps-profile.html, public/panels/users-profile.html, public/panels/workshop-view.html, public/parts/users-grid.html, public/parts/users-groups.html, public/parts/users-locations.html, public/parts/users-roles.html
+// public/panels/apps-profile.html, public/panels/users-profile.html, public/parts/users-grid.html, public/parts/users-groups.html, public/parts/users-locations.html, public/parts/users-roles.html
 T2420395         : Name
 
 // public/panels/apps-profile.html, public/parts/apps-grid.html
@@ -319,10 +319,8 @@ T-1237527035     : Assign groups
 T575154374       : The selected groups below will be applied for all users according to the current user-grid filter.
 T15654139        : Insert groups
 T1722653904      : Remove groups
-T-1362234670     : Groups have been applied successfully
-
-// public/panels/users-assign.html, public/panels/workshop-view.html
 T62491470        : APPLY
+T-1362234670     : Groups have been applied successfully
 
 // public/panels/users-group.html
 T-1077377108     : Group name
@@ -406,16 +404,6 @@ T1430223003      : Updated
 
 // public/panels/users-profile.html, public/parts/apps-grid.html
 T812449097       : Position
-
-// public/panels/workshop-view.html
-T-1824120383     : Schema
-T-961601909      : Type a view name for the application
-T347153324       : Choose a view icon
-T716149561       : Can update
-T202701676       : Can create
-T620385012       : Can remove
-T1036300156      : Update view
-T1383852357      : New view
 
 // public/parts/apps-grid.html
 T2047634         : Apps
