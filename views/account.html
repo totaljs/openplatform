@@ -40,7 +40,7 @@
 	.volume .selected {background-color:#4285f4;color:white}
 	@{fi}
 	body { background-color: #@{if user.darkmode}303030@{else}F9F9F9@{fi}; }
-	.ui-scrollbar-y { width: 5px; }
+
 	@{if user.desktop === 1 || mobile}
 	.centered { background-color: white;}
 	@{else}
@@ -212,6 +212,26 @@
 	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
 	var timeformats = [{ id: 24, name: '@(24 hour clock)' }, { id: 12, name: '@(12 hour clock)' }];
 	var backupdata = null;
+
+	MONTHS[0] = '@(January)';
+	MONTHS[1] = '@(February)';
+	MONTHS[2] = '@(March)';
+	MONTHS[3] = '@(April)';
+	MONTHS[4] = '@(May)';
+	MONTHS[5] = '@(Juny)';
+	MONTHS[6] = '@(July)';
+	MONTHS[7] = '@(August)';
+	MONTHS[8] = '@(September)';
+	MONTHS[9] = '@(October)';
+	MONTHS[10] = '@(November)';
+	MONTHS[11] = '@(December)';
+	DAYS[0] = '@(Sunday)';
+	DAYS[1] = '@(Monday)';
+	DAYS[2] = '@(Tuesday)';
+	DAYS[3] = '@(Wednesday)';
+	DAYS[4] = '@(Thursday)';
+	DAYS[5] = '@(Friday)';
+	DAYS[6] = '@(Saturday)';
 
 	OP.init(function(err, meta) {
 		if (err) {
