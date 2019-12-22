@@ -23,7 +23,7 @@ error-services-notsupported  : Application doesn't support services.
 error-services-endpoint      : Application doesn't support "@" endpoint.
 error-services-invalid       : Services is not defined.
 error-totp                   : Token is invalid.
-smtp                         : You need to define a SMTP hostname.
+error-smtp                   : You need to define a SMTP hostname.
 error-otp-code               : One-Time password code is invalid.
 error-otp-session            : One-Time password session is expired.
 error-blocked-ip             : Your IP has been blocked.
