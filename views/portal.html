@@ -157,6 +157,26 @@
 		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && window.require != null;
 		common.electronpadding = 0;
 
+		MONTHS[0] = '@(January)';
+		MONTHS[1] = '@(February)';
+		MONTHS[2] = '@(March)';
+		MONTHS[3] = '@(April)';
+		MONTHS[4] = '@(May)';
+		MONTHS[5] = '@(Juny)';
+		MONTHS[6] = '@(July)';
+		MONTHS[7] = '@(August)';
+		MONTHS[8] = '@(September)';
+		MONTHS[9] = '@(October)';
+		MONTHS[10] = '@(November)';
+		MONTHS[11] = '@(December)';
+		DAYS[0] = '@(Sunday)';
+		DAYS[1] = '@(Monday)';
+		DAYS[2] = '@(Tuesday)';
+		DAYS[3] = '@(Wednesday)';
+		DAYS[4] = '@(Thursday)';
+		DAYS[5] = '@(Friday)';
+		DAYS[6] = '@(Saturday)';
+
 		function hidetitlemessage(el) {
 			common.titlescache && clearTimeout(common.titlescache);
 			common.titlescache = null;

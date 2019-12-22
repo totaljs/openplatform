@@ -1,5 +1,5 @@
 // Total.js localization file
-// Created by Peter Širka: 2019-12-21 08:40
+// Created by Peter Širka: 2019-12-21 21:46
 
 // schemas/users-password.js
 T-907041958      : Password recovery
@@ -174,6 +174,25 @@ T218986849       : Control panel
 T1147708377      : My account
 T466480241       : My sessions
 T1207891169      : Lock screen
+T-162006966      : January
+T-199248958      : February
+T74113571        : March
+T63478374        : April
+T77125           : May
+T2320502         : Juny
+T2320440         : July
+T1972131363      : August
+T-25881423       : September
+T43165376        : October
+T1703773522      : November
+T626483269       : December
+T-1807319568     : Sunday
+T-1984635600     : Monday
+T687309357       : Tuesday
+T-897468618      : Wednesday
+T1636699642      : Thursday
+T2112549247      : Friday
+T-2049557543     : Saturday
 T9124107         : Mute sounds
 T784119617       : Mute notifications
 T362274143       : Print screen
