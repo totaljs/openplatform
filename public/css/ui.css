@@ -268,19 +268,28 @@ input:invalid { box-shadow: none; }
 	.ui-form > nav button[name='submit'] { max-width: 150px; }
 }
 
-.ui-confirm { background-color: rgba(0,0,0,0.9); position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 300; width: 100%; display: table; height: 100%; transition: 0.5s all; opacity: 0; }
-.light .ui-confirm { background-color: rgba(255,255,255,0.9); }
+.ui-confirm-noscroll, .ui-confirm-noscroll body { overflow: hidden; }
+.ui-confirm { background-color: rgba(255,255,255,0.9); position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 100; width: 100%; display: table; height: 100%; transition: 0.5s all; opacity: 0; }
 .ui-confirm > div { display: table-cell; vertical-align: middle; text-align: center; color: white; padding: 15px; }
-.ui-confirm-body { padding: 30px; position: relative; display: inline-block; border-radius: 4px; max-width: 600px; text-align: left; transform: scale(0.5); transition: 0.3s all; color: gray; border: 10px solid #303030; background-color: white; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
-.light .ui-confirm-body { border-color: #E0E0E0; }
-.ui-confirm-message { border-bottom: 1px solid #F0F0F0; padding: 0 0 20px 0; margin-bottom: 20px; }
-.ui-confirm button { font-size: 12px; position: relative; display: inline-block; cursor: pointer; outline: 0; background-color: #E0E0E0; border: 0; border-radius: 4px; color: gray; padding: 0 20px; height: 30px; font-weight: normal; margin: 0 10px 0 0; }
+.ui-confirm-body { padding: 30px 25px 30px; position: relative; display: inline-block; border-radius: 4px; max-width: 600px; text-align: left; transform: scale(0.5); transition: 0.15s all; color: gray; border: 8px solid #E0E0E0; background-color: white; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+.ui-confirm-message { border-bottom: 1px solid #F0F0F0; padding: 0 0 10px 0; margin-bottom: 15px; }
+.ui-confirm button { font-size: 12px; position: relative; display: inline-block; cursor: pointer; outline: 0; background-color: #E0E0E0; border: 0; border-radius: 2px; color: gray; padding: 0 20px; height: 30px; font-weight: normal; margin: 0 10px 0 0; }
 .ui-confirm button .fa { margin-right: 5px; }
 .ui-confirm button:hover { opacity: 0.9; }
-.ui-confirm button[data-index="0"] { color: white; font-weight: bold; font-weight: bold; background-color: #EC2C28; }
+.ui-confirm-close { position: absolute; color: #C0C0C0; font-size: 11px; right: 10px; top: 8px; cursor: pointer; }
+.ui-confirm-close:hover { color: #A0A0A0; }
 .ui-confirm-visible { opacity: 1; }
 .ui-confirm-visible .ui-confirm-body { -webkit-transform: scale(1); transform: scale(1); }
 .ui-confirm-click { transform: scale(1.07) !important; }
+
+.ui-dark .ui-confirm { background-color: rgba(0,0,0,0.9) }
+.ui-dark .ui-confirm-body { border: 10px solid #303030; background-color: #202020; }
+.ui-dark .ui-confirm-message { border-bottom-color: #303030; }
+.ui-dark .ui-confirm button { background-color: #505050; color: #C0C0C0; }
+.ui-dark .ui-confirm-close { color: #505050; }
+.ui-dark .ui-confirm-close:hover { color: #888888; }
+
+.ui-confirm button[data-index="0"] { color: white; font-weight: bold; font-weight: bold; background-color: #EC2C28; }
 
 .loading { background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzgiIGhlaWdodD0iMzgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSI4LjA0MiUiIHkxPSIwJSIgeDI9IjY1LjY4MiUiIHkyPSIyMy44NjUlIiBpZD0iYSI+PHN0b3Agc3RvcC1jb2xvcj0iI0EwQTBBMCIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0EwQTBBMCIgc3RvcC1vcGFjaXR5PSIuNjMxIiBvZmZzZXQ9IjYzLjE0NiUiLz48c3RvcCBzdG9wLWNvbG9yPSIjQTBBMEEwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxIDEpIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOCIgc3Ryb2tlPSJ1cmwoI2EpIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGZpbGw9IiNBMEEwQTAiIGN4PSIzNiIgY3k9IjE4IiByPSIxIi8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%; animation: rotate 1s forwards infinite; max-width: 300px; max-height: 300px; width: 100%; height: 100%; }
 
@@ -511,31 +520,6 @@ input:invalid { box-shadow: none; }
 .ui-dark .ui-range input[type=range]::-ms-fill-upper { background: #303030; }
 .ui-dark .ui-range input[type=range]:focus::-ms-fill-lower { background: #303030; }
 .ui-dark .ui-range input[type=range]:focus::-ms-fill-upper { background: #303030; }
-
-.ui-calendar * { font-size:12px; }
-.ui-calendar { font-size: 12px; position: absolute; background-color: white; max-width: 250px; width: 100%; border: 1px solid #E0E0E0; left: 100px; top: 100px; border-radius: 2px; z-index: 100; color: gray; box-shadow: 0 5px 25px rgba(0,0,0,0.1); opacity: 0; transform: scale(0.6); transition: all 0.2s; }
-.ui-calendar-visible { transform: scale(1); opacity: 1; }
-.ui-calendar-table { padding: 10px; }
-.ui-calendar table { width: 100%; margin: 0; table-layout: fixed; }
-.ui-calendar table td { text-align: center; vertical-align: middle; font-size: 11px; color: #505050; }
-.ui-calendar table td div { margin: 2px; padding: 5px 0; border-radius: 4px; }
-.ui-calendar table th { padding: 8px 0 5px; text-align: center; width: 14%; vertical-align: middle; font-weight: bold; font-size: 12px; color: black; }
-.ui-calendar-disabled { color: silver !important; cursor: pointer; }
-.ui-calendar-day {}
-.ui-calendar-day-today div { background-color: #F0F0F0; font-weight: bold; }
-.ui-calendar-selected div { background-color: #F8F7DA; font-weight: bold; }
-.ui-calendar-day:hover div { background-color: #F8F7DA; cursor: pointer; }
-.ui-calendar button { background-color: white; border: 0; outline: 0; border: 1px solid #D0D0D0; border-radius: 3px; width: 24px; height: 21px; font-size: 11px; line-height: 0; text-align: center; padding: 0; vertical-align: middle; cursor: pointer; }
-.ui-calendar button:hover { background-color: #F0F0F0; }
-.ui-calendar-header { height: 40px; border-bottom: 1px solid #E0E0E0; padding: 0 10px 0; }
-.ui-calendar-header-info { text-align: center; width: 168px; float: left; font-size: 14px; margin: 8px 0 0 7px; font-weight: bold; color: black; }
-.ui-calendar-header-prev { float: left; margin-top: 9px; }
-.ui-calendar-header-next { float: right; margin-top: 9px; }
-.ui-calendar-today { padding: 8px 10px; border-top: 1px solid #E0E0E0; background-color: #F0F0F0; }
-.ui-calendar-today .fa { margin-right: 6px; }
-.ui-calendar-header select { background-color: white; border: 1px solid #E0E0E0; height: 23px; outline: 0; cursor: pointer; appearance: none; padding: 0 10px; border-radius: 3px; }
-.ui-calendar-today a:first-child { float: right; color: #B7292E; font-weight: bold; }
-.ui-calendar select::-ms-expand { display: none; }
 
 .ui-snackbar { position: fixed; bottom: 0; left: 0; width: 80%; left: 10%; transition: all 0.3s; transform: translate(0,70px); font-size: 14px; z-index: 1000; }
 .ui-snackbar > div { margin: 0; width: 100%; background-color: #303030; border-radius: 3px 3px 0 0; box-shadow: 0 -15px 25px rgba(0,0,0,0.08); border: 1px solid gray; border-bottom: 0; height: 64px }
