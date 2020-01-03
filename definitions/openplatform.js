@@ -52,8 +52,10 @@ MAIN.session.ondata = function(meta, next) {
 };
 
 MAIN.session.onrelease = function(item) {
-	if (item.data)
+	if (item.data) {
+		DBMS().modify('tbl_user', DB_OFFLINE).where('id', item.id);
 		item.data.online = false;
+	}
 };
 
 FUNC.loginotp = function(login, code, callback) {
