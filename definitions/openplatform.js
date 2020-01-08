@@ -53,10 +53,8 @@ MAIN.session.ondata = function(meta, next) {
 
 MAIN.session.onrelease = function(item) {
 	MAIN.session.contains2(item.id, function(err, data) {
-		if (!data) {
-			item.data.online = false;
+		if (!data)
 			DBMS().modify('tbl_user', DB_OFFLINE).where('id', item.id);
-		}
 	});
 };
 
