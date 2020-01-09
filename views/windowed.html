@@ -28,7 +28,7 @@
 	<div data---="LAZY contextmenu"></div>
 	<div data---="LAZY confirm"></div>
 	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
-	<div data---="LAZY calendar"></div>
+	<div data---="LAZY datepicker__null__close:@(Close);today:@(Set today)"></div>
 	<div data---="LAZY menu"></div>
 	<div data---="LAZY tooltip"></div>
 	<div data---="LAZY directory"></div>
@@ -199,11 +199,32 @@
 	<script>
 
 		DEF.languagehtml = '@{user.language}';
+
 		var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
 
 		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && window.require != null;
 		common.electronpadding = 0;
 		common.defaultappid = '@{'%defaultappid'}';
+
+		MONTHS[0] = '@(January)';
+		MONTHS[1] = '@(February)';
+		MONTHS[2] = '@(March)';
+		MONTHS[3] = '@(April)';
+		MONTHS[4] = '@(May)';
+		MONTHS[5] = '@(Juny)';
+		MONTHS[6] = '@(July)';
+		MONTHS[7] = '@(August)';
+		MONTHS[8] = '@(September)';
+		MONTHS[9] = '@(October)';
+		MONTHS[10] = '@(November)';
+		MONTHS[11] = '@(December)';
+		DAYS[0] = '@(Sunday)';
+		DAYS[1] = '@(Monday)';
+		DAYS[2] = '@(Tuesday)';
+		DAYS[3] = '@(Wednesday)';
+		DAYS[4] = '@(Thursday)';
+		DAYS[5] = '@(Friday)';
+		DAYS[6] = '@(Saturday)';
 
 		if (common.electron) {
 			process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';

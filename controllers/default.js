@@ -21,10 +21,6 @@ function index() {
 	this.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
 }
 
-function workshop(id) {
-	this.view('workshop');
-}
-
 function manifest(req, res) {
 	var meta = {};
 	meta.name = CONF.name;

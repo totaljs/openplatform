@@ -86,12 +86,38 @@
 
 <script>
 
+	var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
 	var common = {};
 	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
 	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
 	var statusestemplate = '{{ id | status }}';
 	var statuses = [{ id: 0, name: '@(Available)', template: statusestemplate }, { id: 1, name: '@(Busy)', template: statusestemplate }, { id: 2, name: '@(Do not disturb)', template: statusestemplate }, { id: 3, name: '@(Be right back)', template: statusestemplate }, { id: 4, name: '@(Meeting)', template: statusestemplate }, { id: 5, name: '@(Business trip)', template: statusestemplate }, { id: 6, name: '@(Holiday)', template: statusestemplate }, { id: 7, name: '@(Sick)', template: statusestemplate }, { id: 8, name: '@(Off work)', template: statusestemplate }];
 	var contracts = [{ id: 1, name: '@(Permanent)' }, { id: 2, name: '@(Contractor)' }, { id: 3, name: '@(Intern)' }, { id: 4, name: '@(Part-time)' }, { id: 5, name: '@(Customer)' }];
+
+	MONTHS[0] = '@(January)';
+	MONTHS[1] = '@(February)';
+	MONTHS[2] = '@(March)';
+	MONTHS[3] = '@(April)';
+	MONTHS[4] = '@(May)';
+	MONTHS[5] = '@(Juny)';
+	MONTHS[6] = '@(July)';
+	MONTHS[7] = '@(August)';
+	MONTHS[8] = '@(September)';
+	MONTHS[9] = '@(October)';
+	MONTHS[10] = '@(November)';
+	MONTHS[11] = '@(December)';
+	DAYS[0] = '@(Sunday)';
+	DAYS[1] = '@(Monday)';
+	DAYS[2] = '@(Tuesday)';
+	DAYS[3] = '@(Wednesday)';
+	DAYS[4] = '@(Thursday)';
+	DAYS[5] = '@(Friday)';
+	DAYS[6] = '@(Saturday)';
+
+	ON('@datepicker', function(com) {
+		var fd = FIRSTDATEOFWEEK['@{user.language}'];
+		fd && com.reconfigure({ firstday: fd });
+	});
 
 	common.marketplace = '@{CONF.marketplace}';
 

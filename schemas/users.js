@@ -292,7 +292,7 @@ NEWSCHEMA('Users', function(schema) {
 
 		if ($.model.welcome && !model.blocked && !model.inactive) {
 			$.model.token = ENCRYPTREQ($.req, { id: model.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
-			MAIL(model.email, '@(Welcome to OpenPlatform)', '/mails/welcome', $.model, model.language);
+			MAIL(model.email, TRANSLATOR(model.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', $.model, model.language);
 		}
 
 		$.extend && $.extend(model);
@@ -636,6 +636,15 @@ NEWSCHEMA('Users', function(schema) {
 				data.colorscheme = model.colorscheme;
 
 			$.extend && $.extend(data);
+
+			if ($.model.welcome) {
+				var mailmodel = {};
+				mailmodel.firstname = response.firstname;
+				mailmodel.id = response.id;
+				mailmodel.token = ENCRYPTREQ($.req, { id: response.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
+				mailmodel.login = response.login;
+				MAIL(model.email, TRANSLATOR(response.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', mailmodel, response.language);
+			}
 
 			var id = response.id;
 			response.dbms.replace(data).save(function() {
