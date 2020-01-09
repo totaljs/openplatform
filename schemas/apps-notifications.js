@@ -60,22 +60,27 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			var can = true;
 			var ua;
 
-			if (app && user.apps[app.id]) {
+			if (app) {
 
-				ua = user.apps[app.id];
+				if (user.apps[app.id]) {
+					ua = user.apps[app.id];
 
-				if (ua.notifications === false) {
-					$.invalid('error-notifications-muted');
+					if (ua.notifications === false) {
+						$.invalid('error-notifications-muted');
+						return;
+					}
+
+					if (ua.countnotifications)
+						ua.countnotifications++;
+					else
+						ua.countnotifications = 1;
+
+					if (ua.countnotifications > 15)
+						can = false;
+				} else {
+					$.invalid('error-accessible');
 					return;
 				}
-
-				if (ua.countnotifications)
-					ua.countnotifications++;
-				else
-					ua.countnotifications = 1;
-
-				if (ua.countnotifications > 15)
-					can = false;
 			}
 
 			if (user.countnotifications)
