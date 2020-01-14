@@ -76,6 +76,7 @@ NEWSCHEMA('Apps', function(schema) {
 		var item = MAIN.apps.findItem('id', $.id);
 		if (item) {
 			var obj = {};
+			obj.id = item.id;
 			obj.url = item.url;
 			obj.name = item.name;
 			obj.title = item.title;
