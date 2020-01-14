@@ -189,12 +189,12 @@ FUNC.profile = function(user, callback) {
 	}
 
 	if (user.sa)
-		meta.apps.push({ id: '_admin', icon: 'cog', title: 'Control panel', name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: true });
+		meta.apps.push({ id: '_admin', icon: 'cog', title: TRANSLATOR(user.language, '@(Control panel)'), name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: true });
 
-	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: 'Welcome', name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false });
+	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: TRANSLATOR(user.language, '@(Welcome)'), name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false });
 
 	if (!user.guest)
-		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: TRANSLATOR(user.language, '@(Account)'), name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });
 
 	callback(null, meta);
 };
