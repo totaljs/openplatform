@@ -18,11 +18,13 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('guest', Boolean);
 	schema.define('allowstatus', Boolean);
 	schema.define('allowdesktop', Boolean);
+	schema.define('allowmembers', Boolean);
 	schema.define('allowclock', Boolean);
 	schema.define('allowbackground', Boolean);
 	schema.define('allowtheme', Boolean);
 	schema.define('allowprofile', Boolean);
 	schema.define('allowdesktopfluid', Boolean);
+	schema.define('allowsmembers', Boolean);
 	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
 
@@ -49,6 +51,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.welcome = response.welcome;
 			model.guest = response.guest;
 			model.defaultappid = response.defaultappid;
+			model.allowmembers = response.allowmembers == true;
 			model.allowstatus = response.allowstatus != false;
 			model.allowclock = response.allowclock != false;
 			model.allowdesktop = response.allowdesktop != false;
@@ -100,6 +103,7 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.allowstatus = model.allowstatus != false;
 		CONF.allowclock = model.allowclock != false;
 		CONF.allowdesktop = model.allowdesktop != false;
+		CONF.allowmembers = model.allowmembers == true;
 		CONF.cookie_expiration = model.cookie_expiration || '3 days';
 		CONF.allowbackground = model.allowbackground != false;
 		CONF.allowtheme = model.allowtheme != false;
@@ -138,6 +142,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.welcome = response.welcome;
 				CONF.guest = response.guest;
 				CONF.allowstatus = response.allowstatus != false;
+				CONF.allowmembers = response.allowmembers == true;
 				CONF.allowclock = response.allowclock != false;
 				CONF.allowdesktop = response.allowdesktop != false;
 				CONF.allowbackground = response.allowbackground != false;

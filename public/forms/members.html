@@ -1,0 +1,38 @@
+<div data---="form__common.form__if:membersform;icon:users;width:600;title:@(Allow members);reload:membersform/reload;submit:membersform/submit" class="hidden">
+	<div class="padding">
+		<div class="alert m"><i class="fa fa-warning mr5"></i>@(You can allow to read some data in applications to below declared users. Users will have access according to the application conditions. Not all applications support members.)</div>
+		<div data---="textboxlist__membersform.email__type:type;placeholder:@(Type address and press enter)">@(Email addresses)</div>
+		<div class="help"><i class="far fa-question-circle"></i>@(System pairs registered users according to the email addresses automatically).</div>
+	</div>
+	<nav>
+		<button name="submit" class="userbg uppercase" style="max-width:100%;width:100%">@(Apply changes)</button>
+	</nav>
+</div>
+
+<script>
+	PLUGIN('membersform', function(exports) {
+
+		var old = '';
+
+		exports.reload = function() {
+			AJAX('GET /api/op/members/', function(response) {
+				old = STRINGIFY(response);
+				SET('?.email', response);
+			});
+		};
+
+		exports.submit = function(hide) {
+			var model = GETR('membersform');
+
+			var data = STRINGIFY(model.email);
+			if (data === old) {
+				hide();
+				return;
+			}
+
+			SET('users.team', model.length);
+			AJAX('POST /api/op/members/', model, hide);
+		};
+
+	});
+</script>

@@ -14,7 +14,7 @@ var SIMPLECACHE = {};
 var DDOS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4400;           // Current version of OpenPlatform
+MAIN.version = 4500;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -56,6 +56,14 @@ MAIN.session.onrelease = function(item) {
 		if (!data)
 			DBMS().modify('tbl_user', DB_OFFLINE).where('id', item.id);
 	});
+};
+
+FUNC.loginid = function(controller, userid, callback, note) {
+	FUNC.cookie(controller.req, userid, callback, note);
+};
+
+FUNC.clearcache = function(userid) {
+	delete USERS[userid];
 };
 
 FUNC.loginotp = function(login, code, callback) {
@@ -166,6 +174,9 @@ FUNC.profile = function(user, callback) {
 
 	if (user.guest)
 		meta.guest = true;
+
+	meta.team = user.team ? user.team.length : 0;
+	meta.member = user.member ? user.member.length : 0;
 
 	var bg = user.background || CONF.background;
 	if (bg)
@@ -530,7 +541,7 @@ FUNC.decodeauthtoken = function($, callback) {
 					$.invalid('error-invalid-accesstoken');
 				}
 			}
-		});
+		}, true);
 	} else {
 		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
 		if (tmp === arr[2]) {
@@ -717,6 +728,12 @@ FUNC.makeprofile = function(user, type, app, fields) {
 
 	if (obj.background && (!fields || fields.background))
 		obj.background = CONF.url + '/backgrounds/' + obj.background;
+
+	if (!fields || fields.team)
+		obj.team = user.team;
+
+	if (!fields || fields.member)
+		obj.member = user.member;
 
 	if ((!fields || fields.roles)) {
 		var appdata = user.apps ? user.apps[app.id] : null;
@@ -1188,6 +1205,12 @@ function readuser(id, callback) {
 	var db = DBMS();
 	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE');
 	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
+
+	if (CONF.allowmembers) {
+		db.query('SELECT userid FROM tbl_user_member').where('email', db.get('tbl_user.email')).set('member');
+		db.query('SELECT id as userid FROM tbl_user WHERE email IN (SELECT email FROM tbl_user_member WHERE userid=$1)', [id]).set('team');
+	}
+
 	db.callback(function(err, response) {
 
 		if (err || !response) {
@@ -1196,6 +1219,22 @@ function readuser(id, callback) {
 		}
 
 		var user = response;
+
+		if (user.member) {
+			if (user.member.length) {
+				for (var i = 0; i < user.member.length; i++)
+					user.member[i] = user.member[i].userid;
+			} else
+				delete user.member;
+		}
+
+		if (user.team) {
+			if (user.team.length) {
+				for (var i = 0; i < user.team.length; i++)
+					user.team[i] = user.team[i].userid;
+			} else
+				delete user.team;
+		}
 
 		if (!user.colorscheme)
 			user.colorscheme = CONF.colorscheme || '#4285f4';
@@ -1408,3 +1447,8 @@ ON('service', function(counter) {
 
 	SIMPLECACHE = {};
 });
+
+if (global.UPDATE) {
+	global.UPDATE(MAIN.version, ERROR('Update'), 'updates');
+} else
+	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');

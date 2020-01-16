@@ -231,6 +231,15 @@ CREATE TABLE "public"."tbl_user_report" (
 	PRIMARY KEY ("id")
 );
 
+CREATE TABLE "public"."tbl_user_member" (
+	"id" varchar(25) NOT NULL,
+	"userid" varchar(25),
+	"email" varchar(120),
+	"dtcreated" timestamp,
+	CONSTRAINT "tbl_user_member_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
+	PRIMARY KEY ("id")
+);
+
 CREATE TABLE "public"."tbl_settings" (
 	"id" varchar(30),
 	"body" jsonb,
@@ -336,6 +345,8 @@ CREATE VIEW view_user AS
 
 CREATE INDEX tbl_user_app_idx_query ON tbl_user_app(userid text_ops);
 CREATE INDEX tbl_user_idx_login ON tbl_user(login text_ops);
+CREATE INDEX tbl_user_idx_member ON tbl_user(email text_ops);
+CREATE INDEX tbl_user_member_idx_user ON tbl_user_member(userid text_ops);
 CREATE INDEX tbl_user_idx_group ON tbl_user(groupshash text_ops);
 CREATE INDEX tbl_user_notification_idx_query ON tbl_user_notification(userappid text_ops);
 

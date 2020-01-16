@@ -117,7 +117,12 @@
 					</div>
 					@{fi }
 					@{if !user.guest}
-					<div class="app exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</div>
+						@{if CONF.allowmembers}
+						<div class="app exec internal app-modal" data-exec="Dashboard/showmembers">
+							<i class="fa fa-users"></i>@(Members)
+						</div>
+						@{fi }
+						<div class="app exec internal app-modal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</div>
 					@{fi}
 					@{if !user.guest && user.pin}
 					<div class="app exec internal" data-exec="internallock"><i class="fa fa-lock"></i>@(Lock screen)</div>
@@ -147,6 +152,7 @@
 	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
 	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
+	<div data---="importer__common.form__if:membersform;url:/forms/members.html"></div>
 	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
 
 	<script>
@@ -330,7 +336,7 @@
 		$(document).on('click', '.app', function() {
 			var el = $(this);
 
-			if (el.hclass('app-offline') || el.hclass('app-disabled') || el.attrd('exec') === 'internallogoff')
+			if (el.hclass('app-offline') || el.hclass('app-disabled') || el.attrd('exec') === 'internallogoff' || el.hclass('app-modal'))
 				return;
 
 			var id = el.attrd('id');
@@ -381,6 +387,11 @@
 
 			self.showsessions = function() {
 				SET('common.form', 'sessionsform');
+				SET('common.startmenu', false);
+			};
+
+			self.showmembers = function() {
+				SET('common.form', 'membersform');
 				SET('common.startmenu', false);
 			};
 

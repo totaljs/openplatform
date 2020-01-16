@@ -113,7 +113,10 @@
 					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
 					@{fi}
 					@{if !user.guest}
-					<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
+						@{if CONF.allowmembers}
+						<button class="exec internal" data-exec="Dashboard/showmembers"><i class="fa fa-users"></i>@(Members)</button>
+						@{fi}
+						<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
 					@{fi }
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
 					@{if !user.guest && user.pin}
@@ -194,6 +197,7 @@
 	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
 	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
+	<div data---="importer__common.form__if:membersform;url:/forms/members.html"></div>
 	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
 
 	<script>
@@ -410,6 +414,11 @@
 
 			self.showsessions = function() {
 				SET('common.form', 'sessionsform');
+				SET('common.startmenu', false);
+			};
+
+			self.showmembers = function() {
+				SET('common.form', 'membersform');
 				SET('common.startmenu', false);
 			};
 
