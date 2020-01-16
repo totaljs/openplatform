@@ -38,6 +38,8 @@ NEWSCHEMA('Users/Team', function(schema) {
 				}
 			}
 
+			FUNC.log('account/members', $.user.id, addresses.join(', '), $);
+
 			remove.length && db.remove('tbl_user_member').in('id', remove);
 			db.callback($.done());
 			change && FUNC.clearcache($.user.id);
