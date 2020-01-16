@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 418;
+OP.version = 419;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -625,7 +625,7 @@ OP.emit = function(name, a, b, c, d, e) {
 	}
 };
 
-OP.done = function(message, callback) {
+OP.done = function(message, callback, loading) {
 
 	if (typeof(message) === 'function') {
 		callback = message;
@@ -633,6 +633,8 @@ OP.done = function(message, callback) {
 	}
 
 	return function(response, err) {
+
+		loading && OP.loading(false, 500);
 
 		if (!response && err)
 			response = [{ name: 'network', error: err }];
