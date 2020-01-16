@@ -1,5 +1,6 @@
 NEWSCHEMA('Users/Team', function(schema) {
 
+
 	schema.define('email', '[String]');
 
 	schema.setQuery(function($) {

@@ -389,8 +389,8 @@ NEWSCHEMA('Users', function(schema) {
 				keys = tmp;
 			}
 
-			if (model.firstname && model.lastname) {
-				model.name = (model.firstname + ' ' + model.lastname).max(40);
+			if (model.firstname && model.lastname && !model.name) {
+				model.name = (model.firstname + ' ' + model.lastname).trim().max(40);
 				data.search = model.search = model.name.toSearch();
 				model.linker = model.name.slug();
 			}

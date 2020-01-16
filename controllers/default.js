@@ -78,9 +78,11 @@ function lock() {
 }
 
 function process404() {
+
 	var self = this;
+
 	if (self.url.indexOf('/photos/') !== -1 && self.url.lastIndexOf('.jpg') !== -1) {
-		self.file('img//photo.jpg');
+		self.file('/img/photo.jpg');
 		return;
 	}
 
