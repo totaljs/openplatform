@@ -31,6 +31,10 @@
 						<div data---="input__?.cookie_expiration__required:1;maxlength:20">@(Cookie / Session expiration)</div>
 						<div class="help">@(Type an expiration time in the form: <code>2 days</code> or <code>3 minutes</code>)</div>
 					</div>
+					<div class="col-sm-4 m">
+						<div data---="input__?.allowcreate__maxlength:200">@(URL for creating an account)</div>
+						<div class="help">@(Enables a link to create account at login page)</div>
+					</div>
 				</div>
 
 				<div class="caption">@(Appearance)</div>
@@ -53,13 +57,17 @@
 						<div data---="checkbox__?.guest">@(Allow <b>Guest user</b>)</div>
 						<div data---="checkbox__?.rebuildaccesstoken">@(Re-build access token)</div>
 						<div data---="checkbox__?.allowclock__checkicon:clock-o">@(Show clock)</div>
-						<div data---="checkbox__?.allowstatus__checkicon:smile">@(Allow custom users statuses)</div>
 					</div>
 					<div class="col-sm-4">
-						<div data---="checkbox__?.allowprofile">@(Users can change their profile)</div>
-						<div data---="checkbox__?.allowdesktop">@(Allow to change desktop mode)</div>
+						<div data---="checkbox__?.allowstatus__checkicon:smile">@(Allow custom users statuses)</div>
 						<div data---="checkbox__?.allowbackground">@(Allow to change backgrounds)</div>
+						<div data---="checkbox__?.allowprofile">@(Users can change their profile)</div>
+						<div data---="checkbox__?.allowmembers">@(Allow users to add own members)</div>
+					</div>
+					<div class="col-sm-4">
 						<div data---="checkbox__?.allowtheme">@(Allow to change color themes)</div>
+						<div data---="checkbox__?.allownickname">@(Allow to change nickname)</div>
+						<div data---="checkbox__?.allowdesktop">@(Allow to change desktop mode)</div>
 						<div data---="checkbox__?.allowdesktopfluid">@(Enable fluid desktop mode)</div>
 					</div>
 				</div>
