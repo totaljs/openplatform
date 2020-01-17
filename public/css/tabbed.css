@@ -83,18 +83,18 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light footer .status { border-right-color: #E0E0E0; }
 
 .startmenu .ui-xs { height: 348px !important; }
-.startmenu { position: fixed; top: 45px; height: 380px; background-color: #404040; width: 300px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
+.startmenu { position: fixed; top: 45px; background-color: #404040; width: 300px; z-index: 32; border-radius: 0 0 3px 0; box-shadow: 10px 10px 20px rgba(0,0,0,0.1); transition: all 0.1s; opacity: 0; transform: translate(0px, -80px); }
 .startmenu-title { height: 40px; border-top: 1px solid rgba(0,0,0,0.15); color: white; font-size: 16px; padding: 0; font-weight: bold; }
 .startmenu-profile { cursor: pointer; font-weight: normal; }
 .startmenu-profile img { width: 28px; height: 28px; border-radius: 100px; float: left; margin: 5px 0 0 8px; }
 .startmenu-profile > span { float: left; margin: 11px 0 0 8px; font-size: 13px; }
 .startmenu-title button { float: right; color: white; margin: 10px 10px 0 0; display: none; background: transparent; text-align: center; border: 0; font-size: 20px; }
-.startmenu-nav { height: 341px; }
 .startmenu-nav nav button { display: block; border: 0; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; width: 100%; background-color: transparent; text-align: left; outline: 0; color: #D0D0D0; }
 .startmenu-nav nav button:hover { text-decoration: none; color: white; }
 .startmenu-nav nav button:last-child { border-bottom: 0; }
 .startmenu-nav i { width: 25px; border-right: 1px solid rgba(0,0,0,0.1); margin-right: 8px; }
-.startmenu-nav > div { height: 100%; padding: 8px 15px 10px; }
+.startmenu-nav > div { height: 100%; padding: 8px 15px 10px; border-radius: 0 0 3px 0; }
+.startmenu-nav { border-radius: 0 0 3px 0; }
 .startmenu-search { padding: 5px; background-color: #404040; border-bottom: 1px solid rgba(0,0,0,0.05); }
 .startmenu-status { color: gray; background-color: rgba(0,0,0,0.05); text-align: left; font-weight: normal; line-height: 16px; padding: 5px 5px 0 10px; height: 38px; cursor: pointer; border-radius: 0 0 3px 0; }
 .startmenu-status:hover { background-color: rgba(255,255,255,0.1); }

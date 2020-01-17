@@ -43,7 +43,7 @@
 		<div class="samode hidden userbg" data-bind="user.sa__show__delay:200" title="@(Super Administrator)"><i class="fa fa-unlock mr5"></i>@(SA)</div>
 		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
 		<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
-		<div class="username hidden" data-bind="user__html span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
+		<div class="username hidden" data-bind="user__text span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
 		<div class="status hidden" data-bind="common.status__show__exec:renderstatus"></div>
 	</footer>
 
@@ -57,7 +57,7 @@
 		</div>
 		@{fi}
 
-		<div class="button-window hidden-xs exec tooltip" data-exec="Dashboard/showappsettings" id="appmenu" data-bind="common.focused__.usercolor" data-title="@(Application settings)"><i class="fa fa-cog"></i></div>
+		<div class="button-window hidden-xs tooltip" id="appmenu" data-bind="common.focused__.usercolor" data-title="@(Application settings)"><i class="fa fa-cog"></i></div>
 		<div class="button-status exec visible-xs" title="@(App menu)" data-exec="Dashboard/showappmenu"><i class="fa fa-ellipsis-v"></i></div>
 
 		@{if !user.guest && CONF.allowstatus}
@@ -140,11 +140,11 @@
 			</div>
 		</div>
 		<div class="clearfix"></div>
+		@{if !user.guest && CONF.allowstatus}
 		<div class="startmenu-title">
-			@{if !user.guest}
 			<div class="startmenu-status exec" data-exec="Dashboard/showstatusform" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
-			@{fi}
 		</div>
+		@{fi}
 	</div>
 
 	<div class="titlemessage hidden" data-bind="null__click:hidetitlemessage">
@@ -538,7 +538,6 @@
 			};
 
 			self.showappsettings = function() {
-
 			};
 
 			self.showstatusform = function() {
@@ -589,6 +588,8 @@
 			self.appmenu = function(opt, next, iframe) {
 
 				opt.items = [];
+				opt.offsetY = -5;
+				opt.offsetX = 0;
 
 				if (opt.appitems) {
 					for (var i = 0; i < opt.appitems.length; i++)

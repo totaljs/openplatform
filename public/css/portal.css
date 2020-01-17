@@ -36,6 +36,7 @@ header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px;
 
 .light .links .app:hover, .light .links a:hover, .light .links button:hover { background-color: #F0F0F0; }
 .light .links .app { color: black; }
+.light .links .highlight { color: gray; }
 .light .links a, .light .links button { color: black; }
 
 .menu hr { margin: 10px 0; border-color: #303030; }
@@ -327,4 +328,14 @@ h3 i { margin-right: 5px; }
 .ui-dark .ui-console-tabs { background-color: rgba(40,40,40,0.95); }
 .ui-console { border-color: rgba(220,220,220,0.95); }
 .ui-console-tabs { background-color: rgba(220,220,220,0.95); }
+
+.status0 { color: #68B25B !important; }
+.status1 { color: #C55140 !important; }
+.status2 { color: #EAB34C !important; }
+.status3 { color: #B76DCF !important; }
+.status4 { color: #6DCFA8 !important; }
+.status5 { color: #6DAFCF !important; }
+.status6 { color: #A1CF6D !important; }
+.status7 { color: #D06D6D !important; }
+.status8 { color: #D60000 !important; }
 

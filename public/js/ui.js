@@ -2227,6 +2227,10 @@ COMPONENT('processes@2', function(self, config) {
 		var opt = {};
 		opt.element = $(this);
 		opt.ready = false;
+		opt.align = 'right';
+		opt.offsetY = -15;
+		opt.offsetX = -3;
+
 		common.appoptions = opt;
 		var id = el.attrd('id');
 		var iframe = iframes.findItem('id', id);
@@ -2239,9 +2243,6 @@ COMPONENT('processes@2', function(self, config) {
 			EXEC(config.options, opt, function() {
 
 				opt.ready = true;
-				opt.align = 'right';
-				opt.offsetY = -15;
-				opt.offsetX = -3;
 
 				if (isMOBILE)
 					opt.position = 'bottom';

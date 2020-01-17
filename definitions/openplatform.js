@@ -82,6 +82,19 @@ FUNC.loginotp = function(login, code, callback) {
 		callback('error-otp-code');
 };
 
+FUNC.nicknamesanitize = function(value) {
+	var builder = [];
+	for (var i = 0; i < value.length; i++) {
+		var c = value.charCodeAt(i);
+		if ((c < 48 && c !== 32) || (c > 57 && c < 65) || (c > 90 && c < 97) || (c > 123 && c < 128))
+			continue;
+		if (c === 32 && value.charCodeAt(i + 1) === 32)
+			continue;
+		builder.push(value[i]);
+	}
+	return builder.join('');
+};
+
 FUNC.login = function(login, password, callback) {
 	DBMS().read('tbl_user').fields('id,password,otp,otpsecret').query('login=$1 OR email=$1', [login]).callback(function(err, response) {
 		if (response) {

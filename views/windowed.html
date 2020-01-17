@@ -43,7 +43,7 @@
 		<div class="samode hidden userbg" data-bind="user.sa__show__delay:200" title="@(Super Administrator)"><i class="fa fa-unlock mr5"></i>@(SA)</div>
 		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
 		<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
-		<div class="username hidden" data-bind="user__html span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
+		<div class="username hidden" data-bind="user__text span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
 		<div class="status hidden" data-bind="common.status__show__exec:renderstatus"></div>
 	</footer>
 
@@ -159,13 +159,13 @@
 		</div>
 		<div class="clearfix"></div>
 		<div class="startmenu-title">
-			@{if !user.guest}
+			@{if !user.guest && CONF.allowstatus}
 			<div class="startmenu-status exec" data-exec="Dashboard/showstatusform" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
 			@{fi}
 			<button class="exec tooltip" data-path="common.startmenuapps" data-value="!value" data-title="@(Show desktop)"><i class="fa fa-ellipsis-h"></i></button>
 			<div class="startmenu-profile exec" data-exec="Dashboard/showprofile">
 				<img src="/img/photo.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
-				<span data-bind="user.name__html:value"></span>
+				<span data-bind="user.name__text"></span>
 			</div>
 		</div>
 	</div>

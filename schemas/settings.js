@@ -19,6 +19,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allowstatus', Boolean);
 	schema.define('allowdesktop', Boolean);
 	schema.define('allowmembers', Boolean);
+	schema.define('allownickname', Boolean);
 	schema.define('allowclock', Boolean);
 	schema.define('allowbackground', Boolean);
 	schema.define('allowtheme', Boolean);
@@ -58,6 +59,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.allowbackground = response.allowbackground != false;
 			model.allowtheme = response.allowtheme != false;
 			model.allowprofile = response.allowprofile != false;
+			model.allownickname = response.allownickname == true;
 			model.allowdesktopfluid = response.allowdesktopfluid != false;
 			model.cookie_expiration = response.cookie_expiration || '3 days';
 			MAIN.id = response.url.crc32(true);
@@ -103,6 +105,7 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.allowstatus = model.allowstatus != false;
 		CONF.allowclock = model.allowclock != false;
 		CONF.allowdesktop = model.allowdesktop != false;
+		CONF.allownickname = model.allownickname == true;
 		CONF.allowmembers = model.allowmembers == true;
 		CONF.cookie_expiration = model.cookie_expiration || '3 days';
 		CONF.allowbackground = model.allowbackground != false;
@@ -141,6 +144,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.verifytoken = response.verifytoken;
 				CONF.welcome = response.welcome;
 				CONF.guest = response.guest;
+				CONF.allownickname = response.allownickname == true;
 				CONF.allowstatus = response.allowstatus != false;
 				CONF.allowmembers = response.allowmembers == true;
 				CONF.allowclock = response.allowclock != false;
