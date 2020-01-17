@@ -15,15 +15,15 @@ exports.install = function() {
 	ROUTE('+POST    /api/op/reports/               *Users/Reports      --> @insert', 1024 * 2); // 2 MB
 
 	// Users/Groups
-	ROUTE('+GET     /api/op/groups/                *Users/Groups       --> @query');
+	ROUTE('+GET     /api/op/groups/                *Users/Groups       --> @query');
 	ROUTE('+PATCH   /api/op/groups/                *Users/Groups       --> @patch');
 	ROUTE('+DELETE  /api/op/groups/                *Users/Groups       --> @remove');
 
 	// Codelists
-	ROUTE('+GET     /api/op/companies/             *Users              --> @companies');
-	ROUTE('+GET     /api/op/locations/             *Users              --> @locations');
-	ROUTE('+GET     /api/op/positions/             *Users              --> @positions');
-	ROUTE('+GET     /api/op/groupids/              *Users              --> @groupids');
+	ROUTE('+GET     /api/op/companies/             *Users              --> @companies');
+	ROUTE('+GET     /api/op/locations/             *Users              --> @locations');
+	ROUTE('+GET     /api/op/positions/             *Users              --> @positions');
+	ROUTE('+GET     /api/op/groupids/              *Users              --> @groupids');
 
 	// Apps
 	ROUTE('+GET     /api/op/apps/                  *Apps               --> @query');
@@ -68,6 +68,9 @@ exports.install = function() {
 	ROUTE('+GET     /api/op/meta/',                json_meta_query);
 	ROUTE('+GET     /api/op/sessions/',            json_sessions);
 	ROUTE('+DELETE  /api/op/sessions/{id}/',       json_sessions_remove);
+
+	ROUTE('+GET     /api/op/members/               *Users/Team --> @query');
+	ROUTE('+POST    /api/op/members/               *Users/Team --> @save');
 
 	ROUTE('+POST    /api/op/config/                *Apps/Config        --> @save');
 	ROUTE('+GET     /api/op/config/                *Apps/Config        --> @read');

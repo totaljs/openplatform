@@ -8,6 +8,7 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('notificationsemail', Boolean);
 	schema.define('notificationsphone', Boolean);
 	schema.define('password', 'String(100)');
+	schema.define('name', 'String(50)');
 	schema.define('phone', 'Phone');
 	schema.define('photo', 'String(50)');
 	schema.define('sounds', Boolean);
@@ -34,7 +35,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		var builder = DBMS().read('tbl_user');
 		builder.error('error-users-404');
-		builder.fields('email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat');
+		builder.fields('name,email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat');
 		builder.where('id', $.user.id);
 		builder.callback($.callback);
 		$.extend && $.extend(builder);
@@ -82,6 +83,16 @@ NEWSCHEMA('Account', function(schema) {
 			Fs.unlink(PATH.public(path), NOOP);
 			F.touch('/' + path);
 		}
+
+		if (CONF.allownickname && model.name) {
+			var name = FUNC.nicknamesanitize(model.name);
+			if (name) {
+				user.name = model.name = name;
+				modified = true;
+			} else
+				model.name = undefined;
+		} else
+			model.name = undefined;
 
 		if (model.password && !model.password.startsWith('***')) {
 			user.password = model.password = model.password.hash(CONF.hashmode || 'sha256', CONF.hashsalt);

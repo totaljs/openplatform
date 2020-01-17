@@ -60,6 +60,15 @@
 		<div class="accountphoto">
 			<div data---="preview__account.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
 			<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
+			@{if CONF.allownickname}
+			<div class="padding npb">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3">
+						<div data---="input__account.name__innerlabel:1;required:1;maxlength:30">@(Nick name)</div>
+					</div>
+				</div>
+			</div>
+			@{fi}
 		</div>
 
 		<div class="scroller-padding npb">

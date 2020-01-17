@@ -61,7 +61,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .iconmenu .selected { color: white; }
 
 .menu { padding: 12px 0 0; }
-.menu .item { color: #303030; display: block; padding: 3px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; margin: 0 10px 2px; border-radius: 2px; font-size: 14px; }
+.menu .item { color: #303030; display: block; padding: 3px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; margin: 0 10px 2px; border-radius: 2px; font-size: 14px; }
 .menu .item .options { float: right; cursor: pointer; font-size: 12px; margin: 2px 0 0; }
 .menu .item > i { width: 20px; text-align: center; margin: 3px 5px 0 0; float: left; }
 .menu .item > .fa-trash-o { float: right; text-align: center; margin: 4px 0 0; font-size: 12px; }
@@ -87,8 +87,8 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .marketplace { position: absolute; width: 100%; height: 100%; }
 .marketplace iframe { border: 0; width: 100%; height: 100%; padding: 0; margin: 0; }
 
-.maxwidth { max-width: 1024px; margin: 0 auto; }
-.maxwidthleft { max-width: 1024px; margin: 0; }
+.maxwidth { max-width: 1200px; margin: 0 auto; }
+.maxwidthleft { max-width: 1200px; margin: 0; }
 
 .toolbar { height: 40px; display: block; border-top: 1px solid #D0D0D0; background-color: #F0F0F0; }
 .toolbar button { border: 0; background-color: #F0F0F0; border-right: 1px solid #D0D0D0; outline: 0; width: 20%; height: 39px; padding: 0; margin: 0; text-align: center; float: left; }
@@ -104,7 +104,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 
 .tabmenu2 { padding: 0 10px; margin: 0; display: block; position: relative; font-size: 12px; border: 0; list-style-type: none; height: 45px; overflow: hidden; background-color: white; border-bottom: 1px solid #E0E0E0; user-select: none; }
 .tabmenu2 li { background-color: #F0F0F0; margin: 10px 0 0 0; text-align: center; padding: 0 7px; line-height: 24px; height: 24px; color: #6d6d6d; cursor: pointer; min-width: 90px; max-width: 150px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; width: 33%; }
-.tabmenu2 li:hover { color: #252525; }
+.tabmenu2 li:hover { color: #252525; }
 .tabmenu2 li:first-child { border-radius: 2px 0 0 2px; }
 .tabmenu2 li:last-child { border-radius: 0 2px 2px 0; }
 .tabmenu2 .selected { color: white !important; }

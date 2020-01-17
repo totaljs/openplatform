@@ -98,17 +98,16 @@
 				@{part('middle')}
 
 				<nav class="links npt">
+
+					@{if !user.guest && CONF.allowstatus}
+					<div class="app exec internal app-modal highlight" data-exec="Dashboard/showstatusform" data-bind="user__html:Thelpers.status(value.statusid)"></div>
+					@{fi}
+
 					@{if CONF.welcome}
 					<div class="app exec" data-exec="internalapp" data-id="_welcome" id="welcomeapp">
 						<span class="close exec" data-exec="Dashboard/close" data-id="_welcome"><i class="fa fa-times"></i></span>
 						<i class="fa fa-flag"></i>@(Welcome)
 					</div>
-					@{fi}
-					@{if !user.guest && user.sa}
-						<div class="app exec internal" data-exec="internalapp" data-id="_admin">
-							<span class="close exec" data-exec="Dashboard/close" data-id="_admin"><i class="fa fa-times"></i></span>
-							<i class="fa fa-cog"></i>@(Control panel)
-						</div>
 					@{fi}
 					@{if !user.guest && CONF.allowprofile}
 					<div class="app exec internal" data-exec="internalapp" data-id="_account">
@@ -117,11 +116,26 @@
 					</div>
 					@{fi }
 					@{if !user.guest}
-					<div class="app exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</div>
+						@{if CONF.allowmembers}
+						<div class="app exec internal app-modal" data-exec="Dashboard/showmembers">
+							<i class="fa fa-users"></i>@(Members)
+						</div>
+						@{fi }
+						<div class="app exec internal app-modal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</div>
 					@{fi}
+
+					<hr />
+					@{if !user.guest && user.sa}
+						<div class="app exec internal" data-exec="internalapp" data-id="_admin">
+							<span class="close exec" data-exec="Dashboard/close" data-id="_admin"><i class="fa fa-times"></i></span>
+							<i class="fa fa-cog"></i>@(Control panel)
+						</div>
+					@{fi}
+
 					@{if !user.guest && user.pin}
 					<div class="app exec internal" data-exec="internallock"><i class="fa fa-lock"></i>@(Lock screen)</div>
 					@{fi}
+
 					<div class="app exec" data-exec="internallogoff"><i class="fa fa-power-off red"></i>@(Sign out)</div>
 				</nav>
 
@@ -147,6 +161,7 @@
 	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
 	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
+	<div data---="importer__common.form__if:membersform;url:/forms/members.html"></div>
 	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
 
 	<script>
@@ -330,7 +345,7 @@
 		$(document).on('click', '.app', function() {
 			var el = $(this);
 
-			if (el.hclass('app-offline') || el.hclass('app-disabled') || el.attrd('exec') === 'internallogoff')
+			if (el.hclass('app-offline') || el.hclass('app-disabled') || el.attrd('exec') === 'internallogoff' || el.hclass('app-modal'))
 				return;
 
 			var id = el.attrd('id');
@@ -381,6 +396,11 @@
 
 			self.showsessions = function() {
 				SET('common.form', 'sessionsform');
+				SET('common.startmenu', false);
+			};
+
+			self.showmembers = function() {
+				SET('common.form', 'membersform');
 				SET('common.startmenu', false);
 			};
 
@@ -1168,6 +1188,44 @@
 		Thelpers.appprogress = function(id) {
 			var app = dashboard.apps.findIndex('id', id);
 			return app ? (!app.progress || app.progress <= 0 || app.progress >= 0) ? ' style="width:{0}px"'.format(app.progress) : '' : '';
+		};
+
+		Thelpers.status = function(value, icon) {
+			var str;
+			switch (value) {
+				case 1:
+					str = 'spinner fa-spin status1"></i>@(Busy)';
+					break;
+				case 2:
+					str = 'moon status2"></i>@(Do not disturb)';
+					break;
+				case 3:
+					str = 'door-open status3"></i>@(Be right back)';
+					break;
+				case 4:
+					str = 'brain status4"></i>@(Meeting)';
+					break;
+				case 5:
+					str = 'car status5"></i>@(Business trip)';
+					break;
+				case 6:
+					str = 'umbrella-beach status6"></i>@(Holiday)';
+					break;
+				case 7:
+					str = 'heartbeat status7"></i>@(Sick)';
+					break;
+				case 8:
+					str = 'home status8"></i>@(Off work)';
+					break;
+				default:
+					str = 'smile status0"></i>@(Available)';
+					break;
+			}
+
+			var index = str.indexOf('</i>');
+			var title = str.substring(index + 4);
+
+			return '<i title="' + title + '" class="fa fa-' + (icon ? str.substring(0, index + 4) : str);
 		};
 
 	</script>

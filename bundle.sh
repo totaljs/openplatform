@@ -9,6 +9,7 @@ cp -a ../resources/ resources
 cp -a ../schemas/ schemas
 cp -a ../views/ views
 cp -a ../versions versions
+cp -a ../updates updates
 
 total bundle openplatform.bundle
 cp openplatform.bundle ../openplatform.bundle

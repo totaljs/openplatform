@@ -43,7 +43,7 @@
 		<div class="samode hidden userbg" data-bind="user.sa__show__delay:200" title="@(Super Administrator)"><i class="fa fa-unlock mr5"></i>@(SA)</div>
 		<div class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</div>
 		<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
-		<div class="username hidden" data-bind="user__html span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
+		<div class="username hidden" data-bind="user__text span:value.name__show:value.name__click:Dashboard/showprofile"><i class="fa fa-user-circle"></i><span></span></div>
 		<div class="status hidden" data-bind="common.status__show__exec:renderstatus"></div>
 	</footer>
 
@@ -113,7 +113,10 @@
 					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
 					@{fi}
 					@{if !user.guest}
-					<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
+						@{if CONF.allowmembers}
+						<button class="exec internal" data-exec="Dashboard/showmembers"><i class="fa fa-users"></i>@(Members)</button>
+						@{fi}
+						<button class="exec internal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</button>
 					@{fi }
 					<button class="exec hidden-xs" data-exec="internalreset"><i class="fa fa-window-restore"></i>@(Reset windows)</button>
 					@{if !user.guest && user.pin}
@@ -156,13 +159,13 @@
 		</div>
 		<div class="clearfix"></div>
 		<div class="startmenu-title">
-			@{if !user.guest}
+			@{if !user.guest && CONF.allowstatus}
 			<div class="startmenu-status exec" data-exec="Dashboard/showstatusform" data-bind="user__html b:Thelpers.status(value.statusid)__text span:value.status || '@(You can specify your status)'"><b></b><span></span></div>
 			@{fi}
 			<button class="exec tooltip" data-path="common.startmenuapps" data-value="!value" data-title="@(Show desktop)"><i class="fa fa-ellipsis-h"></i></button>
 			<div class="startmenu-profile exec" data-exec="Dashboard/showprofile">
 				<img src="/img/photo.jpg" data-bind="user.photo__src:Tangular.helpers.photo(value)" onerror="onImageError(this)" />
-				<span data-bind="user.name__html:value"></span>
+				<span data-bind="user.name__text"></span>
 			</div>
 		</div>
 	</div>
@@ -194,6 +197,7 @@
 	<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
 	<div data---="importer__common.form__if:status;url:/forms/status.html"></div>
 	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
+	<div data---="importer__common.form__if:membersform;url:/forms/members.html"></div>
 	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
 
 	<script>
@@ -410,6 +414,11 @@
 
 			self.showsessions = function() {
 				SET('common.form', 'sessionsform');
+				SET('common.startmenu', false);
+			};
+
+			self.showmembers = function() {
+				SET('common.form', 'membersform');
 				SET('common.startmenu', false);
 			};
 

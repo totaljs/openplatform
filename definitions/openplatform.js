@@ -14,7 +14,7 @@ var SIMPLECACHE = {};
 var DDOS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4400;           // Current version of OpenPlatform
+MAIN.version = 4500;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -58,6 +58,14 @@ MAIN.session.onrelease = function(item) {
 	});
 };
 
+FUNC.loginid = function(controller, userid, callback, note) {
+	FUNC.cookie(controller.req, userid, callback, note);
+};
+
+FUNC.clearcache = function(userid) {
+	delete USERS[userid];
+};
+
 FUNC.loginotp = function(login, code, callback) {
 
 	var meta = OTP[login];
@@ -72,6 +80,19 @@ FUNC.loginotp = function(login, code, callback) {
 		callback(null, meta.id);
 	} else
 		callback('error-otp-code');
+};
+
+FUNC.nicknamesanitize = function(value) {
+	var builder = [];
+	for (var i = 0; i < value.length; i++) {
+		var c = value.charCodeAt(i);
+		if ((c < 48 && c !== 32) || (c > 57 && c < 65) || (c > 90 && c < 97) || (c > 123 && c < 128))
+			continue;
+		if (c === 32 && value.charCodeAt(i + 1) === 32)
+			continue;
+		builder.push(value[i]);
+	}
+	return builder.join('');
 };
 
 FUNC.login = function(login, password, callback) {
@@ -167,6 +188,9 @@ FUNC.profile = function(user, callback) {
 	if (user.guest)
 		meta.guest = true;
 
+	meta.team = user.team ? user.team.length : 0;
+	meta.member = user.member ? user.member.length : 0;
+
 	var bg = user.background || CONF.background;
 	if (bg)
 		meta.background = bg;
@@ -189,12 +213,12 @@ FUNC.profile = function(user, callback) {
 	}
 
 	if (user.sa)
-		meta.apps.push({ id: '_admin', icon: 'cog', title: 'Control panel', name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: true });
+		meta.apps.push({ id: '_admin', icon: 'cog', title: TRANSLATOR(user.language, '@(Control panel)'), name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: true });
 
-	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: 'Welcome', name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false });
+	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: TRANSLATOR(user.language, '@(Welcome)'), name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false });
 
 	if (!user.guest)
-		meta.apps.push({ id: '_account', icon: 'user-circle', title: 'Account', name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: TRANSLATOR(user.language, '@(Account)'), name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });
 
 	callback(null, meta);
 };
@@ -530,7 +554,7 @@ FUNC.decodeauthtoken = function($, callback) {
 					$.invalid('error-invalid-accesstoken');
 				}
 			}
-		});
+		}, true);
 	} else {
 		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
 		if (tmp === arr[2]) {
@@ -717,6 +741,12 @@ FUNC.makeprofile = function(user, type, app, fields) {
 
 	if (obj.background && (!fields || fields.background))
 		obj.background = CONF.url + '/backgrounds/' + obj.background;
+
+	if (!fields || fields.team)
+		obj.team = user.team;
+
+	if (!fields || fields.member)
+		obj.member = user.member;
 
 	if ((!fields || fields.roles)) {
 		var appdata = user.apps ? user.apps[app.id] : null;
@@ -1188,6 +1218,12 @@ function readuser(id, callback) {
 	var db = DBMS();
 	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE');
 	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
+
+	if (CONF.allowmembers) {
+		db.query('SELECT userid FROM tbl_user_member').where('email', db.get('tbl_user.email')).set('member');
+		db.query('SELECT id as userid FROM tbl_user WHERE email IN (SELECT email FROM tbl_user_member WHERE userid=$1)', [id]).set('team');
+	}
+
 	db.callback(function(err, response) {
 
 		if (err || !response) {
@@ -1196,6 +1232,22 @@ function readuser(id, callback) {
 		}
 
 		var user = response;
+
+		if (user.member) {
+			if (user.member.length) {
+				for (var i = 0; i < user.member.length; i++)
+					user.member[i] = user.member[i].userid;
+			} else
+				delete user.member;
+		}
+
+		if (user.team) {
+			if (user.team.length) {
+				for (var i = 0; i < user.team.length; i++)
+					user.team[i] = user.team[i].userid;
+			} else
+				delete user.team;
+		}
 
 		if (!user.colorscheme)
 			user.colorscheme = CONF.colorscheme || '#4285f4';
@@ -1408,3 +1460,8 @@ ON('service', function(counter) {
 
 	SIMPLECACHE = {};
 });
+
+if (global.UPDATE) {
+	global.UPDATE(MAIN.version, ERROR('Update'), 'updates');
+} else
+	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');
