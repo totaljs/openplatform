@@ -366,4 +366,4 @@ COMMENT ON COLUMN "public"."tbl_app"."frame" IS 'Frame URL address';
 -- ==============================
 
 -- MAIN SETTINGS
-INSERT INTO "public"."tbl_settings" ("id", "body", "dtupdated", "dtcreated") VALUES ('openplatform', ('{"url": "https://YOURDOMAIN.com", "name": "OpenPlatform", "smtp": "localhost", "test": true, "email": "petersirka@gmail.com", "guest": true, "welcome": "", "background": "", "accesstoken": "' || (SELECT md5(random()::text)) || '", "colorscheme": "#4285f4", "marketplace": "", "verifytoken": "", "smtpsettings": ""}')::jsonb, NULL, NOW());
+INSERT INTO "public"."tbl_settings" ("id", "body", "dtupdated", "dtcreated") VALUES ('openplatform', ('{"url": "https://YOURDOMAIN.com", "name": "OpenPlatform", "smtp": "localhost", "test": true, "email": "info@totaljs.com", "guest": true, "welcome": "", "background": "", "accesstoken": "' || (SELECT md5(random()::text)) || '", "colorscheme": "#4285f4", "marketplace": "", "verifytoken": "", "smtpsettings": ""}')::jsonb, NULL, NOW());

@@ -1167,8 +1167,8 @@ function checkuser(next) {
 	DBMS().read('tbl_user').fields('id').callback(function(err, response) {
 		if (response == null) {
 			var model = {};
-			model.firstname = 'Peter';
-			model.lastname = 'Sirka';
+			model.firstname = 'Total';
+			model.lastname = 'Admin';
 			model.email = 'info@totaljs.com';
 			model.login = 'admin';
 			model.password = 'admin';
