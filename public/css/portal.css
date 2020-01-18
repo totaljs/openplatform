@@ -8,7 +8,7 @@ body.light { background: white; }
 .hidden2 { display: none; }
 .container-fluid { padding-left: 0; padding-right: 0; }
 
-header { height: 45px; border-bottom: 1px solid #404040; line-height: 44px; font-size: 16px; }
+header { height: 45px; border-bottom: 1px solid #404040; line-height: 44px; font-size: 14px; }
 header .title { margin-left: 10px; font-weight: bold; vertical-align: top; display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 header img { width: 28px; float: left; border-radius: 100px; margin: 7px 8px 0 8px; cursor: pointer; }
 
