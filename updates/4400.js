@@ -10,6 +10,7 @@ db.query(`CREATE TABLE "public"."tbl_user_member" (
 	PRIMARY KEY ("id")
 )`);
 
+
 // Indexes
 db.query('CREATE INDEX tbl_user_member_idx_user ON tbl_user_member(userid text_ops);');
 db.query('CREATE INDEX tbl_user_idx_member ON tbl_user(email text_ops);');
