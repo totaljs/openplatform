@@ -50,9 +50,9 @@ button { outline: 0; }
 .ui-wiki-topic label i:before { content: '\f054' }
 .ui-wiki-topic label:hover { background-color: #F0F0F0; }
 .ui-wiki-topic-body { display: none; padding: 18px; }
-.ui-wiki-title { padding: 0; font-weight: bold; height: 50px; border-bottom: 1px solid #E0E0E0; }
-.ui-wiki-title span { display: block; margin-right: 50px; line-height: 50px; font-size: 16px; padding-left: 10px; }
-.ui-wiki-title button { float: right; width: 50px; height: 50px; background-color: red; color: white; border: 0; font-size: 16px; }
+.ui-wiki-title { padding: 0; font-weight: bold; height: 45px; border-bottom: 1px solid #E0E0E0; }
+.ui-wiki-title span { display: block; margin-right: 45px; line-height: 45px; font-size: 16px; padding-left: 10px; }
+.ui-wiki-title button { float: right; width: 44px; height: 44px; background-color: red; color: white; border: 0; font-size: 16px; }
 .ui-wiki-title button:hover { opacity: 0.8; }
 .ui-wiki-visible .ui-wiki-topic-body { display: block; border-bottom: 1px solid #E0E0E0; }
 .ui-wiki-visible label { background-color: #4285F4 !important; border-bottom-color: #4285F4 !important; color: white !important; }
