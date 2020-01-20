@@ -1060,6 +1060,13 @@
 						$('.ui-pin-input:first-child').find('input').focus();
 					}, 200);
 				} else {
+
+					// Possible redirect
+					if (response.value && response.value.indexOf('/') !== -1) {
+						location.href = response.value;
+						return;
+					}
+
 					SET('form.response', response);
 					response.success && location.reload(true);
 				}
