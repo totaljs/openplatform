@@ -1217,6 +1217,7 @@ ON('ready', function() {
 function readuser(id, callback) {
 	var db = DBMS();
 	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE');
+	db.error('error-users-404');
 	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 
 	if (CONF.allowmembers) {
