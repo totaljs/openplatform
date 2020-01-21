@@ -8528,11 +8528,11 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 			var opt = {};
 			opt.element = self.find(cls2 + '-control');
-			opt.items = dirsource;
+			opt.items = dirsource || GET(self.makepath(config.dirsource));
 			opt.offsetY = -1 + (config.diroffsety || 0);
 			opt.offsetX = 0 + (config.diroffsetx || 0);
 			opt.placeholder = config.dirplaceholder;
-			opt.render = config.dirrender ? GET(config.dirrender) : null;
+			opt.render = config.dirrender ? GET(self.makepath(config.dirrender)) : null;
 			opt.custom = !!config.dircustom;
 			opt.offsetWidth = 2;
 			opt.minwidth = config.dirminwidth || 200;
@@ -8546,13 +8546,13 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			var val = self.get();
 			opt.selected = val;
 
-			if (config.direxclude === false) {
+			if (dirsource && config.direxclude == false) {
 				for (var i = 0; i < dirsource.length; i++) {
 					var item = dirsource[i];
 					if (item)
 						item.selected = typeof(item) === 'object' && item[config.dirvalue] === val;
 				}
-			} else {
+			} else if (config.direxclude) {
 				opt.exclude = function(item) {
 					return item ? item[config.dirvalue] === val : false;
 				};
@@ -8581,12 +8581,18 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					if (val) {
 						self.set(val, 2);
 						self.change();
-						self.bindvalue();
+						if (dirsource)
+							self.bindvalue();
+						else
+							input.val(val);
 					}
 				} else {
 					self.set(val, 2);
 					self.change();
-					self.bindvalue();
+					if (dirsource)
+						self.bindvalue();
+					else
+						input.val(val);
 				}
 			};
 
@@ -8670,7 +8676,8 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				t.value = arr.join('');
 			} else {
 				nobindcamouflage = true;
-				input[0].value = self.get();
+				var val = self.get();
+				input[0].value = val == null ? '' : val;
 			}
 			self.tclass(cls + '-camouflaged', is);
 		}
@@ -8758,6 +8765,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			}
 			value = val.join('');
 		}
+
 		self.getterin(value, realtime, nobind);
 	};
 
@@ -8772,10 +8780,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					var val = [];
 					for (var i = 0; i < config.mask.length; i++) {
 						var c = config.mask.charAt(i);
-						if (c === '_')
-							val.push(value.charAt(index++) || '_');
-						else
-							val.push(c);
+						val.push(c === '_' ? (value.charAt(index++) || '_') : c);
 					}
 					value = val.join('');
 				}
@@ -8821,6 +8826,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 	};
 
 	self.bindvalue = function() {
+
 		if (dirsource) {
 
 			var value = self.get();
@@ -8843,7 +8849,10 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				item = value;
 
 			input.val(item || '');
-		}
+
+		} else if (config.dirsource)
+			input.val(self.get() || '');
+
 		self.check();
 	};
 
@@ -8882,10 +8891,15 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 	self.configure = function(key, value) {
 		switch (key) {
 			case 'dirsource':
-				self.datasource(value, function(path, value) {
-					dirsource = value;
+				if (config.dirajax || value.indexOf('/') !== -1) {
+					dirsource = null;
 					self.bindvalue();
-				});
+				} else {
+					self.datasource(value, function(path, value) {
+						dirsource = value;
+						self.bindvalue();
+					});
+				}
 				self.tclass(cls + '-dropdown', !!value);
 				break;
 			case 'disabled':
@@ -8992,13 +9006,13 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		if (!config.forcevalidation)
 			return false;
 
-		var val = self.get();
-
 		if (self.type === 'number')
-			return true;
+			return false;
 
+		var val = self.get();
 		return (self.type === 'phone' || self.type === 'email') && (val != null && (typeof(val) === 'string' && val.length !== 0));
 	};
+
 });
 
 COMPONENT('nativenotifications', 'timeout:8000', function(self, config) {

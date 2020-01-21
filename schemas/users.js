@@ -521,6 +521,11 @@ NEWSCHEMA('Users', function(schema) {
 				modified = true;
 			}
 
+			if ((!keys || keys.groupid) && response.groupid !== model.groupid) {
+				data.groupid = model.groupid;
+				modified = true;
+			}
+
 			if (!keys || keys.groups) {
 
 				if (model.groups)
@@ -827,19 +832,19 @@ NEWSCHEMA('Users', function(schema) {
 	}, 'statusid:Number,contractid:Number,page:Number,limit:Number,statusid:Number');
 
 	schema.addWorkflow('companies', function($) {
-		DBMS().query('SELECT company as name FROM tbl_user WHERE company LIKE $1 GROUP BY company LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+		DBMS().query('SELECT company as id, company as name FROM tbl_user WHERE LENGTH(company)>0 AND company LIKE $1 GROUP BY company LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
 	});
 
 	schema.addWorkflow('positions', function($) {
-		DBMS().query('SELECT position as name FROM tbl_user WHERE position LIKE $1 GROUP BY position LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+		DBMS().query('SELECT position as id, position as name FROM tbl_user WHERE LENGTH(position)>0 AND position LIKE $1 GROUP BY position LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
 	});
 
 	schema.addWorkflow('locations', function($) {
-		DBMS().query('SELECT locality as name FROM tbl_user WHERE locality LIKE $1 GROUP BY locality LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+		DBMS().query('SELECT locality as id, locality as name FROM tbl_user WHERE LENGTH(locality)>0 AND locality LIKE $1 GROUP BY locality LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
 	});
 
 	schema.addWorkflow('groupids', function($) {
-		DBMS().query('SELECT groupid as name FROM tbl_user WHERE groupid LIKE $1 GROUP BY groupid LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+		DBMS().query('SELECT groupid as id, groupid as name FROM tbl_user WHERE LENGTH(groupid)>0 AND groupid LIKE $1 GROUP BY groupid LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
 	});
 
 });

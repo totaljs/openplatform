@@ -115,7 +115,7 @@
 				<div class="caption">@(Employee data)</div>
 				<div class="row">
 					<div class="col-sm-6 m">
-						<div data---="input__?.company__maxlength:40;autosource:?/searchcompany__''">@(Company)</div>
+						<div data---="input__?.company__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchcompany__''">@(Company)</div>
 					</div>
 					<div class="col-sm-6 m">
 						<div data---="input__?.locality__maxlength:40;autosource:?/searchlocality__''">@(Location)</div>
@@ -144,7 +144,7 @@
 						<div class="help">@(<b>Custom reference</b> can contain an external idenficator of user.)</div>
 					</div>
 					<div class="col-sm-6 m">
-						<div data---="input__?.groupid__maxlength:30;autosource:?/searchgroupid__''">@(Group ID)</div>
+						<div data---="input__?.groupid__maxlength:30;direxclude:false;dircustom:true;dirvalue:name;dirsource:?/searchgroupid__''">@(Group ID)</div>
 						<div class="help">@(<b>Group ID</b> is suitable for pairing of users from the same company or group.)</div>
 					</div>
 				</div>
