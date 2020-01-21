@@ -86,8 +86,9 @@
 
 <script>
 
+	MAKE('common', NOOP);
+
 	var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
-	var common = {};
 	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
 	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
 	var statusestemplate = '{{ id | status }}';
@@ -119,6 +120,7 @@
 		fd && com.reconfigure({ firstday: fd });
 	});
 
+	CACHEPATH('common.page', '7 days', true);
 	common.marketplace = '@{CONF.marketplace}';
 
 	OP.on('menu', function() {
@@ -138,7 +140,7 @@
 
 	AJAX('GET /api/profile/', function(response) {
 		SET('user', response);
-		SET('common.page', 'users');
+		//SET('common.page', 'users');
 	});
 
 	OP.on('share', function(data) {

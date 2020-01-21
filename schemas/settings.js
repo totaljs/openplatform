@@ -29,6 +29,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allowsmembers', Boolean);
 	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
+	schema.define('maxmembers', Number);
 
 	schema.setGet(function($) {
 
@@ -64,6 +65,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.allownickname = response.allownickname == true;
 			model.allowdesktopfluid = response.allowdesktopfluid != false;
 			model.cookie_expiration = response.cookie_expiration || '3 days';
+			model.maxmembers = response.maxmembers || 0;
 			MAIN.id = response.url.crc32(true);
 			$.callback(model);
 		});
@@ -116,6 +118,7 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.allowprofile = model.allowprofile != false;
 		CONF.allowdesktopfluid = model.allowdesktopfluid != false;
 		CONF.defaultappid = model.defaultappid;
+		CONF.maxmembers = model.maxmembers;
 
 		MAIN.id = CONF.url.crc32(true);
 
@@ -159,6 +162,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.allowdesktopfluid = response.allowdesktopfluid != false;
 				CONF.cookie_expiration = response.cookie_expiration || '3 days';
 				CONF.defaultappid = response.defaultappid;
+				CONF.maxmembers = response.maxmembers || 0;
 				MAIN.id = CONF.url.crc32(true);
 			}
 			$.success(true);

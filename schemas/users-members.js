@@ -1,6 +1,5 @@
 NEWSCHEMA('Users/Team', function(schema) {
 
-
 	schema.define('email', '[String]');
 
 	schema.setQuery(function($) {
@@ -13,11 +12,17 @@ NEWSCHEMA('Users/Team', function(schema) {
 
 	schema.setSave(function($) {
 
+		var addresses = $.model.email;
+
+		if (CONF.maxmembers && addresses.length > CONF.maxmembers) {
+			$.invalid('error-members-limit');
+			return;
+		}
+
 		var db = DBMS();
 
 		db.find('tbl_user_member').fields('id,email').where('userid', $.user.id).callback(function(err, response) {
 
-			var addresses = $.model.email;
 			var remove = [];
 			var change = false;
 

@@ -1,6 +1,7 @@
 <div data---="form__common.form__if:membersform;icon:users;width:600;title:@(Allow members);reload:membersform/reload;submit:membersform/submit" class="hidden">
 	<div class="padding">
 		<div class="alert m"><i class="fa fa-warning mr5"></i>@(You can allow to read some data in applications to below declared users. Users will have access according to the application conditions. Not all applications support members.)</div>
+		<div data-bind="common.maxmembers__show__text b:value.pluralize('@(# members,# member, # members, # members)')" class="hidden red m"><i class="fa fa-users"></i> @(Limit <b></b>.)</div>
 		<div data---="textboxlist__membersform.email__type:type;placeholder:@(Type address and press enter)">@(Email addresses)</div>
 		<div class="help"><i class="far fa-question-circle"></i>@(System pairs registered users according to the email addresses automatically).</div>
 	</div>
@@ -31,7 +32,7 @@
 			}
 
 			SET('users.team', model.length);
-			AJAX('POST /api/op/members/', model, hide);
+			AJAX('POST /api/op/members/', model, FUNC.messageresponse('@(Your member list has been updated successfully.)', hide));
 		};
 
 	});

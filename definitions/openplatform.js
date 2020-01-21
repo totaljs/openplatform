@@ -1195,6 +1195,10 @@ function checkuser(next) {
 PAUSESERVER('initialization');
 ON('ready', function() {
 	$WORKFLOW('Settings', 'init', function() {
+
+		// Set all users to offline
+		DBMS().query('UPDATE tbl_user SET online=FALSE WHERE online=TRUE');
+
 		FUNC.init(function() {
 			FUNC.refreshapps(function() {
 				FUNC.refreshgroupsroles(function() {

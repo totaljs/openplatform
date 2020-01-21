@@ -9,7 +9,9 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
-	<script src="@{'%cdn'}/spa.min@18.js"></script>
+	<!--<script src="@{'%cdn'}/spa.min@18.js"></script>-->
+	<script src="/spa.min@18.js"></script>
+	<script>ENVIRONMENT('opadmin');</script>
 	@{import('meta', 'head', 'app.css', 'app.js', 'favicon.ico')}
 </head>
 <body data---="exec" class="invisible@{if user.darkmode} ui-dark@{fi}">

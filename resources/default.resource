@@ -29,3 +29,4 @@ error-otp-session            : One-Time password session is expired.
 error-blocked-ip             : Your IP has been blocked.
 error-users-email            : Email address is already used by another user.
 error-users-login            : Login name is already used by another user.
+error-members-limit          : You have exceed a maximum count of members.
