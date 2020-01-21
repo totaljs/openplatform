@@ -139,7 +139,7 @@ h3 .fa { margin-right: 5px; }
 .ui-dark h2 { color: white; }
 .ui-dark h3 { color: white; }
 
-.buttons { padding: 11px 15px 0; border-top: 1px solid #E0E0E0; height: 50px; }
+.buttons { padding: 13px 15px 0; border-top: 1px solid #E0E0E0; height: 50px; }
 .buttons .link { margin-left: 10px; font-size: 12px; color: gray; }
 .ui-layout-bottom .buttons { border-top: 0; }
 .ui-dark .buttons { border-top-color: #404040; }
