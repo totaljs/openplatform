@@ -75,7 +75,7 @@
 				<!-- <span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span> -->
 				<span class="title">@{CONF.name}</span>
 			</header>
-			<div data---="viewbox__null__margin:77;parent:window">
+			<div data---="viewbox__null__margin:77;parent:window;scrollbar:1;visibleY:0">
 
 				@{part('top')}
 
@@ -85,7 +85,7 @@
 							{{ foreach m in value }}
 								{{ if !m.internal }}
 								<div class="appprocess app{{ if !m.online}} disabled{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.id | appfocused }}" data-id="{{ m.id }}" draggable="true">
-									<span class="close exec" data-exec="Dashboard/close" data-id="{{ m.id }}"><i class="fa fa-times"></i></span>{{ if m.countnotifications }}<b>{{ if m.countnotifications > 99 }}99{{ else }}{{ m.countnotifications}}{{ fi }}</b>{{ fi }}<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{m.color}}"{{ fi }}></i>{{ m.title }}
+									<span class="close exec" data-exec="Dashboard/close" data-id="{{ m.id }}"><i class="fa fa-times"></i></span>{{ if m.countnotifications }}<b>{{ if m.countnotifications > 99 }}99{{ else }}{{ m.countnotifications}}{{ fi }}</b>{{ fi }}<i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>{{ m.title }}
 									<span class="appprogress hidden ap{{ m.id }}"><span class="userbg"{{ m.id | appprogress }}></span></span>
 								</div>
 								{{ fi }}
@@ -169,7 +169,7 @@
 		var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
 
 		DEF.languagehtml = '@{user.language}';
-		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && window.require != null;
+		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && W.require != null;
 		common.electronpadding = 0;
 
 		MONTHS[0] = '@(January)';
@@ -910,23 +910,28 @@
 					return;
 				}
 
-				if (window.user && window.user.desktop != null && window.user.desktop !== profile.desktop) {
+				if (W.user && W.user.desktop != null && W.user.desktop !== profile.desktop) {
 					location.reload(true);
 					return;
 				}
 
-				if (window.user && window.user.apps) {
+				if (W.user && W.user.apps) {
 					var apps = profile.apps;
-					var removed = [];
+
 					for (var i = 0; i < apps.length; i++) {
 						var app = apps[i];
 						var ua = user.apps.findItem('id', app.id);
 						if (ua)
 							COPY(app, ua);
+						else
+							user.apps.push(app);
 					}
+
 					user.apps = user.apps.remove(function(item) {
 						return apps.findItem('id', item.id) == null;
 					});
+
+					profile.apps = user.apps;
 				}
 
 				profile.datefdow = FIRSTDATEOFWEEK[profile.language || 'en'] || 0;
