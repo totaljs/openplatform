@@ -813,7 +813,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 		} else {
 
-			var meta = CONVERT(response, 'name:String(30),description:String(100),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowreadusers:Number,allowreadprofile:Number,allownotifications:Boolean,allowreadmeta:Boolean,responsive:boolean');
+			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowreadusers:Number,allowreadprofile:Number,allownotifications:Boolean,allowreadmeta:Boolean,responsive:boolean');
 
 			app.hostname = output.hostname.replace(/:\d+/, '');
 			app.online = true;
@@ -825,6 +825,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.frame = meta.url;
 			app.email = meta.email;
 			app.roles = meta.roles;
+			app.color = meta.color;
 			app.width = meta.width;
 			app.height = meta.height;
 			app.resize = meta.resize;
@@ -848,7 +849,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			else
 				app.origin = null;
 
-			var sign = (app.name + '' + app.icon + app.version + (app.width || 0) + '' + (app.height || 0) + (app.resize ? '1' : '0') + app.type + (app.responsive ? '1' : '0') + (app.mobilemenu ? '1' : '0') + (app.serververify ? '1' : '0') + (app.allowreadapps ? '1' : '0') + (app.allowreadusers ? '1' : '0') + (app.allowreadprofile ? '1' : '0') + (app.allownotifications ? '1' : '0') + (app.allowreadmeta ? '1' : '0') + (app.origin ? (app.origin.join('') || '[]') : '[]') + (app.roles ? (app.roles.join('') || '[]') : '[]') + app.hostname + (app.services ? JSON.stringify(app.services) : '{}'));
+			var sign = (app.name + '' + app.icon + app.version + (app.color ? app.color : '') + (app.width || 0) + '' + (app.height || 0) + (app.resize ? '1' : '0') + app.type + (app.responsive ? '1' : '0') + (app.mobilemenu ? '1' : '0') + (app.serververify ? '1' : '0') + (app.allowreadapps ? '1' : '0') + (app.allowreadusers ? '1' : '0') + (app.allowreadprofile ? '1' : '0') + (app.allownotifications ? '1' : '0') + (app.allowreadmeta ? '1' : '0') + (app.origin ? (app.origin.join('') || '[]') : '[]') + (app.roles ? (app.roles.join('') || '[]') : '[]') + app.hostname + (app.services ? JSON.stringify(app.services) : '{}'));
 			app.checksum = sign.crc32(true) + '';
 		}
 
