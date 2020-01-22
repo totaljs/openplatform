@@ -915,7 +915,11 @@
 					return;
 				}
 
+				var cansort = false;
+
 				if (W.user && W.user.apps) {
+
+					cansort = true;
 					var apps = profile.apps;
 
 					for (var i = 0; i < apps.length; i++) {
@@ -943,7 +947,7 @@
 					}, 1000);
 				}
 
-				if (profile.apps[0] && profile.apps[0].position != null && profile.apps[1] && profile.apps[1].position != null)
+				if (cansort || (profile.apps[0] && profile.apps[0].position != null && profile.apps[1] && profile.apps[1].position != null))
 					profile.apps.quicksort('position');
 				else
 					profile.apps.quicksort('title');
@@ -1233,7 +1237,6 @@
 
 			return '<i title="' + title + '" class="fa fa-' + (icon ? str.substring(0, index + 4) : str);
 		};
-
 	</script>
 
 	@{components('openplatform_portal')}
