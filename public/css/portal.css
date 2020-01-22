@@ -21,7 +21,7 @@ header img { width: 28px; float: left; border-radius: 100px; margin: 7px 8px 0 8
 header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px; margin: 5px 13px 0 5px; cursor: pointer; }
 
 .menu .caption { margin: 0 10px; margin-top: 20px; }
-.links { padding: 10px 10px 0 10px; }
+.links { padding: 10px; }
 .links a, .links button { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 2px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; user-select: none; height: 25px; background-color: transparent; }
 .links .selected { font-weight: bold; color: white; }
 .links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin-right: 6px; float: left; line-height: 20px; }
@@ -92,8 +92,8 @@ header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px;
 .username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
 .username:hover { opacity: 0.7; }
 .username i { margin-right: 5px; }
-footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; background: linear-gradient(0deg,#191919,#202020); }
-.light footer { background: linear-gradient(0deg,#F8F8F8,white); }
+footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; background: linear-gradient(0deg,#191919,#202020); border-top: 1px solid #404040; }
+.light footer { background: linear-gradient(0deg,#F8F8F8,white); border-top-color: #E0E0E0; }
 .console { font-size: 12px; cursor: pointer; float: left; }
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }

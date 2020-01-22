@@ -74,7 +74,9 @@ exports.install = function() {
 
 	ROUTE('+POST    /api/op/config/                *Apps/Config        --> @save');
 	ROUTE('+GET     /api/op/config/                *Apps/Config        --> @read');
-	ROUTE('+POST    /api/op/mail/                  *Mail               --> @send');
+
+	// Because of security reasons
+	// ROUTE('+POST    /api/op/mail/                  *Mail               --> @send');
 
 	ROUTE('+POST    /api/op/notify/{id}/                       *Apps/Notifications  --> @internal');
 	ROUTE('+GET     /api/op/badges/{id}/                       *Apps/Badges         --> @internal');
@@ -233,7 +235,10 @@ function json_service() {
 
 		if (appid === 'openplatform') {
 			self.user = obj.user;
-			OPERATION('api_' + serviceid, obj.app, self.callback(), self);
+			if (serviceid === 'mail')
+				$WORKFLOW('Mail', 'send', self.body, self.callback());
+			else
+				OPERATION('api_' + serviceid, obj.app, self.callback(), self);
 			return;
 		}
 
