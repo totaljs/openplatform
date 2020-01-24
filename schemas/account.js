@@ -41,7 +41,6 @@ NEWSCHEMA('Account', function(schema) {
 		$.extend && $.extend(builder);
 	});
 
-
 	schema.addWorkflow('check', function($) {
 
 		if ($.user.guest) {
@@ -178,6 +177,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		DBMS().modify('tbl_user', model).where('id', $.user.id).error('error-users-404').callback(function(err, response) {
 			if (response) {
+				user.rev = GUID(5);
 				MAIN.session.update2($.user.id, user);
 				FUNC.log('account/update', $.user.id, 'Updated account: ' + $.user.name, $);
 				EMIT('users/update', user.id, 'account');
