@@ -174,7 +174,7 @@ h3 i { margin-right: 5px; }
 .appbadge i { color: red; font-size: 7px; }
 
 .appprocess { position: relative; }
-.appprocess .appbadge { position: absolute; margin: 20px 0 0 7px; font-size: 7px; }
+.appprocess .appbadge { position: absolute; margin: 9px 0 0 -16px; font-size: 7px; }
 .appprocess .appbadge i { font-size: 7px; }
 
 .appprogress span { height: 3px; display: block; border-radius: 0; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }

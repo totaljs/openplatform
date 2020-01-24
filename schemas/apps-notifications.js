@@ -189,4 +189,5 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 		} else
 			$.success();
 	});
+
 });

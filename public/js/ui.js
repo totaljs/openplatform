@@ -2812,11 +2812,14 @@ COMPONENT('processes@2', function(self, config) {
 		return self;
 	};
 
-	function makeurl(url, accesstoken) {
+	function makeurl(url, accesstoken, rev) {
 
 		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
 		var language = '&language=' + (user.language || 'en');
+		if (rev)
+			language += '&rev=' + rev;
+
 		var index = url.indexOf('?');
 		if (index === -1)
 			return url + '?openplatform=' + accesstoken + language;
@@ -2949,7 +2952,7 @@ COMPONENT('processes@2', function(self, config) {
 				else if (value.href.indexOf(url) !== -1)
 					url = value.href;
 			}
-			iframe.iframe.attr('src', makeurl(url, value.accesstoken));
+			iframe.iframe.attr('src', makeurl(url, value.accesstoken, value.rev));
 		}, 100);
 
 		setTimeout(function() {
@@ -3854,11 +3857,14 @@ COMPONENT('processes', function(self, config) {
 		return self;
 	};
 
-	function makeurl(url, accesstoken) {
+	function makeurl(url, accesstoken, rev) {
 
 		accesstoken = encodeURIComponent(location.protocol + '//' + location.hostname + (location.port && +location.port > 1000 ? (':' + location.port) : '') + '/verify/?accesstoken=' + encodeURIComponent(accesstoken));
 
 		var language = '&language=' + (user.language || 'en');
+		if (rev)
+			language += '&rev=' + rev;
+
 		var index = url.indexOf('?');
 		if (index === -1)
 			return url + '?openplatform=' + accesstoken + language;
@@ -4020,7 +4026,7 @@ COMPONENT('processes', function(self, config) {
 				else if (value.href.indexOf(url) !== -1)
 					url = value.href;
 			}
-			iframe.iframe.attr('src', makeurl(url, value.accesstoken));
+			iframe.iframe.attr('src', makeurl(url, value.accesstoken, value.rev));
 		}, 100);
 
 		setTimeout(function() {

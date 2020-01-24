@@ -45,6 +45,7 @@ MAIN.session.ondata = function(meta, next) {
 			return;
 		}
 
+		user.rev = GUID(5); // revision
 		DB_ONLINE.dtlogged = NOW;
 		DBMS().modify('tbl_user', DB_ONLINE).where('id', meta.id);
 		next(null, user);
@@ -281,6 +282,7 @@ FUNC.meta = function(app, user, serverside) {
 	if (!serverside) {
 		meta.accesstoken = token;
 		meta.verify = CONF.url + '/api/verify/?accesstoken=' + token;
+		meta.rev = user.rev;
 	}
 
 	if (serverside) {
