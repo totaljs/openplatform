@@ -291,7 +291,8 @@ NEWSCHEMA('Users', function(schema) {
 			model.directoryid = 0;
 
 		if ($.model.welcome && !model.blocked && !model.inactive) {
-			$.model.token = ENCRYPTREQ($.req, { id: model.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
+			if ($.req)
+				$.model.token = ENCRYPTREQ($.req, { id: model.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
 			MAIL(model.email, TRANSLATOR(model.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', $.model, model.language);
 		}
 

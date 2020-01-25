@@ -16,5 +16,7 @@
 	<div style="font-weight:bold;text-transform:uppercase;color:black">@(Password)</div>
 	<div style="color:black">************</div>
 </div>
+@{if model.token}
 <div style="color:#DA4453;margin-top:10px"><b>@(Click on the link below:)</b></div>
 <div style="overflow:hidden"><a href="@{'%url'}/?token=@{model.token}">@{'%url'}/?token=@{model.token}</a></div>
+@{fi}
