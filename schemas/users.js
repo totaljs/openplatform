@@ -166,6 +166,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.company && builder.gridfilter('company', opt, String);
 		opt.gender && builder.gridfilter('gender', opt, String);
 		opt.language && builder.gridfilter('language', opt, String);
+		opt.reference && builder.gridfilter('reference', opt, String);
 		opt.supervisor && builder.gridfilter('supervisor', opt, String);
 		opt.note && builder.gridfilter('note', opt, String);
 		opt.deputy && builder.gridfilter('deputy', opt, String);
