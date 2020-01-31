@@ -27,11 +27,13 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allowcreate', String);
 	schema.define('allowdesktopfluid', Boolean);
 	schema.define('allowsmembers', Boolean);
+	schema.define('allowappearance', Boolean);
 	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
 	schema.define('maxmembers', Number);
 
 	schema.setGet(function($) {
+
 
 		if ($.controller && FUNC.notadmin($))
 			return;
@@ -55,6 +57,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.guest = response.guest;
 			model.defaultappid = response.defaultappid;
 			model.allowmembers = response.allowmembers == true;
+			model.allowappearance = response.allowappearance != false;
 			model.allowcreate = response.allowcreate;
 			model.allowstatus = response.allowstatus != false;
 			model.allowclock = response.allowclock != false;
@@ -111,6 +114,7 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.allowdesktop = model.allowdesktop != false;
 		CONF.allownickname = model.allownickname == true;
 		CONF.allowmembers = model.allowmembers == true;
+		CONF.allowappearance = model.allowappearance != false;
 		CONF.allowcreate = model.allowcreate;
 		CONF.cookie_expiration = model.cookie_expiration || '3 days';
 		CONF.allowbackground = model.allowbackground != false;
@@ -152,6 +156,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.guest = response.guest;
 				CONF.allownickname = response.allownickname == true;
 				CONF.allowstatus = response.allowstatus != false;
+				CONF.allowappearance = response.allowappearance != false;
 				CONF.allowmembers = response.allowmembers == true;
 				CONF.allowcreate = response.allowcreate;
 				CONF.allowclock = response.allowclock != false;

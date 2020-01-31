@@ -92,6 +92,8 @@
 			<div class="clearfix"></div>
 			@{fi}
 			<hr />
+
+			@{if CONF.allowappearance}
 			<div class="ui-appearance" data---="appearance__account.darkmode">
 				<div class="ui-appearance-label">
 					<i class="fa fa-paint-brush"></i>@(Appearance):
@@ -101,6 +103,7 @@
 				<div class="ui-appearance-option ui-appearance-light ui-appearance-selected">@(Light)</div>
 			</div>
 			<hr />
+			@{fi}
 
 			<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
 				<i class="fa fa-volume-up"></i>
