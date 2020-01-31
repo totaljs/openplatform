@@ -58,7 +58,10 @@ NEWSCHEMA('Users/Groups', function(schema) {
 			insert = true;
 		});
 
+		db.query('UPDATE tbl_user SET dtmodified=$1 WHERE groups && $2', [NOW, [id]]);
+
 		if (apps) {
+
 			if (!insert)
 				db.remove('tbl_group_app').where('groupid', id);
 

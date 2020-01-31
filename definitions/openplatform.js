@@ -1035,7 +1035,6 @@ FUNC.refreshgroupsroles = function(callback) {
 
 					// Reads app roles
 					var roles = {};
-
 					for (var j = 0; j < item.groups.length; j++) {
 						var group = MAIN.groupscache[item.groups[j]];
 						var appsroles = group.appsroles[appid];
