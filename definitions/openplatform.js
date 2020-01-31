@@ -1446,13 +1446,35 @@ function refresh_apps() {
 	}, FUNC.updateroles);
 }
 
+function emailnotifications() {
+
+	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE online=FALSE AND countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
+
+		if (!items.length)
+			return;
+
+		var messages = [];
+		for (var i = 0; i < items.length; i++) {
+			var user = items[i];
+			var msg = Mail.create(TRANSLATOR(user.language, '@(Unread notifications)'), VIEW('mails/notifications', user, null, null, user.language));
+			msg.to(user.email);
+			msg.from(CONF.mail_address_from, CONF.name);
+			messages.push(msg);
+		}
+
+		Mail.send2(messages, ERROR('emailnotifications'));
+	});
+}
+
 ON('service', function(counter) {
 
 	if (counter % 10 === 0) {
 		refresh_apps();
-		MAIN.session.releaseunused('1 hour');
+		if (!CONF.allow_sessions_unused)
+			MAIN.session.releaseunused('1 hour');
 		USERS = {}; // clears cache
 		DDOS = {};
+		CONF.allownotifications && emailnotifications();
 	}
 
 	if (OTPCOUNT) {

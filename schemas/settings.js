@@ -28,12 +28,12 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allowdesktopfluid', Boolean);
 	schema.define('allowsmembers', Boolean);
 	schema.define('allowappearance', Boolean);
+	schema.define('allownotifications', Boolean);
 	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
 	schema.define('maxmembers', Number);
 
 	schema.setGet(function($) {
-
 
 		if ($.controller && FUNC.notadmin($))
 			return;
@@ -55,6 +55,7 @@ NEWSCHEMA('Settings', function(schema) {
 			model.marketplace = response.marketplace;
 			model.welcome = response.welcome;
 			model.guest = response.guest;
+			model.allownotifications = response.allownotifications == true;
 			model.defaultappid = response.defaultappid;
 			model.allowmembers = response.allowmembers == true;
 			model.allowappearance = response.allowappearance != false;
@@ -116,6 +117,7 @@ NEWSCHEMA('Settings', function(schema) {
 		CONF.allowmembers = model.allowmembers == true;
 		CONF.allowappearance = model.allowappearance != false;
 		CONF.allowcreate = model.allowcreate;
+		CONF.allownotifications = model.allownotifications == true;
 		CONF.cookie_expiration = model.cookie_expiration || '3 days';
 		CONF.allowbackground = model.allowbackground != false;
 		CONF.allowtheme = model.allowtheme != false;
@@ -154,6 +156,7 @@ NEWSCHEMA('Settings', function(schema) {
 				CONF.verifytoken = response.verifytoken;
 				CONF.welcome = response.welcome;
 				CONF.guest = response.guest;
+				CONF.allownotifications = response.allownotifications == true;
 				CONF.allownickname = response.allownickname == true;
 				CONF.allowstatus = response.allowstatus != false;
 				CONF.allowappearance = response.allowappearance != false;

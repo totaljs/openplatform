@@ -1,6 +1,6 @@
 const DB_NOTIFICATION_APP = {};
 const DB_NOTIFICATION_USER = {};
-const DB_NOTIFICATIONS_RESET = { countnotifications: 0 };
+const DB_NOTIFICATIONS_RESET = { countnotifications: 0, dtnotified: null };
 const DB_NOTIFICATIONS_UNREAD = { unread: false };
 
 NEWSCHEMA('Apps/Notifications', function(schema) {
@@ -95,7 +95,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 				// Updates session
 				MAIN.session.set2(user.id, user);
 
-				DB_NOTIFICATION_USER.dtnotified = NOW;
 				DB_NOTIFICATION_USER.countnotifications = user.countnotifications;
 				DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;
 

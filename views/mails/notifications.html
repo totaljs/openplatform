@@ -1,8 +1,7 @@
 @{layout('~mails/layout')}
 
-<div style="font-size:20px;color:black">@(Dear) <b>@{model.firstname}</b></div>
-<br />
-<div style="color:#606060">@(You have <b>@{model.countnotifications}x unread</b> notifications. Please sign-in to OpenPlatform and read all notifications.)</div>
-<br />
-<div style="color:#DA4453;margin-top:10px"><b>@(To sign-in click on the link below:)</b></div>
-<div style="overflow:hidden"><a href="@{'%url'}">@{'%url'}</a></div>
+<div style="text-align:center;padding:10px 0">
+	<div style="color:#606060;border-bottom:1px solid #E0E0E0;padding-bottom:15px;margin-bottom:15px">@(You have <b>unread &#128276; notifications</b> in @{'%name'}. You need to sign-in to @{'%name'} and then you can read all notifications.)</div>
+	<div style="margin:10px 0 3px">@(Login page)</div>
+	<div style="overflow:hidden;font-size:18px"><a href="@{'%url'}">@{'%url'}</a></div>
+</div>
