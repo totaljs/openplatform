@@ -1448,7 +1448,8 @@ function refresh_apps() {
 
 function emailnotifications() {
 
-	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE online=FALSE AND countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
+	// online=FALSE
+	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
 
 		if (!items.length)
 			return;
