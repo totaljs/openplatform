@@ -341,6 +341,9 @@ FUNC.meta = function(app, user, serverside) {
 
 		meta.services = CONF.url + '/api/services/?accesstoken=' + tokenapp;
 
+		if (app.settings)
+			meta.settings = app.settings;
+
 		if (app.services)
 			meta.servicetoken = app.servicetoken;
 	}
