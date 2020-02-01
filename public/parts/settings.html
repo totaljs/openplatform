@@ -12,26 +12,26 @@
 				</div>
 
 				<div class="row">
-					<div class="col-sm-4 m b">
+					<div class="col-md-4 m b">
 						<div data---="input__?.url__required:1;maxlength:500;type:url">@(URL address)</div>
 					</div>
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.name__required:1;maxlength:50">@(OpenPlatform name)</div>
 					</div>
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.email__required:1;type:email">@(Support email)</div>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.verifytoken__maxlength:20;camouflage:•">@(Verification token)</div>
 						<div class="help">@(Verification token is a simple security tool against Hijacking data of third-party apps. If you change it, you may lose data in third-party apps.) <span class="link exec" data-exec="?/verifytoken"><i class="fa fa-retweet"></i>@(Generate token)</span></div>
 					</div>
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.cookie_expiration__required:1;maxlength:20">@(Cookie / Session expiration)</div>
 						<div class="help">@(Type an expiration time in the form: <code>2 days</code> or <code>3 minutes</code>)</div>
 					</div>
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.allowcreate__maxlength:200">@(URL for creating an account)</div>
 						<div class="help">@(Enables a link to create account at login page)</div>
 					</div>
@@ -39,7 +39,7 @@
 
 				<div class="caption">@(Appearance)</div>
 				<div class="row">
-					<div class="col-sm-6 m">
+					<div class="col-md-6 m">
 						<div data---="colorselector__settings.colorscheme__null__'#4285f4'"></div>
 					</div>
 				</div>
@@ -52,40 +52,42 @@
 
 				<hr />
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-md-4">
 						<div data---="checkbox__?.test">@(This is <b>Test environment</b>)</div>
 						<div data---="checkbox__?.guest">@(Allow <b>Guest user</b>)</div>
 						<div data---="checkbox__?.rebuildaccesstoken">@(Re-build access token)</div>
-						<div data---="checkbox__?.allowclock__checkicon:clock-o">@(Show clock)</div>
+						<div data---="checkbox__?.allowdesktopfluid">@(Enable fluid desktop mode)</div>
+						<div data---="checkbox__?.allownotifications">@(Allow e-mail notifications)</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-md-4">
+						<div data---="checkbox__?.allowclock__checkicon:clock-o">@(Show clock)</div>
 						<div data---="checkbox__?.allowstatus__checkicon:smile">@(Allow custom user statuses)</div>
 						<div data---="checkbox__?.allowbackground">@(Allow to change backgrounds)</div>
 						<div data---="checkbox__?.allowprofile">@(Users can change their profile)</div>
 						<div data---="checkbox__?.allowmembers">@(Allow users to add own members)</div>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-md-4">
 						<div data---="checkbox__?.allowtheme">@(Allow to change color themes)</div>
+						<div data---="checkbox__?.allowappearance">@(Allow to change appearance)</div>
 						<div data---="checkbox__?.allownickname">@(Allow to change nickname)</div>
 						<div data---="checkbox__?.allowdesktop">@(Allow to change desktop mode)</div>
-						<div data---="checkbox__?.allowdesktopfluid">@(Enable fluid desktop mode)</div>
 					</div>
 				</div>
 				<hr />
 
 				<div class="row">
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.defaultappid__dirsource:main.apps;dirkey:title;dirempty:@(No application)">@(Default application)</div>
 					</div>
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.marketplace__maxlength:500;type:url;placeholder:https://domain.com/marketplace.html;icon:shopping-basket">@(Link to Marketplace)</div>
 					</div>
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.welcome__maxlength:500;type:url;placeholder:https://domain.com/welcome.html">@(Link to Welcome page)</div>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.maxmembers__type:number;maxlength:4;disabled:1;icon:users" data-bind="?.allowmembers__enabled">@(Max. allowed members)</div>
 						<div class="help"><code>0</code> @(disables the limit)</div>
 					</div>
@@ -93,10 +95,10 @@
 				<br />
 				<div class="caption"><i class="far fa-envelope-o"></i>@(SMTP settings)</div>
 				<div class="row">
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.smtp__maxlength:100;placeholder:localhost__'localhost'">@(SMTP server)</div>
 					</div>
-					<div class="col-sm-4 m">
+					<div class="col-md-4 m">
 						<div data---="input__?.sender__type:email;forcevalidation:0__'@'">@(Sender email address)</div>
 					</div>
 				</div>

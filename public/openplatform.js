@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 419;
+OP.version = 420;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -644,6 +644,22 @@ OP.done = function(message, callback, loading) {
 		} else {
 			message && OP.send('done', message);
 			callback && callback(response, err);
+		}
+	};
+};
+
+OP.resume = function(callback, loading) {
+	return function(response, err) {
+		loading && OP.loading(false, 500);
+		if (!response && err)
+			response = [{ name: 'network', error: err }];
+		if (response instanceof Array) {
+			OP.send('done', response);
+		} else {
+			if (typeof(callback) === 'function')
+				callback(response);
+			else
+				SETR(callback, response);
 		}
 	};
 };

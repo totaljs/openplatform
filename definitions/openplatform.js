@@ -341,6 +341,9 @@ FUNC.meta = function(app, user, serverside) {
 
 		meta.services = CONF.url + '/api/services/?accesstoken=' + tokenapp;
 
+		if (app.settings)
+			meta.settings = app.settings;
+
 		if (app.services)
 			meta.servicetoken = app.servicetoken;
 	}
@@ -1032,7 +1035,6 @@ FUNC.refreshgroupsroles = function(callback) {
 
 					// Reads app roles
 					var roles = {};
-
 					for (var j = 0; j < item.groups.length; j++) {
 						var group = MAIN.groupscache[item.groups[j]];
 						var appsroles = group.appsroles[appid];
@@ -1446,13 +1448,36 @@ function refresh_apps() {
 	}, FUNC.updateroles);
 }
 
+function emailnotifications() {
+
+	// online=FALSE
+	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
+
+		if (!items.length)
+			return;
+
+		var messages = [];
+		for (var i = 0; i < items.length; i++) {
+			var user = items[i];
+			var msg = Mail.create(TRANSLATOR(user.language, '@(Unread notifications)'), VIEW('mails/notifications', user, null, null, user.language));
+			msg.to(user.email);
+			msg.from(CONF.mail_address_from, CONF.name);
+			messages.push(msg);
+		}
+
+		Mail.send2(messages, ERROR('emailnotifications'));
+	});
+}
+
 ON('service', function(counter) {
 
 	if (counter % 10 === 0) {
 		refresh_apps();
-		MAIN.session.releaseunused('1 hour');
+		if (!CONF.allow_sessions_unused)
+			MAIN.session.releaseunused('1 hour');
 		USERS = {}; // clears cache
 		DDOS = {};
+		CONF.allownotifications && emailnotifications();
 	}
 
 	if (OTPCOUNT) {

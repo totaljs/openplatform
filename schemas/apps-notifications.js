@@ -1,6 +1,7 @@
 const DB_NOTIFICATION_APP = {};
 const DB_NOTIFICATION_USER = {};
 const DB_NOTIFICATIONS_RESET = { countnotifications: 0 };
+const DB_NOTIFICATIONS_RESET2 = { countnotifications: 0, dtnotified: null };
 const DB_NOTIFICATIONS_UNREAD = { unread: false };
 
 NEWSCHEMA('Apps/Notifications', function(schema) {
@@ -13,7 +14,7 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 
 		var db = DBMS();
 		db.all('tbl_user_notification').where('userid', $.user.id).callback($.callback).take(100).sort('dtcreated', true);
-		db.mod('tbl_user', DB_NOTIFICATIONS_RESET).where('id', $.user.id);
+		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).where('id', $.user.id);
 		db.mod('tbl_user_app', DB_NOTIFICATIONS_RESET).where('userid', $.user.id);
 		db.mod('tbl_user_notification', DB_NOTIFICATIONS_UNREAD).where('userid', $.user.id).where('unread', true);
 
@@ -95,7 +96,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 				// Updates session
 				MAIN.session.set2(user.id, user);
 
-				DB_NOTIFICATION_USER.dtnotified = NOW;
 				DB_NOTIFICATION_USER.countnotifications = user.countnotifications;
 				DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;
 
@@ -177,7 +177,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			// Updates session
 			MAIN.session.set2(user.id, user);
 
-			DB_NOTIFICATION_USER.dtnotified = NOW;
 			DB_NOTIFICATION_USER.countnotifications = user.countnotifications;
 			DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;
 

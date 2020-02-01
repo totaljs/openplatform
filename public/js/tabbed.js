@@ -338,6 +338,7 @@ $(window).on('message', function(e) {
 				meta.datefdow = user.datefdow;
 				meta.darkmode = user.darkmode;
 				meta.colorscheme = user.colorscheme;
+				meta.username = user.name;
 				meta.userapps = [];
 
 				for (var i = 0; i < user.apps.length; i++) {

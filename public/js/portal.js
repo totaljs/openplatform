@@ -320,6 +320,7 @@ $(window).on('message', function(e) {
 				meta.darkmode = user.darkmode;
 				meta.colorscheme = user.colorscheme;
 				meta.userapps = [];
+				meta.username = user.name;
 
 				for (var i = 0; i < user.apps.length; i++) {
 					var ua = user.apps[i];

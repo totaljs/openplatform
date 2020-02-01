@@ -92,6 +92,8 @@
 			<div class="clearfix"></div>
 			@{fi}
 			<hr />
+
+			@{if CONF.allowappearance}
 			<div class="ui-appearance" data---="appearance__account.darkmode">
 				<div class="ui-appearance-label">
 					<i class="fa fa-paint-brush"></i>@(Appearance):
@@ -101,16 +103,7 @@
 				<div class="ui-appearance-option ui-appearance-light ui-appearance-selected">@(Light)</div>
 			</div>
 			<hr />
-
-			<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
-				<i class="fa fa-volume-up"></i>
-				<div>
-					<span data-volume="15">@(low)</span>
-					<span data-volume="50">@(medium)</span>
-					<span data-volume="100">@(loud)</span>
-				</div>
-			</div>
-			<br />
+			@{fi}
 
 			<div class="row">
 				<div class="col-2">
@@ -191,6 +184,14 @@
 				</div>
 				<div class="col-2 m">
 					<div data---="input__account.language__innerlabel:1;dirsource:languages;dirplaceholder:@(Search language)">@(Language)</div>
+				</div>
+			</div>
+			<div class="volume" data-bind="account.volume__click span:account_volume_set__exec:account_volume">
+				<i class="fa fa-volume-up"></i>
+				<div>
+					<span data-volume="15">@(low volume)</span>
+					<span data-volume="50">@(medium volume)</span>
+					<span data-volume="100">@(loud volume)</span>
 				</div>
 			</div>
 		</div>
