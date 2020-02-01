@@ -1243,6 +1243,7 @@ input:invalid { box-shadow: none; }
 .ui-dark .notification-unread { background-color: #2d2d29; }
 
 .ui-textarea { border: 1px solid #E0E0E0; padding: 0; border-radius: 2px; position: relative; display: block; width: 100%; background-color: white; overflow: hidden; }
+.ui-textarea-placeholder { position: absolute; top: 4px; left: 5px; cursor: text; color: #6f6f6f; user-select: none; }
 .ui-textarea textarea { border: 0; width: 100%; height: 100%; outline: 0; font: normal 14px Arial; color: black; resize: none; min-height: 50px; background-color: white; padding: 4px 5px; }
 .ui-textarea-label { margin-bottom: 3px; font-size: 12px; text-align: left; }
 .ui-textarea-label .fa { margin-right: 5px; }
@@ -1255,6 +1256,7 @@ input:invalid { box-shadow: none; }
 .ui-textarea-helper { margin-top: 8px; font-size: 11px; color: red; text-align: left; display: none; }
 .ui-textarea-helper-show { display: block; }
 .ui-disabled.ui-textarea { background-color: #F0F0F0; cursor: not-allowed; }
+.ui-disabled .ui-textarea-placeholder { cursor: not-allowed; }
 .ui-disabled.ui-textarea textarea { background-color: #F0F0F0; color: gray; }
 .ui-disabled .ui-textarea { background-color: #F0F0F0; }
 .ui-disabled .ui-textarea textarea { background-color: #F0F0F0; cursor: not-allowed; color: gray; }

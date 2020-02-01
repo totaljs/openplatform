@@ -13322,7 +13322,9 @@ COMPONENT('window', 'zindex:12;scrollbar:true', function(self, config) {
 
 COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 
-	var input, content = null;
+	var cls = 'ui-textarea';
+	var cls2 = '.' + cls;
+	var input, placeholder, content = null;
 
 	self.nocompile && self.nocompile();
 
@@ -13354,10 +13356,10 @@ COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 			case 'required':
 				self.noValid(!value);
 				!value && self.state(1, 1);
-				self.tclass('ui-textarea-required', value);
+				self.tclass(cls + '-required', value);
 				break;
 			case 'placeholder':
-				input.prop('placeholder', value || '');
+				placeholder.html(value || '');
 				break;
 			case 'maxlength':
 				input.prop('maxlength', value || 1000);
@@ -13369,7 +13371,7 @@ COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 				input.focus();
 				break;
 			case 'monospace':
-				self.tclass('ui-textarea-monospace', value);
+				self.tclass(cls + '-monospace', value);
 				break;
 			case 'icon':
 				redraw = true;
@@ -13393,12 +13395,13 @@ COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 
 		var attrs = [];
 		var builder = [];
+		var placeholderelement = '';
 
-		self.tclass('ui-disabled', config.disabled === true);
-		self.tclass('ui-textarea-monospace', config.monospace === true);
-		self.tclass('ui-textarea-required', config.required === true);
+		self.tclass('ui-disabled', !!config.disabled);
+		self.tclass(cls + '-monospace', !!config.monospace);
+		self.tclass(cls + '-required', !!config.required);
 
-		config.placeholder && attrs.attr('placeholder', config.placeholder);
+		config.placeholder && (placeholderelement = '<div class="{0}-placeholder">{1}</div>'.format(cls, config.placeholder));
 		config.maxlength && attrs.attr('maxlength', config.maxlength);
 		config.error && attrs.attr('error');
 		attrs.attr('data-jc-bind', '');
@@ -13406,31 +13409,29 @@ COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 		config.autofocus === 'true' && attrs.attr('autofocus');
 		config.disabled && attrs.attr('disabled');
 		config.readonly && attrs.attr('readonly');
-		builder.push('<textarea {0}></textarea>'.format(attrs.join(' ')));
+		builder.push('{1}<textarea {0}></textarea>'.format(attrs.join(' '), placeholderelement));
 
 		var label = config.label || content;
 
 		if (!label.length) {
-			config.error && builder.push('<div class="ui-textarea-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
-			self.aclass('ui-textarea ui-textarea-container');
+			config.error && builder.push('<div class="{0}-helper"><i class="fa fa-warning" aria-hidden="true"></i> {1}</div>'.format(cls, config.error));
+			self.aclass(cls + ' ' + cls + '-container');
 			self.html(builder.join(''));
-			input = self.find('textarea');
-			return;
+		} else {
+			var html = builder.join('');
+			builder = [];
+			builder.push('<div class="' + cls + '-label">');
+			config.icon && builder.push('<i class="fa fa-{0}"></i>'.format(config.icon));
+			builder.push(label);
+			builder.push(':</div><div class="{0}">{1}</div>'.format(cls, html));
+			config.error && builder.push('<div class="{0}-helper"><i class="fa fa-warning" aria-hidden="true"></i> {1}</div>'.format(cls, config.error));
+			self.html(builder.join(''));
+			self.rclass(cls);
+			self.aclass(cls + '-container');
 		}
 
-		var html = builder.join('');
-
-		builder = [];
-		builder.push('<div class="ui-textarea-label">');
-		config.icon && builder.push('<i class="fa fa-{0}"></i>'.format(config.icon));
-		builder.push(label);
-		builder.push(':</div><div class="ui-textarea">{0}</div>'.format(html));
-		config.error && builder.push('<div class="ui-textarea-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
-
-		self.html(builder.join(''));
-		self.rclass('ui-textarea');
-		self.aclass('ui-textarea-container');
 		input = self.find('textarea');
+		placeholder = self.find(cls2 + '-placeholder');
 
 		if (!config.scrollbar) {
 			input.noscrollbar();
@@ -13443,6 +13444,22 @@ COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 		self.type = config.type;
 		self.format = config.format;
 		self.redraw();
+
+		self.event('click', cls2 + '-placeholder', function() {
+			if (!config.disabled) {
+				placeholder.aclass('hidden');
+				input.focus();
+			}
+		});
+
+		self.event('focus', 'textarea', function() {
+			placeholder.aclass('hidden');
+		});
+
+		self.event('blur', 'textarea', function() {
+			if (!self.get() && config.placeholder)
+				placeholder.rclass('hidden');
+		});
 	};
 
 	self.state = function(type) {
@@ -13452,8 +13469,19 @@ COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 		if (invalid === self.$oldstate)
 			return;
 		self.$oldstate = invalid;
-		self.tclass('ui-textarea-invalid', invalid);
-		config.error && self.find('.ui-textarea-helper').tclass('ui-textarea-helper-show', invalid);
+		self.tclass(cls + '-invalid', invalid);
+		config.error && self.find( cls2 + '-helper').tclass(cls + '-helper-show', invalid);
+	};
+
+	self.setter2 = function(value) {
+
+		if (!config.placeholder)
+			return;
+
+		if (value)
+			placeholder.aclass('hidden');
+		else
+			placeholder.rclass('hidden');
 	};
 });
 

@@ -166,6 +166,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.company && builder.gridfilter('company', opt, String);
 		opt.gender && builder.gridfilter('gender', opt, String);
 		opt.language && builder.gridfilter('language', opt, String);
+		opt.reference && builder.gridfilter('reference', opt, String);
 		opt.supervisor && builder.gridfilter('supervisor', opt, String);
 		opt.note && builder.gridfilter('note', opt, String);
 		opt.deputy && builder.gridfilter('deputy', opt, String);
@@ -436,7 +437,8 @@ NEWSCHEMA('Users', function(schema) {
 			if (!keys || keys.repo) {
 				if (response.repo && typeof(response.repo) === 'object')
 					response.repo = JSON.stringify(response.repo);
-				if (response.repo && model.repo && response.repo !== model.repo) {
+
+				if (response.repo !== model.repo) {
 					if (model.repo)
 						data.repo = model.repo;
 					else

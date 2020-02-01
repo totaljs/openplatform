@@ -87,6 +87,11 @@
 					response.appsroles = {};
 					response.password = '';
 
+					if (response.repo)
+						response.repo = JSON.stringify(response.repo, null, '  ');
+					else
+						response.repo = '';
+
 					for (var i = 0; i < response.apps.length; i++) {
 						var app = response.apps[i];
 						response.appsroles[app.id] = app.roles;

@@ -118,7 +118,7 @@
 						<div data---="input__?.company__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchcompany;dirplaceholder:@(Search or type a new)__''">@(Company)</div>
 					</div>
 					<div class="col-sm-6 m">
-						<div data---="input__?.locality__maxlength:40;autosource:?/searchlocality__''">@(Location)</div>
+						<div data---="input__?.locality__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchlocality;dirplaceholder:@(Search or type a new)__''">@(Location)</div>
 					</div>
 				</div>
 				<div class="row">
@@ -126,7 +126,7 @@
 						<div data---="input__?.contractid__dirsource:contracts;dirsearch:false;placeholder:@(Choose a contract type)__0">@(Contract type)</div>
 					</div>
 					<div class="col-sm-6 m">
-						<div data---="input__?.position__maxlength:40;autosource:?/searchposition__''">@(Position)</div>
+						<div data---="input__?.position__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchposition;dirplaceholder:@(Search or type a new)__''">@(Position)</div>
 					</div>
 				</div>
 				<div class="row">
@@ -213,10 +213,11 @@
 			<div class="padding">
 				<div class="caption"><i class="fa fa-rocket"></i>@(Explicitly allowed apps)</div>
 				<div data---="apps__?.appsroles__datasource:main.apps__{}" class="m"></div>
-				<div data-bind="?.repo__show" class="hidden">
-					<hr />
-					<div class="m b"><i class="fa fa-box mr5"></i>@(Dynamic repository)</div>
-					<div data---="objecteditor__?.repo"></div>
+				<div>
+					<div class="caption"><i class="fa fa-box mr5"></i>@(Dynamic repository)</div>
+					<!-- <div data---="objecteditor__?.repo"></div> -->
+					<div data---="textarea__?.repo__monospace:true;height:150;placeholder:{}"></div>
+					<div class="help"><span data-bind="?.invalidrepo__show" class="red mr5 b"><i class="fa fa-warning mr5"></i>@(Invalid format.)</span>@(Must be defined in JSON format.)</div>
 				</div>
 			</div>
 		</div>
@@ -236,6 +237,17 @@
 		};
 
 		exports.submit = function() {
+			var model = GETR('?');
+			if (model.invalidrepo) {
+				OP.confirm2('@(__Dynamic repository contains invalid format!__ Are you really sure you want to save user profile?)', ['"floppy-o" @(Save)', '@(Cancel)'], function() {
+					exports.scope();
+					exports.submitforce();
+				});
+			} else
+				exports.submitforce();
+		};
+
+		exports.submitforce = function() {
 			var model = CLONE(GETR('?'));
 			model.darkmode = model.darkmode === 'true';
 			var keys = Object.keys(model.appsroles || EMPTYOBJECT);
@@ -259,10 +271,8 @@
 				model.apps.push({ id: key, roles: roles });
 			}
 
+			model.repo = model.repo && !model.invalidrepo ? JSON.stringify(JSON.parse(model.repo)) : null;
 			model.appsroles = undefined;
-
-			if (model.repo)
-				model.repo = STRINGIFY(model.repo);
 
 			AJAX('POST /api/op/users/' + (model.id || ''), model, OP.done('@(User has been saved successfully)', function() {
 				NULL('common.panel');
@@ -315,6 +325,18 @@
 		WATCH('?.firstname + ?.lastname', function(path, value) {
 			if (usersprofilepanel.firstname && usersprofilepanel.lastname && !usersprofilepanel.name)
 				SET('?.name', usersprofilepanel.firstname + ' ' + usersprofilepanel.lastname);
+		});
+
+		WATCH('?.repo', function(path, value) {
+			var val = false;
+			if (value) {
+				try {
+					JSON.parse(value);
+				} catch (e) {
+					val = true;
+				}
+			}
+			SET('?.invalidrepo', val);
 		});
 	});
 
