@@ -289,9 +289,9 @@ h3 i { margin-right: 5px; }
 	.menu { position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%; z-index: 36; background-color: #202020; display: none; }
 	.light .menu { background-color: white; }
 	.main { margin-left: 0; border-left: 0; }
-	.links .app > i, .links a > i, .links button > i { line-height: 24px; }
-	.links a, .links button { font-size: 16px; height: 28px; }
-	.links .app { font-size: 16px; height: 28px; }
+	.links .app > i, .links a > i, .links button > i { line-height: 30px; font-size: 14px; margin-top: -2px; width: 20px; }
+	.links a, .links button { font-size: 18px; height: 30px; }
+	.links .app { font-size: 18px; height: 30px; }
 	header { box-shadow: none; }
 	.ui-notifications { width: auto; left: 0; }
 	.form-border { border-left: 0; }
