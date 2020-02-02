@@ -292,7 +292,8 @@ h3 i { margin-right: 5px; }
 	.links .app > i, .links a > i, .links button > i { line-height: 30px; font-size: 14px; margin-top: -2px; width: 20px; }
 	.links a, .links button { font-size: 18px; height: 30px; }
 	.links .app { font-size: 18px; height: 30px; }
-	header { box-shadow: none; }
+	header { box-shadow: none; height: 60px; padding: 9px 0 0; }
+	header .title { font-size: 18px; }
 	.ui-notifications { width: auto; left: 0; }
 	.form-border { border-left: 0; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }

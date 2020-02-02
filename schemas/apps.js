@@ -2,6 +2,7 @@ const DB_VERSION = {};
 const DB_BADGES_RESET = { countbadges: 0 };
 const DB_BADGESNOTIFICATIONS_RESET = { countbadges: 0, countnotifications: 0 };
 const DB_OPEN = { '+countopen': 1 };
+const DB_NOTIFY_RESET = { countnotifications: 0, dtnotified: null };
 
 NEWSCHEMA('Apps', function(schema) {
 
@@ -303,6 +304,8 @@ NEWSCHEMA('Apps', function(schema) {
 
 			} else {
 
+				var notifications = user.countnotifications;
+
 				data.notifications = user.apps[$.id].notifications !== false;
 				user.countnotifications -= user.apps[$.id].countnotifications;
 
@@ -311,8 +314,12 @@ NEWSCHEMA('Apps', function(schema) {
 
 				user.apps[$.id].countnotifications = 0;
 
-				if (user.apps[$.id].countbadges)
-					DBMS().modify('tbl_user_app', DB_BADGES_RESET).where('id', $.user.id + $.id);
+				if (user.apps[$.id].countbadges || (notifications && !user.countnotifications)) {
+					var db = DBMS();
+					user.apps[$.id].countbadges && db.modify('tbl_user_app', DB_BADGES_RESET).where('id', $.user.id + $.id);
+					if (notifications && !user.countnotifications)
+						db.modify('tbl_user', DB_NOTIFY_RESET).where('id', $.user.id);
+				}
 
 				user.apps[$.id].countbadges = 0;
 				data.newversion = user.apps[$.id].version !== app.version;
