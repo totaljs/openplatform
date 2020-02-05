@@ -668,16 +668,25 @@ NEWSCHEMA('Users', function(schema) {
 						FUNC.log('users/update', id, model.name, $);
 						EMIT('users/update', id);
 						MAIN.session.release2(id);
-						FUNC.refreshgroupsrolesdelay();
-						FUNC.refreshmetadelay();
+
+						if (!keys || keys.apps || keys.groups)
+							FUNC.refreshgroupsrolesdelay();
+
+						if (!keys || keys.company || keys.groups || keys.locality || keys.language || keys.directory)
+							FUNC.refreshmetadelay();
+
 					});
 				} else {
 					$.success(id);
 					FUNC.log('users/update', id, model.name, $);
 					EMIT('users/update', id);
 					MAIN.session.release2(id);
-					FUNC.refreshgroupsrolesdelay();
-					FUNC.refreshmetadelay();
+
+					if (!keys || keys.apps || keys.groups)
+						FUNC.refreshgroupsrolesdelay();
+
+					if (!keys || keys.company || keys.groups || keys.locality || keys.language || keys.directory)
+						FUNC.refreshmetadelay();
 				}
 			});
 		});
