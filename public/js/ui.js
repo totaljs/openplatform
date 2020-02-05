@@ -2708,9 +2708,11 @@ COMPONENT('processes@2', function(self, config) {
 
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
-		iframe.element.find('.ui-process-loading').aclass('hidden');
-		self.progress(id, 0);
-		self.message(iframe, 'reload');
+		if (iframe) {
+			iframe.element.find('.ui-process-loading').aclass('hidden');
+			self.progress(id, 0);
+			self.message(iframe, 'reload');
+		}
 	};
 
 	self.progress = function(id, val) {
@@ -3763,9 +3765,11 @@ COMPONENT('processes', function(self, config) {
 
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
-		iframe.element.find('.ui-process-loading').aclass('hidden');
-		self.progress(id, 0);
-		self.message(iframe, 'reload');
+		if (iframe) {
+			iframe.element.find('.ui-process-loading').aclass('hidden');
+			self.progress(id, 0);
+			self.message(iframe, 'reload');
+		}
 	};
 
 	self.reorder = function() {

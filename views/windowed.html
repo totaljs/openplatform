@@ -756,6 +756,13 @@
 					user.name = response.name;
 				}
 
+				if (user.rev !== response.rev) {
+					// a new revision
+					// we need to notify all apps
+					user.rev = response.rev;
+					SETTER('processes', 'emitevent', 'revision', user.rev);
+				}
+
 				if (user.photo !== response.photo) {
 					is = true;
 					user.photo = response.photo;
