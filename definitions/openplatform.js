@@ -974,10 +974,10 @@ FUNC.refreshgroupsroles = function(callback) {
 			MAIN.rolescache[item.id] = obj;
 		}
 
-		var updatecount = 0;
+		var updatedusers = [];
 		var fnupdatecount = function(response) {
-			if (response.length)
-				updatecount++;
+			for (var i = 0; i < response.length; i++)
+				updatedusers.push(response[i].userid);
 		};
 
 		// Clean apps
@@ -1030,7 +1030,7 @@ FUNC.refreshgroupsroles = function(callback) {
 				for (var i = 0; i < apps.length; i++)
 					appsid.push(PG_ESCAPE(apps[i]));
 
-				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash=$1{0}) RETURNING 1'.format((appsid && appsid.length ? ' AND appid NOT IN ({0})'.format(appsid.join(',')) : '')), [groupshash]).data(fnupdatecount);
+				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash=$1{0}) RETURNING userid'.format((appsid && appsid.length ? ' AND appid NOT IN ({0})'.format(appsid.join(',')) : '')), [groupshash]).data(fnupdatecount);
 
 				for (var i = 0; i < appsid.length; i++) {
 
@@ -1057,7 +1057,7 @@ FUNC.refreshgroupsroles = function(callback) {
 
 					roles = Object.keys(roles);
 					db.query('UPDATE tbl_user_app SET roles=$1 WHERE appid={0} AND inherited=TRUE AND userid IN (SELECT id FROM tbl_user WHERE tbl_user.groupshash=$2)'.format(appsid[i]), [roles, groupshash]);
-					db.query('INSERT INTO tbl_user_app (id, userid, appid, roles, inherited, notifications, countnotifications, countbadges, countopen, dtcreated, position) SELECT id||{0}, id, {0}, $1, TRUE, TRUE, 0, 0, 0, NOW(), {1} FROM tbl_user WHERE tbl_user.groupshash=$2 AND NOT EXISTS(SELECT 1 FROM tbl_user_app WHERE tbl_user_app.id=tbl_user.id||{0}) RETURNING 1'.format(appsid[i], app.position || 0), [roles, groupshash]).data(fnupdatecount);
+					db.query('INSERT INTO tbl_user_app (id, userid, appid, roles, inherited, notifications, countnotifications, countbadges, countopen, dtcreated, position) SELECT id||{0}, id, {0}, $1, TRUE, TRUE, 0, 0, 0, NOW(), {1} FROM tbl_user WHERE tbl_user.groupshash=$2 AND NOT EXISTS(SELECT 1 FROM tbl_user_app WHERE tbl_user_app.id=tbl_user.id||{0}) RETURNING userid'.format(appsid[i], app.position || 0), [roles, groupshash]).data(fnupdatecount);
 				}
 
 				db.callback(next);
@@ -1068,10 +1068,18 @@ FUNC.refreshgroupsroles = function(callback) {
 				var hashes = Object.keys(groupshashes);
 				var db = DBMS();
 				hashes.length && db.update('tbl_user', { groupshash: '' }).notin('groupshash', hashes);
-				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash IS NULL OR tbl_user.groupshash=\'\')');
+				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash IS NULL OR tbl_user.groupshash=\'\') RETURNING userid');
 
 				// Releases all sessions
-				updatecount && MAIN.session.release();
+				if (updatedusers.length) {
+					if (updatedusers.length > 1000)
+						MAIN.session.release();
+					else {
+						for (var i = 0; i < updatedusers.length; i++)
+							MAIN.session.release2(updatedusers[i]);
+					}
+				}
+
 				callback && callback();
 			});
 		});
