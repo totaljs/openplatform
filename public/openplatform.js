@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 420;
+OP.version = 421;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -350,7 +350,9 @@ OP.confirm = function(message, buttons, callback) {
 	var data = {};
 	data.body = message;
 	data.buttons = buttons instanceof Array ? buttons : buttons.split(',').trim();
+	var scope = window.M && window.M.scope ? window.M.scope() : null;
 	return OP.send('confirm', data, function(err, button) {
+		scope && window.M.scope(scope);
 		callback(button ? button.index : -1);
 	});
 };
@@ -359,7 +361,9 @@ OP.options = function(fn, callback) {
 	OP.on('options', function() {
 		var arr = [];
 		fn(arr);
+		var scope = window.M && window.M.scope ? window.M.scope() : null;
 		OP.send('options', arr, function(err, selected) {
+			scope && window.M.scope(scope);
 			selected && callback(selected);
 		});
 	});
@@ -375,7 +379,9 @@ OP.config = function(body, callback) {
 	} else
 		data.body = JSON.stringify(body);
 
+	var scope = window.M && window.M.scope ? window.M.scope() : null;
 	return OP.send('config', data, function(err, data) {
+		scope && window.M.scope(scope);
 		callback && callback(data, err);
 	});
 };
@@ -392,7 +398,9 @@ OP.meta = function(callback) {
 	var data = {};
 	data.ua = navigator.userAgent;
 	data.accesstoken = OP.accesstoken;
+	var scope = window.M && window.M.scope ? window.M.scope() : null;
 	OP.send('meta', data, function(err, response) {
+		scope && window.M.scope(scope);
 		callback(err, response);
 	});
 };
@@ -632,9 +640,11 @@ OP.done = function(message, callback, loading) {
 		message = null;
 	}
 
+	var scope = window.M && window.M.scope ? window.M.scope() : null;
 	return function(response, err) {
 
 		loading && OP.loading(false, 500);
+		scope && window.M.scope(scope);
 
 		if (!response && err)
 			response = [{ name: 'network', error: err }];
@@ -649,7 +659,9 @@ OP.done = function(message, callback, loading) {
 };
 
 OP.resume = function(callback, loading) {
+	var scope = window.M && window.M.scope ? window.M.scope() : null;
 	return function(response, err) {
+		scope && window.M.scope(scope);
 		loading && OP.loading(false, 500);
 		if (!response && err)
 			response = [{ name: 'network', error: err }];
