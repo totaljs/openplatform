@@ -68,11 +68,13 @@ function logout() {
 function lock() {
 	var self = this;
 	MAIN.session.get(self.sessionid, function(err, profile, meta) {
-		meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
-		if (meta.settings.indexOf('locked:1') === -1)
-			meta.settings = (meta.settings ? ';' : '') + 'locked:1';
-		var expire = CONF.cookie_expiration || '3 days';
-		MAIN.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
+		if (meta) {
+			meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
+			if (meta.settings.indexOf('locked:1') === -1)
+				meta.settings = (meta.settings ? ';' : '') + 'locked:1';
+			var expire = CONF.cookie_expiration || '3 days';
+			MAIN.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
+		}
 		self.redirect('/');
 	});
 }
