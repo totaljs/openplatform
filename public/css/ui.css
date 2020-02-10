@@ -1379,3 +1379,5 @@ input:invalid { box-shadow: none; }
 	.ui-datepicker-header-info { width: calc(100% - 75px); }
 	.ui-datepicker table td div { padding: 10px 0; }
 }
+
+.ui-clipboard { position: absolute; left: -100px; top: -100px; height: 1px; width: 1px; }
