@@ -39,7 +39,7 @@ header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px;
 .light .links .highlight { color: gray; }
 .light .links a, .light .links button { color: black; }
 
-.menu hr { margin: 10px 0; border-color: #303030; }
+.menu hr { margin: 0 0 10px 0; border-color: #303030; }
 .light .menu hr { border-color: #F0F0F0; }
 .menu { width: 220px; float: left; }
 .container .menu { border-left: 1px solid #404040; }
