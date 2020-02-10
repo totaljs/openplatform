@@ -699,6 +699,7 @@
 				var app = dashboard.apps.findItem('id', id);
 				if (app) {
 					app.dtfocused = NOW;
+					W.pathname = '/?app=' + encodeURIComponent(app.internal.name);
 					b.tclass('appbutton', app.internal.mobilemenu === true);
 				}
 				$('.ui-process-focus').rclass('ui-process-focus');
@@ -709,6 +710,7 @@
 				common.statustimeout && clearTimeout(common.statustimeout);
 				common.statustimeout = null;
 				NULL('common.status');
+				W.pathname = null;
 			}
 			EXEC('Dashboard/saveState');
 		});
