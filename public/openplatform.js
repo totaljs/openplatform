@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 421;
+OP.version = 422;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -384,6 +384,10 @@ OP.config = function(body, callback) {
 		scope && window.M.scope(scope);
 		callback && callback(data, err);
 	});
+};
+
+OP.clipboard = function(text) {
+	OP.send('clipboard', text);
 };
 
 OP.snackbar = function(message, type, button) {

@@ -266,6 +266,10 @@ $(window).on('message', function(e) {
 
 			break;
 
+		case 'clipboard':
+			SETTER('clipboard', 'copy', data.body);
+			break;
+
 		case 'mail':
 			AJAX('POST /api/op/mail/', data.body, NOOP);
 			break;

@@ -14888,3 +14888,30 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 		self.html('<div class="ui-datepicker-header"><button class="ui-datepicker-header-prev" name="prev" data-date="{0}-{1}"><span class="fa fa-arrow-left"></span></button><div class="ui-datepicker-header-info">{2} {3}</div><button class="ui-datepicker-header-next" name="next" data-date="{0}-{1}"><span class="fa fa-arrow-right"></span></button></div><div class="ui-datepicker-table" data-date="{0}-{1}"><table cellpadding="0" cellspacing="0" border="0"><thead>{4}</thead><tbody>{5}</tbody></table></div>'.format(output.year, output.month, months, years, header.join(''), builder.join('')) + (self.opt.cancel ? ('<div class="ui-datepicker-cancel">' + self.opt.cancel + '</div>') : '') + (config.today ? '<div class="ui-datepicker-today"><span class="link">{0}</span><span class="link ui-datepicker-today-a"><i class="fa fa-datepicker"></i>{1}</span></div>'.format(config.close, config.today) : ''));
 	};
 });
+
+COMPONENT('clipboard', function(self) {
+
+	var container;
+
+	self.singleton();
+	self.readonly();
+	self.nocompile && self.nocompile();
+
+	self.copy = function(value) {
+		container.val(value);
+		container.focus();
+		container.select();
+		document.execCommand('copy');
+		container.blur();
+	};
+
+	self.make = function() {
+		var id = 'clipboard' + self.id;
+		$(document.body).append('<textarea id="{0}" class="ui-clipboard"></textarea>'.format(id));
+		container = $('#' + id);
+	};
+
+	self.setter = function(value) {
+		value && self.copy(value);
+	};
+});

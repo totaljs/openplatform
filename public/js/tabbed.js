@@ -299,6 +299,10 @@ $(window).on('message', function(e) {
 			}
 			break;
 
+		case 'clipboard':
+			SETTER('clipboard', 'copy', data.body);
+			break;
+
 		case 'launched':
 			if (app) {
 

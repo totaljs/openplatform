@@ -294,6 +294,10 @@ $(window).on('message', function(e) {
 			SET('reportbug.screenshot', data.body);
 			break;
 
+		case 'clipboard':
+			SETTER('clipboard', 'copy', data.body);
+			break;
+
 		case 'appearance':
 			if (app) {
 				var iframe = processes.findProcess(app.id);
