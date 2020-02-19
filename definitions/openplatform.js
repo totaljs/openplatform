@@ -14,7 +14,7 @@ var SIMPLECACHE = {};
 var DDOS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4500;           // Current version of OpenPlatform
+MAIN.version = 4501;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -133,8 +133,8 @@ FUNC.cookie = function(req, user, sessionid, callback, note) {
 		sessionid = null;
 	}
 
-	var id;
 	var opt = {};
+	var id;
 
 	if (typeof(user) === 'string') {
 		id = user;

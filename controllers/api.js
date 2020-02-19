@@ -5,6 +5,7 @@ const REQUEST_FLAGS = ['post', 'keepalive', 'json'];
 exports.install = function() {
 
 	// Users
+
 	ROUTE('+GET     /api/op/users/                 *Users              --> @query');
 	ROUTE('+GET     /api/op/users/{id}/            *Users              --> @read');
 	ROUTE('+POST    /api/op/users/                 *Users              --> @check @insert (response)');
@@ -237,8 +238,10 @@ function json_service() {
 			self.user = obj.user;
 			if (serviceid === 'mail')
 				$WORKFLOW('Mail', 'send', self.body, self.callback());
-			else
+			else {
+				self.body = U.parseJSON(self.body, true);
 				OPERATION('api_' + serviceid, obj.app, self.callback(), self);
+			}
 			return;
 		}
 
