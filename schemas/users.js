@@ -531,6 +531,16 @@ NEWSCHEMA('Users', function(schema) {
 
 			if (!keys || keys.groups) {
 
+
+				tmp = [];
+				for (var i = 0; i < model.groups.length; i++) {
+					var item = model.groups[i];
+					if (tmp.indexOf(item) === -1)
+						tmp.push(item);
+				}
+
+				model.groups = tmp;
+
 				if (model.groups)
 					model.groups.sort();
 
