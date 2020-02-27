@@ -109,7 +109,7 @@ FUNC.titlechange = function(type, id, text) {
 
 	el.rclass2('titlemessage-').aclass('titlemessage-' + type);
 	icon.rclass2('fa-').aclass('fa-' + (type === 'success' ? 'check-circle' : 'warning'));
-	title.html(text);
+	title.html(text.markdown(MD_LINE));
 	el.rclass('hidden');
 
 	common.titlescache && clearTimeout(common.titlescache);

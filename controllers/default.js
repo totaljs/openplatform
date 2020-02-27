@@ -18,8 +18,11 @@ exports.install = function() {
 };
 
 function index() {
-	var desktop = this.user.desktop;
-	this.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
+	var self = this;
+	var desktop = self.user.desktop;
+	self.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
+	if (self.user.welcome)
+		self.user.welcome = false;
 }
 
 function manifest(req, res) {

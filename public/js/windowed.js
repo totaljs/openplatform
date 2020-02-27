@@ -113,7 +113,7 @@ FUNC.titlechange = function(type, id, text) {
 
 	header.aclass('ui-process-header-' + type);
 	icon.rclass().aclass('fa fa-' + (type === 'success' ? 'check-circle' : 'warning'));
-	title.html(text);
+	title.html(text.markdown(MD_LINE));
 
 	common.titlescache[id] = setTimeout(function() {
 		header.rclass('ui-process-header-' + type);
