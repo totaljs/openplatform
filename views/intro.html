@@ -1,0 +1,120 @@
+@{layout('')}
+
+<div data---="intro__common.intro__if:welcome;selected:ui-intro-selected;exec:intro/submit" class="hidden">
+	<figure>
+		<div class="m"><i class="fa fa-flag fa-4x usercolor"></i></div>
+		<div>@(Welcome <b>@{user.name}</b> to <b>@{'%name'}</b>)</div>
+	</figure>
+
+	@{if CONF.allowtheme || CONF.allowappearance}
+	<figure>
+		<div class="padding">
+
+			@{if CONF.allowappearance}
+			<div><i class="fa fa-paint-brush"></i> @(<b>Appearance</b>. You can choose light or dark mode. Not all apps support appearance.)</div>
+			<br />
+			<div data---="radiobuttonexpert__intro.darkmode__datasource:%intromodes;type:boolean">
+				<script type="text/html">
+					<div class="radioimage"><img src="/img/{{ type }}.png" alt="{{ name }}" />{{ name }}</div>
+				</script>
+			</div>
+			@{fi}
+
+			@{if CONF.allowtheme}
+			<hr />
+			<div>@(Choose a theme color:)</div>
+			<div data---="colorselector__intro.colorscheme__null" style="margin-bottom:5px"></div>
+			@{fi}
+
+		</div>
+	</figure>
+	@{fi}
+
+	<figure>
+		<div class="m"><i class="far usercolor fa-calendar fa-3x"></i></div>
+		<div>@(Date/Time and language settings)</div>
+		<div class="padding npt left">
+			<hr />
+			<div class="col-sm-6 m">
+				<div data---="input__intro.dateformat__dirsource:%cl.dateformats;dirsearch:false">@(Date format)</div>
+			</div>
+			<div class="col-sm-6 m">
+				<div data---="input__intro.timeformat__dirsource:%cl.timeformats;dirsearch:false">@(Time)</div>
+			</div>
+			<div class="col-sm-6 m">
+				<div data---="input__intro.numberformat__dirsource:%cl.numberformats;dirsearch:false">@(Number format)</div>
+			</div>
+			<div class="col-sm-6 m">
+				<div data---="input__intro.language__dirsource:languages;dirplaceholder:@(Search language)">@(Language)</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</figure>
+
+	@{if CONF.allowdesktop}
+	<figure>
+		<div class="m"><i class="fas fa-window-restore usercolor fa-3x"></i></div>
+		<div>@(User interface modes)</div>
+		<br />
+		<div data---="radiobuttonexpert__intro.desktop__datasource:%introdesktop;type:number">
+			<script type="text/html">
+				<div class="radioimage"><img src="/img/{{ type }}.png" width="60" alt="{{ name }}" />{{ name }}</div>
+			</script>
+		</div>
+	</figure>
+	@{fi}
+
+	<figure>
+		<div class="m"><i class="far usercolor fa-bell fa-3x"></i></div>
+		<div>@(Additional settings)</div>
+		<div class="padding left gray npt">
+			<hr />
+			<div class="col-sm-8">
+				<div class="mt5">@(Enable notifications)</div>
+			</div>
+			<div class="col-sm-4 right">
+				<div data---="togglebutton__intro.notifications"></div>
+			</div>
+			<div class="col-sm-8">
+				<div class="mt5">@(Enable mail notifications)</div>
+			</div>
+			<div class="col-sm-4 right">
+				<div data---="togglebutton__intro.notificationsemail"></div>
+			</div>
+			<div class="col-sm-8">
+				<div class="mt5">@(Enable sounds)</div>
+			</div>
+			<div class="col-sm-4 right">
+				<div data---="togglebutton__intro.sounds"></div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</figure>
+</div>
+
+<script>
+
+	SET('%intromodes', [{ id: false, type: 'light', name: '@(Light)' }, { id: true, type: 'dark', name: '@(Dark)' }]);
+	SET('%introdesktop', [{ id: 1, type: 'windowed', name: '@(Windowed)' }, { id: 2, type: 'tabbed', name: '@(Tabbed)' }, { id: 3, type: 'portal', name: '@(Portal)' }]);
+
+	SET('GET /api/account/', 'intro');
+	SET('GET /api/cl/ <5 minutes>', '%cl');
+
+	PLUGIN('intro', function(exports) {
+
+		WATCH('?.colorscheme + ?.darkmode', function(path, value) {
+			var val = GET('?');
+			refresh_color({ colorscheme: val.colorscheme, darkmode: !!val.darkmode });
+		});
+
+		exports.submit = function() {
+			var model = GETR('?');
+			AJAX('POST /api/account/', model, function(response) {
+				if (model.desktop !== user.desktop)
+					location.reload(true);
+			});
+		};
+
+	});
+
+</script>

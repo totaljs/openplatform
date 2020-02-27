@@ -112,11 +112,11 @@
 					</div>
 					@{fi}
 					@{if !user.guest && CONF.allowprofile}
-					<div class="app exec internal" data-exec="internalapp" data-id="_account">
-						<span class="close exec" data-exec="Dashboard/close" data-id="_account"><i class="fa fa-times"></i></span>
+					<div class="app exec internal app-modal" data-exec="Dashboard/showprofile">
 						<i class="fa fa-user-circle"></i>@(My account)
 					</div>
 					@{fi }
+
 					@{if !user.guest}
 						@{if CONF.allowmembers}
 						<div class="app exec internal app-modal" data-exec="Dashboard/showmembers">
@@ -126,7 +126,8 @@
 						<div class="app exec internal app-modal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</div>
 					@{fi}
 
-					<hr />
+					<hr style="margin-top:10px" />
+
 					@{if !user.guest && user.sa}
 						<div class="app exec internal" data-exec="internalapp" data-id="_admin">
 							<span class="close exec" data-exec="Dashboard/close" data-id="_admin"><i class="fa fa-times"></i></span>
@@ -165,6 +166,7 @@
 	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
 	<div data---="importer__common.form__if:membersform;url:/forms/members.html"></div>
 	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
+	<div data---="importer__common.form__if:profileform;url:/_profile/"></div>
 
 	<script>
 
@@ -215,6 +217,7 @@
 		common.livecounter = 0;
 		common.liverefreshing = false;
 		common.maxmembers = +'@{CONF.maxmembers}';
+		common.welcome = '@{user.welcome}' === 'true';
 
 		CACHEPATH('common.statusid', '6 hours');
 
@@ -385,8 +388,10 @@
 			};
 
 			self.showprofile = function() {
-				if (!user.guest)
-					internalapp('_account');
+				if (!user.guest) {
+					SET('common.form', 'profileform');
+					SET('common.startmenu', false);
+				}
 			};
 
 			self.minimizemenu = function() {
@@ -768,7 +773,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userborder{border-color:{0}}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', ''), 'usertheme');
+			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button{background-color:{0}}.radioimage.selected{border-color:{0}!important}.userborder{border-color:{0}}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
@@ -1111,7 +1116,6 @@
 		});
 
 		$(document).on('contextmenu', '.launchpadapp', function(e) {
-
 			e.stopPropagation();
 			e.preventDefault();
 
@@ -1179,6 +1183,13 @@
 						});
 					}, 1000);
 				}
+
+				@{if CONF.allowprofile}
+				if (common.welcome) {
+					SET('common.intro', 'welcome');
+					IMPORT('/_intro/');
+				}
+				@{fi}
 
 			});
 		});

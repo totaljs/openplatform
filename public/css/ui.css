@@ -4,6 +4,21 @@ button { outline: 0; }
 .hidden { display: none; }
 .noscroll { overflow: hidden; }
 
+.radioimage { padding: 8px 12px 4px; margin: 5px 8px; border-radius: 3px; border: 2px solid #E0E0E0; display: position: relative; display: inline-block; cursor: pointer; font-size: 11px; text-align: center; color: gray; }
+.radioimage:first-child { margin-left: 0; }
+.radioimage img { display: block; margin-bottom: 5px; }
+.radioimage.selected { color: white; }
+.ui-dark .radioimage { border-color: #404040; }
+
+.volume { float: left; width: 33.33%; cursor: pointer; background-color: #F0F0F0; text-align: center; font-size: 12px; line-height: 32px; }
+.volume.selected { color: white; }
+.volume:first-child { border-radius: 2px 0 0 2px; border-right: 0; }
+.volume:last-child { border-radius: 0 2px 2px 0; border-left: 0; }
+.ui-dark .volume  { background-color: #404040; }
+
+.inline { position: relative; }
+.mr10 { margin-right: 10px; }
+
 .alert { color: #856404; background-color: #FFFFD5; border: 1px solid #e8e6bd; border-radius: 3px; padding: 10px 15px; font-size: 12px; line-height: 15px; }
 .ui-dark .alert { background-color: #4a4a38; border-color: #656450; color: #a59a7a; }
 .ui-dark .bg-yellow { background-color: #2b2c31; }
@@ -322,6 +337,7 @@ input:invalid { box-shadow: none; }
 .badge-large .fa { margin-right: 5px; }
 .badge-small { font-size: 10px; padding: 0px 3px 1px; }
 
+.left { text-align: left; }
 .center { text-align: center; }
 .right { text-align: right; }
 
@@ -342,6 +358,7 @@ input:invalid { box-shadow: none; }
 .ui-preview-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
 .ui-preview-label .fa { margin-right: 5px; }
 .ui-preview img { margin-left: auto; margin-right: auto; border-radius: 100%; border: 2px solid #E0E0E0; cursor: pointer; }
+.ui-dark .ui-preview img { border-color: #404040; }
 
 .ui-dropdowncheckbox-container { display: block; text-align: left; position: relative; font-size:14px; }
 .ui-dropdowncheckbox { border: 1px solid #E0E0E0; padding: 0 0 0 10px; border-radius: 2px; outline: 0; overflow: hidden; width: 100%; background-color: white; height: 28px; cursor: pointer; }
@@ -411,6 +428,13 @@ input:invalid { box-shadow: none; }
 .light .ui-process-iframe-container { background-color: white; position: relative; }
 .ui-process iframe { width: 100%; height: 100%; overflow: auto; overflow-scrolling: touch; background-color: #202020; margin: 0; padding: 0; line-height: 0; border: 0; }
 .light .ui-process iframe { background-color: white; }
+.ui-process-offline { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; background:rgba(30,30,30,0.95); color: white; user-select: none; }
+.ui-process-offline i { display: block; margin-bottom: 15px; font-size: 60px; color: #c73b3b; }
+.ui-process-offline section { display: table; width: 100%; height: 100%; table-layout: fixed; }
+.ui-process-offline div { display: table-cell; width: 100%; height: 100%; text-align: center; vertical-align: middle; }
+
+.light .ui-process-offline { background: rgba(230,230,230,0.95); color: black; }
+
 .ui-process-loading { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; background-color: rgba(60,60,60,0.9); user-select: none; }
 .ui-process-loading > div { position: absolute; width: 250px; height: 120px; left: 50%; top: 50%; margin: -60px 0 0 -125px; }
 .ui-process-loading .loading { background-size: 80px 80px; width: 80px; height: 80px; margin: 0 auto; }
@@ -722,8 +746,8 @@ input:invalid { box-shadow: none; }
 .ui-directory-visible { opacity: 1; }
 .ui-directory-container { height: 150px; overflow-x: hidden; overflow-y: auto; overflow-scrolling: touch; margin: 0 30px 0 0; padding: 0; }
 .ui-directory ul { list-style-type: none; margin: 0; padding: 0; }
-.ui-directory .selected { background-color: #E9E9E9; color: black; }
-.ui-directory .current { background-color: #F2F2F2; color: black; }
+.ui-directory .selected { background-color: #E9E9E9; color: white !important; }
+.ui-directory .current { background-color: #F2F2F2; }
 .ui-directory-default li { padding: 0 40px 0 10px; height: 26px; line-height: 26px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .ui-directory li { border-top: 1px solid #F0F0F0; font-size: 12px; background-color: white; cursor: pointer; margin: 0; }
 .ui-directory li:first-child { border-top: 0; }
@@ -1381,3 +1405,79 @@ input:invalid { box-shadow: none; }
 }
 
 .ui-clipboard { position: absolute; left: -100px; top: -100px; height: 1px; width: 1px; }
+
+.ui-appearance { height: 55px; }
+.ui-appearance-label { float: left; padding: 5px 0 0 0; font-size: 12px; width: 250px; }
+.ui-appearance-label i { margin-right: 5px; }
+.ui-appearance-option { background-image: url(../img/appearance.png); border-radius: 3px; border: 2px solid #E0E0E0; width: 80px; height: 55px; float: right; margin-left: 10px; text-align: center; font-size: 11px; padding: 19px 0 0 20px; cursor: pointer; }
+.ui-appearance-selected { border-color: #49a7f8 !important; }
+.ui-appearance-light { background-position: -7px 0; background-size: 175px 51px; color: black; }
+.ui-appearance-dark { background-position: 80px 0; background-size: 175px 51px; color: white; }
+
+.ui-largeform-noscroll, .ui-largeform-noscroll body { overflow: hidden; }
+.ui-largeform-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow: hidden; transform-style: preserve-3d; padding: 0 30px; }
+.ui-dark .ui-largeform-container { background-color: rgba(100,100,100,0.2); }
+.ui-largeform { background-color: white; border-radius: 3px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transform: scale(0); transition: all 0.15s; opacity: 0; text-align: left; position: relative; margin: 0 auto; }
+.ui-largeform .padding { padding: 15px; }
+.ui-dark .ui-largeform { background-color: #202020; }
+.ui-container-table { display: table; width: 100%; height: 100%; }
+.ui-container-cell { display: table-cell; width: 100%; height: 100%; text-align: center; vertical-align: middle; }
+.ui-largeform-animate { transform: scale(1); opacity: 1; }
+.ui-largeform-animate-click { transform: skewX(-2deg); }
+.ui-largeform-title { padding: 0 10px; line-height: 57px; font-size: 18px; user-select: none; color: black; background-color: white; border-bottom: 1px solid #E0E0E0; height: 58px; }
+.ui-largeform-title .ui-largeform-button-close { float: right; cursor: pointer; font-size: 18px; margin: 1px 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; width: 20px; padding: 0; }
+.ui-largeform-title .ui-largeform-button-close:hover { transform: scale(1.1); }
+.ui-largeform-title > span { font-weight: bold; }
+.ui-largeform-title i { margin-right: 7px; }
+.ui-dark .ui-largeform-title { background-color: #202020; border-bottom-color: #303030; color: white; }
+.ui-largeform > nav { padding: 0 15px 0; border-top: 1px solid #E0E0E0; background-color: white; border-radius: 0 0 2px 2px; line-height: 65px; height: 65px; display: block; float: none; width: 100%; }
+.ui-dark .ui-largeform > nav { background-color: #202020; border-top-color: #303030; }
+.ui-largeform > nav button { border: 0; margin: 15px 0 0; background-color: #F0F0F0; height: 34px; padding: 0 20px; color: black; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; float: left; }
+.ui-dark .ui-largeform > nav button { border-color: #202020; background-color: #505050; color: #E0E0E0; }
+.ui-largeform > nav button i { width: 16px; }
+.ui-largeform > nav button:hover { opacity: 0.9; }
+.ui-largeform > nav button:active { background-color: #D0D0D0; }
+.ui-largeform > nav button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
+.ui-largeform > nav button:first-child { border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
+.ui-largeform > nav button:last-child { border-top-right-radius: 2px; border-bottom-right-radius: 2px; }
+.ui-largeform > nav button[name='submit'] { min-width: 120px; font-weight: bold; background-color: #4285F4; color: white; font-size: 14px; }
+
+.ui-dark .ui-largeform > nav button:active { background-color: #404040; }
+.ui-dark .ui-largeform > nav button:disabled { background-color: #303030 !important; color: #606060 !important; border-color: #202020 !important; }
+
+@media(max-width: 768px) {
+	.ui-largeform-container { background: none; padding: 0; }
+}
+
+.ui-intro-noscroll, .ui-intro-noscroll body { overflow: hidden; }
+.ui-intro { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(180,180,180,0.8); width: 100%; height: 100%; overflow: hidden; z-index: 50; }
+.ui-intro-body { position: relative; top: 50%; background-color: white; border-radius: 3px; max-width: 400px; width: 100%; height: 366px; margin: -180px auto 0 auto; display: block; box-shadow: 0 5px 10px rgba(0,0,0,0.02); transition: all 0.3s; transform: scale(1.5); }
+.ui-intro-body-visible { transform: scale(1); }
+.ui-intro-figures { display: table; width: 100%; height: 325px; }
+.ui-intro .visible { display: table-cell; }
+.ui-intro figure { display: none; vertical-align: middle; text-align: center; width: 100%; height: 100%; overflow: hidden; }
+i.ui-intro-button { margin: 14px 3px 0; cursor: pointer; color: silver; font-size: 11px; }
+.ui-intro-pagination { padding: 0 0 0 10px; border-top: 1px solid #4783EE; }
+.ui-intro-pagination .ui-intro-selected { color: #4783EE; }
+.ui-intro-pagination button { float: right; border: 0; background-color: #4783EE; color: white; border-radius: 0 0 3px 0; font: normal 11px Arial; text-transform: uppercase; font-weight: bold; height: 40px; width: 150px; padding: 0; margin: 0; outline: 0; }
+.ui-intro-pagination button:hover { opacity: 0.8; }
+.ui-intro-pagination button i { margin-left: 5px; }
+
+.ui-dark .ui-intro { background-color: rgba(0,0,0,0.8); }
+.ui-dark .ui-intro-body { background-color: #202020; }
+.ui-dark i.ui-intro-button { color: #404040; }
+
+.ui-radiobuttonexpert { color: black; font-size: 14px; vertical-align: baseline; position: relative; }
+.ui-radiobuttonexpert-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
+.ui-radiobuttonexpert-label-required:before { color: red; content: '***'; margin-right: 5px; }
+.ui-large .ui-radiobuttonexpert-label { font-size: 14px; }
+
+.ui-togglebutton { background-color: white; margin: 5px 0; border-radius: 20px; border: 2px solid #D0D0D0; height: 20px; cursor: pointer; width: 40px; position: relative; display: inline-block; user-select: none; -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; }
+.ui-togglebutton button { cursor: pointer; outline: 0; display:block; position: absolute; left: 0; top: 0; border-radius: 100%; width: 22px; height: 22px; background-color: white; float: left; margin: -3px 0 0 -3px; border: 2px solid #D0D0D0; transition: left 0.3s; padding: 0; color: #C0C0C0; font-size: 9px; text-align: center; }
+.ui-togglebutton-selected button { left: 19px; top: 0; margin: 0; border: 0; width: 16px; height: 16px; box-shadow: 0 0 4px rgba(0,0,0,0.1); font-size: 11px; color: black; }
+.ui-togglebutton-invalid { border-color: #DA362D !important;  }
+.ui-togglebutton.ui-disabled { background-color: #A0A0A0 !important; border: gray !important; cursor: not-allowed !important; }
+.ui-dark .ui-togglebutton { background-color: #202020; border-color: #404040; }
+.ui-dark .ui-togglebutton button { background-color: #606060; border-color: #606060; color: #999999; }
+.ui-dark .ui-togglebutton-selected { background-color: #83B152; border-color: #7DA652; }
+.ui-dark .ui-togglebutton-selected button { background-color: white; color: black; }

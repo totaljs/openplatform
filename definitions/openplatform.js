@@ -14,7 +14,7 @@ var SIMPLECACHE = {};
 var DDOS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4501;           // Current version of OpenPlatform
+MAIN.version = 4500;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -1241,7 +1241,7 @@ ON('ready', function() {
 // Reads a user
 function readuser(id, callback) {
 	var db = DBMS();
-	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE');
+	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop');
 	db.error('error-users-404');
 	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 
@@ -1287,6 +1287,7 @@ function readuser(id, callback) {
 			apps[app.id] = app;
 		}
 
+		user.welcome = !response.dtlogged;
 		user.apps = apps;
 		user.ticks = NOW.getTime();
 		USERS[id] = user;

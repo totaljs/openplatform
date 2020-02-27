@@ -1,23 +1,18 @@
 <div data---="form__common.form__if:sessionsform;icon:history;width:600;title:@(My open sessions);reload:sessionsform/reload" class="hidden">
-	<div class="padding">
-
-		<div data---="table__sessionsform.items__highlight:false" class="mt5">
+	<div class="padding npb">
+		<table data-bind="sessionsform.items__template" class="mt5 table">
 			<script type="text/html" data-size="0,120px,120px">
-				<tr>
-					<td class="fs12 {{ if current }}b opfg{{ else }}gray{{ fi }}"><i class="fa fa-desktop color mr5"></i> {{ note }}</td>
-					<td class="fs12 right silver">{{ used | time }}</td>
-					<td class="fs12 right"><span class="link red ml5 exec" data-exec="sessionsform/cancel"><i class="fa fa-times mr5"></i>@(Cancel)</span></td>
-				</tr>
+				<tbody>
+					{{ foreach m in value }}
+					<tr>
+						<td class="fs12 {{ if m.current }}b opfg{{ else }}gray{{ fi }}"><i class="fa fa-desktop color mr5"></i> {{ m.note }}</td>
+						<td class="fs12 right silver hidden-xs">{{ m.used | time }}</td>
+						<td class="fs12 right"><span class="link red ml5 exec" data-exec="sessionsform/cancel"><i class="fa fa-times mr5"></i>@(Cancel)</span></td>
+					</tr>
+					{{ end }}
+				</tbody>
 			</script>
-
-			<script type="text/html" data-size="0,120px" data-display="xs">
-				<tr>
-					<td class="fs12 {{ if current }}b opfg{{ else }}gray{{ fi }}"><i class="fa fa-desktop color mr5"></i> {{ note }}</td>
-					<td class="fs12 right"><span class="link red fs11 ml5 exec" data-exec="sessionsform/cancel"><i class="fa fa-times mr5"></i>@(Cancel)</span></td>
-				</tr>
-			</script>
-		</div>
-		<br />
+		</table>
 	</div>
 	<nav>
 		<button name="cancel" class="userbg" style="max-width:100%;width:100%">@(Close)</button>

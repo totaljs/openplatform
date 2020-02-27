@@ -9,6 +9,7 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('notificationsphone', Boolean);
 	schema.define('password', 'String(100)');
 	schema.define('name', 'String(50)');
+	schema.define('status', 'String(70)');
 	schema.define('phone', 'Phone');
 	schema.define('photo', 'String(50)');
 	schema.define('sounds', Boolean);
@@ -35,7 +36,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		var builder = DBMS().read('tbl_user');
 		builder.error('error-users-404');
-		builder.fields('name,email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat');
+		builder.fields('name,status,email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat');
 		builder.where('id', $.user.id);
 		builder.callback($.callback);
 		$.extend && $.extend(builder);
@@ -111,6 +112,11 @@ NEWSCHEMA('Account', function(schema) {
 			user.email = model.email;
 			modified = true;
 		}
+
+		if (user.status !== model.status)
+			user.status = model.status;
+		else
+			model.status = undefined;
 
 		user.notifications = model.notifications;
 		user.notificationsemail = model.notificationsemail;

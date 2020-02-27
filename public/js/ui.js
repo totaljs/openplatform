@@ -172,472 +172,6 @@ COMPONENT('time', function(self) {
 	};
 });
 
-COMPONENT('dropdown', function(self, config) {
-
-	var select, container, condition, content = null;
-	var render = '';
-
-	self.nocompile();
-	self.validate = function(value) {
-
-		if (!config.required || config.disabled)
-			return true;
-
-		var type = typeof(value);
-		if (type === 'undefined' || type === 'object')
-			value = '';
-		else
-			value = value.toString();
-
-		EMIT('reflow', self.name);
-
-		switch (self.type) {
-			case 'currency':
-			case 'number':
-				return value > 0;
-		}
-
-		return value.length > 0;
-	};
-
-	self.configure = function(key, value, init) {
-
-		if (init)
-			return;
-
-		var redraw = false;
-
-		switch (key) {
-			case 'type':
-				self.type = value;
-				break;
-			case 'items':
-
-				if (value instanceof Array) {
-					self.bind('', value);
-					return;
-				}
-
-				var items = [];
-
-				value.split(',').forEach(function(item) {
-					item = item.trim().split('|');
-					var obj = { id: item[1] == null ? item[0] : item[1], name: item[0] };
-					items.push(obj);
-				});
-
-				self.bind('', items);
-				break;
-			case 'if':
-				condition = value ? FN(value) : null;
-				break;
-			case 'required':
-				self.find('.ui-dropdown-label').tclass('ui-dropdown-label-required', value);
-				self.state(1, 1);
-				break;
-			case 'datasource':
-				self.datasource(value, self.bind);
-				break;
-			case 'label':
-				content = value;
-				redraw = true;
-				break;
-			case 'icon':
-				redraw = true;
-				break;
-			case 'disabled':
-				self.tclass('ui-disabled', value);
-				self.find('select').prop('disabled', value);
-				break;
-		}
-
-		redraw && setTimeout2(self.id + '.redraw', 100);
-	};
-
-	self.bind = function(path, arr) {
-
-		if (!arr)
-			arr = EMPTYARRAY;
-
-		var builder = [];
-		var value = self.get();
-		var template = '<option value="{0}"{1}>{2}</option>';
-		var propText = config.text || 'name';
-		var propValue = config.value || 'id';
-
-		config.empty !== undefined && builder.push('<option value="">{0}</option>'.format(config.empty));
-
-		for (var i = 0, length = arr.length; i < length; i++) {
-			var item = arr[i];
-			if (condition && !condition(item))
-				continue;
-			if (item.length)
-				builder.push(template.format(item, value === item ? ' selected="selected"' : '', item));
-			else
-				builder.push(template.format(item[propValue], value === item[propValue] ? ' selected="selected"' : '', item[propText]));
-		}
-
-		render = builder.join('');
-		select.html(render);
-	};
-
-	self.redraw = function() {
-		var html = '<div class="ui-dropdown"><select data-jc-bind="">{0}</select></div>'.format(render);
-		var builder = [];
-		var label = content || config.label;
-		if (label) {
-			builder.push('<div class="ui-dropdown-label{0}">{1}{2}:</div>'.format(config.required ? ' ui-dropdown-label-required' : '', config.icon ? '<span class="fa fa-{0}"></span> '.format(config.icon) : '', label));
-			builder.push('<div class="ui-dropdown-values">{0}</div>'.format(html));
-			self.html(builder.join(''));
-		} else
-			self.html(html).aclass('ui-dropdown-values');
-		select = self.find('select');
-		container = self.find('.ui-dropdown');
-		render && self.refresh();
-		config.disabled && self.reconfigure('disabled:true');
-	};
-
-	self.make = function() {
-		self.type = config.type;
-		content = self.html();
-		self.aclass('ui-dropdown-container');
-		self.redraw();
-		config.if && (condition = FN(config.if));
-		config.items && self.reconfigure({ items: config.items });
-		config.datasource && self.reconfigure('datasource:' + config.datasource);
-	};
-
-	self.state = function(type) {
-		if (!type)
-			return;
-		var invalid = config.required ? self.isInvalid() : false;
-		if (invalid === self.$oldstate)
-			return;
-		self.$oldstate = invalid;
-		container.tclass('ui-dropdown-invalid', invalid);
-	};
-});
-
-COMPONENT('textbox', function(self, config) {
-
-	var input, content = null, isfilled = false;
-	var innerlabel = function() {
-		var is = !!input[0].value;
-		if (isfilled !== is) {
-			isfilled = is;
-			self.tclass('ui-textbox-filled', isfilled);
-		}
-	};
-
-	self.nocompile && self.nocompile();
-
-	self.validate = function(value) {
-
-		if ((!config.required || config.disabled) && !self.forcedvalidation())
-			return true;
-
-		if (self.type === 'date')
-			return value instanceof Date && !isNaN(value.getTime());
-
-		if (value == null)
-			value = '';
-		else
-			value = value.toString();
-
-		EMIT('reflow', self.name);
-
-		if (config.minlength && value.length < config.minlength)
-			return false;
-
-		switch (self.type) {
-			case 'email':
-				return value.isEmail();
-			case 'phone':
-				return value.isPhone();
-			case 'url':
-				return value.isURL();
-			case 'currency':
-			case 'number':
-				return value > 0;
-		}
-
-		return config.validation ? !!self.evaluate(value, config.validation, true) : value.length > 0;
-	};
-
-	self.make = function() {
-
-		content = self.html();
-
-		self.type = config.type;
-		self.format = config.format;
-
-		self.event('click', '.fa-calendar', function(e) {
-			if (!config.disabled && !config.readonly && config.type === 'date') {
-				e.preventDefault();
-				SETTER('calendar', 'toggle', self.element, self.get(), function(date) {
-					self.change(true);
-					self.set(date);
-				});
-			}
-		});
-
-		self.event('click', '.fa-caret-up,.fa-caret-down', function() {
-			if (!config.disabled && !config.readonly && config.increment) {
-				var el = $(this);
-				var inc = el.hclass('fa-caret-up') ? 1 : -1;
-				self.change(true);
-				self.inc(inc);
-			}
-		});
-
-		self.event('click', '.ui-textbox-label', function() {
-			input.focus();
-		});
-
-		self.event('click', '.ui-textbox-control-icon', function() {
-			if (config.disabled || config.readonly)
-				return;
-			if (self.type === 'search') {
-				self.$stateremoved = false;
-				$(this).rclass('fa-times').aclass('fa-search');
-				self.set('');
-			} else if (self.type === 'password') {
-				var el = $(this);
-				var type = input.attr('type');
-
-				input.attr('type', type === 'text' ? 'password' : 'text');
-				el.rclass2('fa-').aclass(type === 'text' ? 'fa-eye' : 'fa-eye-slash');
-			} else if (config.iconclick)
-				EXEC(config.iconclick, self);
-		});
-
-		self.event('focus', 'input', function() {
-			if (!config.disabled && !config.readonly && config.autocomplete)
-				EXEC(config.autocomplete, self);
-		});
-
-		self.event('input', 'input', innerlabel);
-		self.redraw();
-		config.iconclick && self.configure('iconclick', config.iconclick);
-	};
-
-	self.setter2 = function(value) {
-		if (self.type === 'search') {
-			if (self.$stateremoved && !value)
-				return;
-			self.$stateremoved = !value;
-			self.find('.ui-textbox-control-icon').tclass('fa-times', !!value).tclass('fa-search', !value);
-		}
-		innerlabel();
-	};
-
-	self.redraw = function() {
-
-		var attrs = [];
-		var builder = [];
-		var tmp = 'text';
-
-		switch (config.type) {
-			case 'password':
-				tmp = config.type;
-				break;
-			case 'number':
-			case 'phone':
-				isMOBILE && (tmp = 'tel');
-				break;
-		}
-
-		self.tclass('ui-disabled', config.disabled === true);
-		self.tclass('ui-textbox-required', config.required === true);
-		self.type = config.type;
-		attrs.attr('type', tmp);
-		config.placeholder && !config.innerlabel && attrs.attr('placeholder', config.placeholder);
-		config.maxlength && attrs.attr('maxlength', config.maxlength);
-		config.keypress != null && attrs.attr('data-jc-keypress', config.keypress);
-		config.delay && attrs.attr('data-jc-keypress-delay', config.delay);
-		config.disabled && attrs.attr('disabled');
-		config.readonly && attrs.attr('readonly');
-		config.error && attrs.attr('error');
-		attrs.attr('data-jc-bind', '');
-
-		if (config.autofill) {
-			attrs.attr('name', self.path.replace(/\./g, '_'));
-			attrs.attr('autocomplete', 'on');
-			self.autofill && self.autofill();
-		} else {
-			attrs.attr('name', 'input' + Date.now());
-			attrs.attr('autocomplete', 'new-password');
-		}
-
-		config.align && attrs.attr('class', 'ui-' + config.align);
-		!isMOBILE && config.autofocus && attrs.attr('autofocus');
-
-		builder.push('<div class="ui-textbox-input"><input {0} /></div>'.format(attrs.join(' ')));
-
-		var icon = config.icon;
-		var icon2 = config.icon2;
-
-		if (!icon2 && self.type === 'date')
-			icon2 = 'calendar';
-		else if (!icon2 && self.type === 'password')
-			icon2 = 'eye';
-		else if (self.type === 'search')
-			icon2 = 'search';
-
-		icon2 && builder.push('<div class="ui-textbox-control"><span class="fa fa-{0} ui-textbox-control-icon"></span></div>'.format(icon2));
-		config.increment && !icon2 && builder.push('<div class="ui-textbox-control"><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
-
-		if (config.label)
-			content = config.label;
-
-		self.tclass('ui-textbox-innerlabel', !!config.innerlabel);
-
-		if (content.length) {
-			var html = builder.join('');
-			builder = [];
-			builder.push('<div class="ui-textbox-label">');
-			icon && builder.push('<i class="fa fa-{0}"></i> '.format(icon));
-			builder.push('<span>' + content + (content.substring(content.length - 1) === '?' ? '' : ':') + '</span>');
-			builder.push('</div><div class="ui-textbox">{0}</div>'.format(html));
-			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
-			self.html(builder.join(''));
-			self.aclass('ui-textbox-container');
-			input = self.find('input');
-		} else {
-			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
-			self.aclass('ui-textbox ui-textbox-container');
-			self.html(builder.join(''));
-			input = self.find('input');
-		}
-	};
-
-	self.configure = function(key, value, init) {
-
-		if (init)
-			return;
-
-		var redraw = false;
-
-		switch (key) {
-			case 'readonly':
-				self.find('input').prop('readonly', value);
-				break;
-			case 'disabled':
-				self.tclass('ui-disabled', value);
-				self.find('input').prop('disabled', value);
-				self.reset();
-				break;
-			case 'format':
-				self.format = value;
-				self.refresh();
-				break;
-			case 'required':
-				self.noValid(!value);
-				!value && self.state(1, 1);
-				self.tclass('ui-textbox-required', value === true);
-				break;
-			case 'placeholder':
-				input.prop('placeholder', value || '');
-				break;
-			case 'maxlength':
-				input.prop('maxlength', value || 1000);
-				break;
-			case 'autofill':
-				input.prop('name', value ? self.path.replace(/\./g, '_') : '');
-				break;
-			case 'label':
-				if (content && value)
-					self.find('.ui-textbox-label span').html(value);
-				else
-					redraw = true;
-				content = value;
-				break;
-			case 'type':
-				self.type = value;
-				if (value === 'password')
-					value = 'password';
-				else
-					self.type = 'text';
-				self.find('input').prop('type', self.type);
-				break;
-			case 'align':
-				input.rclass(input.attr('class')).aclass('ui-' + value || 'left');
-				break;
-			case 'autofocus':
-				input.focus();
-				break;
-			case 'icon2click': // backward compatibility
-			case 'iconclick':
-				config.iconclick = value;
-				self.find('.ui-textbox-control').css('cursor', value ? 'pointer' : 'default');
-				break;
-			case 'icon':
-				var tmp = self.find('.ui-textbox-label .fa');
-				if (tmp.length)
-					tmp.rclass2('fa-').aclass('fa-' + value);
-				else
-					redraw = true;
-				break;
-			case 'icon2':
-			case 'increment':
-				redraw = true;
-				break;
-			case 'labeltype':
-				redraw = true;
-				break;
-		}
-
-		redraw && setTimeout2('redraw.' + self.id, function() {
-			self.redraw();
-			self.refresh();
-		}, 100);
-	};
-
-	self.formatter(function(path, value) {
-		if (value) {
-			switch (config.type) {
-				case 'lower':
-					value = value.toString().toLowerCase();
-					break;
-				case 'upper':
-					value = value.toString().toUpperCase();
-					break;
-			}
-		}
-		return config.type === 'date' ? (value ? value.format(config.format || 'yyyy-MM-dd') : value) : value;
-	});
-
-	self.parser(function(path, value) {
-		if (value) {
-			switch (config.type) {
-				case 'lower':
-					value = value.toLowerCase();
-					break;
-				case 'upper':
-					value = value.toUpperCase();
-					break;
-			}
-		}
-		return value ? config.spaces === false ? value.replace(/\s/g, '') : value : value;
-	});
-
-	self.state = function(type) {
-		if (!type)
-			return;
-		var invalid = config.required ? self.isInvalid() : self.forcedvalidation() ? self.isInvalid() : false;
-		if (invalid === self.$oldstate)
-			return;
-		self.$oldstate = invalid;
-		self.tclass('ui-textbox-invalid', invalid);
-		config.error && self.find('.ui-textbox-helper').tclass('ui-textbox-helper-show', invalid);
-	};
-
-	self.forcedvalidation = function() {
-		var val = self.get();
-		return (self.type === 'phone' || self.type === 'email') && (val != null && (typeof val === 'string' && val.length !== 0));
-	};
-});
-
 COMPONENT('exec', function(self, config) {
 	self.readonly();
 	self.blind();
@@ -954,7 +488,7 @@ COMPONENT('websocket', 'reconnect:3000', function(self, config) {
 	};
 });
 
-COMPONENT('form', 'zindex:12;scrollbar:1', function(self, config) {
+COMPONENT('form', 'zindex:30;scrollbar:1', function(self, config) {
 
 	var cls = 'ui-form';
 	var cls2 = '.' + cls;
@@ -1297,133 +831,6 @@ COMPONENT('loading', function(self) {
 			self.rclass('ui-loading-opacity').aclass('hidden', 100);
 		}, timeout || 1);
 		return self;
-	};
-});
-
-COMPONENT('contextmenu', function(self) {
-
-	var is = false;
-	var timeout, container, arrow;
-
-	self.template = Tangular.compile('<div data-index="{{ index }}"{{ if selected }} class="selected"{{ fi }}><i class="fa {{ icon }}"></i><span>{{ name | raw }}</span></div>');
-	self.singleton();
-	self.readonly();
-	self.nocompile();
-	self.callback = null;
-	self.items = EMPTYARRAY;
-
-	self.make = function() {
-
-		self.classes('ui-contextmenu');
-		self.append('<span class="ui-contextmenu-arrow fa fa-caret-up"></span><div class="ui-contextmenu-items"></div>');
-		container = self.find('.ui-contextmenu-items');
-		arrow = self.find('.ui-contextmenu-arrow');
-
-		self.event('touchstart mousedown', 'div[data-index]', function(e) {
-			self.callback && self.callback(self.items[+$(this).attr('data-index')], $(self.target));
-			self.hide();
-			e.preventDefault();
-			e.stopPropagation();
-		});
-
-		$(document).on('touchstart mousedown', function() {
-			is && self.hide(0);
-		});
-	};
-
-	self.show = function(orientation, target, items, callback, offsetX, offsetY) {
-
-		if (is) {
-			clearTimeout(timeout);
-			var obj = target instanceof jQuery ? target[0] : target;
-			if (self.target === obj) {
-				self.hide(0);
-				return;
-			}
-		}
-
-		target = $(target);
-		var type = typeof(items);
-		var item;
-
-		if (type === 'string')
-			items = self.get(items);
-		else if (type === 'function') {
-			callback = items;
-			items = (target.attr('data-options') || '').split(';');
-			for (var i = 0, length = items.length; i < length; i++) {
-				item = items[i];
-				if (!item)
-					continue;
-				var val = item.split('|');
-				items[i] = { name: val[0], icon: val[1], value: val[2] || val[0] };
-			}
-		}
-
-		if (!items) {
-			self.hide(0);
-			return;
-		}
-
-		self.callback = callback;
-
-		var builder = [];
-		for (var i = 0, length = items.length; i < length; i++) {
-			item = items[i];
-			item.index = i;
-			if (item.icon) {
-				if (item.icon.substring(0, 3) !== 'fa-')
-					item.icon = 'fa-' + item.icon;
-			} else
-				item.icon = 'fa-caret-right';
-
-			builder.push(self.template(item));
-		}
-
-		self.items = items;
-		self.target = target[0];
-		var offset = target.offset();
-
-		container.html(builder);
-
-		switch (orientation) {
-			case 'left':
-				arrow.css({ left: '15px' });
-				break;
-			case 'right':
-				arrow.css({ left: '210px' });
-				break;
-			case 'center':
-				arrow.css({ left: '107px' });
-				break;
-		}
-
-		var options = { left: orientation === 'center' ? Math.ceil((offset.left - self.element.width() / 2) + (target.innerWidth() / 2)) : orientation === 'left' ? offset.left - 8 : (offset.left - self.element.width()) + target.innerWidth() + (offsetX || 0), top: offset.top + target.innerHeight() + 10 + (offsetY || 0) };
-		self.css(options);
-
-		if (is)
-			return;
-
-		self.element.show();
-		setTimeout(function() {
-			self.classes('ui-contextmenu-visible');
-			self.emit('contextmenu', true, self, self.target);
-		}, 100);
-
-		is = true;
-	};
-
-	self.hide = function(sleep) {
-		if (!is)
-			return;
-		clearTimeout(timeout);
-		timeout = setTimeout(function() {
-			self.element.hide().rclass('ui-contextmenu-visible');
-			self.emit('contextmenu', false, self, self.target);
-			self.callback = null;
-			self.target = null;
-			is = false;
-		}, sleep ? sleep : 100);
 	};
 });
 
@@ -1770,302 +1177,6 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;customi
 	};
 });
 
-COMPONENT('dropdowncheckbox', 'checkicon:check;visible:0;alltext:All selected;limit:0;selectedtext:{0} selected', function(self, config) {
-
-	var data = [], render = '';
-	var container, values, content, datasource = null;
-	var prepared = false;
-	var W = window;
-
-	!W.$dropdowncheckboxtemplate && (W.$dropdowncheckboxtemplate = Tangular.compile('<div class="ui-dropdowncheckbox-item" data-index="{{ index }}"><div><i class="fa fa-{{ $.checkicon }}"></i></div><span>{{ text }}</span></div>'));
-	var template = W.$dropdowncheckboxtemplate;
-
-	self.nocompile();
-
-	self.validate = function(value) {
-		return config.disabled || !config.required ? true : value && value.length > 0;
-	};
-
-	self.configure = function(key, value, init) {
-
-		if (init)
-			return;
-
-		var redraw = false;
-
-		switch (key) {
-
-			case 'type':
-				self.type = value;
-				break;
-
-			case 'required':
-				self.find('.ui-dropdowncheckbox-label').tclass('ui-dropdowncheckbox-required', config.required);
-				break;
-
-			case 'label':
-				content = value;
-				redraw = true;
-				break;
-
-			case 'disabled':
-				self.tclass('ui-disabled', value);
-				break;
-
-			case 'checkicon':
-				self.find('i').rclass().aclass('fa fa-' + value);
-				break;
-
-			case 'icon':
-				redraw = true;
-				break;
-
-			case 'datasource':
-				self.datasource(value, self.bind);
-				datasource && self.refresh();
-				datasource = value;
-				break;
-
-			case 'items':
-
-				if (value instanceof Array) {
-					self.bind('', value);
-					return;
-				}
-
-				var items = [];
-				value.split(',').forEach(function(item) {
-					item = item.trim().split('|');
-					var val = (item[1] == null ? item[0] : item[1]).trim();
-					if (config.type === 'number')
-						val = +val;
-					items.push({ name: item[0].trim(), id: val });
-				});
-
-				self.bind('', items);
-				self.refresh();
-				break;
-		}
-
-		redraw && setTimeout2(self.id + '.redraw', self.redraw, 100);
-	};
-
-	self.redraw = function() {
-
-		var html = '<div class="ui-dropdowncheckbox"><span class="fa fa-caret-down"></span><div class="ui-dropdowncheckbox-selected"></div></div><div class="ui-dropdowncheckbox-values hidden">{0}</div>'.format(render);
-		if (content.length)
-			self.html('<div class="ui-dropdowncheckbox-label{0}">{1}{2}:</div>'.format(config.required ? ' ui-dropdowncheckbox-required' : '', config.icon ? ('<i class="fa fa-' + config.icon + '"></i>') : '', content) + html);
-		else
-			self.html(html);
-
-		container = self.find('.ui-dropdowncheckbox-values');
-		values = self.find('.ui-dropdowncheckbox-selected');
-		prepared && self.refresh();
-		self.tclass('ui-disabled', config.disabled === true);
-	};
-
-	self.make = function() {
-
-		self.type = config.type;
-
-		content = self.html();
-		self.aclass('ui-dropdowncheckbox-container');
-		self.redraw();
-
-		if (config.items)
-			self.reconfigure({ items: config.items });
-		else if (config.datasource)
-			self.reconfigure({ datasource: config.datasource });
-		else
-			self.bind('', null);
-
-		self.event('click', '.ui-dropdowncheckbox', function(e) {
-
-			if (config.disabled)
-				return;
-
-			container.tclass('hidden');
-
-			if (W.$dropdowncheckboxelement) {
-				W.$dropdowncheckboxelement.aclass('hidden');
-				W.$dropdowncheckboxelement = null;
-			}
-
-			!container.hasClass('hidden') && (W.$dropdowncheckboxelement = container);
-			e.stopPropagation();
-		});
-
-		self.event('click', '.ui-dropdowncheckbox-item', function(e) {
-
-			e.stopPropagation();
-
-			if (config.disabled)
-				return;
-
-			var el = $(this);
-			var is = !el.hasClass('ui-dropdowncheckbox-checked');
-			var index = +el.attr('data-index');
-			var value = data[index];
-
-			if (value === undefined)
-				return;
-
-			value = value.value;
-
-			var arr = self.get();
-
-			if (!(arr instanceof Array))
-				arr = [];
-
-			var index = arr.indexOf(value);
-
-			if (is) {
-				if (config.limit && arr.length === config.limit)
-					return;
-				index === -1 && arr.push(value);
-			} else {
-				index !== -1 && arr.splice(index, 1);
-			}
-
-			self.set(arr);
-			self.change(true);
-		});
-	};
-
-	self.bind = function(path, value) {
-		var clsempty = 'ui-dropdowncheckbox-values-empty';
-
-		if (value !== undefined)
-			prepared = true;
-
-		if (!value || !value.length) {
-			var h = config.empty || '&nbsp;';
-			if (h === self.old)
-				return;
-			container.aclass(clsempty).html(h);
-			self.old = h;
-			return;
-		}
-
-		var kv = config.value || 'id';
-		var kt = config.text || 'name';
-
-		render = '';
-		data = [];
-
-		for (var i = 0, length = value.length; i < length; i++) {
-			var isString = typeof(value[i]) === 'string';
-			var item = { value: isString ? value[i] : value[i][kv], text: isString ? value[i] : value[i][kt], index: i };
-			render += template(item, config);
-			data.push(item);
-		}
-
-		var h = HASH(render);
-		if (h === self.old)
-			return;
-
-		self.old = h;
-
-		if (render)
-			container.rclass(clsempty).html(render);
-		else
-			container.aclass(clsempty).html(config.empty);
-
-		self.refresh();
-	};
-
-	self.setter = function(value) {
-
-		if (!prepared)
-			return;
-
-		var label = '';
-		var count = value == null || !value.length ? undefined : value.length;
-
-		if (value && count) {
-			var remove = [];
-			for (var i = 0; i < count; i++) {
-				var selected = value[i];
-				var index = 0;
-				var is = false;
-				while (true) {
-					var item = data[index++];
-					if (item === undefined)
-						break;
-					if (item.value != selected)
-						continue;
-					label += (label ? ', ' : '') + item.text;
-					is = true;
-				}
-				!is && remove.push(selected);
-			}
-
-			if (config.cleaner !== false && value) {
-				var refresh = false;
-				while (true) {
-					var item = remove.shift();
-					if (item === undefined)
-						break;
-					value.splice(value.indexOf(item), 1);
-					refresh = true;
-				}
-				refresh && self.set(value);
-			}
-		}
-
-		container.find('.ui-dropdowncheckbox-item').each(function() {
-			var el = $(this);
-			var index = +el.attr('data-index');
-			var checked = false;
-			if (!value || !value.length)
-				checked = false;
-			else if (data[index])
-				checked = data[index];
-			checked && (checked = value.indexOf(checked.value) !== -1);
-			el.tclass('ui-dropdowncheckbox-checked', checked);
-		});
-
-		if (!label && value && config.cleaner !== false) {
-			// invalid data
-			// it updates model without notification
-			self.rewrite([]);
-		}
-
-		if (!label && config.placeholder) {
-			values.rattr('title', '');
-			values.html('<span>{0}</span>'.format(config.placeholder));
-		} else {
-			if (count == data.length && config.alltext !== 'null' && config.alltext)
-				label = config.alltext;
-			else if (config.visible && count > config.visible)
-				label = config.selectedtext.format(count, data.length);
-			values.attr('title', label);
-			values.html(label);
-		}
-	};
-
-	self.state = function(type) {
-		if (!type)
-			return;
-		var invalid = config.required ? self.isInvalid() : false;
-		if (invalid === self.$oldstate)
-			return;
-		self.$oldstate = invalid;
-		self.find('.ui-dropdowncheckbox').tclass('ui-dropdowncheckbox-invalid', invalid);
-	};
-
-	if (W.$dropdowncheckboxevent)
-		return;
-
-	W.$dropdowncheckboxevent = true;
-	$(document).on('click', function() {
-		if (W.$dropdowncheckboxelement) {
-			W.$dropdowncheckboxelement.aclass('hidden');
-			W.$dropdowncheckboxelement = null;
-		}
-	});
-});
-
 COMPONENT('notify', 'timeout:3000', function(self, config) {
 
 	var autoclosing;
@@ -2129,69 +1240,6 @@ COMPONENT('notify', 'timeout:3000', function(self, config) {
 	};
 });
 
-COMPONENT('repeater', 'hidden:true;check:true', function(self, config) {
-
-	var filter = null;
-	var recompile = false;
-	var reg = /\$(index|path)/g;
-
-	self.readonly();
-
-	self.configure = function(key, value) {
-		if (key === 'filter')
-			filter = value ? GET(value) : null;
-		else if (key === 'if')
-			filter = FN('value => ' + value);
-	};
-
-	self.make = function() {
-		var element = self.find('script');
-
-		if (!element.length) {
-			element = self.element;
-			self.element = self.element.parent();
-		}
-
-		var html = element.html();
-		element.remove();
-		self.template = Tangular.compile(html);
-		recompile = html.COMPILABLE();
-	};
-
-	self.setter = function(value) {
-
-		if (!value || !value.length) {
-			config.hidden && self.aclass('hidden');
-			self.empty();
-			self.cache = '';
-			return;
-		}
-
-		var builder = [];
-		for (var i = 0, length = value.length; i < length; i++) {
-			var item = value[i];
-			item.index = i;
-			if (!filter || filter(item)) {
-				builder.push(self.template(item).replace(reg, function(text) {
-					return text.substring(0, 2) === '$i' ? i.toString() : self.path + '[' + i + ']';
-				}));
-			}
-		}
-
-		var tmp = builder.join('');
-
-		if (config.check) {
-			if (tmp === self.cache)
-				return;
-			self.cache = tmp;
-		}
-
-		self.html(tmp);
-		config.hidden && self.rclass('hidden');
-		recompile && self.compile();
-	};
-});
-
 COMPONENT('processes@2', function(self, config) {
 
 	var self = this;
@@ -2211,7 +1259,7 @@ COMPONENT('processes@2', function(self, config) {
 
 	var theader = '<div class="ui-process-header"></div><span class="appprogress ap{{id}}"><span class="userbg"></span></span>';
 
-	self.template = Tangular.compile('<div class="ui-process{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div><div class="loading"></div><div class="ui-process-loading-text"></div></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
+	self.template = Tangular.compile('<div class="ui-process{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{0}<div class="ui-process-iframe-container"><div class="ui-process-offline hidden"><section><div></div></section></div><div class="ui-process-loading"><div><div class="loading"></div><div class="ui-process-loading-text"></div></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
 	self.nocompile();
 
@@ -2730,7 +1778,7 @@ COMPONENT('processes@2', function(self, config) {
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
 		if (iframe) {
-			iframe.element.find('.ui-process-loading').aclass('hidden');
+			iframe.element.find('.ui-process-loading,.ui-process-offline').aclass('hidden');
 			self.progress(id, 0);
 			self.message(iframe, 'reload');
 		}
@@ -3014,7 +2062,7 @@ COMPONENT('processes', function(self, config) {
 
 	var theader = '<div class="ui-process-header"><button class="ui-process-mainmenu visible-xs hidden" name="menu"><i class="fa fa-navicon"></i></button><span class="appprogress ap{{id}}"><span class="userbg"></span></span><div class="ui-process-meta"><span><i class="{{ internal.icon | icon }}"></i></span><div>{{ internal.title }}</div></div><nav>{{ if !internal.internal }}<button name="help" class="ui-process-button ui-process-help"><i class="fa fa-question-circle"></i></button><button name="options" class="ui-process-menu ui-process-button"><span><i class="fa fa-cog"></i></span></button>{{ fi }}<button name="minimize" class="ui-process-button"><i class="fa fa-window-minimize"></i></button>{{ if internal.resize && !$.mobile }}<button name="maximize" class="ui-process-button"><i class="far maximized"></i></button>{{ fi }}<button name="close" class="ui-process-button"><i class="fa fa-times"></i></button></nav></div>';
 
-	self.template = Tangular.compile('<div class="ui-process' + (isMOBILE ? '' : ' ui-process-animation') + '{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize" data-orientation="tl"></div><div class="ui-process-resize" data-orientation="bl"></div><div class="ui-process-resize" data-orientation="br"></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
+	self.template = Tangular.compile('<div class="ui-process' + (isMOBILE ? '' : ' ui-process-animation') + '{{ if $.hidden }} ui-process-hidden{{ fi }}" data-id="{{ id }}">{{ if internal.resize && !$.mobile }}<div class="ui-process-resize" data-orientation="tl"></div><div class="ui-process-resize" data-orientation="bl"></div><div class="ui-process-resize" data-orientation="br"></div>{{ fi }}{0}<div class="ui-process-iframe-container"><div class="ui-process-offline hidden"><section><div></div></section></div><div class="ui-process-loading"><div class="loading"></div><div class="ui-process-loading-text"></div></div><iframe src="/loading.html" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" class="ui-process-iframe"></iframe></div>{1}</div>'.format(ismobile ? '' : theader, ismobile ? theader : ''));
 	self.readonly();
 	self.nocompile();
 
@@ -3787,7 +2835,7 @@ COMPONENT('processes', function(self, config) {
 	self.reload = function(id) {
 		var iframe = self.findProcess(id);
 		if (iframe) {
-			iframe.element.find('.ui-process-loading').aclass('hidden');
+			iframe.element.find('.ui-process-loading,.ui-process-offline').aclass('hidden');
 			self.progress(id, 0);
 			self.message(iframe, 'reload');
 		}
@@ -4371,80 +3419,6 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 		return valid;
 	};
 
-});
-
-COMPONENT('range', function(self, config) {
-
-	var content = '';
-
-	self.nocompile();
-
-	self.validate = function(value) {
-		return !config.required || config.disabled ? true : value != 0;
-	};
-
-	self.configure = function(key, value, init, prev) {
-		if (init)
-			return;
-		var redraw = false;
-		switch (key) {
-			case 'step':
-			case 'max':
-			case 'min':
-				var input = self.find('input');
-				if (value)
-					input.prop(key, value);
-				else
-					input.removeProp(key);
-				break;
-
-			case 'icon':
-				if (value && prev)
-					self.find('i').rclass().aclass('fa fa-' + value);
-				else
-					redraw = true;
-				break;
-
-			case 'required':
-				self.find('.ui-range-label').tclass('ui-range-label-required', value);
-				break;
-
-			case 'type':
-				self.type = value;
-				break;
-
-			case 'label':
-				redraw = true;
-				break;
-		}
-
-		if (redraw) {
-			self.redraw();
-			self.refresh();
-		}
-	};
-
-	self.redraw = function() {
-
-		var label = config.label || content;
-		var html = '';
-
-		if (label)
-			html = '<div class="ui-range-label{1}">{2}{0}:</div>'.format(label, config.required ? ' ui-range-label-required' : '', (config.icon ? '<i class="fa fa-{0}"></i>'.format(config.icon) : ''));
-
-		var attrs = [];
-		config.step && attrs.attr('step', config.step);
-		config.max && attrs.attr('max', config.max);
-		config.min && attrs.attr('min', config.min);
-		self.html('{0}<input type="range" data-jc-bind=""{1} />'.format(html, attrs.length ? ' ' + attrs.join(' ') : ''));
-	};
-
-	self.make = function() {
-		self.type = config.type;
-		content = self.html();
-		self.aclass('ui-range');
-		self.redraw();
-	};
 });
 
 COMPONENT('audio', function(self) {
@@ -7121,248 +6095,6 @@ COMPONENT('markdown', function (self) {
 	})();
 });
 
-COMPONENT('modal', 'zindex:100;width:800', function(self, config) {
-
-	var cls = 'ui-modal';
-	var cls2 = '.' + cls;
-	var W = window;
-	var eheader, earea, ebody, efooter, emodal, icon, first = true;
-
-	if (W.$$modal == null) {
-		W.$$modal = 0;
-
-		var resizemodal = function() {
-			SETTER('modal', 'resize');
-		};
-		var resize = function() {
-			setTimeout2(cls, resizemodal, 300);
-		};
-		if (W.OP)
-			W.OP.on('resize', resize);
-		else
-			$(W).on('resize', resize);
-	}
-
-	self.readonly();
-
-	self.make = function() {
-
-		$(document.body).append('<div id="{0}" class="{1}-container hidden"></div>'.format(self.ID, cls));
-
-		var scr = self.find('> script');
-		self.template = scr.length ? scr.html() : '';
-		self.aclass(cls);
-
-		var el = $('#' + self.ID);
-		el[0].appendChild(self.dom);
-
-		self.rclass('hidden');
-		self.replace(el);
-
-		self.event('click', '.cancel', self.cancel);
-		self.event('click', 'button[name]', function() {
-			var t = this;
-			if (!t.disabled) {
-				switch (t.name) {
-					case 'submit':
-					case 'cancel':
-						self[t.name]();
-						break;
-				}
-			}
-		});
-
-
-		if (!self.template)
-			self.prepare();
-
-		config.enter && self.event('keydown', 'input', function(e) {
-			e.which === 13 && !self.find('button[name="submit"]')[0].disabled && setTimeout(self.submit, 800);
-		});
-	};
-
-	self.submit = function() {
-		if (config.submit)
-			EXEC(config.submit, self.hide);
-		else
-			self.hide();
-	};
-
-	self.cancel = function() {
-		if (config.cancel)
-			EXEC(config.cancel, self.hide);
-		else
-			self.hide();
-	};
-
-	self.hide = function() {
-		self.set('');
-	};
-
-	self.resize = function() {
-
-		if (self.hclass('hidden'))
-			return;
-
-		var mobile = WIDTH() === 'xs';
-
-		var hh = eheader.height();
-		var hb = ebody.height();
-		var hf = efooter.height();
-		var h = Math.ceil((WH / 100) * (mobile ? 94 : 90));
-		var hs = hh + hb + hf;
-
-		var top = ((WH - h) / 2.2) >> 0;
-		var width = mobile ? emodal.width() : config.width;
-		var ml = Math.ceil(width / 2) * -1;
-
-		if (config.center) {
-			top = Math.ceil((WH / 2) - (hs / 2));
-			if (top < 0)
-				top = (WH - h) / 2 >> 0;
-		}
-
-		if (!mobile && config.align) {
-			top = '';
-			ml = '';
-			hh += 25;
-		}
-
-		var sw = SCROLLBARWIDTH();
-		ebody.css({ 'margin-right': sw ? sw : null });
-		emodal.css({ top: top, 'margin-left': ml });
-		earea.css({ 'max-height': h - hh - hf, 'width': width + 30 });
-	};
-
-	self.configure = function(key, value, init, prev) {
-		switch (key) {
-			case 'title':
-				eheader && eheader.find('label').html(value);
-				break;
-			case 'width':
-				emodal && emodal.css('max-width', config.width);
-				self.resize();
-				break;
-			case 'center':
-				self.resize();
-				break;
-			case 'align':
-				prev && emodal.rclass(cls + '-align-' + prev);
-				value && emodal.aclass(cls + '-align-' + value);
-				self.resize();
-				break;
-			case 'icon':
-				if (eheader) {
-					if (icon) {
-						prev && icon.rclass('fa-' + prev);
-					} else {
-						eheader.prepend('<i class="{0}-icon fa"></i>'.format(cls));
-						icon = eheader.find(cls2 + '-icon');
-					}
-					value && icon.aclass('fa-' + value);
-				}
-				break;
-		}
-	};
-
-	self.prepare = function(dynamic) {
-
-		self.find(cls2 + ' > div').each(function(index) {
-			$(this).aclass(cls + '-' + (index === 0 ? 'header' : index === 1 ? 'body' : 'footer'));
-		});
-
-		eheader = self.find(cls2 + '-header');
-		ebody = self.find(cls2 + '-body');
-		efooter = self.find(cls2 + '-footer');
-		emodal = self.find(cls2);
-		ebody.wrap('<div class="{0}-body-area" />'.format(cls));
-		earea = self.find(cls2 + '-body-area');
-		config.label && eheader.find('label').html(config.label);
-		dynamic && self.reconfigure(config);
-
-		earea.on('scroll', function() {
-			if (!self.$scrolling) {
-				EMIT('scrolling', self.name);
-				EMIT('reflow', self.name);
-				self.$scrolling = true;
-				setTimeout(function() {
-					self.$scrolling = false;
-				}, 1500);
-			}
-		});
-	};
-
-	self.setter = function(value) {
-
-		setTimeout2(cls + '-noscroll', function() {
-			$('html').tclass(cls + '-noscroll', !!$(cls2 + '-container').not('.hidden').length);
-		}, 789);
-
-		var hidden = value !== config.if;
-
-		if (self.hclass('hidden') === hidden)
-			return;
-
-		setTimeout2(cls + 'reflow', function() {
-			EMIT('reflow', self.name);
-		}, 10);
-
-		if (hidden) {
-			self.rclass(cls + '-visible');
-			setTimeout(function() {
-				self.aclass('hidden');
-				self.release(true);
-			}, 100);
-			W.$$modal--;
-			return;
-		}
-
-		if (self.template) {
-			var is = (/(data-bind|data-jc|data-{2,})="/).test(self.template);
-			self.find('div[data-jc-replaced]').html(self.template);
-			self.prepare(true);
-			self.template = null;
-			is && COMPILE();
-		}
-
-		if (W.$$modal < 1)
-			W.$$modal = 1;
-
-		W.$$modal++;
-
-		self.css('z-index', W.$$modal * config.zindex);
-		self.element.scrollTop(0);
-		self.rclass('hidden');
-
-		self.resize();
-		self.release(false);
-
-		config.reload && EXEC(config.reload, self);
-		config.default && DEFAULT(config.default, true);
-
-		if (!isMOBILE && config.autofocus) {
-			var el = self.find(config.autofocus === true ? 'input[type="text"],input[type="password"],select,textarea' : config.autofocus);
-			el.length && setTimeout(function() {
-				el[0].focus();
-			}, 1500);
-		}
-
-		var delay = first ? 500 : 0;
-
-		setTimeout(function() {
-			earea[0].scrollTop = 0;
-			self.aclass(cls + '-visible');
-		}, 300 + delay);
-
-		// Fixes a problem with freezing of scrolling in Chrome
-		setTimeout2(self.ID, function() {
-			self.css('z-index', (W.$$modal * config.zindex) + 1);
-		}, 500 + delay);
-
-		first = false;
-	};
-});
-
 COMPONENT('menu', function(self) {
 
 	self.singleton();
@@ -7989,362 +6721,6 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 			is = false;
 		}, sleep ? sleep : 100);
 	};
-});
-
-COMPONENT('table', 'highlight:true;unhighlight:true;multiple:false;pk:id', function(self, config) {
-
-	var cls = 'ui-table';
-	var cls2 = '.' + cls;
-	var etable, ebody, eempty, ehead;
-	var opt = { selected: [] };
-	var templates = {};
-	var sizes = {};
-	var names = {};
-	var aligns = {};
-	var dcompile = false;
-
-	self.readonly();
-	self.nocompile();
-	self.bindvisible();
-
-	self.make = function() {
-
-		self.aclass(cls + ' invisible' + (config.detail ? (' ' + cls + '-detailed') : '') + (config.highlight ? (' ' + cls + '-selectable') : '') + (config.border ? (' ' + cls + '-border') : ''));
-
-		self.find('script').each(function() {
-
-			var el = $(this);
-			var type = el.attrd('type');
-
-			switch (type) {
-				case 'detail':
-					var h = el.html();
-					dcompile = h.COMPILABLE();
-					templates.detail = Tangular.compile(h);
-					return;
-				case 'empty':
-					templates.empty = el.html();
-					return;
-			}
-
-			var display = el.attrd('display');
-			var template = Tangular.compile(el.html());
-			var size = (el.attrd('size') || '').split(',');
-			var name = (el.attrd('head') || '').split(',');
-			var align = (el.attrd('align') || '').split(',');
-			var i;
-
-			for (i = 0; i < align.length; i++) {
-				switch (align[i].trim()) {
-					case '0':
-						align[i] = 'left';
-						break;
-					case '1':
-						align[i] = 'center';
-						break;
-					case '2':
-						align[i] = 'right';
-						break;
-				}
-			}
-
-			display = (display || '').split(',').trim();
-
-			for (i = 0; i < align.length; i++)
-				align[i] = align[i].trim();
-
-			for (i = 0; i < size.length; i++)
-				size[i] = size[i].trim();
-
-			for (i = 0; i < name.length; i++) {
-				name[i] = name[i].trim().replace(/'\w'/, function(val) {
-					return '<i class="fa fa-{0}"></i>'.format(val.replace(/'/g, ''));
-				});
-			}
-
-			if (!size[0] && size.length === 1)
-				size = EMPTYARRAY;
-
-			if (!align[0] && align.length === 1)
-				align = EMPTYARRAY;
-
-			if (!name[0] && name.length === 1)
-				name = EMPTYARRAY;
-
-			if (display.length) {
-				for (i = 0; i < display.length; i++) {
-					templates[display[i]] = template;
-					sizes[display[i]] = size.length ? size : null;
-					names[display[i]] = name.length ? name : null;
-					aligns[display[i]] = align.length ? align : null;
-				}
-			} else {
-				templates.lg = templates.md = templates.sm = templates.xs = template;
-				sizes.lg = sizes.md = sizes.sm = sizes.xs = size.length ? size : null;
-				names.lg = names.md = names.sm = names.xs = name.length ? name : null;
-				aligns.lg = aligns.md = aligns.sm = aligns.xs = align.length ? align : null;
-			}
-
-		});
-
-		self.html('<table class="{0}-table"><thead class="{0}-thead"></thead><tbody class="{0}-tbody"></tbody><tfooter class="{0}-tfooter hidden"></tfooter></table><div class="{0}-empty hidden"></div>'.format(cls));
-		etable = self.find('table');
-		ebody = etable.find('tbody');
-		eempty = self.find(cls2 + '-empty').html(templates.empty || '');
-		ehead = etable.find('thead');
-		templates.empty && templates.empty.COMPILABLE() && COMPILE(eempty);
-
-		var blacklist = { A: 1, BUTTON: 1 };
-
-		ebody.on('click', '> tr', function(e) {
-
-			if (!config.highlight)
-				return;
-
-			var el = $(this);
-			var node = e.target;
-
-			if (blacklist[node.tagName] || (node.tagName === 'SPAN' && node.getAttribute('class') || '').indexOf('link') !== -1)
-				return;
-
-			if (node.tagName === 'I') {
-				var parent = $(node).parent();
-				if (blacklist[parent[0].tagName] || (parent[0].tagName === 'SPAN' && parent.hclass('link')))
-					return;
-			}
-
-			var index = +el.attrd('index');
-			if (index > -1) {
-				var is = el.hclass(cls + '-selected');
-				if (config.multiple) {
-					if (is) {
-						if (config.unhighlight) {
-							el.rclass(cls + '-selected');
-							config.detail && self.row_detail(el);
-							opt.selected = opt.selected.remove(index);
-							config.exec && SEEX(config.exec, self.selected(), el);
-						}
-					} else {
-						el.aclass(cls + '-selected');
-						config.exec && SEEX(config.exec, self.selected(), el);
-						config.detail && self.row_detail(el);
-						opt.selected.push(index);
-					}
-				} else {
-
-					if (is && !config.unhighlight)
-						return;
-
-					if (opt.selrow) {
-						opt.selrow.rclass(cls + '-selected');
-						config.detail && self.row_detail(opt.selrow);
-						opt.selrow = null;
-						opt.selindex = -1;
-					}
-
-					// Was selected
-					if (is) {
-						config.exec && SEEX(config.exec);
-						return;
-					}
-
-					opt.selindex = index;
-					opt.selrow = el;
-					el.aclass(cls + '-selected');
-					config.exec && SEEX(config.exec, opt.items[index], el);
-					config.detail && self.row_detail(el);
-				}
-			}
-		});
-
-		var resize = function() {
-			setTimeout2(self.ID, self.resize, 500);
-		};
-
-		if (W.OP)
-			W.OP.on('resize', resize);
-		else
-			$(W).on('resize', resize);
-	};
-
-	self.resize = function() {
-		var display = WIDTH();
-		if (display !== opt.display && sizes[display] && sizes[display] !== sizes[opt.display])
-			self.refresh();
-	};
-
-	self.row_detail = function(el) {
-
-		var index = +el.attrd('index');
-		var row = opt.items[index];
-		var eld = el.next();
-
-		if (el.hclass(cls + '-selected')) {
-
-			// Row is selected
-			if (eld.hclass(cls + '-detail')) {
-				// Detail exists
-				eld.rclass('hidden');
-			} else {
-
-				// Detail doesn't exist
-				el.after('<tr class="{0}-detail"><td colspan="{1}" data-index="{2}"></td></tr>'.format(cls, el.find('td').length, index));
-				eld = el.next();
-
-				var tmp;
-
-				if (config.detail === true) {
-					tmp = eld.find('td');
-					tmp.html(templates.detail(row, { index: index, user: window.user }));
-					dcompile && COMPILE(tmp);
-				} else {
-					tmp = eld.find('td');
-					EXEC(config.detail, row, function(row) {
-						var is = typeof(row) === 'string';
-						tmp.html(is ? row : templates.detail(row, { index: index, user: window.user }));
-						if ((is && row.COMPILABLE()) || dcompile)
-							COMPILE(tmp);
-					}, tmp);
-				}
-			}
-
-		} else
-			eld.hclass(cls + '-detail') && eld.aclass('hidden');
-	};
-
-	self.redrawrow = function(index, row) {
-
-		if (typeof(index) === 'number')
-			index = ebody.find('tr[data-index="{0}"]'.format(index));
-
-		if (index.length) {
-			var template = templates[opt.display];
-			var indexer = {};
-			indexer.user = W.user;
-			indexer.index = +index.attrd('index');
-			var is = index.hclass(cls + '-selected');
-			var next = index.next();
-			index.replaceWith(template(row, indexer).replace('<tr', '<tr data-index="' + indexer.index + '"'));
-			next.hclass(cls + '-detail') && next.remove();
-			is && ebody.find('tr[data-index="{0}"]'.format(indexer.index)).trigger('click');
-		}
-	};
-
-	self.appendrow = function(row) {
-
-		var index = opt.items.indexOf(row);
-		if (index == -1)
-			index = opt.items.push(row) - 1;
-
-		var template = templates[opt.display];
-		var indexer = {};
-		indexer.user = W.user;
-		indexer.index = index;
-		ebody.append(template(row, indexer).replace('<tr', '<tr data-index="' + indexer.index + '"'));
-	};
-
-	self.removerow = function(row) {
-		var index = opt.items.indexOf(row);
-		if (index == -1)
-			return;
-		opt.selected = opt.selected.remove(index);
-		opt.items.remove(row);
-	};
-
-	self.selected = function() {
-		var rows = [];
-		for (var i = 0; i < opt.selected.length; i++) {
-			var row = opt.items[opt.selected[i]];
-			row && rows.push(row);
-		}
-		return rows;
-	};
-
-	self.setter = function(value) {
-
-		if (value && value.items)
-			value = value.items;
-
-		var empty = !value || !value.length;
-		var clsh = 'hidden';
-
-		if (!self.isinit) {
-			self.rclass('invisible', 10);
-			self.isinit = true;
-		}
-
-		if (empty) {
-			etable.aclass(clsh);
-			eempty.rclass(clsh);
-			return;
-		}
-
-		var display = WIDTH();
-		var builder = [];
-		var indexer = {};
-
-
-		var selected = opt.selected.slice(0);
-
-		for (var i = 0; i < selected.length; i++) {
-			var row = opt.items[selected[i]];
-			selected[i] = row[config.pk];
-		}
-
-		indexer.user = window.user;
-
-		var template = templates[display];
-		var count = 0;
-		var size = sizes[display];
-		var name = names[display];
-		var align = aligns[display];
-
-		if ((size && size.length) || (name && name.length) || (align && align.length)) {
-
-			var arr = name || size || align;
-
-			for (var i = 0; i < arr.length; i++)
-				builder.push('<th style="width:{0};text-align:{2}">{1}</th>'.format(!size || size[i] === '0' ? 'auto' : size[i], name ? name[i] : '', align ? align[i] : 'left'));
-
-			ehead.tclass(cls + '-nohead', !name);
-			ehead.html('<tr>{0}</tr>'.format(builder.join('')));
-			builder = [];
-		} else
-			ehead.html('');
-
-		if (template) {
-			for (var i = 0; i < value.length; i++) {
-				var item = value[i];
-				count++;
-				indexer.index = i;
-				builder.push(template(item, indexer).replace('<tr', '<tr data-index="' + i + '"'));
-			}
-		}
-
-		opt.display = display;
-		opt.items = value;
-		opt.selindex = -1;
-		opt.selrow = null;
-		opt.selected = [];
-
-		count && ebody.html(builder.join(''));
-
-		eempty.tclass(clsh, count > 0);
-		etable.tclass(clsh, count == 0);
-
-		config.exec && SEEX(config.exec, config.multiple ? [] : null);
-
-		if (config.remember) {
-			for (var i = 0; i < selected.length; i++) {
-				if (selected[i]) {
-					var index = opt.items.findIndex(config.pk, selected[i]);
-					if (index !== -1)
-						ebody.find('tr[data-index="{0}"]'.format(index)).trigger('click');
-				}
-			}
-		}
-	};
-
 });
 
 COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;direxclude:false;forcevalidation:1;searchalign:1;after:\\:', function(self, config) {
@@ -13198,7 +11574,7 @@ COMPONENT('faiconsbutton', 'default:#FFFFFF;align:left;position:top', function(s
 	};
 });
 
-COMPONENT('window', 'zindex:12;scrollbar:true', function(self, config) {
+COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 
 	var cls = 'ui-window';
 	var cls2 = '.' + cls;
@@ -13226,7 +11602,6 @@ COMPONENT('window', 'zindex:12;scrollbar:true', function(self, config) {
 
 	self.hide = function() {
 		self.set('');
-		config.onhide && EXEC(config.onhide);
 	};
 
 	self.resize = function() {
@@ -13510,164 +11885,6 @@ COMPONENT('textarea', 'scrollbar:true', function(self, config) {
 	};
 });
 
-COMPONENT('objecteditor', 'null:true', function(self, config) {
-
-	self.nocompile && self.nocompile();
-
-	var skip = false;
-	var tstringmultiline = '<div class="ui-oe-string-multiline ui-oe-item"><div class="ui-oe-label"><span>{label}</span></div><div class="ui-oe-control"><textarea data-type="string" name="{path}">{value}</textarea></div></div>';
-	var tstring = '<div class="ui-oe-string ui-oe-item"><div class="ui-oe-label"><span>{label}</span></div><div class="ui-oe-control"><input type="text" data-type="string" name="{path}" value="{value}" /></div></div>';
-	var tdate = '<div class="ui-oe-date ui-oe-item"><div class="ui-oe-label"><span>{label}</span></div><div class="ui-oe-control"><input type="text" data-type="date" name="{path}" value="{value}" /></div></div>';
-	var tnumber = '<div class="ui-oe-number ui-oe-item"><div class="ui-oe-label"><span>{label}</span></div><div class="ui-oe-control"><input type="text" data-type="number" name="{path}" value="{value}" /></div></div>';
-	var tboolean = '<div class="ui-oe-boolean ui-oe-item"><div class="ui-oe-label"><span>{label}</span></div><div class="ui-oe-control"><div data-name="{path}" class="ui-eo-checkbox{value}"><i class="fa fa-check"></i></div></div></div>';
-	var tnull = '<div class="ui-oe-null ui-oe-item"><div class="ui-oe-label"><span>{label}</span></div><div class="ui-oe-control">null</div></div>';
-	var tgroup = '<div class="ui-oe-group ui-oe-level-{level}"><div class="ui-oe-label">{name}</div><div class="ui-oe-items">{body}</div></div>';
-	var tarray = '<div class="ui-oe-array ui-oe-level-{level}"><div class="ui-oe-label"><b>Array:</b> {name}</div><div class="ui-oe-items">{body}</div></div>';
-
-	self.configure = function(key, value ) {
-		if (key === 'skip')
-			config.skip = value instanceof Array ? value : value.split(',');
-	};
-
-	self.make = function() {
-		self.aclass('ui-oe');
-
-		self.event('click', '.ui-eo-checkbox', function() {
-			var el = $(this);
-			var cls = 'checked';
-			var path = self.path + '.' + el.attrd('name');
-			el.tclass(cls);
-			skip = true;
-			SET(path, el.hclass(cls));
-			self.change(true);
-		});
-
-		self.event('input', 'input,textarea', function() {
-
-			var el = $(this);
-			var type = el.attrd('type');
-			var path = self.path + '.' + this.name;
-			var val = this.value;
-
-			switch (type) {
-				case 'string':
-					break;
-				case 'number':
-					val = val.parseFloat();
-					break;
-				case 'date':
-					val = val.parseDate();
-					break;
-			}
-
-			setTimeout2(self.ID, function() {
-				skip = true;
-				SET(path, val);
-				self.change(true);
-			}, 100);
-		});
-	};
-
-	self.redraw = function(path, obj, level) {
-
-		var arr = Object.keys(obj);
-		var builder = [];
-
-		for (var i = 0; i < arr.length; i++) {
-			var key = arr[i];
-			var val = obj[key];
-
-			if (val == null)
-				continue;
-
-			var tmp = {};
-
-			tmp.pathraw = (path ? (path + '.') : '') + key;
-
-			if (!config.null || (config.skip && config.skip.indexOf(tmp.pathraw) !== -1))
-				continue;
-
-			tmp.path = tmp.pathraw;
-			tmp.label = key;
-			tmp.value = val;
-
-			if (val == null) {
-				builder.push(tnull.arg(tmp));
-				continue;
-			}
-
-			var type = typeof(val);
-			if (type === 'string') {
-				tmp.value = Tangular.helpers.encode(tmp.value);
-				if (tmp.value.indexOf('\n') == -1)
-					builder.push(tstring.arg(tmp));
-				else
-					builder.push(tstringmultiline.arg(tmp));
-			} else if (type === 'number')
-				builder.push(tnumber.arg(tmp));
-			else if (type === 'boolean') {
-				tmp.value = val ? ' checked' : '';
-				builder.push(tboolean.arg(tmp));
-			} else {
-				if (val instanceof Date) {
-					tmp.value = tmp.value.format('yyyy-MM-dd HH:mm:ss');
-					builder.push(tdate.arg(tmp));
-				} else if (val instanceof Array) {
-
-					type = typeof(val[0]);
-					var sub = [];
-
-					if (type === 'number') {
-						for (var j = 0; j < val.length; j++) {
-							tmp.path = tmp.pathraw + '[' + j + ']';
-							tmp.value = val[j];
-							sub.push(tnumber.arg(tmp));
-						}
-					} else if (type === 'string') {
-						for (var j = 0; j < val.length; j++) {
-							tmp.path = tmp.pathraw + '[' + j + ']';
-							tmp.value = val[j];
-							tmp.value = Tangular.helpers.encode(tmp.value);
-							sub.push(tstring.arg(tmp));
-						}
-					} else if (type === 'boolean') {
-						for (var j = 0; j < val.length; j++) {
-							tmp.path = tmp.pathraw + '[' + j + ']';
-							tmp.value = val[j];
-							sub.push(tboolean.arg(tmp));
-						}
-					} else {
-						for (var j = 0; j < val.length; j++)
-							sub.push(self.redraw(tmp.pathraw + '[' + j + ']', val[j], j + 1));
-					}
-					sub.length && builder.push(tarray.arg({ name: tmp.pathraw, body: sub.join(''), level: level }));
-				} else
-					builder.push(self.redraw(tmp.path, val, level + 1));
-			}
-
-		}
-
-		var output = builder.join('');
-		return level ? tgroup.arg({ name: path, body: output, level: level }) : output;
-	};
-
-	self.setter = function(value) {
-
-		if (value == null) {
-			self.empty();
-			return;
-		}
-
-		if (skip) {
-			skip = false;
-			return;
-		}
-
-		self.html(self.redraw('', value, 0));
-	};
-
-});
-
 COMPONENT('movable', function(self, config) {
 
 	var events = {};
@@ -13753,689 +11970,6 @@ COMPONENT('movable', function(self, config) {
 		$(document).off('dragenter dragover dragexit drop dragleave dragstart', config.selector, events.ondrag);
 		$(document).off('mousedown', config.selector, events.ondown);
 	};
-});
-
-COMPONENT('editable', 'disabled:0', function(self, config) {
-
-	var cls = 'ui-editable';
-	var rtrue = /1|true/i;
-	var events = {};
-	var changed = null;
-
-	self.getter = null;
-	self.setter = null;
-
-	self.validate = function(value, init) {
-
-		if (init)
-			return true;
-
-		var is = true;
-		var arr = self.find('[data-editable]');
-
-		for (var i = 0; i < arr.length; i++) {
-
-			var el = $(arr[i]);
-			var opt = self.parse(el);
-			var disabled = el.attrd('disabled');
-
-			if ((disabled && rtrue.test(disabled)) || HIDDEN(el))
-				continue;
-
-			if (!opt || !opt.required)
-				continue;
-
-			if (opt.path) {
-				var val = GET(opt.path);
-				if (opt.validate && !opt.validate(val))
-					is = false;
-				else if (opt.type === 'number')
-					is = val ? val > 0 || val < 0 : false;
-				else if (opt.type === 'email')
-					is = val ? val.isEmail() : false;
-				else if (opt.type === 'phone')
-					is = val.isPhone();
-				else if (opt.type === 'date')
-					is = val ? val.getTime() > 0 : false;
-				else if (opt.type === 'boolean')
-					is = val ? true : false;
-				else if (val instanceof Array)
-					is = !!val.length;
-				else
-					is = val ? true : false;
-				if (!is)
-					break;
-			}
-		}
-
-		return is;
-	};
-
-	self.makefn = function(val) {
-		return (/\(|=|>|<|\+|-|\)/).test(val) ? FN('value=>' + val) : (function(path) { return function(value) { return GET(self.makepath(path))(value); }; })(val);
-	};
-
-	self.parse = function(el) {
-
-		var t = el[0];
-
-		if (t.$editable)
-			return t.$editable;
-
-		var opt = (el.attrd('editable') || '').parseConfig();
-
-		if (!opt.path) {
-			if (!opt.save) {
-				// Internal hack for data-bind instance
-				var binder = el[0].$jcbind;
-				if (!binder)
-					return;
-				opt.path = binder.path;
-				opt.binder = binder;
-			}
-		} else
-			opt.path = self.path + '.' + opt.path;
-
-		opt.html = el.html();
-
-		if (opt.type)
-			opt.type = opt.type.toLowerCase();
-
-		if (opt.type === 'date' && !opt.format)
-			opt.format = config.dateformat || 'yyyy-MM-dd';
-
-		if (opt.type === 'bool')
-			opt.type += 'ean';
-
-		if (opt.validate)
-			opt.validate = self.makefn(opt.validate);
-
-		if (opt.accept)
-			opt.accept = self.makefn(opt.accept);
-
-		if (opt.raw == null)
-			opt.raw = true;
-
-		if (opt.can || config.can) {
-			opt.canedit = function(el) {
-				var opt = el[0].$editable;
-				return (opt.can && !GET(self.makepath(opt.can))(opt, el)) || (config.can && !GET(self.makepath(config.can))(opt, el));
-			};
-		}
-
-		t.$editable = opt;
-		return opt;
-	};
-
-	self.movecursor = function(el, beg) {
-		var range, selection, doc = document;
-		if (doc.createRange) {
-			range = doc.createRange();
-			range.selectNodeContents(el[0]);
-			range.collapse(beg ? true : false);
-			selection = W.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(range);
-		} else if (doc.selection) {
-			range = doc.body.createTextRange();
-			range.moveToElementText(el[0]);
-			range.collapse(beg ? true : false);
-			range.select();
-		}
-	};
-
-	self.cancel = function(opt, el) {
-		opt.value = null;
-		!opt.save && el.html('');
-		self.approve2(el);
-	};
-
-	self.configure = function(name, value) {
-		switch (name) {
-			case 'disabled':
-				self.tclass(cls + '-disabled', !!value);
-				self.tclass(cls + '-enabled', !value);
-				break;
-		}
-	};
-
-	self.focusnext = function(el, e) {
-		if (el instanceof jQuery)
-			el = el[0];
-		var arr = self.find('[data-editable]');
-		for (var i = 0; i < arr.length; i++) {
-			if (arr[i] === el) {
-				var next = arr[i + 1];
-				if (next) {
-					$(next).trigger('click');
-					e && e.preventDefault();
-				}
-				return true;
-			}
-		}
-	};
-
-	self.changed = function() {
-		var keys = Object.keys(changed);
-		var data = {};
-		var model = self.get();
-		for (var i = 0; i < keys.length; i++)
-			data[keys[i]] = model[keys[i]];
-		return data;
-	};
-
-	self.make = function() {
-
-		self.aclass(cls);
-		self.event('click', '[data-editable]', function(e) {
-
-			if (config.disabled)
-				return;
-
-			var t = this;
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			if (t.$editable && t.$editable.is)
-				return;
-
-			var el = $(t);
-			var disabled = el.attrd('disabled');
-			if (disabled && rtrue.test(disabled))
-				return;
-
-			var opt = self.parse(el);
-
-			if (!opt || (opt.canedit && !opt.canedit(el)))
-				return;
-
-			var target = $(e.target);
-			if (opt.type === 'tags') {
-				if (target.hclass('fa')) {
-					var temp = GET(opt.path);
-					var index = target.parent().eq(0).index();
-					temp.splice(index, 1);
-					SET(opt.path, temp, 2);
-					self.change(true);
-					return;
-				} else if (target[0].nodeName === 'SPAN')
-					return;
-			}
-
-			opt.is = true;
-			opt.keypressed = 0;
-
-			if (opt.dirsource) {
-
-				opt.value = GET(opt.path) || el.text();
-
-				if (!opt.dirvalue)
-					opt.dirvalue = 'id';
-
-				var scope = el.scope();
-				var attr = {};
-				attr.element = el;
-				attr.items = GET(scope == null ? self.makepath(opt.dirsource) : scope.makepath(opt.dirsource));
-				attr.offsetY = -1;
-				attr.placeholder = typeof(opt.dirsearch) === 'string' ? opt.dirsearch : opt.dirplaceholder;
-				attr.search = opt.dirsearch;
-				attr.render = opt.dirrender ? GET(scope == null ? self.makepath(opt.dirrender) : scope.makepath(opt.dirrender)) : null;
-				attr.custom = !!opt.dircustom;
-				attr.offsetWidth = 2;
-				attr.minwidth = opt.dirminwidth || 200;
-				attr.maxwidth = opt.dirmaxwidth;
-				attr.key = opt.dirkey || 'name';
-				attr.empty = opt.dirempty;
-
-				if (opt.direxclude || opt.direxclude == null) {
-					attr.exclude = function(item) {
-
-						if (!item)
-							return;
-
-						if (typeof(item) === 'string')
-							return item === opt.value;
-
-						var v = item[opt.dirvalue || 'id'];
-						return opt.value instanceof Array ? opt.value.indexOf(v) !== -1 : v === opt.value;
-					};
-				}
-
-				attr.close = function() {
-					opt.is = false;
-				};
-
-				attr.callback = function(item, el, custom) {
-
-					opt.is = false;
-
-					// empty
-					if (item == null) {
-						self.cancel(opt, el);
-						return;
-					}
-
-					var val = custom || typeof(item) === 'string' ? item : item[opt.dirvalue];
-					if (custom && typeof(attr.dircustom) === 'string') {
-						var fn = GET(attr.dircustom.replace(/\?/g, self.pathscope));
-						fn(val, function(val) {
-							if (val) {
-
-								if (opt.accept && !opt.accept(val)) {
-									self.cancel(opt, el);
-									return;
-								}
-
-								if (typeof(val) === 'string') {
-									opt.value = val;
-									!opt.save && el.html(val);
-								} else {
-									opt.value = item[opt.dirvalue];
-									!opt.save && el.html(val[attr.key]);
-								}
-								self.approve2(val);
-							}
-						});
-					} else if (!custom) {
-
-						if (opt.accept && !opt.accept(val)) {
-							self.cancel(opt, el);
-							return;
-						}
-
-						opt.value = val;
-						!opt.save && el.html(typeof(item) === 'string' ? item : item[attr.key]);
-						self.approve2(el);
-					}
-				};
-
-				SETTER('directory', 'show', attr);
-
-			} else if (opt.type === 'boolean') {
-				TOGGLE(opt.path, 2);
-				self.change(true);
-				opt.is = false;
-			} else if (opt.type === 'set') {
-				SET(opt.path, new Function('return ' + (opt.value == null ? 'null' : opt.value))(), 2);
-				self.change(true);
-				opt.is = false;
-			} else {
-
-				opt.prev = opt.value = GET(opt.path);
-				opt.html = el.html();
-
-				if (opt.value == null || opt.value == '') {
-					opt.value = opt.raw ? '' : opt.html;
-					if (opt.raw && !el.hclass('invalid')) {
-						opt.clear = true;
-						self.movecursor(el, 1);
-					}
-				}
-
-				self.attach(el);
-			}
-		});
-
-		events.keydown = function(e) {
-
-			var t = this;
-
-			if (!t.$events)
-				return;
-
-			var meta = t.$editable;
-
-			if (meta.clear) {
-				t.innerHTML = '';
-				meta.clear = 0;
-			}
-
-			if (!meta.keypressed) {
-				meta.keypressed = 1;
-				$(t).aclass('keypressed');
-			}
-
-			if ((e.metaKey || e.ctrlKey) && (e.which === 66 || e.which === 76 || e.which === 73 || e.which === 85)) {
-				if (meta.type !== 'html') {
-					e.preventDefault();
-					e.stopPropagation();
-				}
-			}
-
-			var el;
-
-			if (e.which === 27) {
-				el = $(t);
-				self.cnotify(el, 'no');
-				self.detach(el);
-				if (config.escape) {
-					setTimeout(function() {
-						EXEC(config.escape, meta.path, GET(meta.path));
-					}, 100);
-				}
-				return;
-			}
-
-			if (e.which === 13 || e.which === 9) {
-
-				if (e.which === 13 && meta.multiline)
-					return;
-
-				e.preventDefault();
-
-				el = $(t);
-				if (self.approve(el)) {
-
-					self.detach(el);
-					el.rclass('keypressed');
-
-					if (e.which === 9) {
-						if (self.focusnext(t, e))
-							return;
-					}
-
-					if (config.enter) {
-						setTimeout(function() {
-							EXEC(config.enter, meta.path, GET(meta.path));
-						}, 100);
-					}
-
-				} else {
-					// INVALID
-					self.cnotify(el, 'no');
-				}
-			}
-		};
-
-		events.blur = function() {
-			var t = this;
-			if (t.$events) {
-				var el = $(t);
-				el.rclass('keypressed');
-
-				if (t.$editable.is) {
-					var is = self.approve(el);
-					self.cnotify(el, is ? 'ok' : 'no');
-				}
-
-				self.detach(el);
-			}
-		};
-
-		events.paste = function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			var meta = this.$editable;
-			var text = e.originalEvent.clipboardData.getData(self.attrd('clipboard') || 'text/plain');
-			text && document.execCommand('insertText', false, meta.multiline ? text.trim() : text.replace(/\n|\r/g, '').trim());
-		};
-
-		events.focus = function(e) {
-			var t = this;
-			var jcbind = e.target.$jcbind || {};
-
-			if (t.$editable && t.$editable.is && t.$editable.autosource) {
-				var attr = t.$editable;
-				var opt = {};
-				opt.element = $(t);
-				opt.search = GET(attr.autosource);
-				opt.offsetY = 10;
-				opt.callback = function(item, el) {
-					attr.value = typeof(item) === 'string' ? item : item[attr.autovalue || 'name'];
-					el.html(attr.value);
-					self.approve2(el);
-				};
-				SETTER('autocomplete', 'show', opt);
-				return;
-			}
-
-			if (jcbind.empty && jcbind.empty == e.target.innerText) {
-				$(e.target).empty();
-				return;
-			}
-		};
-	};
-
-	self.approve = function(el) {
-
-		var opt = el[0].$editable;
-
-		SETTER('!autocomplete', 'hide');
-
-		var cur = el.html();
-
-		if (!opt.required && (opt.html === cur || (opt.raw && !cur && !opt.empty)))
-			return true;
-
-		var val = cur;
-
-		if (opt.type !== 'html') {
-			var area = document.createElement('TEXTAREA');
-			area.innerHTML = val;
-			val = $(area).text();
-			val = val.replace(/<br(\s\/)?>/g, opt.multiline ? '\n' : '').trim();
-		}
-
-		if (opt.maxlength && val.length > opt.maxlength)
-			val = val.substring(0, opt.maxlength);
-
-		opt.value = val;
-
-		switch (opt.type) {
-			case 'number':
-				opt.value = opt.value ? opt.value.parseFloat() : 0;
-				if ((opt.minvalue != null && opt.value < opt.minvalue) || (opt.maxvalue != null && opt.value > opt.maxvalue)) {
-					opt.value = '';
-					return false;
-				}
-				break;
-			case 'phone':
-				if (opt.required) {
-					if (!opt.value.isPhone()) {
-						opt.html = null;
-						return false;
-					}
-				} else if (opt.value && !opt.value.isPhone()) {
-					opt.value = '';
-					return false;
-				}
-				break;
-			case 'email':
-				if (opt.required) {
-					if ((!opt.value || !opt.value.isEmail())) {
-						opt.html = null;
-						return false;
-					}
-				} else if (opt.value && !opt.value.isEmail()) {
-					opt.value = '';
-					return false;
-				}
-
-				break;
-			case 'date':
-				if (!opt.empty) {
-					SETTER('!datepicker', 'hide');
-					opt.value = opt.value ? opt.value.parseDate(opt.format) : null;
-					if (opt.required && !opt.value) {
-						return false;
-					}
-				}
-				break;
-			case 'boolean':
-				opt.value = opt.value === true || opt.value == 'true' || opt.value == '1' || opt.value == 'on';
-				break;
-			default:
-				if (opt.required && !opt.value) {
-					//opt.value = '';
-					opt.html = null;
-					return false;
-				}
-				break;
-		}
-
-		if (opt.accept && !opt.accept(val))
-			return false;
-
-		// EMPTY STRING
-		if ((!opt.type || opt.type === 'string') && (opt.value == null || opt.value === '') && (opt.prev == null || opt.prev === ''))
-			return false;
-
-		if (!opt.empty && (opt.required && (opt.value == null || opt.value === '')) || (opt.validate && !opt.validate(opt.value)))
-			return false;
-
-		opt.html = null;
-		self.approve2(el);
-		return true;
-	};
-
-	self.cnotify = function(el, classname) {
-
-		var meta = el[0].$editable;
-
-		if (classname === 'ok') {
-
-			el.rclass('invalid').aclass('changed');
-
-			if (!changed) {
-				self.aclass(cls + '-changed');
-				changed = {};
-			}
-
-			changed[meta.path.substring(self.path.length + 1)] = 1;
-			config.changed && SEEX(config.changed, self.changed());
-			config.invalid && EXEC(config.invalid, el, false, meta);
-		} else {
-			meta.invalid && EXEC(config.invalid, el, true, meta);
-			el.aclass((meta.required ? 'invalid ' : '') + 'changed');
-		}
-
-		el.aclass(cls + '-' + classname);
-		setTimeout(function() {
-			el && el.rclass(cls + '-' + classname);
-		}, 1000);
-	};
-
-	self.approve2 = function(el) {
-		var opt = el[0].$editable;
-		if (opt.save) {
-			GET(opt.save)(opt, function(is) {
-				el.html(is || is == null ? opt.value : opt.html);
-				if (is || is == null)
-					self.cnotify(el, 'ok');
-				else
-					self.cnotify(el, 'no');
-			});
-		} else {
-			setTimeout(function() {
-
-				var b = null;
-				if (el.binder)
-					b = el.binder();
-				if (b)
-					b.disabled = true;
-
-				if (opt.type === 'tags')
-					PUSH(opt.path, opt.value, 2);
-				else
-					SET(opt.path, opt.value, 2);
-
-				self.cnotify(el, 'ok');
-				self.change(true);
-
-				var val = opt.binder ? GET(opt.binder.path) : null;
-				if (opt.empty && !val && typeof(opt.empty) === 'string') {
-					el.html(opt.empty);
-					if (b)
-						b.disabled = false;
-					return;
-				}
-
-				b && setTimeout(function() {
-					b.disabled = false;
-					if (opt.empty || opt.rebind)
-						opt.binder && opt.binder.exec(val, opt.binder.path);
-				}, 100);
-			}, 100);
-		}
-	};
-
-	self.attach = function(el) {
-		if (!el[0].$events) {
-
-			var o = el[0].$editable;
-			el[0].$events = true;
-
-			el.aclass('editable-editing' + (o.multiline ? ' editable-multiline' : ''));
-			el.on('focus', events.focus);
-			el.on('keydown', events.keydown);
-			el.on('blur', events.blur);
-			el.on('paste', events.paste);
-			el.attr('contenteditable', true);
-			el.focus();
-			self.movecursor(el, o.clear ? 1 : 0);
-
-			if (o.type === 'date') {
-				var opt = {};
-				opt.element = el;
-				opt.value = (o.value && typeof(o.value) === 'string' ? o.value.parseDate(o.format) : o.value) || NOW;
-				opt.callback = function(date) {
-					el.html(date.format(o.format));
-					self.approve(el);
-				};
-				SETTER('datepicker', 'show', opt);
-			}
-		}
-	};
-
-	self.detach = function(el) {
-		if (el[0].$events) {
-			el.off('keydown', events.keydown);
-			el.off('blur', events.blur);
-			el.off('paste', events.paste);
-			el[0].$events = false;
-			var opt = el[0].$editable;
-			if (opt.html != null)
-				el.html(opt.html);
-			opt.is = false;
-			el.rclass('editable-editing editable-multiline');
-			el.attr('contenteditable', false);
-		}
-	};
-
-	self.state = function(type, what) {
-		// reset or update
-		if (type === 0 || what === 3 || what === 4) {
-
-			self.find('.changed').rclass('changed');
-			self.rclass(cls + '-changed');
-
-			if (changed) {
-				changed = null;
-				config.changed && SEEX(config.changed);
-			}
-
-			var el = self.find('.invalid');
-
-			if (config.invalid) {
-				for (var i = 0; i < el.length; i++)
-					EXEC(config.invalid, el[0], false, el[0].$editable);
-			}
-
-			el.rclass('invalid');
-		}
-	};
-
-	self.setter = function(value, path, type) {
-		if (type !== 2) {
-			if (config.autofocus) {
-				setTimeout(function() {
-					self.find('[data-editable]:first-child').eq(0).trigger('click');
-				}, 400);
-			}
-		}
-	};
-
 });
 
 COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;monthselect:true;yearfrom:-70 years;yearto:5 years', function(self, config) {
@@ -14937,24 +12471,7 @@ COMPONENT('clipboard', function(self) {
 	};
 });
 
-COMPONENT('appearance', function(self, config, cls) {
-	var cls2 = '.' + cls;
-	self.readonly();
-	self.make = function() {
-		self.event('click', cls2 + '-option', function() {
-			var el = $(this);
-			self.set(el.hclass(cls + '-dark'));
-			self.change();
-		});
-	};
-
-	self.setter = function(value) {
-		self.find(cls2 + '-dark').tclass(cls + '-selected', value === true);
-		self.find(cls2 + '-light').tclass(cls + '-selected', value !== true);
-	};
-});
-
-COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config, cls) {
+COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1;visibleY:0;scrolltop:1', function(self, config, cls) {
 
 	var cls2 = '.' + cls;
 	var csspos = {};
@@ -15000,7 +12517,7 @@ COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config
 	self.readonly();
 	self.submit = function() {
 		if (config.submit)
-			EXEC(config.submit, self.hide);
+			EXEC(config.submit, self.hide, self.element);
 		else
 			self.hide();
 	};
@@ -15027,7 +12544,6 @@ COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config
 		var padding = isMOBILE ? 0 : config.padding;
 
 		var ui = self.find(cls2);
-		var fh = ui.innerHeight();
 		csspos.height = WH - (padding * 2);
 		csspos.top = padding;
 		ui.css(csspos);
@@ -15040,6 +12556,7 @@ COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config
 			csspos.height -= nav.height();
 
 		self.find(cls2 + '-body').css(csspos);
+		self.scrollbar && self.scrollbar.resize();
 		self.element.SETTER('*', 'resize');
 	};
 
@@ -15064,7 +12581,10 @@ COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config
 		}
 
 		self.rclass('hidden invisible');
-		self.replace(el);
+		self.replace(el, true);
+
+		if (config.scrollbar)
+			self.scrollbar = SCROLLBAR(self.find(cls2 + '-body'), { visibleY: config.visibleY, orientation: 'y' });
 
 		self.event('scroll', function() {
 			EMIT('scroll', self.name);
@@ -15113,6 +12633,7 @@ COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config
 			if (!isHidden) {
 				config.reload && EXEC(config.reload, self);
 				config.default && DEFAULT(config.default, true);
+				config.scrolltop && self.scrollbar && self.scrollbar.scrollTop(0);
 			}
 			return;
 		}
@@ -15140,11 +12661,11 @@ COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config
 			W.$$largeform_level = 1;
 
 		W.$$largeform_level++;
-
 		self.css('z-index', W.$$largeform_level * config.zindex);
 		self.rclass('hidden');
 
 		self.release(false);
+		config.scrolltop && self.scrollbar && self.scrollbar.scrollTop(0);
 
 		config.reload && EXEC(config.reload, self);
 		config.default && DEFAULT(config.default, true);
@@ -15166,5 +12687,1256 @@ COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1', function(self, config
 		setTimeout2(self.ID, function() {
 			self.css('z-index', (W.$$largeform_level * config.zindex) + 1);
 		}, 500);
+	};
+});
+
+COMPONENT('intro', 'selected:.selected', function(self, config, cls) {
+
+	var cls2 = '.' + cls;
+	var container = 'intro' + GUID(4);
+	var content, figures, buttons, button = null;
+	var index = 0;
+	var visible = false;
+
+	self.readonly();
+
+	self.make = function() {
+		$(document.body).append('<div id="{0}" class="hidden {1}"><div class="{1}-body"></div></div>'.format(container, cls));
+		content = self.element;
+		container = $('#' + container);
+		content.rclass('hidden');
+		var body = container.find(cls2 + '-body');
+		body[0].appendChild(self.element[0]);
+		self.replace(container);
+		content.aclass('ui-intro-figures');
+		figures = content.find('figure');
+		var items = [];
+
+		figures.each(function(index) {
+			items.push('<i class="fa fa-circle {0}-button" data-index="{1}"></i>'.format(cls, index));
+		});
+
+		body.append('<div class="{0}-pagination"><button name="next"></button>{1}</div>'.format(cls, items.join('')));
+		buttons = self.find(cls2 + '-button');
+		button = self.find(cls2 + '-pagination').find('button');
+
+		self.event('click', 'button[name="next"]', function() {
+			index++;
+			if (index >= figures.length) {
+				self.set('');
+				config.exec && EXEC(config.exec);
+				config.remove && self.remove();
+			} else {
+				self.move(index);
+				config.page && EXEC(config.page, index);
+			}
+		});
+
+		self.event('click', 'button[name="close"]', function() {
+			self.set('');
+			config.exec && EXEC(config.exec, true);
+			config.remove && self.remove();
+		});
+
+		self.event('click', cls2 + '-button', function() {
+			self.move(+this.getAttribute('data-index'));
+		});
+	};
+
+	self.move = function(indexer) {
+		figures.filter('.visible').rclass('visible');
+		buttons.filter('.' + config.selected).rclass(config.selected);
+		figures.eq(indexer).aclass('visible');
+		buttons.eq(indexer).aclass(config.selected);
+		button.html(indexer < buttons.length - 1 ? ((config.next || 'Next') + '<i class="fa fa-chevron-right"></i>') : (config.close || 'Done'));
+		index = indexer;
+		return self;
+	};
+
+	self.setter = function(value) {
+		var is = value == config.if;
+		if (is === visible)
+			return;
+		index = 0;
+		self.move(0);
+		visible = is;
+		self.tclass('hidden', !is);
+		setTimeout(function() {
+			self.find(cls2 + '-body').tclass(cls + '-body-visible', is);
+		}, 100);
+	};
+});
+
+COMPONENT('radiobuttonexpert', 'selected:selected', function(self, config, cls) {
+
+	var cls2 = '.' + cls;
+	var template;
+	var recompile = false;
+	var selected;
+	var reg = /\$(index|path)/g;
+
+	self.nocompile();
+
+	self.configure = function(key, value, init) {
+
+		if (init)
+			return;
+
+		switch (key) {
+			case 'disabled':
+				self.tclass('ui-disabled', value);
+				break;
+			case 'required':
+				self.find(cls2 + '-label').tclass(cls + '-label-required', value);
+				break;
+			case 'type':
+				self.type = config.type;
+				break;
+			case 'label':
+				self.find(cls2 + '-label').html(value);
+				break;
+			case 'datasource':
+				self.datasource(value, self.bind);
+				break;
+		}
+
+	};
+
+	self.make = function() {
+
+		var element = self.find('script');
+		if (!element.length)
+			return;
+
+		var html = element.html();
+		element.remove();
+		html = html.replace('>', ' data-value="{{ {0} }}" data-disabled="{{ {1} }}">'.format(config.value || 'id', config.disabledkey || 'disabled'));
+		template = Tangular.compile(html);
+		recompile = html.COMPILABLE();
+
+		config.label && self.html('<div class="' + cls + '-label{1}">{0}</div>'.format(config.label, config.required ? (' ' + cls + '-label-required') : ''));
+		config.datasource && self.reconfigure('datasource:' + config.datasource);
+		config.type && (self.type = config.type);
+		config.disabled && self.aclass('ui-disabled');
+
+		self.event('click', '[data-value]', function() {
+			var el = $(this);
+			if (config.disabled || +el.attrd('disabled'))
+				return;
+			var value = self.parser(el.attrd('value'));
+			self.set(value);
+			self.change(true);
+		});
+	};
+
+	self.validate = function(value) {
+		return config.disabled || !config.required ? true : !!value;
+	};
+
+	self.setter = function(value) {
+
+		selected && config.selected && selected.rclass(config.selected);
+
+		if (value == null)
+			return;
+
+		var el = self.find('[data-value="' + value + '"]');
+		if (el) {
+			config.selected && el.aclass(config.selected);
+			selected = el;
+		}
+	};
+
+	self.bind = function(path, arr) {
+
+		if (!arr)
+			arr = EMPTYARRAY;
+
+		var builder = [];
+		var disabledkey = config.disabledkey || 'disabled';
+
+		for (var i = 0; i < arr.length; i++) {
+			var item = arr[i];
+			item[disabledkey] = +item[disabledkey] || 0;
+			builder.push(template(item).replace(reg, function(text) {
+				return text.substring(0, 2) === '$i' ? i.toString() : self.path + '[' + i + ']';
+			}));
+		}
+
+		render = builder.join('');
+		self.find(cls2 + '-container').remove();
+		self.append('<div class="{0}-container{1}">{2}</div>'.format(cls, config.class ? ' ' + config.class : '', render));
+		self.refresh();
+		recompile && self.compile();
+	};
+});
+
+COMPONENT('togglebutton', function(self, config) {
+
+	var cls = 'ui-togglebutton';
+	var icon;
+
+	self.nocompile();
+
+	self.validate = function(value) {
+		return (config.disabled || !config.required) ? true : value === true;
+	};
+
+	self.configure = function(key, value, init) {
+		switch (key) {
+			case 'disabled':
+				!init && self.tclass('ui-disabled', value);
+				break;
+			case 'icontrue':
+			case 'iconfalse':
+				if (value.indexOf(' ') === -1)
+					config[key] = 'fa fa-' + value;
+				break;
+		}
+	};
+
+	self.make = function() {
+		self.aclass(cls);
+		self.append('<button><i></i></button>');
+		icon = self.find('i');
+		self.event('click', function() {
+			if (!config.disabled) {
+				self.dirty(false);
+				self.getter(!self.get());
+			}
+		});
+	};
+
+	self.setter = function(value) {
+		self.tclass(cls + '-selected', value === true);
+		icon.rclass();
+		if (value === true) {
+			if (config.icontrue)
+				icon.aclass(config.icontrue);
+		} else {
+			if (config.iconfalse)
+				icon.aclass(config.iconfalse);
+		}
+	};
+
+	self.state = function(type) {
+		if (!type)
+			return;
+		var invalid = config.required ? self.isInvalid() : false;
+		if (invalid === self.$oldstate)
+			return;
+		self.$oldstate = invalid;
+		self.tclass(cls + '-invalid', invalid);
+	};
+});
+
+COMPONENT('editable', 'disabled:0', function(self, config) {
+
+	var cls = 'ui-editable';
+	var rtrue = /1|true/i;
+	var events = {};
+	var changed = null;
+
+	self.getter = null;
+	self.setter = null;
+
+	var isdisabled = function(el) {
+		var c = 'disabled';
+		var disabled = el.attrd(c);
+		var parent;
+		if (!disabled) {
+			parent = el.parent();
+			disabled = parent.attrd(c) || parent.parent().attrd(c);
+		}
+		return disabled ? rtrue.test(disabled) : false;
+	};
+
+	self.validate = function(value, init) {
+
+		if (init)
+			return true;
+
+		var is = true;
+		var arr = self.find('[data-editable]');
+
+		for (var i = 0; i < arr.length; i++) {
+
+			var el = $(arr[i]);
+			var opt = self.parse(el);
+			var disabled = isdisabled(el);
+			if (disabled || HIDDEN(el))
+				continue;
+
+			if (!opt || !opt.required)
+				continue;
+
+			if (opt.path) {
+				var val = GET(opt.path);
+				if (opt.validate && !opt.validate(val))
+					is = false;
+				else if (opt.type === 'number')
+					is = val ? val > 0 || val < 0 : false;
+				else if (opt.type === 'email')
+					is = val ? val.isEmail() : false;
+				else if (opt.type === 'phone')
+					is = val.isPhone();
+				else if (opt.type === 'date')
+					is = val ? val.getTime() > 0 : false;
+				else if (opt.type === 'boolean')
+					is = val ? true : false;
+				else if (val instanceof Array)
+					is = !!val.length;
+				else
+					is = val ? true : false;
+				if (!is)
+					break;
+			}
+		}
+
+		return is;
+	};
+
+	self.makefn = function(val) {
+		return (/\(|=|>|<|\+|-|\)/).test(val) ? FN('value=>' + val) : (function(path) { return function(value) { return GET(self.makepath(path))(value); }; })(val);
+	};
+
+	self.parse = function(el) {
+
+		var t = el[0];
+
+		if (t.$editable)
+			return t.$editable;
+
+		var opt = (el.attrd('editable') || '').parseConfig();
+
+		if (!opt.path) {
+			if (!opt.save) {
+				// Internal hack for data-bind instance
+				var binder = el[0].$jcbind;
+				if (!binder)
+					return;
+				opt.path = binder.path;
+				opt.binder = binder;
+			}
+		} else
+			opt.path = self.path + '.' + opt.path;
+
+		opt.html = el.html();
+
+		if (opt.type)
+			opt.type = opt.type.toLowerCase();
+
+		if (opt.type === 'date' && !opt.format)
+			opt.format = config.dateformat || 'yyyy-MM-dd';
+
+		if (opt.type === 'bool')
+			opt.type += 'ean';
+
+		if (opt.validate)
+			opt.validate = self.makefn(opt.validate);
+
+		if (opt.accept)
+			opt.accept = self.makefn(opt.accept);
+
+		if (opt.raw == null)
+			opt.raw = true;
+
+		if (opt.can || config.can) {
+			opt.canedit = function(el) {
+				var opt = el[0].$editable;
+				return (opt.can && !GET(self.makepath(opt.can))(opt, el)) || (config.can && !GET(self.makepath(config.can))(opt, el));
+			};
+		}
+
+		t.$editable = opt;
+		return opt;
+	};
+
+	self.movecursor = function(el, beg) {
+		var range, selection, doc = document;
+		if (doc.createRange) {
+			range = doc.createRange();
+			range.selectNodeContents(el[0]);
+			range.collapse(beg ? true : false);
+			selection = W.getSelection();
+			selection.removeAllRanges();
+			selection.addRange(range);
+		} else if (doc.selection) {
+			range = doc.body.createTextRange();
+			range.moveToElementText(el[0]);
+			range.collapse(beg ? true : false);
+			range.select();
+		}
+	};
+
+	self.cancel = function(opt, el) {
+		opt.value = null;
+		!opt.save && el.html('');
+		self.approve2(el);
+	};
+
+	self.configure = function(name, value) {
+		switch (name) {
+			case 'disabled':
+				self.tclass(cls + '-disabled', !!value);
+				self.tclass(cls + '-enabled', !value);
+				break;
+		}
+	};
+
+	self.focusnext = function(el, e) {
+		if (el instanceof jQuery)
+			el = el[0];
+		var arr = self.find('[data-editable]');
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i] === el) {
+				var next = arr[i + 1];
+				if (next) {
+					$(next).trigger('click');
+					e && e.preventDefault();
+				}
+				return true;
+			}
+		}
+	};
+
+	self.changed = function() {
+		var keys = Object.keys(changed);
+		var data = {};
+		var model = self.get();
+		for (var i = 0; i < keys.length; i++)
+			data[keys[i]] = model[keys[i]];
+		return data;
+	};
+
+	self.make = function() {
+
+		self.aclass(cls);
+		self.event('click', '[data-editable]', function(e) {
+
+			if (config.disabled)
+				return;
+
+			var t = this;
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (t.$editable && t.$editable.is)
+				return;
+
+			var el = $(t);
+			if (isdisabled(el))
+				return;
+
+			var opt = self.parse(el);
+			if (!opt || (opt.canedit && !opt.canedit(el)))
+				return;
+
+			var target = $(e.target);
+			if (opt.type === 'tags') {
+				if (target.hclass('fa')) {
+					var temp = GET(opt.path);
+					var index = target.parent().eq(0).index();
+					temp.splice(index, 1);
+					SET(opt.path, temp, 2);
+					self.change(true);
+					return;
+				} else if (target[0].nodeName === 'SPAN')
+					return;
+			}
+
+			opt.is = true;
+			opt.keypressed = 0;
+
+			if (opt.dirsource) {
+
+				opt.value = GET(opt.path) || el.text();
+
+				if (!opt.dirvalue)
+					opt.dirvalue = 'id';
+
+				var scope = el.scope();
+				var attr = {};
+				attr.element = el;
+				attr.items = GET(scope == null ? self.makepath(opt.dirsource) : scope.makepath(opt.dirsource));
+				attr.offsetY = -1;
+				attr.placeholder = typeof(opt.dirsearch) === 'string' ? opt.dirsearch : opt.dirplaceholder;
+				attr.search = opt.dirsearch;
+				attr.render = opt.dirrender ? GET(scope == null ? self.makepath(opt.dirrender) : scope.makepath(opt.dirrender)) : null;
+				attr.custom = !!opt.dircustom;
+				attr.offsetWidth = 2;
+				attr.minwidth = opt.dirminwidth || 200;
+				attr.maxwidth = opt.dirmaxwidth;
+				attr.key = opt.dirkey || 'name';
+				attr.empty = opt.dirempty;
+
+				if (opt.direxclude || opt.direxclude == null) {
+					attr.exclude = function(item) {
+
+						if (!item)
+							return;
+
+						if (typeof(item) === 'string')
+							return item === opt.value;
+
+						var v = item[opt.dirvalue || 'id'];
+						return opt.value instanceof Array ? opt.value.indexOf(v) !== -1 : v === opt.value;
+					};
+				}
+
+				attr.close = function() {
+					opt.is = false;
+				};
+
+				attr.callback = function(item, el, custom) {
+
+					opt.is = false;
+
+					// empty
+					if (item == null) {
+						self.cancel(opt, el);
+						return;
+					}
+
+					var val = custom || typeof(item) === 'string' ? item : item[opt.dirvalue];
+					if (custom && typeof(attr.dircustom) === 'string') {
+						var fn = GET(attr.dircustom.replace(/\?/g, self.pathscope));
+						fn(val, function(val) {
+							if (val) {
+
+								if (opt.accept && !opt.accept(val)) {
+									self.cancel(opt, el);
+									return;
+								}
+
+								if (typeof(val) === 'string') {
+									opt.value = val;
+									!opt.save && el.html(val);
+								} else {
+									opt.value = item[opt.dirvalue];
+									!opt.save && el.html(val[attr.key]);
+								}
+								self.approve2(val);
+							}
+						});
+					} else if (!custom) {
+
+						if (opt.accept && !opt.accept(val)) {
+							self.cancel(opt, el);
+							return;
+						}
+
+						opt.value = val;
+						!opt.save && el.html(typeof(item) === 'string' ? item : item[attr.key]);
+						self.approve2(el);
+					}
+				};
+
+				SETTER('directory', 'show', attr);
+
+			} else if (opt.type === 'boolean') {
+				TOGGLE(opt.path, 2);
+				self.change(true);
+				opt.is = false;
+			} else if (opt.type === 'set') {
+				SET(opt.path, new Function('return ' + (opt.value == null ? 'null' : opt.value))(), 2);
+				self.change(true);
+				opt.is = false;
+			} else {
+
+				opt.prev = opt.value = GET(opt.path);
+				opt.html = el.html();
+
+				if (opt.value == null || opt.value == '') {
+					opt.value = opt.raw ? '' : opt.html;
+					if (opt.raw && !el.hclass('invalid')) {
+						opt.clear = true;
+						self.movecursor(el, 1);
+					}
+				}
+
+				self.attach(el);
+			}
+		});
+
+		events.keydown = function(e) {
+
+			var t = this;
+
+			if (!t.$events)
+				return;
+
+			var meta = t.$editable;
+
+			if (meta.clear) {
+				t.innerHTML = '';
+				meta.clear = 0;
+			}
+
+			if (!meta.keypressed) {
+				meta.keypressed = 1;
+				$(t).aclass('keypressed');
+			}
+
+			if ((e.metaKey || e.ctrlKey) && (e.which === 66 || e.which === 76 || e.which === 73 || e.which === 85)) {
+				if (meta.type !== 'html') {
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			}
+
+			var el;
+
+			if (e.which === 27) {
+				el = $(t);
+				self.cnotify(el, 'no');
+				self.detach(el);
+				if (config.escape) {
+					setTimeout(function() {
+						EXEC(config.escape, meta.path, GET(meta.path));
+					}, 100);
+				}
+				return;
+			}
+
+			if (e.which === 13 || e.which === 9) {
+
+				if (e.which === 13 && meta.multiline)
+					return;
+
+				e.preventDefault();
+
+				el = $(t);
+				if (self.approve(el)) {
+
+					self.detach(el);
+					el.rclass('keypressed');
+
+					if (e.which === 9) {
+						if (self.focusnext(t, e))
+							return;
+					}
+
+					if (config.enter) {
+						setTimeout(function() {
+							EXEC(config.enter, meta.path, GET(meta.path));
+						}, 100);
+					}
+
+				} else {
+					// INVALID
+					self.cnotify(el, 'no');
+				}
+			}
+		};
+
+		events.blur = function() {
+			var t = this;
+			if (t.$events) {
+				var el = $(t);
+				el.rclass('keypressed');
+
+				if (t.$editable.is) {
+					var is = self.approve(el);
+					self.cnotify(el, is ? 'ok' : 'no');
+				}
+
+				self.detach(el);
+			}
+		};
+
+		events.paste = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var meta = this.$editable;
+			var text = e.originalEvent.clipboardData.getData(self.attrd('clipboard') || 'text/plain');
+			text && document.execCommand('insertText', false, meta.multiline ? text.trim() : text.replace(/\n|\r/g, '').trim());
+		};
+
+		events.focus = function(e) {
+			var t = this;
+			var jcbind = e.target.$jcbind || {};
+
+			if (t.$editable && t.$editable.is && t.$editable.autosource) {
+				var attr = t.$editable;
+				var opt = {};
+				opt.element = $(t);
+				opt.search = GET(attr.autosource);
+				opt.offsetY = 10;
+				opt.callback = function(item, el) {
+					attr.value = typeof(item) === 'string' ? item : item[attr.autovalue || 'name'];
+					el.html(attr.value);
+					self.approve2(el);
+				};
+				SETTER('autocomplete', 'show', opt);
+				return;
+			}
+
+			if (jcbind.empty && jcbind.empty == e.target.innerText) {
+				$(e.target).empty();
+				return;
+			}
+		};
+	};
+
+	self.approve = function(el) {
+
+		var opt = el[0].$editable;
+
+		SETTER('!autocomplete', 'hide');
+
+		var cur = el.html();
+
+		if (!opt.required && (opt.html === cur || (opt.raw && !cur && !opt.empty)))
+			return true;
+
+		var val = cur;
+
+		if (opt.type !== 'html') {
+			var area = document.createElement('TEXTAREA');
+			area.innerHTML = val;
+			val = $(area).text();
+			val = val.replace(/<br(\s\/)?>/g, opt.multiline ? '\n' : '').trim();
+		}
+
+		if (opt.maxlength && val.length > opt.maxlength)
+			val = val.substring(0, opt.maxlength);
+
+		opt.value = val;
+
+		switch (opt.type) {
+			case 'number':
+				opt.value = opt.value ? opt.value.parseFloat() : 0;
+				if ((opt.minvalue != null && opt.value < opt.minvalue) || (opt.maxvalue != null && opt.value > opt.maxvalue)) {
+					opt.value = '';
+					return false;
+				}
+				break;
+			case 'phone':
+				if (opt.required) {
+					if (!opt.value.isPhone()) {
+						opt.html = null;
+						return false;
+					}
+				} else if (opt.value && !opt.value.isPhone()) {
+					opt.value = '';
+					return false;
+				}
+				break;
+			case 'email':
+				if (opt.required) {
+					if ((!opt.value || !opt.value.isEmail())) {
+						opt.html = null;
+						return false;
+					}
+				} else if (opt.value && !opt.value.isEmail()) {
+					opt.value = '';
+					return false;
+				}
+
+				break;
+			case 'date':
+				if (!opt.empty) {
+					SETTER('!datepicker', 'hide');
+					opt.value = opt.value ? opt.value.parseDate(opt.format) : null;
+					if (opt.required && !opt.value) {
+						return false;
+					}
+				}
+				break;
+			case 'boolean':
+				opt.value = opt.value === true || opt.value == 'true' || opt.value == '1' || opt.value == 'on';
+				break;
+			default:
+				if (opt.required && !opt.value) {
+					//opt.value = '';
+					opt.html = null;
+					return false;
+				}
+				break;
+		}
+
+		if (opt.accept && !opt.accept(val))
+			return false;
+
+		// EMPTY STRING
+		if ((!opt.type || opt.type === 'string') && (opt.value == null || opt.value === '') && (opt.prev == null || opt.prev === ''))
+			return false;
+
+		if (!opt.empty && (opt.required && (opt.value == null || opt.value === '')) || (opt.validate && !opt.validate(opt.value)))
+			return false;
+
+		opt.html = null;
+		self.approve2(el);
+		return true;
+	};
+
+	self.cnotify = function(el, classname) {
+
+		var meta = el[0].$editable;
+
+		if (classname === 'ok') {
+
+			el.rclass('invalid').aclass('changed');
+
+			if (!changed) {
+				self.aclass(cls + '-changed');
+				changed = {};
+			}
+
+			changed[meta.path.substring(self.path.length + 1)] = 1;
+			config.changed && SEEX(config.changed, self.changed());
+			config.invalid && EXEC(config.invalid, el, false, meta);
+		} else {
+			meta.invalid && EXEC(config.invalid, el, true, meta);
+			el.aclass((meta.required ? 'invalid ' : '') + 'changed');
+		}
+
+		el.aclass(cls + '-' + classname);
+		setTimeout(function() {
+			el && el.rclass(cls + '-' + classname);
+		}, 1000);
+	};
+
+	self.approve2 = function(el) {
+		var opt = el[0].$editable;
+		if (opt.save) {
+			GET(opt.save)(opt, function(is) {
+				el.html(is || is == null ? opt.value : opt.html);
+				if (is || is == null)
+					self.cnotify(el, 'ok');
+				else
+					self.cnotify(el, 'no');
+			});
+		} else {
+			setTimeout(function() {
+
+				var b = null;
+				if (el.binder)
+					b = el.binder();
+				if (b)
+					b.disabled = true;
+
+				if (opt.type === 'tags')
+					PUSH(opt.path, opt.value, 2);
+				else
+					SET(opt.path, opt.value, 2);
+
+				self.cnotify(el, 'ok');
+				self.change(true);
+
+				var val = opt.binder ? GET(opt.binder.path) : null;
+				if (opt.empty && !val && typeof(opt.empty) === 'string') {
+					el.html(opt.empty);
+					if (b)
+						b.disabled = false;
+					return;
+				}
+
+				b && setTimeout(function() {
+					b.disabled = false;
+					if (opt.empty || opt.rebind)
+						opt.binder && opt.binder.exec(val, opt.binder.path);
+				}, 100);
+			}, 100);
+		}
+	};
+
+	self.attach = function(el) {
+		if (!el[0].$events) {
+
+			var o = el[0].$editable;
+			el[0].$events = true;
+
+			el.aclass('editable-editing' + (o.multiline ? ' editable-multiline' : ''));
+			el.on('focus', events.focus);
+			el.on('keydown', events.keydown);
+			el.on('blur', events.blur);
+			el.on('paste', events.paste);
+			el.attr('contenteditable', true);
+			el.focus();
+			self.movecursor(el, o.clear ? 1 : 0);
+
+			if (o.type === 'date') {
+				var opt = {};
+				opt.element = el;
+				opt.value = (o.value && typeof(o.value) === 'string' ? o.value.parseDate(o.format) : o.value) || NOW;
+				opt.callback = function(date) {
+					el.html(date.format(o.format));
+					self.approve(el);
+				};
+				SETTER('datepicker', 'show', opt);
+			}
+		}
+	};
+
+	self.detach = function(el) {
+		if (el[0].$events) {
+			el.off('keydown', events.keydown);
+			el.off('blur', events.blur);
+			el.off('paste', events.paste);
+			el[0].$events = false;
+			var opt = el[0].$editable;
+			if (opt.html != null)
+				el.html(opt.html);
+			opt.is = false;
+			el.rclass('editable-editing editable-multiline');
+			el.attr('contenteditable', false);
+		}
+	};
+
+	self.state = function(type, what) {
+		// reset or update
+		if (type === 0 || what === 3 || what === 4) {
+
+			self.find('.changed').rclass('changed');
+			self.rclass(cls + '-changed');
+
+			if (changed) {
+				changed = null;
+				config.changed && SEEX(config.changed);
+			}
+
+			var el = self.find('.invalid');
+
+			if (config.invalid) {
+				for (var i = 0; i < el.length; i++)
+					EXEC(config.invalid, el[0], false, el[0].$editable);
+			}
+
+			el.rclass('invalid');
+		}
+	};
+
+	self.setter = function(value, path, type) {
+		if (type !== 2) {
+			if (config.autofocus) {
+				setTimeout(function() {
+					self.find('[data-editable]:first-child').eq(0).trigger('click');
+				}, 400);
+			}
+		}
+	};
+
+});
+
+COMPONENT('textbox', function(self, config) {
+
+	var input, content = null, isfilled = false;
+	var innerlabel = function() {
+		var is = !!input[0].value;
+		if (isfilled !== is) {
+			isfilled = is;
+			self.tclass('ui-textbox-filled', isfilled);
+		}
+	};
+
+	self.nocompile && self.nocompile();
+
+	self.validate = function(value) {
+
+		if ((!config.required || config.disabled) && !self.forcedvalidation())
+			return true;
+
+		if (self.type === 'date')
+			return value instanceof Date && !isNaN(value.getTime());
+
+		if (value == null)
+			value = '';
+		else
+			value = value.toString();
+
+		EMIT('reflow', self.name);
+
+		if (config.minlength && value.length < config.minlength)
+			return false;
+
+		switch (self.type) {
+			case 'email':
+				return value.isEmail();
+			case 'phone':
+				return value.isPhone();
+			case 'url':
+				return value.isURL();
+			case 'currency':
+			case 'number':
+				return value > 0;
+		}
+
+		return config.validation ? !!self.evaluate(value, config.validation, true) : value.length > 0;
+	};
+
+	self.make = function() {
+
+		content = self.html();
+
+		self.type = config.type;
+		self.format = config.format;
+
+		self.event('click', '.fa-calendar', function(e) {
+			if (!config.disabled && !config.readonly && config.type === 'date') {
+				e.preventDefault();
+				SETTER('calendar', 'toggle', self.element, self.get(), function(date) {
+					self.change(true);
+					self.set(date);
+				});
+			}
+		});
+
+		self.event('click', '.fa-caret-up,.fa-caret-down', function() {
+			if (!config.disabled && !config.readonly && config.increment) {
+				var el = $(this);
+				var inc = el.hclass('fa-caret-up') ? 1 : -1;
+				self.change(true);
+				self.inc(inc);
+			}
+		});
+
+		self.event('click', '.ui-textbox-label', function() {
+			input.focus();
+		});
+
+		self.event('click', '.ui-textbox-control-icon', function() {
+			if (config.disabled || config.readonly)
+				return;
+			if (self.type === 'search') {
+				self.$stateremoved = false;
+				$(this).rclass('fa-times').aclass('fa-search');
+				self.set('');
+			} else if (self.type === 'password') {
+				var el = $(this);
+				var type = input.attr('type');
+
+				input.attr('type', type === 'text' ? 'password' : 'text');
+				el.rclass2('fa-').aclass(type === 'text' ? 'fa-eye' : 'fa-eye-slash');
+			} else if (config.iconclick)
+				EXEC(config.iconclick, self);
+		});
+
+		self.event('focus', 'input', function() {
+			if (!config.disabled && !config.readonly && config.autocomplete)
+				EXEC(config.autocomplete, self);
+		});
+
+		self.event('input', 'input', innerlabel);
+		self.redraw();
+		config.iconclick && self.configure('iconclick', config.iconclick);
+	};
+
+	self.setter2 = function(value) {
+		if (self.type === 'search') {
+			if (self.$stateremoved && !value)
+				return;
+			self.$stateremoved = !value;
+			self.find('.ui-textbox-control-icon').tclass('fa-times', !!value).tclass('fa-search', !value);
+		}
+		innerlabel();
+	};
+
+	self.redraw = function() {
+
+		var attrs = [];
+		var builder = [];
+		var tmp = 'text';
+
+		switch (config.type) {
+			case 'password':
+				tmp = config.type;
+				break;
+			case 'number':
+			case 'phone':
+				isMOBILE && (tmp = 'tel');
+				break;
+		}
+
+		self.tclass('ui-disabled', !!config.disabled);
+		self.tclass('ui-textbox-required', !!config.required);
+		self.type = config.type;
+		attrs.attr('type', tmp);
+		config.placeholder && !config.innerlabel && attrs.attr('placeholder', config.placeholder);
+		config.maxlength && attrs.attr('maxlength', config.maxlength);
+		config.keypress != null && attrs.attr('data-jc-keypress', config.keypress);
+		config.delay && attrs.attr('data-jc-keypress-delay', config.delay);
+		config.disabled && attrs.attr('disabled');
+		config.readonly && attrs.attr('readonly');
+		config.error && attrs.attr('error');
+		attrs.attr('data-jc-bind', '');
+
+		if (config.autofill) {
+			attrs.attr('name', self.path.replace(/\./g, '_'));
+			attrs.attr('autocomplete', 'on');
+			self.autofill && self.autofill();
+		} else {
+			attrs.attr('name', 'input' + Date.now());
+			attrs.attr('autocomplete', 'new-password');
+		}
+
+		config.align && attrs.attr('class', 'ui-' + config.align);
+		!isMOBILE && config.autofocus && attrs.attr('autofocus');
+
+		builder.push('<div class="ui-textbox-input"><input {0} /></div>'.format(attrs.join(' ')));
+
+		var icon = config.icon;
+		var icon2 = config.icon2;
+
+		if (!icon2 && self.type === 'date')
+			icon2 = 'calendar';
+		else if (!icon2 && self.type === 'password')
+			icon2 = 'eye';
+		else if (self.type === 'search')
+			icon2 = 'search';
+
+		icon2 && builder.push('<div class="ui-textbox-control"><span class="fa fa-{0} ui-textbox-control-icon"></span></div>'.format(icon2));
+		config.increment && !icon2 && builder.push('<div class="ui-textbox-control"><span class="fa fa-caret-up"></span><span class="fa fa-caret-down"></span></div>');
+
+		if (config.label)
+			content = config.label;
+
+		self.tclass('ui-textbox-innerlabel', !!config.innerlabel);
+
+		if (content.length) {
+			var html = builder.join('');
+			builder = [];
+			builder.push('<div class="ui-textbox-label">');
+			icon && builder.push('<i class="fa fa-{0}"></i> '.format(icon));
+			builder.push('<span>' + content + (content.substring(content.length - 1) === '?' ? '' : ':') + '</span>');
+			builder.push('</div><div class="ui-textbox">{0}</div>'.format(html));
+			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
+			self.html(builder.join(''));
+			self.aclass('ui-textbox-container');
+			input = self.find('input');
+		} else {
+			config.error && builder.push('<div class="ui-textbox-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
+			self.aclass('ui-textbox ui-textbox-container');
+			self.html(builder.join(''));
+			input = self.find('input');
+		}
+	};
+
+	self.configure = function(key, value, init) {
+
+		if (init)
+			return;
+
+		var redraw = false;
+
+		switch (key) {
+			case 'readonly':
+				self.find('input').prop('readonly', value);
+				break;
+			case 'disabled':
+				self.tclass('ui-disabled', value);
+				self.find('input').prop('disabled', value);
+				self.reset();
+				break;
+			case 'format':
+				self.format = value;
+				self.refresh();
+				break;
+			case 'required':
+				self.noValid(!value);
+				!value && self.state(1, 1);
+				self.tclass('ui-textbox-required', value === true);
+				break;
+			case 'placeholder':
+				input.prop('placeholder', value || '');
+				break;
+			case 'maxlength':
+				input.prop('maxlength', value || 1000);
+				break;
+			case 'autofill':
+				input.prop('name', value ? self.path.replace(/\./g, '_') : '');
+				break;
+			case 'label':
+				if (content && value)
+					self.find('.ui-textbox-label span').html(value);
+				else
+					redraw = true;
+				content = value;
+				break;
+			case 'type':
+				self.type = value;
+				if (value === 'password')
+					value = 'password';
+				else
+					self.type = 'text';
+				self.find('input').prop('type', self.type);
+				break;
+			case 'align':
+				input.rclass(input.attr('class')).aclass('ui-' + value || 'left');
+				break;
+			case 'autofocus':
+				input.focus();
+				break;
+			case 'icon2click': // backward compatibility
+			case 'iconclick':
+				config.iconclick = value;
+				self.find('.ui-textbox-control').css('cursor', value ? 'pointer' : 'default');
+				break;
+			case 'icon':
+				var tmp = self.find('.ui-textbox-label .fa');
+				if (tmp.length)
+					tmp.rclass2('fa-').aclass('fa-' + value);
+				else
+					redraw = true;
+				break;
+			case 'icon2':
+			case 'increment':
+				redraw = true;
+				break;
+			case 'labeltype':
+				redraw = true;
+				break;
+		}
+
+		redraw && setTimeout2('redraw.' + self.id, function() {
+			self.redraw();
+			self.refresh();
+		}, 100);
+	};
+
+	self.formatter(function(path, value) {
+		if (value) {
+			switch (config.type) {
+				case 'lower':
+					value = value.toString().toLowerCase();
+					break;
+				case 'upper':
+					value = value.toString().toUpperCase();
+					break;
+			}
+		}
+		return config.type === 'date' ? (value ? value.format(config.format || 'yyyy-MM-dd') : value) : value;
+	});
+
+	self.parser(function(path, value) {
+		if (value) {
+			switch (config.type) {
+				case 'lower':
+					value = value.toLowerCase();
+					break;
+				case 'upper':
+					value = value.toUpperCase();
+					break;
+			}
+		}
+		return value ? config.spaces === false ? value.replace(/\s/g, '') : value : value;
+	});
+
+	self.state = function(type) {
+		if (!type)
+			return;
+		var invalid = config.required ? self.isInvalid() : self.forcedvalidation() ? self.isInvalid() : false;
+		if (invalid === self.$oldstate)
+			return;
+		self.$oldstate = invalid;
+		self.tclass('ui-textbox-invalid', invalid);
+		config.error && self.find('.ui-textbox-helper').tclass('ui-textbox-helper-show', invalid);
+	};
+
+	self.forcedvalidation = function() {
+		var val = self.get();
+		return (self.type === 'phone' || self.type === 'email') && (val != null && (typeof val === 'string' && val.length !== 0));
 	};
 });

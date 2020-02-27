@@ -75,6 +75,7 @@ document.onkeydown = function(e) {
 	} else if (e.keyCode === 116) {
 		// F5
 		OP.loading(false);
+		OP.offline(false);
 		OP.progress(0);
 		setTimeout(function() {
 			if (location.href.indexOf('openplatform=') === -1)
@@ -396,6 +397,10 @@ OP.snackbar = function(message, type, button) {
 	data.type = type;
 	data.button = button;
 	return OP.send('snackbar', data, button);
+};
+
+OP.offline = function(message) {
+	OP.send('offline', message);
 };
 
 OP.meta = function(callback) {

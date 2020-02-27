@@ -3,8 +3,9 @@
 html,body { height: 100%; overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto; }
 body { height: 100%; background: #808080 linear-gradient(#5f5e50,#565656); background-size: cover; }
 body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
-.ui-dark { color: #C0C0C0; }
 
+.inline { position: relative; }
+.ui-dark { color: #C0C0C0; }
 .hidden2 { display: none; }
 
 header { height: 45px; border-bottom: 1px solid rgba(0,0,0,0.2); background: #333333 linear-gradient(#333333,#383838); position: fixed; z-index: 35; width: 100%; color: #909090; border-bottom: 1px solid rgba(255,255,255,0.1); }

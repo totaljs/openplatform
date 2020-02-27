@@ -14,4 +14,5 @@ NEWSCHEMA('Account/Totp', function(schema) {
 	schema.addWorkflow('generate', function($) {
 		$.callback(MODULE('totp').generate('OpenPlatform', CONF.name));
 	});
+
 });

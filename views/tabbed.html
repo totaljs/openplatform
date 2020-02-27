@@ -122,7 +122,7 @@
 					@{fi}
 
 					@{if !user.guest && CONF.allowprofile}
-					<button class="exec internal" data-exec="internalapp" data-id="_account"><i class="fa fa-user-circle"></i>@(My account)</button>
+					<button class="exec internal" data-exec="Dashboard/showprofile"><i class="fa fa-user-circle"></i>@(My account)</button>
 					@{fi }
 
 					@{if !user.guest}
@@ -160,6 +160,7 @@
 	<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
 	<div data---="importer__common.form__if:membersform;url:/forms/members.html"></div>
 	<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
+	<div data---="importer__common.form__if:profileform;url:/_profile/"></div>
 
 	<script>
 
@@ -168,6 +169,7 @@
 		common.electron = navigator.userAgent.indexOf('Electron') !== -1 && W.require != null;
 		common.electronpadding = 0;
 		common.defaultappid = '@{'%defaultappid'}';
+		common.welcome = '@{user.welcome}' === 'true';
 
 		MONTHS[0] = '@(January)';
 		MONTHS[1] = '@(February)';
@@ -222,7 +224,7 @@
 
 			var hidetooltip = function() {
 				clearTimeout2('tooltip');
-				SETTER('tooltip', 'hide', true);
+				SETTER('!tooltip', 'hide', true);
 			};
 
 			$(document).on('mouseenter', '.tooltip', function(e) {
@@ -405,8 +407,10 @@
 			};
 
 			self.showprofile = function() {
-				if (!user.guest)
-					internalapp('_account');
+				if (!user.guest) {
+					SET('common.form', 'profileform');
+					SET('common.startmenu', false);
+				}
 			};
 
 			self.showsessions = function() {
@@ -611,6 +615,12 @@
 				next();
 			};
 
+			@{if CONF.allowprofile}
+			if (common.welcome) {
+				SET('common.intro', 'welcome');
+				IMPORT('/_intro/');
+			}
+			@{fi}
 		});
 
 		SETTER(true, 'shortcuts', 'register', 'F1', function() {
@@ -752,7 +762,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button{background-color:{0}}.radioimage.selected{background-color:{0};border-color:{0}!important}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);

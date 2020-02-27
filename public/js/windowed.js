@@ -294,6 +294,13 @@ $(window).on('message', function(e) {
 			SET('reportbug.screenshot', data.body);
 			break;
 
+		case 'offline':
+			var iframe = processes.findProcess(app.id);
+			var offline = iframe.element.find('.ui-process-offline');
+			var b = data.body;
+			offline.tclass('hidden', !b).find('div').html('<i class="fa fa-warning"></i>' + (b || '').markdown(MD_LINE));
+			break;
+
 		case 'clipboard':
 			SETTER('clipboard', 'copy', data.body);
 			break;

@@ -1,0 +1,256 @@
+@{layout('')}
+
+<div data---="largeform__common.form__if:profileform;icon:user-circle;width:700;title:@(My account);reload:profileform/reload;submit:profileform/submit;zindex:100" class="hidden">
+	<div data-scope="profileform">
+
+		<div class="col-md-4 col-md-offset-4 col-xs-6 col-xs-offset-3">
+			<div class="padding npb">
+				<div data---="preview__?.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
+				<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<hr />
+
+		<div class="padding npb mt10">
+
+			@{if CONF.allownickname}
+			<div class="col-sm-6 m">
+				<div data---="input__?.name__required:1;maxlength:30">@(Nick name)</div>
+			</div>
+			<div class="col-sm-6 m">
+				<div data---="input__?.status__maxlength:70">@(Status)</div>
+			</div>
+			<div class="clearfix"></div>
+			@{fi}
+
+			<div class="col-sm-6 m">
+				<div data---="input__?.email__type:email;required:1">@(Email address)</div>
+			</div>
+			<div class="col-sm-6 m">
+				<div data---="input__?.phone">@(Phone number)</div>
+			</div>
+			<div class="clearfix"></div>
+
+			@{if CONF.allowtheme || CONF.allowbackground}
+			<div class="padding npb">
+				@{if CONF.allowtheme}
+				<div data---="colorselector__?.colorscheme__null" style="margin-bottom:5px"></div>
+				@{fi}
+				@{if CONF.allowbackground}
+				<div style="font-size:12px">
+					<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
+					<div data---="singleupload__?.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+				</div>
+				<div class="clearfix"></div>
+				<hr />
+				@{fi}
+			</div>
+			@{fi}
+
+			<div class="fs12">
+				@{if CONF.allowdesktop}
+				<div class="col-md-6">
+					<div>@(User interface mode):</div>
+					<div data---="radiobuttonexpert__?.desktop__datasource:%profiledesktop;type:number" class="mt5">
+						<script type="text/html">
+							<div class="radioimage"><img src="/img/{{ type }}.png" width="50" alt="{{ name }}" />{{ name }}</div>
+						</script>
+					</div>
+				</div>
+				@{fi}
+				@{if CONF.allowappearance}
+				<div class="col-md-6">
+					<div>@(Choose light or dark mode):</div>
+					<div data---="radiobuttonexpert__?.darkmode__datasource:%profilemodes;type:boolean" class="mt5">
+						<script type="text/html">
+							<div class="radioimage"><img src="/img/{{ type }}.png" width="50" alt="{{ name }}" />{{ name }}</div>
+						</script>
+					</div>
+				</div>
+				@{fi}
+				<div class="clearfix"></div>
+				<div class="padding npt npb">
+					<hr />
+				</div>
+				<div class="col-md-6">
+					<div data---="checkbox__?.notifications">@(Enable notifications)</div>
+					<div data---="checkbox__?.notificationsemail">@(Enable email notifications)</div>
+					<div data---="checkbox__?.sounds">@(Enable sounds)</div>
+				</div>
+				<div class="col-md-6">
+					<div data---="checkbox__?.otp" class="b">@(Enable 2FA one-time password)</div>
+					<div data---="checkbox__?.changepassword" class="b red">@(Change password)</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+		<div data-bind="?.otp2__show" class="padding hidden">
+			<hr class="nmt" />
+			<div data-bind="%totpqrcode__template" class="padding">
+				<script type="text/html">
+					<div class="caption"><i class="fa fa-qrcode"></i>@(Scan QR Code for 2FA)</div>
+					<div class="help m">@(First of all, you need to download an application for Android or iOS, and then you need to scan this QR Code into it. The application will generate a different password before you sign-in each time.)</div>
+					<table class="table table-small table-bordered">
+						<tr>
+							<td class="b">Google Authenticator</td>
+							<td style="width:80px" class="center"><a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank"><i class="fab fa-android"></i> Android</a></td>
+							<td style="width:80px" class="center"><a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank"><i class="fab fa-apple"></i> iOS</a></td>
+						</tr>
+						<tr>
+							<td class="b">Microsoft Authenticator</td>
+							<td class="center"><a href="https://play.google.com/store/apps/details?id=com.azure.authenticator" target="_blank"><i class="fab fa-android"></i> Android</a></td>
+							<td class="center"><a href="https://apps.apple.com/us/app/microsoft-authenticator/id983156458" target="_blank"><i class="fab fa-apple"></i> iOS</a></td>
+						</tr>
+					</table>
+					<br />
+					<div class="center">
+						<div style="position:relative;display:inline-block;padding:15px;border-radius:3px;background-color:white;margin-bottom:10px">
+							<img src="{{ value.qrcode }}" border="0" alt="@(One-Time password)" />
+						</div>
+						<div class="help"><i class="fa fa-key"></i><b>@(Your private key:)</b><div class="mt5"><code>{{ value.secret }}</code></div></div>
+						<hr />
+					</div>
+				</script>
+			</div>
+			<div class="center">
+				<h3><i class="fa fa-keyboard-o"></i>@(Enter the code from the app here:)</h3>
+				<div data---="pin__%totpcode__mask:false"></div>
+			</div>
+		</div>
+
+		<div class="padding npt">
+			<div data-bind="?.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
+				<div class="padding">
+					<div data---="input__?.password__maxlength:30;type:password;required:1;innerlabel:1;$id:password">@(New password)</div>
+					<div class="help">
+						<span class="link pull-right exec" data-exec="?/password">@(Generate)</span>
+						<i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)
+					</div>
+				</div>
+			</div>
+			<div class="padding npt npb">
+				<hr />
+			</div>
+			<div class="col-md-4 m">
+				<div data---="input__?.dateformat__dirsource:%cl.dateformats;dirsearch:false">@(Date format)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data---="input__?.timeformat__dirsource:%cl.timeformats;dirsearch:false">@(Time)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data---="input__?.numberformat__dirsource:%cl.numberformats;dirsearch:false">@(Number format)</div>
+			</div>
+			<div class="col-md-4 m">
+				<div data---="input__?.language__dirsource:languages;dirplaceholder:@(Search language)">@(Language)</div>
+			</div>
+			<div class="col-md-8 m">
+				<div class="fs12">@(Volume):</div>
+				<div data---="radiobuttonexpert__?.volume__datasource:%profilevolume" style="margin-top:3px">
+					<script type="text/html">
+						<div class="volume">{{ name }}</div>
+					</script>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<hr class="nmt" />
+		<div class="padding npt npb">
+			<div class="padding npt fs12">
+				<div class="alert">
+					<i class="fa fa-lock mr5"></i>@(Screen will be locked only on desktop computers after defined idle time.)
+				</div>
+			</div>
+			<div class="col-md-4 col-xs-6">
+				<div data---="input__?.locking__type:number;forcevalidation:0;placeholder:@(In minutes)">@(Idle time)</div>
+				<div class="help m"><i class="fa fa-clock"></i>@(Must be defined in minutes.)</div>
+			</div>
+			<div class="col-md-4 col-xs-6">
+				<div data---="input__?.pin__maxlength:4;mask:####;maskregexp:\d,\d,\d,\d;placeholder:@(In minutes)">@(PIN code)</div>
+				<div class="help m"><i class="fa fa-calculator"></i>@(Only 4 numbers.)</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+
+	<nav data---="validation__profileform" style="padding-left:30px">
+		<button name="submit" class="exec b" disabled>@(SAVE SETTINGS)</button>
+		<button name="cancel" class="exec">@(Cancel)</button>
+	</nav>
+
+</div>
+
+<script>
+
+	SET('%profilemodes', [{ id: false, type: 'light', name: '@(Light)' }, { id: true, type: 'dark', name: '@(Dark)' }]);
+	SET('%profilevolume', [{ id: 20, name: '@(low)' }, { id: 50, name: '@(medium)' }, { id: 80, name: '@(loud)' }]);
+	SET('%profiledesktop', [{ id: 1, type: 'windowed', name: '@(Windows)' }, { id: 2, type: 'tabbed', name: '@(Tabbed)' }, { id: 3, type: 'portal', name: '@(Portal)' }]);
+	SET('GET /api/cl/ <5 minutes>', '%cl');
+
+	PLUGIN('profileform', function(exports) {
+
+		exports.reload = function() {
+			SET('GET /api/account/', 'profileform');
+		};
+
+		exports.submit = function(hide) {
+			SETTER('loading', 'show');
+			var model = CLONE(GETR('?'));
+
+			if (!model.changepassword)
+				delete model.password;
+
+			AJAX('POST /api/account/', model, function(response) {
+				SETTER('loading', 'hide', 500);
+				if (response.success) {
+					hide();
+					SETTER('message', 'success', '@(Your account has been updated successfully.)');
+					refresh_profiledata();
+				} else
+					SETTER('message', 'warning', response[0].error);
+			});
+		};
+
+		WATCH('?.locking', function(path, value, type) {
+			if (value <= 0)
+				SET('?.locking', '@(disabled)');
+		});
+
+		WATCH('?.otp', function(path, value, type) {
+			if (value && type === 2) {
+				// regenerate TOTP
+				SET('?.otp2', true);
+				exports.totp();
+			} else {
+				SET('?.otp2', false);
+				SET('?.otpsecret', '');
+			}
+		});
+
+		WATCH('%totpcode', function(path, value, type) {
+			if (value.trim().length === 6) {
+				AJAX('POST /api/account/totp/verify/', { code: value, secret: account.otpsecret }, function(response) {
+					if (response instanceof Array)
+						OP.message(response, 'warning');
+					else
+						OP.message('@(Your code is valid. __Do not forget to save settings__.)');
+				});
+			}
+		});
+
+		exports.password = function() {
+			SET('?.password', GUID(7) + '-' + GUID(7) + '-' + GUID(7));
+			SETTER('#password', 'password', false);
+		};
+
+		exports.totp = function() {
+			AJAX('GET /api/account/totp/', function(response) {
+				SET('?.otpsecret', response.secret);
+				SET('%totpqrcode', response);
+				var pin = exports.element.FIND('pin');
+				pin && pin.find('input').eq(0).focus();
+			});
+		};
+
+	});
+</script>

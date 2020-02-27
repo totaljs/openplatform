@@ -6,9 +6,12 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .scroller { overflow-y: scroll; overflow-scrolling: touch; }
 .scroller-padding { padding: 20px; }
 
+.inline { position: relative; }
+
 .mt10 { margin-top: 10px; }
 .mt15 { margin-top: 15px; }
 .ml5 { margin-left: 5px; }
+.mr10 { margin-right: 10px; }
 
 .dg { border: 0; }
 .ui-layout-section .dg-footer { border-bottom: 0; border-right: 0; border-left: 0; border-top: 1px solid #E0E0E0; }

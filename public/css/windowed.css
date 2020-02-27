@@ -3,8 +3,9 @@
 html,body { height: 100%; overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto; }
 body { height: 100%; background: #808080 linear-gradient(#5f5e50,#565656); background-size: cover; }
 body.light { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
-.ui-dark { color: #C0C0C0; }
 
+.inline { position: relative; }
+.ui-dark { color: #C0C0C0; }
 .hidden2 { display: none; }
 .launchpad *, header * { user-select: none; }
 

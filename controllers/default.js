@@ -9,6 +9,8 @@ exports.install = function() {
 	ROUTE('GET /marketplace/');
 	ROUTE('GET /logout/', logout);
 	ROUTE('GET /lock/', lock);
+	ROUTE('+GET /_intro/', 'intro');
+	ROUTE('+GET /_profile/', 'profile');
 
 	FILE('/manifest.json', manifest);
 
@@ -16,7 +18,6 @@ exports.install = function() {
 };
 
 function index() {
-
 	var desktop = this.user.desktop;
 	this.view(desktop === 3 ? 'portal' : desktop === 2 ? 'tabbed' : 'windowed');
 }

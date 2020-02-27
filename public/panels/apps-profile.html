@@ -33,14 +33,18 @@
 						<div class="key">@(Email address)</div>
 						<div class="value">{{ value.meta.email | def }}</div>
 					</div>
+					{{ if value.meta.roles && value.meta.roles.length }}
 					<div class="keyvalue">
 						<div class="key">@(Supported roles)</div>
 						<div class="value">{{ value.meta.roles | joinbgcolor(' ') }}</div>
 					</div>
+					{{ fi }}
+					{{ if value.meta.origin && value.meta.origin.length }}
 					<div class="keyvalue">
 						<div class="key">@(Allowed origin)</div>
 						<div class="value">{{ value.meta.origin | join }}</div>
 					</div>
+					{{ fi }}
 					<br />
 					<table class="table table-small nmb table-bordered">
 						<thead>

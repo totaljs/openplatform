@@ -4,8 +4,9 @@ const REQUEST_FLAGS = ['post', 'keepalive', 'json'];
 
 exports.install = function() {
 
-	// Users
+	ROUTE('+GET     /api/cl/', cl);
 
+	// Users
 	ROUTE('+GET     /api/op/users/                 *Users              --> @query');
 	ROUTE('+GET     /api/op/users/{id}/            *Users              --> @read');
 	ROUTE('+POST    /api/op/users/                 *Users              --> @check @insert (response)');
@@ -98,6 +99,15 @@ exports.install = function() {
 	// CORS
 	CORS();
 };
+
+function cl() {
+	var self = this;
+	var obj = {};
+	obj.numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
+	obj.dateformats = [{ id: 'yyyy-MM-dd', name: TRANSLATE(self.user.language, 'year-month-day') }, { id: 'dd.MM.yyyy', name: TRANSLATE(self.user.language, 'day.month.year') }, { id: 'MM.dd.yyyy', name: TRANSLATE(self.user.language, 'month.day.year') }];
+	obj.timeformats = [{ id: 24, name: TRANSLATE(self.user.language, '24 hour clock') }, { id: 12, name: TRANSLATE(self.user.language, '12 hour clock') }];
+	self.json(obj);
+}
 
 function json_verify() {
 	var self = this;

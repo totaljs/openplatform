@@ -43,6 +43,8 @@ AUTH(function($) {
 
 		if (init)
 			profile.ua = ($.headers['user-agent'] || '').parseUA();
+		else if (profile.welcome)
+			profile.welcome = false;
 
 		if ($.req.locked)
 			$.invalid(profile);
