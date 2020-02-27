@@ -907,8 +907,16 @@
 
 				if (keys.join('') !== keysnew.join(''))
 					refresh_profile();
-				else if (is)
-					UPD('user');
+				else {
+
+					if (!is && user.repo && response.repo && STRINGIFY(user.repo) !== STRINGIFY(response.repo)) {
+						user.repo = response.repo;
+						is = true;
+					}
+
+					if (is)
+						UPD('user');
+				}
 			});
 		}
 
