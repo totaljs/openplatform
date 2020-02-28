@@ -579,6 +579,7 @@
 						if (wa.length) {
 							var ls = localStorage;
 							if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
+								common.welcome = true;
 								ls.setItem('welcome', '1');
 								skip = true;
 								internalapp(wa);

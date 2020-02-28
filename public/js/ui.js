@@ -12708,7 +12708,7 @@ COMPONENT('intro', 'selected:.selected', function(self, config, cls) {
 		var body = container.find(cls2 + '-body');
 		body[0].appendChild(self.element[0]);
 		self.replace(container);
-		content.aclass('ui-intro-figures');
+		content.aclass(cls + '-figures');
 		figures = content.find('figure');
 		var items = [];
 
@@ -12720,7 +12720,7 @@ COMPONENT('intro', 'selected:.selected', function(self, config, cls) {
 		buttons = self.find(cls2 + '-button');
 		button = self.find(cls2 + '-pagination').find('button');
 
-		self.event('click', 'button[name="next"]', function() {
+		self.event('click', 'button[name="next"],.link[name="next"]', function() {
 			index++;
 			if (index >= figures.length) {
 				self.set('');
@@ -12732,7 +12732,7 @@ COMPONENT('intro', 'selected:.selected', function(self, config, cls) {
 			}
 		});
 
-		self.event('click', 'button[name="close"]', function() {
+		self.event('click', 'button[name="close"],.link[name="close"]', function() {
 			self.set('');
 			config.exec && EXEC(config.exec, true);
 			config.remove && self.remove();

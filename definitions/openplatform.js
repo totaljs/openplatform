@@ -1288,7 +1288,6 @@ function readuser(id, callback) {
 		}
 
 		user.welcome = !response.dtlogged;
-		console.log(user.name, user.welcome, response.dtlogged);
 		user.apps = apps;
 		user.ticks = NOW.getTime();
 		USERS[id] = user;

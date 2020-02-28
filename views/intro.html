@@ -1,6 +1,6 @@
 @{layout('')}
 
-<div data---="intro__common.intro__if:welcome;selected:ui-intro-selected;exec:intro/submit" class="hidden">
+<div data---="intro__common.intro__if:welcome;selected:ui-intro-selected;exec:intro/submit;next:@(Next);close:@(Done)" class="hidden">
 	<figure>
 		<div class="m"><i class="fa fa-flag fa-4x usercolor"></i></div>
 		<div>@(Welcome <b>@{user.name}</b> to <b>@{'%name'}</b>)</div>
@@ -90,6 +90,30 @@
 			<div class="clearfix"></div>
 		</div>
 	</figure>
+
+	<figure>
+		<div class="mt10"><i class="fa usercolor fa-key fa-3x"></i></div>
+		<div class="mt10">@(Change your password)</div>
+		<div class="padding left gray npt">
+			<hr />
+			<div class="padding npt npb">
+				<div class="fs12 center">@(Here you can change your password.)</div>
+				<div class="center help" style="margin-top:3px"><i class="far fa-lightbulb"></i>@(Do not want to change the password?) <span class="link" name="next">@(Skip this step)</span></div>
+			</div>
+			<hr />
+			<div class="col-sm-6">
+				<div data---="input__intro.password__maxlength:30;type:password">@(New password)</div>
+			</div>
+			<div class="col-sm-6">
+				<div data---="input__intro.passwordreply__maxlength:30;type:password">@(Password again)</div>
+			</div>
+			<div class="clearfix"></div>
+			<div class="padding npb" style="padding:5px 15px 0;height:30px">
+				<div class="help green nmb b hidden npt" data-bind="intro__show:value.password===value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="far fa-check-circle"></i>@(Password will be changed.)</div>
+				<div class="help red nmb b hidden npt" data-bind="intro__show:value.password!==value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="fa fa-warning"></i>@(Passwords do not match.)</div>
+			</div>
+		</div>
+	</figure>
 </div>
 
 <script>
@@ -108,10 +132,18 @@
 		});
 
 		exports.submit = function() {
+
 			var model = GETR('?');
+			var password = '';
+
+			if (model.password && model.passwordreply && model.password === model.passwordreply)
+				password = model.password;
+
+			model.password = password;
+
 			AJAX('POST /api/account/', model, function(response) {
 				if (model.desktop !== user.desktop)
-					location.reload(true);
+					location.href = '/';
 			});
 		};
 
