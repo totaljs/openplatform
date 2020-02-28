@@ -736,7 +736,7 @@ input:invalid { box-shadow: none; }
 .ui-dark .ui-menu li:hover { background-color: #202020; }
 .ui-dark .ui-menu-divider hr { border-color: #404040; }
 
-.ui-directory { position: absolute; opacity: 0; transition: 0.25s transform cubic-bezier(0.23, 1, 0.32, 1); left: -100; top: -100; z-index: 100; box-shadow: 0 1px 20px rgba(0,0,0,0.1); background-color: white; border-radius: 3px; border: 1px solid #E0E0E0; overflow: hidden; transition: all 0.2s; }
+.ui-directory { position: absolute; opacity: 0; transition: 0.25s transform cubic-bezier(0.23, 1, 0.32, 1); left: -100; top: -100; z-index: 300; box-shadow: 0 1px 20px rgba(0,0,0,0.1); background-color: white; border-radius: 3px; border: 1px solid #E0E0E0; overflow: hidden; transition: all 0.2s; }
 .ui-directory-search { height: 38px; background: white; border-radius: 3px 3px 0 0; border-bottom: 1px solid #E0E0E0; line-height: 22px; }
 .ui-directory-search input { width: 100%; background-color: white; border: 0; font-size: 12px; outline: 0; padding: 0; margin: 0; line-height: 16px; outline: 0; }
 .ui-directory-search > div { margin: 0 20px 0 35px; padding: 6px 10px 0 0; line-height: 24px; }

@@ -600,7 +600,8 @@
 								skip = true;
 								internalapp(wa);
 							}
-						}
+						} else if (NAV.query.welcome)
+							common.welcome = true;
 					}
 
 					if (!skip && !user.apps.findItem('favorite', true)) {

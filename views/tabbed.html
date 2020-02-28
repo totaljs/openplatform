@@ -584,7 +584,8 @@
 								skip = true;
 								internalapp(wa);
 							}
-						}
+						} else if (NAV.query.welcome)
+							common.welcome = true;
 					}
 
 					if (!skip && !user.apps.findItem('favorite', true))
@@ -763,7 +764,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button{background-color:{0}}.volume.selected{background-color:{0}}.radioimage.selected{background-color:{0}!important;border-color:{0}!important}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button{background-color:{0}}.volume.selected{background-color:{0}}.radioimage.selected{background-color:{0}!important;border-color:{0}!important}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.ui-features .selected{background-color:{0}!important}li.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
