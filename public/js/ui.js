@@ -12762,6 +12762,7 @@ COMPONENT('intro', 'selected:.selected', function(self, config, cls) {
 		visible = is;
 		self.tclass('hidden', !is);
 		setTimeout(function() {
+			is && self.element.focus();
 			self.find(cls2 + '-body').tclass(cls + '-body-visible', is);
 		}, 100);
 	};

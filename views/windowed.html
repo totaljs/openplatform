@@ -555,7 +555,7 @@
 						var wa = $('#welcomeapp');
 						if (wa.length) {
 							var ls = localStorage;
-							if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
+							if (ls.getItem('welcome') || NAV.query.welcome) {
 								common.welcome = true;
 								ls.setItem('welcome', '1');
 								skip = true;
@@ -599,7 +599,7 @@
 			};
 
 			@{if CONF.allowprofile}
-			if (common.welcome) {
+			if (common.welcome || (!localStorage.getItem('welcome') && NAV.query.welcome)) {
 				SET('common.intro', 'welcome');
 				IMPORT('/_intro/');
 			}
@@ -732,7 +732,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button{background-color:{0}}.radioimage.selected{background-color:{0};border-color:{0}!important}.userbg,.user{background-color:{0}}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button{background-color:{0}}.volume.selected{background-color:{0}}.radioimage.selected{background-color:{0}!important;border-color:{0}!important}.userbg,.user{background-color:{0}}.ui-features .selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
