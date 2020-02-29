@@ -6,6 +6,12 @@
 				<div class="help"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
 			</div>
 			<hr class="nmb" />
+			<div data-bind="?.meta.notallowed__show" class="hidden padding">
+				<div class="alert" style="border-color:red">
+					<div class="b"><i class="fa fa-ban mr5 red"></i>@(WARNING)</div>
+					<div class="mt5">@(You can't provide this application in your OpenPlatform because <b>the domain name is not defined in allowed domains</b>.)</div>
+				</div>
+			</div>
 			<div class="bg-yellow padding" data-bind="?__template__track:meta__show:value && value.meta">
 				<script type="text/html">
 					<div class="caption"><i class="fa fa-book-open"></i>@(Downloaded meta data)</div>
@@ -42,7 +48,7 @@
 					{{ if value.meta.origin && value.meta.origin.length }}
 					<div class="keyvalue">
 						<div class="key">@(Allowed origin)</div>
-						<div class="value">{{ value.meta.origin | join }}</div>
+						<div class="value">{{ value.meta.origin | join | def }}</div>
 					</div>
 					{{ fi }}
 					<br />
@@ -248,12 +254,16 @@
 				}
 
 				var model = GET('?');
+
+				if (meta.openplatform && meta.openplatform.length)
+					meta.notallowed = meta.openplatform.indexOf(location.protocol + '//' + location.hostname) === -1;
+
 				SET('?.meta', meta);
 
 				if (!model.title)
 					SET('?.title', meta.title || meta.name);
 
-				if (meta && !meta.settings)
+				if (!meta.settings)
 					meta.settings = {};
 
 				var settings = meta.settings;

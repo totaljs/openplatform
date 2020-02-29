@@ -136,6 +136,10 @@
 
 		exports.refresh = function() {
 			AJAX('GET /api/op/settings/', function(response) {
+
+				if (response.url === 'https://YOURDOMAIN.com' || !response.url)
+					response.url = location.protocol + '//' + location.hostname;
+
 				backup = CLONE(response);
 				SETR('?', response);
 				exports.verifysmtp();
