@@ -12,6 +12,7 @@ var OTP = {};
 var OTPCOUNT = 0;
 var SIMPLECACHE = {};
 var DDOS = {};
+var ORIGINERRORS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
 MAIN.version = 4500;           // Current version of OpenPlatform
@@ -468,10 +469,18 @@ FUNC.unauthorized = function(obj, $) {
 	var user = obj.user;
 	if (app.origin) {
 		if (app.origin.indexOf($.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
+			if (!ORIGINERRORS[$.ip]) {
+				FUNC.log('error-origin', null, app.hostname + ' != ' + $.ip);
+				ORIGINERRORS[$.ip] = 1;
+			}
 			$.invalid('error-invalid-origin');
 			return true;
 		}
 	} else if (app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
+		if (!ORIGINERRORS[$.ip]) {
+			FUNC.log('error-origin', null, app.hostname + ' != ' + $.ip);
+			ORIGINERRORS[$.ip] = 1;
+		}
 		$.invalid('error-invalid-origin');
 		return true;
 	}
@@ -1494,6 +1503,7 @@ ON('service', function(counter) {
 			MAIN.session.releaseunused('1 hour');
 		USERS = {}; // clears cache
 		DDOS = {};
+		ORIGINERRORS = {};
 		CONF.allownotifications && emailnotifications();
 	}
 
