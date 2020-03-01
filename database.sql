@@ -349,6 +349,7 @@ CREATE INDEX tbl_user_idx_member ON tbl_user(email text_ops);
 CREATE INDEX tbl_user_member_idx_user ON tbl_user_member(userid text_ops);
 CREATE INDEX tbl_user_idx_group ON tbl_user(groupshash text_ops);
 CREATE INDEX tbl_user_notification_idx_query ON tbl_user_notification(userappid text_ops);
+CREATE INDEX tbl_user_idx_reference ON tbl_user(reference text_ops);
 
 -- ==============================
 -- COMMENTS
