@@ -391,8 +391,8 @@ T1674689704      : Ak to vyžaduje autor, zadajte sériové číslo
 T171466555       : Index polohy
 T1114654095      : Dolný index znamená vyššiu pozíciu v zozname aplikácií
 T-2009772570     : Aplikácia je blokovaná
-T452750370       : Obnovte znak služieb
-T-638129598      : Obnovte povolenia podľa meta súboru
+T452750370       : Vygenerovať nový service token
+T-638129598      : Aktualizovať meta-data
 T1960914378      : Aplikácia môže automaticky obnoviť svoje povolenia
 T-1329640266     : Mali by ste vedieť, že povolenie automatického obnovovania oprávnení <b> je veľmi nebezpečný krok </b>.
 T-1332224478     : Vlastné nastavenia aplikácií
@@ -409,7 +409,7 @@ T1972506027      : Autor
 T80818744        : Názov
 
 // public/panels/apps-profile.html, public/panels/users-profile.html, public/parts/settings.html
-T1234942569      : Obnoviť access-token
+T1234942569      : Vygenerovať nový access-token
 
 // public/panels/apps-profile.html, public/panels/users-profile.html
 T-159776256      : yyyy-MM-dd
