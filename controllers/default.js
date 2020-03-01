@@ -2,7 +2,6 @@ exports.install = function() {
 
 	ROUTE('+GET  /', index);
 	ROUTE('+GET  /admin/');
-	ROUTE('+GET  /account/');
 	ROUTE('+GET  /welcome/');
 
 	ROUTE('GET /*', login, ['unauthorize']);

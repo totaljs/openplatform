@@ -69,9 +69,9 @@
 				@{fi}
 				<span class="testmode hidden" data-bind="user.test__show__delay:200">@(TEST)</span>
 				@{if user.photo && user.photo.indexOf('empty') === -1}
-				<img src="/photos/@{user.photo}" class="exec" data-exec="internalapp" data-id="_account" />
+				<img src="/photos/@{user.photo}" class="exec internal app-modal" data-exec="Dashboard/showprofile" />
 				@{else}
-				<span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span>
+				<span class="initials exec internal app-modal" data-exec="Dashboard/showprofile" data-bind="user.name__!html:Thelpers.initials(value)"></span>
 				@{fi}
 				<!-- <span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span> -->
 				<span class="title">@{CONF.name}</span>
