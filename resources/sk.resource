@@ -482,7 +482,7 @@ T-1593025818     : Poslať uvítací e-mail
 T-652024608      : Znova zostavte overovací token
 T1726516877      : Svetlý režim
 T93492205        : Tmavý režim
-T650806603       : Priradiť e-mailu
+T650806603       : Priradiť e-mail
 T-1168384000     : Zadajte nové heslo
 T-523495226      : Generovanie hesla
 T1470117065      : Prednostne povolené aplikácie
