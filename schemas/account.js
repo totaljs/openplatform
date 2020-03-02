@@ -71,18 +71,18 @@ NEWSCHEMA('Account', function(schema) {
 
 		// Removing older background
 		if (user.background && user.background !== CONF.background && model.background !== user.background) {
-			path = 'backgrounds/' + model.background;
+			path = 'backgrounds/' + user.background;
 			Fs.unlink(PATH.public(path), NOOP);
 			F.touch('/' + path);
 		}
 
 		// Removing older photo
+		/*
 		if (user.photo && model.photo !== user.photo) {
 			path = 'photos/' + user.photo;
-			// @TODO: removing photo must be posponed
 			Fs.unlink(PATH.public(path), NOOP);
 			F.touch('/' + path);
-		}
+		}*/
 
 		if (CONF.allownickname && model.name) {
 			var name = FUNC.nicknamesanitize(model.name);
