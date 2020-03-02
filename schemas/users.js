@@ -393,13 +393,13 @@ NEWSCHEMA('Users', function(schema) {
 
 			if (model.name) {
 				model.name = FUNC.nicknamesanitize(model.name) || 'Invalid name';
-				model.linker = model.name.slug();
+				data.linker = model.linker = model.name.slug();
 			}
 
 			if (model.firstname && model.lastname && !model.name) {
 				model.name = (model.firstname + ' ' + model.lastname).trim().max(40);
 				data.search = model.search = (model.firstname + ' ' + model.lastname).trim().max(40).toSearch();
-				model.linker = model.name.slug();
+				data.linker = model.linker = model.name.slug();
 			}
 
 			// Removing older photo
