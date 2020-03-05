@@ -43,45 +43,43 @@
 		</div>
 		<div class="padding">
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-md-2 m">
 					<div class="keyvalue2">
 						<div class="key">@(Logged users)</div>
 						<div class="value" data-bind="!?.online.logged__text:value+'x'">---</div>
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2 m">
 					<div class="keyvalue2">
 						<div class="key">@(Max. online users)</div>
 						<div class="value" data-bind="!?.online.maxonline__text:value+'x'">---</div>
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2 m">
 					<div class="keyvalue2">
 						<div class="key">@(Memory)</div>
 						<div class="value" data-bind="!?.online.memory.heapUsed__text:Thelpers.filesize(value)">---</div>
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2 m">
 					<div class="keyvalue2">
 						<div class="key">@(Requests)</div>
 						<div class="value"><span data-bind="!?.online.performance.request__text:(value || 0).floor(1)">---</span> @(req/min.)</div>
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2 m">
 					<div class="keyvalue2">
 						<div class="key">@(Files)</div>
 						<div class="value"><span data-bind="!?.online.performance.file__text:(value || 0).floor(1)">---</span> @(req/min.)</div>
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2 m">
 					<div class="keyvalue2">
 						<div class="key">@(Sessions)</div>
 						<div class="value"><span data-bind="!?.online.sessions.count__text:value + 'x'">---</span></div>
 					</div>
 				</div>
 			</div>
-			<br />
-
 			<div class="row">
 				<div class="col-md-4 m">
 					<div class="b"><i class="fa fa-desktop mr5"></i>@(Devices)</div>
