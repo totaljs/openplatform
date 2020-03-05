@@ -244,7 +244,7 @@
 				for (var i = 0; i < value.apps.length; i++) {
 					var item = value.apps[i];
 					item.percentage = ((item.count / max) * 100).floor(1);
-					item.name = main.apps.findValue('id', item.appid, 'name', DEF.empty);
+					item.name = main.apps.findValue('id', item.appid, 'title', DEF.empty);
 				}
 			}
 
