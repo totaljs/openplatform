@@ -147,7 +147,7 @@
 	OP.appearance();
 
 	OP.on('appearance', function(profile) {
-		CSS('.button,.submit{background-color:{0}}.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
+		CSS('.dashboard-referrer span,.button,.submit{background-color:{0}}.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
 	});
 
 	AJAX('GET /api/profile/', function(response) {
