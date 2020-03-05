@@ -1,0 +1,375 @@
+<style>
+	.dashboard-referrer { font-size: 12px; background-color: #F9F9F9; margin: 0 0 5px; padding: 5px 5px 3px 5px; border-radius: 2px; position: relative; }
+	.dashboard-referrer figure > div:last-child { margin-right: 60px; }
+	.dashboard-referrer figure > div:first-child { width: 60px; text-align: right; float: right; font-weight: bold; border-left: 1px solid #E0E0E0; padding: 0 5px; }
+	.dashboard-referrer figure > div { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+	.dashboard-referrer span { position: absolute; background-color: #D0D0D0; left: 0; margin-top: -5px; height: 2px; border-radius: 2px 2px 0 0; }
+	.ui-dark .dashboard-referrer { background-color: #202020; color: #C0C0C0; }
+	.ui-dark .dashboard-referrer figure > div:first-child { border-left-color: #303030; }
+	.ui-dark .dashboard-referrer span { background-color: #606060; }
+
+	.onlinevisitors .online { animation: 1s blink infinite forwards; font-size: 20px; color: #8CC152; float: left; margin: 7px 10px 0 0; }
+	.onlinevisitors-count { font-size: 30px; font-weight: bold; line-height: 30px; position: relative; }
+	.onlinevisitors-count span { position: absolute; margin: 2px 0 0 10px; }
+	.onlinevisitors-last { color: gray; font-size: 12px; }
+	.onlinevisitors { height: 60px; border-bottom: 1px solid #E0E0E0; padding: 12px 20px 0; }
+	.onlinevisitors-share { float: right; cursor: pointer; margin-left: 10px; }
+	.ui-dark .onlinevisitors-count { color: white; }
+	.ui-dark .onlinevisitors { border-bottom-color: #404040; }
+
+	.onlinevisitors-header { border-bottom: 1px solid #E0E0E0; padding: 0 0 10px 0; margin-bottom: 10px; }
+	.ui-dark .onlinevisitors-header { border-bottom-color: #404040; }
+	.onlinevisitors-domain { float: right; }
+	.onlinevisitors-date { cursor: pointer; }
+	.onlinevisitors-date i { margin-right: 5px; }
+
+	.totalvisitors { float: right; line-height: 16px; margin: 14px 20px 0; text-align: right; }
+
+	@keyframes blink {
+		0% { opacity: 0.5; }
+		50% { opacity: 1; }
+		100% { opacity: 0.5; }
+	}
+</style>
+
+<div data-scope="dashboard">
+	<div data---="viewbox__null__scrollbar:1;parent:window">
+		<div class="totalvisitors">
+			@(Total:) <b data-bind="!?.online.logged__html:value.pluralize('@(# users, # user, # users, # users)')"></b>
+			<div class="help nmt">@(Max. online) <b data-bind="!?.online.maxonline__text">---</b></div>
+		</div>
+		<div class="onlinevisitors">
+			<div class="onlinevisitors-count"><i class="fa fa-circle online"></i><b data-bind="!?.online.online__html:value.pluralize('@(# users, # user, # users, # users)')"></b><span class="badge badge-green">@(online)</span></div>
+		</div>
+		<div class="padding">
+			<div class="row">
+				<div class="col-md-2">
+					<div class="keyvalue2">
+						<div class="key">@(Logged users)</div>
+						<div class="value" data-bind="!?.online.logged__text:value+'x'">---</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="keyvalue2">
+						<div class="key">@(Max. online users)</div>
+						<div class="value" data-bind="!?.online.maxonline__text:value+'x'">---</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="keyvalue2">
+						<div class="key">@(Memory)</div>
+						<div class="value" data-bind="!?.online.memory.heapUsed__text:Thelpers.filesize(value)">---</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="keyvalue2">
+						<div class="key">@(Requests)</div>
+						<div class="value"><span data-bind="!?.online.performance.request__text:(value || 0).floor(1)">---</span> @(req/min.)</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="keyvalue2">
+						<div class="key">@(Files)</div>
+						<div class="value"><span data-bind="!?.online.performance.file__text:(value || 0).floor(1)">---</span> @(req/min.)</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="keyvalue2">
+						<div class="key">@(Sessions)</div>
+						<div class="value"><span data-bind="!?.online.sessions.count__text:value + 'x'">---</span></div>
+					</div>
+				</div>
+			</div>
+			<br />
+
+			<div class="row">
+				<div class="col-md-4 m">
+					<div class="b"><i class="fa fa-desktop mr5"></i>@(Devices)</div>
+					<div data---="statsbarsimple__?.online.devices__animate:0" class="mt5">
+						<script type="text/html">
+							{{ name }} {{ percentage }}%
+						</script>
+						<script type="text/html">
+							{{ name }} {{ percentage }}%
+						</script>
+					</div>
+				</div>
+				<div class="col-md-4 m">
+					<div class="b"><i class="far fa-window-restore mr5"></i>@(Modes)</div>
+					<div data---="statsbarsimple__?.online.modes__animate:0" class="mt5">
+						<script type="text/html">
+							{{ name }} {{ percentage }}%
+						</script>
+						<script type="text/html">
+							{{ name }} {{ percentage }}%
+						</script>
+					</div>
+				</div>
+				<div class="col-md-4 m">
+					<div class="b"><i class="fa fa-adjust mr5"></i>@(Appearance)</div>
+					<div data---="statsbarsimple__?.online.themes__animate:0" class="mt5">
+						<script type="text/html">
+							{{ name }} {{ percentage }}%
+						</script>
+						<script type="text/html">
+							{{ name }} {{ percentage }}%
+						</script>
+					</div>
+				</div>
+			</div>
+
+			<div data-bind="?.online.apps__template">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="b m"><i class="fa fa-rocket mr5"></i>@(Apps)</div>
+					{{ foreach m in value }}
+						<div class="dashboard-referrer">
+							<span style="width:{{ m.percentage }}%"></span>
+							<figure>
+								<div>{{ m.count }}x</div>
+								<div>{{ m.name }}</div>
+							</figure>
+						</div>
+					{{ end }}
+					<div class="clearfix">&nbsp;</div>
+					{{ fi }}
+				</script>
+			</div>
+			<div data-bind="?.online.browsers__template">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="b m"><i class="fab fa-html5 mr5"></i>@(Browsers)</div>
+					{{ foreach m in value }}
+					<div class="dashboard-referrer">
+						<span style="width:{{ m.percentage }}%"></span>
+						<figure>
+							<div>{{ m.count }}x</div>
+							<div>{{ m.name }}</div>
+						</figure>
+					</div>
+					{{ end }}
+					<div class="clearfix"></div>
+					{{ fi }}
+				</script>
+			</div>
+		</div>
+		<ul data---="tabmenu__?.year__datasource:?.meta" class="tabmenu2 visitors-tabmenu">
+			<script type="text/html">
+				<li data-value="{{ year }}"><i class="far fa-calendar"></i>{{ year }}</li>
+			</script>
+		</ul>
+		<div class="padding" style="padding-top:10px">
+			<div class="row">
+				<div class="col-md-6 m">
+					<div class="fs12 m">
+						<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Logged users)</span>
+						<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Max. online)</span>
+					</div>
+					<div data---="linechart__?.yearly.statslogged__height:200"></div>
+				</div>
+				<div class="col-md-6 m">
+					<div class="fs12 m">
+						<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Desktop)</span>
+						<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Mobile devices)</span>
+					</div>
+					<div data---="linechart__?.yearly.statsdevices__height:200"></div>
+				</div>
+				<div class="col-md-6 m">
+					<div class="fs12 m">
+						<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Windowed)</span>
+						<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Tabbed)</span>
+						<i class="fa fa-square legend-3 mr5"></i><span class="mr10">@(Portal)</span>
+					</div>
+					<div data---="linechart__?.yearly.statsmodes__height:200"></div>
+				</div>
+				<div class="col-md-6 m">
+					<div class="fs12 m">
+						<i class="fa fa-square legend-1 mr5"></i><span class="mr10">@(Light mode)</span>
+						<i class="fa fa-square legend-2 mr5"></i><span class="mr10">@(Dark mode)</span>
+					</div>
+					<div data---="linechart__?.yearly.statsthemes__height:200"></div>
+				</div>
+			</div>
+
+			<div data-bind="?.yearly.apps__template">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="b m"><i class="fa fa-rocket mr5"></i>@(Most used apps)</div>
+					{{ foreach m in value }}
+						<div class="dashboard-referrer">
+							<span style="width:{{ m.percentage }}%"></span>
+							<figure>
+								<div>{{ m.percentage }}%</div>
+								<div>{{ m.name }}</div>
+							</figure>
+						</div>
+					{{ end }}
+					<div class="clearfix">&nbsp;</div>
+					{{ fi }}
+				</script>
+			</div>
+
+			<div data-bind="?.yearly.browsers__template">
+				<script type="text/html">
+					{{ if value && value.length }}
+					<div class="b m"><i class="fab fa-html5 mr5"></i>@(Most used browsers)</div>
+					{{ foreach m in value }}
+						<div class="dashboard-referrer">
+							<span style="width:{{ m.percentage }}%"></span>
+							<figure>
+								<div>{{ m.percentage }}%</div>
+								<div>{{ m.name }}</div>
+							</figure>
+						</div>
+					{{ end }}
+					<div class="clearfix"></div>
+					{{ fi }}
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	PLUGIN('dashboard', function(exports) {
+
+		var prepare = function(value) {
+
+			var max = 0;
+
+			if (value.apps) {
+				for (var i = 0; i < value.apps.length; i++)
+					max += value.apps[i].count;
+
+				for (var i = 0; i < value.apps.length; i++) {
+					var item = value.apps[i];
+					item.percentage = ((item.count / max) * 100).floor(1);
+					item.name = main.apps.findValue('id', item.appid, 'name', DEF.empty);
+				}
+			}
+
+			if (value.browsers) {
+				max = 0;
+				for (var i = 0; i < value.browsers.length; i++)
+					max += value.browsers[i].count;
+
+				for (var i = 0; i < value.browsers.length; i++) {
+					var item = value.browsers[i];
+					item.percentage = ((item.count / max) * 100).floor(1);
+				}
+			}
+
+			if (value.mobile !== null) {
+				value.devices = [];
+				value.devices.push({ name: '@(Mobile)', value: value.mobile });
+				value.devices.push({ name: '@(Desktop)', value: value.desktop });
+			}
+
+			if (value.windowed !== null) {
+				value.modes = [];
+				value.modes.push({ name: '@(Windowed)', value: value.windowed });
+				value.modes.push({ name: '@(Tabbed)', value: value.tabbed });
+				value.modes.push({ name: '@(Portal)', value: value.portal });
+			}
+
+			if (value.darkmode !== null) {
+				value.themes = [];
+				value.themes.push({ name: '@(Light)', value: value.lightmode });
+				value.themes.push({ name: '@(Dark)', value: value.darkmode });
+			}
+
+			return value;
+		};
+
+		exports.reload = function() {
+			WAIT('main.apps', exports.refresh);
+		};
+
+		exports.count = function(value) {
+			return (value || 0).format(0) + 'x';
+		};
+
+		exports.refresh = function() {
+			AJAX('GET /api/op/dashboard/', function(response) {
+				SET('?.year', NOW.getFullYear());
+				SET('?.meta', response);
+			});
+		};
+
+		REPEAT('common.page__value==="dashboard"', function() {
+			// browser is online
+			// browser tab is focused
+			// defined condition is valid
+			WAIT('main.apps', function() {
+				AJAX('GET /api/op/dashboard/online/', function(response) {
+					SET('?.online', prepare(response));
+				});
+			});
+		}, 10000, true);
+
+		WATCH('?.year', function(path, value) {
+			AJAX('GET /api/op/dashboard/' + value, function(response) {
+
+				var slogged = [];
+				var smaxlonline = [];
+				var sdark = [];
+				var slight = [];
+				var sportal = [];
+				var smobile = [];
+				var sdesktop = [];
+				var swindowed = [];
+				var stabbed = [];
+
+				response.statslogged = [];
+				response.statsdevices = [];
+				response.statsmodes = [];
+				response.statsthemes = [];
+				response.statsmaxonline = [];
+
+				for (var i = 0; i < 12; i++) {
+
+					var month = MONTHS[i].substring(0, 3);
+					var item = response.usage.findItem('month', i + 1);
+
+					if (item) {
+						slogged.push({ x: month, y: item.stats[0] });
+						smobile.push({ x: month, y: item.stats[1] });
+						sdesktop.push({ x: month, y: item.stats[2] });
+						smaxlonline.push({ x: month, y: item.stats[3] });
+						swindowed.push({ x: month, y: item.stats[4] });
+						sportal.push({ x: month, y: item.stats[5] });
+						stabbed.push({ x: month, y: item.stats[6] });
+						slight.push({ x: month, y: item.stats[7] });
+						sdark.push({ x: month, y: item.stats[8] });
+					} else {
+						slogged.push({ x: month, y: 0 });
+						smobile.push({ x: month, y: 0 });
+						sdesktop.push({ x: month, y: 0 });
+						smaxlonline.push({ x: month, y: 0 });
+						swindowed.push({ x: month, y: 0 });
+						sportal.push({ x: month, y: 0 });
+						stabbed.push({ x: month, y: 0 });
+						slight.push({ x: month, y: 0 });
+						sdark.push({ x: month, y: 0 });
+					}
+				}
+
+				response.statslogged.push({ name: '@(Logged)', values: slogged });
+				response.statslogged.push({ name: '@(Max. online)', values: smaxlonline });
+
+				response.statsdevices.push({ name: '@(Desktop)', values: sdesktop });
+				response.statsdevices.push({ name: '@(Mobile)', values: smobile });
+
+				response.statsmodes.push({ name: '@(Windowed)', values: swindowed });
+				response.statsmodes.push({ name: '@(Tabbed)', values: stabbed });
+				response.statsmodes.push({ name: '@(Portal)', values: sportal });
+
+				response.statsthemes.push({ name: '@(Light)', values: slight });
+				response.statsthemes.push({ name: '@(Dark)', values: sdark });
+
+				SET('?.yearly', prepare(response));
+			});
+		});
+
+	});
+</script>

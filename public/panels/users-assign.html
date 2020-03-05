@@ -1,20 +1,16 @@
-<div data---="panel__common.panel__if:usersassign;reload:usersassignpanel/reload;title:@(Assign groups);icon:user;scrollbar:false;width:500" class="hidden">
-	<div data-scope="usersassignpanel">
-		<div data---="viewbox__common.panel__height:100;margin:50;scrollbar:1;parent:.ui-panel-body;scrolltop:true">
-			<div class="padding npb">
-				<div class="alert m"><i class="fa fa-warning"></i> @(The selected groups below will be applied for all users according to the current user-grid filter.)</div>
-				<div class="caption"><i class="fa fa-plus-circle green"></i>@(Insert groups)</div>
-				<div data---="checkboxlist__?.add__datasource:main.meta.groups__[]"></div>
-				<br />
-				<div class="caption"><i class="fa fa-minus-circle red"></i>@(Remove groups)</div>
-				<div data---="checkboxlist__?.rem__datasource:main.meta.groups__[]"></div>
-			</div>
-		</div>
-		<div class="buttons" data---="validation__?">
-			<button name="submit" class="submit exec" data-exec="?/submit" disabled><i class="fa fa-floppy-o"></i>@(APPLY)</button>
-			<span class="link cancel">@(Cancel)</span>
-		</div>
+<div data---="form__common.panel__if:usersassign;reload:usersassignpanel/reload;title:@(Assign groups);submit:usersassignpanel/submit;icon:user;scrollbar:false;width:500" class="hidden">
+	<div data-scope="usersassignpanel" class="padding">
+		<div class="alert m"><i class="fa fa-warning"></i> @(The selected groups below will be applied for all users according to the current user-grid filter.)</div>
+		<div class="caption"><i class="fa fa-plus-circle green"></i>@(Insert groups)</div>
+		<div data---="checkboxlist__?.add__datasource:main.meta.groups__[]"></div>
+		<br />
+		<div class="caption"><i class="fa fa-minus-circle red"></i>@(Remove groups)</div>
+		<div data---="checkboxlist__?.rem__datasource:main.meta.groups__[]"></div>
 	</div>
+	<nav data---="validation__usersassignpanel">
+		<button name="submit" disabled><i class="fa fa-floppy-o"></i>@(APPLY)</button>
+		<button name="cancel">@(Cancel)</button>
+	</nav>
 </div>
 
 <script>

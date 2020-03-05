@@ -16,6 +16,7 @@
 				{ name: 'blocked', text: '@(Blocked)', width: 100, template: '{{ blocked | boolean(\'red\') }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 				{ name: 'title', text: '@(Title)', width: 200, template: '{{ if workshopid }}<span class="badge badge-blue mr5">@(workshop)</span>{{ fi }}{{ title }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}' },
 				{ name: 'version', text: '@(Version)', width: 100, align: 1 },
+				{ name: 'count', text: '@(Running)', width: 100, align: 1, template: '{{ if count }}<span class="badge badge-silver">{{ count }}</span>{{ else }}---{{ fi }}' },
 				{ name: 'email', text: '@(Email)', width: 200 },
 				{ name: 'author', text: '@(Author)', width: 200 },
 				{ name: 'roles', text: '@(Roles)', width: 250, template: '{{ if roles && roles.length }}<i class="fa fa-key"></i> {{ fi }}{{ roles | joinbgcolor(\' \') }}', sort: false, search: '{{ roles | join }}' },

@@ -65,7 +65,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('apps', '[Object]');  // [{ id: UID, roles: [] }]
 
 	var fields = { id: 1, name: 1, online: 1, dtcreated: 1, dtupdated: 1, dtmodified: 1, dtlogged: 1 };
-	var fieldsall = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged', 'note'];
+	var fieldsall = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged', 'note', 'running'];
 	var fieldsallpublic = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged', 'verifytoken', 'accesstoken'];
 
 	(function() {

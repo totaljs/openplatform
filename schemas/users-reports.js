@@ -4,11 +4,15 @@ NEWSCHEMA('Users/Reports', function(schema) {
 
 	schema.define('appid', 'UID', true);
 	schema.define('type', ['Bug', 'Feature', 'Improvement'], true);
-	// schema.define('subject', 'String(100)', true);
 	schema.define('screenshot', String);
-	schema.define('ispriority', Boolean);
-	schema.define('issolved', Boolean);
+	schema.define('priority', Boolean);
 	schema.define('body', String);
+
+	schema.setQuery(function($) {
+		if ($.controller && FUNC.notadmin($))
+			return;
+		DBMS().list('view_user_report').autofill($, 'id:UID,solved:Boolean,dtcreated:Date,dtsolved:Date,ip:String,username:String,userphoto:String,userposition:String,appname:String,appicon:String,screenshot:Number', '', 'dtcreated_desc', 100).callback($.callback);
+	});
 
 	schema.setInsert(function($) {
 
@@ -19,8 +23,8 @@ NEWSCHEMA('Users/Reports', function(schema) {
 		model.dtcreated = NOW;
 		model.userid = $.user.id;
 		model.ip = $.ip;
-		model.issolved = false;
-		model.isremoved = false;
+		model.solved = false;
+		model.removed = false;
 		model.screenshot = undefined;
 
 		var db = DBMS();
@@ -31,6 +35,9 @@ NEWSCHEMA('Users/Reports', function(schema) {
 				$.invalid(err);
 				return;
 			}
+
+			if (screenshot)
+				model.screenshot = screenshot.base64ToBuffer();
 
 			$.extend && $.extend(model);
 			db.insert('tbl_user_report', model).callback($.done());
@@ -78,6 +85,30 @@ NEWSCHEMA('Users/Reports', function(schema) {
 				model.ispriority && mail.high();
 			}
 		});
+	});
+
+	schema.addWorkflow('solved', function($) {
+		if ($.controller && FUNC.notadmin($))
+			return;
+		DBMS().modify('tbl_user_report', { solved: true, dtsolved: NOW }).where('id', $.id).callback($.done());
+	});
+
+	schema.addWorkflow('screenshot', function($) {
+		if ($.controller && FUNC.notadmin($))
+			return;
+		DBMS().one('tbl_user_report').where('id', $.id).fields('screenshot').callback(function(err, response) {
+			if (response && response.screenshot)
+				$.controller.binary(response.screenshot, 'image/jpeg');
+			else
+				$.controller.throw404();
+			$.cancel();
+		});
+	});
+
+	schema.setRemove(function($) {
+		if ($.controller && FUNC.notadmin($))
+			return;
+		DBMS().remove('tbl_user_report').where('id', $.id).callback($.done());
 	});
 
 });

@@ -34,6 +34,7 @@
 				{ name: 'inactive', text: '@(Inactive)', width: 80, template: '{{ inactive | boolean(\'red\') }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 				{ name: 'deputy', text: '@(Deputy)', width: 200 },
 				{ name: 'supervisor', text: '@(Supervisor)', width: 200 },
+				{ name: 'running', text: '@(Running)', width: 200, template: '{{ running | runningapps }}', filter: false, sort: false },
 				{ name: 'note', text: '@(Note)', width: 200 },
 				{ name: 'dtlogged', text: '@(Logged)', width: 120, align: 1, format: '[.user.dateformat]' },
 				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]' },

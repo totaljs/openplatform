@@ -62,6 +62,7 @@ CREATE TABLE "public"."tbl_user" (
 	"desktop" int2 DEFAULT '1'::smallint,
 	"otp" bool DEFAULT false,
 	"online" bool DEFAULT false,
+	"running" _varchar,
 	"dtbirth" timestamp,
 	"dtbeg" timestamp,
 	"dtend" timestamp,
@@ -221,10 +222,10 @@ CREATE TABLE "public"."tbl_user_report" (
 	"subject" varchar(100),
 	"body" text,
 	"ip" cidr,
-	"issolved" bool DEFAULT false,
-	"ispriority" bool DEFAULT false,
-	"isremoved" bool DEFAULT false,
-	"dtsolved" bool,
+	"screenshot" bytea,
+	"solved" bool DEFAULT false,
+	"priority" bool DEFAULT false,
+	"dtsolved" timestamp,
 	"dtcreated" timestamp DEFAULT now(),
 	CONSTRAINT "tbl_report_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
 	CONSTRAINT "tbl_report_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
@@ -270,6 +271,55 @@ CREATE TABLE "public"."tbl_group_app" (
 	"roles" _varchar,
 	CONSTRAINT "tbl_group_app_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
 	CONSTRAINT "tbl_group_app_groupid_fkey" FOREIGN KEY ("groupid") REFERENCES "public"."tbl_group"("id") ON DELETE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_usage" (
+	"id" varchar(10) NOT NULL,
+	"online" int4 DEFAULT 0,
+	"logged" int4 DEFAULT 0,
+	"maxonline" int4 DEFAULT 0,
+	"desktop" int4 DEFAULT 0,
+	"mobile" int4 DEFAULT 0,
+	"windowed" int4 DEFAULT 0,
+	"tabbed" int4 DEFAULT 0,
+	"portal" int4 DEFAULT 0,
+	"lightmode" int4 DEFAULT 0,
+	"darkmode" int4 DEFAULT 0,
+	"date" date,
+	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_usage_app" (
+	"id" varchar(35) NOT NULL,
+	"appid" varchar(25),
+	"count" int4 DEFAULT 0,
+	"mobile" int4 DEFAULT 0,
+	"desktop" int4 DEFAULT 0,
+	"windowed" int4 DEFAULT 0,
+	"tabbed" int4 DEFAULT 0,
+	"portal" int4 DEFAULT 0,
+	"lightmode" int4 DEFAULT 0,
+	"darkmode" int4 DEFAULT 0,
+	"date" date,
+	"dtupdated" timestamp,
+	CONSTRAINT "tbl_usage_app_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_usage_browser" (
+	"id" varchar(35) NOT NULL,
+	"count" int2,
+	"name" varchar(50),
+	"windowed" int4 DEFAULT 0,
+	"tabbed" int4 DEFAULT 0,
+	"portal" int4 DEFAULT 0,
+	"lightmode" int4 DEFAULT 0,
+	"darkmode" int4 DEFAULT 0,
+	"mobile" bool DEFAULT false,
+	"date" date,
+	"dtupdated" timestamp,
 	PRIMARY KEY ("id")
 );
 
@@ -328,6 +378,7 @@ CREATE VIEW view_user AS
 		a.dateformat,
 		a.timeformat,
 		a.numberformat,
+		a.running,
 		a.dtbirth,
 		a.dtbeg,
 		a.dtend,
@@ -338,6 +389,28 @@ CREATE VIEW view_user AS
 		CASE WHEN (length(a.deputyid) > 0) THEN (SELECT b.name FROM tbl_user b WHERE b.id = a.deputyid LIMIT 1) ELSE ''::text END AS deputy,
 		CASE WHEN (length(a.supervisorid) > 0) THEN (SELECT c.name FROM tbl_user c WHERE c.id=a.supervisorid LIMIT 1) ELSE ''::text END AS supervisor
 	FROM tbl_user a;
+
+CREATE VIEW view_user_report AS
+	SELECT a.id,
+		a.userid,
+		a.appid,
+		a.type,
+		a.subject,
+		a.body,
+		a.ip,
+		a.solved,
+		a.priority,
+		a.dtsolved,
+		a.dtcreated,
+		length(a.screenshot) AS screenshot,
+		b.name AS username,
+		b.photo AS userphoto,
+		b."position" AS userposition,
+		c.title AS appname,
+		c.icon AS appicon
+	FROM tbl_user_report a
+		LEFT JOIN tbl_user b ON b.id = a.userid
+		LEFT JOIN tbl_app c ON c.id = a.appid
 
 -- ==============================
 -- INDEXES

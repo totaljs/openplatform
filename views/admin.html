@@ -18,6 +18,18 @@
 	<section data-type="left">
 		<div data---="viewbox__null__parent:.ui-layout-section;height:100;scrollbar:0">
 			<div class="menu" data---="selected__common.page__selector:.item">
+
+				<div class="caption">@(Platform)</div>
+				<div class="item exec" data-exec="main/show" data-if="dashboard">
+					<i class="fa fa-dashboard"></i>
+					<span>@(Dashboard)</span>
+				</div>
+				<div class="item exec" data-exec="main/show" data-if="reports">
+					<i class="fa fa-bug"></i>
+					<span>@(Reports)</span>
+				</div>
+				<hr />
+
 				<div class="caption">@(Users)</div>
 				<div class="item exec" data-exec="main/show" data-if="users">
 					<i class="fa fa-users"></i>
@@ -51,12 +63,7 @@
 
 				<hr />
 				<div class="caption">@(More)</div>
-				<!--
-				<div class="item exec" data-exec="main/show" data-if="dashboard">
-					<i class="fa fa-dashboard"></i>
-					<span>@(Dashboard)</span>
-				</div>
-				-->
+
 				@{part('more')}
 
 				<div class="item exec" data-exec="main/show" data-if="wiki">
@@ -72,13 +79,15 @@
 	</section>
 
 	<section data-type="main">
-		<div data---="part__common.page__if:users;url:/parts/users-grid.html;reload:usersgrid/reload;cleaner:5" class="hidden"></div>
-		<div data---="part__common.page__if:groups;url:/parts/users-groups.html;reload:usersgroups/reload;cleaner:5" class="hidden"></div>
-		<div data---="part__common.page__if:roles;url:/parts/users-roles.html;reload:usersroles/reload;cleaner:5" class="hidden"></div>
-		<div data---="part__common.page__if:apps;url:/parts/apps-grid.html;reload:appsgrid/reload;cleaner:5" class="hidden"></div>
-		<div data---="part__common.page__if:marketplace;url:/parts/marketplace.html;reload:marketplace/reload;cleaner:5" class="hidden invisible"></div>
-		<div data---="part__common.page__if:wiki;url:/parts/wiki.html;cleaner:5" class="hidden invisible"></div>
-		<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;cleaner:5;delay:500" class="hidden invisible"></div>
+		<div data---="part__common.page__if:dashboard;url:/parts/dashboard.html;reload:dashboard/reload" class="hidden invisible"></div>
+		<div data---="part__common.page__if:users;url:/parts/users-grid.html;reload:usersgrid/reload" class="hidden"></div>
+		<div data---="part__common.page__if:groups;url:/parts/users-groups.html;reload:usersgroups/reload" class="hidden"></div>
+		<div data---="part__common.page__if:roles;url:/parts/users-roles.html;reload:usersroles/reload" class="hidden"></div>
+		<div data---="part__common.page__if:apps;url:/parts/apps-grid.html;reload:appsgrid/reload" class="hidden"></div>
+		<div data---="part__common.page__if:marketplace;url:/parts/marketplace.html;reload:marketplace/reload" class="hidden invisible"></div>
+		<div data---="part__common.page__if:wiki;url:/parts/wiki.html" class="hidden invisible"></div>
+		<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;delay:500" class="hidden invisible"></div>
+		<div data---="part__common.page__if:reports;url:/parts/reports.html;reload:reports/reload;delay:500" class="hidden invisible"></div>
 		@{part('main')}
 	</section>
 
@@ -88,7 +97,7 @@
 
 	MAKE('common', function(obj) {
 		if (!obj.page)
-			obj.page = 'users';
+			obj.page = 'dashboard';
 	});
 
 	var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
@@ -203,6 +212,21 @@
 
 	Thelpers.boolean = function(value, color) {
 		return value ? ('<b class="' + (color || 'green') + '">@(yes)</b>') : '@(no)';
+	};
+
+	Thelpers.running = function(value) {
+		if (value === '_admin')
+			return '<b>@(Control panel)</b>';
+		return main.apps.findValue('id', value, 'title', value);
+	};
+
+	Thelpers.runningapps = function(value) {
+		if (!value || !value.length)
+			return DEF.empty;
+		var builder = [];
+		for (var i = 0; i < value.length; i++)
+			builder.push(Thelpers.running(value[i]));
+		return builder.join(', ');
 	};
 
 	Thelpers.status = function(value, icon) {

@@ -62,11 +62,25 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.settings = app.settings;
 			obj.reference = app.reference;
 			obj.workshopid = app.workshopid;
+			obj.count = 0;
 			arr.push(obj);
 		}
 
-		$.extend && $.extend(arr);
-		$.callback(arr);
+		DBMS().query('SELECT unnest(running) as appid, COUNT(1)::int4 as count FROM tbl_user WHERE running IS NOT NULL GROUP BY appid').callback(function(err, response) {
+
+			for (var i = 0; i < response.length; i++) {
+				var item = response[i];
+				if (item.appid[0] !== '_') {
+					var app = arr.findItem('id', item.appid);
+					if (app)
+						app.count = item.count;
+				}
+			}
+
+			$.extend && $.extend(arr);
+			$.callback(arr);
+		});
+
 	});
 
 	schema.setGet(function($) {
@@ -87,8 +101,12 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.autorefresh = item.autorefresh;
 			obj.settings = item.settings;
 			obj.position = item.position;
-			$.extend && $.extend(obj);
-			$.callback(obj);
+
+			DBMS().query('SELECT COUNT(1)::int4 as running FROM tbl_user WHERE inactive=FALSE AND online=TRUE AND running && $1', [[obj.id]]).first().callback(function(err, response) {
+				obj.count = response.running;
+				$.extend && $.extend(obj);
+				$.callback(obj);
+			});
 		} else
 			$.invalid('error-apps-404');
 	});
@@ -261,6 +279,12 @@ NEWSCHEMA('Apps', function(schema) {
 			$.invalid('error-apps-404');
 	});
 
+	var usage_insert = function(doc, params) {
+		doc.id = params.id;
+		doc.appid = params.appid;
+		doc.date = NOW;
+	};
+
 	schema.addWorkflow('run', function($) {
 
 		var user = $.user;
@@ -335,6 +359,16 @@ NEWSCHEMA('Apps', function(schema) {
 
 				DB_OPEN.dtopen = NOW;
 				db.mod('tbl_user_app', DB_OPEN).where('id', user.id + $.id);
+
+				var usage = {};
+				var usageid = NOW.format('yyyyMMdd') + $.id;
+
+				usage['+count'] = 1;
+				usage['+' + (user.mobile ? 'mobile' : 'desktop')] = 1;
+				usage['+' + (user.desktop === 1 ? 'windowed' : user.desktop === 2 ? 'tabbed' : 'desktop')] = 1;
+				usage['+' + (user.darkmode === 1 ? 'darkmode' : 'lightmode')] = 1;
+				usage.dtupdated = NOW;
+				db.mod('tbl_usage_app', usage, true).where('id', usageid).insert(usage_insert, { id: usageid, appid: $.id });
 
 				MAIN.session.set2(user.id, user);
 			}

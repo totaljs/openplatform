@@ -21,6 +21,14 @@ exports.install = function() {
 	ROUTE('+PATCH   /api/op/groups/                *Users/Groups       --> @patch');
 	ROUTE('+DELETE  /api/op/groups/                *Users/Groups       --> @remove');
 
+	// Platform
+	ROUTE('+GET     /api/op/dashboard/                *Dashboard          --> @read');
+	ROUTE('+GET     /api/op/dashboard/online/         *Dashboard          --> @online');
+	ROUTE('+GET     /api/op/dashboard/{year}/         *Dashboard          --> @yearly');
+	ROUTE('+GET     /api/op/reports/                  *Users/Reports      --> @query');
+	ROUTE('+GET     /api/op/reports/{id}/screenshot/  *Users/Reports      --> @screenshot');
+	ROUTE('+GET     /api/op/reports/{id}/solved/      *Users/Reports      --> @solved');
+
 	// Codelists
 	ROUTE('+GET     /api/op/companies/             *Users              --> @companies');
 	ROUTE('+GET     /api/op/locations/             *Users              --> @locations');
@@ -45,7 +53,7 @@ exports.install = function() {
 	ROUTE('-POST    /api/login/otp/                *Users/Login        --> @otp');
 	ROUTE('-POST    /api/password/                 *Users/Password     --> @exec');
 
-	// Acount
+	// Account
 	ROUTE('+GET     /api/account/                  *Account            --> @read');
 	ROUTE('+POST    /api/account/                  *Account            --> @check @save (response)');
 	ROUTE('+GET     /api/account/totp/             *Account/Totp       --> @generate');
@@ -182,7 +190,17 @@ function json_online(id) {
 }
 
 function json_profile() {
-	this.json(FUNC.profilelive(this.user), null, null, skip);
+
+	var self = this;
+	var running = self.query.running;
+
+	if (self.user.running !== running) {
+		self.user.running = running;
+		DBMS().modify('tbl_user', { running: (running || '').split(',') }).where('id', self.user.id);
+	}
+
+	self.user.ping = NOW;
+	self.json(FUNC.profilelive(this.user), null, null, skip);
 }
 
 function json_profile_full() {

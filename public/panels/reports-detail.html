@@ -1,0 +1,70 @@
+<div data---="form__common.panel__if:reportsdetail;reload:reportsdetailpanel/reload;title:@(Report detail);submit:reportsdetailpanel/submit;icon:user;scrollbar:false;width:700" class="hidden">
+	<div data-scope="reportsdetailpanel" class="padding npt">
+
+		<div data-bind="?__template">
+			<script type="text/html">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="keyvalue">
+							<div class="key">@(Created)</div>
+							<div class="value">{{ value.dtcreated | format('@(yyyy-MM-dd HH:mm)') }}</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="keyvalue">
+							<div class="key">@(IP address)</div>
+							<div class="value">{{ value.ip }}</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="keyvalue">
+							<div class="key">@(High priority)</div>
+							<div class="value">{{ value.priority | boolean }}</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="keyvalue">
+							<div class="key">@(User)</div>
+							<div class="value">{{ value.username }}</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="keyvalue">
+							<div class="key">@(Application)</div>
+							<div class="value">{{ value.appname }}</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="keyvalue">
+							<div class="key">@(Solved)</div>
+							<div class="value">{{ value.solved | boolean }}{{ if value.solved }}<span class="gray ml5">/ {{ value.dtsolved | format('@(yyyy-MM-dd HH:mm)') }}</span>{{ fi }}</div>
+						</div>
+					</div>
+				</div>
+				<div class="alert mt15" data-bind="?.solved__hide">Make the issue solved: <span class="link exec green b" data-exec="?/solve"><i class="fa fa-check-circle mr5"></i>@(Mark as solved)</span></div>
+				<pre style="white-space:pre-wrap;padding:15px 0;margin:0;font-family:Arial">{{ value.body }}</pre>
+				{{ if value.screenshot }}
+				<div><img src="/api/op/reports/{{ value.id }}/screenshot/" class="screenshot img-responsive" alt="@(Screenshot)" /></div>
+				{{ fi }}
+			</script>
+		</div>
+	</div>
+	<nav data---="validation__reportsdetailpanel">
+		<button name="cancel" style="width:100%">@(Cancel)</button>
+	</nav>
+</div>
+
+<script>
+	PLUGIN('reportsdetailpanel', function(exports) {
+		exports.solve = function() {
+			AJAX('GET /api/op/reports/{0}/solved/'.format(reportsdetailpanel.id), function() {
+				reportsdetailpanel.dtsolved = NOW;
+				reportsdetailpanel.solved = true;
+				UPD('reportsdetailpanel');
+				EXEC('reportsgrid/refresh');
+			});
+		};
+	});
+</script>

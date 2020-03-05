@@ -1,0 +1,105 @@
+<div data-scope="reportsgrid">
+
+	<div class="header">
+		<label><i class="fa fa-bug"></i>@(Reports)</label>
+		<div>
+			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-bullseye"></i>@(Detail)</button>
+			<button data-bind="?.checked__enabled:value && value.length" class="exec" data-exec="?/menu" disabled><i class="fa fa-check-circle green"></i>@(Options)</button>
+		</div>
+	</div>
+
+	<div data---="datagrid__?.items__height:.ui-layout-section;exec:?/filter;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;noborder:1;margin:45">
+		<script type="text/plain">
+			[
+				{ name: 'id', text: '@(ID)', width: 140, hide: true },
+				{ name: 'type', text: '@(Type)', template: '{{ if solved }}<i class="fa fa-check-circle green mr5"></i>{{ fi }}{{ if !solved && priority }}<span class="badge badge-small badge-red mr5">@(high)</span>{{ fi }}{{ type | reporttype }}', width: 150 },
+				{ name: 'appname', text: '@(Application)', width: 200 },
+				{ name: 'username', text: '@(User)', width: 220, template: '{{ username }}{{ if userposition }} <span class="gray">/ {{ userposition }}</span>{{ fi }}' },
+				{ name: 'body', text: '@(Message)', width: 400 },
+				{ name: 'priority', text: '@(High)', width: 120, type: 'bool', align: 1 },
+				{ name: 'solved', text: '@(Solved)', width: 120, type: 'bool', align: 1 },
+				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]' },
+				{ name: 'dtsolved', text: '@(Solved)', width: 120, align: 1, format: '[.user.dateformat]' }
+			]
+		</script>
+	</div>
+</div>
+
+<div data---="importer__common.panel__if:reportsdetail;url:/panels/reports-detail.html"></div>
+
+<script>
+
+	Thelpers.reporttype = function(val) {
+		switch (val) {
+			case 'Bug':
+				return '@(Bug)';
+			case 'Feature':
+				return '@(Feature request)';
+			case 'Improvement':
+				return '@(Improvement)';
+		}
+		return DEF.empty;
+	};
+
+	PLUGIN('reportsgrid', function(exports) {
+
+		exports.refresh = function() {
+			NULL('?.items');
+		};
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.filter = function(type, filter, sort, page) {
+
+			if (type === 'init')
+				return;
+
+			if (filter == null)
+				filter = {};
+
+			filter.page = page || 1;
+			filter.sort = sort;
+			AJAX('GET /api/op/reports/', filter, '?.items');
+		};
+
+		exports.edit = function(row) {
+			SETR('reportsdetailpanel', CLONE(row));
+			SET('common.panel', 'reportsdetail');
+		};
+
+		exports.menu = function(el) {
+
+			var opt = {};
+			opt.element = el;
+			opt.align = 'right';
+			opt.items = [];
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'trash-o red' });
+
+			SETTER('menu', 'show', opt);
+
+			opt.callback = function(item) {
+
+				var checked = GET('?.checked');
+
+				if (item.id === 'remove') {
+					OP.confirm('@(Are you sure you want to remove selected reports?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
+						if (index)
+							return;
+						OP.loading(true);
+						checked.wait(function(item, next, index) {
+							OP.progress((index / checked.length) * 100);
+							AJAX('DELETE /api/op/reports/' + item.id, next);
+						}, function() {
+							OP.progress(100);
+							OP.loading(false, 500);
+							exports.refresh();
+						});
+					});
+				}
+			};
+		};
+
+	});
+</script>

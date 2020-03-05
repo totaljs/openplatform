@@ -1,5 +1,5 @@
 // DB
-require('dbms').init(CONF.database, null, ERROR('DBMS'));
+require('dbms').init(CONF.database, ERROR('DBMS'));
 
 // Constants
 const Fs = require('fs');
@@ -470,7 +470,7 @@ FUNC.unauthorized = function(obj, $) {
 	if (app.origin) {
 		if (app.origin.indexOf($.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 			if (!ORIGINERRORS[$.ip]) {
-				FUNC.log('error-origin', null, app.hostname + ' != ' + $.ip);
+				FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
 				ORIGINERRORS[$.ip] = 1;
 			}
 			$.invalid('error-invalid-origin');
@@ -478,7 +478,7 @@ FUNC.unauthorized = function(obj, $) {
 		}
 	} else if (app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 		if (!ORIGINERRORS[$.ip]) {
-			FUNC.log('error-origin', null, app.hostname + ' != ' + $.ip);
+			FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
 			ORIGINERRORS[$.ip] = 1;
 		}
 		$.invalid('error-invalid-origin');
@@ -1477,7 +1477,7 @@ function refresh_apps() {
 function emailnotifications() {
 
 	// online=FALSE
-	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
+	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications, (SELECT array_agg(x.body) FROM tbl_user_notification x WHERE x.userid=a.id AND x.unread=TRUE LIMIT 15) as messages FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
 
 		if (!items.length)
 			return;
@@ -1485,6 +1485,12 @@ function emailnotifications() {
 		var messages = [];
 		for (var i = 0; i < items.length; i++) {
 			var user = items[i];
+
+			if (user.messages && user.messages.length) {
+				for (var j = 0; j < user.messages.length; j++)
+					user.messages[j] = user.messages[j].replace(/\n|\t|_{1,}|\*{1,}/g, '');
+			}
+
 			var msg = Mail.create(TRANSLATOR(user.language, '@(Unread notifications)'), VIEW('mails/notifications', user, null, null, user.language));
 			msg.to(user.email);
 			msg.from(CONF.mail_address_from, CONF.name);
@@ -1495,6 +1501,15 @@ function emailnotifications() {
 	});
 }
 
+var usage_online_cache = 0;
+var usage_online = function(err, response) {
+	if (response.used !== usage_online_cache) {
+		usage_online_cache = response.used;
+		var id = NOW.format('yyyyMMdd');
+		DBMS().modify('tbl_usage', { online: usage_online_cache, '>maxonline': usage_online_cache }, true).where('id', id).insert(usage_logged_insert);
+	}
+};
+
 ON('service', function(counter) {
 
 	if (counter % 10 === 0) {
@@ -1504,8 +1519,10 @@ ON('service', function(counter) {
 		USERS = {}; // clears cache
 		DDOS = {};
 		ORIGINERRORS = {};
-		CONF.allownotifications && emailnotifications();
 	}
+
+	// @TODO: add back to counter
+	CONF.allownotifications && emailnotifications();
 
 	if (OTPCOUNT) {
 		var keys = Object.keys(OTP);
@@ -1518,10 +1535,62 @@ ON('service', function(counter) {
 		}
 	}
 
+	MAIN.session.count(usage_online);
 	SIMPLECACHE = {};
 });
 
-if (global.UPDATE) {
-	global.UPDATE([4400], ERROR('Update'), 'updates');
-} else
+if (global.UPDATE)
+	global.UPDATE([4400, 4500], ERROR('Update'), 'updates');
+else
 	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');
+
+var usage_logged_insert = function(doc) {
+	doc.id = NOW.format('yyyyMMdd');
+	doc.date = NOW;
+};
+
+var usage_browser_insert = function(doc, params) {
+	doc.id = params.id;
+	doc.name = params.name.max(50);
+	doc.date = NOW;
+	doc.mobile = params.mobile;
+};
+
+FUNC.usage_logged = function(user) {
+
+	var model = {};
+	var model_browser = {};
+	var id = NOW.format('yyyyMMdd');
+
+	switch (user.desktop) {
+		case 1:
+			model['+windowed'] = model_browser['+windowed'] = 1;
+			break;
+		case 2:
+			model['+tabbed'] = model_browser['+tabbed'] = 1;
+			break;
+		case 3:
+			model['+portal'] = model_browser['+portal'] = 1;
+			break;
+	}
+
+	model['+logged'] = 1;
+
+	if (user.mobile)
+		model['+mobile'] = 1;
+	else
+		model['+desktop'] = 1;
+
+	if (user.darkmode)
+		model['+darkmode'] = model_browser['+darkmode'] = 1;
+	else
+		model['+lightmode'] = model_browser['+lightmode'] = 1;
+
+	var db = DBMS();
+	model.dtupdated = model_browser.dtupdated = NOW;
+	db.modify('tbl_usage', model, true).where('id', id).insert(usage_logged_insert);
+
+	var browserid = id + user.ua.hash(true).toString(16);
+	model_browser['+count'] = 1;
+	db.modify('tbl_usage_browser', model_browser, true).where('id', browserid).insert(usage_browser_insert, { name: user.ua, id: browserid, mobile: user.mobile });
+};
