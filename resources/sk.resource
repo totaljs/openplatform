@@ -231,7 +231,7 @@ T1939328147      : Platforma
 T1003994483      : Architektúra
 T-1993889503     : Pamäť
 T187480080       : Výkon
-T-457675027      : požadovaný/minimálny.
+T-457675027      : req/min.
 T1469723837      : Relácie
 T-1314122681     : online:
 T-275466972      : nepoužitý:
