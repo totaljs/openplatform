@@ -21,6 +21,7 @@
 	.onlinevisitors-domain { float: right; }
 	.onlinevisitors-date { cursor: pointer; }
 	.onlinevisitors-date i { margin-right: 5px; }
+	.table-dashboard .initials { width: 16px; height: 16px; font-size: 8px; line-height: 16px; float: left; padding: 0; margin-right: 5px; }
 
 	.totalvisitors { float: right; line-height: 16px; margin: 14px 20px 0; text-align: right; }
 
@@ -29,6 +30,7 @@
 		50% { opacity: 1; }
 		100% { opacity: 0.5; }
 	}
+
 </style>
 
 <div data-scope="dashboard">
@@ -40,45 +42,47 @@
 		<div class="onlinevisitors">
 			<div class="onlinevisitors-count"><i class="fa fa-circle online"></i><b data-bind="!?.online.online__html:value.pluralize('@(# users, # user, # users, # users)')"></b><span class="badge badge-green">@(online)</span></div>
 		</div>
-		<div class="padding">
+		<div class="padding bg-smoke npb">
 			<div class="row">
-				<div class="col-md-2 m">
+				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
 						<div class="key">@(Logged users)</div>
 						<div class="value" data-bind="!?.online.logged__text:value+'x'">---</div>
 					</div>
 				</div>
-				<div class="col-md-2 m">
+				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
 						<div class="key">@(Max. online users)</div>
 						<div class="value" data-bind="!?.online.maxonline__text:value+'x'">---</div>
 					</div>
 				</div>
-				<div class="col-md-2 m">
+				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
 						<div class="key">@(Memory)</div>
 						<div class="value" data-bind="!?.online.memory.heapUsed__text:Thelpers.filesize(value)">---</div>
 					</div>
 				</div>
-				<div class="col-md-2 m">
+				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
 						<div class="key">@(Requests)</div>
-						<div class="value"><span data-bind="!?.online.performance.request__text:(value || 0).floor(1)">---</span> @(req/min.)</div>
+						<div class="value"><span data-bind="!?.online.performance.request__text:(value || 0).format(0)">---</span> @(req/min.)</div>
 					</div>
 				</div>
-				<div class="col-md-2 m">
+				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
 						<div class="key">@(Files)</div>
-						<div class="value"><span data-bind="!?.online.performance.file__text:(value || 0).floor(1)">---</span> @(req/min.)</div>
+						<div class="value"><span data-bind="!?.online.performance.file__text:(value || 0).format(0)">---</span> @(req/min.)</div>
 					</div>
 				</div>
-				<div class="col-md-2 m">
+				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
 						<div class="key">@(Sessions)</div>
 						<div class="value"><span data-bind="!?.online.sessions.count__text:value + 'x'">---</span></div>
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="padding">
 			<div class="row">
 				<div class="col-md-4 m">
 					<div class="b"><i class="fa fa-desktop mr5"></i>@(Devices)</div>
@@ -115,7 +119,21 @@
 				</div>
 			</div>
 
-			<div data-bind="?.online.apps__template">
+			<div class="b m"><i class="fa fa-users mr5"></i>@(Last logged users)</div>
+			<table class="table table-small table-dashboard">
+				<tbody data-bind="?.online.users__template__changes">
+					<script type="text/html">
+					{{ foreach m in value }}
+					<tr>
+						<td>{{ m.name | initials }} {{ m.name }} {{ if m.position }}<span class="gray">/ {{ m.position }}</span>{{ fi }}</td>
+						<td class="right col-xs-4">{{ m.dtlogged | time2 }}<i class="far fa-clock ml5"></i></td>
+					</tr>
+					{{ end }}
+					</script>
+				</tbody>
+			</table>
+
+			<div data-bind="?.online.apps__template__changes">
 				<script type="text/html">
 					{{ if value && value.length }}
 					<div class="b m"><i class="fa fa-rocket mr5"></i>@(Apps)</div>
@@ -132,7 +150,8 @@
 					{{ fi }}
 				</script>
 			</div>
-			<div data-bind="?.online.browsers__template">
+
+			<div data-bind="?.online.browsers__template__changes">
 				<script type="text/html">
 					{{ if value && value.length }}
 					<div class="b m"><i class="fab fa-html5 mr5"></i>@(Browsers)</div>
@@ -149,6 +168,7 @@
 					{{ fi }}
 				</script>
 			</div>
+
 		</div>
 		<ul data---="tabmenu__?.year__datasource:?.meta" class="tabmenu2 visitors-tabmenu">
 			<script type="text/html">
@@ -302,7 +322,7 @@
 					SET('?.online', prepare(response));
 				});
 			});
-		}, 10000, true);
+		}, 15000, true);
 
 		WATCH('?.year', function(path, value) {
 			AJAX('GET /api/op/dashboard/' + value, function(response) {

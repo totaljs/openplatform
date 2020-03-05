@@ -28,6 +28,7 @@ exports.install = function() {
 	ROUTE('+GET     /api/op/reports/                  *Users/Reports      --> @query');
 	ROUTE('+GET     /api/op/reports/{id}/screenshot/  *Users/Reports      --> @screenshot');
 	ROUTE('+GET     /api/op/reports/{id}/solved/      *Users/Reports      --> @solved');
+	ROUTE('+DELETE  /api/op/reports/{id}/             *Users/Reports      --> @remove');
 
 	// Codelists
 	ROUTE('+GET     /api/op/companies/             *Users              --> @companies');

@@ -12,6 +12,7 @@ NEWSCHEMA('Dashboard', function(schema) {
 		db.one('tbl_usage').where('date', date);
 		db.all('tbl_usage_app').where('date', date).set('apps').sort('count', true);
 		db.all('tbl_usage_browser').where('date', date).set('browsers').sort('count', true);
+		db.all('tbl_user').fields('name,position,dtlogged').take(10).query('dtlogged IS NOT NULL').sort('dtlogged', true).set('users');
 		db.callback(function(err, response) {
 
 			MAIN.session.count(function(err, counter) {

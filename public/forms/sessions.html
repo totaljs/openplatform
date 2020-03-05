@@ -4,7 +4,7 @@
 			<script type="text/html" data-size="0,120px,120px">
 				<tbody>
 					{{ foreach m in value }}
-					<tr>
+					<tr data-index="{{ $index }}">
 						<td class="fs12 {{ if m.current }}b opfg{{ else }}gray{{ fi }}"><i class="fa fa-desktop color mr5"></i> {{ m.note }}</td>
 						<td class="fs12 right silver hidden-xs">{{ m.used | time }}</td>
 						<td class="fs12 right"><span class="link red ml5 exec" data-exec="sessionsform/cancel"><i class="fa fa-times mr5"></i>@(Cancel)</span></td>
