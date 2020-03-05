@@ -1519,10 +1519,8 @@ ON('service', function(counter) {
 		USERS = {}; // clears cache
 		DDOS = {};
 		ORIGINERRORS = {};
+		CONF.allownotifications && emailnotifications();
 	}
-
-	// @TODO: add back to counter
-	CONF.allownotifications && emailnotifications();
 
 	if (OTPCOUNT) {
 		var keys = Object.keys(OTP);

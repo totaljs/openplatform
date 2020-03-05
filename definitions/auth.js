@@ -41,13 +41,17 @@ AUTH(function($) {
 			MAIN.session.set(meta.sessionid, meta.id, profile, opt.expire, meta.note, 'locked:' + (locked ? 1 : 0));
 		}
 
-		if (init)
+		if (init) {
+			profile.mobile = $.req.mobile;
 			profile.ua = ($.headers['user-agent'] || '').parseUA();
+			FUNC.usage_logged(profile);
+		}
 
 		if ($.req.locked)
 			$.invalid(profile);
 		else
 			$.success(profile);
+
 	});
 });
 
