@@ -141,18 +141,42 @@
 
 	WATCH('common.page', function() {
 		if (common.layout)
-			SET('common.layout', '');
+			NULL('common.layout');
 	});
 
 	OP.appearance();
 
 	OP.on('appearance', function(profile) {
-		CSS('.button,.submit{background-color:{0}}.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
+		CSS('.dashboard-referrer > span,.button,.submit{background-color:{0}}.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
 	});
 
-	AJAX('GET /api/profile/', function(response) {
-		SET('user', response);
-		//SET('common.page', 'users');
+	AJAX('GET /api/profile/', function(user) {
+
+		SET('user', user);
+		DEF.dateformat = user.dateformat;
+		user.timeformat = user.timeformat;
+		user.numberformat = user.numberformat;
+
+		switch (user.numberformat) {
+			case 1: // 1 000.12
+				DEF.decimalseparator = '.';
+				DEF.thousandsseparator = ' ';
+				break;
+			case 2: // 1 000,12
+				DEF.decimalseparator = ',';
+				DEF.thousandsseparator = ' ';
+				break;
+			case 3: // 1.000,12
+				DEF.decimalseparator = ',';
+				DEF.thousandsseparator = '.';
+				break;
+			case 4: // 1,000.12
+				DEF.decimalseparator = '.';
+				DEF.thousandsseparator = ',';
+				break;
+		}
+
+		ENV('date', user.dateformat);
 	});
 
 	OP.on('share', function(data) {
@@ -265,6 +289,39 @@
 		var title = str.substring(index + 4);
 
 		return '<i title="' + title + '" class="si fa fa-' + (icon ? str.substring(0, index + 4) : str);
+	};
+
+	Thelpers.time = function(value) {
+
+		if (!value)
+			return;
+
+		var diff = Date.now() - value.parseDate().getTime();
+		var minutes = ((diff / 1000) / 60) >> 0;
+
+		if (minutes <= 1) {
+			var seconds = (diff / 1000) >> 0;
+			if (seconds < 60)
+				return @(seconds + ' ' + Thelpers.pluralize(seconds >> 0, 'seconds', 'second', 'seconds', 'seconds') + ' ago');
+		}
+
+		if (minutes < 60)
+			return minutes < 2 ? '@(less than minute ago)' : @(minutes + ' minutes ago');
+
+		var hours = (minutes / 60) >> 0;
+		if (hours < 24)
+			return @(hours + ' ' + Thelpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
+
+		var days = (hours / 24) >> 0;
+		if (days < 30)
+			return @(days + ' ' + Thelpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
+
+		var months = (days / 29) >> 0;
+		if (months < 12)
+			return @(months + ' ' + Thelpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
+
+		var years = (months / 12) >> 0;
+		return @(years + ' ' + Thelpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
 	};
 
 	COMPONENT('apps', 'toggle:Toggle all', function(self, config) {
