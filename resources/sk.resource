@@ -294,7 +294,7 @@ T1963757157      : Upozornenie!
 T2145077757      : Máte {0}.
 T-879585745      : '# neprečítané upozornenia', '# neprečítané upozornenia', '# neprečítané upozornenia', '# neprečítané upozornenia'
 T109270          : teraz
-T-384049170      : minutes + ' minúty'
+T-384049170      : 'pred ' + minutes + ' minútami'
 T-607062505      : 'pred ' + hours + ' ' + Thelpers.pluralize (hours, 'hodinami', 'hodinou', 'hodinami', 'hodinami')
 T-1773948937     : 'pred ' + days + ' ' + Thelpers.pluralize (days, 'dňami', 'dňom', 'dňami', 'dňami')
 T-1914128321     : 'pred ' + months + ' ' + Thelpers.pluralize (months, 'mesiacmi', 'mesiacom', 'mesiacmi', 'mesiacmi')

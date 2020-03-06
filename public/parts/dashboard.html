@@ -36,11 +36,11 @@
 <div data-scope="dashboard">
 	<div data---="viewbox__null__scrollbar:1;parent:window">
 		<div class="totalvisitors">
-			@(Total:) <b data-bind="!?.online.logged__html:value.pluralize('@(# users, # user, # users, # users)')"></b>
-			<div class="help nmt">@(Max. online) <b data-bind="!?.online.maxonline__text">---</b></div>
+			@(Total:) <b data-bind="?.online.logged__html:(value || 0).pluralize('@(# users, # user, # users, # users)')"></b>
+			<div class="help nmt">@(Max. online) <b data-bind="?.online.maxonline__text:value||0">---</b></div>
 		</div>
 		<div class="onlinevisitors">
-			<div class="onlinevisitors-count"><i class="fa fa-circle online"></i><b data-bind="!?.online.online__html:value.pluralize('@(# users, # user, # users, # users)')"></b><span class="badge badge-green">@(online)</span></div>
+			<div class="onlinevisitors-count"><i class="fa fa-circle online"></i><b data-bind="?.online.online__html:(value || 0).pluralize('@(# users, # user, # users, # users)')"></b><span class="badge badge-green">@(online)</span></div>
 		</div>
 		<div class="padding bg-smoke npb">
 			<div class="row">

@@ -48,7 +48,7 @@ NEWSCHEMA('Apps/Badges', function(schema) {
 			MAIN.session.set2(user.id, user);
 
 			DB_BADGES.countbadges = ua.countbadges;
-			DBMS().mod('tbl_user_app', DB_BADGES).where('id', user.id + app.id);
+			DBMS().mod('tbl_user_app', DB_BADGES).where('id', user.id + app.id).error('FET');
 		}
 
 		// Response
