@@ -24,7 +24,6 @@ NEWSCHEMA('Users/Reports', function(schema) {
 		model.userid = $.user.id;
 		model.ip = $.ip;
 		model.solved = false;
-		model.removed = false;
 		model.screenshot = undefined;
 
 		var db = DBMS();
@@ -55,6 +54,8 @@ NEWSCHEMA('Users/Reports', function(schema) {
 			builder.push('<b>Mode:</b> ' + ($.user.desktop === 3 ? 'Desktop mode' : $.user.desktop === 2 ? 'Tabbed mode' : 'Windowed mode'));
 			builder.push(hr);
 			builder.push('<b>User:</b> ' + $.user.name + ($.user.sa ? ' <em>(sa)</em>' : ''));
+			builder.push('<b>Identifier:</b> ' + $.user.id);
+			$.user.reference && builder.push('<b>Reference:</b> ' + $.user.reference);
 			builder.push('<b>Email:</b> ' + $.user.email);
 			$.user.phone && builder.push('<b>Phone:</b> ' + $.user.phone);
 

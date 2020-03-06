@@ -185,6 +185,11 @@ T148746311       : Čiastočný
 T670819326       : Zákazník
 T119527          : áno
 T3521            : nie
+T-880052139      : menej ako minúta
+T922337301       : 'pred ' + seconds + ' ' + Thelpers.pluralize(seconds >> 0, 'sekundami', 'sekundou', 'sekundami', 'sekundami')
+
+// public/parts/dashboard.html
+T-1822699756     : Posledne prihlásení užívatelia
 
 // views/admin.html, views/mails/welcome.html
 T956107380       : Dashboard
@@ -289,11 +294,11 @@ T1963757157      : Upozornenie!
 T2145077757      : Máte {0}.
 T-879585745      : '# neprečítané upozornenia', '# neprečítané upozornenia', '# neprečítané upozornenia', '# neprečítané upozornenia'
 T109270          : teraz
-T-384049170      : minutes + ' minúty pred'
-T-607062505      : hours + '' + Thelpers.pluralize (hours, 'hodiny', 'hodiny', 'hodiny', 'hodiny') + 'pred'
-T-1773948937     : days + '' + Thelpers.pluralize (days, 'dni', 'deň', 'dni', 'dni') + 'pred'
-T-1914128321     : months + '' + Thelpers.pluralize (months, 'mesiace', 'mesiac', 'mesiace', 'mesiace') + 'pred'
-T-1172197065     : years + '' + Thelpers.pluralize (years, 'roky', 'roky', 'roky', 'roky') + 'pred'
+T-384049170      : 'pred ' + minutes + ' minútami'
+T-607062505      : 'pred ' + hours + ' ' + Thelpers.pluralize (hours, 'hodinami', 'hodinou', 'hodinami', 'hodinami')
+T-1773948937     : 'pred ' + days + ' ' + Thelpers.pluralize (days, 'dňami', 'dňom', 'dňami', 'dňami')
+T-1914128321     : 'pred ' + months + ' ' + Thelpers.pluralize (months, 'mesiacmi', 'mesiacom', 'mesiacmi', 'mesiacmi')
+T-1172197065     : 'pred ' + years + ' ' + Thelpers.pluralize (years, 'rokmi', 'rokom', 'rokmi', 'rokmi')
 T-2061030829     : Zobraziť okno
 
 // views/portal.html, views/tabbed.html, views/windowed.html, public/forms/sessions.html
@@ -491,6 +496,11 @@ T79807489        : Upraviť používateľa
 T1116151887      : Vytvoriť používateľa
 T482457817       : Používateľ bol úspešne uložený
 T-1174504016     : Vyhľadávanie používateľov
+T945797203       : Spustené aplikácie
+T1988673055      : Svetlá téma
+T-1390451521     : Tmavá téma
+T80774569        : Téma
+T1956825820      : Prihlasovacie údaje
 
 // public/panels/users-profile.html, public/parts/users-groups.html, public/parts/users-locations.html
 T2331            : ID
@@ -602,8 +612,8 @@ T-1449824213     : Role (iba na čítanie)
 
 // views/mails/notifications.html, views/mails/password.html, views/mails/welcome.html
 T-1350661346     : Máte <b>neprečítané &#128276; notifikácie</b> v @{'%name'}. Prihláste sa do @{'%name'} a tam si môžete prečítajte všetky notifikácie.
-T187529478       : Prihlásenie
 T2125970         : Milý
+T491663851       : Posledné notifikácie
 
 // views/mails/password.html
 T-48703600       : Použili ste obnovenie hesla. Kliknutím na tlačidlo nižšie obnovíte svoje heslo. Ak ste tento e-mail dostali omylom, môžete ho ignorovať.
@@ -613,3 +623,42 @@ T-535726761      : Kliknite na odkaz nižšie:
 
 // views/mails/welcome.html
 T990642187       : Vážený užívateľ, vitajte v <b>@{'%name'}</b>. Sme veľmi radi, že ste sa pripojili do našej platformy. Prihláste sa do Vášho účtu za pomoci nižšie uvedeného odkazu.
+
+// public/parts/dashboard.html
+T-1784055402     : Celkom:
+T1649536775      : # užívateľov, # užívateľ, # užívatelia, # užívateľov
+T-476457015      : Max. online
+T-1409072630     : Prihlásení užívatelia
+T782417649       : Max. online užívateľov
+T-328612892      : Požiadavky
+T67881559        : Súbory
+T-1070512963     : Zariadenia
+T74517264        : Módy
+T448831083       : Prehliadače
+T-1073207300     : Stolový počítač
+T1164829567      : Mobilné zariadenia
+T-923107144      : Najviac používané aplikácie
+T-1572708975     : Najviac používané prehliadače
+T2043610225      : Detail
+T2622298         : Typ
+T3202466         : vysoká
+T-1675388953     : Správa
+T2249154         : Vysoká
+T-282213635      : Ste si istý, že chcete vymazať vybrané hlásenia?
+
+// public/parts/apps-grid.html, public/parts/users-grid.html
+T-1079530081     : Spustené
+
+// public/panels/reports-detail.html, public/parts/reports.html
+T2645995         : Užívateľ
+T-1072845520     : Aplikácia
+T-1812902875     : Vyriešené
+
+// public/panels/reports-detail.html
+T-458762083      : Hlásenie
+T-1240389125     : IP adresa
+T-1062954432     : Označiť ako vyriešené
+T1577017734      : Screenshot
+
+// views/admin.html, public/parts/reports.html
+T-1535710817     : Hlásenia

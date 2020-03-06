@@ -7518,6 +7518,10 @@ COMPONENT('tooltip', function(self) {
 		}, force ? 1 : 200);
 	};
 
+	self.on('scroll + reflow', function() {
+		self.hide(true);
+	});
+
 	self.show = function(opt) {
 
 		var tmp = opt.element ? opt.element instanceof jQuery ? opt.element[0] : opt.element.element ? opt.element.dom : opt.element : null;
