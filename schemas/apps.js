@@ -66,7 +66,7 @@ NEWSCHEMA('Apps', function(schema) {
 			arr.push(obj);
 		}
 
-		DBMS().query('SELECT unnest(running) as appid, COUNT(1)::int4 as count FROM tbl_user WHERE running IS NOT NULL GROUP BY appid').callback(function(err, response) {
+		DBMS().query('SELECT unnest(running) as appid, COUNT(1)::int4 as count FROM tbl_user WHERE online=TRUE AND running IS NOT NULL GROUP BY appid').callback(function(err, response) {
 
 			for (var i = 0; i < response.length; i++) {
 				var item = response[i];
