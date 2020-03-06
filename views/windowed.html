@@ -556,13 +556,11 @@
 						if (wa.length) {
 							var ls = localStorage;
 							if (ls.getItem('welcome') || NAV.query.welcome) {
-								common.welcome = true;
 								ls.setItem('welcome', '1');
 								skip = true;
 								internalapp(wa);
 							}
-						} else if (NAV.query.welcome)
-							common.welcome = true;
+						}
 					}
 
 					if (!skip && !user.apps.findItem('favorite', true))
@@ -600,10 +598,11 @@
 			};
 
 			@{if CONF.allowprofile}
-			if (common.welcome || (!localStorage.getItem('welcome') && NAV.query.welcome)) {
+			if (common.welcome || NAV.query.welcome) {
 				SET('common.intro', 'welcome');
 				IMPORT('/_intro/');
-			}
+			} else if (NAV.query.notifications)
+				SET('common.form', 'noticications');
 			@{fi}
 		});
 
@@ -746,7 +745,12 @@
 				return;
 
 			common.liverefreshing = true;
-			AJAX('GET /api/profile/live', function(response) {
+			var running = [];
+
+			for (var i = 0; i < dashboard.apps.length; i++)
+				running.push(dashboard.apps[i].id);
+
+			AJAX('GET /api/profile/live/' + (running.length ? ('?running=' + running.join(',')) : ''), function(response) {
 
 				common.liverefreshing = false;
 
