@@ -773,7 +773,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button{background-color:{0}}.radioimage.selected{border-color:{0}!important}.userborder{border-color:{0}}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', ''), 'usertheme');
+			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button,.ui-form>nav button[name=\'submit\'],.ui-largeform>nav button[name=\'submit\']{background-color:{0}}.radioimage.selected{border-color:{0}!important}.userborder{border-color:{0}}.userbg{background-color:{0}}.userhover:hover{background-color:{0}!important}.links a > i,.links button > i,.links .app > i{color:{0}}.focused{background-color:{0}!important;color:white!important}.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}!important}{1}'.format(user.colorscheme || '#4285f4', ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
