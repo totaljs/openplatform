@@ -258,7 +258,7 @@ h3 .fa { margin-right: 5px; }
 .ui-dark .ui-filter-buttons button { background-color: #404040; }
 
 .keyvalue { border-bottom: 1px solid #E0E0E0; padding: 10px 0 5px; }
-.keyvalue .key { font-size: 10px; font-weight: bold; color: black; }
+.keyvalue .key { font-size: 10px; font-weight: bold; color: black; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 .keyvalue .key:after { content: ':'; }
 .keyvalue .key i { margin-right: 4px; }
 .keyvalue .value { font-size: 12px; }
@@ -268,7 +268,7 @@ h3 .fa { margin-right: 5px; }
 .ui-dark .keyvalue .key { color: white; }
 
 .keyvalue2 { border: 1px solid #E0E0E0; padding: 10px; border-radius: 2px; background-color: white; }
-.keyvalue2 .key { font-size: 12px; font-weight: bold; color: black; }
+.keyvalue2 .key { font-size: 12px; font-weight: bold; color: black; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 .keyvalue2 .key:after { content: ':'; }
 .keyvalue2 .key i { margin-right: 4px; }
 .keyvalue2 .value { font-size: 16px; }
