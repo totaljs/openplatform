@@ -97,7 +97,7 @@ footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; background: lin
 .console { font-size: 12px; cursor: pointer; float: left; }
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
-.testmode { position: absolute; background-color: red; color: white; font-size: 8px; font-weight: bold; padding: 0 3px; margin: 4px 0 0 8px; border-radius: 2px; vertical-align: middle; line-height: 10px; vertical-align: top; top: 35px; left: 2px; }
+.testmode { position: absolute; background-color: red; color: white; font-size: 8px; font-weight: bold; padding: 0 3px; margin: 4px 0 0 8px; border-radius: 2px; vertical-align: middle; line-height: 10px; vertical-align: top; top: 35px; left: 2px; z-index: 2 }
 
 .appnonotify { font-size: 10px; position: absolute; top: 3px; left: 36px; color: white; }
 .light .appnonotify { color: black; }
