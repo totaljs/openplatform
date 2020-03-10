@@ -141,7 +141,7 @@ NEWSCHEMA('Apps', function(schema) {
 		var model = $.clean();
 
 		if (!model.name) {
-			$.invalid('error-apps-offline');
+			$.invalid('error-apps-meta');
 			return;
 		}
 
@@ -186,6 +186,12 @@ NEWSCHEMA('Apps', function(schema) {
 			return;
 
 		var model = $.clean();
+
+		if (!model.name) {
+			$.invalid('error-apps-meta');
+			return;
+		}
+
 		model.dtupdated = NOW;
 
 		if (model.rebuildaccesstoken)
