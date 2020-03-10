@@ -2,7 +2,7 @@ MAIN.fields = ['id', 'supervisorid', 'deputyid', 'groupid', 'directory', 'direct
 
 const Fs = require('fs');
 const BOOL = { '1': 'true', 'true': 'true' };
-const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1, repo: 1 };
+const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1, repo: 1, checksum: 1 };
 
 function isdatemodified(dt1, dt2) {
 	if (dt1 instanceof Date && dt2 instanceof Date)
@@ -40,6 +40,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('password', 'String(70)'); // optional 30, but 70 is because of backward compatibility
 	schema.define('groups', '[String]');
 	schema.define('colorscheme', 'Lower(7)');
+	schema.define('checksum', 'String(30)'); // a custom helper
 	schema.define('background', 'String(150)');
 	schema.define('blocked', Boolean);
 	schema.define('welcome', Boolean);
@@ -428,6 +429,9 @@ NEWSCHEMA('Users', function(schema) {
 				data.sa = model.sa;
 				modified = true;
 			}
+
+			if ((!keys || keys.checksum) && response.checksum !== model.checksum)
+				data.checksum = model.checksum;
 
 			if ((!keys || keys.reference) && response.reference !== model.reference) {
 				data.reference = model.reference;
@@ -834,7 +838,7 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			builder.fields(fieldsallpublic);
-			builder.subquery('approles', 'SELECT x.roles FROM tbl_user_app x WHERE x.userid=tbl_user.id AND x.appid=\'{0}\' LIMIT 1'.format(obj.app.id));
+			builder.subquery('appsroles', 'SELECT x.roles FROM tbl_user_app x WHERE x.userid=tbl_user.id AND x.appid=\'{0}\' LIMIT 1'.format(obj.app.id));
 
 			if (opt.sort)
 				builder.gridsort(opt.sort);
