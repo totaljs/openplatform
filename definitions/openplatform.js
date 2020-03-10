@@ -1,6 +1,8 @@
 // DB
 require('dbms').init(CONF.database, ERROR('DBMS'));
 
+// DBMS.measure && DBMS.measure(true);
+
 // Constants
 const Fs = require('fs');
 const DB_ONLINE = { online: true };
@@ -764,9 +766,11 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	if (!fields || fields.member)
 		obj.member = user.member;
 
-	if ((!fields || fields.roles)) {
+	if (!fields || fields.roles) {
+
 		var appdata = user.apps ? user.apps[app.id] : null;
 		var appsroles = appdata ? appdata.roles.slice(0) : user.appsroles ? user.appsroles.slice(0) : null;
+
 		if (appsroles && user.roles && user.roles.length) {
 			obj.roles = appsroles;
 			for (var i = 0; i < user.roles.length; i++) {
@@ -789,6 +793,7 @@ FUNC.makeprofile = function(user, type, app, fields) {
 
 	if (!fields || fields.volume)
 		obj.volume = user.volume;
+
 
 	var token;
 

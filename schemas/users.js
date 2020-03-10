@@ -834,7 +834,7 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			builder.fields(fieldsallpublic);
-			builder.subquery('approles', 'SELECT x.roles FROM tbl_user_app x WHERE x.userid=tbl_user.id AND x.appid=\'{0}\' LIMIT 1'.format(obj.app.id));
+			builder.subquery('appsroles', 'SELECT x.roles FROM tbl_user_app x WHERE x.userid=tbl_user.id AND x.appid=\'{0}\' LIMIT 1'.format(obj.app.id));
 
 			if (opt.sort)
 				builder.gridsort(opt.sort);

@@ -17,6 +17,7 @@ error-file-type              : Invalid file type.
 error-apps-404               : Application not found.
 error-apps-offline           : Application is offline.
 error-apps-exists            : Application already exists in database.
+error-apps-meta              : Application has invalid meta data.
 error-pin                    : PIN is invalid.
 error-services-app           : Invalid application.
 error-services-notsupported  : Application doesn't support services.
