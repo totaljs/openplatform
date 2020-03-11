@@ -19,6 +19,8 @@ NEWSCHEMA('Users/Assign', function(schema) {
 				var pggroupid = PG_ESCAPE(model.add[i]);
 				applyfilter(db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_append(groups,{0})'.format(pggroupid)), model.filter).query('NOT ({0}=ANY(groups))'.format(pggroupid));
 			}
+
+			db.debug();
 		}
 
 		if (model.rem && model.rem.length) {
@@ -70,8 +72,8 @@ NEWSCHEMA('Users/Assign', function(schema) {
 		opt.middlename && builder.gridfilter('middlename', opt, String);
 		opt.phone && builder.gridfilter('phone', opt, String);
 		opt.email && builder.gridfilter('email', opt, String);
-		opt.group && builder.query('$1=ANY (groups)', [opt.group]);
-		opt.groups && builder.query('$1=ANY (groups)', [opt.groups]);
+		opt.group && builder.query('groups && ' + PG_ESCAPE('{' + opt.group + '}'));
+		opt.groups && builder.query('groups && ' + PG_ESCAPE('{' + opt.groups + '}'));
 		opt.modified && builder.where('dtmodified', '>', opt.modified);
 		opt.logged && builder.where('dtlogged', '<', opt.logged);
 		opt.dtupdated && builder.gridfilter('dtupdated', opt, Date);
