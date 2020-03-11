@@ -62,13 +62,16 @@ NEWSCHEMA('Users/Assign', function(schema) {
 		opt.otp && builder.query('otp=' + (BOOL[opt.otp] || 'false'));
 		opt.online && builder.query('online=' + (BOOL[opt.online] || 'false'));
 		opt.q && builder.search('search', opt.q);
+		opt.reference && builder.gridfilter('reference', opt, String);
 		opt.name && builder.gridfilter('name', opt, String);
+		opt.note && builder.gridfilter('note', opt, String);
 		opt.firstname && builder.gridfilter('firstname', opt, String);
 		opt.lastname && builder.gridfilter('lastname', opt, String);
 		opt.middlename && builder.gridfilter('middlename', opt, String);
 		opt.phone && builder.gridfilter('phone', opt, String);
 		opt.email && builder.gridfilter('email', opt, String);
 		opt.group && builder.query('$1=ANY (groups)', [opt.group]);
+		opt.groups && builder.query('$1=ANY (groups)', [opt.groups]);
 		opt.modified && builder.where('dtmodified', '>', opt.modified);
 		opt.logged && builder.where('dtlogged', '<', opt.logged);
 		opt.dtupdated && builder.gridfilter('dtupdated', opt, Date);
