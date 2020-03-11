@@ -14,13 +14,13 @@ NEWSCHEMA('Users/Assign', function(schema) {
 		var model = $.model;
 		var db = DBMS();
 
+		FUNC.log('users/assign', null, 'Add: ' + model.add.join(',') + ', Rem: ' + model.rem.join(','), $);
+
 		if (model.add && model.add.length) {
 			for (var i = 0; i < model.add.length; i++) {
 				var pggroupid = PG_ESCAPE(model.add[i]);
 				applyfilter(db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_append(groups,{0})'.format(pggroupid)), model.filter).query('NOT ({0}=ANY(groups))'.format(pggroupid));
 			}
-
-			db.debug();
 		}
 
 		if (model.rem && model.rem.length) {
@@ -35,7 +35,9 @@ NEWSCHEMA('Users/Assign', function(schema) {
 				$.invalid(err);
 			else {
 				$.success();
-				FUNC.refreshgroupsrolesdelay();
+				FUNC.repairgroupsroles(function() {
+					FUNC.refreshgroupsrolesdelay();
+				});
 			}
 		});
 	});

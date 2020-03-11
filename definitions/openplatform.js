@@ -1,7 +1,7 @@
 // DB
 require('dbms').init(CONF.database, ERROR('DBMS'));
 
-// DBMS.measure && DBMS.measure(true);
+DBMS.measure && DBMS.measure(true);
 
 // Constants
 const Fs = require('fs');
@@ -947,7 +947,30 @@ FUNC.refreshgroupsrolesdelay = function() {
 	setTimeout2('refreshgroupsrolesdelay', FUNC.refreshgroupsroles, 2000);
 };
 
+// Repairs empty groups
+FUNC.repairgroupsroles = function(callback) {
+	DBMS().query('SELECT groups FROM tbl_user WHERE groupshash IS NULL OR groupshash=\'\' AND groups IS NOT NULL AND array_length(groups,1) IS NOT NULL GROUP BY groups').data(function(response) {
+
+		if (!response) {
+			callback && callback();
+			return;
+		}
+
+		response.wait(function(item, next) {
+			var arr = item.groups.slice(0);
+			arr.sort();
+			var groupshash = arr.join(',').crc32(true) + '';
+			if (groupshash)
+				DBMS().query('UPDATE tbl_user SET groupshash=\'{0}\' WHERE array_to_string("groups", \',\')=$1'.format(groupshash), [item.groups.join(',')]).callback(next);
+			else
+				next();
+		}, callback);
+	});
+};
+
+
 FUNC.refreshgroupsroles = function(callback) {
+
 	var db = DBMS();
 	db.query('SELECT id, name, note, dtcreated, dtupdated FROM tbl_group ORDER BY 2').set('groups');
 	db.query('SELECT id, name FROM cl_role ORDER BY 2').set('roles');
@@ -1081,6 +1104,7 @@ FUNC.refreshgroupsroles = function(callback) {
 				// Repairs bad group hash
 				var hashes = Object.keys(groupshashes);
 				var db = DBMS();
+
 				hashes.length && db.update('tbl_user', { groupshash: '' }).notin('groupshash', hashes);
 				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash IS NULL OR tbl_user.groupshash=\'\') RETURNING userid');
 
