@@ -258,13 +258,13 @@ input:invalid { box-shadow: none; }
 .ui-form-title .ui-form-button-close { float: right; cursor: pointer; font-size: 18px; margin: -2px 0 0 0; transition: all 0.2s; background: none; border: 0; outline: 0; height: auto; color: red; text-align: right !important; width: 20px; padding: 0; }
 .ui-form-title .ui-form-button-close:hover { transform: scale(1.2); }
 .ui-form-title > span { font-weight: bold; }
-.ui-form-title > .fa, .ui-form-title > .far { margin-right: 7px; }
+.ui-form-title > i { margin-right: 7px; }
 .ui-dark .ui-form-title { background-color: #191919; border-bottom-color: #191919; color: white; }
 .ui-form > nav { padding: 0 20px 0; border-top: 1px solid #E0E0E0; background-color: white; border-radius: 0 0 2px 2px; line-height: 65px; height: 65px; display: block; float: none; position: relative; }
 .ui-dark .ui-form > nav { background-color: #202020; border-top-color: #303030; }
 .ui-form > nav button { border: 0; margin: 15px 0 0; background-color: #F0F0F0; height: 34px; padding: 0 20px; color: black; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; float: left; }
 .ui-dark .ui-form nav button { border-color: #202020; background-color: #505050; color: #E0E0E0; }
-.ui-form > nav button i { width: 16px; }
+.ui-form > nav button i { width: 16px; margin-right: 3px; }
 .ui-form > nav button:hover { opacity: 0.9; }
 .ui-form > nav button:active { background-color: #D0D0D0; }
 .ui-form > nav button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
@@ -1435,7 +1435,7 @@ input:invalid { box-shadow: none; }
 .ui-dark .ui-largeform > nav { background-color: #202020; border-top-color: #303030; }
 .ui-largeform > nav button { border: 0; margin: 15px 0 0; background-color: #F0F0F0; height: 34px; padding: 0 20px; color: black; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; float: left; min-width: 80px;}
 .ui-dark .ui-largeform > nav button { border-color: #202020; background-color: #505050; color: #E0E0E0; }
-.ui-largeform > nav button i { width: 16px; }
+.ui-largeform > nav button i { width: 16px; margin-right: 3px; }
 .ui-largeform > nav button:hover { opacity: 0.9; }
 .ui-largeform > nav button:active { background-color: #D0D0D0; }
 .ui-largeform > nav button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: silver !important; cursor: not-allowed; box-shadow: none; }
