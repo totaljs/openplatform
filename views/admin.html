@@ -411,7 +411,7 @@
 			var builder = [];
 			for (var i = 0; i < apps.length; i++) {
 				var item = apps[i];
-				builder.push(checkbox.format(item.id, 'app', item.name));
+				builder.push(checkbox.format(item.id, 'app', item.title));
 				if (item.roles.length) {
 					builder.push('<div class="{0}-roles hidden" data-id="{1}">'.format(cls, item.id));
 					for (var j = 0; j < item.roles.length; j++)

@@ -50,6 +50,13 @@
 					<div class="value">{{ value.meta.origin | join | def }}</div>
 				</div>
 				{{ fi }}
+				{{ if value.meta.services }}
+				<div class="keyvalue">
+					<div class="key">@(Services)</div>
+					<div class="value">{{ value.meta.services | joinobject | def }}</div>
+				</div>
+				{{ fi }}
+
 				<br />
 				<table class="table table-small nmb table-bordered">
 					<thead>
@@ -158,6 +165,12 @@
 </div>
 
 <script>
+
+	Thelpers.joinobject = function(val, divider) {
+		var keys = Object.keys(val || EMPTYOBJECT);
+		return val ? Thelpers.encode(keys.join(divider == null ? ', ' : divider)) : '';
+	};
+
 	PLUGIN('appsprofilepanel', function(exports) {
 
 		exports.reload = function(com) {
