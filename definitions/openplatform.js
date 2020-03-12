@@ -1,7 +1,7 @@
 // DB
 require('dbms').init(CONF.database, ERROR('DBMS'));
 
-DBMS.measure && DBMS.measure(true);
+// DBMS.measure && DBMS.measure(true);
 
 // Constants
 const Fs = require('fs');
