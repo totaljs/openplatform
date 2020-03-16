@@ -106,7 +106,7 @@
 					@{fi}
 
 					@{if CONF.welcome}
-					<div class="app exec" data-exec="internalapp" data-id="_welcome" id="welcomeapp">
+					<div class="app exec internal" data-exec="internalapp" data-id="_welcome" id="welcomeapp">
 						<span class="close exec" data-exec="Dashboard/close" data-id="_welcome"><i class="fa fa-times"></i></span>
 						<i class="fa fa-flag"></i>@(Welcome)
 					</div>
@@ -351,7 +351,7 @@
 		$(document).on('click', '.app', function() {
 			var el = $(this);
 
-			if (el.hclass('app-offline') || el.hclass('app-disabled') || el.attrd('exec') === 'internallogoff' || el.hclass('app-modal'))
+			if (el.hclass('app-offline') || el.hclass('app-disabled') || el.hclass('internal') || el.attrd('exec') === 'internallogoff' || el.hclass('app-modal'))
 				return;
 
 			var id = el.attrd('id');
