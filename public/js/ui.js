@@ -5258,13 +5258,17 @@ COMPONENT('console', function(self, config) {
 
 	self.show = function(id) {
 
-		if (current === id || !ready)
+		if (current === id)
 			return;
 
-		etabs.find(cls2 + '-selected').rclass(cls + '-selected');
-		etabs.find(cls2 + '-tab[data-id="{0}"]'.format(id)).aclass(cls + '-selected');
-		current = id;
-		self.render_logs(source[id]);
+		WAIT(function() {
+			return ready;
+		}, function() {
+			etabs.find(cls2 + '-selected').rclass(cls + '-selected');
+			etabs.find(cls2 + '-tab[data-id="{0}"]'.format(id)).aclass(cls + '-selected');
+			current = id;
+			self.render_logs(source[id]);
+		});
 	};
 
 	self.rebind = function(path, value) {

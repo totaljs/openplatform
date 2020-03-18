@@ -1174,6 +1174,18 @@
 				if (NAV.query.password && !user.guest)
 					EXEC('Dashboard/showprofile');
 
+				if (NAV.query.open) {
+					var appsearch = NAV.query.open.toLowerCase();
+					for (var i = 0; i < user.apps.length; i++) {
+						var tmp = user.apps[i];
+						var name = (tmp.name + ' ' + tmp.title).toLowerCase();
+						if (name.indexOf(appsearch) !== -1) {
+							EXEC('Dashboard/navigate', { id: tmp.id });
+							break;
+						}
+					}
+				}
+
 				var share = NAV.query.share;
 				if (share) {
 					var diff = share.length % 4;
