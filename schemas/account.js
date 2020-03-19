@@ -178,7 +178,7 @@ NEWSCHEMA('Account', function(schema) {
 		var keys = Object.keys(model);
 
 		if (modified) {
-			user.dtmodified = NOW;
+			model.dtmodified = user.dtmodified = NOW;
 			keys.push('dtmodified');
 		}
 
