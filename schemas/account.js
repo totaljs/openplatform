@@ -118,9 +118,17 @@ NEWSCHEMA('Account', function(schema) {
 		else
 			model.status = undefined;
 
-		user.notifications = model.notifications;
-		user.notificationsemail = model.notificationsemail;
+		if (user.notifications !== model.notifications) {
+			user.notifications = model.notifications;
+			modified = true;
+		}
+
 		user.notificationsphone = model.notificationsphone;
+
+		if (user.notificationsemail !== model.notificationsemail) {
+			user.notificationsemail = model.notificationsemail;
+			modified = true;
+		}
 
 		if (user.phone !== model.phone) {
 			user.phone = model.phone;
