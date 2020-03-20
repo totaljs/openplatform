@@ -247,9 +247,16 @@
 	Thelpers.runningapps = function(value) {
 		if (!value || !value.length)
 			return DEF.empty;
+
+		value = value.trim();
+
+		if (!value.length)
+			return DEF.empty();
+
 		var builder = [];
 		for (var i = 0; i < value.length; i++)
 			builder.push(Thelpers.running(value[i]));
+
 		return builder.join(', ');
 	};
 
@@ -332,7 +339,7 @@
 		var checkbox = '<div data-id="{0}" data-type="{1}" class="' + cls + '-checkbox"><i class="fa"></i><span>{2}</span></div>';
 		var skip = false;
 		var cache;
-		var cachearr;
+		var cachearr = [];
 
 		self.make = function() {
 			self.aclass(cls);
@@ -408,6 +415,7 @@
 		};
 
 		self.redraw = function() {
+
 			var builder = [];
 			for (var i = 0; i < apps.length; i++) {
 				var item = apps[i];

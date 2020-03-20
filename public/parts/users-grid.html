@@ -88,6 +88,9 @@
 					response.appsroles = {};
 					response.password = '';
 
+					if (response.running)
+						response.running = response.running.trim();
+
 					if (response.repo)
 						response.repo = JSON.stringify(response.repo, null, '  ');
 					else

@@ -507,7 +507,7 @@ T2331            : ID
 
 // public/panels/users-profile.html, public/parts/users-grid.html
 T135335054       : Prezývka
-T-2013470302     : Zaznamenané
+T-2013470302     : Prihlásený
 T2390573         : Muž
 T2100660076      : Žena
 T-1808614382     : Stav

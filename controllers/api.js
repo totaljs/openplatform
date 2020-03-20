@@ -197,7 +197,7 @@ function json_profile() {
 
 	if (self.user.running !== running) {
 		self.user.running = running;
-		DBMS().modify('tbl_user', { running: (running || '').split(',') }).where('id', self.user.id);
+		DBMS().modify('tbl_user', { running: (running || '').split(',').trim() }).where('id', self.user.id);
 	}
 
 	self.user.ping = NOW;
