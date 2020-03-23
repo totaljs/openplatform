@@ -295,7 +295,7 @@ NEWSCHEMA('Users', function(schema) {
 
 		if ($.model.welcome && !model.blocked && !model.inactive) {
 			if ($.req)
-				$.model.token = ENCRYPTREQ($.req, { id: model.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
+				$.model.token = ENCRYPT({ id: model.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
 			MAIL(model.email, TRANSLATOR(model.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', $.model, model.language);
 		}
 
@@ -669,7 +669,7 @@ NEWSCHEMA('Users', function(schema) {
 				var mailmodel = {};
 				mailmodel.firstname = response.firstname;
 				mailmodel.id = response.id;
-				mailmodel.token = ENCRYPTREQ($.req, { id: response.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
+				mailmodel.token = ENCRYPT({ id: response.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
 				mailmodel.login = response.login;
 				MAIL(model.email, TRANSLATOR(response.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', mailmodel, response.language);
 			}

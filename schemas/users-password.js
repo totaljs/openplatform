@@ -28,7 +28,7 @@ NEWSCHEMA('Users/Password', function(schema) {
 			model.middlename = response.middlename;
 			model.name = response.name;
 			model.login = $.model.name;
-			model.token = ENCRYPTREQ($.req, { id: response.id, date: NOW, type: 'password' }, CONF.secretpassword);
+			model.token = ENCRYPT({ id: response.id, date: NOW, type: 'password' }, CONF.secretpassword);
 			model.email = response.email;
 
 			FUNC.log('password', response.id, response.name, $);
