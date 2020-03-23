@@ -46,7 +46,7 @@ function login() {
 
 	if (self.query.token) {
 		var data = DECRYPT(self.query.token, CONF.secretpassword);
-		if (data && data.date.add('2 days') > NOW) {
+		if (data && data.date && data.date.add('2 days') > NOW) {
 			FUNC.cookie(self, data.id, null, function() {
 				self.redirect(self.url + (data.type === 'password' ? '?password=1' : '?welcome=1'));
 			}, (self.headers['user-agent'] || '').parseUA() + ' ({0})'.format(self.ip));
