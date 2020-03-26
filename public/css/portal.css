@@ -26,7 +26,7 @@ header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px;
 .links .selected { font-weight: bold; color: white; }
 .links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin-right: 6px; float: left; line-height: 20px; }
 .links .app:hover, .links a:hover, .links button:hover { text-decoration: none; background-color: #303030; }
-.links b { position: absolute; font-size: 10px; left: 2px; color: white; width: 17px; height: 17px; line-height: 17px; border-radius: 100px; text-align: center; margin: 1px 0 0; background-color: #D33534; }
+.links b { position: absolute; font-size: 10px; left: 2px; color: white; width: 18px; height: 18px; line-height: 18px; border-radius: 100px; text-align: center; margin: 1px 0 0; background-color: #D33534; z-index: 1; }
 .links .app { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 2px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; cursor: pointer; user-select: none; height: 25px; background-color: transparent; }
 .links .app-progress{}
 .links .close { float: right; color: #D33534; display: none; margin-top: 0; }
@@ -152,7 +152,7 @@ h3 i { margin-right: 5px; }
 .light .user.selected { background-color: #E0E0E0; }
 
 .button-notifications { float: right; font-size: 18px; padding: 0; width: 45px; height: 44px; line-height: 44px; cursor: pointer; text-align: center; }
-.button-notifications span { font-size: 10px; width: 20px; height: 20px; line-height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 0; margin: 2px 0 0 7px; font-weight: bold; }
+.button-notifications span { font-size: 10px; width: 20px; height: 20px; line-height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 0; margin: 2px 0 0 7px; font-weight: bold; z-index: 1; }
 .button-notifications .fa { color: white; }
 .button-notifications .far { color: #606060; }
 

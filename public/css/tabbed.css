@@ -180,7 +180,7 @@ h3 i { margin-right: 5px; }
 .light .user.selected { background-color: #E0E0E0; }
 
 .button-notifications { float: right; font-size: 22px; padding: 0; width: 45px; height: 44px; line-height: 44px; cursor: pointer; text-align: center; }
-.button-notifications span { font-size: 10px; width: 20px; height: 20px; line-height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 0; margin: 2px 0 0 9px; font-weight: bold; }
+.button-notifications span { font-size: 10px; width: 20px; height: 20px; line-height: 20px; color: white; background-color: #D33634; position: absolute; text-align: center; border-radius: 100px; padding: 0; margin: 2px 0 0 9px; font-weight: bold; z-index: 1; }
 .button-notifications .fa { color: white; }
 .button-notifications .far { color: #606060; }
 
@@ -205,7 +205,7 @@ h3 i { margin-right: 5px; }
 #dashboardapps .isrunning { position: absolute; font-size: 9px; right: 2px; top: 2px; display: none; color: #777777; }
 .light #dashboardapps .isrunning { color: gray; }
 #dashboardapps .app-running .isrunning { display: block; }
-#dashboardapps .appunread { left: auto; right: 3px; margin-top: 9px; }
+#dashboardapps .appunread { left: auto; right: 3px; margin-top: 9px; z-index: 1; }
 
 .startmenu-apps .app > span { display: none; position: absolute; background-color: #D33634; color: white; z-index: 3; padding: 2px 5px; border-radius: 3px; font-size: 10px; right: 20px; top: 9px; }
 .startmenu-apps .app > span i { margin-right: 5px; }
