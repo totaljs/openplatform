@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 422;
+OP.version = 423;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -645,9 +645,13 @@ OP.emit = function(name, a, b, c, d, e) {
 OP.done = function(message, callback, loading) {
 
 	if (typeof(message) === 'function') {
+		loading = callback;
 		callback = message;
 		message = null;
 	}
+
+	if (loading == null)
+		loading = true;
 
 	var scope = window.M && window.M.scope ? window.M.scope() : null;
 	return function(response, err) {
