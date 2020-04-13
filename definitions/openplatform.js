@@ -466,11 +466,24 @@ FUNC.decodetoken = function($, callback) {
 	}
 };
 
+function checkorigin(origin, ip) {
+
+	var l = ip.length;
+
+	for (var i = 0; i < origin.length; i++) {
+		var o = origin[i];
+		if (o.substring(0, l) === ip)
+			return i;
+	}
+
+	return -1;
+}
+
 FUNC.unauthorized = function(obj, $) {
 	var app = obj.app;
 	var user = obj.user;
 	if (app.origin) {
-		if (app.origin.indexOf($.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
+		if (checkorigin(app.origin, $.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 			if (!ORIGINERRORS[$.ip]) {
 				FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
 				ORIGINERRORS[$.ip] = 1;
