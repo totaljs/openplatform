@@ -249,8 +249,16 @@ NEWSCHEMA('Apps', function(schema) {
 
 		if (!$.query.url || !$.query.url.isURL())
 			$.invalid('error-invalid-url');
-		else
-			RESTBuilder.GET($.query.url).exec($.done(true));
+		else {
+			RESTBuilder.GET($.query.url).exec(function(err, response, output) {
+				if (err)
+					$.invalid(err);
+				else {
+					response.hostname = output.hostname;
+					$.success(response);
+				}
+			});
+		}
 	});
 
 	// List of apps for apps
