@@ -466,13 +466,11 @@ FUNC.decodetoken = function($, callback) {
 	}
 };
 
-function checkorigin(origin, ip) {
+function checkorigin(origins, ip) {
 
-	var l = ip.length;
-
-	for (var i = 0; i < origin.length; i++) {
-		var o = origin[i];
-		if (o.substring(0, l) === ip)
+	for (var i = 0; i < origins.length; i++) {
+		var o = origins[i];
+		if (ip.substring(0, o.length) === o)
 			return i;
 	}
 
