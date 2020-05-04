@@ -136,10 +136,10 @@
 			<div class="caption">@(Employee data)</div>
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="input__?.company__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchcompany;dirplaceholder:@(Search or type a new)__''">@(Company)</div>
+					<div data---="input__?.company__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchcompany;dirempty:@(Empty);dirplaceholder:@(Search or type a new)__''">@(Company)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__?.locality__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchlocality;dirplaceholder:@(Search or type a new)__''">@(Location)</div>
+					<div data---="input__?.locality__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchlocality;dirempty:@(Empty);dirplaceholder:@(Search or type a new)__''">@(Location)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.contractid__dirsource:contracts;dirsearch:false;placeholder:@(Choose a contract type)__0">@(Contract type)</div>
@@ -147,7 +147,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="input__?.position__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchposition;dirplaceholder:@(Search or type a new)__''">@(Position)</div>
+					<div data---="input__?.position__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchposition;dirempty:@(Empty);dirplaceholder:@(Search or type a new)__''">@(Position)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="dynamicvalue__?.supervisorid__url:/api/op/users/{value}/?skipme=1;click:?/searchuser;placeholder:@(Choose a user)__''">@(Select <b>Supervisor</b>)</div>
@@ -163,7 +163,7 @@
 					<div class="help">@(<b>Custom reference</b> can contain an external idenficator of user.)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__?.groupid__maxlength:30;direxclude:false;dircustom:true;dirvalue:name;dirsource:?/searchgroupid;dirplaceholder:@(Search or type a new)__''">@(Group ID)</div>
+					<div data---="input__?.groupid__maxlength:30;direxclude:false;dircustom:true;dirvalue:name;dirsource:?/searchgroupid;dirempty:@(Empty);dirplaceholder:@(Search or type a new)__''">@(Group ID)</div>
 					<div class="help">@(<b>Group ID</b> is suitable for pairing of users from the same company or group.)</div>
 				</div>
 				<div class="col-md-4 m">

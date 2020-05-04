@@ -6495,14 +6495,25 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 					self.opt && self.opt.ajax(val, function(items) {
 						var builder = [];
 						var indexer = {};
+						var item;
+
 						for (var i = 0; i < items.length; i++) {
-							var item = items[i];
+							item = items[i];
 							if (self.opt.exclude && self.opt.exclude(item))
 								continue;
 							indexer.index = i;
 							resultscount++;
-							builder.push(self.opt.raw ? self.templateraw(item, indexer) : self.template(item, indexer));
+							builder.push(self.opt.ta(item, indexer));
 						}
+
+						if (self.opt.empty) {
+							item = {};
+							item[self.opt.key || 'name'] = self.opt.empty;
+							item.template = '<b>{0}</b>'.format(self.opt.empty);
+							indexer.index = -1;
+							builder.unshift(self.opt.ta(item, indexer));
+						}
+
 						skipclear = true;
 						self.opt.items = items;
 						container.html(builder);
@@ -6625,6 +6636,8 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 				builder.unshift(ta(item, indexer));
 			}
 		}
+
+		opt.ta = ta;
 
 		self.target = element[0];
 

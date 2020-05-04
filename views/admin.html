@@ -95,6 +95,8 @@
 
 <script>
 
+	CONFIG('datagrid,serverlisting,listing', 'pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items);');
+
 	MAKE('common', function(obj) {
 		if (!obj.page)
 			obj.page = 'dashboard';
