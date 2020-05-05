@@ -215,6 +215,11 @@ OP.init = function(callback, notembedded) {
 
 	OP.ready = false;
 
+	if (notembedded)
+		OP.is = true;
+
+	OP.embeded = !notembedded;
+
 	if (!callback)
 		callback = function(is) {
 			if (is == null) {
@@ -259,7 +264,12 @@ OP.init = function(callback, notembedded) {
 
 		if (notembedded) {
 			OP.ready = true;
-			callback && setTimeout(callback, 100);
+			var usr = window.user || {};
+			callback && setTimeout(callback, 100, null, usr);
+			OP.$process({ type: 'appearance', body: { colorscheme: usr.colorscheme, darkmode: usr.darkmode }});
+			window.addEventListener('resize', function() {
+				OP.emit('resize');
+			});
 			return;
 		}
 
