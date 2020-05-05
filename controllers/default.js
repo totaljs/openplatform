@@ -44,13 +44,7 @@ function accesstoken(token) {
 		return;
 	}
 
-	var url = self.query.url;
-
-	if (!url) {
-		self.invalid('error-redirecturl');
-		return;
-	}
-
+	var url = self.query.url || app.frame;
 	self.id = app.id;
 
 	$WORKFLOW('Apps', 'run', function(err, response) {
