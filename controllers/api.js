@@ -129,6 +129,7 @@ function json_verify() {
 	FUNC.decodeauthtoken(self, function(obj) {
 		var app = obj.app;
 		var user = obj.user;
+
 		if (user.online)
 			self.json(FUNC.meta(app, user, true));
 		else

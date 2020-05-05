@@ -26,6 +26,7 @@ NEWSCHEMA('Apps', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
+		var isadminarea = $.req && $.req.uri && $.req.uri.pathname ? $.req.uri.pathname.indexOf('/op/apps/') !== -1 : false;
 		var arr = [];
 		for (var i = 0; i < MAIN.apps.length; i++) {
 			var app = MAIN.apps[i];
@@ -34,6 +35,10 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.name = app.name;
 			obj.title = $.user && app.titles ? (app.titles[$.user.language] || app.title) : app.title;
 			obj.url = app.url;
+
+			if (isadminarea)
+				obj.accesstoken = app.accesstoken;
+
 			obj.reference = app.reference;
 			obj.allowguestuser = app.allowguestuser;
 			obj.allowreadusers = app.allowreadusers;
@@ -388,7 +393,8 @@ NEWSCHEMA('Apps', function(schema) {
 			}
 
 			$.callback(data);
-		}
+		} else
+			$.invalid('error-apps-404');
 
 	});
 

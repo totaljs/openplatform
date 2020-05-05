@@ -10,6 +10,7 @@ exports.install = function() {
 	ROUTE('GET /lock/', lock);
 	ROUTE('+GET /_intro/', 'intro');
 	ROUTE('+GET /_profile/', 'profile');
+	ROUTE('+GET /access/{token}/', accesstoken);
 
 	FILE('/manifest.json', manifest);
 
@@ -32,6 +33,46 @@ function manifest(req, res) {
 	meta.start_url = '/';
 	meta.display = 'standalone';
 	res.json(meta);
+}
+
+function accesstoken(token) {
+
+	var app = MAIN.apps.findItem('accesstoken', token);
+	var self = this;
+	if (!app) {
+		self.throw401();
+		return;
+	}
+
+	var url = self.query.url;
+
+	if (!url) {
+		self.invalid('error-redirecturl');
+		return;
+	}
+
+	self.id = app.id;
+
+	$WORKFLOW('Apps', 'run', function(err, response) {
+
+		var builder = [];
+		builder.push('openplatform=' + encodeURIComponent(response.verify));
+
+		if (response.rev)
+			builder.push('rev=' + response.rev);
+
+		if (self.user.language)
+			builder.push('language=' + self.user.language);
+
+		var index = url.indexOf('?');
+		if (index === -1)
+			url += '?';
+		else
+			url += '&';
+
+		self.redirect(url + builder.join('&'));
+	}, self);
+
 }
 
 function login() {

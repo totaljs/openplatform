@@ -1,5 +1,6 @@
 /*auto*/
 
+.monospace { font-family: monospace; }
 button { outline: 0; }
 .hidden { display: none; }
 .noscroll { overflow: hidden; }

@@ -27,6 +27,7 @@
 				{ name: 'services', text: '@(Services)', width: 100, template: '{{ services | boolean }}', align: 1, filter: false, sort: false },
 				{ name: 'responsive', text: '@(Mobile)', width: 100, template: '{{ responsive | boolean }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 				{ name: 'position', text: '@(Position)', width: 100, align: 1 },
+				{ name: 'accesstoken', text: '@(Access token)', width: 250, template: '<span data-token="{{ accesstoken }}" class="exec link" data-exec="?/showaccesstoken"><i class="fa fa-eye mr5"></i>@(Show token) ************</span>', sort: false, filter: false },
 				{ name: 'dtsync', text: '@(Refreshed)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
 				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]', filter: false },
 				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]', filter: false }
@@ -55,6 +56,11 @@
 			});
 		};
 
+		exports.showaccesstoken = function(el) {
+			el.replaceWith('<span class="monospace">{0}</span>'.format(el.attrd('token')));
+			OP.play('success');
+		};
+
 		exports.create = function(url) {
 
 			if (typeof(url) !== 'string')
@@ -76,7 +82,7 @@
 			opt.items = [];
 			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'trash-o red' });
 
-			SETTER('menu', 'show', opt);
+			SETTER('menu/show', opt);
 
 			opt.callback = function(item) {
 

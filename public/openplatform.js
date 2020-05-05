@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 423;
+OP.version = 424;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -211,7 +211,7 @@ OP.progress = function(p) {
 	return OP.send('progress', p);
 };
 
-OP.init = function(callback) {
+OP.init = function(callback, notembedded) {
 
 	OP.ready = false;
 
@@ -256,6 +256,12 @@ OP.init = function(callback) {
 	OP.accesstoken = accesstoken;
 
 	$(document).ready(function() {
+
+		if (notembedded) {
+			OP.ready = true;
+			callback && setTimeout(callback, 100);
+			return;
+		}
 
 		var timeout = setTimeout(function() {
 			timeout = null;
