@@ -2,6 +2,16 @@
 -- TABLES
 -- ==============================
 
+CREATE TABLE "public"."cl_config" (
+	"id" varchar(30) NOT NULL,
+	"type" varchar(10),
+	"value" text,
+	"name" varchar(50),
+	"dtcreated" timestamp DEFAULT now(),
+	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
 CREATE TABLE "public"."tbl_user" (
 	"id" varchar(25) NOT NULL,
 	"supervisorid" varchar(25),
@@ -274,6 +284,24 @@ CREATE TABLE "public"."tbl_group_app" (
 	PRIMARY KEY ("id")
 );
 
+CREATE TABLE "public"."tbl_oauth" (
+	"id" varchar(25) NOT NULL,
+	"accesstoken" varchar(50),
+	"name" varchar(40),
+	"url" varchar(500),
+	"icon" varchar(30),
+	"version" varchar(20),
+	"allowreadprofile" int2 DEFAULT 0,
+	"allowreadapps" int2 DEFAULT 0,
+	"allowreadusers" int2 DEFAULT 0,
+	"allowreadmeta" int2 DEFAULT 0,
+	"blocked" bool DEFAULT false,
+	"dtused" timestamp,
+	"dtcreated" timestamp,
+	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
 CREATE TABLE "public"."tbl_usage" (
 	"id" varchar(10) NOT NULL,
 	"online" int4 DEFAULT 0,
@@ -320,6 +348,23 @@ CREATE TABLE "public"."tbl_usage_browser" (
 	"mobile" bool DEFAULT false,
 	"date" date,
 	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_usage_oauth" (
+	"id" varchar(35) NOT NULL,
+	"oauthid" varchar(25),
+	"count" int4 DEFAULT 0,
+	"mobile" int4 DEFAULT 0,
+	"desktop" int4 DEFAULT 0,
+	"windowed" int4 DEFAULT 0,
+	"tabbed" int4 DEFAULT 0,
+	"portal" int4 DEFAULT 0,
+	"lightmode" int4 DEFAULT 0,
+	"darkmode" int4 DEFAULT 0,
+	"date" date,
+	"dtupdated" timestamp,
+	CONSTRAINT "tbl_usage_oauth_oauthid_fkey" FOREIGN KEY ("oauthid") REFERENCES "public"."tbl_oauth"("id") ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY ("id")
 );
 
@@ -439,5 +484,37 @@ COMMENT ON COLUMN "public"."tbl_app"."frame" IS 'Frame URL address';
 -- DATA
 -- ==============================
 
--- MAIN SETTINGS
-INSERT INTO "public"."tbl_settings" ("id", "body", "dtupdated", "dtcreated") VALUES ('openplatform', ('{"url": "https://YOURDOMAIN.com", "name": "OpenPlatform", "smtp": "localhost", "test": true, "email": "info@totaljs.com", "guest": true, "welcome": "", "background": "", "accesstoken": "' || (SELECT md5(random()::text)) || '", "colorscheme": "#4285f4", "marketplace": "", "verifytoken": "", "smtpsettings": ""}')::jsonb, NULL, NOW());
+-- INSERT DEFAULT CONFIGURATION
+INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VALUES
+('accesstoken', 'string', (SELECT md5(random()::text)), 'accesstoken', NOW()),
+('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),
+('allowbackground', 'boolean', 'true', 'allowbackground', NOW()),
+('allowclock', 'boolean', 'true', 'allowclock', NOW()),
+('allowcreate', 'string', '', 'allowcreate', NOW()),
+('allowdesktop', 'boolean', 'true', 'allowdesktop', NOW()),
+('allowdesktopfluid', 'boolean', 'true', 'allowdesktopfluid', NOW()),
+('allowmembers', 'boolean', 'true', 'allowmembers', NOW()),
+('allownickname', 'boolean', 'true', 'allownickname', NOW()),
+('allownotifications', 'boolean', 'true', 'allownotifications', NOW()),
+('allowprofile', 'boolean', 'true', 'allowprofile', NOW()),
+('allowsmembers', 'boolean', 'false', 'allowsmembers', NOW()),
+('allowstatus', 'boolean', 'true', 'allowstatus', NOW()),
+('allowtheme', 'boolean', 'true', 'allowtheme', NOW()),
+('allowaccesstoken', 'boolean', 'true', 'allowaccesstoken', NOW()),
+('allowoauth', 'boolean', 'true', 'allowoauth', NOW()),
+('background', 'string', '', 'background', NOW()),
+('colorscheme', 'string', '#4285f4', 'colorscheme', NOW()),
+('cookie_expiration', 'string', '3 days', 'cookie_expiration', NOW()),
+('defaultappid', 'string', '', 'defaultappid', NOW()),
+('email', 'string', 'info@totaljs.com', 'email', NOW()),
+('guest', 'boolean', 'true', 'guest', NOW()),
+('marketplace', 'string', '', 'marketplace', NOW()),
+('maxmembers', 'number', '10', 'maxmembers', NOW()),
+('name', 'string', 'OpenPlatform', 'name', NOW()),
+('sender', 'string', 'info@totaljs.com', 'sender', NOW()),
+('smtp', 'string', 'localhost', 'smtp', NOW()),
+('smtpsettings', 'json', '{"user":"","password":"","timeout":2000}', 'smtpsettings', NOW()),
+('test', 'boolean', 'true', 'test', NOW()),
+('url', 'string', 'https://YOURDOMAIN.com', 'url', NOW()),
+('verifytoken', 'string', SUBSTRING((SELECT md5(random()::text)), 0, 10), 'verifytoken', NOW()),
+('welcome', 'string', '', 'welcome', NOW());

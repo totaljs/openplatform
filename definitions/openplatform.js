@@ -17,7 +17,7 @@ var DDOS = {};
 var ORIGINERRORS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4500;           // Current version of OpenPlatform
+MAIN.version = 4600;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -272,6 +272,39 @@ FUNC.profilelive = function(user) {
 	}
 
 	return meta;
+};
+
+FUNC.reconfigure = function(callback) {
+	DBMS().find('cl_config').fields('id,type,value').data(function(response) {
+		for (var i = 0; i < response.length; i++) {
+			var item = response[i];
+			var val = item.value;
+			switch (item.type) {
+				case 'number':
+					val = +val;
+					break;
+				case 'boolean':
+					val = val === '1' || val === 'true';
+					break;
+				case 'date':
+					val = val.parseDate();
+					break;
+				case 'object':
+					val = JSON.parse(val);
+					break;
+			}
+
+			if (item.id === 'smtpsettings') {
+				item.id = 'mail_smtp_options';
+				val = val.parseJSON();
+			}
+
+			CONF[item.id] = val;
+		}
+
+		MAIN.id = CONF.url.crc32(true);
+		callback && callback();
+	});
 };
 
 // Output see the app only
@@ -1573,12 +1606,16 @@ ON('service', function(counter) {
 		}
 	}
 
+	// Auto-reconfiguration
+	if (counter % 60 === 0)
+		FUNC.reconfigure();
+
 	MAIN.session.count(usage_online);
 	SIMPLECACHE = {};
 });
 
 if (global.UPDATE)
-	global.UPDATE([4400, 4500], ERROR('Update'), 'updates');
+	global.UPDATE([4400, 4500, 4600], ERROR('Update'), 'updates');
 else
 	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');
 

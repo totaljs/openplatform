@@ -96,9 +96,9 @@ COMPONENT('xs', function(self, config) {
 	};
 });
 
-COMPONENT('checkbox', function(self, config) {
+COMPONENT('checkbox', function(self, config, cls) {
 
-	self.nocompile();
+	self.nocompile && self.nocompile();
 
 	self.validate = function(value) {
 		return (config.disabled || !config.required) ? true : (value === true || value === 'true' || value === 'on');
@@ -112,7 +112,7 @@ COMPONENT('checkbox', function(self, config) {
 				self.find('span').html(value);
 				break;
 			case 'required':
-				self.find('span').tclass('ui-checkbox-label-required', value);
+				self.find('span').tclass(cls + '-label-required', value);
 				break;
 			case 'disabled':
 				self.tclass('ui-disabled', value);
@@ -124,19 +124,20 @@ COMPONENT('checkbox', function(self, config) {
 	};
 
 	self.make = function() {
-		self.aclass('ui-checkbox');
-		self.html('<div><i class="fa fa-{2}"></i></div><span{1}>{0}</span>'.format(config.label || self.html(), config.required ? ' class="ui-checkbox-label-required"' : '', config.checkicon || 'check'));
+		self.aclass(cls);
+		self.html('<div><i class="fa fa-{2}"></i></div><span{1}>{0}</span>'.format(config.label || self.html(), config.required ? (' class="' + cls + '-label-required"') : '', config.checkicon || 'check'));
 		config.disabled && self.aclass('ui-disabled');
 		self.event('click', function() {
-			if (config.disabled)
-				return;
-			self.dirty(false);
-			self.getter(!self.get());
+			if (!config.disabled) {
+				self.dirty(false);
+				self.getter(!self.get());
+			}
 		});
 	};
 
 	self.setter = function(value) {
-		self.tclass('ui-checkbox-checked', !!value);
+		var is = config.reverse ? !value : !!value;
+		self.tclass(cls + '-checked', is);
 	};
 });
 
@@ -8685,14 +8686,14 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		isecolumns = false;
 		ecolumns.aclass('hidden');
 		if (use) {
-			var hidden = {};
-			ecolumns.find('input').each(function() {
-				hidden[this.value] = !this.checked;
+			var nothidden = {};
+			ecolumns.find('.dg-columns-checkbox-checked').each(function() {
+				nothidden[this.getAttribute('data-id')] = true;
 			});
 			self.cols(function(cols) {
 				for (var i = 0; i < cols.length; i++) {
 					var col = cols[i];
-					col.hidden = hidden[col.id] === true;
+					col.hidden = nothidden[col.id] !== true;
 				}
 			});
 		}
@@ -8736,7 +8737,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		if (config.exec)
 			pagination = '<div class="dg-footer hidden"><div class="dg-pagination-items hidden-xs"></div><div class="dg-pagination"><button name="page-first" disabled><i class="fa fa-angle-double-left"></i></button><button name="page-prev" disabled><i class="fa fa-angle-left"></i></button><div><input type="text" name="page" maxlength="5" class="dg-pagination-input" /></div><button name="page-next" disabled><i class="fa fa-angle-right"></i></button><button name="page-last" disabled><i class="fa fa-angle-double-right"></i></button></div><div class="dg-pagination-pages"></div></div>';
 
-		self.dom.innerHTML = '<div class="dg-btn-columns"><i class="fa fa-caret-left"></i><span class="fa fa-columns"></span></div><div class="dg-columns hidden"><div><div class="dg-columns-body"></div></div><button class="dg-columns-button" name="columns-apply"><i class="fa fa-columns"></i>{1}</button><span class="dt-columns-reset">{2}</span></div><div class="dg-container"><span class="dg-resize-line hidden"></span><div class="dg-header-scrollbar"><div class="dg-header"></div><div class="dg-body-scrollbar"><div class="dg-body"></div></div></div></div>{0}'.format(pagination, config.buttonapply, config.buttonreset);
+		self.dom.innerHTML = '<div class="dg-btn-columns"><i class="fa fa-caret-left"></i><span class="fa fa-columns"></span></div><div class="dg-columns hidden"><div><div class="dg-columns-body"></div></div><button class="dg-columns-button" name="columns-apply"><i class="fa fa-check-circle"></i>{1}</button><span class="dt-columns-reset">{2}</span></div><div class="dg-container"><span class="dg-resize-line hidden"></span><div class="dg-header-scrollbar"><div class="dg-header"></div><div class="dg-body-scrollbar"><div class="dg-body"></div></div></div></div>{0}'.format(pagination, config.buttonapply, config.buttonreset);
 
 		header = self.find('.dg-header');
 		vbody = self.find('.dg-body');
@@ -8747,7 +8748,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		sheader = self.find('.dg-header-scrollbar');
 		sbody = self.find('.dg-body-scrollbar');
 
-		self.scrollbarY = SCROLLBAR(sbody, { visibleY: true, orientation: 'y', controls: container, marginY: 58 });
+		self.scrollbarY = SCROLLBAR(sbody, { visibleY: true, orientation: 'y', controls: container, marginY: 54 });
 		self.scrollbarX = SCROLLBAR(sheader, { visibleX: true, orientation: 'x', controls: container });
 
 		// self.scrollbar.sync(sheader, 'x');
@@ -8805,7 +8806,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 				for (var i = 0; i < opt.cols.length; i++) {
 					var col = opt.cols[i];
-					(col.listcolumn && !col.$hidden) && builder.push('<div><label><input type="checkbox" value="{0}"{1} /><span>{2}</span></label></div>'.format(col.id, col.hidden ? '' : ' checked', col.text));
+					(col.listcolumn && !col.$hidden) && builder.push('<div><label class="dg-columns-checkbox{1}" data-id="{0}"><span><i class="fa fa-check"></i></span>{2}</label></div>'.format(col.id, col.hidden ? '' : ' dg-columns-checkbox-checked', col.text));
 				}
 
 				ecolumns.find('.dg-columns-body')[0].innerHTML = builder.join('');
@@ -8830,28 +8831,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			dir.placeholder = config.dirplaceholder;
 
 			dir.callback = function(item) {
-
-				var val = item[col.ovalue];
-				var is = val != null && val !== '';
-				var name = el.attrd('name');
-
-				opt.filtervalues[col.id] = val;
-
-				if (is) {
-					if (opt.filter[name] == val)
-						return;
-					opt.filter[name] = val;
-				} else
-					delete opt.filter[name];
-
-				delete opt.filtercache[name];
-				opt.filtercl[name] = val;
-
-				forcescroll = opt.scroll = 'y';
-				opt.operation = 'filter';
-				el.parent().tclass('dg-filter-selected', is);
-				el.text(item[dir.key] || '');
-				self.fn_refresh();
+				self.applyfilterdirectory(el, col, item);
 			};
 
 			SETTER('directory', 'show', dir);
@@ -9032,6 +9012,31 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			}
 		});
 
+		self.applyfilterdirectory = function(label, col, item) {
+
+			var val = item[col.ovalue];
+			var is = val != null && val !== '';
+			var name = label.attrd('name');
+
+			opt.filtervalues[col.id] = val;
+
+			if (is) {
+				if (opt.filter[name] == val)
+					return;
+				opt.filter[name] = val;
+			} else
+				delete opt.filter[name];
+
+			delete opt.filtercache[name];
+			opt.filtercl[name] = val;
+
+			forcescroll = opt.scroll = 'y';
+			opt.operation = 'filter';
+			label.parent().tclass('dg-filter-selected', is);
+			label.text(item[col.otext] || '');
+			self.fn_refresh();
+		};
+
 		var d = { is: false };
 
 		self.event('dragstart', function(e) {
@@ -9184,6 +9189,10 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			self.fn_in_checked();
 		});
 
+		self.event('click', '.dg-columns-checkbox', function() {
+			$(this).tclass('dg-columns-checkbox-checked');
+		});
+
 		self.event('click', 'button', function(e) {
 			switch (this.name) {
 				case 'columns-apply':
@@ -9328,25 +9337,41 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 	self.applyfilter = function(obj, add) {
 
+
+		if (!ready) {
+			setTimeout(self.applyfilter, 100, obj, add);
+			return;
+		}
+
 		if (!add)
 			opt.filter = {};
 
-		header.find('input,select').each(function() {
+		var keys = Object.keys(obj);
+
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			var col = opt.cols.findItem('name', key);
+			if (col.options) {
+				var items = col.options instanceof Array ? col.options : GET(col.options);
+				if (items instanceof Array) {
+					var item = items.findItem(col.ovalue, obj[key]);
+					if (item) {
+						var el = header.find('.dg-hcol[data-index="{0}"] label'.format(col.index));
+						if (el.length)
+							self.applyfilterdirectory(el, col, item);
+					}
+				}
+			}
+		}
+
+		header.find('input').each(function() {
 			var t = this;
 			var el = $(t);
 			var val = obj[el.attrd('name')];
-			if (val !== undefined) {
-				if (t.tagName === 'SELECT') {
-					var col = opt.cols.findItem('index', +el.closest('.dg-hcol').attrd('index'));
-					if (col && col.options) {
-						var index = col.options.findIndex(col.ovalue, val);
-						if (index > -1)
-							el.val(index);
-					}
-				} else
-					el.val(val == null ? '' : val);
-			}
+			if (val !== undefined)
+				el.val(val == null ? '' : val);
 		}).trigger('change');
+
 	};
 
 	self.rebind = function(code) {
@@ -9588,12 +9613,20 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		self.scrollbarY.scrollTop(y);
 	};
 
-	self.redrawrow = function(row) {
-		var index = opt.rows.indexOf(row);
+	self.redrawrow = function(oldrow, newrow) {
+		var index = opt.rows.indexOf(oldrow);
 		if (index !== -1) {
+
+			// Replaces old row with a new
+			if (newrow) {
+				if (self.selected === oldrow)
+					self.selected = newrow;
+				oldrow = opt.rows[index] = newrow;
+			}
+
 			var el = vbody.find('.dg-row[data-index="{0}"]'.format(index));
 			if (el.length) {
-				opt.render[index] = $(self.renderrow(index, row))[0];
+				opt.render[index] = $(self.renderrow(index, oldrow))[0];
 				el[0].parentNode.replaceChild(opt.render[index], el[0]);
 			}
 		}

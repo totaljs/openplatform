@@ -12,8 +12,11 @@ exports.install = function() {
 	ROUTE('+GET /_profile/', 'profile');
 	ROUTE('+GET /access/{token}/', accesstoken);
 
-	FILE('/manifest.json', manifest);
+	ROUTE('+GET /oauth/authorize/', oauthauthorize);
+	ROUTE('POST /oauth/token/', oauthsession);
+	ROUTE('GET /oauth/profile/', oauthprofile);
 
+	FILE('/manifest.json', manifest);
 	ROUTE('#404', process404);
 };
 
@@ -35,7 +38,150 @@ function manifest(req, res) {
 	res.json(meta);
 }
 
+function oauthauthorize() {
+	var self = this;
+
+	if (!CONF.allowoauth) {
+		self.invalid('error-nooauth');
+		return;
+	}
+
+	var url = self.query.redirect_uri || '';
+	var id = self.query.client_id || '';
+
+	if (!url || !id) {
+		self.invalid('error-data');
+		return;
+	}
+
+	DBMS().one('tbl_oauth').fields('id').where('id', id).query('blocked=FALSE').error('error-invalid-clientkey').callback(function(err) {
+		if (err)
+			self.invalid(err);
+		else
+			self.redirect(url + '?code=' + self.sessionid.encryptUID(CONF.hashsalt));
+	});
+}
+
+function oauthsession() {
+
+	var self = this;
+
+	if (!CONF.allowoauth) {
+		self.invalid('error-nooauth');
+		return;
+	}
+
+	var filter = CONVERT(self.body, 'code:String,client_id:String,client_secret:String');
+	var code = filter.code.decryptUID(CONF.hashsalt);
+
+	if (!code) {
+		self.invalid('error-invalid-accesstoken');
+		return;
+	}
+
+	MAIN.session.get(code, function(err, profile, session) {
+
+		if (!profile) {
+			self.invalid('error-invalid-accesstoken');
+			return;
+		}
+
+		DBMS().one('tbl_oauth').fields('name').where('id', filter.client_id).where('accesstoken', filter.client_secret).callback(function(err, response) {
+			if (response) {
+				var accesstoken = ENCRYPTREQ(self, { code: filter.code, userid: profile.id, id: filter.client_id }, CONF.hashsalt);
+				self.json({ access_token: accesstoken, expire: session.expire });
+			} else
+				self.invalid('error-invalid-accesstoken');
+		});
+
+	});
+}
+
+var usage_oauth_insert = function(doc, params) {
+	doc.id = params.id;
+	doc.oauthid = params.oauthid;
+	doc.date = NOW;
+};
+
+function oauthprofile() {
+
+	var self = this;
+
+	if (!CONF.allowoauth) {
+		self.invalid('error-nooauth');
+		return;
+	}
+
+	var token = self.headers.authorization.split(' ')[1];
+
+	if (!token) {
+		self.invalid('error-invalid-accesstoken');
+		return;
+	}
+
+	var data = DECRYPTREQ(self, token, CONF.hashsalt);
+	if (!data) {
+		self.invalid('error-invalid-accesstoken');
+		return;
+	}
+
+	var db = DBMS();
+	db.one('tbl_oauth').where('id', data.id).fields('allowreadprofile').query('blocked=FALSE').set('oauth');
+	db.err('error-invalid-accesstoken');
+	db.one('tbl_user').where('id', data.userid).fields('id,supervisorid,deputyid,groupid,directory,directoryid,statusid,status,photo,name,linker,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,language,reference,locality,position,colorscheme,repo,roles,groups,inactive,blocked,notifications,notificationsemail,notificationsphone,sa,darkmode,inactive,sounds,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,middlename,contractid,ou,desktop').set('user');
+	db.err('error-invalid-accesstoken');
+	db.callback(function(err, response) {
+
+		if (err) {
+			self.invalid(err);
+			return;
+		}
+
+		var user = response.user;
+
+		if (user.inactive) {
+			self.invalid('error-inactive');
+			return;
+		}
+
+		if (user.blocked) {
+			self.invalid('error-blocked');
+			return;
+		}
+
+		var usage = {};
+		var usageid = NOW.format('yyyyMMdd') + data.id;
+
+		usage['+count'] = 1;
+		usage['+' + (user.mobile ? 'mobile' : 'desktop')] = 1;
+		usage['+' + (user.desktop === 1 ? 'windowed' : user.desktop === 2 ? 'tabbed' : 'desktop')] = 1;
+		usage['+' + (user.darkmode === 1 ? 'darkmode' : 'lightmode')] = 1;
+		usage.dtupdated = NOW;
+
+		var db = DBMS();
+		db.mod('tbl_usage_oauth', usage, true).where('id', usageid).insert(usage_oauth_insert, { id: usageid, oauthid: data.id });
+		db.mod('tbl_oauth', { dtused: NOW }).where('id', data.id);
+
+		user.blocked = undefined;
+		user.inactive = undefined;
+
+		if (response.oauth.allowreadprofile !== 2) {
+			user.email = undefined;
+			user.phone = undefined;
+			user.repo = undefined;
+			user.dtbirth = undefined;
+		}
+
+		self.json(user);
+	});
+}
+
 function accesstoken(token) {
+
+	if (!CONF.allowaccesstoken) {
+		self.invalid('error-noaccesstoken');
+		return;
+	}
 
 	var app = MAIN.apps.findItem('accesstoken', token);
 	var self = this;
@@ -66,7 +212,6 @@ function accesstoken(token) {
 
 		self.redirect(url + builder.join('&'));
 	}, self);
-
 }
 
 function login() {

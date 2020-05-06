@@ -56,6 +56,11 @@
 
 				@{part('applications')}
 
+				<div class="item exec" data-exec="main/show" data-if="oauth" data-bind="common.allowoauth__show">
+					<i class="fa fa-key"></i>
+					<span>@(OAuth 2.0)</span>
+				</div>
+
 				<div class="item exec hidden" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
 					<i class="fa fa-shopping-bag"></i>
 					<span>@(Marketplace)</span>
@@ -83,6 +88,7 @@
 		<div data---="part__common.page__if:users;url:/parts/users-grid.html;reload:usersgrid/reload" class="hidden"></div>
 		<div data---="part__common.page__if:groups;url:/parts/users-groups.html;reload:usersgroups/reload" class="hidden"></div>
 		<div data---="part__common.page__if:roles;url:/parts/users-roles.html;reload:usersroles/reload" class="hidden"></div>
+		<div data---="part__common.page__if:oauth;url:/parts/oauth-grid.html;reload:oauthgrid/reload" class="hidden"></div>
 		<div data---="part__common.page__if:apps;url:/parts/apps-grid.html;reload:appsgrid/reload" class="hidden"></div>
 		<div data---="part__common.page__if:marketplace;url:/parts/marketplace.html;reload:marketplace/reload" class="hidden invisible"></div>
 		<div data---="part__common.page__if:wiki;url:/parts/wiki.html" class="hidden invisible"></div>
@@ -136,6 +142,7 @@
 
 	CACHEPATH('common.page', '7 days', true);
 	common.marketplace = '@{CONF.marketplace}';
+	common.allowoauth = '@{CONF.allowoauth}'==='true';
 
 	OP.on('menu', function() {
 		SET('common.layout', common.layout === 'menu' ? '' : 'menu');

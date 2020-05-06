@@ -44,6 +44,12 @@ exports.install = function() {
 	ROUTE('+POST    /api/op/apps/{id}/             *Apps               --> @check @refresh @update (response)');
 	ROUTE('+DELETE  /api/op/apps/{id}/             *Apps               --> @remove');
 
+	// OAuth
+	ROUTE('+GET     /api/op/oauth/                 *OAuth              --> @query');
+	ROUTE('+POST    /api/op/oauth/                 *OAuth              --> @insert');
+	ROUTE('+POST    /api/op/oauth/{id}/            *OAuth              --> @update');
+	ROUTE('+DELETE  /api/op/oauth/{id}/            *OAuth              --> @remove');
+
 	// Settings
 	ROUTE('+GET     /api/op/settings/              *Settings           --> @read');
 	ROUTE('+POST    /api/op/settings/              *Settings           --> @save');

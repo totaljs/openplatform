@@ -31,3 +31,7 @@ error-blocked-ip             : Your IP has been blocked.
 error-users-email            : Email address is already used by another user.
 error-users-login            : Login name is already used by another user.
 error-members-limit          : You have exceed a maximum count of members.
+error-data                   : Invalid data
+error-invalid-clientkey      : Invalid OAuth 2 client key
+error-nooauth               : OAuth 2.0 service is inactive.
+error-noaccesstoken         : Access Token service is inactive.
