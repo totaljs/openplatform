@@ -455,7 +455,7 @@ CREATE VIEW view_user_report AS
 		c.icon AS appicon
 	FROM tbl_user_report a
 		LEFT JOIN tbl_user b ON b.id = a.userid
-		LEFT JOIN tbl_app c ON c.id = a.appid
+		LEFT JOIN tbl_app c ON c.id = a.appid;
 
 -- ==============================
 -- INDEXES
