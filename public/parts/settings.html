@@ -121,6 +121,29 @@
 				<div class="fs12 m">
 					<span class="link exec" data-exec="?/verifysmtp"><i class="fa fa-angle-right mr5"></i>@(Verify SMTP server)</span>
 				</div>
+				<br />
+				<div class="caption"><i class="fa fa-users"></i>@(Connect users from another OpenPlatform)</div>
+
+				<div class="alert m">
+					@(Access to this OpenPlatform will be fully under control of defined OpenPlatform below, <b>sign-in form will be disabled</b>. Users won't be able to change own credentials in this OpenPlatform.)
+				</div>
+
+				<div class="row">
+					<div class="col-md-4 m">
+						<div data---="input__?.oauthopenplatform__maxlength:200__''">@(URL address)</div>
+					</div>
+					<div class="col-md-4 m">
+						<div data---="input__?.oauthkey__maxlength:30;camouflage:•__''">@(OAuth 2 key)</div>
+					</div>
+					<div class="col-md-4 m">
+						<div data---="input__?.oauthsecret__maxlength:50;camouflage:•__''">@(OAuth 2 secret)</div>
+					</div>
+				</div>
+
+				<div data-bind="?__show:value&&value.oauthopenplatform&&value.oauthkey&&value.oauthsecret__track:oauthopenplatform,oauthkey,oauthsecret" class="hidden help">
+					<span class="link exec red" data-exec="?/removeoauth2"><i class="fa fa-trash mr5"></i>@(Remove OAuth 2.0 settings)</span>
+				</div>
+
 			</div>
 		</div>
 	</div>
@@ -170,6 +193,12 @@
 				SET('common.marketplace', model.marketplace);
 				SET('common.allowoauth', model.allowoauth);
 			}));
+		};
+
+		exports.removeoauth2 = function() {
+			SET('?.oauthopenplatform @change', '');
+			SET('?.oauthkey', '');
+			SET('?.oauthsecret', '');
 		};
 
 		WATCH('?.url', function(path, value) {

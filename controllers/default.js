@@ -15,6 +15,7 @@ exports.install = function() {
 	ROUTE('+GET /oauth/authorize/', oauthauthorize);
 	ROUTE('POST /oauth/token/', oauthsession);
 	ROUTE('GET /oauth/profile/', oauthprofile);
+	ROUTE('GET /oauth/sync/', oauthsync);
 
 	FILE('/manifest.json', manifest);
 	ROUTE('#404', process404);
@@ -36,6 +37,118 @@ function manifest(req, res) {
 	meta.start_url = '/';
 	meta.display = 'standalone';
 	res.json(meta);
+}
+
+function oauthsync() {
+	var self = this;
+	var data = {};
+	data.code = self.query.code;
+	data.client_id = CONF.oauthkey;
+	data.client_secret = CONF.oauthsecret;
+	data.redirect_uri = CONF.url + '/oauth/sync/';
+
+	RESTBuilder.POST(CONF.oauthopenplatform + '/oauth/token/', data).callback(function(err, response) {
+
+		if (err) {
+			self.invalid(err);
+			return;
+		}
+
+		if (!response || !response.access_token) {
+			self.invalid('error-oauthsync');
+			return;
+		}
+
+		RESTBuilder.GET(CONF.oauthopenplatform + '/oauth/profile/').header('Authorization', 'Bearer ' + response.access_token).callback(function(err, response) {
+
+			if (err) {
+				$.invalid(err);
+				return;
+			}
+
+			if (!response || !response.id) {
+				self.invalid('error-oauthsync');
+				return;
+			}
+
+			if (!response.email) {
+				self.invalid('error-oauthfields');
+				return;
+			}
+
+			// Synchronize profile
+			DBMS().one('tbl_user').where('id', response.id).fields('id,photo').callback(function(err, user) {
+
+				var options = { internal: true };
+				var groups = [];
+
+				for (var i = 0; i < response.groups.length; i++) {
+					if (!MAIN.groupscache[response.groups[i]])
+						groups.push(response.groups[i]);
+				}
+
+				// Download photo
+				if ((!user || response.photo !== user.photo) && response.photo) {
+					var path = PATH.public('photos');
+					PATH.mkdir(path);
+					DOWNLOAD(CONF.oauthopenplatform + '/photos/' + response.photo, path + '/' + response.photo, NOOP);
+				}
+
+				response.checksum = 'oauth2';
+
+				// Makes new groups
+				groups.wait(function(group, next) {
+
+					$PATCH('Users/Groups', { id: group, name: group, note: 'Imported from ' + CONF.oauthopenplatform, apps: [] }, function(err) {
+						if (err) {
+							groups = null;
+							self.invalid('error', 'OAuth Sync Error (1):' + err);
+							next = null;
+						} else
+							next();
+					});
+
+				}, function() {
+					if (user) {
+						response.rebuildtoken = true;
+						delete response.desktop;
+						delete response.sounds;
+						delete response.notifications;
+						delete response.notificationsemail;
+						delete response.notificationsphone;
+						delete response.darkmode;
+						delete response.volume;
+						delete response.language;
+						delete response.dateformat;
+						delete response.timeformat;
+						delete response.numberformat;
+						delete response.statusid;
+						delete response.status;
+						options.keys = Object.keys(response);
+						options.id = response.id;
+
+						$PATCH('Users', response, options, function(err) {
+							if (err)
+								self.invalid('error', 'OAuth Sync Error (2):' + err);
+							else
+								FUNC.loginid(self, response.id, () => self.redirect('/'), 'OAuth 2.0 login');
+						}, self);
+
+					} else {
+						response.previd = response.id;
+						$INSERT('Users', response, options, function(err) {
+							if (err)
+								self.invalid('error', 'OAuth Sync Error (3):' + err);
+							else
+								FUNC.loginid(self, response.id, () => self.redirect('/'), 'OAuth 2.0 login');
+						});
+					}
+				});
+
+			});
+		});
+
+	});
 }
 
 function oauthauthorize() {
@@ -88,7 +201,7 @@ function oauthsession() {
 
 		DBMS().one('tbl_oauth').fields('name').where('id', filter.client_id).where('accesstoken', filter.client_secret).callback(function(err, response) {
 			if (response) {
-				var accesstoken = ENCRYPTREQ(self, { code: filter.code, userid: profile.id, id: filter.client_id }, CONF.hashsalt);
+				var accesstoken = F.encrypt({ code: filter.code, userid: profile.id, id: filter.client_id }, CONF.hashsalt);
 				self.json({ access_token: accesstoken, expire: session.expire });
 			} else
 				self.invalid('error-invalid-accesstoken');
@@ -112,14 +225,14 @@ function oauthprofile() {
 		return;
 	}
 
-	var token = self.headers.authorization.split(' ')[1];
-
+	var token = (self.headers.authorization || '').split(' ')[1];
 	if (!token) {
 		self.invalid('error-invalid-accesstoken');
 		return;
 	}
 
-	var data = DECRYPTREQ(self, token, CONF.hashsalt);
+	var data = F.decrypt(token, CONF.hashsalt);
+
 	if (!data) {
 		self.invalid('error-invalid-accesstoken');
 		return;
@@ -221,6 +334,11 @@ function login() {
 	if (self.req.locked) {
 		// locked
 		self.view('locked');
+		return;
+	}
+
+	if (CONF.oauthopenplatform && CONF.oauthkey && CONF.oauthsecret) {
+		self.redirect(CONF.oauthopenplatform + '/oauth/authorize/?client_id=' + CONF.oauthkey + '&redirect_uri=' + encodeURIComponent(CONF.url + '/oauth/sync/'));
 		return;
 	}
 

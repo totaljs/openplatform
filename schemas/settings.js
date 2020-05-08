@@ -34,6 +34,9 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('rebuildaccesstoken', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
 	schema.define('maxmembers', Number);
+	schema.define('oauthopenplatform', 'URL');
+	schema.define('oauthkey', 'String(30)');
+	schema.define('oauthsecret', 'String(50)');
 
 	schema.setGet(function($) {
 

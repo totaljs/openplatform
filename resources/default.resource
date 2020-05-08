@@ -33,5 +33,7 @@ error-users-login            : Login name is already used by another user.
 error-members-limit          : You have exceed a maximum count of members.
 error-data                   : Invalid data
 error-invalid-clientkey      : Invalid OAuth 2 client key
-error-nooauth               : OAuth 2.0 service is inactive.
-error-noaccesstoken         : Access Token service is inactive.
+error-nooauth                : OAuth 2.0 service is inactive.
+error-noaccesstoken          : Access Token service is inactive.
+error-oauthsync              : Unhandled problem with synchronization accounts via OAuth 2.0
+error-oauthfields            : OAuth 2.0 doesn't send all information about the user

@@ -100,7 +100,7 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		var pgid = PG_ESCAPE(id);
 		var db = DBMS();
 		db.remove('tbl_group').query('id=' + pgid);
-		db.query('UPDATE tbl_user SET dtmodified=NOW, dtupdated=NOW(), groups=array_remove(groups,{0}) WHERE ({0}=ANY(groups))'.format(pgid));
+		db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_remove(groups,{0}) WHERE ({0}=ANY(groups))'.format(pgid));
 		db.callback(function() {
 			FUNC.log('groups/remove', id, group.name, $);
 			FUNC.refreshgroupsroles(function() {

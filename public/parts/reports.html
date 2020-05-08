@@ -4,7 +4,7 @@
 		<label><i class="fa fa-bug"></i>@(Reports)</label>
 		<div>
 			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-bullseye"></i>@(Detail)</button>
-			<button data-bind="?.checked__enabled:value && value.length" class="exec" data-exec="?/menu" disabled><i class="fa fa-check-circle green"></i>@(Options)</button>
+			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash red"></i>@(Remove)</button>
 		</div>
 	</div>
 
@@ -70,35 +70,26 @@
 		};
 
 		exports.menu = function(el) {
+			var checked = GET('?.checked');
+			var selected = GET('?.selected');
+			var arr;
 
-			var opt = {};
-			opt.element = el;
-			opt.align = 'right';
-			opt.items = [];
-			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'trash-o red' });
+			if (checked && checked.length)
+				arr = checked;
+			else if (selected)
+				arr = [selected];
 
-			SETTER('menu', 'show', opt);
-
-			opt.callback = function(item) {
-
-				var checked = GET('?.checked');
-
-				if (item.id === 'remove') {
-					OP.confirm('@(Are you sure you want to remove selected reports?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
-						if (index)
-							return;
-						OP.loading(true);
-						checked.wait(function(item, next, index) {
-							OP.progress((index / checked.length) * 100);
-							AJAX('DELETE /api/op/reports/' + item.id, next);
-						}, function() {
-							OP.progress(100);
-							OP.loading(false, 500);
-							exports.refresh();
-						});
-					});
-				}
-			};
+			OP.confirm2('@(Are you sure you want to remove selected reports?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
+				OP.loading(true);
+				arr.wait(function(item, next, index) {
+					OP.progress((index / arr.length) * 100);
+					AJAX('DELETE /api/op/reports/' + item.id, next);
+				}, function() {
+					OP.progress(100);
+					OP.loading(false, 500);
+					exports.refresh();
+				});
+			});
 		};
 
 	});

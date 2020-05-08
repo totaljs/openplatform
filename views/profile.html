@@ -14,7 +14,7 @@
 
 		<div class="padding npb mt10">
 
-			@{if CONF.allownickname}
+			@{if CONF.allownickname && user.checksum !== 'oauth2'}
 			<div class="col-sm-6 m">
 				<div data---="input__?.name__required:1;maxlength:30">@(Nick name)</div>
 			</div>
@@ -22,8 +22,6 @@
 				<div data---="input__?.status__maxlength:70">@(Status)</div>
 			</div>
 			<div class="clearfix"></div>
-			@{fi}
-
 			<div class="col-sm-6 m">
 				<div data---="input__?.email__type:email;required:1">@(Email address)</div>
 			</div>
@@ -31,6 +29,7 @@
 				<div data---="input__?.phone">@(Phone number)</div>
 			</div>
 			<div class="clearfix"></div>
+			@{fi}
 
 			@{if CONF.allowtheme || CONF.allowbackground}
 			<div class="padding npb">
@@ -80,13 +79,16 @@
 					<div data---="checkbox__?.notificationsemail">@(Enable email notifications)</div>
 					<div data---="checkbox__?.sounds">@(Enable sounds)</div>
 				</div>
+				@{if user.checksum !== 'oauth2'}
 				<div class="col-md-6">
 					<div data---="checkbox__?.otp" class="b">@(Enable 2FA one-time password)</div>
 					<div data---="checkbox__?.changepassword" class="b red">@(Change password)</div>
 				</div>
+				@{fi}
 				<div class="clearfix"></div>
 			</div>
 		</div>
+
 		<div data-bind="?.otp2__show" class="padding hidden">
 			<hr class="nmt" />
 			<div data-bind="%totpqrcode__template" class="padding">

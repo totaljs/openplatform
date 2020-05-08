@@ -4,7 +4,7 @@
 		<div>
 			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
 			<button data-bind="?.selected__enabled:value && !value.workshopid" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
-			<button data-bind="?.checked__enabled:value && value.length" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash-o red"></i>@(Remove)</button>
+			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash red"></i>@(Remove)</button>
 		</div>
 	</div>
 
@@ -56,13 +56,18 @@
 
 			exports.scope();
 			var checked = GET('?.checked');
+			var selected = GET('?.selected');
+			var arr;
 
-			OP.confirm('@(Are you sure you want to remove selected OAuth tokens?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
-				if (index)
-					return;
+			if (checked && checked.length)
+				arr = checked;
+			else if (selected)
+				arr = [selected];
+
+			OP.confirm2('@(Are you sure you want to remove selected OAuth tokens?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
 				OP.loading(true);
-				checked.wait(function(item, next, index) {
-					OP.progress((index / checked.length) * 100);
+				arr.wait(function(item, next, index) {
+					OP.progress((index / arr.length) * 100);
 					AJAX('DELETE /api/op/oauth/' + item.id, next);
 				}, function() {
 					OP.progress(100);

@@ -36,7 +36,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		var builder = DBMS().read('tbl_user');
 		builder.error('error-users-404');
-		builder.fields('name,status,email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat');
+		builder.fields('name,status,email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat,checksum');
 		builder.where('id', $.user.id);
 		builder.callback($.callback);
 		$.extend && $.extend(builder);
@@ -76,6 +76,8 @@ NEWSCHEMA('Account', function(schema) {
 			F.touch('/' + path);
 		}
 
+		var isoauth =  $.user.checksum === 'oauth2';
+
 		// Removing older photo
 		/*
 		if (user.photo && model.photo !== user.photo) {
@@ -84,7 +86,7 @@ NEWSCHEMA('Account', function(schema) {
 			F.touch('/' + path);
 		}*/
 
-		if (CONF.allownickname && model.name) {
+		if (CONF.allownickname && model.name && !isoauth) {
 			var name = FUNC.nicknamesanitize(model.name);
 			if (name) {
 				user.name = model.name = name;
@@ -94,24 +96,31 @@ NEWSCHEMA('Account', function(schema) {
 		} else
 			model.name = undefined;
 
-		if (model.password && !model.password.startsWith('***')) {
+		if (!isoauth && model.password && !model.password.startsWith('***')) {
 			user.password = model.password = model.password.hash(CONF.hashmode || 'sha256', CONF.hashsalt);
 			model.dtpassword = NOW;
 			user.dtpassword = NOW;
 		} else
 			model.password = undefined;
 
-		if (!model.otp)
-			model.otpsecret = null;
-		else if (!model.otpsecret)
+		if (isoauth) {
 			model.otpsecret = undefined;
+			model.opt = undefined;
+		} else {
+			if (!model.otp)
+				model.otpsecret = null;
+			else if (!model.otpsecret)
+				model.otpsecret = undefined;
+		}
+
 
 		var modified = false;
 
-		if (user.email !== model.email) {
+		if (!isoauth && user.email !== model.email) {
 			user.email = model.email;
 			modified = true;
-		}
+		} else
+			model.email = undefined;
 
 		if (user.status !== model.status)
 			user.status = model.status;
@@ -130,10 +139,11 @@ NEWSCHEMA('Account', function(schema) {
 			modified = true;
 		}
 
-		if (user.phone !== model.phone) {
+		if (!isoauth && user.phone !== model.phone) {
 			user.phone = model.phone;
 			modified = true;
-		}
+		} else
+			model.phone = undefined;
 
 		user.darkmode = model.darkmode;
 
