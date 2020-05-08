@@ -305,6 +305,8 @@ FUNC.reconfigure = function(callback) {
 			CONF[item.id] = val;
 		}
 
+		CONF.mail_smtp && Mail.use(CONF.mail_smtp, CONF.mail_smtp_options, ERROR('SMTP server'));
+
 		MAIN.id = CONF.url.crc32(true);
 		callback && callback();
 	});
