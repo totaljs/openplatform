@@ -32,7 +32,7 @@
 			@{fi}
 
 			@{if CONF.allowtheme || CONF.allowbackground}
-			<div class="padding npb">
+			<div class="padding npb@{if user.checksum === 'oauth2'} npt@{fi}">
 				@{if CONF.allowtheme}
 				<div data---="colorselector__?.colorscheme__null" style="margin-bottom:5px"></div>
 				@{fi}
