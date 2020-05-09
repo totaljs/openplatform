@@ -300,13 +300,13 @@ FUNC.reconfigure = function(callback) {
 			if (item.id === 'smtpsettings') {
 				item.id = 'mail_smtp_options';
 				val = val.parseJSON();
-			}
+			} else if (item.id === 'smtp')
+				item.id = 'mail_smtp';
 
 			CONF[item.id] = val;
 		}
 
 		CONF.mail_smtp && Mail.use(CONF.mail_smtp, CONF.mail_smtp_options, ERROR('SMTP server'));
-
 		MAIN.id = CONF.url.crc32(true);
 		callback && callback();
 	});
