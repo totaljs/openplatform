@@ -165,7 +165,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.language && builder.gridfilter('language', opt, String);
 		opt.groupid && builder.gridfilter('groupid', opt, String);
 		opt.company && builder.gridfilter('company', opt, String);
-		opt.gender && builder.gridfilter('gender', opt, String);
+		opt.gender && builder.where('gender', opt.gender);
 		opt.language && builder.gridfilter('language', opt, String);
 		opt.reference && builder.gridfilter('reference', opt, String);
 		opt.position && builder.gridfilter('position', opt, String);
