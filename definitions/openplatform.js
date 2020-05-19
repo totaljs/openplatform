@@ -302,6 +302,8 @@ FUNC.reconfigure = function(callback) {
 				val = val.parseJSON();
 			} else if (item.id === 'smtp')
 				item.id = 'mail_smtp';
+			else if (item.id === 'sender')
+				item.id = 'mail_address_from';
 
 			CONF[item.id] = val;
 		}
