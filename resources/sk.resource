@@ -281,7 +281,7 @@ T2524            : OK
 T2571410         : TEST
 T-1397214398     : Vitajte
 T218986849       : Ovládací panel
-T1147708377      : Môj účet
+T1147708377      : Nastavenie
 T466480241       : Moje relácie
 T1207891169      : Uzamknúť obrazovku
 T9124107         : Stlmiť zvuky

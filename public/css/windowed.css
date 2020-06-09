@@ -204,7 +204,7 @@ h3 i { margin-right: 5px; }
 .launchpadapp .appbadge i { font-size: 7px; }
 
 .appprocess { position: relative; }
-.appprocess .appbadge { position: absolute; margin: 20px 0 0 7px; font-size: 7px; }
+.appprocess .appbadge { position: absolute; margin: 20px 0 0 7px; font-size: 7px; z-index: 1; }
 .appprocess .appbadge i { font-size: 7px; }
 
 .appprogress { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 3px; padding: 0; }
