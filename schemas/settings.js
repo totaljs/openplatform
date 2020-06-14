@@ -124,7 +124,7 @@ NEWSCHEMA('Settings', function(schema) {
 	});
 });
 
-NEWSCHEMA('Settings/SMTP').make(function(schema) {
+NEWSCHEMA('Settings/SMTP', function(schema) {
 
 	schema.define('smtp', 'String(100)', true);
 	schema.define('smtpsettings', 'JSON');
