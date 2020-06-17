@@ -317,16 +317,35 @@ function json_service() {
 		headers['X-OpenPlatform'] = MAIN.id + '-' + obj.user.directoryid + '-' + CONF.verifytoken + '-' + obj.user.id + '-' + app.servicetoken;
 		headers['Content-Type'] = self.headers['content-type'];
 
-		REQUEST(endpoint, REQUEST_FLAGS, self.body, function(err, response, status, headers) {
+		if (F.version < 4000) {
+			REQUEST(endpoint, REQUEST_FLAGS, self.body, function(err, response, status, headers) {
 
-			if (err) {
-				self.status = status < 400 ? 500 : status;
-				self.invalid(err);
-			} else {
-				self.status = status;
-				self.content(response, headers['content-type']);
-			}
+				if (err) {
+					self.status = status < 400 ? 500 : status;
+					self.invalid(err);
+				} else {
+					self.status = status;
+					self.content(response, headers['content-type']);
+				}
 
-		}, null, headers);
+			}, null, headers);
+		} else {
+			var opt = {};
+			opt.keepalive = true;
+			opt.url = endpoint;
+			opt.headers = headers;
+			opt.method = 'POST';
+			opt.encoding = 'binary';
+			opt.callback = function(err, response) {
+				if (err) {
+					self.status = response.status < 400 ? 500 : response.status;
+					self.invalid(err);
+				} else {
+					self.status = response.status;
+					self.binary(response.body, response.headers['content-type']);
+				}
+			};
+			REQUEST(opt);
+		}
 	});
 }
