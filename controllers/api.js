@@ -309,7 +309,7 @@ function json_service() {
 
 		var endpoint = app.services[serviceid];
 		if (!endpoint) {
-			self.invalid('error-services-endpoint').replace('@', service);
+			self.invalid('error-services-endpoint').replace('@', serviceid);
 			return;
 		}
 
@@ -319,7 +319,6 @@ function json_service() {
 
 		if (F.version < 4000) {
 			REQUEST(endpoint, REQUEST_FLAGS, self.body, function(err, response, status, headers) {
-
 				if (err) {
 					self.status = status < 400 ? 500 : status;
 					self.invalid(err);
@@ -327,7 +326,6 @@ function json_service() {
 					self.status = status;
 					self.content(response, headers['content-type']);
 				}
-
 			}, null, headers);
 		} else {
 			var opt = {};
@@ -336,6 +334,7 @@ function json_service() {
 			opt.headers = headers;
 			opt.method = 'POST';
 			opt.encoding = 'binary';
+			opt.body = self.buffer;
 			opt.callback = function(err, response) {
 				if (err) {
 					self.status = response.status < 400 ? 500 : response.status;
