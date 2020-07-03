@@ -275,7 +275,7 @@ function json_service() {
 			if (serviceid === 'mail')
 				$WORKFLOW('Mail', 'send', self.body, self.callback());
 			else {
-				self.body = U.parseJSON(self.body, true);
+				self.body = F.version < 4000 ? U.parseJSON(self.body, true) : self.body.toString('utf8').parseJSON(true);
 				OPERATION('api_' + serviceid, obj.app, self.callback(), self);
 			}
 			return;
