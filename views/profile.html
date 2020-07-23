@@ -233,7 +233,7 @@
 
 		WATCH('%totpcode', function(path, value, type) {
 			if (value.trim().length === 6) {
-				AJAX('POST /api/account/totp/verify/', { code: value, secret: account.otpsecret }, function(response) {
+				AJAX('POST /api/account/totp/verify/', { code: value, secret: profileform.otpsecret }, function(response) {
 					if (response instanceof Array)
 						OP.message(response, 'warning');
 					else
