@@ -14,7 +14,7 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	@{if user && (user.background || CONF.background)}
 	<style>body{background:url(/backgrounds/@{user.background || CONF.background}) 50% 50%}</style>
 	@{fi}

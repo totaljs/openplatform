@@ -14,7 +14,7 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" href="/icon.png" />
 	<link rel="manifest" href="/manifest.json" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
 	@{import('meta', 'head', 'portal.css', 'portal.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
