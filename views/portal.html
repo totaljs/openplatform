@@ -25,6 +25,7 @@
 	<div data---="LAZY clipboard"></div>
 	<div data---="LAZY contextmenu"></div>
 	<div data---="LAZY confirm"></div>
+	<div data---="LAZY approve__null__cancel:@(Cancel)"></div>
 	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
 	<div data---="LAZY datepicker__null__close:@(Close);today:@(Set today)"></div>
 	<div data---="LAZY menu"></div>
@@ -396,7 +397,7 @@
 
 			self.minimizemenu = function() {
 				$(document.body).tclass('menuminimized');
-				$(window).trigger('resize');
+				$(W).trigger('resize');
 			};
 
 			self.hidemenu = function() {
@@ -992,6 +993,7 @@
 				}
 
 				profile.noapps = noapps;
+				FUNC.faviconbadge(profile.countnotifications);
 				SET('user', profile);
 				refresh_color(user);
 				EXEC('Dashboard/sync');

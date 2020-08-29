@@ -553,12 +553,19 @@ $(window).on('message', function(e) {
 			break;
 
 		case 'confirm':
-			FUNC.playsound('confirm', app.id);
 			FUNC.focus();
-			SETTER('confirm', 'show', data.body.body.markdown(MD_NOTIFICATION), data.body.buttons, function(index) {
-				var iframe = processes.findProcess(app.id);
-				iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
-			});
+			FUNC.playsound('confirm', app.id);
+			if (data.body.buttons.length === 1) {
+				SETTER('approve/show', data.body.body.markdown(MD_NOTIFICATION), data.body.buttons[0], function() {
+					var iframe = processes.findProcess(app.id);
+					iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
+				});
+			} else {
+				SETTER('confirm/show', data.body.body.markdown(MD_NOTIFICATION), data.body.buttons, function(index) {
+					var iframe = processes.findProcess(app.id);
+					iframe && data.callback && processes.message(iframe, 'confirm', { index: index }, data.callback);
+				});
+			}
 			break;
 
 		case 'report':

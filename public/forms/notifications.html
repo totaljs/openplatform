@@ -6,7 +6,7 @@
 			<div class="notification-icon">{{ if m.type === 3 }}&nbsp;{{ else }}<i class="fa {{ if m.type === 0 }}fa-info-circle blue{{ else if m.type === 1 }}fa-check-circle green{{ else if m.type === 2 }}fa-warning red{{ fi }}"></i>{{ fi }}</div>
 			<div class="notification-date">{{ m.dtcreated | ndate }}</div>
 			<div class="notification-app"><i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>{{ m.title }}</div>
-			<div class="notification-body opfg">{{ m.body | markdown_notifications }}</div>
+			<div class="notification-body opfg markdown-small"><div class="markdown">{{ m.body | markdown_notifications }}</div></div>
 		</div>
 		{{ end }}
 		</script>
