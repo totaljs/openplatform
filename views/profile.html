@@ -51,7 +51,7 @@
 
 			<div class="fs12">
 				@{if CONF.allowdesktop}
-				<div class="col-md-6">
+				<div class="col-md-6 m">
 					<div>@(User interface mode):</div>
 					<div data---="radiobuttonexpert__?.desktop__datasource:%profiledesktop;type:number" class="mt5">
 						<script type="text/html">
@@ -61,7 +61,7 @@
 				</div>
 				@{fi}
 				@{if CONF.allowappearance}
-				<div class="col-md-6">
+				<div class="col-md-6 m">
 					<div>@(Choose light or dark mode):</div>
 					<div data---="radiobuttonexpert__?.darkmode__datasource:%profilemodes;type:boolean" class="mt5">
 						<script type="text/html">

@@ -28,8 +28,10 @@
 			var data = {};
 			data.TYPE = 'install';
 			data.url = url;
+			data.settings = settings;
+			data.sn = serialnumber;
 			// data.settings = {};
-			window.parent.postMessage(JSON.stringify(data), '*');
+			W.parent.postMessage(JSON.stringify(data), '*');
 		}
 	</script>
 

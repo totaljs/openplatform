@@ -1427,6 +1427,7 @@ COMPONENT('processes@2', function(self, config) {
 
 	self.focus = function(id) {
 
+		$(document.body).rclass('menushow');
 		SETTER('menu', 'hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 
@@ -2036,6 +2037,7 @@ COMPONENT('processes@2', function(self, config) {
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
 		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');
+		$(document.body).rclass('menushow');
 	};
 
 });

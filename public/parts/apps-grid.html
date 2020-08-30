@@ -36,8 +36,6 @@
 	</div>
 </div>
 
-<div data---="importer__common.panel__if:appsprofile;url:/panels/apps-profile.html"></div>
-
 <script>
 
 	PLUGIN('appsgrid', function(exports) {
@@ -85,7 +83,7 @@
 			else if (selected)
 				arr = [selected];
 
-			OP.confirm2('@(Are you sure you want to remove selected apps?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
+			OP.confirm2('@(Are you sure you want to remove selected apps?)', '"trash-o" @(Remove)', function() {
 				OP.loading(true);
 				arr.wait(function(item, next, index) {
 					OP.progress((index / arr.length) * 100);

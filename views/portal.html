@@ -30,8 +30,8 @@
 	<div data---="LAZY datepicker__null__close:@(Close);today:@(Set today)"></div>
 	<div data---="LAZY menu"></div>
 	<div data---="LAZY directory"></div>
+	<div data---="LAZY message__null__button:@(Close)"></div>
 	<div data---="tooltip"></div>
-	<div data---="message__null__button:@(Close)"></div>
 	<div data---="nativenotifications"></div>
 	<div data---="audio__user.volume"></div>
 	<div data---="loading" class="hidden"></div>
@@ -432,13 +432,13 @@
 				var app = dashboard.apps.findItem('id', id);
 				if (app == null)
 					return;
+				console.log(app);
 				if (app.internal.countbadges || app.internal.countnotifications) {
 					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
 					app.internal.countnotifications = 0;
 					app.internal.countbadges = 0;
 					BIND('user.apps');
 				}
-				SETTER('processes', 'maximize', id);
 			};
 
 			self.close = function(el, e) {
@@ -633,7 +633,7 @@
 
 		});
 
-		SETTER(true, 'shortcuts', 'register', 'F1', function() {
+		SETTER(true, 'shortcuts/register', 'F1', function() {
 			var items = [];
 
 			for (var i = 0; i < user.apps.length; i++) {
@@ -646,7 +646,7 @@
 
 			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
 
-			SETTER('features', 'show', items, function(item) {
+			SETTER('features/show', items, function(item) {
 				switch (item.TYPE) {
 					case 'app':
 						internalapp($('.app[data-id="{0}"],.internal[data-id="{0}"]'.format(item.id)));

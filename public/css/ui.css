@@ -25,7 +25,7 @@ button { outline: 0; }
 .ui-dark .bg-yellow { background-color: #2b2c31; }
 .ui-dark .bg-yellow hr { border-color: #333540; }
 
-.ui-console { position: fixed; left: 0; right: 0; bottom: 0; transition: all 0.15s; transform: translate(0,150px); height: 150px; z-index: 32; border: 5px solid rgba(255,255,255,0.8); border-bottom: 0; }
+.ui-console { position: fixed; left: 0; right: 0; bottom: 0; transition: all 0.15s; transform: translate(0,150px); height: 150px; z-index: 72; border: 5px solid rgba(255,255,255,0.8); border-bottom: 0; }
 .ui-console-visible { transform: translate(0,0); }
 .ui-console-tabs { height: 26px; padding: 0; background-color: rgba(255,255,255,0.8); }
 .ui-console-tabs span { float: left; width: 24px; height: 26px; line-height: 26px; text-align: center; cursor: pointer; color: gray; font-size: 12px; }
@@ -1465,10 +1465,10 @@ input:invalid { box-shadow: none; }
 
 .ui-largeform-noscroll, .ui-largeform-noscroll body { overflow: hidden; }
 .ui-largeform-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow: hidden; transform-style: preserve-3d; padding: 0 30px; }
-.ui-dark .ui-largeform-container { background-color: rgba(40,40,40,0.8); }
+.ui-dark .ui-largeform-container { background-color: rgba(20,20,20,0.92); }
 .ui-largeform { background-color: white; border-radius: 3px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transform: scale(0); transition: all 0.15s; opacity: 0; text-align: left; position: relative; margin: 0 auto; }
 .ui-largeform .padding { padding: 15px; }
-.ui-dark .ui-largeform { background-color: #202020; }
+.ui-dark .ui-largeform { background-color: #202020;  box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .ui-container-table { display: table; width: 100%; height: 100%; }
 .ui-container-cell { display: table-cell; width: 100%; height: 100%; text-align: center; vertical-align: middle; }
 .ui-largeform-animate { transform: scale(1); opacity: 1; }

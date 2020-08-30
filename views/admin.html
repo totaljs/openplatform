@@ -49,6 +49,11 @@
 				<hr />
 				<div class="caption">@(Applications)</div>
 
+				<div class="item exec hidden red" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
+					<i class="fa fa-shopping-bag"></i>
+					<span>@(Marketplace)</span>
+				</div>
+
 				<div class="item exec" data-exec="main/show" data-if="apps">
 					<i class="fa fa-rocket"></i>
 					<span>@(Applications)</span>
@@ -59,11 +64,6 @@
 				<div class="item exec" data-exec="main/show" data-if="oauth" data-bind="common.allowoauth__show">
 					<i class="fa fa-key"></i>
 					<span>@(OAuth 2.0)</span>
-				</div>
-
-				<div class="item exec hidden" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
-					<i class="fa fa-shopping-bag"></i>
-					<span>@(Marketplace)</span>
 				</div>
 
 				<hr />
@@ -99,10 +99,11 @@
 
 </div>
 
+<div data---="importer__common.panel__if:appsprofile;url:/panels/apps-profile.html"></div>
+
 <script>
 
 	CONFIG('datagrid,serverlisting,listing', 'pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items);');
-	CONFIG('datagrid','placeholder:@(Search)');
 
 	MAKE('common', function(obj) {
 		if (!obj.page)
@@ -195,6 +196,20 @@
 			OP.loading(false, 3000);
 			SET('common.page', 'apps');
 			EXEC(true, 'appsgrid/create', data.url);
+		}
+	});
+
+	$(W).on('message', function(e) {
+
+		var data = PARSE((e.originalEvent && e.originalEvent.data).toString() || '');
+		if (!data || !data.TYPE)
+			return;
+		if (data.TYPE === 'install') {
+			SET('appsprofilepanel @reset', data);
+			SET('common.panel', 'appsprofile');
+			setTimeout(function() {
+				UPD('appsprofilepanel.title @change');
+			}, 1500);
 		}
 	});
 
@@ -498,9 +513,9 @@
 				opt.html = el.attrd('title');
 				opt.align = 'bottom';
 				opt.timeout = 1500;
-				SETTER('tooltip', 'show', opt);
+				SETTER('tooltip/show', opt);
 			} else
-				SETTER('tooltip', 'hide');
+				SETTER('tooltip/hide');
 		});
 	}
 

@@ -20,6 +20,7 @@ exports.install = function() {
 	ROUTE('+GET     /api/op/groups/                *Users/Groups       --> @query');
 	ROUTE('+PATCH   /api/op/groups/                *Users/Groups       --> @patch');
 	ROUTE('+DELETE  /api/op/groups/                *Users/Groups       --> @remove');
+	ROUTE('+GET     /api/op/marketplace/           *Meta               --> @marketplace');
 
 	// Platform
 	ROUTE('+GET     /api/op/dashboard/                *Dashboard          --> @read');
