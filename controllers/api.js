@@ -89,6 +89,7 @@ exports.install = function() {
 
 	ROUTE('+GET     /api/op/members/               *Users/Team --> @query');
 	ROUTE('+POST    /api/op/members/               *Users/Team --> @save');
+	ROUTE('+GET     /api/op/members/check/         *Users/Team --> @check');
 
 	ROUTE('+POST    /api/op/config/                *Apps/Config        --> @save');
 	ROUTE('+GET     /api/op/config/                *Apps/Config        --> @read');

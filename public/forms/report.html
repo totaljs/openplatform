@@ -8,7 +8,7 @@
 		<div data---="checkbox__?.priority__null__false" class="red">@(High priority)</div>
 	</div>
 	<nav data---="validation__reportbug">
-		<button name="submit" class="userbg" disabled>@(SUBMIT)</button>
+		<button name="submit" class="userbg" disabled><i class="fa fa-check-circle"></i>@(SUBMIT)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 </div>
@@ -26,8 +26,7 @@
 			model.app = undefined;
 			if (!model.isscreenshot)
 				model.screenshot = '';
-			AJAX('POST /api/op/reports/', model, FUNC.messageresponse('@(Report has been sent successfully.)'));
-			hide();
+			AJAX('POST /api/op/reports/', model, ASETTER('message/response', '@(Report has been sent successfully.)', hide));
 		};
 	});
 </script>

@@ -52,4 +52,11 @@ NEWSCHEMA('Users/Team', function(schema) {
 
 	});
 
+	schema.addWorkflow('check', function($) {
+		if ($.filter.email)
+			DBMS().one('tbl_user').fields('name').where('email', $.filter.email).callback($.callback);
+		else
+			$.invalid('error-users-404');
+	}, 'email:email');
+
 });

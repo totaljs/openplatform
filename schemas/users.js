@@ -169,6 +169,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.language && builder.gridfilter('language', opt, String);
 		opt.reference && builder.gridfilter('reference', opt, String);
 		opt.position && builder.gridfilter('position', opt, String);
+		opt.photo && builder.query(opt.photo === 'true' ? 'LENGTH(photo)>0' : '(LENGTH(photo)=0 OR photo IS NULL)');
 		opt.supervisor && builder.gridfilter('supervisor', opt, String);
 		opt.note && builder.gridfilter('note', opt, String);
 		opt.deputy && builder.gridfilter('deputy', opt, String);

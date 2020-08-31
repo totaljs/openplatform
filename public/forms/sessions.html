@@ -31,7 +31,7 @@
 			var indexer = +row.attrd('index');
 			var sessions = GET('?.items');
 			var session = sessions[indexer];
-			SETTER('confirm', 'show', '@(Are you sure you want to cancel selected session?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
+			SETTER('approve/show', '@(Are you sure you want to cancel selected session?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
 				!index && AJAX('DELETE /api/op/sessions/{id}'.arg(session), exports.reload);
 			});
 		};

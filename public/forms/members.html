@@ -2,18 +2,22 @@
 	<div class="padding">
 		<div class="alert m"><i class="fa fa-warning mr5"></i>@(You can allow to read some data in applications to below declared users. Users will have access according to the application conditions. Not all applications support members.)</div>
 		<div data-bind="common.maxmembers__show__text b:value.pluralize('@(# members,# member, # members, # members)')" class="hidden red m"><i class="fa fa-users"></i> @(Limit <b></b>.)</div>
-		<div data---="textboxlist__membersform.email__type:type;placeholder:@(Type address and press enter)">@(Email addresses)</div>
+		<div data---="textboxlist__membersform.email__type:email;$setter:membersform/check;$id:membersformlist;error:@(You reach the maximum limit);placeholder:@(Type address and press enter)">@(Email addresses)</div>
 		<div class="help"><i class="far fa-question-circle"></i>@(System pairs registered users according to the email addresses automatically).</div>
 	</div>
-	<nav>
-		<button name="submit" class="userbg uppercase" style="max-width:100%;width:100%">@(Apply changes)</button>
+	<nav data---="validation__membersform">
+		<button name="submit" disabled class="userbg uppercase" style="max-width:100%;width:100%"><i class="fa fa-check-circle"></i>@(Apply changes)</button>
 	</nav>
 </div>
 
 <script>
+
+	common.maxmembers && SETTER(true, '#membersformlist/reconfigure', 'limit:' + common.maxmembers);
+
 	PLUGIN('membersform', function(exports) {
 
 		var old = '';
+		var cache = {};
 
 		exports.reload = function() {
 			AJAX('GET /api/op/members/', function(response) {
@@ -22,9 +26,37 @@
 			});
 		};
 
+		exports.check = function(value) {
+
+			if (!value)
+				return;
+
+			var el = this.element;
+
+			value.wait(function(item, next) {
+
+				if (cache[item]) {
+					next();
+					return;
+				}
+
+				AJAX('GET /api/op/members/check/', { email: item }, function(response) {
+					if (response)
+						cache[item] = response;
+					else
+						cache[item] = EMPTYOBJECT;
+					next();
+				});
+			}, function() {
+				el.find('input').each(function() {
+					if (this.value)
+						$(this).tclass('b', cache[this.value] !== EMPTYOBJECT);
+				});
+			});
+		};
+
 		exports.submit = function(hide) {
 			var model = GETR('membersform');
-
 			var data = STRINGIFY(model.email);
 			if (data === old) {
 				hide();
@@ -32,7 +64,7 @@
 			}
 
 			SET('users.team', model.length);
-			AJAX('POST /api/op/members/', model, FUNC.messageresponse('@(Your member list has been updated successfully.)', hide));
+			AJAX('POST /api/op/members/', model, ASETTER('message/response', '@(Your member list has been updated successfully.)', hide));
 		};
 
 	});
