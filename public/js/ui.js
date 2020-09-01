@@ -51,12 +51,7 @@ Thelpers.initialsbase64 = function(value, width, height) {
 var MD_LINE = { wrap: false, headlines: false, tables: false, code: false, ul: false, linetag: '', images: false };
 var MD_NOTIFICATION = { wrap: false, headlines: false };
 
-var languages = 'Abkhaz|ab,Afar|aa,Afrikaans|af,Akan|ak,Albanian|sq,Amharic|am,Arabic|ar,Aragonese|an,Armenian|hy,Assamese|as,Avaric|av,Avestan|ae,Aymara|ay,Azerbaijani|az,Bambara|bm,Bashkir|ba,Basque|eu,Belarusian|be,Bengali|bn,Bihari|bh,Bislama|bi,Bosnian|bs,Breton|br,Bulgarian|bg,Burmese|my,Catalan|ca,Chamorro|ch,Chechen|ce,Chichewa|ny,Chinese|zh,Church Slavic|cu,Chuvash|cv,Cornish|kw,Corsican|co,Cree|cr,Croatian|hr,Czech|cs,Danish|da,Divehi|dv,Dutch|nl,Dzongkha|dz,English|en,Esperanto|eo,Estonian|et,Ewe|ee,Faroese|fo,Fijian|fj,Finnish|fi,French|fr,Fulah|ff,Gaelic|gd,Galician|gl,Ganda|lg,Georgian|ka,German|de,Greek|el,Guaraní|gn,Gujarati|gu,Haitian|ht,Hausa|ha,Hebrew|he,Herero|hz,Hindi|hi,Hiri Motu|ho,Hungarian|hu,Icelandic|is,Ido|io,Igbo|ig,Indonesian|id,Interlingua|ia,Interlingue|ie,Inuktitut|iu,Inupiaq|ik,Irish|ga,Italian|it,Japanese|ja,Javanese|jv,Kalaallisut|kl,Kannada|kn,Kanuri|kr,Kashmiri|ks,Kazakh|kk,Khmer|km,Kikuyu|ki,Kinyarwanda|rw,Kirghiz|ky,Kirundi|rn,Komi|kv,Kongo|kg,Korean|ko,Kuanyama|kj,Kurdish|ku,Lao|lo,latin|la,Latvian|lv,Limburgish|li,Lingala|ln,Lithuanian|lt,Luba-Katanga|lu,Luxembourgish|lb,Macedonian|mk,Malagasy|mg,Malay|ms,Malayalam|ml,Maltese|mt,Manx|gv,Māori|mi,Marathi|mr,Marshallese|mh,Moldavian|mo,Mongolian|mn,Nauru|na,Navajo|nv,Ndonga|ng,Nepali|ne,Northern Sami|se,North Ndebele|nd,Norwegian|no,Norwegian Bokmål|nb,Norwegian Nynorsk|nn,Occitan|oc,Ojibwa|oj,Oriya|or,Oromo|om,Ossetian|os,Pāli|pi,Panjabi|pa,Pashto|ps,Persian|fa,Polish|pl,Portuguese|pt,Quechua|qu,Raeto-Romance|rm,Romanian|ro,Russian|ru,Samoan|sm,Sango|sg,Sanskrit|sa,Sardinian|sc,Serbian|sr,Serbo-Croatian|sh,Shona|sn,Sichuan Yi|ii,Sindhi|sd,Sinhala|si,Slovak|sk,Slovenian|sl,Somali|so,Southern Sotho|st,South Ndebele|nr,Spanish|es,Sundanese|su,Swahili|sw,Swati|ss,Swedish|sv,Tagalog|tl,Tahitian|ty,Tajik|tg,Tamil|ta,Tatar|tt,Telugu|te,Thai|th,Tibetan|bo,Tigrinya|ti,Tonga|to,Tsonga|ts,Tswana|tn,Turkish|tr,Turkmen|tk,Twi|tw,Uighur|ug,Ukrainian|uk,Urdu|ur,Uzbek|uz,Venda|ve,Vietnamese|vi,Volapük|vo,Walloon|wa,Welsh|cy,Western Frisian|fy,Wolof|wo,Xhosa|xh,Yiddish|yi,Yoruba|yo,Zhuang|za,Zulu|zu'.split(',').map(function(val) {
-	var arr = val.split('|');
-	return { id: arr[1], value: arr[1], text: arr[0], name: arr[0] };
-});
-
-window.SENDCOMMAND = function(type, body) {
+W.SENDCOMMAND = function(type, body) {
 	for (var i = 0; i < dashboard.apps.length; i++) {
 		var app = dashboard.apps[i];
 		SETTER('processes', 'sendcommanddata', app.id, { type: type, body: body });
@@ -4820,12 +4815,12 @@ COMPONENT('suggestion', function(self, config) {
 
 });
 
-COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', function(self, config) {
+COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:1', function(self, config, cls) {
 
-	var cls = 'ui-dynamicvalue';
+	var cls2 = '.' + cls;
 
-	self.readonly();
 	self.nocompile();
+	self.bindvisible(50);
 
 	self.validate = function(value) {
 		return !config.required || config.disabled ? true : !!value;
@@ -4847,7 +4842,7 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 				config.html = Tangular.compile(value);
 				break;
 			case 'label':
-				var label = self.find('.' + cls + '-label');
+				var label = self.find(cls2 + '-label');
 				label.tclass('hidden', !value);
 				label.find('span').html((value || '') + ':');
 				break;
@@ -4860,7 +4855,7 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 				self.tclass('ui-disabled', value);
 				break;
 			case 'icon':
-				var fa = self.find('.' + cls + '-label').find('i');
+				var fa = self.find(cls2 + '-label').find('i');
 				fa.rclass2('fa-').rclass('hidden');
 				if (value)
 					fa.aclass('fa-' + value);
@@ -4882,11 +4877,44 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 		self.html('<div class="{2}-label{3}"><i class="fa hidden"></i><span>{1}:</span></div><div class="{2}"><div class="{2}-icon"><i class="fa fa-times"></i></div><div class="{2}-value">{0}</div></div>'.format(config.placeholder, config.label, cls, config.label ? '' : ' hidden'));
 
 		self.event('click', '.' + cls, function() {
-			!config.disabled && EXEC(config.click, self.element, function(value) {
-				self.set(value);
-				self.change();
-				config.required && setTimeout(self.validate2, 100);
-			}, self.get());
+
+			if (config.disabled)
+				return;
+
+			if (config.dirsource) {
+				var opt = {};
+				opt.element = self.element;
+				opt.offsetY = -1;
+				opt.placeholder = config.dirplaceholder;
+				opt.render = config.dirrender ? GET(self.makepath(config.dirrender)) : null;
+				opt.custom = !!config.dircustom;
+				opt.offsetWidth = 2;
+				opt.minwidth = config.dirminwidth || 200;
+				opt.maxwidth = config.dirmaxwidth;
+				opt.key = config.dirkey || config.key;
+				opt.empty = config.dirempty;
+				opt.key = config.dirkey;
+				opt.items = function(value, next) {
+					if (config.dirsource.indexOf(' ') !== -1) {
+						var val = encodeURIComponent(value);
+						AJAX(config.dirsource.format(val).arg({ value: val }), next);
+					} else
+						EXEC(self.makepath(config.dirsource), value, next);
+				};
+				opt.callback = function(selected) {
+					self.set(selected[config.dirvalue || 'id']);
+					self.change();
+					config.required && setTimeout(self.validate2, 100);
+				};
+				SETTER('directory', 'show', opt);
+			} else {
+				EXEC(self.makepath(config.click || config.find), self.element, function(value) {
+					self.set(value);
+					self.change();
+					config.required && setTimeout(self.validate2, 100);
+				}, self.get());
+			}
+
 		});
 
 		self.event('click', '.fa-times', function(e) {
@@ -4901,11 +4929,13 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 
 	self.bindvalue = function(value) {
 
+		config.bind && SEEX(self.makepath(config.bind), value);
+
 		if (config.remap)
 			value = config.remap(value);
 
 		self.tclass(cls + '-is', !!value);
-		var fa = self.find('.' + cls + '-icon').find('i');
+		var fa = self.find(cls2 + '-icon').find('i');
 
 		fa.rclass2('fa-');
 
@@ -4914,8 +4944,8 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 		else
 			fa.aclass('fa-' + config.icon2);
 
-		var val = value ? config.html(value) : config.placeholder;
-		var body = self.find('.' + cls + '-value');
+		var val = (value ? config.html(value) : config.placeholder) || '';
+		var body = self.find(cls2 + '-value');
 
 		if (body.html() !== val)
 			body.html(val);
@@ -4927,9 +4957,10 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 		if (value) {
 			if (config.url) {
 				config.loading && SETTER('loading', 'show');
-				AJAX('GET ' + config.url.arg({ value: encodeURIComponent(value) }), self.bindvalue);
+				var val = encodeURIComponent(value);
+				AJAX('GET ' + config.url.format(val).arg({ value: val }), self.bindvalue);
 			} else
-				EXEC(config.exec, value, self.bindvalue, type);
+				EXEC(self.makepath(config.exec || config.read), value, self.bindvalue, type);
 		} else
 			self.bindvalue(value);
 	};

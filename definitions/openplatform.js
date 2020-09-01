@@ -17,7 +17,7 @@ var DDOS = {};
 var ORIGINERRORS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4600;           // Current version of OpenPlatform
+MAIN.version = 4700;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -1622,7 +1622,7 @@ ON('service', function(counter) {
 });
 
 if (global.UPDATE)
-	global.UPDATE([4400, 4500, 4600], ERROR('Update'), 'updates');
+	global.UPDATE([4400, 4500, 4600, 4700], ERROR('Update'), 'updates');
 else
 	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');
 

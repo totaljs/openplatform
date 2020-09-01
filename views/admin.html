@@ -103,6 +103,11 @@
 
 <script>
 
+	SET('GET /api/cl/ <5 minutes>', function(response) {
+		SET('%cl', response);
+		SET('languages', response.languages);
+	});
+
 	CONFIG('datagrid,serverlisting,listing', 'pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items);');
 
 	MAKE('common', function(obj) {

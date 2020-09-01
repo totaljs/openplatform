@@ -62,7 +62,7 @@
 		};
 
 		exports.reload = function() {
-			exports.refresh();
+			WAIT('%cl', exports.refresh);
 		};
 
 		exports.filter = function(type, filter, sort, page) {

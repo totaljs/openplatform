@@ -186,7 +186,7 @@
 		exports.localize = function(el) {
 			var opt = {};
 			opt.element = el;
-			opt.items = languages;
+			opt.items = GET('%cl.languages') || EMPTYARRAY;
 			opt.placeholder = '@(Search language)';
 			opt.callback = function(item) {
 
