@@ -1418,7 +1418,7 @@ COMPONENT('processes@2', function(self, config) {
 		}
 
 		if (this.name !== 'menu')
-			SETTER('menu', 'hide');
+			SETTER('!menu/hide');
 
 		self.hidemenu();
 		e.preventDefault();
@@ -1428,7 +1428,7 @@ COMPONENT('processes@2', function(self, config) {
 	self.focus = function(id) {
 
 		$(document.body).rclass('menushow');
-		SETTER('menu', 'hide');
+		SETTER('!menu/hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 
 		var iframe = iframes.findItem('id', id);
@@ -2243,7 +2243,7 @@ COMPONENT('processes', function(self, config) {
 		}
 
 		if (this.name !== 'menu')
-			SETTER('menu', 'hide');
+			SETTER('!menu/hide');
 
 		self.hidemenu();
 		e.preventDefault();
@@ -2282,7 +2282,7 @@ COMPONENT('processes', function(self, config) {
 
 	self.focus = function(id) {
 
-		SETTER('menu', 'hide');
+		SETTER('!menu/hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 
 		var iframe = iframes.findItem('id', id);

@@ -1195,7 +1195,7 @@
 		if (!isMOBILE) {
 			var hidetooltip = function() {
 				clearTimeout2('tooltip');
-				SETTER('tooltip', 'hide', true);
+				SETTER('!tooltip/hide', true);
 			};
 			$(document).on('mouseenter', '.tooltip', function(e) {
 				clearTimeout2('tooltiphide');
