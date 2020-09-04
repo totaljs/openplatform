@@ -25,14 +25,16 @@
 	<div data---="LAZY clipboard"></div>
 	<div data---="LAZY contextmenu"></div>
 	<div data---="LAZY confirm"></div>
+	<div data---="LAZY approve__null__cancel:@(Cancel)"></div>
 	<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
 	<div data---="LAZY datepicker__null__close:@(Close);today:@(Set today)"></div>
 	<div data---="LAZY menu"></div>
 	<div data---="LAZY directory"></div>
-	<div data---="tooltip"></div>
-	<div data---="message__null__button:@(Close)"></div>
+	<div data---="LAZY message__null__button:@(Close);style:2"></div>
+	<div data---="LAZY tooltip"></div>
+	<div data---="LAZY floatinginput"></div>
+	<div data---="LAZY audio__user.volume"></div>
 	<div data---="nativenotifications"></div>
-	<div data---="audio__user.volume"></div>
 	<div data---="loading" class="hidden"></div>
 	<div data---="shortcuts"></div>
 	<div data---="markdown"></div>
@@ -229,7 +231,7 @@
 
 			var hidetooltip = function() {
 				clearTimeout2('tooltip');
-				SETTER('tooltip', 'hide', true);
+				SETTER('!tooltip/hide', true);
 			};
 
 			$(document).on('mouseenter', '.tooltip', function(e) {
@@ -248,7 +250,7 @@
 				setTimeout2('tooltiphide', hidetooltip, 200);
 			}).on('click', function() {
 				clearTimeout2('tooltip');
-				SETTER('!tooltip', 'hide');
+				SETTER('!tooltip/hide');
 			});
 		}
 
@@ -297,15 +299,15 @@
 		}
 
 		function internallock() {
-			SETTER('loading', 'show');
+			SETTER('loading/show');
 			setTimeout(function() {
 				location.href = '/lock/';
 			}, 500);
 		}
 
 		function internallogoff() {
-			SETTER('loading', 'show');
-			SETTER('processes', 'kill');
+			SETTER('loading/show');
+			SETTER('processes/kill');
 			setTimeout(function() {
 				location.href = '/logout/';
 			}, 1500);
@@ -338,7 +340,7 @@
 			if (user.sa) {
 				var id = $(this).attrd('id');
 				setTimeout(function() {
-					SETTER('processes', 'reload', id);
+					SETTER('processes/reload', id);
 				}, 500);
 			}
 		});
@@ -363,7 +365,7 @@
 					iframe.internal.countnotifications = 0;
 					iframe.internal.countbadges = 0;
 				}
-				SETTER('processes', 'maximize', id);
+				SETTER('processes/maximize', id);
 			} else
 				AJAX('GET /api/profile/{0}/'.format(id), FUNC.open);
 
@@ -396,7 +398,7 @@
 
 			self.minimizemenu = function() {
 				$(document.body).tclass('menuminimized');
-				$(window).trigger('resize');
+				$(W).trigger('resize');
 			};
 
 			self.hidemenu = function() {
@@ -431,13 +433,13 @@
 				var app = dashboard.apps.findItem('id', id);
 				if (app == null)
 					return;
+				console.log(app);
 				if (app.internal.countbadges || app.internal.countnotifications) {
 					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
 					app.internal.countnotifications = 0;
 					app.internal.countbadges = 0;
 					BIND('user.apps');
 				}
-				SETTER('processes', 'maximize', id);
 			};
 
 			self.close = function(el, e) {
@@ -448,7 +450,7 @@
 				}
 
 				self.hidemenu();
-				SETTER('processes', 'kill', el instanceof jQuery ? el.attrd('id') : el);
+				SETTER('processes/kill', el instanceof jQuery ? el.attrd('id') : el);
 			};
 
 			self.mainmenu = function() {
@@ -457,11 +459,11 @@
 			};
 
 			self.mainmenu2 = function() {
-				SETTER('processes', 'showmenu', common.focused);
+				SETTER('processes/showmenu', common.focused);
 			};
 
 			self.closefocused = function() {
-				common.focused && SETTER('processes', 'kill', common.focused);
+				common.focused && SETTER('processes/kill', common.focused);
 				setTimeout(function() {
 					var arr = $('.ui-process');
 					for (var i = 0; i < arr.length; i++) {
@@ -511,7 +513,7 @@
 				if (iframe) {
 					self.open(el instanceof jQuery ? el : el.id);
 					setTimeout(function() {
-						SETTER('processes', 'sendnotifydata', app.id, data);
+						SETTER('processes/sendnotifydata', app.id, data);
 					}, 500);
 				} else {
 					app.notifydata = data;
@@ -526,7 +528,7 @@
 					var app = user.apps.findItem('id', item.id);
 					var rem = app == null || !app.online;
 					if (rem) {
-						SETTER('processes', 'kill', item.id);
+						SETTER('processes/kill', item.id);
 						is = true;
 					} else {
 						item.running = item.internal.running = app.running = true;
@@ -556,7 +558,7 @@
 			};
 
 			self.showappmenu = function() {
-				SETTER('processes', 'message2', common.focused, 'menu');
+				SETTER('processes/message2', common.focused, 'menu');
 			};
 
 			self.showappsettings = function() {
@@ -632,7 +634,7 @@
 
 		});
 
-		SETTER(true, 'shortcuts', 'register', 'F1', function() {
+		SETTER(true, 'shortcuts/register', 'F1', function() {
 			var items = [];
 
 			for (var i = 0; i < user.apps.length; i++) {
@@ -645,7 +647,7 @@
 
 			items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logoff' });
 
-			SETTER('features', 'show', items, function(item) {
+			SETTER('features/show', items, function(item) {
 				switch (item.TYPE) {
 					case 'app':
 						internalapp($('.app[data-id="{0}"],.internal[data-id="{0}"]'.format(item.id)));
@@ -672,10 +674,10 @@
 		SETTER(true, 'shortcuts', 'register', 'alt+w,cmd+w,alt+F3', function(e) {
 
 			if (dashboard.current) {
-				SETTER('processes', 'kill', dashboard.current.id);
+				SETTER('processes/kill', dashboard.current.id);
 				dashboard.current = null;
 			} else if (dashboard.apps.length)
-				SETTER('processes', 'kill', dashboard.apps[0].id);
+				SETTER('processes/kill', dashboard.apps[0].id);
 
 			e.preventDefault();
 			e.stopPropagation();
@@ -683,12 +685,12 @@
 
 		SETTER(true, 'shortcuts', 'register', 'alt+r,F5', function(e) {
 			var id = $('.ui-process-focus').attrd('id');
-			id && SETTER('processes', 'reload', id);
+			id && SETTER('processes/reload', id);
 			e.preventDefault();
 			e.stopPropagation();
 		}, true);
 
-		SETTER(true, 'shortcuts', 'register', 'esc', function(e) {
+		SETTER(true, 'shortcuts/register', 'esc', function(e) {
 			if (common.form) {
 				NUL('common.form');
 				e.preventDefault();
@@ -992,6 +994,7 @@
 				}
 
 				profile.noapps = noapps;
+				FUNC.faviconbadge(profile.countnotifications);
 				SET('user', profile);
 				refresh_color(user);
 				EXEC('Dashboard/sync');
@@ -1126,7 +1129,7 @@
 					SETTER('processes', item.value, id);
 			};
 
-			SETTER('menu', 'show', opt);
+			SETTER('menu/show', opt);
 		});
 
 		$(document).on('contextmenu', '.launchpadapp', function(e) {
@@ -1164,7 +1167,7 @@
 				SETTER('processes', item.value, id);
 			};
 
-			SETTER('menu', 'show', opt);
+			SETTER('menu/show', opt);
 		});
 
 		ON('ready', function() {

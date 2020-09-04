@@ -51,7 +51,7 @@
 
 			<div class="fs12">
 				@{if CONF.allowdesktop}
-				<div class="col-md-6">
+				<div class="col-md-6 m">
 					<div>@(User interface mode):</div>
 					<div data---="radiobuttonexpert__?.desktop__datasource:%profiledesktop;type:number" class="mt5">
 						<script type="text/html">
@@ -61,7 +61,7 @@
 				</div>
 				@{fi}
 				@{if CONF.allowappearance}
-				<div class="col-md-6">
+				<div class="col-md-6 m">
 					<div>@(Choose light or dark mode):</div>
 					<div data---="radiobuttonexpert__?.darkmode__datasource:%profilemodes;type:boolean" class="mt5">
 						<script type="text/html">
@@ -146,7 +146,7 @@
 				<div data---="input__?.numberformat__dirsource:%cl.numberformats;dirsearch:false">@(Number format)</div>
 			</div>
 			<div class="col-md-4 m">
-				<div data---="input__?.language__dirsource:languages;dirplaceholder:@(Search language)">@(Language)</div>
+				<div data---="input__?.language__dirsource:%cl.languages;dirplaceholder:@(Search language)">@(Language)</div>
 			</div>
 			<div class="col-md-8 m">
 				<div class="fs12">@(Volume):</div>
@@ -178,7 +178,7 @@
 	</div>
 
 	<nav data---="validation__profileform" style="padding-left:30px">
-		<button name="submit" class="exec b" disabled style="min-width:200px">@(SAVE)</button>
+		<button name="submit" class="exec b" disabled style="min-width:200px"><i class="fa fa-check-circle"></i>@(SAVE)</button>
 		<button name="cancel" class="exec">@(Cancel)</button>
 	</nav>
 

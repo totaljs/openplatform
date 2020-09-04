@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 424;
+OP.version = 425;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -361,6 +361,10 @@ OP.confirm2 = function(message, buttons, callback) {
 	OP.confirm(message, buttons instanceof Array ? buttons : buttons.split(',').trim(), function(index) {
 		!index && callback();
 	});
+};
+
+OP.approve = function(message, button, callback) {
+	OP.confirm(message, [button], callback);
 };
 
 OP.confirm = function(message, buttons, callback) {

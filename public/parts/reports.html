@@ -65,10 +65,6 @@
 		};
 
 		exports.edit = function(row) {
-
-			if (row instanceof jQuery)
-				row = GET('?.selected');
-
 			SETR('reportsdetailpanel', CLONE(row));
 			SET('common.panel', 'reportsdetail');
 		};

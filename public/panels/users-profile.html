@@ -92,7 +92,7 @@
 					<div data---="input__?.name__maxlength:40;required:1__''">@(Nickname)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="input__?.language__dirsource:languages;dirplaceholder:@(Search language);icon:language__'en'">@(Language)</div>
+					<div data---="input__?.language__dirsource:%cl.languages;dirplaceholder:@(Search language);icon:language__'en'">@(Language)</div>
 				</div>
 				<div class="col-md-4 m">
 					<div data---="input__?.dtbirth__type:date;maxlength:10;placeholder:@(yyyy-MM-dd)__null">@(Date of birth)</div>
@@ -259,7 +259,7 @@
 		</div>
 	</div>
 	<nav class="buttons" data---="validation__usersprofilepanel">
-		<button name="submit" disabled><i class="fa fa-floppy-o"></i>@(SAVE)</button>
+		<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 </div>

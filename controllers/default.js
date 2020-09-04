@@ -46,7 +46,6 @@ function oauthsync() {
 	data.client_id = CONF.oauthkey;
 	data.client_secret = CONF.oauthsecret;
 	data.redirect_uri = CONF.url + '/oauth/sync/';
-
 	RESTBuilder.POST(CONF.oauthopenplatform + '/oauth/token/', data).callback(function(err, response) {
 
 		if (err) {
@@ -131,7 +130,7 @@ function oauthsync() {
 							if (err)
 								self.invalid('error', 'OAuth Sync Error (2):' + err);
 							else
-								FUNC.loginid(self, response.id, () => self.redirect('/'), 'OAuth 2.0 login');
+								FUNC.loginid(self, response.id, () => self.redirect('/'), 'OAuth 2.0 login: ' + self.ua);
 						}, self);
 
 					} else {
@@ -140,7 +139,7 @@ function oauthsync() {
 							if (err)
 								self.invalid('error', 'OAuth Sync Error (3):' + err);
 							else
-								FUNC.loginid(self, response.id, () => self.redirect('/'), 'OAuth 2.0 login');
+								FUNC.loginid(self, response.id, () => self.redirect('/'), 'OAuth 2.0 login: ' + self.ua);
 						});
 					}
 				});

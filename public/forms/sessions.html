@@ -1,5 +1,6 @@
 <div data---="form__common.form__if:sessionsform;icon:history;width:600;title:@(My open sessions);reload:sessionsform/reload" class="hidden">
 	<div class="padding npb">
+		<div class="m">@(Open sessions:)</div>
 		<table data-bind="sessionsform.items__template" class="mt5 table">
 			<script type="text/html" data-size="0,120px,120px">
 				<tbody>
@@ -31,8 +32,8 @@
 			var indexer = +row.attrd('index');
 			var sessions = GET('?.items');
 			var session = sessions[indexer];
-			SETTER('confirm', 'show', '@(Are you sure you want to cancel selected session?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
-				!index && AJAX('DELETE /api/op/sessions/{id}'.arg(session), exports.reload);
+			SETTER('approve/show', '@(Are you sure you want to cancel selected session?)', '"trash-o" @(Yes)', function() {
+				AJAX('DELETE /api/op/sessions/{id}'.arg(session), exports.reload);
 			});
 		};
 	});

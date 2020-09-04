@@ -51,12 +51,7 @@ Thelpers.initialsbase64 = function(value, width, height) {
 var MD_LINE = { wrap: false, headlines: false, tables: false, code: false, ul: false, linetag: '', images: false };
 var MD_NOTIFICATION = { wrap: false, headlines: false };
 
-var languages = 'Abkhaz|ab,Afar|aa,Afrikaans|af,Akan|ak,Albanian|sq,Amharic|am,Arabic|ar,Aragonese|an,Armenian|hy,Assamese|as,Avaric|av,Avestan|ae,Aymara|ay,Azerbaijani|az,Bambara|bm,Bashkir|ba,Basque|eu,Belarusian|be,Bengali|bn,Bihari|bh,Bislama|bi,Bosnian|bs,Breton|br,Bulgarian|bg,Burmese|my,Catalan|ca,Chamorro|ch,Chechen|ce,Chichewa|ny,Chinese|zh,Church Slavic|cu,Chuvash|cv,Cornish|kw,Corsican|co,Cree|cr,Croatian|hr,Czech|cs,Danish|da,Divehi|dv,Dutch|nl,Dzongkha|dz,English|en,Esperanto|eo,Estonian|et,Ewe|ee,Faroese|fo,Fijian|fj,Finnish|fi,French|fr,Fulah|ff,Gaelic|gd,Galician|gl,Ganda|lg,Georgian|ka,German|de,Greek|el,Guaraní|gn,Gujarati|gu,Haitian|ht,Hausa|ha,Hebrew|he,Herero|hz,Hindi|hi,Hiri Motu|ho,Hungarian|hu,Icelandic|is,Ido|io,Igbo|ig,Indonesian|id,Interlingua|ia,Interlingue|ie,Inuktitut|iu,Inupiaq|ik,Irish|ga,Italian|it,Japanese|ja,Javanese|jv,Kalaallisut|kl,Kannada|kn,Kanuri|kr,Kashmiri|ks,Kazakh|kk,Khmer|km,Kikuyu|ki,Kinyarwanda|rw,Kirghiz|ky,Kirundi|rn,Komi|kv,Kongo|kg,Korean|ko,Kuanyama|kj,Kurdish|ku,Lao|lo,latin|la,Latvian|lv,Limburgish|li,Lingala|ln,Lithuanian|lt,Luba-Katanga|lu,Luxembourgish|lb,Macedonian|mk,Malagasy|mg,Malay|ms,Malayalam|ml,Maltese|mt,Manx|gv,Māori|mi,Marathi|mr,Marshallese|mh,Moldavian|mo,Mongolian|mn,Nauru|na,Navajo|nv,Ndonga|ng,Nepali|ne,Northern Sami|se,North Ndebele|nd,Norwegian|no,Norwegian Bokmål|nb,Norwegian Nynorsk|nn,Occitan|oc,Ojibwa|oj,Oriya|or,Oromo|om,Ossetian|os,Pāli|pi,Panjabi|pa,Pashto|ps,Persian|fa,Polish|pl,Portuguese|pt,Quechua|qu,Raeto-Romance|rm,Romanian|ro,Russian|ru,Samoan|sm,Sango|sg,Sanskrit|sa,Sardinian|sc,Serbian|sr,Serbo-Croatian|sh,Shona|sn,Sichuan Yi|ii,Sindhi|sd,Sinhala|si,Slovak|sk,Slovenian|sl,Somali|so,Southern Sotho|st,South Ndebele|nr,Spanish|es,Sundanese|su,Swahili|sw,Swati|ss,Swedish|sv,Tagalog|tl,Tahitian|ty,Tajik|tg,Tamil|ta,Tatar|tt,Telugu|te,Thai|th,Tibetan|bo,Tigrinya|ti,Tonga|to,Tsonga|ts,Tswana|tn,Turkish|tr,Turkmen|tk,Twi|tw,Uighur|ug,Ukrainian|uk,Urdu|ur,Uzbek|uz,Venda|ve,Vietnamese|vi,Volapük|vo,Walloon|wa,Welsh|cy,Western Frisian|fy,Wolof|wo,Xhosa|xh,Yiddish|yi,Yoruba|yo,Zhuang|za,Zulu|zu'.split(',').map(function(val) {
-	var arr = val.split('|');
-	return { id: arr[1], value: arr[1], text: arr[0], name: arr[0] };
-});
-
-window.SENDCOMMAND = function(type, body) {
+W.SENDCOMMAND = function(type, body) {
 	for (var i = 0; i < dashboard.apps.length; i++) {
 		var app = dashboard.apps[i];
 		SETTER('processes', 'sendcommanddata', app.id, { type: type, body: body });
@@ -1418,7 +1413,7 @@ COMPONENT('processes@2', function(self, config) {
 		}
 
 		if (this.name !== 'menu')
-			SETTER('menu', 'hide');
+			SETTER('!menu/hide');
 
 		self.hidemenu();
 		e.preventDefault();
@@ -1427,7 +1422,8 @@ COMPONENT('processes@2', function(self, config) {
 
 	self.focus = function(id) {
 
-		SETTER('menu', 'hide');
+		$(document.body).rclass('menushow');
+		SETTER('!menu/hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 
 		var iframe = iframes.findItem('id', id);
@@ -2036,6 +2032,7 @@ COMPONENT('processes@2', function(self, config) {
 		UPDATE(config.datasource);
 		$('.appclose[data-id="{0}"]'.format(value.id)).rclass('hidden');
 		$('.app[data-id="{0}"]'.format(value.id)).aclass('app-running');
+		$(document.body).rclass('menushow');
 	};
 
 });
@@ -2241,7 +2238,7 @@ COMPONENT('processes', function(self, config) {
 		}
 
 		if (this.name !== 'menu')
-			SETTER('menu', 'hide');
+			SETTER('!menu/hide');
 
 		self.hidemenu();
 		e.preventDefault();
@@ -2280,7 +2277,7 @@ COMPONENT('processes', function(self, config) {
 
 	self.focus = function(id) {
 
-		SETTER('menu', 'hide');
+		SETTER('!menu/hide');
 		$('.appbadge[data-id="{0}"]'.format(id)).aclass('hidden');
 
 		var iframe = iframes.findItem('id', id);
@@ -3199,30 +3196,34 @@ COMPONENT('quicknotifications', 'clean:4000', function(self, config) {
 	};
 });
 
-COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maximum limit', function (self, config) {
+COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maximum limit;movable:false', function (self, config, cls) {
 
 	var container, content;
 	var empty = {};
 	var skip = false;
-	var cempty = 'empty';
+	var cempty = cls + '-empty';
+	var crequired = 'required';
 	var helper = null;
+	var cls2 = '.' + cls;
 
 	self.setter = null;
 	self.getter = null;
-	self.nocompile();
+	self.nocompile && self.nocompile();
 
-	self.template = Tangular.compile('<div class="ui-textboxlist-item"><div><i class="fa fa-times"></i></div><div><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder }}"{{ if disabled}} disabled="disabled"{{ fi }} value="{{ value }}" /></div></div>');
+	self.template = Tangular.compile(('<div class="{0}-item"><div>'  + (config.movable ? '<i class="fa fa-angle-up {0}-up"></i><i class="fa fa-angle-down {0}-down"></i>' : '') + '<i class="fa fa-times {0}-remove"></i></div><div><input type="text" maxlength="{{ max }}" placeholder="{{ placeholder }}"{{ if disabled}} disabled="disabled"{{ fi }} value="{{ value }}" /></div></div>').format(cls));
 
 	self.configure = function (key, value, init, prev) {
+
 		if (init)
 			return;
 
 		var redraw = false;
 		switch (key) {
 			case 'disabled':
-				self.tclass('ui-textboxlist-required', value);
+				self.tclass(crequired, value);
 				self.find('input').prop('disabled', true);
 				empty.disabled = value;
+				self.reset();
 				break;
 			case 'maxlength':
 				empty.max = value;
@@ -3256,11 +3257,12 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 		var html = config.label || content;
 
 		if (config.icon)
-			icon = '<i class="fa fa-{0}"></i>'.format(config.icon);
+			icon = '<i class="{0}"></i>'.format(config.icon.indexOf(' ') === -1 ? ('fa fa-' + config.icon) : config.icon);
 
 		empty.value = '';
-		self.html((html ? '<div class="ui-textboxlist-label{2}">{1}{0}:</div>'.format(html, icon, config.required ? ' ui-textboxlist-label-required' : '') : '') + '<div class="ui-textboxlist-items"></div>' + self.template(empty).replace('-item"', '-item ui-textboxlist-base"'));
-		container = self.find('.ui-textboxlist-items');
+		self.tclass(cls + '-movable', !!config.movable);
+		self.html((html ? ('<div class="' + cls + '-label{2}">{1}{0}:</div>').format(html, icon, config.required ? (' ' + cls + '-required') : '') : '') + ('<div class="' + cls + '-items"></div>' + self.template(empty).replace('-item"', '-item ' + cls + '-base"')));
+		container = self.find(cls2 + '-items');
 	};
 
 	self.make = function () {
@@ -3274,20 +3276,46 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 			self.aclass('ui-disabled');
 
 		content = self.html();
-		self.aclass('ui-textboxlist');
+		self.aclass(cls);
 		self.redraw();
 
-		self.event('focus', 'input', function() {
-			config.autocomplete && EXEC(config.autocomplete, self, $(this));
+		self.move = function(offset, el) {
+
+			var arr = self.get();
+			var index = el.index();
+			var tmp;
+
+			if (offset === 1) {
+				if (arr[index] == null || arr[index + 1] == null)
+					return;
+			} else {
+				if (arr[index] == null || arr[index - 1] == null)
+					return;
+			}
+
+			tmp = arr[index];
+			arr[index] = arr[index + offset];
+			arr[index + offset] = tmp;
+			var items = self.find(cls2 + '-item');
+			items.eq(index).find('input').val(arr[index]);
+			items.eq(index + offset).find('input').val(arr[index + offset]);
+		};
+
+		self.event('click', cls2 + '-up', function () {
+			self.move(-1, $(this).closest(cls2 + '-item'));
 		});
 
-		self.event('click', '.fa-times', function () {
+		self.event('click', cls2 + '-down', function () {
+			self.move(1, $(this).closest(cls2 + '-item'));
+		});
+
+		self.event('click', cls2 + '-remove', function () {
 
 			if (config.disabled)
 				return;
 
 			var el = $(this);
-			var parent = el.closest('.ui-textboxlist-item');
+			var parent = el.closest(cls2 + '-item');
 			var value = parent.find('input').val();
 			var arr = self.get();
 
@@ -3302,18 +3330,21 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 
 			arr.splice(index, 1);
 
-			self.tclass(cempty, arr.length === 0);
+			self.tclass(cempty, !arr.length);
+			self.tclass(crequired, config.required && !arr.length);
 
 			skip = true;
-			self.set(arr, 2);
+			SET(self.path, arr, 2);
 			self.change(true);
 		});
 
-		// PMC: added blur event for base input auto submit
 		self.event('change keypress blur', 'input', function (e) {
 
 			if ((e.type === 'keypress' && e.which !== 13) || config.disabled)
 				return;
+
+			e.stopPropagation();
+			e.preventDefault();
 
 			var el = $(this);
 
@@ -3322,39 +3353,59 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 				return;
 
 			var arr = [];
-			var base = el.closest('.ui-textboxlist-base');
+			var base = el.closest(cls2 + '-base');
 			var len = base.length > 0;
 
 			if (len && e.type === 'change')
 				return;
 
-			var raw = self.get();
+			var raw = self.get() || EMPTYARRAY;
 
-			if (config.limit && raw.length >= config.limit) {
-				if (helper) {
-					base.after('<div class="ui-textboxlist-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>'.format(config.error));
-					helper = container.closest('.ui-textboxlist').find('.ui-textboxlist-helper');
+			if (config.limit && len && raw.length >= config.limit) {
+				if (!helper) {
+					base.after(('<div class="' + cls + '-helper"><i class="fa fa-warning" aria-hidden="true"></i> {0}</div>').format(config.error));
+					helper = container.closest(cls2).find(cls2 + '-helper');
 				}
 				return;
 			}
 
 			if (len) {
 
-				if (!raw || raw.indexOf(value) === -1)
-					self.push(value, 2);
+				if (!raw || raw.indexOf(value) === -1) {
+					self.push(value);
+					config.exec && EXEC(self.makepath(config.exec), value);
+				}
 
 				this.value = '';
 				self.change(true);
 				return;
 			}
 
+			var skip = true;
+
 			container.find('input').each(function () {
-				arr.push(this.value.trim());
+				var temp = this.value.trim();
+				switch (config.type) {
+					case 'number':
+						temp = temp.parseInt();
+						break;
+					case 'date':
+						temp = temp.parseDate();
+						break;
+				}
+
+				if (arr.indexOf(temp) === -1)
+					arr.push(temp);
+
+				if (raw.indexOf(temp) === -1)
+					skip = false;
 			});
 
-			skip = true;
-			self.set(arr, 2);
-			self.change(true);
+			if (!skip) {
+				self.set(arr, 2);
+				self.change(true);
+			}
+
 		});
 	};
 
@@ -3367,17 +3418,19 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 
 		if (!value || !value.length) {
 			self.aclass(cempty);
+			config.required && self.aclass(crequired);
 			container.empty();
 			return;
 		}
 
 		self.rclass(cempty);
+		self.rclass(crequired);
 		var builder = [];
 
-		value.forEach(function (item) {
-			empty.value = item;
+		for (var i = 0; i < value.length; i++) {
+			empty.value = value[i];
 			builder.push(self.template(empty));
-		});
+		}
 
 		container.empty().append(builder.join(''));
 	};
@@ -3393,7 +3446,8 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 		if (!value || !value.length)
 			return valid;
 
-		value.forEach(function (item, i) {
+		for (var i = 0; i < value.length; i++) {
+			var item = value[i];
 			!item && (item = '');
 			switch (config.type) {
 				case 'email':
@@ -3408,14 +3462,13 @@ COMPONENT('textboxlist', 'maxlength:100;required:false;error:You reach the maxim
 					break;
 				case 'date':
 					valid = item instanceof Date && !isNaN(item.getTime());
-					// TODO: date string format validation
 					break;
 				default:
 					valid = item.length > 0;
 					break;
 			}
-			items.eq(i).tclass('ui-textboxlist-item-invalid', !valid);
-		});
+			items.eq(i).tclass(cls + '-item-invalid', !valid);
+		}
 
 		return valid;
 	};
@@ -3721,26 +3774,40 @@ COMPONENT('search', 'class:hidden;delay:50;attribute:data-search', function(self
 	};
 });
 
-COMPONENT('message', function(self, config) {
+COMPONENT('message', 'button:OK', function(self, config, cls) {
 
-	var cls = 'ui-message';
 	var cls2 = '.' + cls;
 	var is, visible = false;
+	var events = {};
 
 	self.readonly();
 	self.singleton();
 	self.nocompile && self.nocompile();
 
 	self.make = function() {
-		self.aclass(cls + ' hidden');
 
-		self.event('click', 'button', function() {
+		var pls = (config.style === 2 ? (' ' + cls + '2') : '');
+		self.aclass(cls + ' hidden' + pls);
+		self.event('click', 'button', self.hide);
+	};
+
+	events.keyup = function(e) {
+		if (e.which === 27)
 			self.hide();
-		});
+	};
 
-		$(window).on('keyup', function(e) {
-			visible && e.which === 27 && self.hide();
-		});
+	events.bind = function() {
+		if (!events.is) {
+			$(W).on('keyup', events.keyup);
+			events.is = false;
+		}
+	};
+
+	events.unbind = function() {
+		if (events.is) {
+			events.is = false;
+			$(W).off('keyup', events.keyup);
+		}
 	};
 
 	self.warning = function(message, icon, fn) {
@@ -3772,46 +3839,62 @@ COMPONENT('message', function(self, config) {
 		self.content(cls + '-success', message, icon || 'check-circle');
 	};
 
-	FUNC.messageresponse = function(success, callback) {
-		return function(response, err) {
-			if (err || response instanceof Array) {
+	self.response = function(message, callback, response) {
 
-				var msg = [];
-				var template = '<div class="' + cls + '-error"><i class="fa fa-warning"></i>{0}</div>';
+		var fn;
 
-				if (response instanceof Array) {
-					for (var i = 0; i < response.length; i++)
-						msg.push(template.format(response[i].error));
-					msg = msg.join('');
-				} else
-					msg = template.format(err.toString());
+		if (typeof(message) === 'function') {
+			response = callback;
+			fn = message;
+			message = null;
+		} else if (typeof(callback) === 'function')
+			fn = callback;
+		else {
+			response = callback;
+			fn = null;
+		}
 
-				self.warning(msg);
-			} else {
-				self.success(success);
-				callback && callback(response);
+		if (response instanceof Array) {
+			var builder = [];
+			for (var i = 0; i < response.length; i++) {
+				var err = response[i].error;
+				err && builder.push(err);
 			}
-		};
+			self.warning(builder.join('<br />'));
+			SETTER('!loading/hide');
+		} else if (typeof(response) === 'string') {
+			self.warning(response);
+			SETTER('!loading/hide');
+		} else {
+			message && self.success(message);
+			fn && fn(response);
+		}
 	};
 
 	self.hide = function() {
+		events.unbind();
 		self.callback && self.callback();
 		self.aclass('hidden');
 		visible = false;
 	};
 
 	self.content = function(classname, text, icon) {
-		!is && self.html('<div><div class="ui-message-icon"><i class="fa fa-' + icon + '"></i></div><div class="ui-message-body"><div class="text"></div><hr /><button>' + (config.button || 'OK') + '</button></div></div>');
+
+		if (icon.indexOf(' ') === -1)
+			icon = 'fa fa-' + icon;
+
+		!is && self.html('<div><div class="{0}-icon"><i class="{1}"></i></div><div class="{0}-body"><div class="{0}-text"></div><hr /><button>{2}</button></div></div>'.format(cls, icon, config.button));
 		visible = true;
 		self.rclass2(cls + '-').aclass(classname);
 		self.find(cls2 + '-body').rclass().aclass(cls + '-body');
 
 		if (is)
-			self.find(cls2 + '-icon').find('.fa').rclass2('fa-').aclass('fa-' + icon);
+			self.find(cls2 + '-icon').find('.fa').rclass2('fa').aclass(icon);
 
-		self.find('.text').html(text);
+		self.find(cls2 + '-text').html(text);
 		self.rclass('hidden');
 		is = true;
+		events.bind();
 		setTimeout(function() {
 			self.aclass(cls + '-visible');
 			setTimeout(function() {
@@ -4000,18 +4083,19 @@ COMPONENT('shortcuts', function(self) {
 	};
 });
 
-COMPONENT('features', 'height:37', function(self, config) {
+COMPONENT('features', 'height:37', function(self, config, cls) {
 
+	var cls2 = '.' + cls;
 	var container, timeout, input, search, scroller = null;
 	var is = false, results = false, selectedindex = 0, resultscount = 0;
 
 	self.oldsearch = '';
 	self.items = null;
-	self.template = Tangular.compile('<li data-search="{{ $.search }}" data-index="{{ $.index }}"{{ if selected }} class="selected"{{ fi }}>{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ name | raw }}</li>');
+	self.template = Tangular.compile('<li data-search="{{ $.search }}" data-index="{{ $.index }}"{{ if selected }} class="selected"{{ fi }}>{{ if icon }}<i class="{{ icon }}"></i>{{ fi }}{{ name | raw }}</li>');
 	self.callback = null;
 	self.readonly();
 	self.singleton();
-	self.nocompile();
+	self.nocompile && self.nocompile();
 
 	self.configure = function(key, value, init) {
 		if (init)
@@ -4025,13 +4109,13 @@ COMPONENT('features', 'height:37', function(self, config) {
 
 	self.make = function() {
 
-		self.aclass('ui-features-layer hidden');
-		self.append('<div class="ui-features"><div class="ui-features-search"><span><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="ui-features-search-input" /></div></div><div class="ui-features-container noscrollbar"><ul></ul></div></div>'.format(config.placeholder));
+		self.aclass(cls + '-layer hidden');
+		self.append('<div class="{1}"><div class="{1}-search"><span><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="{1}-search-input" /></div></div><div class="{1}-container noscrollbar"><ul></ul></div></div>'.format(config.placeholder, cls));
 
 		container = self.find('ul');
 		input = self.find('input');
-		search = self.find('.ui-features');
-		scroller = self.find('.ui-features-container');
+		search = self.find(cls2);
+		scroller = self.find(cls2 + '-container');
 
 		self.event('touchstart mousedown', 'li[data-index]', function(e) {
 			self.callback && self.callback(self.items[+this.getAttribute('data-index')]);
@@ -4041,7 +4125,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 		});
 
 		$(document).on('touchstart mousedown', function(e) {
-			is && !$(e.target).hclass('ui-features-search-input') && self.hide(0);
+			is && !$(e.target).hclass(cls + '-search-input') && self.hide(0);
 		});
 
 		$(window).on('resize', function() {
@@ -4059,7 +4143,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 					o = true;
 					var sel = self.find('li.selected');
 					if (sel.length && self.callback)
-						self.callback(self.items[+sel.attr('data-index')]);
+						self.callback(self.items[+sel.attrd('index')]);
 					self.hide();
 					break;
 				case 38: // up
@@ -4116,7 +4200,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 
 		container.find('li').each(function() {
 			var el = $(this);
-			var val = el.attr('data-search');
+			var val = el.attrd('search');
 			var h = false;
 
 			for (var i = 0; i < value.length; i++) {
@@ -4191,6 +4275,10 @@ COMPONENT('features', 'height:37', function(self, config) {
 			item = items[i];
 			indexer.index = i;
 			indexer.search = (item.name + ' ' + (item.keywords || '')).trim().toSearch();
+
+			if (item.icon && item.icon.indexOf(' ') === -1)
+				item.icon = 'fa fa-' + item.icon;
+
 			!item.value && (item.value = item.name);
 			builder.push(self.template(item, indexer));
 		}
@@ -4210,7 +4298,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 		self.rclass('hidden');
 
 		setTimeout(function() {
-			self.aclass('ui-features-visible');
+			self.aclass(cls + '-visible');
 		}, 100);
 
 		!isMOBILE && setTimeout(function() {
@@ -4218,7 +4306,7 @@ COMPONENT('features', 'height:37', function(self, config) {
 		}, 500);
 
 		is = true;
-		$('html,body').aclass('ui-features-noscroll');
+		$('html,body').aclass(cls + '-noscroll');
 	};
 
 	self.hide = function(sleep) {
@@ -4226,11 +4314,11 @@ COMPONENT('features', 'height:37', function(self, config) {
 			return;
 		clearTimeout(timeout);
 		timeout = setTimeout(function() {
-			self.aclass('hidden').rclass('ui-features-visible');
+			self.aclass('hidden').rclass(cls + '-visible');
 			self.callback = null;
 			self.target = null;
 			is = false;
-			$('html,body').rclass('ui-features-noscroll');
+			$('html,body').rclass(cls + '-noscroll');
 		}, sleep ? sleep : 100);
 	};
 });
@@ -4727,12 +4815,12 @@ COMPONENT('suggestion', function(self, config) {
 
 });
 
-COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', function(self, config) {
+COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:1', function(self, config, cls) {
 
-	var cls = 'ui-dynamicvalue';
+	var cls2 = '.' + cls;
 
-	self.readonly();
 	self.nocompile();
+	self.bindvisible(50);
 
 	self.validate = function(value) {
 		return !config.required || config.disabled ? true : !!value;
@@ -4754,7 +4842,7 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 				config.html = Tangular.compile(value);
 				break;
 			case 'label':
-				var label = self.find('.' + cls + '-label');
+				var label = self.find(cls2 + '-label');
 				label.tclass('hidden', !value);
 				label.find('span').html((value || '') + ':');
 				break;
@@ -4767,7 +4855,7 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 				self.tclass('ui-disabled', value);
 				break;
 			case 'icon':
-				var fa = self.find('.' + cls + '-label').find('i');
+				var fa = self.find(cls2 + '-label').find('i');
 				fa.rclass2('fa-').rclass('hidden');
 				if (value)
 					fa.aclass('fa-' + value);
@@ -4789,11 +4877,44 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 		self.html('<div class="{2}-label{3}"><i class="fa hidden"></i><span>{1}:</span></div><div class="{2}"><div class="{2}-icon"><i class="fa fa-times"></i></div><div class="{2}-value">{0}</div></div>'.format(config.placeholder, config.label, cls, config.label ? '' : ' hidden'));
 
 		self.event('click', '.' + cls, function() {
-			!config.disabled && EXEC(config.click, self.element, function(value) {
-				self.set(value);
-				self.change();
-				config.required && setTimeout(self.validate2, 100);
-			}, self.get());
+
+			if (config.disabled)
+				return;
+
+			if (config.dirsource) {
+				var opt = {};
+				opt.element = self.element;
+				opt.offsetY = -1;
+				opt.placeholder = config.dirplaceholder;
+				opt.render = config.dirrender ? GET(self.makepath(config.dirrender)) : null;
+				opt.custom = !!config.dircustom;
+				opt.offsetWidth = 2;
+				opt.minwidth = config.dirminwidth || 200;
+				opt.maxwidth = config.dirmaxwidth;
+				opt.key = config.dirkey || config.key;
+				opt.empty = config.dirempty;
+				opt.key = config.dirkey;
+				opt.items = function(value, next) {
+					if (config.dirsource.indexOf(' ') !== -1) {
+						var val = encodeURIComponent(value);
+						AJAX(config.dirsource.format(val).arg({ value: val }), next);
+					} else
+						EXEC(self.makepath(config.dirsource), value, next);
+				};
+				opt.callback = function(selected) {
+					self.set(selected[config.dirvalue || 'id']);
+					self.change();
+					config.required && setTimeout(self.validate2, 100);
+				};
+				SETTER('directory', 'show', opt);
+			} else {
+				EXEC(self.makepath(config.click || config.find), self.element, function(value) {
+					self.set(value);
+					self.change();
+					config.required && setTimeout(self.validate2, 100);
+				}, self.get());
+			}
+
 		});
 
 		self.event('click', '.fa-times', function(e) {
@@ -4808,11 +4929,13 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 
 	self.bindvalue = function(value) {
 
+		config.bind && SEEX(self.makepath(config.bind), value);
+
 		if (config.remap)
 			value = config.remap(value);
 
 		self.tclass(cls + '-is', !!value);
-		var fa = self.find('.' + cls + '-icon').find('i');
+		var fa = self.find(cls2 + '-icon').find('i');
 
 		fa.rclass2('fa-');
 
@@ -4821,8 +4944,8 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 		else
 			fa.aclass('fa-' + config.icon2);
 
-		var val = value ? config.html(value) : config.placeholder;
-		var body = self.find('.' + cls + '-value');
+		var val = (value ? config.html(value) : config.placeholder) || '';
+		var body = self.find(cls2 + '-value');
 
 		if (body.html() !== val)
 			body.html(val);
@@ -4834,9 +4957,10 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:true', funct
 		if (value) {
 			if (config.url) {
 				config.loading && SETTER('loading', 'show');
-				AJAX('GET ' + config.url.arg({ value: encodeURIComponent(value) }), self.bindvalue);
+				var val = encodeURIComponent(value);
+				AJAX('GET ' + config.url.format(val).arg({ value: val }), self.bindvalue);
 			} else
-				EXEC(config.exec, value, self.bindvalue, type);
+				EXEC(self.makepath(config.exec || config.read), value, self.bindvalue, type);
 		} else
 			self.bindvalue(value);
 	};
@@ -5524,13 +5648,26 @@ COMPONENT('markdown', function (self) {
 		setTimeout(function() {
 			self.remove();
 		}, 500);
+
+		$(document).on('click', '.showsecret', function() {
+			var el = $(this);
+			var next = el.next();
+			next.tclass('hidden');
+
+			var is = next.hclass('hidden');
+			var icons = el.find('i');
+			icons.eq(0).tclass('fa-unlock', !is).tclass('fa-lock', is);
+			icons.eq(1).tclass('fa-angle-up', !is).tclass('fa-angle-down', is);
+
+			el.find('b').html(el.attrd(is ? 'show' : 'hide'));
+		});
 	};
 
-	/*! Markdown | (c) 2019 Peter Sirka | www.petersirka.com */
+	/*! Markdown | (c) 2019-2020 Peter Sirka | www.petersirka.com */
 	(function Markdown() {
 
 		var keywords = /\{.*?\}\(.*?\)/g;
-		var linksexternal = /(https|http):\/\//;
+		var linksexternal = /(https|http):\/\/|\.\w+$/;
 		var format = /__.*?__|_.*?_|\*\*.*?\*\*|\*.*?\*|~~.*?~~|~.*?~/g;
 		var ordered = /^[a-z|0-9]{1}\.\s|^-\s/i;
 		var orderedsize = /^(\s|\t)+/;
@@ -5543,10 +5680,6 @@ COMPONENT('markdown', function (self) {
 		var encode = function(val) {
 			return '&' + (val === '<' ? 'lt' : 'gt') + ';';
 		};
-
-		function markdown_code(value) {
-			return '<code>' + value.substring(1, value.length - 1) + '</code>';
-		}
 
 		function markdown_imagelinks(value) {
 			var end = value.lastIndexOf(')') + 1;
@@ -5587,6 +5720,9 @@ COMPONENT('markdown', function (self) {
 				// footnotes
 				return (/^\d+$/).test(text) ? '<sup data-id="{0}" class="footnote">{1}</sup>'.format(link.substring(1), text) : '<span data-id="{0}" class="footnote">{1}</span>'.format(link.substring(1), text);
 			}
+
+			if (link.substring(0, 4) === 'www.')
+				link = 'https://' + link;
 
 			var nofollow = link.charAt(0) === '@' ? ' rel="nofollow"' : linksexternal.test(link) ? ' target="_blank"' : '';
 			return '<a href="' + link + '"' + nofollow + '>' + text + '</a>';
@@ -5696,7 +5832,7 @@ COMPONENT('markdown', function (self) {
 				var len = url.length;
 				var l = url.charAt(len - 1);
 				var f = url.charAt(0);
-				if (l === '.' || l === ',')
+				if (l === '.' || l === ',' || l === ')')
 					url = url.substring(0, len - 1);
 				else
 					l = '';
@@ -5704,6 +5840,156 @@ COMPONENT('markdown', function (self) {
 				return (f.charCodeAt(0) < 40 ? f : '') + '[' + url + '](' + url + ')' + l;
 			});
 		}
+
+		FUNC.markdownredraw = function(el, opt) {
+
+			if (!opt)
+				opt = EMPTYOBJECT;
+
+			el.find('.lang-secret').each(function() {
+				var el = $(this);
+				el.parent().replaceWith('<div class="secret" data-show="{0}" data-hide="{1}"><span class="showsecret"><i class="fa fa-lock"></i><i class="fa pull-right fa-angle-down"></i><b>{0}</b></span><div class="hidden">'.format(opt.showsecret || 'Show secret data', opt.hidesecret || 'Hide secret data') + el.html().trim().markdown(opt.secretoptions) +'</div></div>');
+			});
+
+			el.find('.lang-video').each(function() {
+				var t = this;
+				if (t.$mdloaded)
+					return;
+				t.$mdloaded = 1;
+				var el = $(t);
+				var html = el.html();
+				if (html.indexOf('youtube') !== -1)
+					el.parent().replaceWith('<div class="video"><iframe src="https://www.youtube.com/embed/' + html.split('v=')[1] + '" frameborder="0" allowfullscreen></iframe></div>');
+				else if (html.indexOf('vimeo') !== -1)
+					el.parent().replaceWith('<div class="video"><iframe src="//player.vimeo.com/video/' + html.substring(html.lastIndexOf('/') + 1) + '" frameborder="0" allowfullscreen></iframe></div>');
+			});
+
+			el.find('.lang-barchart').each(function() {
+
+				var t = this;
+				if (t.$mdloaded)
+					return;
+
+				t.$mdloaded = 1;
+				var el = $(t);
+				var arr = el.html().split('\n').trim();
+				var series = [];
+				var categories = [];
+				var y = '';
+
+				for (var i = 0; i < arr.length; i++) {
+					var line = arr[i].split('|').trim();
+					for (var j = 1; j < line.length; j++) {
+						if (i === 0)
+							series.push({ name: line[j], data: [] });
+						else
+							series[j - 1].data.push(+line[j]);
+					}
+					if (i)
+						categories.push(line[0]);
+					else
+						y = line[0];
+				}
+
+				var options = {
+					chart: {
+						height: 300,
+						type: 'bar',
+					},
+					yaxis: { title: { text: y }},
+					series: series,
+					xaxis: { categories: categories, },
+					fill: { opacity: 1 },
+				};
+
+				var chart = new ApexCharts($(this).parent().empty()[0], options);
+				chart.render();
+			});
+
+			el.find('.lang-linerchar').each(function() {
+
+				var t = this;
+				if (t.$mdloaded)
+					return;
+				t.$mdloaded = 1;
+
+				var el = $(t);
+				var arr = el.html().split('\n').trim();
+				var series = [];
+				var categories = [];
+				var y = '';
+
+				for (var i = 0; i < arr.length; i++) {
+					var line = arr[i].split('|').trim();
+					for (var j = 1; j < line.length; j++) {
+						if (i === 0)
+							series.push({ name: line[j], data: [] });
+						else
+							series[j - 1].data.push(+line[j]);
+					}
+					if (i)
+						categories.push(line[0]);
+					else
+						y = line[0];
+				}
+
+				var options = {
+					chart: {
+						height: 300,
+						type: 'line',
+					},
+					yaxis: { title: { text: y }},
+					series: series,
+					xaxis: { categories: categories, },
+					fill: { opacity: 1 },
+				};
+
+				var chart = new ApexCharts($(this).parent().empty()[0], options);
+				chart.render();
+			});
+
+			el.find('.lang-iframe').each(function() {
+
+				var t = this;
+				if (t.$mdloaded)
+					return;
+				t.$mdloaded = 1;
+
+				var el = $(t);
+				el.parent().replaceWith('<div class="iframe">' + el.html().replace(/&lt;/g, '<').replace(/&gt;/g, '>') + '</div>');
+			});
+
+			el.find('pre code').each(function(i, block) {
+				var t = this;
+				if (t.$mdloaded)
+					return;
+				t.$mdloaded = 1;
+				hljs.highlightBlock(block);
+			});
+
+			el.find('a').each(function() {
+				var t = this;
+				if (t.$mdloaded)
+					return;
+				t.$mdloaded = 1;
+				var el = $(t);
+				var href = el.attr('href');
+				var c = href.substring(0, 1);
+				if (href === '#') {
+					var beg = '';
+					var end = '';
+					var text = el.html();
+					if (text.substring(0, 1) === '<')
+						beg = '-';
+					if (text.substring(text.length - 1) === '>')
+						end = '-';
+					el.attr('href', '#' + (beg + markdown_id(el.text()) + end));
+				} else if (c !== '/' && c !== '#')
+					el.attr('target', '_blank');
+			});
+
+			el.find('.code').rclass('hidden');
+		};
 
 		String.prototype.markdown = function(opt) {
 
@@ -5740,6 +6026,7 @@ COMPONENT('markdown', function (self) {
 			var prev;
 			var prevsize = 0;
 			var tmp;
+			var codes = [];
 
 			if (opt.wrap == null)
 				opt.wrap = true;
@@ -5752,6 +6039,15 @@ COMPONENT('markdown', function (self) {
 					var text = ul.pop();
 					builder.push('</' + text + '>');
 				}
+			};
+
+			var formatcode = function(value) {
+				var index = codes.push('<code>' + value.substring(1, value.length - 1) + '</code>') - 1;
+				return '\0code{0}\0'.format(index);
+			};
+
+			var formatcodeflush = function(value) {
+				return codes[+value.substring(5, value.length - 1)];
 			};
 
 			var formatlinks = function(val) {
@@ -5780,7 +6076,8 @@ COMPONENT('markdown', function (self) {
 						beg2 = i;
 						continue;
 					} else if (beg2 > -1 && il === '&gt;') {
-						callback(val.substring(beg2, i + 4), true);
+						if (val.substring(beg2 - 6, beg2) !== '<code>')
+							callback(val.substring(beg2, i + 4), true);
 						beg2 = -1;
 						continue;
 					}
@@ -5858,7 +6155,7 @@ COMPONENT('markdown', function (self) {
 				return val;
 			};
 
-			for (var i = 0, length = lines.length; i < length; i++) {
+			for (var i = 0; i < lines.length; i++) {
 
 				lines[i] = lines[i].replace(encodetags, encode);
 
@@ -5866,7 +6163,7 @@ COMPONENT('markdown', function (self) {
 
 					if (iscode) {
 						if (opt.code !== false)
-							builder.push('</code></pre></div>');
+							builder[builder.length - 1] += '</code></pre></div>';
 						iscode = false;
 						continue;
 					}
@@ -5889,6 +6186,9 @@ COMPONENT('markdown', function (self) {
 
 				var line = lines[i];
 
+				if (opt.br !== false)
+					line = line.replace(/&lt;br(\s\/)?&gt;/g, '<br />');
+
 				if (opt.urlify !== false && opt.links !== false)
 					line = markdown_urlify(line);
 
@@ -5896,7 +6196,7 @@ COMPONENT('markdown', function (self) {
 					line = opt.custom(line);
 
 				if (opt.formatting !== false)
-					line = line.replace(format, markdown_format).replace(code, markdown_code);
+					line = line.replace(code, formatcode).replace(format, markdown_format);
 
 				if (opt.images !== false)
 					line = imagescope(line);
@@ -6094,10 +6394,11 @@ COMPONENT('markdown', function (self) {
 			closeul();
 			table && opt.tables !== false && builder.push('</tbody></table>');
 			iscode && opt.code !== false && builder.push('</code></pre>');
-			return (opt.wrap ? '<div class="markdown">' : '') + builder.join('\n').replace(/\t/g, '    ') + (opt.wrap ? '</div>' : '');
+			return (opt.wrap ? '<div class="markdown">' : '') + builder.join('\n').replace(/\0code\d+\0/g, formatcodeflush).replace(/\t/g, '    ') + (opt.wrap ? '</div>' : '');
 		};
 
 	})();
+
 });
 
 COMPONENT('menu', function(self) {
@@ -6251,16 +6552,16 @@ COMPONENT('menu', function(self) {
 
 });
 
-COMPONENT('directory', 'minwidth:200', function(self, config) {
+COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
-	var cls = 'ui-directory';
 	var cls2 = '.' + cls;
-	var container, timeout, icon, plus, skipreset = false, skipclear = false, ready = false, input = null;
+	var container, timeout, icon, plus, skipreset = false, skipclear = false, ready = false, input = null, issearch = false;
 	var is = false, selectedindex = 0, resultscount = 0;
 	var templateE = '{{ name | encode | ui_directory_helper }}';
 	var templateR = '{{ name | raw }}';
 	var template = '<li data-index="{{ $.index }}" data-search="{{ name }}" {{ if selected }} class="current selected{{ if classname }} {{ classname }}{{ fi }}"{{ else if classname }} class="{{ classname }}"{{ fi }}>{0}</li>';
 	var templateraw = template.format(templateR);
+	var parentclass;
 
 	template = template.format(templateE);
 
@@ -6289,14 +6590,14 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 	self.make = function() {
 
 		self.aclass(cls + ' hidden');
-		self.append('<div class="{1}-search"><span class="{1}-add hidden"><i class="fa fa-plus"></i></span><span class="{1}-button"><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="{1}-search-input" name="dir{2}" autocomplete="dir{2}" /></div></div><div class="{1}-container"><ul></ul></div>'.format(config.placeholder, cls, Date.now()));
+		self.append('<div class="{1}-search"><span class="{1}-add hidden"><i class="fa fa-plus"></i></span><span class="{1}-button"><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="{1}-search-input" name="dir{2}" autocomplete="new-password" /></div></div><div class="{1}-container"><ul></ul></div>'.format(config.placeholder, cls, Date.now()));
 		container = self.find('ul');
 		input = self.find('input');
 		icon = self.find(cls2 + '-button').find('.fa');
 		plus = self.find(cls2 + '-add');
 
 		self.event('mouseenter mouseleave', 'li', function() {
-			if (ready) {
+			if (ready && !issearch) {
 				container.find('li.current').rclass('current');
 				$(this).aclass('current');
 				var arr = container.find('li:visible');
@@ -6323,7 +6624,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 		});
 
 		self.event('click', cls2 + '-add', function() {
-			if (self.opt.callback) {
+			if (self.opt.custom && self.opt.callback) {
 				self.opt.scope && M.scope(self.opt.scope);
 				self.opt.callback(input.val(), self.opt.element, true);
 				self.hide();
@@ -6335,13 +6636,42 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 				self.opt.scope && M.scope(self.opt.scope);
 				self.opt.callback(self.opt.items[+this.getAttribute('data-index')], self.opt.element);
 			}
-			self.hide();
+			is = true;
+			self.hide(0);
 			e.preventDefault();
 			e.stopPropagation();
 		});
 
 		var e_click = function(e) {
-			is && !$(e.target).hclass(cls + '-search-input') && self.hide(0);
+			var node = e.target;
+			var count = 0;
+
+			if (is) {
+				while (true) {
+					var c = node.getAttribute('class') || '';
+					if (c.indexOf(cls + '-search-input') !== -1)
+						return;
+					node = node.parentNode;
+					if (!node || !node.tagName || node.tagName === 'BODY' || count > 3)
+						break;
+					count++;
+				}
+			} else {
+				is = true;
+				while (true) {
+					var c = node.getAttribute('class') || '';
+					if (c.indexOf(cls) !== -1) {
+						is = false;
+						break;
+					}
+					node = node.parentNode;
+					if (!node || !node.tagName || node.tagName === 'BODY' || count > 4)
+						break;
+					count++;
+				}
+			}
+
+			is && self.hide(0);
 		};
 
 		var e_resize = function() {
@@ -6353,7 +6683,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 		self.bindevents = function() {
 			if (!self.bindedevents) {
 				$(document).on('click', e_click);
-				$(window).on('resize', e_resize);
+				$(W).on('resize', e_resize);
 				self.bindedevents = true;
 			}
 		};
@@ -6362,7 +6692,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 			if (self.bindedevents) {
 				self.bindedevents = false;
 				$(document).off('click', e_click);
-				$(window).off('resize', e_resize);
+				$(W).off('resize', e_resize);
 			}
 		};
 
@@ -6383,7 +6713,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 						self.opt.scope && M.scope(self.opt.scope);
 						if (sel.length)
 							self.opt.callback(self.opt.items[+sel.attrd('index')], self.opt.element);
-						else
+						else if (self.opt.custom)
 							self.opt.callback(this.value, self.opt.element, true);
 					}
 					self.hide();
@@ -6412,6 +6742,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 		});
 
 		self.event('input', 'input', function() {
+			issearch = true;
 			setTimeout2(self.ID, self.search, 100, null, this.value);
 		});
 
@@ -6422,25 +6753,29 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 		self.on('reflow', fn);
 		self.on('scroll', fn);
 		self.on('resize', fn);
-		$(window).on('scroll', fn);
+		$(W).on('scroll', fn);
 	};
 
 	self.move = function() {
+
 		var counter = 0;
 		var scroller = container.parent();
 		var h = scroller.height();
 		var li = container.find('li');
-		var hli = li.eq(0).innerHeight() || 30;
+		var hli = (li.eq(0).innerHeight() || 30) + 1;
 		var was = false;
 		var last = -1;
 		var lastselected = 0;
+		var plus = (hli * 2);
+		var sh = (li.length * hli);
 
-		li.each(function(index) {
-			var el = $(this);
+		for (var i = 0; i < li.length; i++) {
+
+			var el = $(li[i]);
 
 			if (el.hclass('hidden')) {
 				el.rclass('current');
-				return;
+				continue;
 			}
 
 			var is = selectedindex === counter;
@@ -6449,22 +6784,27 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 			if (is) {
 				was = true;
 				var t = (hli * (counter || 1));
-				var f = Math.ceil((h / hli) / 2);
-				if (counter > f)
-					scroller[0].scrollTop = (t + f) - (h / 2.8 >> 0);
-				else
-					scroller[0].scrollTop = 0;
+				// var p = (t / sh) * 100;
+				scroller[0].scrollTop = t - plus;
 			}
 
 			counter++;
-			last = index;
+			last = i;
 			lastselected++;
-		});
+		}
 
 		if (!was && last >= 0) {
 			selectedindex = lastselected;
 			li.eq(last).aclass('current');
 		}
+	};
+
+	var nosearch = function() {
+		issearch = false;
+	};
+
+	self.nosearch = function() {
+		setTimeout2(self.ID + 'nosearch', nosearch, 500);
 	};
 
 	self.search = function(value) {
@@ -6482,6 +6822,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 				selectedindex = 0;
 			resultscount = self.opt.items ? self.opt.items.length : 0;
 			self.move();
+			self.nosearch();
 			return;
 		}
 
@@ -6519,21 +6860,24 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 						self.opt.items = items;
 						container.html(builder);
 						self.move();
+						self.nosearch();
 					});
 				}, 300, null, val);
 			}
 		} else if (value) {
 			value = value.toSearch();
-			container.find('li').each(function() {
-				var el = $(this);
+			var arr = container.find('li');
+			for (var i = 0; i < arr.length; i++) {
+				var el = $(arr[i]);
 				var val = el.attrd('search').toSearch();
 				var is = val.indexOf(value) === -1;
 				el.tclass('hidden', is);
 				if (!is)
 					resultscount++;
-			});
+			}
 			skipclear = true;
 			self.move();
+			self.nosearch();
 		}
 	};
 
@@ -6554,6 +6898,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 		// opt.exclude    --> function(item) must return Boolean
 		// opt.search
 		// opt.selected   --> only for String Array "opt.items"
+		// opt.classname
 
 		var el = opt.element instanceof jQuery ? opt.element[0] : opt.element;
 
@@ -6561,6 +6906,16 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 			opt.items = EMPTYARRAY;
 
 		self.tclass(cls + '-default', !opt.render);
+
+		if (parentclass) {
+			self.rclass(parentclass);
+			parentclass = null;
+		}
+
+		if (opt.classname) {
+			self.aclass(opt.classname);
+			parentclass = opt.classname;
+		}
 
 		if (!opt.minwidth)
 			opt.minwidth = 200;
@@ -6584,14 +6939,16 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 		var type = typeof(items);
 		var item;
 
-		if (type === 'function' && callback) {
-			opt.ajax = items;
-			type = '';
-			items = null;
+		if (type === 'string') {
+			items = GET(items);
+			type = typeof(items);
 		}
 
-		if (type === 'string')
-			items = self.get(items);
+		if (type === 'function' && callback) {
+			type = '';
+			opt.ajax = items;
+			items = null;
+		}
 
 		if (!items && !opt.ajax) {
 			self.hide(0);
@@ -6605,9 +6962,11 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 		opt.class && self.aclass(opt.class);
 
 		input.val('');
+
 		var builder = [];
-		var ta = opt.key ? Tangular.compile(template.replace(/\{\{\sname/g, '{{ ' + opt.key)) : opt.raw ? self.templateraw : self.template;
 		var selected = null;
+
+		opt.ta = opt.key ? Tangular.compile((opt.raw ? templateraw : template).replace(/\{\{\sname/g, '{{ ' + opt.key)) : opt.raw ? self.templateraw : self.template;
 
 		if (!opt.ajax) {
 			var indexer = {};
@@ -6620,13 +6979,15 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 				if (opt.exclude && opt.exclude(item))
 					continue;
 
-				if (item.selected) {
+				if (item.selected || opt.selected === item) {
 					selected = i;
 					skipreset = true;
-				}
+					item.selected = true;
+				} else
+					item.selected = false;
 
 				indexer.index = i;
-				builder.push(ta(item, indexer));
+				builder.push(opt.ta(item, indexer));
 			}
 
 			if (opt.empty) {
@@ -6634,11 +6995,9 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 				item[opt.key || 'name'] = opt.empty;
 				item.template = '<b>{0}</b>'.format(opt.empty);
 				indexer.index = -1;
-				builder.unshift(ta(item, indexer));
+				builder.unshift(opt.ta(item, indexer));
 			}
 		}
-
-		opt.ta = ta;
 
 		self.target = element[0];
 
@@ -6696,7 +7055,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 			if (selected == null)
 				scroller[0].scrollTop = 0;
 			else {
-				var h = container.find('li:first-child').height();
+				var h = container.find('li:first-child').innerHeight() + 1;
 				var y = (container.find('li.selected').index() * h) - (h * 2);
 				scroller[0].scrollTop = y < 0 ? 0 : y;
 			}
@@ -6741,11 +7100,10 @@ COMPONENT('directory', 'minwidth:200', function(self, config) {
 	};
 });
 
-COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;direxclude:false;forcevalidation:1;searchalign:1;after:\\:', function(self, config) {
+COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;direxclude:false;forcevalidation:1;searchalign:1;after:\\:', function(self, config, cls) {
 
-	var cls = 'ui-input';
 	var cls2 = '.' + cls;
-	var input, placeholder, dirsource, binded, customvalidator, mask, isdirvisible = false, nobindcamouflage = false, focused = false;
+	var input, placeholder, dirsource, binded, customvalidator, mask, rawvalue, isdirvisible = false, nobindcamouflage = false, focused = false;
 
 	self.nocompile();
 	self.bindvisible(20);
@@ -6754,7 +7112,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		Thelpers.ui_input_icon = function(val) {
 			return val.charAt(0) === '!' ? ('<span class="ui-input-icon-custom">' + val.substring(1) + '</span>') : ('<i class="fa fa-' + val + '"></i>');
 		};
-		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}<input type="{{ if !dirsource && type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }}{{ if dirsource }} readonly{{ else }} data-jc-bind=""{{ fi }}{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} /></div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
+		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment && !ricon }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' && !ricon }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}{{ if dirsource || type === \'icon\' || type === \'emoji\' || type === \'color\' }}<div class="{0}-value" tabindex="0"></div>{{ else }}<input type="{{ if type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }} data-jc-bind=""{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} />{{ fi }}</div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
 	};
 
 	self.make = function() {
@@ -6778,7 +7136,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				self.check();
 		});
 
-		self.event('focus', 'input', function() {
+		self.event('focus', 'input,' + cls2 + '-value', function() {
 
 			if (config.disabled)
 				return $(this).blur();
@@ -6943,7 +7301,51 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 		self.event('click', cls2 + '-control', function() {
 
-			if (!config.dirsource || config.disabled || isdirvisible)
+			if (config.disabled || isdirvisible)
+				return;
+
+			if (config.type === 'icon') {
+				opt = {};
+				opt.element = self.element;
+				opt.value = self.get();
+				opt.empty = true;
+				opt.callback = function(val) {
+					self.change(true);
+					self.set(val);
+					self.check();
+					rawvalue.focus();
+				};
+				SETTER('faicons', 'show', opt);
+				return;
+			} else if (config.type === 'color') {
+				opt = {};
+				opt.element = self.element;
+				opt.value = self.get();
+				opt.empty = true;
+				opt.callback = function(al) {
+					self.change(true);
+					self.set(al);
+					self.check();
+					rawvalue.focus();
+				};
+				SETTER('colorpicker', 'show', opt);
+				return;
+			} else if (config.type === 'emoji') {
+				opt = {};
+				opt.element = self.element;
+				opt.value = self.get();
+				opt.empty = true;
+				opt.callback = function(al) {
+					self.change(true);
+					self.set(al);
+					self.check();
+					rawvalue.focus();
+				};
+				SETTER('emoji', 'show', opt);
+				return;
+			}
+
+			if (!config.dirsource)
 				return;
 
 			isdirvisible = true;
@@ -6987,7 +7389,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 				// empty
 				if (item == null) {
-					input.val('');
+					rawvalue.html('');
 					self.set(null, 2);
 					self.change();
 					self.check();
@@ -7019,6 +7421,8 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					else
 						input.val(val);
 				}
+
+				rawvalue.focus();
 			};
 
 			SETTER('directory', 'show', opt);
@@ -7030,8 +7434,12 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					e.preventDefault();
 					e.stopPropagation();
 					self.find(cls2 + '-control').trigger('click');
-				} else if (!config.camouflage || $(e.target).hclass(cls + '-placeholder'))
-					input.focus();
+				} else if (!config.camouflage || $(e.target).hclass(cls + '-placeholder')) {
+					if (input.length)
+						input.focus();
+					else
+						rawvalue.focus();
+				}
 			}
 		});
 
@@ -7054,18 +7462,20 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					opt = {};
 					opt.element = self.element;
 					opt.value = self.get();
-					opt.callback = function(date) {
+					opt.callback = function(val) {
 						self.change(true);
-						self.set(date);
+						self.set(val);
+						input.focus();
 					};
 					SETTER('datepicker', 'show', opt);
 				} else if (config.type === 'time') {
 					opt = {};
 					opt.element = self.element;
 					opt.value = self.get();
-					opt.callback = function(date) {
+					opt.callback = function(val) {
 						self.change(true);
-						self.set(date);
+						self.set(val);
+						input.focus();
 					};
 					SETTER('timepicker', 'show', opt);
 				} else if (config.type === 'search')
@@ -7073,9 +7483,12 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				else if (config.type === 'password')
 					self.password();
 				else if (config.type === 'number') {
-					var n = $(e.target).hclass('fa-caret-up') ? 1 : -1;
-					self.change(true);
-					self.inc(config.increment * n);
+					var tmp = $(e.target);
+					if (tmp.attr('class').indexOf('fa-') !== -1) {
+						var n = tmp.hclass('fa-caret-up') ? 1 : -1;
+						self.change(true);
+						self.inc(config.increment * n);
+					}
 				}
 				return;
 			}
@@ -7152,6 +7565,8 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				return value.isPhone();
 			case 'url':
 				return value.isURL();
+			case 'zip':
+				return (/^\d{5}(?:[-\s]\d{4})?$/).test(value);
 			case 'currency':
 			case 'number':
 				value = value.parseFloat();
@@ -7237,7 +7652,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 	self.check = function() {
 
-		var is = !!input[0].value;
+		var is = input.length ? !!input[0].value : !!self.get();
 
 		if (binded === is)
 			return;
@@ -7252,9 +7667,10 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 	self.bindvalue = function() {
 
+		var value = self.get();
+
 		if (dirsource) {
 
-			var value = self.get();
 			var item;
 
 			for (var i = 0; i < dirsource.length; i++) {
@@ -7273,10 +7689,23 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			if (value && item == null && config.dircustom)
 				item = value;
 
-			input.val(item || '');
+			rawvalue.text(item || '');
 
 		} else if (config.dirsource)
-			input.val(self.get() || '');
+			rawvalue.text(value || '');
+		else {
+			switch (config.type) {
+				case 'color':
+					rawvalue.css('background-color', value || '');
+					break;
+				case 'icon':
+					rawvalue.html('<i class="{0}"></i>'.format(value || ''));
+					break;
+				case 'emoji':
+					rawvalue.html(value);
+					break;
+			}
+		}
 
 		self.check();
 	};
@@ -7288,6 +7717,10 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				config.ricon = 'angle-down';
 			else if (config.type === 'date') {
 				config.ricon = 'calendar';
+				if (!config.align && !config.innerlabel)
+					config.align = 1;
+			} else if (config.type === 'icon' || config.type === 'color' || config.type === 'emoji') {
+				config.ricon = 'angle-down';
 				if (!config.align && !config.innerlabel)
 					config.align = 1;
 			} else if (config.type === 'time') {
@@ -7308,8 +7741,14 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		}
 
 		self.tclass(cls + '-masked', !!config.mask);
+		self.rclass2(cls + '-type-');
+
+		if (config.type)
+			self.aclass(cls + '-type-' + config.type);
+
 		self.html(W.ui_input_template(config));
 		input = self.find('input');
+		rawvalue = self.find(cls2 + '-value');
 		placeholder = self.find(cls2 + '-placeholder');
 	};
 
@@ -7326,14 +7765,15 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					});
 				}
 				self.tclass(cls + '-dropdown', !!value);
+				input.prop('readonly', !!config.disabled || !!config.dirsource);
 				break;
 			case 'disabled':
-				self.tclass('ui-disabled', value == true);
-				input.prop('readonly', value === true);
+				self.tclass('ui-disabled', !!value);
+				input.prop('readonly', !!value || !!config.dirsource);
 				self.reset();
 				break;
 			case 'required':
-				self.tclass(cls + '-required', value == true);
+				self.tclass(cls + '-required', !!value);
 				self.reset();
 				break;
 			case 'type':
@@ -7368,9 +7808,13 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		if (value) {
 			switch (config.type) {
 				case 'lower':
-					return value.toString().toLowerCase();
+					return (value + '').toLowerCase();
 				case 'upper':
-					return value.toString().toUpperCase();
+					return (value + '').toUpperCase();
+				case 'phone':
+					return (value + '').replace(/\s/g, '');
+				case 'email':
+					return (value + '').toLowerCase();
 				case 'date':
 					return value.format(config.format || 'yyyy-MM-dd');
 				case 'time':
@@ -7395,10 +7839,14 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 						tmp = '';
 					return value + (tmp ? (' ' + tmp) : '');
 				case 'lower':
+				case 'email':
 					value = value.toLowerCase();
 					break;
 				case 'upper':
 					value = value.toUpperCase();
+					break;
+				case 'phone':
+					value = value.replace(/\s/g, '');
 					break;
 				case 'time':
 					tmp = value.split(':');
@@ -7416,14 +7864,14 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 	});
 
 	self.state = function(type) {
-		if (!type)
-			return;
-		var invalid = config.required ? self.isInvalid() : self.forcedvalidation() ? self.isInvalid() : false;
-		if (invalid === self.$oldstate)
-			return;
-		self.$oldstate = invalid;
-		self.tclass(cls + '-invalid', invalid);
-		config.error && self.find(cls2 + '-error').tclass('hidden', !invalid);
+		if (type) {
+			var invalid = config.required ? self.isInvalid() : self.forcedvalidation() ? self.isInvalid() : false;
+			if (invalid === self.$oldstate)
+				return;
+			self.$oldstate = invalid;
+			self.tclass(cls + '-invalid', invalid);
+			config.error && self.find(cls2 + '-error').tclass('hidden', !invalid);
+		}
 	};
 
 	self.forcedvalidation = function() {
@@ -14341,5 +14789,386 @@ COMPONENT('statsbarsimple', 'tooltip:1;animate:1;value:value;colors:#3182BD,#FD8
 			});
 			bars.aclass(cls + '-show');
 		}
+	};
+});
+
+COMPONENT('approve', 'cancel:Cancel', function(self, config, cls) {
+
+	var cls2 = '.' + cls;
+	var events = {};
+	var buttons;
+	var oldcancel;
+
+	self.readonly();
+	self.singleton();
+	self.nocompile && self.nocompile();
+
+	self.make = function() {
+
+		self.aclass(cls + ' hidden');
+		self.html('<div><div class="{0}-body"><span class="{0}-close"><i class="fa fa-times"></i></span><div class="{0}-content"></div><div class="{0}-buttons"><button data-index="0"></button><button data-index="1"></button></div></div></div>'.format(cls));
+
+		buttons = self.find(cls2 + '-buttons').find('button');
+
+		self.event('click', 'button', function() {
+			self.hide(+$(this).attrd('index'));
+		});
+
+		self.event('click', cls2 + '-close', function() {
+			self.callback = null;
+			self.hide(-1);
+		});
+
+		self.event('click', function(e) {
+			var t = e.target.tagName;
+			if (t !== 'DIV')
+				return;
+			var el = self.find(cls2 + '-body');
+			el.aclass(cls + '-click');
+			setTimeout(function() {
+				el.rclass(cls + '-click');
+			}, 300);
+		});
+	};
+
+	events.keydown = function(e) {
+		var index = e.which === 13 ? 0 : e.which === 27 ? 1 : null;
+		if (index != null) {
+			self.find('button[data-index="{0}"]'.format(index)).trigger('click');
+			e.preventDefault();
+			e.stopPropagation();
+			events.unbind();
+		}
+	};
+
+	events.bind = function() {
+		$(W).on('keydown', events.keydown);
+	};
+
+	events.unbind = function() {
+		$(W).off('keydown', events.keydown);
+	};
+
+	self.show = function(message, a, b, fn) {
+
+		if (typeof(b) === 'function') {
+			fn = b;
+			b = config.cancel;
+		}
+
+		if (M.scope)
+			self.currscope = M.scope();
+
+		self.callback = fn;
+
+		var icon = a.match(/"[a-z0-9-\s]+"/);
+		if (icon) {
+
+			var tmp = icon + '';
+			if (tmp.indexOf(' ') == -1)
+				tmp = 'fa fa-' + tmp;
+
+			a = a.replace(icon, '').trim();
+			icon = '<i class="{0}"></i>'.format(tmp.replace(/"/g, ''));
+		} else
+			icon = '';
+
+		var color = a.match(/#[0-9a-f]+/i);
+		if (color)
+			a = a.replace(color, '').trim();
+
+		buttons.eq(0).css('background-color', color || '').html(icon + a);
+
+		if (oldcancel !== b) {
+			oldcancel = b;
+			buttons.eq(1).html(b);
+		}
+
+		self.find(cls2 + '-content').html(message.replace(/\n/g, '<br />'));
+		$('html').aclass(cls + '-noscroll');
+		self.rclass('hidden');
+		events.bind();
+		self.aclass(cls + '-visible', 5);
+	};
+
+	self.hide = function(index) {
+
+		if (!index) {
+			self.currscope && M.scope(self.currscope);
+			self.callback && self.callback(index);
+		}
+
+		self.rclass(cls + '-visible');
+		events.unbind();
+		setTimeout2(self.id, function() {
+			$('html').rclass(cls + '-noscroll');
+			self.aclass('hidden');
+		}, 1000);
+	};
+});
+
+COMPONENT('floatinginput', 'minwidth:200', function(self, config, cls) {
+
+	var cls2 = '.' + cls;
+	var timeout, icon, plus, input, summary;
+	var is = false;
+	var plusvisible = false;
+
+	self.readonly();
+	self.singleton();
+	self.nocompile && self.nocompile();
+
+	self.configure = function(key, value, init) {
+		if (init)
+			return;
+		switch (key) {
+			case 'placeholder':
+				self.find('input').prop('placeholder', value);
+				break;
+		}
+	};
+
+	self.make = function() {
+
+		self.aclass(cls + ' hidden');
+		self.append('<div class="{1}-summary hidden"></div><div class="{1}-input"><span class="{1}-add hidden"><i class="fa fa-plus"></i></span><span class="{1}-button"><i class="fa fa-search"></i></span><div><input type="text" placeholder="{0}" class="{1}-search-input" name="dir{2}" autocomplete="dir{2}" /></div></div'.format(config.placeholder, cls, Date.now()));
+
+		input = self.find('input');
+		icon = self.find(cls2 + '-button').find('i');
+		plus = self.find(cls2 + '-add');
+		summary = self.find(cls2 + '-summary');
+
+		self.event('click', cls2 + '-button', function(e) {
+			input.val('');
+			self.search();
+			e.stopPropagation();
+			e.preventDefault();
+		});
+
+		self.event('click', cls2 + '-add', function() {
+			if (self.opt.callback) {
+				self.opt.scope && M.scope(self.opt.scope);
+				self.opt.callback(input.val(), self.opt.element, true);
+				self.hide();
+			}
+		});
+
+		self.event('keydown', 'input', function(e) {
+			switch (e.which) {
+				case 27:
+					self.hide();
+					break;
+				case 13:
+					if (self.opt.callback) {
+						self.opt.scope && M.scope(self.opt.scope);
+						self.opt.callback(this.value, self.opt.element);
+					}
+					self.hide();
+					break;
+			}
+		});
+
+		var e_click = function(e) {
+			var node = e.target;
+			var count = 0;
+
+			if (is) {
+				while (true) {
+					var c = node.getAttribute('class') || '';
+					if (c.indexOf(cls + '-input') !== -1)
+						return;
+					node = node.parentNode;
+					if (!node || !node.tagName || node.tagName === 'BODY' || count > 3)
+						break;
+					count++;
+				}
+			} else {
+				is = true;
+				while (true) {
+					var c = node.getAttribute('class') || '';
+					if (c.indexOf(cls) !== -1) {
+						is = false;
+						break;
+					}
+					node = node.parentNode;
+					if (!node || !node.tagName || node.tagName === 'BODY' || count > 4)
+						break;
+					count++;
+				}
+			}
+
+			is && self.hide(0);
+		};
+
+		var e_resize = function() {
+			is && self.hide(0);
+		};
+
+		self.bindedevents = false;
+
+		self.bindevents = function() {
+			if (!self.bindedevents) {
+				$(document).on('click', e_click);
+				$(W).on('resize', e_resize);
+				self.bindedevents = true;
+			}
+		};
+
+		self.unbindevents = function() {
+			if (self.bindedevents) {
+				self.bindedevents = false;
+				$(document).off('click', e_click);
+				$(W).off('resize', e_resize);
+			}
+		};
+
+		self.event('input', 'input', function() {
+			var is = !!this.value;
+			if (plusvisible !== is) {
+				plusvisible = is;
+				plus.tclass('hidden', !this.value);
+			}
+		});
+
+		var fn = function() {
+			is && self.hide(1);
+		};
+
+		self.on('reflow', fn);
+		self.on('scroll', fn);
+		self.on('resize', fn);
+		$(W).on('scroll', fn);
+	};
+
+	self.show = function(opt) {
+
+		// opt.element
+		// opt.callback(value, el)
+		// opt.offsetX     --> offsetX
+		// opt.offsetY     --> offsetY
+		// opt.offsetWidth --> plusWidth
+		// opt.placeholder
+		// opt.render
+		// opt.minwidth
+		// opt.maxwidth
+		// opt.icon;
+		// opt.maxlength = 30;
+
+		var el = opt.element instanceof jQuery ? opt.element[0] : opt.element;
+
+		self.tclass(cls + '-default', !opt.render);
+
+		if (!opt.minwidth)
+			opt.minwidth = 200;
+
+		if (is) {
+			clearTimeout(timeout);
+			if (self.target === el) {
+				self.hide(1);
+				return;
+			}
+		}
+
+		self.initializing = true;
+		self.target = el;
+		plusvisible = false;
+
+		var element = $(opt.element);
+
+		setTimeout(self.bindevents, 500);
+
+		self.opt = opt;
+		opt.class && self.aclass(opt.class);
+
+		input.val(opt.value || '');
+		input.prop('maxlength', opt.maxlength || 50);
+
+		self.target = element[0];
+
+		var w = element.width();
+		var offset = element.offset();
+		var width = w + (opt.offsetWidth || 0);
+
+		if (opt.minwidth && width < opt.minwidth)
+			width = opt.minwidth;
+		else if (opt.maxwidth && width > opt.maxwidth)
+			width = opt.maxwidth;
+
+		var ico = '';
+
+		if (opt.icon) {
+			if (opt.icon.indexOf(' ') === -1)
+				ico = 'fa fa-' + opt.icon;
+			else
+				ico = opt.icon;
+		} else
+			ico = 'fa fa-pencil-alt';
+
+		icon.rclass2('fa').aclass(ico).rclass('hidden');
+
+		if (opt.value) {
+			plusvisible = true;
+			plus.rclass('hidden');
+		} else
+			plus.aclass('hidden');
+
+		self.find('input').prop('placeholder', opt.placeholder || config.placeholder);
+		var options = { left: 0, top: 0, width: width };
+
+		summary.tclass('hidden', !opt.summary).html(opt.summary || '');
+
+		switch (opt.align) {
+			case 'center':
+				options.left = Math.ceil((offset.left - width / 2) + (width / 2));
+				break;
+			case 'right':
+				options.left = (offset.left - width) + w;
+				break;
+			default:
+				options.left = offset.left;
+				break;
+		}
+
+		options.top = opt.position === 'bottom' ? ((offset.top - self.height()) + element.height()) : offset.top;
+		options.scope = M.scope ? M.scope() : '';
+
+		if (opt.offsetX)
+			options.left += opt.offsetX;
+
+		if (opt.offsetY)
+			options.top += opt.offsetY;
+
+		self.css(options);
+
+		!isMOBILE && setTimeout(function() {
+			input.focus();
+		}, 200);
+
+		self.rclass('hidden');
+
+		setTimeout(function() {
+			self.initializing = false;
+			is = true;
+			if (self.opt && self.target && self.target.offsetParent)
+				self.aclass(cls + '-visible');
+			else
+				self.hide(1);
+		}, 100);
+	};
+
+	self.hide = function(sleep) {
+		if (!is || self.initializing)
+			return;
+		clearTimeout(timeout);
+		timeout = setTimeout(function() {
+			self.unbindevents();
+			self.rclass(cls + '-visible').aclass('hidden');
+			if (self.opt) {
+				self.opt.close && self.opt.close();
+				self.opt.class && self.rclass(self.opt.class);
+				self.opt = null;
+			}
+			is = false;
+		}, sleep ? sleep : 100);
 	};
 });
