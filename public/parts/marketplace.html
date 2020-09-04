@@ -1,3 +1,13 @@
-<div class="marketplace">
-	<iframe src="about:blank" data-bind="common.marketplace__src" border="0" scrolling="yes"></iframe>
-</div>
+<div class="marketplace"></div>
+
+<script>
+	AJAX('GET /api/op/marketplace/', function(response) {
+		var qs = $.param(response);
+		if (common.marketplace.indexOf('?') === -1)
+			common.marketplace += '?' + qs;
+		else
+			common.marketplace += '&' + qs;
+		$('.marketplace').html('<iframe src="about:blank" data-bind="common.marketplace__src" border="0" scrolling="yes"></iframe>');
+		COMPILE();
+	});
+</script>
