@@ -279,7 +279,7 @@ NEWSCHEMA('Apps', function(schema) {
 				if (!item.workshopid) {
 					var app = FUNC.makeapp(item, obj.allowreadapps);
 					if (app)
-						arr.push(obj);
+						arr.push(app);
 				}
 			}
 			$.callback(arr);
