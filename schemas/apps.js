@@ -277,7 +277,7 @@ NEWSCHEMA('Apps', function(schema) {
 			for (var i = 0; i < MAIN.apps.length; i++) {
 				var item = MAIN.apps[i];
 				if (!item.workshopid) {
-					var app = FUNC.makeapp(item, obj.allowreadapps);
+					var app = FUNC.makeapp(item, obj.app.allowreadapps);
 					if (app)
 						arr.push(app);
 				}
