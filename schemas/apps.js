@@ -26,6 +26,12 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('origin', '[String]');
 	schema.define('version', 'String(10)');
 
+	schema.define('allowguestuser', Boolean);
+	schema.define('allownotifications', Boolean);
+	schema.define('allowreadusers', Number);
+	schema.define('allowreadprofile', Number);
+	schema.define('allowreadmeta', Boolean);
+
 	schema.required('url', (model) => model.typeid === 'external');
 
 	schema.setQuery(function($) {
@@ -117,6 +123,11 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.position = item.position;
 			obj.color = item.color;
 			obj.icon = item.icon;
+			obj.allowguestuser = item.allowguestuser;
+			obj.allownotifications = item.allownotifications;
+			obj.allowreadmeta = item.allowreadmeta;
+			obj.allowreadprofile = item.allowreadprofile;
+			obj.allowreadusers = item.allowreadusers;
 
 			if (item.typeid === 'designer') {
 				obj.roles = item.roles;
@@ -219,6 +230,8 @@ NEWSCHEMA('Apps', function(schema) {
 
 		if (model.typeid === 'designer')
 			model.name = model.title;
+
+		console.log(model);
 
 		if (!model.name) {
 			$.invalid('error-apps-meta');

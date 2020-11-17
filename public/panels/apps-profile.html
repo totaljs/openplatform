@@ -103,7 +103,7 @@
 							<td class="center">{{ value.responsive | checkbox }}</td>
 						</tr>
 						<tr>
-							<td>@(Optimized for guest user	)</td>
+							<td>@(Optimized for guest user)</td>
 							<td class="center">{{ value.meta.allowguest | checkbox }}</td>
 							<td class="center">{{ value.allowguest | checkbox }}</td>
 						</tr>
@@ -182,6 +182,22 @@
 				<div data---="checkbox__?.rebuildservicetoken__checkicon:refresh">@(Re-build service token)</div>
 			</div>
 			<hr />
+
+			<div data-bind="?.typeid__show:value==='designer'" class="hidden m">
+				<div class="panel">
+					<label><i class="fas fa-lock mr5"></i>@(Permissions)</label>
+					<div class="padding">
+						<div data---="checkbox__?.allowreadmeta">@(Can read meta information)</div>
+						<div data---="checkbox__?.allownotifications">@(Allow notifications)</div>
+						<div data---="checkbox__?.allowguest">@(Guest can access to this app)</div>
+						<hr />
+						<div data---="radiobutton__?.allowreadprofile__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number"><span class="fas fa-user-circle mr5"></span><b>@(Can API read user profile?)</b></div>
+						<hr />
+						<div data---="radiobutton__?.allowreadusers__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number"><span class="fas fa-users mr5"></span><b>@(Can API read users?)</b></div>
+					</div>
+				</div>
+			</div>
+
 			<div data-bind="?.typeid__show:value==='external'">
 				<div data---="checkbox__?.permissions__checkicon:refresh">@(Refresh permissions according to the meta file)</div>
 				<div data---="checkbox__?.autorefresh__checkicon:refresh">@(Application can refresh its permissions automatically)</div>

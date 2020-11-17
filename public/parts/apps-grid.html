@@ -91,7 +91,7 @@
 			if (typeof(url) !== 'string')
 				url = '';
 
-			SET('appsprofilepanel @reset', { sn: '', title: '', url: url || '', position: (main.apps.length + 1), typeid: 'external' });
+			SET('appsprofilepanel @reset', { sn: '', title: '', url: url || '', position: (main.apps.length + 1), typeid: 'external',allowreadmeta: true, allowguest: false, allowreadprofile: 1, allownotifications: true, allowreadusers: 1 });
 			SET('common.panel', 'appsprofile');
 		};
 

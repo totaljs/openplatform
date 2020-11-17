@@ -2,9 +2,17 @@
 
 html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; height: 100%; }
 
-.panel { background-color: #F0F0F0; border-right: 1px solid #D0D0D0; }
+.panel { background-color: transparent; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #404040; }
+.panel > label { display: block; padding: 15px 20px; border-bottom: 1px solid #404040; font-size: 16px; color: #FFF; font-weight: bold; }
+.panel > label i { margin-right: 5px; }
+
+.oplight .panel { background-color: transparent; border-color: #E0E0E0; }
+.oplight .panel > label { border-bottom-color: #E0E0E0; color: #000; }
+
 .scroller { overflow-y: scroll; overflow-scrolling: touch; }
 .scroller-padding { padding: 20px; }
+hr { border-color: #E0E0E0; }
+.ui-dark { border-color: #404040; }
 
 .inline { position: relative; }
 .gray { color: gray; }
@@ -88,7 +96,6 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .ui-dark .menu .item.complete { color: #404040; }
 .ui-dark .menu .item.canceled { color: #404040; }
 
-.ui-dark .panel { background-color: #252525; border-right-color: #303030; }
 .marketplace { position: absolute; width: 100%; height: 100%; }
 .marketplace iframe { border: 0; width: 100%; height: 100%; padding: 0; margin: 0; }
 
@@ -206,7 +213,6 @@ h3 .fa { margin-right: 5px; }
 .pointer { cursor: pointer; }
 
 @media(max-width: 767px) {
-	.panel { border-right: 0; }
 	.scroller-padding { padding-right: 20px; }
 	.search { padding: 10px; }
 	.search .ui-textbox { height: 34px; }
