@@ -78,7 +78,9 @@
 				<!-- <span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span> -->
 				<div class="title">@{CONF.name}<span data-bind="user.name__text"></span></div>
 			</header>
-			<div data---="viewbox__null__margin:82;parent:window;scrollbar:1;visibleY:0;marginxs:101">
+			<div data---="viewbox__null__margin:0;parent:window;scrollbar:1;visibleY:0;marginxs:0">
+
+				<div class="menu-top"></div>
 
 				@{part('top')}
 
@@ -147,6 +149,7 @@
 
 				@{part('bottom')}
 
+				<div class="menu-footer"></div>
 			</div>
 			<footer>
 				<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>

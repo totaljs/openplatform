@@ -302,16 +302,14 @@ h3 .fa { margin-right: 5px; }
 
 .initials { width: 37px; height: 37px; text-align: center; color: white; display: block; padding: 8px 0 0; font-weight: bold; border-radius: 100px; cursor: default; }
 
-.iconbutton { float: left; vertical-align: top; margin: 0; border: 1px solid #40404; border-left: 0; min-width: 80px; text-align: center; cursor: pointer; padding: 2px 8px; background-color: #383838; }
+.iconbutton { float: left; vertical-align: top; margin: 0; border: 1px solid #404040; border-left: 0; min-width: 80px; text-align: center; cursor: pointer; padding: 2px 8px; background-color: #383838; }
 .iconbutton:first-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-left: 1px solid #404040; }
 .iconbutton:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
 .iconbutton i { font-size: 20px; text-align: center; margin: 5px 0 2px; display: block; }
 .iconbutton span { display: block; font-size: 11px; padding: 2px 0; }
-.iconbutton.selected { background-color: $color; border-color: $color !important; color: #FFF; }
 
 .oplight .iconbutton { border-color: #D0D0D0; background-color: #FFF; }
 .oplight .iconbutton:first-child { border-left-color: #D0D0D0; }
-.oplight .iconbutton.selected { background-color: $color; border-color: $color !important; color: #FFF; }
 
 .appsdesigner .item { height: 34px; border-bottom: 1px solid #404040; line-height: 32px; font-size: 13px; }
 .oplight .appsdesigner .item { border-bottom-color: #E0E0E0; }
