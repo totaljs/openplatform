@@ -1,0 +1,63 @@
+<div data---="largeform__common.form2__if:appsdesignercomponents;width:800;title:@(UI components);reload:?/reload;submit:?/submit;zindex:50;scrollbar:0" class="hidden" data-scope="appsdesignercomponents">
+	<div class="appsdesignercomponents">
+		<div class="header bg-smoke">
+			<div class="pull-left" style="padding-left:15px">
+				<button class="exec b" data-exec="?/add"><i class="fa fa-plus-circle green"></i>@(Add component)</button>
+			</div>
+		</div>
+		<div data---="viewbox__common.form2__parent:auto;scrollbar:1;margin:45" class="invisible">
+			<div data---="empty__common.components__icon:far fa-plus-circle;parent:auto">
+				<script type="text/html">@(You need to add some UI components<br>optimized for UI designer)</script>
+				<div data-bind="common.components__template" class="padding">
+					<script type="text/html">
+						{{ foreach m in value }}
+							<div data-id="{{ m }}" class="item">
+								<div class="controls">
+									<button class="exec" title="@(Remove)" data-exec="?/remove"><i class="far fa-trash-o red"></i></button>
+								</div>
+								<div class="name"><i class="fa fa-globe"></i>{{ m }}</div>
+							</div>
+						{{ end }}
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+	<nav data---="validation__?">
+		<button name="cancel" style="width:100%">CANCEL</button>
+	</nav>
+</div>
+
+<script>
+
+	PLUGIN('appsdesignercomponents', function(exports) {
+
+		exports.reload = function(com) {
+		};
+
+		exports.add = function(el) {
+			var opt = {};
+			opt.element = el;
+			opt.placeholder = '@(URL address)';
+			opt.minwidth = 350;
+			opt.maxlength = 1000;
+			opt.icon = 'fas fa-globe';
+			opt.summary = '@(Enter URL address to UI component. Download more UI components from:) ' + '<a href="https://marketplace.totaljs.com/designer/" target="_blank">marketplace.totaljs.com/designer</a>';
+			opt.callback = function(value) {
+				if (!value.isURL())
+					return;
+				AJAX('POST /api/op/components/', { id: value }, OP.done('@(UI component has been registered successfully)', refresh_components));
+			};
+			SETTER('floatinginput/show', opt);
+		};
+
+		exports.remove = function(el) {
+			var id = el.closest('.item').attrd('id');
+			OP.confirm2('@(Are you sure you want to remove selected component?)', '"trash-o" @(Remove)', function() {
+				OP.loading(true);
+				AJAX('DELETE /api/op/components/', { id: id }, OP.done('@(UI component has been removed successfully)', refresh_components));
+			});
+		};
+	});
+
+</script>

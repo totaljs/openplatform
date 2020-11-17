@@ -83,7 +83,7 @@
 		</div>
 	</section>
 
-	<section data-type="main">
+	<section data-type="main" id="mainbody">
 		<div data---="part__common.page__if:dashboard;url:/parts/dashboard.html;reload:dashboard/reload" class="hidden invisible"></div>
 		<div data---="part__common.page__if:users;url:/parts/users-grid.html;reload:usersgrid/reload" class="hidden"></div>
 		<div data---="part__common.page__if:groups;url:/parts/users-groups.html;reload:usersgroups/reload" class="hidden"></div>
@@ -100,6 +100,7 @@
 </div>
 
 <div data---="importer__common.panel__if:appsprofile;url:/panels/apps-profile.html"></div>
+<div data---="importer__common.panel__if:appsdesigner;url:/panels/apps-designer.html"></div>
 
 <script>
 
@@ -163,7 +164,7 @@
 	OP.appearance();
 
 	OP.on('appearance', function(profile) {
-		CSS('.dashboard-referrer > span,.button,.submit{background-color:{0}}.selected{background-color:{0}!important;color:white!important}'.format(profile.colorscheme), 'opcustomstyle');
+		CSS('.dashboard-referrer > span,.button,.submit{background-color:{0}}.selected{background:{0}!important;color:white!important},.color{color:{0}!important}'.format(profile.colorscheme), 'opcustomstyle');
 	});
 
 	AJAX('GET /api/profile/', function(user) {
@@ -235,8 +236,13 @@
 
 		exports.refreshapps = function() {
 			AJAX('GET /api/op/apps/', function(response) {
-				for (var i = 0; i < response.length; i++)
-					response[i].roles.quicksort();
+				for (var i = 0; i < response.length; i++) {
+					var app = response[i];
+					app.roles && app.roles.quicksort();
+					if (!app.version)
+						app.version = DEF.empty;
+				}
+
 				SET('?.apps', response);
 			});
 		};
@@ -523,6 +529,31 @@
 				SETTER('!tooltip/hide');
 		});
 	}
+
+	function refresh_components(callback) {
+		AJAX('GET /api/op/components/', function(response) {
+			if (W.builder)
+				W.builder.components = response;
+			SET('common.components', response);
+			if (callback && typeof(callback) === 'function')
+				callback();
+		});
+	}
+
+	ON('builder', function(builder) {
+		builder.proicons = true;
+		builder.url_sources = 'GET /api/op/sources/';
+		builder.url_sources_save = 'POST /api/op/op/sources/';
+		builder.url_sources_delete = 'DELETE /api/op/sources/{0}/';
+		builder.url_actions = 'GET /api/op/actions/';
+		builder.url_designs = 'GET /api/op/ui/{0}/';
+		builder.url_designs_save = 'POST /api/op/ui/';
+		builder.components = common.components;
+	});
+
+	refresh_components(function() {
+		IMPORT('https://cdn.componentator.com/designer/builder@1.html', '#mainbody');
+	});
 
 </script>
 

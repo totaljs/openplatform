@@ -7,7 +7,7 @@ const DB_NOTIFY_RESET = { countnotifications: 0, dtnotified: null };
 NEWSCHEMA('Apps', function(schema) {
 
 	schema.define('previd', 'UID')(null); // internal for re-importing of apps
-
+	schema.define('typeid', ['external', 'designer'])('external');
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(40)', true);
 	schema.define('titles', Object); // localized title
@@ -20,6 +20,13 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('rebuildservicetoken', Boolean);
 	schema.define('position', Number);
 	schema.define('settings', Object);
+	schema.define('icon', 'String(30)');
+	schema.define('color', 'Upper(7)');
+	schema.define('roles', '[String]');
+	schema.define('origin', '[String]');
+	schema.define('version', 'String(10)');
+
+	schema.required('url', (model) => model.typeid === 'external');
 
 	schema.setQuery(function($) {
 
@@ -32,6 +39,7 @@ NEWSCHEMA('Apps', function(schema) {
 			var app = MAIN.apps[i];
 			var obj = {};
 			obj.id = app.id;
+			obj.typeid = app.typeid;
 			obj.name = app.name;
 			obj.title = $.user && app.titles ? (app.titles[$.user.language] || app.title) : app.title;
 			obj.url = app.url;
@@ -96,6 +104,7 @@ NEWSCHEMA('Apps', function(schema) {
 		var item = MAIN.apps.findItem('id', $.id);
 		if (item) {
 			var obj = {};
+			obj.typeid = item.typeid;
 			obj.id = item.id;
 			obj.url = item.url;
 			obj.name = item.name;
@@ -106,6 +115,14 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.autorefresh = item.autorefresh;
 			obj.settings = item.settings;
 			obj.position = item.position;
+			obj.color = item.color;
+			obj.icon = item.icon;
+
+			if (item.typeid === 'designer') {
+				obj.roles = item.roles;
+				obj.origin = item.origin;
+				obj.version = item.version;
+			}
 
 			DBMS().query('SELECT COUNT(1)::int4 as running FROM tbl_user WHERE inactive=FALSE AND online=TRUE AND running && $1', [[obj.id]]).first().callback(function(err, response) {
 				obj.count = response.running;
@@ -145,6 +162,9 @@ NEWSCHEMA('Apps', function(schema) {
 
 		var model = $.clean();
 
+		if (model.typeid === 'designer')
+			model.name = model.title;
+
 		if (!model.name) {
 			$.invalid('error-apps-meta');
 			return;
@@ -160,6 +180,11 @@ NEWSCHEMA('Apps', function(schema) {
 		model.servicetoken = GUID(15);
 		model.linker = model.name.slug(40);
 		model.search = (model.name + ' ' + model.title).toSearch().max(40);
+
+		if (model.typeid === 'designer') {
+			model.online = true;
+			model.url = null;
+		}
 
 		if (!model.services)
 			delete model.services;
@@ -178,7 +203,7 @@ NEWSCHEMA('Apps', function(schema) {
 					FUNC.log('apps/create', model.id, model.name, $);
 					EMIT('apps/create', model.id);
 					FUNC.refreshguest();
-					FUNC.updateroles($.done());
+					FUNC.updateroles($.done(model.id));
 				});
 			} else
 				$.invalid(err);
@@ -191,6 +216,9 @@ NEWSCHEMA('Apps', function(schema) {
 			return;
 
 		var model = $.clean();
+
+		if (model.typeid === 'designer')
+			model.name = model.title;
 
 		if (!model.name) {
 			$.invalid('error-apps-meta');
@@ -208,6 +236,11 @@ NEWSCHEMA('Apps', function(schema) {
 		if (!model.titles)
 			model.titles = null;
 
+		if (model.typeid === 'designer') {
+			model.online = true;
+			model.url = null;
+		}
+
 		model.permissions = undefined;
 		model.rebuildaccesstoken = undefined;
 		model.rebuildservicetoken = undefined;
@@ -223,7 +256,7 @@ NEWSCHEMA('Apps', function(schema) {
 					FUNC.log('apps/update', $.id, model.name, $);
 					EMIT('apps/update', $.id);
 					FUNC.refreshguest();
-					FUNC.updateroles($.done());
+					FUNC.updateroles($.done($.id));
 				});
 			} else
 				$.invalid(err || 'error-apps-404');
@@ -391,6 +424,9 @@ NEWSCHEMA('Apps', function(schema) {
 
 				MAIN.session.set2(user.id, user);
 			}
+
+			if (app.typeid === 'designer')
+				data.url = '/builder/' + $.id + '/';
 
 			$.callback(data);
 		} else

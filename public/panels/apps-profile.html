@@ -1,16 +1,31 @@
 <div data---="largeform__common.panel__if:appsprofile;reload:appsprofilepanel/reload;submit:appsprofilepanel/submit;icon:rocket;autofocus:1;width:750" class="hidden">
 	<div data-scope="appsprofilepanel">
-		<div class="padding npb">
-			<div data---="input__?.url__required:1;type:url;$delay:1000">@(URL address)</div>
-			<div class="help"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
+		<div class="padding npb" data-bind="?__hide:value.id&&value.typeid==='designer'__track:id,typeid">
+
+			<div data-bind="?.id__hide" class="hidden">
+				<div data---="radiobuttonexpert__?.typeid__datasource:external|External|fas fa-laptop-code,designer|Designer|fas fa-brush__'external'">
+					<script type="text/html">
+						<div class="iconbutton">
+							<i class="{{ icon }}"></i>
+							<span>{{ name }}</span>
+						</div>
+					</script>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div data-bind="?.typeid__show:value==='external'">
+				<br data-bind="?.id__hide" />
+				<div data---="input__?.url__required:1;type:url;$delay:1000">@(URL address)</div>
+				<div class="help m"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
+			</div>
 		</div>
-		<hr class="nmb" />
 		<div data-bind="?.meta.notallowed__show" class="hidden padding">
 			<div class="alert" style="border-color:red">
 				<div class="b"><i class="fa fa-ban mr5 red"></i>@(WARNING)</div>
 				<div class="mt5">@(You can't provide this application in your OpenPlatform because <b>the domain name is not defined in allowed domains</b>.)</div>
 			</div>
 		</div>
+
 		<div class="bg-smoke padding" data-bind="?__template__track:meta__show:value && value.meta">
 			<script type="text/html">
 				<div class="caption"><i class="fa fa-book-open"></i>@(Downloaded meta data)</div>
@@ -137,6 +152,21 @@
 			</div>
 			<div class="m help"><span class="exec link" data-exec="?/localize"><i class="fa fa-language"></i>@(Add localization)</span></div>
 
+			<div data-bind="?.typeid__show:value==='designer'" class="hidden">
+				<div class="row">
+					<div class="col-md-3 col-xs-3 m">
+						<div data---="input__?.icon__type:icon;required:1">@(Icon)</div>
+					</div>
+					<!--
+					<div class="col-md-3 col-xs-3 m">
+						<div data---="input__?.color__type:color">@(Color)</div>
+					</div>-->
+					<div class="col-md-3 col-xs-3 m">
+						<div data---="input__?.version__maxlength:10;align:1">@(Version)</div>
+					</div>
+				</div>
+			</div>
+
 			<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX;camouflage:•__''">@(Serial number)</div>
 			<div class="help m"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
 			<div class="row">
@@ -152,10 +182,16 @@
 				<div data---="checkbox__?.rebuildservicetoken__checkicon:refresh">@(Re-build service token)</div>
 			</div>
 			<hr />
-			<div data---="checkbox__?.permissions__checkicon:refresh">@(Refresh permissions according to the meta file)</div>
-			<div data---="checkbox__?.autorefresh__checkicon:refresh">@(Application can refresh its permissions automatically)</div>
-			<div class="alert hidden mt10" data-bind="?.autorefresh__show">
-				<i class="fa fa-warning"></i> @(You need to know that allowing refresh permissions automatically <b>is very dangerous step</b>.)
+			<div data-bind="?.typeid__show:value==='external'">
+				<div data---="checkbox__?.permissions__checkicon:refresh">@(Refresh permissions according to the meta file)</div>
+				<div data---="checkbox__?.autorefresh__checkicon:refresh">@(Application can refresh its permissions automatically)</div>
+				<div class="alert hidden mt10" data-bind="?.autorefresh__show">
+					<i class="fa fa-warning"></i> @(You need to know that allowing refresh permissions automatically <b>is very dangerous step</b>.)
+				</div>
+			</div>
+			<div data-bind="?.typeid__hide:value==='external'">
+				<div data---="textboxlist__?.roles__placeholder:@(Type a role and press enter)" class="m"><b>@(Roles)</b></div>
+				<div data---="textboxlist__?.origin__placeholder:@(Type IPv4 address and press enter)"><b>@(Allowed origin for external API)</b></div>
 			</div>
 		</div>
 		<div data-bind="?.settings2__show:value && value.length__strict" class="hidden padding bg-smoke radius">
@@ -214,18 +250,29 @@
 
 		exports.submit = function() {
 			var model = CLONE(GETR('?'));
-			model.settings = model.settings2.length ? {} : null;
-			for (var i = 0; i < model.settings2.length; i++) {
-				var item = model.settings2[i];
-				model.settings[item.name] = item.value;
+			model.settings = model.settings2 && model.settings2.length ? {} : null;
+
+			if (model.settings2 && model.settings2.length) {
+				for (var i = 0; i < model.settings2.length; i++) {
+					var item = model.settings2[i];
+					model.settings[item.name] = item.value;
+				}
 			}
+
 			model.titles2 = undefined;
 			model.settings2 = undefined;
-			AJAX('POST /api/op/apps/' + (model.id || ''), model, OP.done('@(Application has been saved successfully)', function() {
+			AJAX('POST /api/op/apps/' + (model.id || ''), model, OP.done('@(Application has been saved successfully)', function(response) {
 				NULL('common.panel');
 				EXEC('appsgrid/refresh');
 				EXEC('usersroles/refresh');
 				EXEC('main/refreshmeta');
+
+				if (!model.id && model.typeid === 'designer') {
+					OP.loading(true);
+					SET('appsdesigner @reset', { appid: response.value, name: model.title });
+					SET('common.panel', 'appsdesigner', 1000);
+				}
+
 			}));
 		};
 

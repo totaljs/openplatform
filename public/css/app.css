@@ -43,6 +43,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .header button:disabled, .toolbar button:disabled { color: silver; cursor: not-allowed; border-color: #E0E0E0 !important; background: linear-gradient(#F8F8F8,#F0F0F0); }
 .header button:disabled i, .toolbar button:disabled i { color: silver !important; }
 .header button.right, .toolbar button.right { float: right; margin-left: 5px; margin-right: 0; text-align: center; }
+.header button.active { background: #F0F0F0 !important; }
 
 .ui-dark .header button, .ui-dark  .toolbar button { background: linear-gradient(#323232,#353535); border-color: #404040; color: white; }
 .ui-dark .header button:hover, .ui-dark  .toolbar button:hover { border-top-color: #505050; border-bottom-color: #505050; }
@@ -300,3 +301,32 @@ h3 .fa { margin-right: 5px; }
 .ui-dark .visitors-tabmenu { padding: 20px 20px 0; height: 70px; background: linear-gradient(0deg,#282828,#202020); }
 
 .initials { width: 37px; height: 37px; text-align: center; color: white; display: block; padding: 8px 0 0; font-weight: bold; border-radius: 100px; cursor: default; }
+
+.iconbutton { float: left; vertical-align: top; margin: 0; border: 1px solid #40404; border-left: 0; min-width: 80px; text-align: center; cursor: pointer; padding: 2px 8px; background-color: #383838; }
+.iconbutton:first-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-left: 1px solid #404040; }
+.iconbutton:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+.iconbutton i { font-size: 20px; text-align: center; margin: 5px 0 2px; display: block; }
+.iconbutton span { display: block; font-size: 11px; padding: 2px 0; }
+.iconbutton.selected { background-color: $color; border-color: $color !important; color: #FFF; }
+
+.oplight .iconbutton { border-color: #D0D0D0; background-color: #FFF; }
+.oplight .iconbutton:first-child { border-left-color: #D0D0D0; }
+.oplight .iconbutton.selected { background-color: $color; border-color: $color !important; color: #FFF; }
+
+.appsdesigner .item { height: 34px; border-bottom: 1px solid #404040; line-height: 32px; font-size: 13px; }
+.oplight .appsdesigner .item { border-bottom-color: #E0E0E0; }
+.appsdesigner .item .name { margin-right: 150px; }
+.appsdesigner .item .name i { width: 14px; text-align: center; margin-right: 7px; color: #777; }
+.appsdesigner .item .controls { width: 150px; float: right; text-align: right; }
+.appsdesigner .item .controls button { background-color: transparent; border: 0; font-size: 12px; color: #777; }
+.appsdesigner .item .controls button:hover { color: #FFF; }
+.oplight .appsdesigner .item .controls button:hover { color: #000; }
+
+.appsdesignercomponents .item { height: 34px; border-bottom: 1px solid #404040; line-height: 32px; }
+.oplight .appsdesignercomponents .item { border-bottom-color: #E0E0E0; }
+.appsdesignercomponents .item .name { margin-right: 150px; font-size: 13px; }
+.appsdesignercomponents .item .name i { width: 14px; text-align: center; margin-right: 7px; color: #777; }
+.appsdesignercomponents .item .controls { width: 150px; float: right; text-align: right; }
+.appsdesignercomponents .item .controls button { background-color: transparent; border: 0; font-size: 12px; color: #777; }
+.appsdesignercomponents .item .controls button:hover { color: #FFF; }
+.oplight .appsdesignercomponents .item .controls button:hover { color: #000; }

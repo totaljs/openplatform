@@ -17,7 +17,7 @@ var DDOS = {};
 var ORIGINERRORS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4700;           // Current version of OpenPlatform
+MAIN.version = 4800;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -875,6 +875,12 @@ DEF.helpers.profile = function() {
 FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 	var checksum = app.checksum || '';
+
+	if (app.typeid === 'designer') {
+		app.online = true;
+		callback(null, app, false);
+		return;
+	}
 
 	RESTBuilder.GET(app.url).exec(function(err, response, output) {
 
