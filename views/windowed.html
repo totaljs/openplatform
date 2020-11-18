@@ -613,7 +613,7 @@
 
 			for (var i = 0; i < user.apps.length; i++) {
 				var app = user.apps[i];
-				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: app.icon, keywords: app.name });
+				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: (app.icon.indexOf('fa-') === -1 ? 'fa-' : '') + app.icon + (app.icon.indexOf(' ') === -1 ? ' fa' : ''), keywords: app.name });
 			}
 
 			items.push({ name: '@(Reset windows)', icon: 'window-restore', TYPE: 'reset' });
