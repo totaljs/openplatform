@@ -1566,7 +1566,7 @@ function refresh_apps() {
 function emailnotifications() {
 
 	// online=FALSE
-	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications,(SELECT array_agg(x.body) FROM tbl_user_notification x WHERE x.userid=a.id AND x.unread=TRUE ORDER BY x.dtcreated DESC LIMIT 20) as messages FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
+	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications,(SELECT array_agg(x.body ORDER BY x.dtcreated DESC) FROM tbl_user_notification x WHERE x.userid=a.id AND x.unread=TRUE LIMIT 20) as messages FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
 
 		if (!items.length)
 			return;
