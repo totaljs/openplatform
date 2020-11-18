@@ -21,7 +21,7 @@ header img { width: 45px; position: absolute; border-radius: 3px; margin: 0 8px 
 .menuminimized .menu .ui-scrollbar-path { visibility: hidden !important; }
 
 .initials { width: 37px; line-height: 37px; text-align: center; color: white; display: block; padding: 0; font-weight: bold; border-radius: 100px; cursor: default; }
-header .initials { position: absolute; line-height: 44px; width: 44px; font-size: 14px; margin: 0 8px 0 0; cursor: pointer; border-radius: 3px; }
+header .initials { position: absolute; line-height: 45px; width: 44px; font-size: 14px; margin: 0 8px 0 0; cursor: pointer; border-radius: 3px; }
 .menu-top { height: 55px; }
 .menu-footer { height: 40px; }
 .menu .caption { margin: 0 10px; margin-top: 20px; }
