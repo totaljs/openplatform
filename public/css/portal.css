@@ -11,7 +11,7 @@ body.light { background: white; }
 header { height: 45px; line-height: 44px; font-size: 14px; position: absolute; margin: 8px 10px 0; border-radius: 3px; background-color: #333; box-shadow: 0 2px 3px rgba(0,0,0,0.05); right: 0; left: 0; z-index: 10; }
 header .title { margin: 0 30px 0 50px; font-weight: bold; vertical-align: top; display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; line-height: 16px; padding-top: 7px; }
 header .title span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; font-weight: normal; }
-header img { width: 44px; position: absolute; border-radius: 3px; margin: 0 8px 0 0; cursor: pointer; }
+header img { width: 45px; position: absolute; border-radius: 3px; margin: 0 8px 0 0; cursor: pointer; }
 
 .light header { background-color: #FFF; }
 
