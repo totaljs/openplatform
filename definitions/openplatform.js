@@ -1628,7 +1628,7 @@ ON('service', function(counter) {
 });
 
 if (global.UPDATE)
-	global.UPDATE([4400, 4500, 4600, 4700], ERROR('Update'), 'updates');
+	global.UPDATE([4400, 4500, 4600, 4700, 4800], ERROR('Update'), 'updates');
 else
 	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');
 

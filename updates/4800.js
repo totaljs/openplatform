@@ -7,7 +7,8 @@ db.task(function(responses, response) {
 		return;
 
 	db.query('ALTER TABLE tbl_app ADD typeid VARCHAR(10)');
-	db.query('UPDATE tbl_app SET typeid=\'external\');
+	db.query('UPDATE tbl_app SET typeid=\'external\'');
+	db.query('UPDATE cl_config SET value=\'https://marketplace.totaljs.com/openplatform/\' WHERE id=\'marketplace\'');
 
 	db.query(`CREATE TABLE "public"."tbl_app_source" (
 	"id" varchar(25) NOT NULL,
