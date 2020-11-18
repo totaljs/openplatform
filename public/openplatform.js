@@ -1,7 +1,7 @@
 var OP = {};
 var OPENPLATFORM = OP;
 
-OP.version = 425;
+OP.version = 426;
 OP.callbacks = {};
 OP.events = {};
 OP.is = top !== window;
@@ -14,6 +14,18 @@ OP.interval = setInterval(function() {
 		OP.pending = [];
 	}
 }, 500);
+
+OP.jcomponent = function() {
+	ON('request', function(opt) {
+		var index = opt.url.indexOf('?');
+		var raw = index === -1 ? opt.url : opt.url.substring(0, index);
+		raw = raw.substring(raw.indexOf('/', 9) + 1);
+		var end = raw.substring(raw.length - 10);
+		index = end.indexOf('.');
+		if (index === -1)
+			opt.headers.Authorization = 'base64 ' + btoa(NAV.query.openplatform + ',' + NAV.query.rev + ',' + NAV.query.language);
+	});
+};
 
 document.addEventListener('click', function(e) {
 
@@ -246,7 +258,7 @@ OP.init = function(callback, notembedded) {
 	var arr = location.search.substring(1).split('&');
 	var accesstoken = null;
 
-	for (var i = 0, length = arr.length; i < length; i++) {
+	for (var i = 0; i < arr.length; i++) {
 		var name = arr[i];
 		if (name.substring(0, 13) === 'openplatform=') {
 			var tmp = decodeURIComponent(name.substring(13));

@@ -10,7 +10,7 @@
 	<meta name="robots" content="all,follow" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
-	<script src="@{'%cdn'}/openplatform.min.js"></script>
+	<script src="/openplatform.js"></script>
 	<script src="https://designer.totaljs.com/compiler.min.js"></script>
 	<script>ENVIRONMENT('opbuilder');</script>
 	<style>
@@ -82,10 +82,7 @@
 		var appid = '@{controller.id}';
 		var common = {};
 
-		ON('request', function(opt) {
-			if (opt.url.indexOf('componentator.com') === -1 && opt.url.charAt(0) !== '/' && opt.url.indexOf('.html') === -1)
-				opt.headers['x-openplatform'] = 'base64 ' + btoa(NAV.query.openplatform + ',' + NAV.query.rev + ',' + NAV.query.language);
-		});
+		OP.jcomponent();
 
 		function openui(id) {
 
