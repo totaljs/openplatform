@@ -74,11 +74,11 @@ hr { border-color: #E0E0E0; }
 .iconmenu .selected { color: white; }
 
 .menu { padding: 12px 0 0; }
-.menu .item { color: #303030; display: block; padding: 4px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; margin: 0 10px 2px; border-radius: 3px; font-size: 14px; }
+.menu .item { color: #303030; display: block; padding: 4px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; margin: 0 10px 2px; border-radius: 5px; font-size: 14px; }
 .menu .item .options { float: right; cursor: pointer; font-size: 12px; margin: 2px 0 0; }
-.menu .item > i { width: 20px; text-align: center; margin: 3px 5px 0 0; float: left; }
+.menu .item > i { width: 20px; text-align: center; margin: 3px 6px 0 0; float: left; }
 .menu .item > .fa-trash-o { float: right; text-align: center; margin: 4px 0 0; font-size: 12px; }
-.menu .selected { color: white; }
+.menu .selected { color: white; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
 .menu .selected > .fa-trash-o { color: white !important; }
 .menu .item .name { margin: 0 25px; display: block; height: 16px; }
 .menu .item:hover { background-color: rgba(0,0,0,0.05); }
@@ -219,6 +219,10 @@ h3 .fa { margin-right: 5px; }
 	.search .ui-textbox-input { padding: 8px 4px 0 10px; }
 	.search .ui-textbox input { font-size: 14px; }
 	.search .ui-textbox-control { width: 34px; }
+
+	.menu .item { font-size: 18px; padding: 6px 10px; }
+	.menu .item > i { width: 24px; text-align: center; margin: 4px 8px 0 0; float: left; }
+	.xs100 { width: 100%; }
 }
 
 .status0 { color: #68B25B; }

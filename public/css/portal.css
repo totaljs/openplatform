@@ -8,10 +8,10 @@ body.light { background: white; }
 .hidden2 { display: none; }
 .container-fluid { padding-left: 0; padding-right: 0; }
 
-header { height: 45px; line-height: 44px; font-size: 14px; position: absolute; margin: 8px 10px 0; border-radius: 3px; background-color: #333; box-shadow: 0 2px 3px rgba(0,0,0,0.05); right: 0; left: 0; z-index: 10; }
+header { height: 45px; line-height: 44px; font-size: 14px; position: absolute; margin: 8px 10px 0; border-radius: 5px; background-color: #333; box-shadow: 0 2px 3px rgba(0,0,0,0.05); right: 0; left: 0; z-index: 10; }
 header .title { margin: 0 30px 0 50px; font-weight: bold; vertical-align: top; display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; line-height: 16px; padding-top: 7px; }
 header .title span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; font-weight: normal; }
-header img { width: 45px; position: absolute; border-radius: 3px; margin: 0 8px 0 0; cursor: pointer; }
+header img { width: 45px; position: absolute; border-radius: 5px; margin: 0 8px 0 0; cursor: pointer; }
 
 .light header { background-color: #FFF; }
 
@@ -21,16 +21,16 @@ header img { width: 45px; position: absolute; border-radius: 3px; margin: 0 8px 
 .menuminimized .menu .ui-scrollbar-path { visibility: hidden !important; }
 
 .initials { width: 37px; line-height: 37px; text-align: center; color: white; display: block; padding: 0; font-weight: bold; border-radius: 100px; cursor: default; }
-header .initials { position: absolute; line-height: 45px; width: 44px; font-size: 14px; margin: 0 8px 0 0; cursor: pointer; border-radius: 3px; }
+header .initials { position: absolute; line-height: 45px; width: 44px; font-size: 14px; margin: 0 8px 0 0; cursor: pointer; border-radius: 5px; }
 .menu-top { height: 55px; }
 .menu-footer { height: 40px; }
 .menu .caption { margin: 0 10px; margin-top: 20px; }
 .links { padding: 10px; }
 .links a, .links button { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 3px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; user-select: none; height: 25px; background-color: transparent; }
 .links .selected { font-weight: bold; color: white; }
-.links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin-right: 6px; float: left; line-height: 20px; }
+.links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin: 0 6px 0 5px; float: left; line-height: 20px; }
 .links b { position: absolute; font-size: 10px; left: 2px; color: white; width: 19px; height: 19px; line-height: 19px; border-radius: 100px; text-align: center; margin: 0; background-color: #D33534; z-index: 1; }
-.links .app { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 3px; padding: 4px 2px 0 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; cursor: pointer; user-select: none; height: 28px; background-color: transparent; }
+.links .app { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 5px; padding: 4px 2px 0 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; cursor: pointer; user-select: none; height: 28px; background-color: transparent; }
 .links .app-progress{}
 .links .close { float: right; color: #D33534; display: none; margin-top: 0; width: 24px; text-align: center; }
 .links .app-running .close { display: block; }
@@ -295,10 +295,10 @@ h3 i { margin-right: 5px; }
 	.menu { position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%; z-index: 36; background-color: #202020; display: none; }
 	.light .menu { background-color: #F0F0F0; }
 	.main { margin-left: 0; border-left: 0; }
-	.links .app > i, .links a > i, .links button > i { line-height: 32px; font-size: 16px; margin-top: -2px; width: 30px; }
+	.links .app > i, .links a > i, .links button > i { line-height: 32px; font-size: 16px; margin-top: -3px; width: 30px; }
 	.links a, .links button { font-size: 18px; height: 30px; }
-	.links .app { font-size: 18px; height: 32px; padding-right: 5px; }
-	header { height: 60px; padding: 9px 10px 0; margin-top: 10px; }
+	.links .app { font-size: 18px; height: 40px; padding-right: 5px; padding: 8px 10px; }
+	header { height: 60px; padding: 9px 10px 0; margin-top: 15px; }
 	header .initials { width: 61px; margin-top: -5px; margin-left: -5px; height: 61px; font-size: 20px; line-height: 60px; }
 	header img { width: 61px; margin-top: -10px; margin-left: -10px; }
 	.ui-dark header { background-color: #151515; }
