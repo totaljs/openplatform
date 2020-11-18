@@ -64,6 +64,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('dtbeg', Date);
 	schema.define('dtend', Date);
 	schema.define('apps', '[Object]');  // [{ id: UID, roles: [] }]
+	schema.define('oauth2', 'UID');
 
 	var fields = { id: 1, name: 1, online: 1, dtcreated: 1, dtupdated: 1, dtmodified: 1, dtlogged: 1 };
 	var fieldsall = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged', 'note', 'running'];

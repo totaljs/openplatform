@@ -24,6 +24,7 @@ CREATE TABLE "public"."tbl_user" (
 	"supervisorid" varchar(25),
 	"deputyid" varchar(25),
 	"groupid" varchar(30),
+	"oauth2" varchar(25),
 	"accesstoken" varchar(50),
 	"verifytoken" varchar(20),
 	"directory" varchar(25),
@@ -527,6 +528,7 @@ CREATE VIEW view_user AS
 		a.dtcreated,
 		a.dtlogged,
 		a.dtmodified,
+		a.oauth2,
 		CASE WHEN (length(a.deputyid) > 0) THEN (SELECT b.name FROM tbl_user b WHERE b.id = a.deputyid LIMIT 1) ELSE ''::text END AS deputy,
 		CASE WHEN (length(a.supervisorid) > 0) THEN (SELECT c.name FROM tbl_user c WHERE c.id=a.supervisorid LIMIT 1) ELSE ''::text END AS supervisor
 	FROM tbl_user a;
