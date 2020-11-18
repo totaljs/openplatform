@@ -303,7 +303,7 @@ h3 i { margin-right: 5px; }
 .ui-quicknotifications-padding { padding: 0 10px; }
 .ui-quicknotifications-body { line-height: 16px; font-size: 14px; color: silver; display: inline-block; word-break: break-word; }
 .light .ui-quicknotifications-body { color: #777777; }
-.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
+.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 3px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
 .ui-quicknotifications button:hover { opacity: 0.9; }
 
 .panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }

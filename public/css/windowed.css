@@ -61,7 +61,7 @@ footer { height: 30px; position: absolute; bottom: 0; left: 0; right: 0; backgro
 .console { font-size: 12px; cursor: pointer; margin: 7px 0 0 10px; float: left; }
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
-.testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; margin: 8px 10px 0 0; border-radius: 2px; vertical-align: middle; }
+.testmode { float: right; background-color: red; color: white; font-size: 10px; font-weight: bold; padding: 0 3px; margin: 8px 10px 0 0; border-radius: 3px; vertical-align: middle; }
 .samode { float: right; color: white; font-size: 10px; font-weight: bold; padding: 0 8px; height: 30px; line-height: 16px; margin: 0; line-height: 30px; width: 45px; }
 
 footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px; line-height: 30px; padding-right: 10px; border-right: 1px solid #404040; max-width: 400px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
@@ -112,7 +112,7 @@ footer .status { float: right; font-size: 11px; margin: 0 10px 0 0; height: 30px
 .light .ui-process-header { background: #E0E0E0 linear-gradient(#E9E9E9,#DEDEDE); color: black; border-bottom: 1px solid #D4D4D4; }
 .light .ui-process-header nav button { color: #505050; }
 .light .ui-process { box-shadow: 0 5px 30px rgba(0,0,0,0.1); border: 1px solid #C0C0C0; }
-.ui-process { border: 1px solid #505050; border-radius: 2px 2px 0 0; }
+.ui-process { border: 1px solid #505050; border-radius: 3px 3px 0 0; }
 
 .ui-process .maximized:before { content: '\f2d0'; }
 .ui-process-max .maximized:before { content: '\f2d2'; }
@@ -159,7 +159,7 @@ h3 i { margin-right: 5px; }
 
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.user { float: left; cursor: pointer; width: 24px; height: 25px; line-height: 25px; border-radius: 2px; background-color: #4285f4; color: rgba(255,255,255,0.5); margin: 9px 10px 0 10px; user-select: none; text-align: center; font-size: 14px; }
+.user { float: left; cursor: pointer; width: 24px; height: 25px; line-height: 25px; border-radius: 3px; background-color: #4285f4; color: rgba(255,255,255,0.5); margin: 9px 10px 0 10px; user-select: none; text-align: center; font-size: 14px; }
 .user > div { float: left; padding: 15px 20px 0 0; font-size: 14px; text-align: left; height: 49px; }
 .user:hover { opacity: 0.9; color: white; }
 .user b { font-weight: bold; font-size: 14px; display: block; line-height: 15px; }
@@ -279,7 +279,7 @@ h3 i { margin-right: 5px; }
 .ui-quicknotifications-padding { padding: 0 10px; }
 .ui-quicknotifications-body { line-height: 16px; font-size: 14px; color: silver; display: inline-block; word-break: break-word; }
 .light .ui-quicknotifications-body { color: #777777; }
-.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
+.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 3px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
 .ui-quicknotifications button:hover { opacity: 0.9; }
 
 .panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
@@ -353,7 +353,7 @@ h3 i { margin-right: 5px; }
 .launchpad .app-disabled div:hover { color: rgba(255,255,255,0.5); }
 .launchpad-visible { transform: scale(1); opacity: 1; }
 .launchpad .app-offline .appoffline { display: block; }
-.launchpad .appoffline { display: none; color: white; border-radius: 2px; background-color: red; padding: 1px 3px; font-size: 10px; position: absolute; left: 50%; margin: 10px 0 0 0; }
+.launchpad .appoffline { display: none; color: white; border-radius: 3px; background-color: red; padding: 1px 3px; font-size: 10px; position: absolute; left: 50%; margin: 10px 0 0 0; }
 
 .light .launchpad figure div { color: rgba(0,0,0,0.4); }
 .light .launchpad .app.app-running div { color: black; }
