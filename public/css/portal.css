@@ -29,7 +29,7 @@ header .initials { position: absolute; line-height: 45px; width: 44px; font-size
 .links a, .links button { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 3px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; user-select: none; height: 25px; background-color: transparent; }
 .links .selected { font-weight: bold; color: white; }
 .links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin: 0 6px 0 5px; float: left; line-height: 20px; }
-.links b { position: absolute; font-size: 10px; left: 2px; color: white; width: 19px; height: 19px; line-height: 19px; border-radius: 100px; text-align: center; margin: 0; background-color: #D33534; z-index: 1; }
+.links b { position: absolute; font-size: 10px; left: 6px; color: white; width: 19px; height: 19px; line-height: 19px; border-radius: 100px; text-align: center; margin: 0; background-color: #D33534; z-index: 1; }
 .links .app { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 5px; padding: 4px 2px 0 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; cursor: pointer; user-select: none; height: 28px; background-color: transparent; }
 .links .app-progress{}
 .links .close { float: right; color: #D33534; display: none; margin-top: 0; width: 24px; text-align: center; }
