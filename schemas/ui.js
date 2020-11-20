@@ -38,9 +38,6 @@ NEWSCHEMA('UI/Sources', function(schema) {
 		else
 			model.properties = null;
 
-		if (model.typeid !== 'view')
-			model.isnavigation = false;
-
 		var db = DBMS();
 		var builder = db.modify('tbl_app_source', model, true);
 		builder.id(model.id);
@@ -196,6 +193,9 @@ NEWSCHEMA('UI', function(schema) {
 
 		if (!model.sourceid)
 			model.sourceid = null;
+
+		if (model.type !== 'view')
+			model.isnavigation = false;
 
 		db.modify('tbl_app_ui', model, true).id(model.id).where('appid', model.appid).where('isremoved=FALSE').callback($.done(model.id));
 

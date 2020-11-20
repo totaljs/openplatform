@@ -325,7 +325,7 @@ h3 i { margin-right: 5px; }
 .ui-process { left: auto; top: auto; }
 .ui-wiki { top: 0; }
 
-.menu-minimize { position: absolute; top: 8px; right: 0; background-color: #202020; z-index: 51; width: 10px; line-height: 44px; font-size: 8px; text-align: center; cursor: pointer; margin-left: 0; color: gray; }
+.menu-minimize { position: absolute; top: 8px; right: 0; background-color: #202020; z-index: 39; width: 10px; line-height: 44px; font-size: 8px; text-align: center; cursor: pointer; margin-left: 0; color: gray; }
 .menu-minimize:hover { background-color: #303030; }
 .light .menu-minimize { background-color: transparent; color: #000; }
 .menu-minimize i:before { content: '\f104'; }
