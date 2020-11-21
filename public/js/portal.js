@@ -609,7 +609,7 @@ $(window).on('message', function(e) {
 
 		case 'badge':
 			if (app) {
-				if (data.body == null && app.id === common.focused)
+				if ((data.body == null || data.body == false) && app.id === common.focused)
 					return;
 				AJAX('GET /api/op/badges/' + app.id, NOOP);
 			}
