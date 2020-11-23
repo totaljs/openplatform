@@ -210,6 +210,7 @@ CREATE TABLE "public"."tbl_log" (
 	"message" varchar(200),
 	"username" varchar(60),
 	"ua" varchar(30),
+	"data" json,
 	"ip" cidr,
 	"dtcreated" timestamp DEFAULT NOW(),
 	PRIMARY KEY ("id")

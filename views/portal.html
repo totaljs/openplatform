@@ -437,7 +437,6 @@
 				var app = dashboard.apps.findItem('id', id);
 				if (app == null)
 					return;
-				console.log(app);
 				if (app.internal.countbadges || app.internal.countnotifications) {
 					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
 					app.internal.countnotifications = 0;

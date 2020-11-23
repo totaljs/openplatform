@@ -32,8 +32,8 @@
 </head>
 <body data---="exec">
 
-	<div data---="loading__null__style:2"></div>
-	<div data---="message__null__style:2"></div>
+	<div data---="loading" class="hidden"></div>
+	<div data---="message" class="hidden"></div>
 
 	<div data---="layout__common.layout__parent:window__''" class="invisible">
 
@@ -69,13 +69,29 @@
 
 	<script>
 
-		COMPONENT('loading', function(self, config, cls) {
+		EXTENSION('loading', function(self, config, cls) {
 			self.show = function() {
 				OP.loading(true);
 			};
 			self.hide = function(timeout) {
 				OP.loading(false, timeout);
 			};
+		});
+
+		EXTENSION('message', function(self, config, cls) {
+
+			self.success = function(msg) {
+				OP.message(msg, 'success');
+			};
+
+			self.warning = function(msg) {
+				OP.message(msg, 'warning');
+			};
+
+			self.info = function(msg) {
+				OP.message(msg, 'info');
+			};
+
 		});
 
 		DEF.languagehtml = '@{user.language}';
@@ -92,6 +108,9 @@
 			if (id) {
 				SET('common.uiid', id);
 				EXEC('builder/load', id);
+				setTimeout(function() {
+					OP.loading(false);
+				}, 2000);
 			}
 		}
 
@@ -136,11 +155,10 @@
 
 				if (nav.length)
 					openui(nav[0].id);
+
 			});
 
 		});
-
-		OP.ready = true;
 
 		ON('action.back', function($) {
 			$.caller && EXEC('builder/refresh', $.caller.id);

@@ -1535,6 +1535,11 @@ function recovery(next) {
 	});
 }
 
+function stringifyprepare(key, value) {
+	if (key !== 'password' && value != null)
+		return value;
+}
+
 FUNC.log = function(type, rowid, message, $) {
 
 	var obj = {};
@@ -1542,6 +1547,10 @@ FUNC.log = function(type, rowid, message, $) {
 	obj.rowid = rowid;
 	obj.message = (message || '').max(200);
 	obj.dtcreated = NOW;
+
+
+	if ($.model)
+		obj.data = JSON.stringify(F.version > 3999 ? $.model : $.clean(), stringifyprepare);
 
 	if ($) {
 		obj.ip = $.ip;

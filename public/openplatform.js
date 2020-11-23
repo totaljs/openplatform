@@ -1,10 +1,9 @@
 var OP = {};
-var OPENPLATFORM = OP;
 
 OP.version = 426;
 OP.callbacks = {};
 OP.events = {};
-OP.is = top !== window;
+OP.is = parent !== window;
 OP.pending = [];
 OP.$appearance = 0;
 OP.interval = setInterval(function() {
@@ -15,7 +14,8 @@ OP.interval = setInterval(function() {
 	}
 }, 500);
 
-OP.jcomponent = function() {
+OP.jcomponent = function(notembedded) {
+
 	ON('request', function(opt) {
 		var index = opt.url.indexOf('?');
 		var raw = index === -1 ? opt.url : opt.url.substring(0, index);
@@ -25,6 +25,53 @@ OP.jcomponent = function() {
 		if (index === -1)
 			opt.headers.Authorization = 'base64 ' + btoa(NAV.query.openplatform + ',' + NAV.query.rev + ',' + NAV.query.language);
 	});
+
+	ON('@flag showloading', function() {
+		OP.loading(true);
+	});
+
+	ON('@flag hideloading', function() {
+		OP.loading(false, 1000);
+	});
+
+	OP.onready = function(meta) {
+
+		if (meta.dateformat) {
+
+			DEF.dateformat = meta.dateformat;
+
+			if (W.user) {
+				user.timeformat = meta.timeformat;
+				user.dateformat = meta.dateformat;
+				user.numberformat = meta.numberformat;
+			}
+
+			switch (meta.numberformat) {
+				case 1: // 1 000.12
+					DEF.decimalseparator = '.';
+					DEF.thousandsseparator = ' ';
+					break;
+				case 2: // 1 000,12
+					DEF.decimalseparator = ',';
+					DEF.thousandsseparator = ' ';
+					break;
+				case 3: // 1.000,12
+					DEF.decimalseparator = ',';
+					DEF.thousandsseparator = '.';
+					break;
+				case 4: // 1,000.12
+					DEF.decimalseparator = '.';
+					DEF.thousandsseparator = ',';
+					break;
+			}
+
+			ENV('date', DEF.dateformat);
+		}
+
+		SET('common.ready', true, 500);
+	};
+
+	OP.init(notembedded);
 };
 
 document.addEventListener('click', function(e) {
@@ -225,6 +272,11 @@ OP.progress = function(p) {
 
 OP.init = function(callback, notembedded) {
 
+	if (typeof(callback) === 'boolean') {
+		embeded = callback;
+		callback = null;
+	}
+
 	OP.ready = false;
 
 	if (notembedded)
@@ -232,13 +284,12 @@ OP.init = function(callback, notembedded) {
 
 	OP.embeded = !notembedded;
 
-	if (!callback)
+	if (!callback) {
 		callback = function(is) {
 			if (is == null) {
 				OP.ready = true;
 				return;
 			}
-
 			if (document.body)
 				document.body.innerHTML = '401: Unauthorized';
 			else
@@ -248,6 +299,7 @@ OP.init = function(callback, notembedded) {
 				window.close();
 			}, 2000);
 		};
+	}
 
 	if (!OP.is) {
 		callback(new Error('OpenPlatform isn\'t detected.'));
@@ -272,12 +324,13 @@ OP.init = function(callback, notembedded) {
 	data.ua = navigator.userAgent;
 	OP.accesstoken = accesstoken;
 
-	$(document).ready(function() {
+	document.addEventListener('DOMContentLoaded', function() {
 
 		if (notembedded) {
 			OP.ready = true;
 			var usr = window.user || {};
 			callback && setTimeout(callback, 100, null, usr);
+			OP.onready && OP.onready({});
 			OP.$process({ type: 'appearance', body: { colorscheme: usr.colorscheme, darkmode: usr.darkmode }});
 			window.addEventListener('resize', function() {
 				OP.emit('resize');
@@ -292,6 +345,7 @@ OP.init = function(callback, notembedded) {
 		}, 2000);
 
 		OP.send('verify', data, function(err, response) {
+
 			if (timeout) {
 				clearTimeout(timeout);
 				OP.ready = !err;
@@ -302,6 +356,7 @@ OP.init = function(callback, notembedded) {
 			timeout = null;
 			OP.id = response.id;
 			OP.openplatformurl = response.openplatformurl;
+			OP.onready && OP.onready(response);
 		});
 
 	});
@@ -536,7 +591,7 @@ OP.send = function(type, body, callback) {
 	data.type = type;
 	data.body = body || null;
 	data.sender = true;
-	data.origin = location.protocol + '//' + location.hostname;
+	data.origin = location.origin;
 
 	if (!top) {
 		callback && callback(new Error('The application is not running in the OpenPlatform scope.'));
@@ -548,7 +603,7 @@ OP.send = function(type, body, callback) {
 		OP.callbacks[data.callback] = callback;
 	}
 
-	top.postMessage(JSON.stringify(data), '*');
+	parent.postMessage(JSON.stringify(data), '*');
 	return OP;
 };
 

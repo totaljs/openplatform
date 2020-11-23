@@ -14,8 +14,8 @@ exports.install = function() {
 
 	ROUTE('+GET /oauth/authorize/', oauthauthorize);
 	ROUTE('POST /oauth/token/', oauthsession);
-	ROUTE('GET /oauth/profile/', oauthprofile);
-	ROUTE('GET /oauth/sync/', oauthsync);
+	ROUTE('GET  /oauth/profile/', oauthprofile);
+	ROUTE('GET  /oauth/sync/', oauthsync);
 
 	FILE('/manifest.json', manifest);
 	ROUTE('#404', process404);
