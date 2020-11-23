@@ -9979,9 +9979,8 @@ COMPONENT('faiconsbutton', 'default:#FFFFFF;align:left;position:top', function(s
 	};
 });
 
-COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
+COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config, cls) {
 
-	var cls = 'ui-window';
 	var cls2 = '.' + cls;
 
 	if (!W.$$window) {
@@ -10006,6 +10005,9 @@ COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 	self.readonly();
 
 	self.hide = function() {
+		if (config.independent)
+			self.hideforce();
+		self.esc(false);
 		self.set('');
 	};
 
@@ -10020,13 +10022,13 @@ COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 		var scr = self.find('> script');
 		self.template = scr.length ? scr.html() : '';
 
-		$(document.body).append('<div id="{0}" class="hidden {3}-container"><div class="{3}"><div data-bind="@config__change .{3}-icon:@icon__html span:value.title" class="{3}-title"><button name="cancel" class="{3}-button-close{2}" data-path="{1}"><i class="fa fa-times"></i></button><i class="{3}-icon"></i><span></span></div><div class="{3}-header"></div><div class="{3}-body"></div></div>'.format(self.ID, self.path, config.closebutton == false ? ' hidden' : '', cls));
+		$(document.body).append('<div id="{0}" class="hidden {3}-container"><div class="{3}"><div data-bind="@config__change .{3}-icon:@icon__text span:value.title" class="{3}-title"><button name="cancel" class="{3}-button-close{2}" data-path="{1}"><i class="fa fa-times"></i></button><i class="{3}-icon"></i><span></span></div><div class="{3}-header"></div><div class="{3}-body"></div></div>'.format(self.ID, self.path, config.closebutton == false ? ' hidden' : '', cls));
 		var el = $('#' + self.ID);
 		var body = el.find(cls2 + '-body');
 		body[0].appendChild(self.dom);
 
-		if (config.scrollbar && window.SCROLLBAR) {
-			self.scrollbar = SCROLLBAR(body, { visibleY: !!config.scrollbarY });
+		if (config.scrollbar && W.SCROLLBAR) {
+			self.scrollbar = SCROLLBAR(body, { visibleY: !!config.scrollbarY || !!config.visibleY });
 			self.scrollleft = self.scrollbar.scrollLeft;
 			self.scrolltop = self.scrollbar.scrollTop;
 			self.scrollright = self.scrollbar.scrollRight;
@@ -10047,7 +10049,7 @@ COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 
 	self.icon = function(value) {
 		var el = this.rclass2('fa');
-		value.icon && el.aclass('fa fa-' + value.icon);
+		value.icon && el.aclass((value.icon.indexOf(' ') === -1 ? 'fa fa-' : '') + value.icon);
 	};
 
 	self.configure = function(key, value, init) {
@@ -10060,11 +10062,47 @@ COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 		}
 	};
 
+	self.esc = function(bind) {
+		if (bind) {
+			if (!self.$esc) {
+				self.$esc = true;
+				$(W).on('keydown', self.esc_keydown);
+			}
+		} else {
+			if (self.$esc) {
+				self.$esc = false;
+				$(W).off('keydown', self.esc_keydown);
+			}
+		}
+	};
+
+	self.esc_keydown = function(e) {
+		if (e.which === 27 && !e.isPropagationStopped()) {
+			var val = self.get();
+			if (!val || config.if === val) {
+				e.preventDefault();
+				e.stopPropagation();
+				self.hide();
+			}
+		}
+	};
+
+	self.hideforce = function() {
+		if (!self.hclass('hidden')) {
+			self.aclass('hidden');
+			self.release(true);
+			self.find(cls2).rclass(cls + '-animate');
+			W.$$window_level--;
+		}
+	};
+
+	var allowscrollbars = function() {
+		$('html').tclass(cls + '-noscroll', !!$(cls2 + '-container').not('.hidden').length);
+	};
+
 	self.setter = function(value) {
 
-		setTimeout2(cls + '-noscroll', function() {
-			$('html').tclass(cls + '-noscroll', !!$(cls2 + '-container').not('.hidden').length);
-		}, 50);
+		setTimeout2(self.name + '-noscroll', allowscrollbars, 50);
 
 		var isHidden = value !== config.if;
 
@@ -10076,10 +10114,8 @@ COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 		}, 10);
 
 		if (isHidden) {
-			self.aclass('hidden');
-			self.release(true);
-			self.find(cls2).rclass(cls + '-animate');
-			W.$$window_level--;
+			if (!config.independent)
+				self.hideforce();
 			return;
 		}
 
@@ -10103,11 +10139,11 @@ COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 		self.release(false);
 		self.resize();
 
-		config.reload && EXEC(config.reload, self);
-		config.default && DEFAULT(config.default, true);
+		config.reload && self.EXEC(config.reload, self);
+		config.default && DEFAULT(self.makepath(config.default), true);
 
 		if (!isMOBILE && config.autofocus) {
-			var el = self.find(config.autofocus === true ? 'input[type="text"],input[type="password"],select,textarea' : config.autofocus);
+			var el = self.find(config.autofocus ? 'input[type="text"],input[type="password"],select,textarea' : config.autofocus);
 			el.length && setTimeout(function() {
 				el[0].focus();
 			}, 1500);
@@ -10122,6 +10158,8 @@ COMPONENT('window', 'zindex:12;scrollbar:1', function(self, config) {
 		setTimeout2(self.id, function() {
 			self.css('z-index', (W.$$window_level * config.zindex) + 1);
 		}, 500);
+
+		config.closeesc && self.esc(true);
 	};
 });
 
@@ -15858,7 +15896,6 @@ COMPONENT('miniform', 'zindex:12', function(self, config, cls) {
 	};
 });
 
-
 COMPONENT('empty', 'icon:fa fa-database;parent:parent;margin:0', function(self, config, cls) {
 
 	var visible = false;
@@ -15899,6 +15936,13 @@ COMPONENT('empty', 'icon:fa fa-database;parent:parent;margin:0', function(self, 
 	self.resizeforce = function() {
 		var parent = self.parent(config.parent);
 		var wh = parent.height() - 10;
+
+		if (config.topoffset)
+			wh -= self.element.offset().top;
+
+		if (config.topposition)
+			wh -= self.element.position().top;
+
 		table.css('height', wh < 100 ? 'auto' : wh - config.margin);
 	};
 

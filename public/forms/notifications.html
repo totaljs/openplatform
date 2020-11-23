@@ -1,19 +1,38 @@
-<div data---="window__common.form__if:notifications;title:@(Notifications);icon:bell;reload:notifications/reload;autofocus:true;zindex:46;scrollbar:1;onhide:notifications/readall" class="hidden">
-	<div data-bind="notifications__template">
+<div data---="window__common.form__if:notifications;title:@(Notifications);icon:bell;reload:notifications/reload;autofocus:true;zindex:46;scrollbar:1;onhide:notifications/readall;visibleY:1;$id:mynotifications" class="hidden">
+	<div data---="empty__notifications__parent:.ui-window-body;icon:fa fa-check-circle green">
+
 		<script type="text/html">
-		{{ foreach m in value }}
-		<div class="exec notification{{ if m.unread }} notification-unread{{ fi }}" data-data="{{ m.data | encodedata }}" data-id="{{ m.appid }}" data-exec="notifications/open" data-notifyid="{{ m.id }}">
-			<div class="notification-icon">{{ if m.type === 3 }}&nbsp;{{ else }}<i class="fa {{ if m.type === 0 }}fa-info-circle blue{{ else if m.type === 1 }}fa-check-circle green{{ else if m.type === 2 }}fa-warning red{{ fi }}"></i>{{ fi }}</div>
-			<div class="notification-date">{{ m.dtcreated | ndate }}</div>
-			<div class="notification-app"><i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>{{ m.title }}</div>
-			<div class="notification-body opfg markdown-small"><div class="markdown">{{ m.body | markdown_notifications }}</div></div>
-		</div>
-		{{ end }}
+			@(Good job, you don't have any notifications.)
 		</script>
+
+		<div data-bind="notifications__template">
+			<script type="text/html">
+			{{ foreach m in value }}
+			<div class="exec notification{{ if m.unread }} notification-unread{{ fi }}" data-data="{{ m.data | encodedata }}" data-id="{{ m.appid }}" data-exec="notifications/open" data-notifyid="{{ m.id }}">
+				<div class="notification-icon">{{ if m.type === 3 }}&nbsp;{{ else }}<i class="fa {{ if m.type === 0 }}fa-info-circle blue{{ else if m.type === 1 }}fa-check-circle green{{ else if m.type === 2 }}fa-warning red{{ fi }}"></i>{{ fi }}</div>
+				<div class="notification-date">{{ m.dtcreated | ndate }}</div>
+				<div class="notification-app"><i class="{{ m.icon | icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>{{ m.title }}</div>
+				<div class="notification-body opfg markdown-small"><div class="markdown">{{ m.body | markdown_notifications }}</div></div>
+			</div>
+			{{ end }}
+			</script>
+		</div>
 	</div>
 </div>
 
 <script>
+
+	ON('#mynotifications', function(com) {
+		com.find('.ui-window-title').find('button').after('<button data-bind="notifications__show:value&&value.length" name="clear" class="ui-window-button-clear"><i class="fa fa-trash-o"></i></button>');
+		com.find('button[name="clear"]').on('click', function() {
+			if (notifications && notifications.length) {
+				AJAX('GET /api/notifications/clear', NOOP);
+				SET('notifications', []);
+			}
+		});
+		COMPILE();
+	});
+
 	PLUGIN('notifications', function(exports) {
 
 		var cache = 'session';

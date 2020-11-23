@@ -47,7 +47,7 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			model.id = UID('notifications');
 			model.userid = user.id;
 			model.appid = app.id;
-			model.dtcreated = NOW;
+			model.dtcreated = new Date();
 			model.ip = $.ip;
 			model.userappid = user.id + app.id;
 
@@ -187,6 +187,14 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			db.callback($.done());
 		} else
 			$.success();
+	});
+
+	schema.addWorkflow('clear', function($) {
+		var db = DBMS();
+		db.rem('tbl_user_notification').where('userid', $.user.id);
+		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).where('id', $.user.id);
+		db.mod('tbl_user_app', DB_NOTIFICATIONS_RESET).where('userid', $.user.id);
+		$.success();
 	});
 
 });

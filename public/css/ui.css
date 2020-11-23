@@ -1278,19 +1278,22 @@ input:invalid { box-shadow: none; }
 .ui-window-noscroll, .ui-window-noscroll body { overflow: hidden; }
 .ui-window-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 50; overflow: none; transform-style: preserve-3d; height: 100%; }
 .ui-window { background-color: white; margin: 0 auto 30px; transform: scale(0.8); transition: all 0.2s; opacity: 0; }
-.ui-window-header { height: 45px; }
+.ui-window-header { height: 55px; }
 .ui-window-scroll { overflow-scrolling: touch; overflow-y: auto; }
 .ui-window-animate { transform: scale(1); opacity: 1; }
-.ui-window-title { white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis; padding: 0 0 0 20px; font-size: 14px; user-select: none; color: black; border-bottom: 1px solid #E0E0E0; position: absolute; left: 0; right: 0; top: 0; height: 45px; background-color: #F8F8F8; }
-.ui-window-title .ui-window-button-close { float: right; cursor: pointer; font-size: 18px; transition: all 0.2s; background: none; border: 0; outline: 0; color: red; text-align: center; padding: 0; width: auto; height: 45px; width: 45px; border-left: 1px solid #E0E0E0; }
+.ui-window-title { white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis; padding: 0 0 0 20px; font-size: 18px; user-select: none; color: black; border-bottom: 1px solid #E0E0E0; position: absolute; left: 0; right: 0; top: 0; height: 55px; background-color: #FFF; }
+.ui-window-title .ui-window-button-close { float: right; cursor: pointer; font-size: 18px; transition: all 0.2s; background: none; border: 0; outline: 0; color: red; text-align: center; padding: 0; width: auto; height: 55px; width: 60px; border-left: 1px solid #E0E0E0; }
 .ui-window-title .ui-window-button-close:hover { background-color: #F0F0F0; }
-.ui-window-title > span { font-weight: bold; line-height: 44px; }
-.ui-window-title > .fa { margin-right: 7px; }
+.ui-window-title > span { font-weight: bold; line-height: 54px; }
+.ui-window-title > i { margin-right: 7px; }
 .ui-dark .ui-window { background-color: #202020; }
 .ui-dark .ui-window-title { background-color: #252525; border-bottom-color: #404040; color: white; }
 .ui-dark .ui-window { background-color: #202020; }
 .ui-dark .ui-window-title .ui-window-button-close { border-left-color: #404040; }
 .ui-dark .ui-window-title .ui-window-button-close:hover { background-color: #404040; }
+
+.ui-window-title .ui-window-button-clear { float: right; cursor: pointer; font-size: 18px; transition: all 0.2s; background: none; border: 0; outline: 0; color: #000; text-align: center; padding: 0; width: auto; height: 55px; width: 60px; border-left: 1px solid #E0E0E0; }
+.ui-window-title .ui-window-button-clear:hover { background-color: #F0F0F0; }
 
 .notification { min-height: 40px; border-bottom: 1px solid #E0E0E0; padding: 0 17px 0 20px; cursor: pointer; }
 .notification:hover { background-color: rgba(0,0,0,0.03); }

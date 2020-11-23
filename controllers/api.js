@@ -83,6 +83,7 @@ exports.install = function() {
 	ROUTE('+POST      /api/account/status/                *Account/Status       --> @save');
 
 	ROUTE('+GET       /api/notifications/                 *Apps/Notifications   --> @query');
+	ROUTE('+GET       /api/notifications/clear/           *Apps/Notifications   --> @clear');
 
 	// Profile
 	ROUTE('+GET     /api/profile/',                json_profile_full);
