@@ -930,6 +930,20 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			else
 				app.origin = null;
 
+			// Adds resolved origin
+			// Only Total.js 4
+			if (output.origin && output.origin.length) {
+
+				if (!app.origin)
+					app.origin = [];
+
+				for (var i = 0; i < output.origin.length; i++) {
+					var origin = output.origin[i];
+					if (app.origin.indexOf(origin) === -1)
+						app.origin.push(origin);
+				}
+			}
+
 			var sign = (app.name + '' + app.icon + app.version + (app.color ? app.color : '') + (app.width || 0) + '' + (app.height || 0) + (app.resize ? '1' : '0') + app.type + (app.responsive ? '1' : '0') + (app.mobilemenu ? '1' : '0') + (app.serververify ? '1' : '0') + (app.allowreadapps ? '1' : '0') + (app.allowreadusers ? '1' : '0') + (app.allowreadprofile ? '1' : '0') + (app.allownotifications ? '1' : '0') + (app.allowreadmeta ? '1' : '0') + (app.origin ? (app.origin.join('') || '[]') : '[]') + (app.roles ? (app.roles.join('') || '[]') : '[]') + app.hostname + (app.services ? JSON.stringify(app.services) : '{}'));
 			app.checksum = sign.crc32(true) + '';
 		}
