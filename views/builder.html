@@ -158,6 +158,14 @@
 
 			});
 
+			builder.onremove = function($, next) {
+				OP.approve('@(Are you sure you want to remove selected item?)', '"trash-o" @(Remove)', next);
+			};
+
+		});
+
+		ON('builder.error', function(msg) {
+			OP.warning(msg);
 		});
 
 		ON('action.back', function($) {
