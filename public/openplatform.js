@@ -669,17 +669,19 @@ OP.$process = function(data) {
 		var d = data.body;
 		var b = document.body.classList;
 
-		b.add(d.darkmode ? 'opdark' : 'oplight');
-		d.darkmode && b.add('ui-dark');
-		b.add('opbody');
-		b.remove(d.darkmode ? 'oplight' : 'opdark');
-		!d.darkmode && b.remove('ui-dark');
+		if (OP.darkmode !== false) {
+			b.add(d.darkmode ? 'opdark' : 'oplight');
+			d.darkmode && b.add('ui-dark');
+			b.add('opbody');
+			b.remove(d.darkmode ? 'oplight' : 'opdark');
+			!d.darkmode && b.remove('ui-dark');
+			window.OPDARKMODE = d.darkmode;
+		}
 
 		if (!d.colorscheme)
 			d.colorscheme = '#4285f4';
 
 		window.OPCOLOR = d.colorscheme;
-		window.OPDARKMODE = d.darkmode;
 
 		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFFFFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000000') + '}.opborder,.opborderhover:hover{border-color:' + d.colorscheme + '!important}.opbg,.opbghover:hover{background-color:' + d.colorscheme + '!important}.opfg,.opfghover:hover{color:' + d.colorscheme + '!important}'));
 		style.id = 'opstyle';

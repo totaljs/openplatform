@@ -875,6 +875,14 @@ DEF.helpers.profile = function() {
 	return JSON.stringify(FUNC.makeprofile(this.user, 1));
 };
 
+function getCleanValue(a, b, c) {
+	if (a != null)
+		return a;
+	if (b != null)
+		return b;
+	return c;
+}
+
 FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 	var checksum = app.checksum || '';
@@ -894,7 +902,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 		} else {
 
-			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowreadusers:Number,allowreadprofile:Number,allownotifications:Boolean,allowreadmeta:Boolean,responsive:boolean');
+			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowguestuser:Boolean,guestuser:Boolean,applications:Number,allowreadusers:Number,users:Number,userprofile:Number,profile:Number,allownotifications:Boolean,notifications:Boolean,allowreadmeta:Boolean,metadata:Boolean,responsive:boolean');
 
 			app.hostname = output.hostname.replace(/:\d+/, '');
 			app.online = true;
@@ -918,11 +926,12 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.reference = meta.reference;
 
 			if (refreshmeta || app.autorefresh) {
-				app.allowreadapps = meta.allowreadapps;
-				app.allowreadusers = meta.allowreadusers;
-				app.allowreadprofile = meta.allowreadprofile;
-				app.allownotifications = meta.allownotifications;
-				app.allowreadmeta = meta.allowreadmeta;
+				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.applications, 0);
+				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.allowreadusers, 0);
+				app.allowreadprofile = getCleanValue(meta.allowreadprofile, meta.userprofile, 0);
+				app.allownotifications = getCleanValue(meta.allownotifications, meta.notifications, false);
+				app.allowreadmeta = getCleanValue(meta.allowreadmeta, meta.metadata, false);
+				app.allowguestuser = getCleanValue(meta.allowguestuser, meta.guestuser, false);
 			}
 
 			if (meta.origin && meta.origin instanceof Array && meta.origin.length)

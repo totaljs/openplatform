@@ -1924,7 +1924,7 @@ COMPONENT('processes@2', function(self, config) {
 		}
 
 		SET(config.datasource, apps.remove('id', id));
-		SETTER('processes', 'emitevent', 'app.close', id);
+		SETTER('processes', 'emitevent', 'close', id);
 		return self;
 	};
 
@@ -2970,7 +2970,7 @@ COMPONENT('processes', function(self, config) {
 		}
 
 		SET(config.datasource, apps.remove('id', id));
-		SETTER('processes', 'emitevent', 'app.close', id);
+		SETTER('processes', 'emitevent', 'close', id);
 		return self;
 	};
 
