@@ -231,8 +231,6 @@ NEWSCHEMA('Apps', function(schema) {
 		if (model.typeid === 'designer')
 			model.name = model.title;
 
-		console.log(model);
-
 		if (!model.name) {
 			$.invalid('error-apps-meta');
 			return;

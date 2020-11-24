@@ -602,7 +602,22 @@ FUNC.decodeauthtoken = function($, callback) {
 		return;
 	}
 
-	if (user == null) {
+	if (user) {
+		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
+		if (tmp === arr[2]) {
+			var obj = { app: app, user: user };
+			if (FUNC.unauthorized(obj, $)) {
+				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+			} else {
+				SIMPLECACHE[sign] = obj;
+				callback(obj);
+			}
+		} else {
+			DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+			$.invalid('error-invalid-accesstoken');
+		}
+	} else {
+
 		// reads user from DB
 		readuser(arr[1], function(err, user) {
 			if (user == null) {
@@ -624,20 +639,6 @@ FUNC.decodeauthtoken = function($, callback) {
 				}
 			}
 		}, true);
-	} else {
-		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
-		if (tmp === arr[2]) {
-			var obj = { app: app, user: user };
-			if (FUNC.unauthorized(obj, $)) {
-				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-			} else {
-				SIMPLECACHE[sign] = obj;
-				callback(obj);
-			}
-		} else {
-			DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-			$.invalid('error-invalid-accesstoken');
-		}
 	}
 };
 
@@ -821,10 +822,8 @@ FUNC.makeprofile = function(user, type, app, fields) {
 		obj.member = user.member;
 
 	if (!fields || fields.roles) {
-
 		var appdata = user.apps ? user.apps[app.id] : null;
 		var appsroles = appdata ? appdata.roles.slice(0) : user.appsroles ? user.appsroles.slice(0) : null;
-
 		if (appsroles && user.roles && user.roles.length) {
 			obj.roles = appsroles;
 			for (var i = 0; i < user.roles.length; i++) {
@@ -902,7 +901,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 		} else {
 
-			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowguestuser:Boolean,guestuser:Boolean,applications:Number,allowreadusers:Number,users:Number,userprofile:Number,profile:Number,allownotifications:Boolean,notifications:Boolean,allowreadmeta:Boolean,metadata:Boolean,responsive:boolean');
+			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowguestuser:Boolean,guestuser:Boolean,applications:Number,allowreadusers:Number,users:Number,userprofile:Number,allowreadprofile:Number,allownotifications:Boolean,notifications:Boolean,allowreadmeta:Boolean,metadata:Boolean,responsive:boolean');
 
 			app.hostname = output.hostname.replace(/:\d+/, '');
 			app.online = true;
