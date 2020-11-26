@@ -603,6 +603,7 @@ FUNC.decodeauthtoken = function($, callback) {
 	}
 
 	if (user) {
+
 		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
 		if (tmp === arr[2]) {
 			var obj = { app: app, user: user };
@@ -616,14 +617,12 @@ FUNC.decodeauthtoken = function($, callback) {
 			DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
 			$.invalid('error-invalid-accesstoken');
 		}
+
 	} else {
 
 		// reads user from DB
 		readuser(arr[1], function(err, user) {
-			if (user == null) {
-				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-				$.invalid('error-invalid-accesstoken');
-			} else {
+			if (user) {
 				var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
 				if (tmp === arr[2]) {
 					var obj = { app: app, user: user };
@@ -637,6 +636,9 @@ FUNC.decodeauthtoken = function($, callback) {
 					DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
 					$.invalid('error-invalid-accesstoken');
 				}
+			} else {
+				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+				$.invalid('error-invalid-accesstoken');
 			}
 		}, true);
 	}
