@@ -129,9 +129,30 @@ exports.install = function() {
 	ROUTE('GET      /guest/',                             redirect_guest);
 	ROUTE('+GET     /builder/{id}/', 'builder');
 
+	// Other
+	ROUTE('+GET     /api/op/dnsresolver/', dnsresolver);
+
 	// CORS
 	CORS();
 };
+
+function dnsresolver() {
+	var self = this;
+
+	if (!self.user.sa) {
+		self.invalid('error-permissions');
+		return;
+	}
+
+	if ((/^http(s)+\:\/\/.*?\.\w{2,}$/i).test(self.query.domain || '')) {
+		U.resolve(self.query.domain, function(err, response, param, addresses) {
+			self.json(err ? EMPTYARRAY : (addresses || [response.host] || EMPTYARRAY));
+		});
+	} else {
+		self.json(EMPTYARRAY);
+	}
+
+}
 
 function cl() {
 	var self = this;

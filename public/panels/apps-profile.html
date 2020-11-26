@@ -208,6 +208,7 @@
 			<div data-bind="?.typeid__hide:value==='external'">
 				<div data---="textboxlist__?.roles__placeholder:@(Type a role and press enter)" class="m"><b>@(Roles)</b></div>
 				<div data---="textboxlist__?.origin__placeholder:@(Type IPv4 address and press enter)"><b>@(Allowed origin for external API)</b></div>
+				<div class="help"><span class="exec link" data-exec="?/resolve">@(Resolve domain)</span></div>
 			</div>
 		</div>
 		<div data-bind="?.settings2__show:value && value.length__strict" class="hidden padding bg-smoke radius">
@@ -290,6 +291,45 @@
 				}
 
 			}));
+		};
+
+		exports.resolve = function(el) {
+			var opt = {};
+			opt.element = el;
+			opt.summary = '@(OpenPlatform tries to resolve all IP addresses from the domain name).';
+			opt.placeholder = '@(Type a URL address with the protocol)';
+			opt.minwidth = 280;
+			opt.callback = function(value) {
+
+				if (!value)
+					return;
+
+				if (!(/^http(s)?\:\/\/.*?\w{2,}/i).test(value))
+					value = 'https://' + value;
+
+				AJAX(QUERIFY('GET /api/op/dnsresolver/', { domain: value }), function(response) {
+
+					exports.scope();
+
+					var model = GET('?');
+					var is = false;
+
+					if (!model.origin)
+						model.origin = [];
+
+					for (var i = 0; i < response.length; i++) {
+						var item = response[i];
+						if (model.origin.indexOf(item) == -1) {
+							model.origin.push(item);
+							is = true;
+						}
+					}
+
+					is && UPD('?.origin');
+				});
+			};
+
+			SETTER('floatinginput/show', opt);
 		};
 
 		WATCH('?.titles', function(path, value) {
