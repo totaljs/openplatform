@@ -1,6 +1,6 @@
 var OP = {};
 
-OP.version = 426;
+OP.version = 427;
 OP.callbacks = {};
 OP.events = {};
 OP.is = parent !== window;
@@ -65,9 +65,12 @@ OP.jcomponent = function(notembedded) {
 					break;
 			}
 
+			var ts = (DEF.timeformat === 12 ? '!' : '') + (DEF.dateformat + ' - HH:mm') + (DEF.timeformat === 12 ? ' a' : '');
 			ENV('date', DEF.dateformat);
+			ENV('ts', ts);
 		}
 
+		EMIT('opready');
 		SET('common.ready', true, 500);
 	};
 
