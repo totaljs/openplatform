@@ -201,6 +201,7 @@
 		if (data && data.type === 'install') {
 			OP.loading(true);
 			OP.loading(false, 3000);
+			data.typeid = 'external';
 			SET('common.page', 'apps');
 			EXEC(true, 'appsgrid/create', data.url);
 		}
@@ -212,6 +213,7 @@
 		if (!data || !data.TYPE)
 			return;
 		if (data.TYPE === 'install') {
+			data.typeid = 'external';
 			SET('appsprofilepanel @reset', data);
 			SET('common.panel', 'appsprofile');
 			setTimeout(function() {
