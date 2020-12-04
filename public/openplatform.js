@@ -44,6 +44,7 @@ OP.jcomponent = function(notembedded) {
 				user.timeformat = meta.timeformat;
 				user.dateformat = meta.dateformat;
 				user.numberformat = meta.numberformat;
+				DEF.languagehtml = user.language;
 			}
 
 			switch (meta.numberformat) {

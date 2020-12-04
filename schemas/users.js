@@ -410,7 +410,10 @@ NEWSCHEMA('Users', function(schema) {
 			if ((!keys || keys.photo) && response.photo && model.photo !== response.photo) {
 				var path = 'photos/' + response.photo;
 				Fs.unlink(PATH.public(path), NOOP);
-				F.touch('/' + path);
+				if (F.is4)
+					TOUCH('/' + path);
+				else
+					F.touch('/' + path);
 			}
 
 			if ((!keys || keys.password) && model.password && !model.password.startsWith('***'))
