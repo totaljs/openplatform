@@ -210,7 +210,7 @@
 				SETTER('loading', 'hide', 500);
 				if (response.success) {
 					hide();
-					SETTER('message', 'success', '@(Your account has been updated successfully.)');
+					SETTER('snackbar/success', '@(Your account has been updated successfully.)');
 					refresh_profiledata();
 				} else
 					SETTER('message', 'warning', response[0].error);

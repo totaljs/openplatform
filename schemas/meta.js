@@ -17,6 +17,9 @@ NEWSCHEMA('Meta', function(schema) {
 		data.id = MAIN.id;
 		data.url = CONF.url;
 
+		if ($.user.darkmode)
+			data.darkmode = '1';
+
 		var db = DBMS();
 		db.query('SELECT COUNT(1)::int4 AS count FROM tbl_user').first();
 		db.callback(function(err, response) {
