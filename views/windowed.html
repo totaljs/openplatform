@@ -143,10 +143,9 @@
 									<div class="app{{ if !m.online }} app-offline{{ fi }}{{ if m.running }} app-running{{ fi }}{{ m.responsive | responsive }}" data-id="{{ m.id }}">
 										<span><i class="fa fa-power-off"></i>@(OFFLINE)</span>
 										<i class="far fa-bell-slash appnonotify{{ if !m.mutenotifications }} hidden{{ fi }}" data-id="{{ m.id }}"></i>
-										<i class="appclose fa fa-times {{ if !m.running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ m.id }}"></i>
+										<!--<i class="appclose fa fa-times {{ if !m.running }}hidden {{ fi }}exec" data-exec="Dashboard/close" data-id="{{ m.id }}"></i>-->
 										<b class="appunread{{ if !m.countnotifications }} hidden{{ fi }}" data-id="{{ m.id }}">{{ m.countnotifications }}</b>
 										<b class="appbadge{{ if !m.countbadges }} hidden{{ fi }}" data-id="{{ m.id }}"><i class="fa fa-circle"></i></b>
-										<i class="fa fa-heart usercolor appfavorite{{ if !m.favorite }} hidden{{ fi }}"></i>
 										<div class="app-container">
 											<div class="app-icon"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}><i class="{{ m.icon | icon }}"></i></div>
 											<div class="app-meta">{{ m.title }}</div>
@@ -734,7 +733,7 @@
 		});
 
 		function refresh_color(user) {
-			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button,.ui-form>nav button[name=\'submit\'],.ui-largeform>nav button[name=\'submit\']{background-color:{0}}.volume.selected{background-color:{0}}.radioimage.selected{background-color:{0}!important;border-color:{0}!important}.userbg,.user{background-color:{0}}.ui-features .selected{background-color:{0}!important}li.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
+			CSS('.ui-togglebutton-selected{border-color:{0};background-color:{0}}.ui-intro-pagination{border-top-color:{0}}.ui-intro-selected{color:{0}!important}.ui-intro-pagination button,.ui-form>nav button[name=\'submit\'],.ui-largeform>nav button[name=\'submit\']{background-color:{0}}.volume.selected{background-color:{0}}.radioimage.selected{background-color:{0}!important;border-color:{0}!important}.userbg{background-color:{0}}.ui-features .selected{background-color:{0}!important}li.selected{background-color:{0}!important}.usercolor,.notification-app,.notification-date{color:{0}}{1}'.format(user.colorscheme || '#4285f4', user.background ? ('body{background:url(/backgrounds/' + user.background + ') 50% 50% !important;background-size:cover !important;}') : ''), 'usertheme');
 			var b = $(document.body);
 			b.tclass('light', !user.darkmode);
 			b.tclass('ui-dark', !!user.darkmode);
