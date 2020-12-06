@@ -280,7 +280,7 @@ input:invalid { box-shadow: none; }
 
 .ui-form-noscroll, .ui-form-noscroll body { overflow: hidden; }
 .ui-form-container { width: 100%; position: fixed; left: 0; top: 0; bottom: 0; right: 0; background-color: rgba(230,233,237,0.8); z-index: 5; overflow-y: scroll; transform-style: preserve-3d; overflow-scrolling: touch; }
-.ui-dark .ui-form-container { background-color: rgba(40,40,40,0.8); }
+.ui-dark .ui-form-container { background-color: rgba(20,20,20,0.8); }
 .ui-form-container-padding { padding: 0 12px;}
 .ui-form { background-color: white; margin: 0 auto 30px; border-radius: 3px; box-shadow: 0 0 30px rgba(0,0,0,0.05); transform: translate(0, -500px); transition: all 0.2s; opacity: 0; }
 .ui-dark .ui-form { background-color: #202020; }
@@ -290,7 +290,7 @@ input:invalid { box-shadow: none; }
 .ui-form-title .ui-form-button-close:hover { transform: scale(1.2); }
 .ui-form-title > span { font-weight: bold; }
 .ui-form-title > i { margin-right: 7px; }
-.ui-dark .ui-form-title { background-color: #191919; border-bottom-color: #191919; color: white; }
+.ui-dark .ui-form-title { background-color: #282828; border-bottom-color: #404040; color: white; }
 .ui-form > nav { padding: 0 20px 0; border-top: 1px solid #E0E0E0; background-color: white; border-radius: 0 0 3px 3px; line-height: 65px; height: 65px; display: block; float: none; position: relative; }
 .ui-dark .ui-form > nav { background-color: #202020; border-top-color: #303030; }
 .ui-form > nav button { border: 0; margin: 15px 0 0; background-color: #F0F0F0; height: 34px; padding: 0 20px; color: black; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; float: left; width: 50%; }
@@ -303,6 +303,7 @@ input:invalid { box-shadow: none; }
 .ui-form > nav button:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
 .ui-form > nav button[name='submit'] { font-weight: bold; background-color: #4285F4; color: white; font-size: 14px; }
 .ui-dark .ui-form > nav button:disabled { background-color: #303030 !important; color: #606060 !important; border-color: #202020 !important; }
+.ui-dark .ui-form { border: 1px solid #404040; }
 
 @media(max-width: 767px) {
 	.ui-form-container-padding { padding: 0; }
