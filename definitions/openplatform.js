@@ -1559,16 +1559,19 @@ FUNC.log = function(type, rowid, message, $) {
 	obj.dtcreated = NOW;
 
 
-	if ($.model)
-		obj.data = JSON.stringify(F.version > 3999 ? $.model : $.clean(), stringifyprepare);
-
 	if ($) {
+
+		if ($.model)
+			obj.data = JSON.stringify(F.version > 3999 ? $.model : $.clean(), stringifyprepare);
+
 		obj.ip = $.ip;
+
 		if ($.user) {
 			obj.ua = $.user.ua;
 			obj.userid = $.user.id;
 			obj.username = $.user.name;
 		}
+
 	}
 
 	LOGGER('audit', JSON.stringify(obj));
