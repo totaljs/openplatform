@@ -339,6 +339,7 @@ OP.init = function(callback, notembedded) {
 			window.addEventListener('resize', function() {
 				OP.emit('resize');
 			});
+			OP.emit('ready');
 			return;
 		}
 
@@ -357,10 +358,12 @@ OP.init = function(callback, notembedded) {
 					response.href && (location.href = response.href);
 				}, 100));
 			}
+
 			timeout = null;
 			OP.id = response.id;
 			OP.openplatformurl = response.openplatformurl;
 			OP.onready && OP.onready(response);
+			OP.emit('ready');
 		});
 
 	});
