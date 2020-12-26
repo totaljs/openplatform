@@ -313,13 +313,12 @@ OP.init = function(callback, notembedded) {
 
 	var arr = location.search.substring(1).split('&');
 	var accesstoken = null;
-
 	for (var i = 0; i < arr.length; i++) {
 		var name = arr[i];
 		if (name.substring(0, 13) === 'openplatform=') {
 			var tmp = decodeURIComponent(name.substring(13));
 			OP.token = name.substring(13);
-			accesstoken = decodeURIComponent(tmp.substring(tmp.indexOf('accesstoken=') + 12));
+			accesstoken = decodeURIComponent(tmp.substring(tmp.indexOf('token=') + 6));
 			break;
 		}
 	}
@@ -673,7 +672,7 @@ OP.$process = function(data) {
 			tmp && tmp.parentNode.removeChild(tmp);
 		}
 
-		var d = data.body;
+		var d = data.body || data;
 		var b = document.body.classList;
 
 		if (OP.darkmode !== false) {
@@ -684,6 +683,9 @@ OP.$process = function(data) {
 			!d.darkmode && b.remove('ui-dark');
 			window.OPDARKMODE = d.darkmode;
 		}
+
+		if (d.color)
+			d.colorscheme = d.color;
 
 		if (!d.colorscheme)
 			d.colorscheme = '#4285f4';
@@ -791,6 +793,10 @@ window.addEventListener('message', function(e) {
 
 		if (!data.openplatform)
 			return;
+
+		// OpenPlatform cloud
+		if (data.TYPE)
+			data.type = data.TYPE;
 
 		if (!OP.ready && data.type !== 'verify')
 			OP.pending.push(data);
