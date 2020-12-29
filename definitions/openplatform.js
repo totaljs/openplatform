@@ -1562,7 +1562,7 @@ FUNC.log = function(type, rowid, message, $) {
 	if ($) {
 
 		if ($.model)
-			obj.data = JSON.stringify(F.version > 3999 ? $.model : $.clean(), stringifyprepare);
+			obj.data = JSON.stringify(F.is4 ? $.model : $.clean(), stringifyprepare);
 
 		obj.ip = $.ip;
 
