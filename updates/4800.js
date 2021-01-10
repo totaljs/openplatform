@@ -165,6 +165,27 @@ db.task(function(responses, response) {
 	PRIMARY KEY ("id")
 );`);
 
+	db.query(`INSERT INTO "public"."cl_component" ("id") VALUES
+('https://cdn.componentator.com/designer/br@1.html'),
+('https://cdn.componentator.com/designer/button@1.html'),
+('https://cdn.componentator.com/designer/checkbox@1.html'),
+('https://cdn.componentator.com/designer/columns@1.html'),
+('https://cdn.componentator.com/designer/datagrid@1.html'),
+('https://cdn.componentator.com/designer/datatable@1.html'),
+('https://cdn.componentator.com/designer/detail@1.html'),
+('https://cdn.componentator.com/designer/dynamicvalue@1.html'),
+('https://cdn.componentator.com/designer/input@1.html'),
+('https://cdn.componentator.com/designer/keyvalue@1.html'),
+('https://cdn.componentator.com/designer/label@1.html'),
+('https://cdn.componentator.com/designer/line@1.html'),
+('https://cdn.componentator.com/designer/message@1.html'),
+('https://cdn.componentator.com/designer/panel@1.html'),
+('https://cdn.componentator.com/designer/radiobutton@1.html'),
+('https://cdn.componentator.com/designer/tabs@1.html'),
+('https://cdn.componentator.com/designer/toolbar@1.html'),
+('https://cdn.componentator.com/designer/view@1.html'),
+('https://cdn.componentator.com/designer/viewtabs@1.html');');
+);`);
 });
 
 db.callback($.done());
