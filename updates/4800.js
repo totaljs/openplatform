@@ -184,8 +184,7 @@ db.task(function(responses, response) {
 ('https://cdn.componentator.com/designer/tabs@1.html'),
 ('https://cdn.componentator.com/designer/toolbar@1.html'),
 ('https://cdn.componentator.com/designer/view@1.html'),
-('https://cdn.componentator.com/designer/viewtabs@1.html');');
-);`);
+('https://cdn.componentator.com/designer/viewtabs@1.html');`);
 });
 
 db.callback($.done());
