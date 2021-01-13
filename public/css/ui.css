@@ -304,6 +304,7 @@ input:invalid { box-shadow: none; }
 .ui-form > nav button[name='submit'] { font-weight: bold; background-color: #4285F4; color: white; font-size: 14px; }
 .ui-dark .ui-form > nav button:disabled { background-color: #303030 !important; color: #606060 !important; border-color: #202020 !important; }
 .ui-dark .ui-form { border: 1px solid #404040; }
+.ui-dark .ui-form > nav button[name='submit'] { background-color: #4285F4; }
 
 @media(max-width: 767px) {
 	.ui-form-container-padding { padding: 0; }
@@ -1497,6 +1498,7 @@ input:invalid { box-shadow: none; }
 .ui-dark .ui-largeform > nav button:active { background-color: #404040; }
 .ui-dark .ui-largeform > nav button:disabled i { color: #606060 !important; }
 .ui-dark .ui-largeform > nav button:disabled { background-color: #303030 !important; color: #606060 !important; border-color: #202020 !important; }
+.ui-dark .ui-largeform > nav button[name='submit'] { background-color: #4285F4; }
 
 @media(max-width: 768px) {
 	.ui-largeform-container { background: none; padding: 0; }
