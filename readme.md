@@ -22,6 +22,3 @@ OpenPlatform is a simple enterprise-ready platform for running, integrating and 
 - PostgreSQL `+v10`
 - DBMS module - lastest version
 - PostgreSQL module - latest version
-
-[license-image]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[license-url]: license.txt
