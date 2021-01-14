@@ -4,7 +4,7 @@
 - [Join Total.js Telegram](https://t.me/totaljs)
 - [Support](https://www.totaljs.com/support/)
 
-OpenPlatform is a simple enterprise-ready platform for running, integrating and managing multiple web applications. __We recommend to use bundled version__.
+OpenPlatform is a simple enterprise-ready platform for running, integrating and managing multiple web applications. __We recommend to use [bundled version](https://github.com/totaljs/openplatform-bundle)__.
 
 ## Install instructions
 
