@@ -14,8 +14,8 @@ exports.install = function() {
 
 	ROUTE('+GET /oauth/authorize/', oauthauthorize);
 	ROUTE('POST /oauth/token/', oauthsession);
-	ROUTE('GET /oauth/profile/', oauthprofile);
-	ROUTE('GET /oauth/sync/', oauthsync);
+	ROUTE('GET  /oauth/profile/', oauthprofile);
+	ROUTE('GET  /oauth/sync/', oauthsync);
 
 	FILE('/manifest.json', manifest);
 	ROUTE('#404', process404);
@@ -76,7 +76,7 @@ function oauthsync() {
 			}
 
 			// Synchronize profile
-			DBMS().one('tbl_user').where('id', response.id).fields('id,photo').callback(function(err, user) {
+			DBMS().one('tbl_user').where('oauth2', response.id).fields('id,photo').callback(function(err, user) {
 
 				var options = { internal: true };
 				var groups = [];
@@ -94,6 +94,7 @@ function oauthsync() {
 				}
 
 				response.checksum = 'oauth2';
+				response.oauth2 = response.id;
 
 				// Makes new groups
 				groups.wait(function(group, next) {
@@ -123,17 +124,20 @@ function oauthsync() {
 						delete response.numberformat;
 						delete response.statusid;
 						delete response.status;
+						delete response.id;
+
 						options.keys = Object.keys(response);
-						options.id = response.id;
+						options.id = user.id;
 
 						$PATCH('Users', response, options, function(err) {
 							if (err)
 								self.invalid('error', 'OAuth Sync Error (2):' + err);
 							else
-								FUNC.loginid(self, response.id, () => self.redirect('/'), 'OAuth 2.0 login: ' + self.ua);
+								FUNC.loginid(self, user.id, () => self.redirect('/'), 'OAuth 2.0 login: ' + self.ua);
 						}, self);
 
 					} else {
+						response.id = UID();
 						response.previd = response.id;
 						$INSERT('Users', response, options, function(err) {
 							if (err)

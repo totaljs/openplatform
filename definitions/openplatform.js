@@ -17,7 +17,7 @@ var DDOS = {};
 var ORIGINERRORS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4700;           // Current version of OpenPlatform
+MAIN.version = 4800;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -602,29 +602,8 @@ FUNC.decodeauthtoken = function($, callback) {
 		return;
 	}
 
-	if (user == null) {
-		// reads user from DB
-		readuser(arr[1], function(err, user) {
-			if (user == null) {
-				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-				$.invalid('error-invalid-accesstoken');
-			} else {
-				var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
-				if (tmp === arr[2]) {
-					var obj = { app: app, user: user };
-					if (FUNC.unauthorized(obj, $)) {
-						DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-					} else {
-						SIMPLECACHE[sign] = obj;
-						callback(obj);
-					}
-				} else {
-					DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-					$.invalid('error-invalid-accesstoken');
-				}
-			}
-		}, true);
-	} else {
+	if (user) {
+
 		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
 		if (tmp === arr[2]) {
 			var obj = { app: app, user: user };
@@ -638,6 +617,30 @@ FUNC.decodeauthtoken = function($, callback) {
 			DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
 			$.invalid('error-invalid-accesstoken');
 		}
+
+	} else {
+
+		// reads user from DB
+		readuser(arr[1], function(err, user) {
+			if (user) {
+				var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
+				if (tmp === arr[2]) {
+					var obj = { app: app, user: user };
+					if (FUNC.unauthorized(obj, $)) {
+						DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+					} else {
+						SIMPLECACHE[sign] = obj;
+						callback(obj);
+					}
+				} else {
+					DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+					$.invalid('error-invalid-accesstoken');
+				}
+			} else {
+				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+				$.invalid('error-invalid-accesstoken');
+			}
+		}, true);
 	}
 };
 
@@ -697,6 +700,9 @@ FUNC.makeprofile = function(user, type, app, fields) {
 
 	if (!fields || fields.id)
 		obj.id = user.id;
+
+	if (!fields || fields.oauth2)
+		obj.oauth2 = user.oauth2;
 
 	if (user.supervisorid && (!fields || fields.supervisorid))
 		obj.supervisorid = user.supervisorid;
@@ -818,10 +824,8 @@ FUNC.makeprofile = function(user, type, app, fields) {
 		obj.member = user.member;
 
 	if (!fields || fields.roles) {
-
 		var appdata = user.apps ? user.apps[app.id] : null;
 		var appsroles = appdata ? appdata.roles.slice(0) : user.appsroles ? user.appsroles.slice(0) : null;
-
 		if (appsroles && user.roles && user.roles.length) {
 			obj.roles = appsroles;
 			for (var i = 0; i < user.roles.length; i++) {
@@ -872,9 +876,23 @@ DEF.helpers.profile = function() {
 	return JSON.stringify(FUNC.makeprofile(this.user, 1));
 };
 
+function getCleanValue(a, b, c) {
+	if (a != null)
+		return a;
+	if (b != null)
+		return b;
+	return c;
+}
+
 FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 	var checksum = app.checksum || '';
+
+	if (app.typeid === 'designer') {
+		app.online = true;
+		callback(null, app, false);
+		return;
+	}
 
 	RESTBuilder.GET(app.url).exec(function(err, response, output) {
 
@@ -885,7 +903,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 		} else {
 
-			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowreadusers:Number,allowreadprofile:Number,allownotifications:Boolean,allowreadmeta:Boolean,responsive:boolean');
+			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowguestuser:Boolean,guestuser:Boolean,applications:Number,allowreadusers:Number,users:Number,userprofile:Number,allowreadprofile:Number,allownotifications:Boolean,notifications:Boolean,allowreadmeta:Boolean,metadata:Boolean,responsive:boolean');
 
 			app.hostname = output.hostname.replace(/:\d+/, '');
 			app.online = true;
@@ -909,17 +927,32 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.reference = meta.reference;
 
 			if (refreshmeta || app.autorefresh) {
-				app.allowreadapps = meta.allowreadapps;
-				app.allowreadusers = meta.allowreadusers;
-				app.allowreadprofile = meta.allowreadprofile;
-				app.allownotifications = meta.allownotifications;
-				app.allowreadmeta = meta.allowreadmeta;
+				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.applications, 0);
+				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.allowreadusers, 0);
+				app.allowreadprofile = getCleanValue(meta.allowreadprofile, meta.userprofile, 0);
+				app.allownotifications = getCleanValue(meta.allownotifications, meta.notifications, false);
+				app.allowreadmeta = getCleanValue(meta.allowreadmeta, meta.metadata, false);
+				app.allowguestuser = getCleanValue(meta.allowguestuser, meta.guestuser, false);
 			}
 
 			if (meta.origin && meta.origin instanceof Array && meta.origin.length)
 				app.origin = meta.origin;
 			else
 				app.origin = null;
+
+			// Adds resolved origin
+			// Only Total.js 4
+			if (output.origin && output.origin.length) {
+
+				if (!app.origin)
+					app.origin = [];
+
+				for (var i = 0; i < output.origin.length; i++) {
+					var origin = output.origin[i];
+					if (app.origin.indexOf(origin) === -1)
+						app.origin.push(origin);
+				}
+			}
 
 			var sign = (app.name + '' + app.icon + app.version + (app.color ? app.color : '') + (app.width || 0) + '' + (app.height || 0) + (app.resize ? '1' : '0') + app.type + (app.responsive ? '1' : '0') + (app.mobilemenu ? '1' : '0') + (app.serververify ? '1' : '0') + (app.allowreadapps ? '1' : '0') + (app.allowreadusers ? '1' : '0') + (app.allowreadprofile ? '1' : '0') + (app.allownotifications ? '1' : '0') + (app.allowreadmeta ? '1' : '0') + (app.origin ? (app.origin.join('') || '[]') : '[]') + (app.roles ? (app.roles.join('') || '[]') : '[]') + app.hostname + (app.services ? JSON.stringify(app.services) : '{}'));
 			app.checksum = sign.crc32(true) + '';
@@ -1330,7 +1363,7 @@ ON('ready', function() {
 // Reads a user
 function readuser(id, callback) {
 	var db = DBMS();
-	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum');
+	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2');
 	db.error('error-users-404');
 	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 
@@ -1512,6 +1545,11 @@ function recovery(next) {
 	});
 }
 
+function stringifyprepare(key, value) {
+	if (key !== 'password' && value != null)
+		return value;
+}
+
 FUNC.log = function(type, rowid, message, $) {
 
 	var obj = {};
@@ -1520,13 +1558,20 @@ FUNC.log = function(type, rowid, message, $) {
 	obj.message = (message || '').max(200);
 	obj.dtcreated = NOW;
 
+
 	if ($) {
+
+		if ($.model)
+			obj.data = JSON.stringify(F.is4 ? $.model : $.clean(), stringifyprepare);
+
 		obj.ip = $.ip;
+
 		if ($.user) {
 			obj.ua = $.user.ua;
 			obj.userid = $.user.id;
 			obj.username = $.user.name;
 		}
+
 	}
 
 	LOGGER('audit', JSON.stringify(obj));
@@ -1557,7 +1602,7 @@ function refresh_apps() {
 function emailnotifications() {
 
 	// online=FALSE
-	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications,(SELECT array_agg(x.body) FROM tbl_user_notification x WHERE x.userid=a.id AND x.unread=TRUE LIMIT 15) as messages FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
+	DBMS().query('WITH rows AS (UPDATE tbl_user SET dtnotified=NOW() WHERE countnotifications>0 AND dtnotified IS NULL AND notificationsemail=TRUE AND inactive=FALSE AND blocked=FALSE RETURNING id) SELECT b.name,b.email,b.language,b.countnotifications,(SELECT array_agg(x.body ORDER BY x.dtcreated DESC) FROM tbl_user_notification x WHERE x.userid=a.id AND x.unread=TRUE LIMIT 20) as messages FROM rows a INNER JOIN tbl_user b ON a.id=b.id').data(function(items) {
 
 		if (!items.length)
 			return;
@@ -1622,7 +1667,7 @@ ON('service', function(counter) {
 });
 
 if (global.UPDATE)
-	global.UPDATE([4400, 4500, 4600, 4700], ERROR('Update'), 'updates');
+	global.UPDATE([4400, 4500, 4600, 4700, 4800], ERROR('Update'), 'updates');
 else
 	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');
 

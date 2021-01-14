@@ -1,7 +1,7 @@
 @{layout('~mails/layout')}
 
 <div style="text-align:center;padding:10px 0">
-	<div style="color:#606060;border-bottom:1px solid #E0E0E0;padding-bottom:15px;margin-bottom:15px">@(You have <b>unread &#128276; notifications</b> in @{'%name'}. You need to sign-in to @{'%name'} and then you can read all notifications.)</div>
+	<div style="color:#606060;border-bottom:1px solid #E0E0E0;padding-bottom:15px;margin-bottom:15px">@(You have <b>unread &#128276; notifications</b> in @{'%name'}. You need to sign-in to @{'%name'} and read all notifications.)</div>
 	@{if model.messages && model.messages.length}
 	<div style="color:#606060;border-bottom:1px solid #E0E0E0;padding-bottom:15px;margin-bottom:15px;text-align:left">
 		<div style="margin-bottom:10px"><strong>@(Latest notifications:)</strong></div>

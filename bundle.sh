@@ -11,7 +11,7 @@ cp -a ../views/ views
 cp -a ../versions versions
 cp -a ../updates updates
 
-total bundle openplatform.bundle
+total4 bundle openplatform.bundle
 cp openplatform.bundle ../openplatform.bundle
 cd ..
 

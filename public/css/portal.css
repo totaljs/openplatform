@@ -8,40 +8,45 @@ body.light { background: white; }
 .hidden2 { display: none; }
 .container-fluid { padding-left: 0; padding-right: 0; }
 
-header { height: 45px; border-bottom: 1px solid #404040; line-height: 44px; font-size: 14px; position: relative; }
-header .title { margin-left: 10px; font-weight: bold; vertical-align: top; display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-header img { width: 28px; float: left; border-radius: 100px; margin: 7px 8px 0 8px; cursor: pointer; }
+header { height: 45px; line-height: 44px; font-size: 14px; position: absolute; margin: 8px 10px 0; border-radius: 5px; background-color: #333; box-shadow: 0 2px 3px rgba(0,0,0,0.05); right: 0; left: 0; z-index: 10; }
+header .title { margin: 0 30px 0 50px; font-weight: bold; vertical-align: top; display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; line-height: 16px; padding-top: 7px; }
+header .title span { display: block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 11px; font-weight: normal; }
+header img { width: 45px; position: absolute; border-radius: 5px; margin: 0 8px 0 0; cursor: pointer; }
 
-.light header { border-bottom: 1px solid #E0E0E0; }
+.light header { background-color: #FFF; }
 
 .caption { font-size: 12px; font-weight: 700; margin-bottom: 10px; color: black; border-bottom: 1px solid #E0E0E0; padding: 0 0 5px 0; }
 .caption i { margin-right: 5px; }
 
-.initials { width: 37px; line-height: 37px; text-align: center; color: white; display: block; padding: 0; font-weight: bold; border-radius: 100px; cursor: default; }
-header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px; margin: 5px 13px 0 5px; cursor: pointer; }
+.menuminimized .menu .ui-scrollbar-path { visibility: hidden !important; }
 
+.initials { width: 37px; line-height: 37px; text-align: center; color: white; display: block; padding: 0; font-weight: bold; border-radius: 100px; cursor: default; }
+header .initials { position: absolute; line-height: 45px; width: 44px; font-size: 14px; margin: 0 8px 0 0; cursor: pointer; border-radius: 5px; }
+.menu-top { height: 55px; }
+.menu-footer { height: 40px; }
 .menu .caption { margin: 0 10px; margin-top: 20px; }
 .links { padding: 10px; }
-.links a, .links button { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 2px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; user-select: none; height: 25px; background-color: transparent; }
+.links a, .links button { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 3px; padding: 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; width: 100%; user-select: none; height: 25px; background-color: transparent; }
 .links .selected { font-weight: bold; color: white; }
-.links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin-right: 6px; float: left; line-height: 20px; }
-.links .app:hover, .links a:hover, .links button:hover { text-decoration: none; background-color: #303030; }
-.links b { position: absolute; font-size: 10px; left: 2px; color: white; width: 18px; height: 18px; line-height: 18px; border-radius: 100px; text-align: center; margin: 1px 0 0; background-color: #D33534; z-index: 1; }
-.links .app { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 2px; padding: 3px 2px 3px 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; cursor: pointer; user-select: none; height: 25px; background-color: transparent; }
+.links .app > i, .links a > i, .links button > i { width: 14px; text-align: center; font-size: 12px; margin: 0 6px 0 5px; float: left; line-height: 20px; }
+.links b { position: absolute; font-size: 10px; left: 6px; color: white; width: 19px; height: 19px; line-height: 19px; border-radius: 100px; text-align: center; margin: 0; background-color: #D33534; z-index: 1; }
+.links .app { display: block; border: 0; text-align: left; color: #D0D0D0; font-size: 14px; border-radius: 5px; padding: 4px 2px 0 5px; margin-bottom: 3px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; position: relative; cursor: pointer; user-select: none; height: 28px; background-color: transparent; }
 .links .app-progress{}
 .links .close { float: right; color: #D33534; display: none; margin-top: 0; width: 24px; text-align: center; }
 .links .app-running .close { display: block; }
-.links .focused > i { color: white !important; }
-.links .focused .close { color: white !important; }
+.links .focused > i { color: #FFF !important; }
+.links .focused .close { color: #FFF !important; }
+.links .app:hover, .links a:hover, .links button:hover, .links .app-running { text-decoration: none; background-color: #333; box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
 
-.light .links .app:hover, .light .links a:hover, .light .links button:hover { background-color: #F0F0F0; }
+.light .links .app:hover, .light .links a:hover, .light .links .app-running, .light .links button:hover { background-color: #FFF; }
 .light .links .app { color: black; }
 .light .links .highlight { color: gray; }
 .light .links a, .light .links button { color: black; }
 
 .menu hr { margin: 0 0 10px 0; border-color: #303030; }
-.light .menu hr { border-color: #F0F0F0; }
-.menu { width: 220px; float: left; }
+.light .menu hr { border-color: #D0D0D0; }
+.menu { width: 220px; float: left; position: relative; background-color: #222; box-shadow: inset -10px 0 10px rgba(0,0,0,0.08); }
+.light .menu { background-color: #F1F1F1; box-shadow: inset -10px 0 10px rgba(0,0,0,0.03); }
 .container .menu { border-left: 1px solid #404040; }
 .light .container .menu { border-left-color: #D0D0D0; }
 .main { margin-left: 220px; border-left: 1px solid #404040; position: relative; overflow: hidden; }
@@ -92,12 +97,11 @@ header .initials { float: left; line-height: 24px; width: 24px; font-size: 11px;
 .username { float: right; font-size: 12px; margin: 7px 10px 0 0; cursor: pointer; }
 .username:hover { opacity: 0.7; }
 .username i { margin-right: 5px; }
-footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; background: linear-gradient(0deg,#191919,#202020); border-top: 1px solid #404040; }
-.light footer { background: linear-gradient(0deg,#F8F8F8,white); border-top-color: #E0E0E0; }
+footer { height: 32px; line-height: 32px; padding: 0 5px 0 10px; position: absolute; left: 0; right: 0; bottom: 0; z-index: 10; }
 .console { font-size: 12px; cursor: pointer; float: left; }
 .console i { margin-right: 5px; }
 .console:hover { opacity: 0.7; }
-.testmode { position: absolute; background-color: red; color: white; font-size: 8px; font-weight: bold; padding: 0 3px; margin: 4px 0 0 8px; border-radius: 2px; vertical-align: middle; line-height: 10px; vertical-align: top; top: 35px; left: 2px; z-index: 2 }
+.testmode { position: absolute; background-color: red; color: white; font-size: 8px; font-weight: bold; padding: 0 3px; margin: 4px 0 0 7px; border-radius: 3px; vertical-align: middle; line-height: 10px; vertical-align: top; top: 35px; left: 2px; z-index: 2 }
 
 .appnonotify { font-size: 10px; position: absolute; top: 3px; left: 36px; color: white; }
 .light .appnonotify { color: black; }
@@ -136,7 +140,7 @@ h3 i { margin-right: 5px; }
 .orange { color: orange; }
 
 .bg-smoke { background-color: #F8F8F8; }
-.ui-dark .bg-smoke { background-color: #303030; }
+.ui-dark .bg-smoke { background-color: #272727; }
 .bg-yellow { background-color: #FFF8D8; }
 
 .singleline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -174,7 +178,7 @@ h3 i { margin-right: 5px; }
 .appbadge i { color: red; font-size: 7px; }
 
 .appprocess { position: relative; }
-.appprocess .appbadge { position: absolute; margin: 9px 0 0 -16px; font-size: 7px; z-index: 1; }
+.appprocess .appbadge { position: absolute; margin: 10px 0 0 -20px; font-size: 7px; z-index: 1; }
 .appprocess .appbadge i { font-size: 7px; }
 
 .appprogress span { height: 3px; display: block; border-radius: 0; width: 0; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
@@ -199,11 +203,13 @@ h3 i { margin-right: 5px; }
 
 .approle { font-size: 14px; text-align: center; width: 34px; border-left: 1px solid #E0E0E0; padding: 3px 0; }
 .approle:first-child { border-left: 0; }
-.app .appprogress { float: right; width: 20px; height: 7px; border: 1px solid #505050; margin: 6px 5px 0 0; border-radius: 2px; padding: 1px; }
+.app .appprogress { float: right; width: 20px; height: 7px; border: 1px solid #505050; margin: 6px 5px 0 0; border-radius: 3px; padding: 1px; }
 .app .appprogress > span { height 2px; display: block; }
 .light .app .appprogress { border-color: #D0D0D0; }
 .focused .appprogress { border-color: white !important; }
 .focused .appprogress > span { background-color: white !important; }
+
+.app.focused { box-shadow: 0 2px 3px rgba(0,0,0,0.05); }
 
 .toolbar { margin-bottom: 15px; }
 .toolbar button { outline: 0; background-color: transparent; border: 1px solid transparent; border-radius: 4px; font-size: 12px; height: 24px; padding: 0 5px; margin: 0; color: black; margin-right: 5px; }
@@ -256,7 +262,7 @@ h3 i { margin-right: 5px; }
 .ui-quicknotifications-padding { padding: 0 10px; }
 .ui-quicknotifications-body { line-height: 16px; font-size: 14px; color: silver; display: inline-block; word-break: break-word; }
 .light .ui-quicknotifications-body { color: #777777; }
-.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 2px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
+.ui-quicknotifications button { display: inline-block; position: relative; border-radius: 3px; outline: 0; font-size: 11px; color: white; font-weight: bold; padding: 2px 10px; margin-bottom: 10px; border: 1px solid white; background: transparent; }
 .ui-quicknotifications button:hover { opacity: 0.9; }
 
 .panel { background-color: white; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
@@ -287,14 +293,16 @@ h3 i { margin-right: 5px; }
 @media(max-width: 700px) {
 	.menubutton { display: block; }
 	.menu { position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: 100%; z-index: 36; background-color: #202020; display: none; }
-	.light .menu { background-color: white; }
+	.light .menu { background-color: #F0F0F0; }
 	.main { margin-left: 0; border-left: 0; }
-	.links .app > i, .links a > i, .links button > i { line-height: 32px; font-size: 16px; margin-top: -2px; width: 30px; }
+	.links .app > i, .links a > i, .links button > i { line-height: 32px; font-size: 16px; margin-top: -3px; width: 30px; }
 	.links a, .links button { font-size: 18px; height: 30px; }
-	.links .app { font-size: 18px; height: 32px; padding-right: 5px; }
-	header { box-shadow: none; height: 60px; padding: 9px 10px 0; background-color: #F0F0F0; }
+	.links .app { font-size: 18px; height: 40px; padding-right: 5px; padding: 8px 10px; }
+	header { height: 60px; padding: 9px 10px 0; margin-top: 15px; }
+	header .initials { width: 61px; margin-top: -5px; margin-left: -5px; height: 61px; font-size: 20px; line-height: 60px; }
+	header img { width: 61px; margin-top: -10px; margin-left: -10px; }
 	.ui-dark header { background-color: #151515; }
-	header .title { font-size: 18px; }
+	header .title { font-size: 18px; margin-left: 60px; }
 	.ui-notifications { width: auto; left: 0; }
 	.form-border { border-left: 0; }
 	.nplr-xs { padding-left: 0 !important; padding-right: 0 !important; }
@@ -302,9 +310,8 @@ h3 i { margin-right: 5px; }
 	.button-notifications { font-size: 22px; }
 	.appbutton .menubuttonapp { display: block; }
 	.menu-minimize { display: none; }
-	.testmode { left: 10px; }
-	footer { border-top: 1px solid #404040; }
-	.light footer { border-top-color: #E0E0E0; }
+	.testmode { left: 12px; top: 48px; }
+	.menu-top { height: 75px; }
 }
 
 .menushow .menu { display: block; }
@@ -318,10 +325,9 @@ h3 i { margin-right: 5px; }
 .ui-process { left: auto; top: auto; }
 .ui-wiki { top: 0; }
 
-.menu-minimize { float: right; background-color: #202020; z-index: 51; border-left: 1px solid #404040; width: 10px; line-height: 44px; font-size: 8px; text-align: center; cursor: pointer; margin-left: 0; color: gray; }
+.menu-minimize { position: absolute; top: 8px; right: 0; background-color: #202020; z-index: 39; width: 10px; line-height: 44px; font-size: 8px; text-align: center; cursor: pointer; margin-left: 0; color: gray; }
 .menu-minimize:hover { background-color: #303030; }
-.light .menu-minimize { background-color: white; border-left-color: #E0E0E0; color: gray; }
-.light .menu-minimize:hover { background-color: #F0F0F0; }
+.light .menu-minimize { background-color: transparent; color: #000; }
 .menu-minimize i:before { content: '\f104'; }
 .menuminimized .menu-minimize i:before { content: '\f105'; }
 .menuminimized .menu { margin-left: -211px; }

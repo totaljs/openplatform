@@ -7,68 +7,83 @@ exports.install = function() {
 	ROUTE('+GET     /api/cl/', cl);
 
 	// Users
-	ROUTE('+GET     /api/op/users/                 *Users              --> @query');
-	ROUTE('+GET     /api/op/users/{id}/            *Users              --> @read');
-	ROUTE('+POST    /api/op/users/                 *Users              --> @check @insert (response)');
-	ROUTE('+POST    /api/op/users/{id}/            *Users              --> @check @patch (response)');
-	ROUTE('+PATCH   /api/op/users/{id}/            *Users              --> @check @patch (response)');
-	ROUTE('+DELETE  /api/op/users/{id}/            *Users              --> @remove');
-	ROUTE('+POST    /api/op/users/assign/          *Users/Assign       --> @exec');
-	ROUTE('+POST    /api/op/reports/               *Users/Reports      --> @insert', 1024 * 2); // 2 MB
+	ROUTE('+GET       /api/op/users/                      *Users                --> @query');
+	ROUTE('+GET       /api/op/users/{id}/                 *Users                --> @read');
+	ROUTE('+POST      /api/op/users/                      *Users                --> @check @insert (response)');
+	ROUTE('+POST      /api/op/users/{id}/                 *Users                --> @check @patch (response)');
+	ROUTE('+PATCH     /api/op/users/{id}/                 *Users                --> @check @patch (response)');
+	ROUTE('+DELETE    /api/op/users/{id}/                 *Users                --> @remove');
+	ROUTE('+POST      /api/op/users/assign/               *Users/Assign         --> @exec');
+	ROUTE('+POST      /api/op/reports/                    *Users/Reports        --> @insert', 1024 * 2); // 2 MB
 
 	// Users/Groups
-	ROUTE('+GET     /api/op/groups/                *Users/Groups       --> @query');
-	ROUTE('+PATCH   /api/op/groups/                *Users/Groups       --> @patch');
-	ROUTE('+DELETE  /api/op/groups/                *Users/Groups       --> @remove');
-	ROUTE('+GET     /api/op/marketplace/           *Meta               --> @marketplace');
+	ROUTE('+GET       /api/op/groups/                     *Users/Groups         --> @query');
+	ROUTE('+PATCH     /api/op/groups/                     *Users/Groups         --> @patch');
+	ROUTE('+DELETE    /api/op/groups/                     *Users/Groups         --> @remove');
+	ROUTE('+GET       /api/op/marketplace/                *Meta                 --> @marketplace');
 
 	// Platform
-	ROUTE('+GET     /api/op/dashboard/                *Dashboard          --> @read');
-	ROUTE('+GET     /api/op/dashboard/online/         *Dashboard          --> @online');
-	ROUTE('+GET     /api/op/dashboard/{year}/         *Dashboard          --> @yearly');
-	ROUTE('+GET     /api/op/reports/                  *Users/Reports      --> @query');
-	ROUTE('+GET     /api/op/reports/{id}/screenshot/  *Users/Reports      --> @screenshot');
-	ROUTE('+GET     /api/op/reports/{id}/solved/      *Users/Reports      --> @solved');
-	ROUTE('+DELETE  /api/op/reports/{id}/             *Users/Reports      --> @remove');
+	ROUTE('+GET       /api/op/dashboard/                  *Dashboard            --> @read');
+	ROUTE('+GET       /api/op/dashboard/online/           *Dashboard            --> @online');
+	ROUTE('+GET       /api/op/dashboard/{year}/           *Dashboard            --> @yearly');
+	ROUTE('+GET       /api/op/reports/                    *Users/Reports        --> @query');
+	ROUTE('+GET       /api/op/reports/{id}/screenshot/    *Users/Reports        --> @screenshot');
+	ROUTE('+GET       /api/op/reports/{id}/solved/        *Users/Reports        --> @solved');
+	ROUTE('+DELETE    /api/op/reports/{id}/               *Users/Reports        --> @remove');
 
 	// Codelists
-	ROUTE('+GET     /api/op/companies/             *Users              --> @companies');
-	ROUTE('+GET     /api/op/locations/             *Users              --> @locations');
-	ROUTE('+GET     /api/op/positions/             *Users              --> @positions');
-	ROUTE('+GET     /api/op/groupids/              *Users              --> @groupids');
+	ROUTE('+GET       /api/op/companies/                  *Users                --> @companies');
+	ROUTE('+GET       /api/op/locations/                  *Users                --> @locations');
+	ROUTE('+GET       /api/op/positions/                  *Users                --> @positions');
+	ROUTE('+GET       /api/op/groupids/                   *Users                --> @groupids');
 
 	// Apps
-	ROUTE('+GET     /api/op/apps/                  *Apps               --> @query');
-	ROUTE('+GET     /api/op/apps/{id}/             *Apps               --> @read');
-	ROUTE('+GET     /api/op/apps/meta/             *Apps               --> @meta');
-	ROUTE('+POST    /api/op/apps/                  *Apps               --> @check @refresh @insert (response)');
-	ROUTE('+POST    /api/op/apps/{id}/             *Apps               --> @check @refresh @update (response)');
-	ROUTE('+DELETE  /api/op/apps/{id}/             *Apps               --> @remove');
+	ROUTE('+GET       /api/op/apps/                       *Apps                 --> @query');
+	ROUTE('+GET       /api/op/apps/{id}/                  *Apps                 --> @read');
+	ROUTE('+GET       /api/op/apps/meta/                  *Apps                 --> @meta');
+	ROUTE('+POST      /api/op/apps/                       *Apps                 --> @check @refresh @insert (response)');
+	ROUTE('+POST      /api/op/apps/{id}/                  *Apps                 --> @check @refresh @update (response)');
+	ROUTE('+DELETE    /api/op/apps/{id}/                  *Apps                 --> @remove');
+
+	// UI
+	ROUTE('+GET       /api/op/components/                 *UI/Components        --> @query');
+	ROUTE('+POST      /api/op/components/                 *UI/Components        --> @save');
+	ROUTE('+DELETE    /api/op/components/                 *UI/Components        --> @remove');
+	ROUTE('+GET       /api/op/ui/                         *UI                   --> @query');
+	ROUTE('+POST      /api/op/ui/                         *UI                   --> @save');
+	ROUTE('+GET       /api/op/ui/{id}/                    *UI                   --> @read');
+	ROUTE('+DELETE    /api/op/ui/{id}/                    *UI                   --> @remove');
+	ROUTE('+GET       /api/op/ui/sort/                    *UI                   --> @sort');
+	ROUTE('+GET       /api/op/sources/                    *UI/Sources           --> @query');
+	ROUTE('+POST      /api/op/sources/                    *UI/Sources           --> @save');
+	ROUTE('+DELETE    /api/op/sources/{id}/               *UI/Sources           --> @remove');
+	ROUTE('GET        /api/op/actions/                    *UI/Actions           --> @query');
 
 	// OAuth
-	ROUTE('+GET     /api/op/oauth/                 *OAuth              --> @query');
-	ROUTE('+POST    /api/op/oauth/                 *OAuth              --> @insert');
-	ROUTE('+POST    /api/op/oauth/{id}/            *OAuth              --> @update');
-	ROUTE('+DELETE  /api/op/oauth/{id}/            *OAuth              --> @remove');
+	ROUTE('+GET       /api/op/oauth/                      *OAuth                --> @query');
+	ROUTE('+POST      /api/op/oauth/                      *OAuth                --> @insert');
+	ROUTE('+POST      /api/op/oauth/{id}/                 *OAuth                --> @update');
+	ROUTE('+DELETE    /api/op/oauth/{id}/                 *OAuth                --> @remove');
 
 	// Settings
-	ROUTE('+GET     /api/op/settings/              *Settings           --> @read');
-	ROUTE('+POST    /api/op/settings/              *Settings           --> @save');
-	ROUTE('+POST    /api/op/settings/smtp/         *Settings/SMTP      --> @exec');
+	ROUTE('+GET       /api/op/settings/                   *Settings             --> @read');
+	ROUTE('+POST      /api/op/settings/                   *Settings             --> @save');
+	ROUTE('+POST      /api/op/settings/smtp/              *Settings/SMTP        --> @exec');
 
 	// For unauthorized
-	ROUTE('-POST    /api/login/                    *Users/Login        --> @exec');
-	ROUTE('-POST    /api/login/otp/                *Users/Login        --> @otp');
-	ROUTE('-POST    /api/password/                 *Users/Password     --> @exec');
+	ROUTE('-POST      /api/login/                         *Users/Login          --> @exec');
+	ROUTE('-POST      /api/login/otp/                     *Users/Login          --> @otp');
+	ROUTE('-POST      /api/password/                      *Users/Password       --> @exec');
 
 	// Account
-	ROUTE('+GET     /api/account/                  *Account            --> @read');
-	ROUTE('+POST    /api/account/                  *Account            --> @check @save (response)');
-	ROUTE('+GET     /api/account/totp/             *Account/Totp       --> @generate');
-	ROUTE('+POST    /api/account/totp/verify/      *Account/Totp       --> @verify');
-	ROUTE('+POST    /api/account/status/           *Account/Status     --> @save');
+	ROUTE('+GET       /api/account/                       *Account              --> @read');
+	ROUTE('+POST      /api/account/                       *Account              --> @check @save (response)');
+	ROUTE('+GET       /api/account/totp/                  *Account/Totp         --> @generate');
+	ROUTE('+POST      /api/account/totp/verify/           *Account/Totp         --> @verify');
+	ROUTE('+POST      /api/account/status/                *Account/Status       --> @save');
 
-	ROUTE('+GET     /api/notifications/            *Apps/Notifications --> @query');
+	ROUTE('+GET       /api/notifications/                 *Apps/Notifications   --> @query');
+	ROUTE('+GET       /api/notifications/clear/           *Apps/Notifications   --> @clear');
 
 	// Profile
 	ROUTE('+GET     /api/profile/',                json_profile_full);
@@ -112,10 +127,32 @@ exports.install = function() {
 	ROUTE('GET      /api/meta/                            *Meta                --> @read');
 	ROUTE('GET      /api/unlock/                          *Account             --> @unlock');
 	ROUTE('GET      /guest/',                             redirect_guest);
+	ROUTE('+GET     /builder/{id}/', 'builder');
+
+	// Other
+	ROUTE('+GET     /api/op/dnsresolver/', dnsresolver);
 
 	// CORS
 	CORS();
 };
+
+function dnsresolver() {
+	var self = this;
+
+	if (!self.user.sa) {
+		self.invalid('error-permissions');
+		return;
+	}
+
+	if ((/^http(s)+\:\/\/.*?\.\w{2,}$/i).test(self.query.domain || '')) {
+		U.resolve(self.query.domain, function(err, response, param, addresses) {
+			self.json(err ? EMPTYARRAY : (addresses || [response.host] || EMPTYARRAY));
+		});
+	} else {
+		self.json(EMPTYARRAY);
+	}
+
+}
 
 function cl() {
 	var self = this;

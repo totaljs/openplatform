@@ -8,8 +8,9 @@
 	<meta name="robots" content="all,follow" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
+	<script src="https://designer.totaljs.com/compiler.min.js"></script>
 	<script>ENVIRONMENT('opadmin');</script>
 	@{import('meta', 'head', 'app.css', 'app.js', 'favicon.ico')}
 </head>
@@ -29,6 +30,8 @@
 		});
 	</script>
 
+	<div data---="LAZY floatinginput"></div>
+	<div data---="LAZY message__null__style:2"></div>
 	<div data---="LAZY datepicker__null__close:@(Close);today:@(Set today)"></div>
 	<div data---="LAZY suggestion__null__placeholder:@(Search)"></div>
 	<div data---="LAZY autocomplete"></div>

@@ -24,6 +24,7 @@ CREATE TABLE "public"."tbl_user" (
 	"supervisorid" varchar(25),
 	"deputyid" varchar(25),
 	"groupid" varchar(30),
+	"oauth2" varchar(25),
 	"accesstoken" varchar(50),
 	"verifytoken" varchar(20),
 	"directory" varchar(25),
@@ -209,6 +210,7 @@ CREATE TABLE "public"."tbl_log" (
 	"message" varchar(200),
 	"username" varchar(60),
 	"ua" varchar(30),
+	"data" json,
 	"ip" cidr,
 	"dtcreated" timestamp DEFAULT NOW(),
 	PRIMARY KEY ("id")
@@ -375,6 +377,95 @@ CREATE TABLE "public"."tbl_usage_oauth" (
 	PRIMARY KEY ("id")
 );
 
+CREATE TABLE "public"."tbl_app_source" (
+	"id" varchar(25) NOT NULL,
+	"appid" varchar(25),
+	"type" varchar(10),
+	"name" varchar(50),
+	"icon" varchar(30),
+	"color" varchar(7),
+	"properties" json,
+	"url" json,
+	"static" bool DEFAULT false,
+	"local" bool DEFAULT false,
+	"isremoved" bool DEFAULT false,
+	"dtcreated" timestamp DEFAULT now(),
+	"dtupdated" timestamp,
+	CONSTRAINT "tbl_app_source_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_app_source_bk" (
+	"id" serial,
+	"appid" varchar(25),
+	"uid" varchar(25),
+	"userid" varchar(25),
+	"type" varchar(10),
+	"name" varchar(50),
+	"icon" varchar(30),
+	"color" varchar(7),
+	"properties" json,
+	"url" json,
+	"static" bool DEFAULT false,
+	"local" bool DEFAULT false,
+	"isremoved" bool DEFAULT false,
+	"dtcreated" timestamp DEFAULT now(),
+	"dtupdated" timestamp,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_app_ui" (
+	"id" varchar(40) NOT NULL,
+	"appid" varchar(25),
+	"sourceid" varchar(25),
+	"type" varchar(20),
+	"icon" varchar(30),
+	"color" varchar(7),
+	"name" varchar(50),
+	"design" text,
+	"settings" json,
+	"changelog" varchar(100),
+	"isnavigation" bool DEFAULT false,
+	"onchange" text,
+	"onvalidate" text,
+	"onload" text,
+	"onsubmit" text,
+	"position" int2 DEFAULT 0,
+	"dtcreated" timestamp DEFAULT now(),
+	"dtupdated" timestamp,
+	"isremoved" bool DEFAULT false,
+	CONSTRAINT "tbl_app_ui_sourceid_fkey" FOREIGN KEY ("sourceid") REFERENCES "public"."tbl_app_source"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_app_ui_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."tbl_app_ui_bk" (
+	"id" serial,
+	"uid" varchar(40),
+	"appid" varchar(25),
+	"userid" varchar(25),
+	"sourceid" varchar(25),
+	"type" varchar(20),
+	"icon" varchar(30),
+	"color" varchar(7),
+	"name" varchar(50),
+	"changelog" varchar(100),
+	"design" text,
+	"settings" json,
+	"onchange" text,
+	"onvalidate" text,
+	"onload" text,
+	"onsubmit" text,
+	"dtcreated" timestamp DEFAULT now(),
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "public"."cl_component" (
+	"id" varchar(100) NOT NULL,
+	"dtcreated" timestamp DEFAULT now(),
+	PRIMARY KEY ("id")
+);
+
 -- ==============================
 -- VIEWS
 -- ==============================
@@ -438,6 +529,7 @@ CREATE VIEW view_user AS
 		a.dtcreated,
 		a.dtlogged,
 		a.dtmodified,
+		a.oauth2,
 		CASE WHEN (length(a.deputyid) > 0) THEN (SELECT b.name FROM tbl_user b WHERE b.id = a.deputyid LIMIT 1) ELSE ''::text END AS deputy,
 		CASE WHEN (length(a.supervisorid) > 0) THEN (SELECT c.name FROM tbl_user c WHERE c.id=a.supervisorid LIMIT 1) ELSE ''::text END AS supervisor
 	FROM tbl_user a;
@@ -491,6 +583,28 @@ COMMENT ON COLUMN "public"."tbl_app"."frame" IS 'Frame URL address';
 -- DATA
 -- ==============================
 
+-- INSERT UI Components
+INSERT INTO "public"."cl_component" ("id") VALUES
+('https://cdn.componentator.com/designer/br@1.html'),
+('https://cdn.componentator.com/designer/button@1.html'),
+('https://cdn.componentator.com/designer/checkbox@1.html'),
+('https://cdn.componentator.com/designer/columns@1.html'),
+('https://cdn.componentator.com/designer/datagrid@1.html'),
+('https://cdn.componentator.com/designer/datatable@1.html'),
+('https://cdn.componentator.com/designer/detail@1.html'),
+('https://cdn.componentator.com/designer/dynamicvalue@1.html'),
+('https://cdn.componentator.com/designer/input@1.html'),
+('https://cdn.componentator.com/designer/keyvalue@1.html'),
+('https://cdn.componentator.com/designer/label@1.html'),
+('https://cdn.componentator.com/designer/line@1.html'),
+('https://cdn.componentator.com/designer/message@1.html'),
+('https://cdn.componentator.com/designer/panel@1.html'),
+('https://cdn.componentator.com/designer/radiobutton@1.html'),
+('https://cdn.componentator.com/designer/tabs@1.html'),
+('https://cdn.componentator.com/designer/toolbar@1.html'),
+('https://cdn.componentator.com/designer/view@1.html'),
+('https://cdn.componentator.com/designer/viewtabs@1.html');
+
 -- INSERT DEFAULT CONFIGURATION
 INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VALUES
 ('accesstoken', 'string', (SELECT md5(random()::text)), 'accesstoken', NOW()),
@@ -515,7 +629,7 @@ INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VA
 ('defaultappid', 'string', '', 'defaultappid', NOW()),
 ('email', 'string', 'info@totaljs.com', 'email', NOW()),
 ('guest', 'boolean', 'true', 'guest', NOW()),
-('marketplace', 'string', '', 'marketplace', NOW()),
+('marketplace', 'string', 'https://marketplace.totaljs.com/openplatform/', 'marketplace', NOW()),
 ('maxmembers', 'number', '10', 'maxmembers', NOW()),
 ('name', 'string', 'OpenPlatform', 'name', NOW()),
 ('sender', 'string', 'info@totaljs.com', 'sender', NOW()),

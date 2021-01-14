@@ -131,6 +131,7 @@ Thelpers.responsive = function(value) {
 $(window).on('message', function(e) {
 
 	var data = PARSE((e.originalEvent && e.originalEvent.data).toString() || '');
+
 	if (!data || !data.openplatform)
 		return;
 
@@ -162,7 +163,12 @@ $(window).on('message', function(e) {
 	}
 
 	app = dashboard.apps.findItem('accesstoken', data.accesstoken);
-	if (!app || (!app.internal.internal && !app.internal.workshopid && app.url.indexOf(data.origin) === -1))
+
+	var origin = app ? app.url : '';
+	if (origin && origin.charAt(0) === '/')
+		origin = location.origin + origin;
+
+	if (!app || (!app.internal.internal && origin.indexOf(data.origin) === -1))
 		return;
 
 	var processes = FIND('processes');
@@ -609,7 +615,7 @@ $(window).on('message', function(e) {
 
 		case 'badge':
 			if (app) {
-				if (data.body == null && app.id === common.focused)
+				if ((data.body == null || data.body == false) && app.id === common.focused)
 					return;
 				AJAX('GET /api/op/badges/' + app.id, NOOP);
 			}

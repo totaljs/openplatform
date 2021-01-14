@@ -1,10 +1,9 @@
 var OP = {};
-var OPENPLATFORM = OP;
 
-OP.version = 425;
+OP.version = 428;
 OP.callbacks = {};
 OP.events = {};
-OP.is = top !== window;
+OP.is = parent !== window;
 OP.pending = [];
 OP.$appearance = 0;
 OP.interval = setInterval(function() {
@@ -14,6 +13,70 @@ OP.interval = setInterval(function() {
 		OP.pending = [];
 	}
 }, 500);
+
+OP.jcomponent = function(notembedded) {
+
+	ON('request', function(opt) {
+		var index = opt.url.indexOf('?');
+		var raw = index === -1 ? opt.url : opt.url.substring(0, index);
+		raw = raw.substring(raw.indexOf('/', 9) + 1);
+		var end = raw.substring(raw.length - 10);
+		index = end.indexOf('.');
+		if (index === -1)
+			opt.headers.Authorization = 'base64 ' + btoa(NAV.query.openplatform + ',' + NAV.query.rev + ',' + NAV.query.language);
+	});
+
+	ON('@flag showloading', function() {
+		OP.loading(true);
+	});
+
+	ON('@flag hideloading', function() {
+		OP.loading(false, 1000);
+	});
+
+	OP.onready = function(meta) {
+
+		if (meta.dateformat) {
+
+			DEF.dateformat = meta.dateformat;
+
+			if (W.user) {
+				user.timeformat = meta.timeformat;
+				user.dateformat = meta.dateformat;
+				user.numberformat = meta.numberformat;
+				DEF.languagehtml = user.language;
+			}
+
+			switch (meta.numberformat) {
+				case 1: // 1 000.12
+					DEF.decimalseparator = '.';
+					DEF.thousandsseparator = ' ';
+					break;
+				case 2: // 1 000,12
+					DEF.decimalseparator = ',';
+					DEF.thousandsseparator = ' ';
+					break;
+				case 3: // 1.000,12
+					DEF.decimalseparator = ',';
+					DEF.thousandsseparator = '.';
+					break;
+				case 4: // 1,000.12
+					DEF.decimalseparator = '.';
+					DEF.thousandsseparator = ',';
+					break;
+			}
+
+			var ts = (DEF.timeformat === 12 ? '!' : '') + (DEF.dateformat + ' - HH:mm') + (DEF.timeformat === 12 ? ' a' : '');
+			ENV('date', DEF.dateformat);
+			ENV('ts', ts);
+		}
+
+		EMIT('opready');
+		SET('common.ready', true, 500);
+	};
+
+	OP.init(notembedded);
+};
 
 document.addEventListener('click', function(e) {
 
@@ -213,6 +276,11 @@ OP.progress = function(p) {
 
 OP.init = function(callback, notembedded) {
 
+	if (typeof(callback) === 'boolean') {
+		embeded = callback;
+		callback = null;
+	}
+
 	OP.ready = false;
 
 	if (notembedded)
@@ -220,13 +288,12 @@ OP.init = function(callback, notembedded) {
 
 	OP.embeded = !notembedded;
 
-	if (!callback)
+	if (!callback) {
 		callback = function(is) {
 			if (is == null) {
 				OP.ready = true;
 				return;
 			}
-
 			if (document.body)
 				document.body.innerHTML = '401: Unauthorized';
 			else
@@ -236,6 +303,7 @@ OP.init = function(callback, notembedded) {
 				window.close();
 			}, 2000);
 		};
+	}
 
 	if (!OP.is) {
 		callback(new Error('OpenPlatform isn\'t detected.'));
@@ -245,13 +313,12 @@ OP.init = function(callback, notembedded) {
 
 	var arr = location.search.substring(1).split('&');
 	var accesstoken = null;
-
-	for (var i = 0, length = arr.length; i < length; i++) {
+	for (var i = 0; i < arr.length; i++) {
 		var name = arr[i];
 		if (name.substring(0, 13) === 'openplatform=') {
 			var tmp = decodeURIComponent(name.substring(13));
 			OP.token = name.substring(13);
-			accesstoken = decodeURIComponent(tmp.substring(tmp.indexOf('accesstoken=') + 12));
+			accesstoken = decodeURIComponent(tmp.substring(tmp.indexOf('token=') + 6));
 			break;
 		}
 	}
@@ -260,16 +327,18 @@ OP.init = function(callback, notembedded) {
 	data.ua = navigator.userAgent;
 	OP.accesstoken = accesstoken;
 
-	$(document).ready(function() {
+	document.addEventListener('DOMContentLoaded', function() {
 
 		if (notembedded) {
 			OP.ready = true;
 			var usr = window.user || {};
 			callback && setTimeout(callback, 100, null, usr);
+			OP.onready && OP.onready({});
 			OP.$process({ type: 'appearance', body: { colorscheme: usr.colorscheme, darkmode: usr.darkmode }});
 			window.addEventListener('resize', function() {
 				OP.emit('resize');
 			});
+			OP.emit('ready');
 			return;
 		}
 
@@ -280,6 +349,7 @@ OP.init = function(callback, notembedded) {
 		}, 2000);
 
 		OP.send('verify', data, function(err, response) {
+
 			if (timeout) {
 				clearTimeout(timeout);
 				OP.ready = !err;
@@ -287,9 +357,12 @@ OP.init = function(callback, notembedded) {
 					response.href && (location.href = response.href);
 				}, 100));
 			}
+
 			timeout = null;
 			OP.id = response.id;
 			OP.openplatformurl = response.openplatformurl;
+			OP.onready && OP.onready(response);
+			OP.emit('ready');
 		});
 
 	});
@@ -524,7 +597,7 @@ OP.send = function(type, body, callback) {
 	data.type = type;
 	data.body = body || null;
 	data.sender = true;
-	data.origin = location.protocol + '//' + location.hostname;
+	data.origin = location.origin;
 
 	if (!top) {
 		callback && callback(new Error('The application is not running in the OpenPlatform scope.'));
@@ -536,7 +609,7 @@ OP.send = function(type, body, callback) {
 		OP.callbacks[data.callback] = callback;
 	}
 
-	top.postMessage(JSON.stringify(data), '*');
+	parent.postMessage(JSON.stringify(data), '*');
 	return OP;
 };
 
@@ -599,22 +672,27 @@ OP.$process = function(data) {
 			tmp && tmp.parentNode.removeChild(tmp);
 		}
 
-		var d = data.body;
+		var d = data.body || data;
 		var b = document.body.classList;
 
-		b.add(d.darkmode ? 'opdark' : 'oplight');
-		d.darkmode && b.add('ui-dark');
-		b.add('opbody');
-		b.remove(d.darkmode ? 'oplight' : 'opdark');
-		!d.darkmode && b.remove('ui-dark');
+		if (OP.darkmode !== false) {
+			b.add(d.darkmode ? 'opdark' : 'oplight');
+			d.darkmode && b.add('ui-dark');
+			b.add('opbody');
+			b.remove(d.darkmode ? 'oplight' : 'opdark');
+			!d.darkmode && b.remove('ui-dark');
+			window.OPDARKMODE = d.darkmode;
+		}
+
+		if (d.color)
+			d.colorscheme = d.color;
 
 		if (!d.colorscheme)
 			d.colorscheme = '#4285f4';
 
 		window.OPCOLOR = d.colorscheme;
-		window.OPDARKMODE = d.darkmode;
 
-		style.appendChild(document.createTextNode('.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFFFFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000000') + '}.opborder,.opborderhover:hover{border-color:' + d.colorscheme + '!important}.opbg,.opbghover:hover{background-color:' + d.colorscheme + '!important}.opfg,.opfghover:hover{color:' + d.colorscheme + '!important}'));
+		style.appendChild(document.createTextNode(':root{--opcolor:' + d.colorscheme + '}.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000') + '}.opborder,.opborderhover:hover{border-color:' + d.colorscheme + '!important}.opbg,.opbghover:hover{background-color:' + d.colorscheme + '!important}.opfg,.opfghover:hover{color:' + d.colorscheme + '!important}'));
 		style.id = 'opstyle';
 		head.appendChild(style);
 	}
@@ -715,6 +793,10 @@ window.addEventListener('message', function(e) {
 
 		if (!data.openplatform)
 			return;
+
+		// OpenPlatform cloud
+		if (data.TYPE)
+			data.type = data.TYPE;
 
 		if (!OP.ready && data.type !== 'verify')
 			OP.pending.push(data);

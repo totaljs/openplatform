@@ -3,16 +3,18 @@
 		<label><i class="fa fa-rocket"></i>@(Apps)</label>
 		<div>
 			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
-			<button data-bind="?.selected__enabled:value && !value.workshopid" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
-			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash red"></i>@(Remove)</button>
+			<button data-bind="?.selected__enabled:value && value.typeid==='designer'" disabled class="exec" data-exec="?/design"><i class="fa fa-brush"></i>@(Design)</button>
+			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
+			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash-o red"></i>@(Remove)</button>
 		</div>
 	</div>
 
-	<div data---="datagrid__main.apps__height:.ui-layout-section;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;noborder:1;margin:45">
+	<div data---="datagrid__main.apps__height:.ui-layout-section;highlight:true;click:?.selected;dblclick:?/edit2;checked:?.checked;noborder:1;margin:45">
 		<script type="text/plain">
 			[
 				{ name: 'id', text: '@(ID)', width: 140, hide: true },
 				{ name: 'online', text: '@(Online)', width: 70, template: '{{ if online }}<span class="badge badge-small badge-green">@(online)</span>{{ fi }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
+				{ name: 'typeid', text: '@(Type)', width: 100, template: '<span class="badge badge-{{ if typeid === \'designer\' }}orange{{ else }}blue{{ fi }}">{{ typeid | appstype }}</span>', align: 1, sort: false, options: [{ text: '@(3rd party)', value: 'external' }, { text: '@(Designer)', value: 'designer' }] },
 				{ name: 'blocked', text: '@(Blocked)', width: 100, template: '{{ blocked | boolean(\'red\') }}', align: 1, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 				{ name: 'title', text: '@(Title)', width: 200, template: '{{ if workshopid }}<span class="badge badge-blue mr5">@(workshop)</span>{{ fi }}{{ title }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}' },
 				{ name: 'version', text: '@(Version)', width: 100, align: 1 },
@@ -38,6 +40,12 @@
 
 <script>
 
+	var appstypes = [{ id: 'external', name: '@(3rd party)' }, { id: 'designer', name: '@(Designer)' }];
+
+	Thelpers.appstype = function(val) {
+		return appstypes.findValue('id', val, 'name', DEF.empty);
+	};
+
 	PLUGIN('appsgrid', function(exports) {
 
 		exports.edit = function(row) {
@@ -45,13 +53,32 @@
 			if (row instanceof jQuery)
 				row = GET('?.selected');
 
-			if (row.workshopid)
-				return;
-
 			AJAX('GET /api/op/apps/{id}/'.arg(row), function(response) {
+
+				if (response.icon && response.icon.indexOf(' ')) {
+					var tmp = response.icon.split(' ');
+					tmp.reverse();
+					tmp[1] = 'fa-' + tmp[1];
+					response.icon = tmp.join(' ');
+				}
+
 				SETR('appsprofilepanel', CLONE(response));
 				SET('common.panel', 'appsprofile');
 			});
+		};
+
+		exports.edit2 = function(row) {
+
+			if (row instanceof jQuery)
+				row = GET('?.selected');
+
+			if (!row)
+				return;
+
+			if (row.typeid === 'designer')
+				exports.design(row);
+			else
+				exports.edit(row);
 		};
 
 		exports.showaccesstoken = function(el) {
@@ -64,8 +91,21 @@
 			if (typeof(url) !== 'string')
 				url = '';
 
-			SETR('appsprofilepanel', { sn: '', title: '', url: url || '', position: (main.apps.length + 1) });
+			SET('appsprofilepanel @reset', { sn: '', title: '', url: url || '', position: (main.apps.length + 1), typeid: 'external',allowreadmeta: true, allowguest: false, allowreadprofile: 1, allownotifications: true, allowreadusers: 1 });
 			SET('common.panel', 'appsprofile');
+		};
+
+		exports.design = function(row) {
+
+			if (row instanceof jQuery)
+				row = GET('?.selected');
+
+			if (!row)
+				return;
+
+			OP.loading(true);
+			SET('appsdesigner @reset', { appid: row.id, name: row.name });
+			SET('common.panel', 'appsdesigner', 1000);
 		};
 
 		exports.refresh = exports.reload = function() {

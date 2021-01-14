@@ -59,10 +59,10 @@
 
 	<div class="container@{if CONF.allowdesktopfluid != false}-fluid@{fi} invisible" data-bind="common.ready__.invisible:!value">
 		<div class="menu">
+			@{if CONF.allowdesktopfluid != false}
+				<span class="menu-minimize exec" data-exec="Dashboard/minimizemenu"><i class="fa"></i></span>
+			@{fi}
 			<header>
-				@{if CONF.allowdesktopfluid != false}
-					<span class="menu-minimize exec" data-exec="Dashboard/minimizemenu"><i class="fa"></i></span>
-				@{fi}
 				@{if !user.guest}
 				<div class="button-notifications exec tooltip" data-title="@(Notifications)" data-path="common.form" data-value="'notifications'">
 					<span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span>
@@ -76,9 +76,11 @@
 				<span class="initials exec internal app-modal" data-exec="Dashboard/showprofile" data-bind="user.name__!html:Thelpers.initials(value)"></span>
 				@{fi}
 				<!-- <span class="initials exec" data-exec="internalapp" data-id="_account" data-bind="user.name__!html:Thelpers.initials(value)"></span> -->
-				<span class="title">@{CONF.name}</span>
+				<div class="title">@{CONF.name}<span data-bind="user.name__text"></span></div>
 			</header>
-			<div data---="viewbox__null__margin:77;parent:window;scrollbar:1;visibleY:0;marginxs:92">
+			<div data---="viewbox__null__margin:0;parent:window;scrollbar:1;visibleY:0;marginxs:0">
+
+				<div class="menu-top"></div>
 
 				@{part('top')}
 
@@ -127,8 +129,9 @@
 						@{fi }
 						<div class="app exec internal app-modal" data-exec="Dashboard/showsessions"><i class="fa fa-history"></i>@(My sessions)</div>
 					@{fi}
-
-					<hr style="margin-top:10px" />
+				</nav>
+				<hr style="margin-top:10px" />
+				<nav class="links npt">
 
 					@{if !user.guest && user.sa}
 						<div class="app exec internal" data-exec="internalapp" data-id="_admin">
@@ -146,6 +149,7 @@
 
 				@{part('bottom')}
 
+				<div class="menu-footer"></div>
 			</div>
 			<footer>
 				<div class="console" data-bind="common.consolecount__html span:value__click:Dashboard/showconsole"><i class="fa fa-clipboard-list"></i><span>0</span></div>
@@ -433,7 +437,6 @@
 				var app = dashboard.apps.findItem('id', id);
 				if (app == null)
 					return;
-				console.log(app);
 				if (app.internal.countbadges || app.internal.countnotifications) {
 					AJAX('GET /api/profile/{0}/reset/'.format(id), NOOP);
 					app.internal.countnotifications = 0;
@@ -639,7 +642,7 @@
 
 			for (var i = 0; i < user.apps.length; i++) {
 				var app = user.apps[i];
-				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: app.icon, keywords: app.name });
+				items.push({ TYPE: 'app', id: app.id, name: app.title, icon: (app.icon.indexOf('fa-') === -1 ? 'fa-' : '') + app.icon + (app.icon.indexOf(' ') === -1 ? ' fa' : ''), keywords: app.name });
 			}
 
 			if (user.locking)
@@ -1220,6 +1223,9 @@
 				} else if (NAV.query.notifications)
 					SET('common.form', 'noticications');
 				@{fi}
+
+				if (location.search)
+					REDIRECT(NAV.url);
 
 			});
 		});
