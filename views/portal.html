@@ -1224,6 +1224,9 @@
 					SET('common.form', 'noticications');
 				@{fi}
 
+				if (location.search)
+					REDIRECT(NAV.url);
+
 			});
 		});
 
