@@ -174,7 +174,7 @@ function oauthauthorize() {
 		if (err)
 			self.invalid(err);
 		else
-			self.redirect(url + '?code=' + self.sessionid.encryptUID(CONF.hashsalt));
+			self.redirect(url + '?code=' + (F.is4 ? self.sessionid.encrypt_uid(CONF.hashsalt) : self.sessionid.encryptUID(CONF.hashsalt)));
 	});
 }
 
@@ -188,7 +188,7 @@ function oauthsession() {
 	}
 
 	var filter = CONVERT(self.body, 'code:String,client_id:String,client_secret:String');
-	var code = filter.code.decryptUID(CONF.hashsalt);
+	var code = F.is4 ? filter.code.decrypt_uid(CONF.hashsalt) : filter.code.decryptUID(CONF.hashsalt);
 
 	if (!code) {
 		self.invalid('error-invalid-accesstoken');
