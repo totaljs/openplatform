@@ -185,6 +185,7 @@ NEWSCHEMA('UI', function(schema) {
 			model.settings = null;
 
 		model.dtupdated = NOW;
+		model.appid = $.query.id;
 
 		if (!model.id)
 			model.id = UID();
