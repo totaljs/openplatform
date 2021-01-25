@@ -204,7 +204,8 @@ function oauthsession() {
 
 		DBMS().one('tbl_oauth').fields('name').where('id', filter.client_id).where('accesstoken', filter.client_secret).callback(function(err, response) {
 			if (response) {
-				var accesstoken = F.encrypt({ code: filter.code, userid: profile.id, id: filter.client_id }, CONF.hashsalt);
+				var data = { code: filter.code, userid: profile.id, id: filter.client_id };
+				var accesstoken = F.is4 ? ENCRYPT(data, CONF.hashsalt) : F.encrypt(data, CONF.hashsalt);
 				self.json({ access_token: accesstoken, expire: session.expire });
 			} else
 				self.invalid('error-invalid-accesstoken');
@@ -234,7 +235,7 @@ function oauthprofile() {
 		return;
 	}
 
-	var data = F.decrypt(token, CONF.hashsalt);
+	var data = F.is4 ? DECRYPT(token, CONF.hashsalt) : F.decrypt(token, CONF.hashsalt);
 
 	if (!data) {
 		self.invalid('error-invalid-accesstoken');
