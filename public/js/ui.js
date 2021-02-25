@@ -169,6 +169,9 @@ COMPONENT('time', function(self) {
 });
 
 COMPONENT('exec', function(self, config) {
+
+	var regparent = /\?\d/;
+
 	self.readonly();
 	self.blind();
 	self.make = function() {
@@ -178,7 +181,7 @@ COMPONENT('exec', function(self, config) {
 		var scopepath = function(el, val) {
 			if (!scope)
 				scope = el.scope();
-			return scope ? scope.makepath ? scope.makepath(val) : val.replace(/\?/g, el.scope().path) : val;
+			return val == null ? scope : scope ? scope.makepath ? scope.makepath(val) : val.replace(/\?/g, el.scope().path) : val;
 		};
 
 		var fn = function(plus) {
@@ -193,14 +196,25 @@ COMPONENT('exec', function(self, config) {
 
 				scope = null;
 
-				if (el.attrd('prevent' + plus) === 'true') {
+				var prevent = el.attrd('prevent' + plus);
+
+				if (prevent === 'true' || prevent === '1') {
 					e.preventDefault();
 					e.stopPropagation();
 				}
 
 				if (attr) {
-					if (attr.indexOf('?') !== -1)
-						attr = scopepath(el, attr);
+					if (attr.indexOf('?') !== -1) {
+						var tmp = scopepath(el);
+						if (tmp) {
+							var isparent = regparent.test(attr);
+							attr = tmp.makepath ? tmp.makepath(attr) : attr.replace(/\?/g, tmp.path);
+							if (isparent && attr.indexOf('/') !== -1)
+								M.scope(attr.split('/')[0]);
+							else
+								M.scope(tmp.path);
+						}
+					}
 					EXEC(attr, el, e);
 				}
 
@@ -388,102 +402,6 @@ COMPONENT('validation', 'delay:100;flags:visible', function(self, config) {
 	};
 });
 
-COMPONENT('websocket', 'reconnect:3000', function(self, config) {
-
-	var ws, url;
-	var queue = [];
-	var sending = false;
-
-	self.online = false;
-	self.readonly();
-	self.nocompile();
-
-	self.make = function() {
-		url = (config.url || '').env(true);
-		if (!url.match(/^(ws|wss):\/\//))
-			url = (location.protocol.length === 6 ? 'wss' : 'ws') + '://' + location.host + (url.substring(0, 1) !== '/' ? '/' : '') + url;
-		setTimeout(self.connect, 500);
-		self.destroy = self.close;
-	};
-
-	self.send = function(obj) {
-		queue.push(encodeURIComponent(JSON.stringify(obj)));
-		self.process();
-		return self;
-	};
-
-	self.process = function(callback) {
-
-		if (!ws || sending || !queue.length || ws.readyState !== 1) {
-			callback && callback();
-			return;
-		}
-
-		sending = true;
-		var async = queue.splice(0, 3);
-		async.wait(function(item, next) {
-			ws.send(item);
-			setTimeout(next, 5);
-		}, function() {
-			callback && callback();
-			sending = false;
-			queue.length && self.process();
-		});
-	};
-
-	self.close = function(isClosed) {
-		if (!ws)
-			return self;
-		self.online = false;
-		ws.onopen = ws.onclose = ws.onmessage = null;
-		!isClosed && ws.close();
-		ws = null;
-		EMIT('online', false);
-		return self;
-	};
-
-	function onClose(e) {
-
-		if (e.code === 4001) {
-			COOKIES.rem('@{config.cookie}');
-			location.reload(true);
-			return;
-		}
-
-		self.close(true);
-		setTimeout(self.connect, config.reconnect);
-	}
-
-	function onMessage(e) {
-		var data;
-		try {
-			data = PARSE(decodeURIComponent(e.data));
-			self.attrd('jc-path') && self.set(data);
-		} catch (e) {
-			WARN('WebSocket "{0}": {1}'.format(url, e.toString()));
-		}
-		data && EMIT('message', data);
-	}
-
-	function onOpen() {
-		self.online = true;
-		self.process(function() {
-			EMIT('online', true);
-		});
-	}
-
-	self.connect = function() {
-		ws && self.close();
-		setTimeout2(self.id, function() {
-			ws = new WebSocket(url.env(true));
-			ws.onopen = onOpen;
-			ws.onclose = onClose;
-			ws.onmessage = onMessage;
-		}, 100);
-		return self;
-	};
-});
-
 COMPONENT('form', 'zindex:30;scrollbar:1', function(self, config, cls) {
 
 	var cls2 = '.' + cls;
@@ -509,10 +427,7 @@ COMPONENT('form', 'zindex:30;scrollbar:1', function(self, config, cls) {
 			}, 200);
 		};
 
-		if (W.OP)
-			W.OP.on('resize', resize);
-		else
-			$(W).on('resize', resize);
+		ON('resize2', resize);
 
 		$(document).on('click', cls2 + '-container', function(e) {
 
@@ -746,9 +661,8 @@ COMPONENT('form', 'zindex:30;scrollbar:1', function(self, config, cls) {
 	};
 });
 
-COMPONENT('confirm', function(self) {
+COMPONENT('confirm', function(self, config, cls) {
 
-	var cls = 'ui-' + self.name;
 	var cls2 = '.' + cls;
 	var is;
 	var events = {};
@@ -807,16 +721,25 @@ COMPONENT('confirm', function(self) {
 	};
 
 	self.show = self.confirm = function(message, buttons, fn) {
+
+		if (M.scope)
+			self.currscope = M.scope();
+
 		self.callback = fn;
 
 		var builder = [];
 
 		for (var i = 0; i < buttons.length; i++) {
 			var item = buttons[i];
-			var icon = item.match(/"[a-z0-9-]+"/);
+			var icon = item.match(/"[a-z0-9-\s]+"/);
 			if (icon) {
+
+				var tmp = icon + '';
+				if (tmp.indexOf(' ') == -1)
+					tmp = 'fa fa-' + tmp;
+
 				item = item.replace(icon, '').trim();
-				icon = '<i class="fa fa-{0}"></i>'.format(icon.toString().replace(/"/g, ''));
+				icon = '<i class="{0}"></i>'.format(tmp.replace(/"/g, ''));
 			} else
 				icon = '';
 
@@ -831,6 +754,7 @@ COMPONENT('confirm', function(self) {
 	};
 
 	self.hide = function(index) {
+		self.currscope && M.scope(self.currscope);
 		self.callback && self.callback(index);
 		self.rclass(cls + '-visible');
 		events.unbind();
@@ -848,6 +772,7 @@ COMPONENT('confirm', function(self) {
 		events.bind();
 		setTimeout2(self.id, function() {
 			self.aclass(cls + '-visible');
+			document.activeElement && document.activeElement.blur();
 		}, 5);
 	};
 });
@@ -5022,76 +4947,6 @@ COMPONENT('dynamicvalue', 'html:{{ name }};icon2:angle-down;loading:1', function
 
 });
 
-COMPONENT('scrollbar', 'reset:true;margin:0;marginxs:0;marginsm:0;marginmd:0;marginlg:0', function(self, config) {
-
-	self.readonly();
-
-	self.configure = function(key, value) {
-		if (key === 'track') {
-			if (!(value instanceof Array))
-				value = value.split(',').trim();
-
-			for (var i = 0; i < value.length; i++)
-				value[i] = self.path + '.' + value[i];
-
-			value.push(self.path);
-			config.track = value;
-		}
-	};
-
-	self.init = function() {
-
-		var resize = function() {
-			SETTER('scrollbar', 'resize');
-		};
-
-		var resizedelay = function() {
-			setTimeout2('scrollbar', resize, 300);
-		};
-
-		if (W.OP)
-			W.OP.on('resize', resizedelay);
-		else
-			$(W).on('resize', resizedelay);
-	};
-
-	self.make = function() {
-		self.scrollbar = SCROLLBAR(self.element, { visibleX: config.visibleX, visibleY: config.visibleY });
-		self.scrollleft = self.scrollbar.scrollLeft;
-		self.scrolltop = self.scrollbar.scrollTop;
-		self.scrollright = self.scrollbar.scrollRight;
-		self.scrollbottom = self.scrollbar.scrollBottom;
-	};
-
-	self.resize = function() {
-		if (config.parent) {
-			var parent = config.parent === 'window' ? $(window) : self.element.closest(config.parent);
-			self.element.css('height', parent.height() - (config.offset ? self.element.offset().top : 0) - config.margin - config['margin' + WIDTH()]);
-		}
-		self.scrollbar.resize();
-	};
-
-	self.on('resize', self.resize);
-	self.done = self.resize;
-
-	self.scroll = function(x, y) {
-		self.scrollbar.scroll(x, y);
-	};
-
-	self.reset = function() {
-		self.scroll(0, 0);
-	};
-
-	self.setter = function(value, path, type) {
-		if (config.track && config.track.indexOf(path) === -1)
-			return;
-		type && setTimeout(function() {
-			self.done();
-			config.reset && self.reset();
-		}, 500);
-	};
-});
-
 COMPONENT('autocomplete', 'height:200', function(self, config) {
 
 	var cls = 'ui-autocomplete';
@@ -6456,31 +6311,46 @@ COMPONENT('markdown', function (self) {
 
 });
 
-COMPONENT('menu', function(self) {
+COMPONENT('menu', function(self, config, cls) {
 
 	self.singleton();
 	self.readonly();
 	self.nocompile && self.nocompile();
 
-	var cls = 'ui-menu';
+	var cls2 = '.' + cls;
+
 	var is = false;
+	var issubmenu = false;
+	var isopen = false;
 	var events = {};
-	var ul;
+	var ul, children, prevsub, parentclass;
 
 	self.make = function() {
-		self.aclass(cls + ' hidden');
-		self.append('<ul></ul>');
-		ul = self.find('ul');
+		self.aclass(cls + ' hidden ' + cls + '-style-' + (config.style || 1));
+		self.append('<div class="{0}-items"><ul></ul></div><div class="{0}-submenu hidden"><ul></ul></div>'.format(cls));
+		ul = self.find(cls2 + '-items').find('ul');
+		children = self.find(cls2 + '-submenu');
 
-		self.event('touchstart mousedown', 'li', function(e) {
+		self.event('click', 'li', function(e) {
+
+			clearTimeout2(self.ID);
+
 			var el = $(this);
-			if (el.hclass(cls + '-divider')) {
-				e.preventDefault();
-				e.stopPropagation();
-			} else {
-				self.opt.callback(self.opt.items[el.index()]);
-				self.hide();
+			if (!el.hclass(cls + '-divider') && !el.hclass(cls + '-disabled')) {
+				self.opt.scope && M.scope(self.opt.scope);
+				var index = el.attrd('index').split('-');
+				if (index.length > 1) {
+					// submenu
+					self.opt.callback(self.opt.items[+index[0]].children[+index[1]]);
+					self.hide();
+				} else if (!issubmenu) {
+					self.opt.callback(self.opt.items[+index[0]]);
+					self.hide();
+				}
 			}
+
+			e.preventDefault();
+			e.stopPropagation();
 		});
 
 		events.hide = function() {
@@ -6488,26 +6358,79 @@ COMPONENT('menu', function(self) {
 		};
 
 		self.event('scroll', events.hide);
-		self.on('reflow', events.hide);
-		self.on('scroll', events.hide);
-		self.on('resize', events.hide);
+		self.on('reflow + scroll + resize + resize2', events.hide);
 
 		events.click = function(e) {
-			if (is && (!self.target || (self.target !== e.target && !self.target.contains(e.target))))
-				self.hide();
+			if (is && !isopen && (!self.target || (self.target !== e.target && !self.target.contains(e.target))))
+				setTimeout2(self.ID, self.hide, isMOBILE ? 700 : 300);
+		};
+
+		events.hidechildren = function() {
+			if ($(this.parentNode.parentNode).hclass(cls + '-items')) {
+				if (prevsub && prevsub[0] !== this) {
+					prevsub.rclass(cls + '-selected');
+					prevsub = null;
+					children.aclass('hidden');
+					issubmenu = false;
+				}
+			}
+		};
+
+		events.children = function() {
+
+			if (prevsub && prevsub[0] !== this) {
+				prevsub.rclass(cls + '-selected');
+				prevsub = null;
+			}
+
+			issubmenu = true;
+			isopen = true;
+
+			setTimeout(function() {
+				isopen = false;
+			}, 500);
+
+			var el = prevsub = $(this);
+			var index = +el.attrd('index');
+			var item = self.opt.items[index];
+
+			el.aclass(cls + '-selected');
+
+			var html = self.makehtml(item.children, index);
+			children.find('ul').html(html);
+			children.rclass('hidden');
+
+			var css = {};
+			var offset = el.position();
+
+			css.left = ul.width() - 5;
+			css.top = offset.top - 5;
+
+			var offsetX = offset.left;
+
+			offset = self.element.offset();
+
+			var w = children.width();
+			var left = offset.left + css.left + w;
+			if (left > WW + 30)
+				css.left = (offsetX - w) + 5;
+
+			children.css(css);
 		};
 	};
 
 	self.bindevents = function() {
 		events.is = true;
-		$(document).on('touchstart mousedown', events.click);
-		$(window).on('scroll', events.hide);
+		$(document).on('touchstart mouseenter mousedown', cls2 + '-children', events.children).on('touchstart mousedown', events.click);
+		$(W).on('scroll', events.hide);
+		self.element.on('mouseenter', 'li', events.hidechildren);
 	};
 
 	self.unbindevents = function() {
 		events.is = false;
-		$(document).off('touchstart mousedown', events.click);
-		$(window).off('scroll', events.hide);
+		$(document).off('touchstart mouseenter mousedown', cls2 + '-children', events.children).off('touchstart mousedown', events.click);
+		$(W).off('scroll', events.hide);
+		self.element.off('mouseenter', 'li', events.hidechildren);
 	};
 
 	self.showxy = function(x, y, items, callback) {
@@ -6517,6 +6440,55 @@ COMPONENT('menu', function(self) {
 		opt.items = items;
 		opt.callback = callback;
 		self.show(opt);
+	};
+
+	self.makehtml = function(items, index) {
+		var builder = [];
+		var tmp;
+
+		for (var i = 0; i < items.length; i++) {
+			var item = items[i];
+
+			if (typeof(item) === 'string') {
+				// caption or divider
+				if (item === '-')
+					tmp = '<hr />';
+				else
+					tmp = '<span>{0}</span>'.format(item);
+				builder.push('<li class="{0}-divider">{1}</li>'.format(cls, tmp));
+				continue;
+			}
+
+			var cn = item.classname || '';
+			var icon = '';
+
+			if (item.icon)
+				icon = '<i class="{0}"></i>'.format(item.icon.charAt(0) === '!' ? item.icon.substring(1) : item.icon.indexOf('fa-') === -1 ? ('fa fa-' + item.icon) : item.icon);
+			else
+				cn = (cn ? (cn + ' ') : '') + cls + '-nofa';
+
+			tmp = '';
+
+			if (index == null && item.children && item.children.length) {
+				cn += (cn ? ' ' : '') + cls + '-children';
+				tmp += '<i class="fa fa-play pull-right"></i>';
+			}
+
+			if (item.selected)
+				cn += (cn ? ' ' : '') + cls + '-selected';
+
+			if (item.disabled)
+				cn += (cn ? ' ' : '') + cls + '-disabled';
+
+			tmp += '<div class="{0}-name">{1}{2}{3}</div>'.format(cls, icon, item.name, item.shortcut ? '<b>{0}</b>'.format(item.shortcut) : '');
+
+			if (item.note)
+				tmp += '<div class="ui-menu-note">{0}</div>'.format(item.note);
+
+			builder.push('<li class="{0}" data-index="{2}">{1}</li>'.format(cn, tmp, (index != null ? (index + '-') : '') + i));
+		}
+
+		return builder.join('');
 	};
 
 	self.show = function(opt) {
@@ -6538,19 +6510,37 @@ COMPONENT('menu', function(self) {
 			return;
 		}
 
-		var builder = [];
+		var tmp;
 
 		self.target = tmp;
 		self.opt = opt;
+		opt.scope = M.scope();
 
-		for (var i = 0; i < opt.items.length; i++) {
-			var item = opt.items[i];
-			builder.push(typeof(item) == 'string' ? '<li class="{1}-divider">{0}</li>'.format(item === '-' ? '<hr />' : ('<span>' + item + '</span>'), cls) : '<li{2}>{3}{0}{1}</li>'.format(item.icon ? '<i class="{0}"></i>'.format(item.icon.charAt(0) === '!' ? item.icon.substring(1) : ('fa fa-' + item.icon)) : '', item.name, item.icon ? '' : (' class="' + cls + '-nofa"'), item.shortcut ? '<b>{0}</b>'.format(item.shortcut) : ''));
+		if (parentclass && opt.classname !== parentclass) {
+			self.rclass(parentclass);
+			parentclass = null;
 		}
 
-		var css = {};
+		if (opt.large)
+			self.aclass('ui-large');
+		else
+			self.rclass('ui-large');
 
-		ul.html(builder.join(''));
+		isopen = false;
+		issubmenu = false;
+		prevsub = null;
+
+		var css = {};
+		children.aclass('hidden');
+		children.find('ul').empty();
+		clearTimeout2(self.ID);
+
+		ul.html(self.makehtml(opt.items));
+
+		if (!parentclass && opt.classname) {
+			self.aclass(opt.classname);
+			parentclass = opt.classname;
+		}
 
 		if (is) {
 			css.left = 0;
@@ -6582,10 +6572,16 @@ COMPONENT('menu', function(self) {
 			}
 
 			css.top = opt.position === 'bottom' ? (offset.top - self.element.height() - 10) : (offset.top + target.innerHeight() + 10);
+
 		} else {
 			css.left = opt.x;
 			css.top = opt.y;
 		}
+
+		if (opt.position === 'bottom')
+			css.top += 10;
+		else
+			css.top -= 10;
 
 		if (opt.offsetX)
 			css.left += opt.offsetX;
@@ -6593,12 +6589,26 @@ COMPONENT('menu', function(self) {
 		if (opt.offsetY)
 			css.top += opt.offsetY;
 
+		var mw = w;
+		var mh = self.height();
+
+		if (css.left < 0)
+			css.left = 10;
+		else if ((mw + css.left) > WW)
+			css.left = (WW - mw) - 10;
+
+		if (css.top < 0)
+			css.top = 10;
+		else if ((mh + css.top) > WH)
+			css.top = (WH - mh) - 10;
+
 		self.element.css(css);
 	};
 
 	self.hide = function() {
 		events.is && self.unbindevents();
 		is = false;
+		self.opt && self.opt.hide && self.opt.hide();
 		self.target = null;
 		self.opt = null;
 		self.aclass('hidden');
@@ -6611,11 +6621,12 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 	var cls2 = '.' + cls;
 	var container, timeout, icon, plus, skipreset = false, skipclear = false, ready = false, input = null, issearch = false;
-	var is = false, selectedindex = 0, resultscount = 0;
+	var is = false, selectedindex = 0, resultscount = 0, skiphide = false;
 	var templateE = '{{ name | encode | ui_directory_helper }}';
 	var templateR = '{{ name | raw }}';
-	var template = '<li data-index="{{ $.index }}" data-search="{{ name }}" {{ if selected }} class="current selected{{ if classname }} {{ classname }}{{ fi }}"{{ else if classname }} class="{{ classname }}"{{ fi }}>{0}</li>';
+	var template = '<li data-index="{{ $.index }}" data-search="{{ $.search }}" {{ if selected }} class="current selected{{ if classname }} {{ classname }}{{ fi }}"{{ else if classname }} class="{{ classname }}"{{ fi }}>{{ if $.checkbox }}<span class="' + cls + '-checkbox"><i class="fa fa-check"></i></span>{{ fi }}{0}</li>';
 	var templateraw = template.format(templateR);
+	var regstrip = /(&nbsp;|<([^>]+)>)/ig;
 	var parentclass;
 
 	template = template.format(templateE);
@@ -6687,17 +6698,42 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 		});
 
 		self.event('click', 'li', function(e) {
+
 			if (self.opt.callback) {
 				self.opt.scope && M.scope(self.opt.scope);
-				self.opt.callback(self.opt.items[+this.getAttribute('data-index')], self.opt.element);
+				var item = self.opt.items[+this.getAttribute('data-index')];
+				if (self.opt.checkbox) {
+					item.selected = !item.selected;
+					$(this).tclass('selected', item.selected);
+					var response = [];
+					for (var i = 0; i < self.opt.items.length; i++) {
+						var m = self.opt.items[i];
+						if (m.selected)
+							response.push(m);
+					}
+					self.opt.callback(response, self.opt.element);
+					skiphide = true;
+				} else
+					self.opt.callback(item, self.opt.element);
 			}
+
 			is = true;
-			self.hide(0);
-			e.preventDefault();
-			e.stopPropagation();
+
+			if (!self.opt.checkbox) {
+				self.hide(0);
+				e.preventDefault();
+				e.stopPropagation();
+			}
+
 		});
 
 		var e_click = function(e) {
+
+			if (skiphide) {
+				skiphide = false;
+				return;
+			}
+
 			var node = e.target;
 			var count = 0;
 
@@ -6805,9 +6841,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 			is && self.hide(1);
 		};
 
-		self.on('reflow', fn);
-		self.on('scroll', fn);
-		self.on('resize', fn);
+		self.on('reflow + scroll + resize + resize2', fn);
 		$(W).on('scroll', fn);
 	};
 
@@ -6815,14 +6849,12 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		var counter = 0;
 		var scroller = container.parent();
-		var h = scroller.height();
 		var li = container.find('li');
-		var hli = (li.eq(0).innerHeight() || 30) + 1;
+		var hli = 0;
 		var was = false;
 		var last = -1;
 		var lastselected = 0;
-		var plus = (hli * 2);
-		var sh = (li.length * hli);
+		var plus = 0;
 
 		for (var i = 0; i < li.length; i++) {
 
@@ -6837,9 +6869,10 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 			el.tclass('current', is);
 
 			if (is) {
+				hli = (el.innerHeight() || 30) + 1;
+				plus = (hli * 2);
 				was = true;
 				var t = (hli * (counter || 1));
-				// var p = (t / sh) * 100;
 				scroller[0].scrollTop = t - plus;
 			}
 
@@ -6893,20 +6926,25 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 						var builder = [];
 						var indexer = {};
 						var item;
+						var key = (self.opt.search == true ? self.opt.key : (self.opt.search || self.opt.key)) || 'name';
 
 						for (var i = 0; i < items.length; i++) {
 							item = items[i];
 							if (self.opt.exclude && self.opt.exclude(item))
 								continue;
 							indexer.index = i;
+							indexer.search = item[key] ? item[key].replace(regstrip, '') : '';
+							indexer.checkbox = self.opt.checkbox === true;
 							resultscount++;
 							builder.push(self.opt.ta(item, indexer));
 						}
 
 						if (self.opt.empty) {
 							item = {};
-							item[self.opt.key || 'name'] = self.opt.empty;
-							item.template = '<b>{0}</b>'.format(self.opt.empty);
+							var tmp = self.opt.raw ? '<b>{0}</b>'.format(self.opt.empty) : self.opt.empty;
+							item[self.opt.key || 'name'] = tmp;
+							if (!self.opt.raw)
+								item.template = '<b>{0}</b>'.format(self.opt.empty);
 							indexer.index = -1;
 							builder.unshift(self.opt.ta(item, indexer));
 						}
@@ -6920,13 +6958,22 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 				}, 300, null, val);
 			}
 		} else if (value) {
-			value = value.toSearch();
+			value = value.toSearch().split(' ');
 			var arr = container.find('li');
 			for (var i = 0; i < arr.length; i++) {
 				var el = $(arr[i]);
 				var val = el.attrd('search').toSearch();
-				var is = val.indexOf(value) === -1;
+				var is = false;
+
+				for (var j = 0; j < value.length; j++) {
+					if (val.indexOf(value[j]) === -1) {
+						is = true;
+						break;
+					}
+				}
+
 				el.tclass('hidden', is);
+
 				if (!is)
 					resultscount++;
 			}
@@ -6995,7 +7042,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 		var item;
 
 		if (type === 'string') {
-			items = GET(items);
+			items = opt.items = GET(items);
 			type = typeof(items);
 		}
 
@@ -7025,7 +7072,9 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		if (!opt.ajax) {
 			var indexer = {};
+			var key = (opt.search == true ? opt.key : (opt.search || opt.key)) || 'name';
 			for (var i = 0; i < items.length; i++) {
+
 				item = items[i];
 
 				if (typeof(item) === 'string')
@@ -7041,14 +7090,18 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 				} else
 					item.selected = false;
 
+				indexer.checkbox = opt.checkbox === true;
 				indexer.index = i;
+				indexer.search = item[key] ? item[key].replace(regstrip, '') : '';
 				builder.push(opt.ta(item, indexer));
 			}
 
 			if (opt.empty) {
 				item = {};
-				item[opt.key || 'name'] = opt.empty;
-				item.template = '<b>{0}</b>'.format(opt.empty);
+				var tmp = opt.raw ? '<b>{0}</b>'.format(opt.empty) : opt.empty;
+				item[opt.key || 'name'] = tmp;
+				if (!opt.raw)
+					item.template = '<b>{0}</b>'.format(opt.empty);
 				indexer.index = -1;
 				builder.unshift(opt.ta(item, indexer));
 			}
@@ -7077,10 +7130,10 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		switch (opt.align) {
 			case 'center':
-				options.left = Math.ceil((offset.left - width / 2) + (width / 2));
+				options.left = Math.ceil((offset.left - width / 2) + (opt.element.innerWidth() / 2));
 				break;
 			case 'right':
-				options.left = (offset.left - width) + w;
+				options.left = (offset.left - width) + opt.element.innerWidth();
 				break;
 			default:
 				options.left = offset.left;
@@ -7095,6 +7148,19 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		if (opt.offsetY)
 			options.top += opt.offsetY;
+
+		var mw = width;
+		var mh = self.height();
+
+		if (options.left < 0)
+			options.left = 10;
+		else if ((mw + options.left) > WW)
+			options.left = (WW - mw) - 10;
+
+		if (options.top < 0)
+			options.top = 10;
+		else if ((mh + options.top) > WH)
+			options.top = (WH - mh) - 10;
 
 		self.css(options);
 
@@ -7165,9 +7231,9 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 	self.init = function() {
 		Thelpers.ui_input_icon = function(val) {
-			return val.charAt(0) === '!' ? ('<span class="ui-input-icon-custom">' + val.substring(1) + '</span>') : ('<i class="fa fa-' + val + '"></i>');
+			return val.charAt(0) === '!' || val.indexOf(' ') !== -1 ? ('<span class="ui-input-icon-custom"><i class="' + (val.charAt(0) === '!' ? val.substring(1) : val) + '"></i></span>') : ('<i class="fa fa-' + val + '"></i>');
 		};
-		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment && !ricon }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' && !ricon }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}{{ if dirsource || type === \'icon\' || type === \'emoji\' || type === \'color\' }}<div class="{0}-value" tabindex="0"></div>{{ else }}<input type="{{ if type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }} data-jc-bind=""{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} />{{ fi }}</div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
+		W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment && !ricon }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' && !ricon }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}{{ if dirsource || type === \'icon\' || type === \'emoji\' || type === \'color\' }}<div class="{0}-value" tabindex="0"></div>{{ else }}<input type="{{ if type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }} data-jc-bind=""{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} />{{ fi }}</div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
 	};
 
 	self.make = function() {
@@ -7422,8 +7488,11 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			opt.key = config.dirkey || config.key;
 			opt.empty = config.dirempty;
 
-			if (config.dirsearch === false)
-				opt.search = false;
+			if (config.dirraw)
+				opt.raw = true;
+
+			if (config.dirsearch != null)
+				opt.search = config.dirsearch;
 
 			var val = self.get();
 			opt.selected = val;
@@ -7542,7 +7611,8 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 					if (tmp.attr('class').indexOf('fa-') !== -1) {
 						var n = tmp.hclass('fa-caret-up') ? 1 : -1;
 						self.change(true);
-						self.inc(config.increment * n);
+						var val = self.preparevalue((self.get() || 0) + (config.increment * n));
+						self.set(val, 2);
 					}
 				}
 				return;
@@ -7646,6 +7716,19 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 		self.find(cls2 + '-icon-right').find('i').tclass(config.ricon, visible).tclass('fa-eye-slash', !visible);
 	};
 
+	self.preparevalue = function(value) {
+
+		if (self.type === 'number' && (config.minvalue != null || config.maxvalue != null)) {
+			var tmp = typeof(value) === 'string' ? +value.replace(',', '.') : value;
+			if (config.minvalue > tmp)
+				value = config.minvalue;
+			if (config.maxvalue < tmp)
+				value = config.maxvalue;
+		}
+
+		return value;
+	};
+
 	self.getterin = self.getter;
 	self.getter = function(value, realtime, nobind) {
 
@@ -7661,7 +7744,7 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			value = val.join('');
 		}
 
-		self.getterin(value, realtime, nobind);
+		self.getterin(self.preparevalue(value), realtime, nobind);
 	};
 
 	self.setterin = self.setter;
@@ -7744,10 +7827,16 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 			if (value && item == null && config.dircustom)
 				item = value;
 
-			rawvalue.text(item || '');
+			if (config.dirraw)
+				rawvalue.html(item || '');
+			else
+				rawvalue.text(item || '');
 
 		} else if (config.dirsource)
-			rawvalue.text(value || '');
+			if (config.dirraw)
+				rawvalue.html(value || '');
+			else
+				rawvalue.text(value || '');
 		else {
 			switch (config.type) {
 				case 'color':
@@ -7809,15 +7898,24 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 
 	self.configure = function(key, value) {
 		switch (key) {
+			case 'icon':
+				if (value && value.indexOf(' ') === -1)
+					config.icon = 'fa fa-' + value;
+				break;
 			case 'dirsource':
 				if (config.dirajax || value.indexOf('/') !== -1) {
 					dirsource = null;
 					self.bindvalue();
 				} else {
-					self.datasource(value, function(path, value) {
-						dirsource = value;
+					if (value.indexOf(',') !== -1) {
+						dirsource = self.parsesource(value);
 						self.bindvalue();
-					});
+					} else {
+						self.datasource(value, function(path, value) {
+							dirsource = value;
+							self.bindvalue();
+						});
+					}
 				}
 				self.tclass(cls + '-dropdown', !!value);
 				input.prop('readonly', !!config.disabled || !!config.dirsource);
@@ -7835,10 +7933,13 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 				self.type = value;
 				break;
 			case 'validate':
-				customvalidator = value ? (/\(|=|>|<|\+|-|\)/).test(value) ? FN('value=>' + value) : (function(path) { return function(value) { return GET(path)(value); }; })(value) : null;
+				customvalidator = value ? (/\(|=|>|<|\+|-|\)/).test(value) ? FN('value=>' + value) : (function(path) { path = self.makepath(path); return function(value) { return GET(path)(value); }; })(value) : null;
 				break;
 			case 'innerlabel':
-				self.tclass(cls + '-inner', value);
+				self.tclass(cls + '-inner', !!value);
+				break;
+			case 'monospace':
+				self.tclass(cls + '-monospace', !!value);
 				break;
 			case 'maskregexp':
 				if (value) {
@@ -7921,11 +8022,12 @@ COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:
 	self.state = function(type) {
 		if (type) {
 			var invalid = config.required ? self.isInvalid() : self.forcedvalidation() ? self.isInvalid() : false;
-			if (invalid === self.$oldstate)
-				return;
-			self.$oldstate = invalid;
-			self.tclass(cls + '-invalid', invalid);
-			config.error && self.find(cls2 + '-error').tclass('hidden', !invalid);
+			if (invalid !== self.$oldstate) {
+				self.$oldstate = invalid;
+				self.tclass(cls + '-invalid', invalid);
+				self.tclass(cls + '-ok', !invalid);
+				config.error && self.find(cls2 + '-error').tclass('hidden', !invalid);
+			}
 		}
 	};
 
@@ -8103,34 +8205,34 @@ COMPONENT('tooltip', function(self) {
 
 });
 
-COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;height:100', function(self, config) {
+COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;height:100;invisible:1', function(self, config, cls) {
 
 	var eld, elb;
 	var scrollbar;
-	var cls = 'ui-viewbox';
 	var cls2 = '.' + cls;
 	var init = false;
+	var cache;
+	var scrolltoforce;
 
 	self.readonly();
 
 	self.init = function() {
-		var obj;
-		if (W.OP)
-			obj = W.OP;
-		else
-			obj = $(W);
 
 		var resize = function() {
 			for (var i = 0; i < M.components.length; i++) {
 				var com = M.components[i];
 				if (com.name === 'viewbox' && com.dom.offsetParent && com.$ready && !com.$removed)
-					com.resize();
+					com.resizeforce();
 			}
 		};
 
-		obj.on('resize', function() {
+		ON('resize2', function() {
 			setTimeout2('viewboxresize', resize, 200);
 		});
+	};
+
+	self.destroy = function() {
+		scrollbar && scrollbar.destroy();
 	};
 
 	self.configure = function(key, value, init) {
@@ -8168,16 +8270,16 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 	};
 
 	self.make = function() {
-		self.aclass('invisible');
-		config.scroll && MAIN.version > 17 && self.element.wrapInner('<div class="ui-viewbox-body"></div>');
-		self.element.prepend('<div class="ui-viewbox-disabled hidden"></div>');
+		config.invisible && self.aclass('invisible');
+		config.scroll && MAIN.version > 17 && self.element.wrapInner('<div class="' + cls + '-body"></div>');
+		self.element.prepend('<div class="' + cls + '-disabled hidden"></div>');
 		eld = self.find('> .{0}-disabled'.format(cls)).eq(0);
 		elb = self.find('> .{0}-body'.format(cls)).eq(0);
 		self.aclass('{0} {0}-hidden'.format(cls));
 		if (config.scroll) {
 			if (config.scrollbar) {
 				if (MAIN.version > 17) {
-					scrollbar = W.SCROLLBAR(self.find(cls2 + '-body'), { visibleY: config.visibleY, visibleX: config.visibleX, orientation: config.visibleX ? null : 'y', parent: self.element });
+					scrollbar = W.SCROLLBAR(self.find(cls2 + '-body'), { shadow: config.scrollbarshadow, visibleY: config.visibleY, visibleX: config.visibleX, orientation: config.visibleX ? null : 'y', parent: self.element });
 					self.scrolltop = scrollbar.scrollTop;
 					self.scrollbottom = scrollbar.scrollBottom;
 				} else
@@ -8196,20 +8298,41 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 
 	var css = {};
 
-	self.resize = function(scrolltop) {
+	self.resize = function() {
+		setTimeout2(self.ID, self.resizeforce, 200);
+	};
 
-		if (self.release())
-			return;
+	self.resizeforce = function() {
 
 		var el = self.parent(config.parent);
 		var h = el.height();
 		var w = el.width();
 		var width = WIDTH();
+		var mywidth = self.element.width();
+
+		var key = width + 'x' + mywidth + 'x' + w + 'x' + h;
+		if (cache === key) {
+			scrollbar && scrollbar.resize();
+			if (scrolltoforce) {
+				if (scrolltoforce ==='bottom')
+					self.scrollbottom(0);
+				else
+					self.scrolltop(0);
+				scrolltoforce = null;
+			}
+			return;
+		}
+
+		cache = key;
+
 		var margin = config.margin;
 		var responsivemargin = config['margin' + width];
 
 		if (responsivemargin != null)
 			margin = responsivemargin;
+
+		if (margin === 'auto')
+			margin = self.element.offset().top;
 
 		if (h === 0 || w === 0) {
 			self.$waiting && clearTimeout(self.$waiting);
@@ -8223,7 +8346,7 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 			h = config.minheight;
 
 		css.height = h;
-		css.width = self.element.width();
+		css.width = mywidth;
 		eld.css(css);
 
 		css.width = null;
@@ -8233,7 +8356,14 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 		var c = cls + '-hidden';
 		self.hclass(c) && self.rclass(c, 100);
 		scrollbar && scrollbar.resize();
-		scrolltop && self.scrolltop(0);
+
+		if (scrolltoforce) {
+			if (scrolltoforce ==='bottom')
+				self.scrollbottom(0);
+			else
+				self.scrolltop(0);
+			scrolltoforce = null;
+		}
 
 		if (!init) {
 			self.rclass('invisible', 250);
@@ -8246,7 +8376,15 @@ COMPONENT('viewbox', 'margin:0;scroll:true;delay:100;scrollbar:0;visibleY:1;heig
 	};
 
 	self.setter = function() {
-		setTimeout(self.resize, config.delay, config.scrolltop);
+		scrolltoforce = config.scrollto || config.scrolltop;
+		if (scrolltoforce) {
+			if (scrolltoforce ==='bottom')
+				self.scrollbottom(0);
+			else
+				self.scrolltop(0);
+			scrolltoforce = null;
+		}
+		setTimeout(self.resize, config.delay, scrolltoforce);
 	};
 });
 
@@ -9373,9 +9511,8 @@ COMPONENT('checkboxlist', 'checkicon:check', function(self, config) {
 	};
 });
 
-COMPONENT('radiobutton', 'inline:1', function(self, config) {
+COMPONENT('radiobutton', 'inline:1', function(self, config, cls) {
 
-	var cls = 'ui-radiobutton';
 	var cls2 = '.' + cls;
 	var template = '<div data-value="{1}"><i></i><span>{0}</span></div>';
 
@@ -9418,7 +9555,7 @@ COMPONENT('radiobutton', 'inline:1', function(self, config) {
 		var label = config.label || self.html();
 		label && builder.push('<div class="' + cls + '-label{1}">{0}</div>'.format(label, config.required ? (' ' + cls + '-label-required') : ''));
 		self.aclass(cls + (!config.inline ? (' ' + cls + '-block') : '') + (config.disabled ? ' ui-disabled' : ''));
-		self.event('click', 'div', function() {
+		self.event('click', 'div[data-value]', function() {
 			if (config.disabled)
 				return;
 			var value = self.parser($(this).attrd('value'));
@@ -9426,7 +9563,6 @@ COMPONENT('radiobutton', 'inline:1', function(self, config) {
 			self.change(true);
 		});
 		self.html(builder.join(''));
-		html = self.html();
 		config.items && self.reconfigure('items:' + config.items);
 		config.datasource && self.reconfigure('datasource:' + config.datasource);
 		config.type && (self.type = config.type);
@@ -9437,7 +9573,7 @@ COMPONENT('radiobutton', 'inline:1', function(self, config) {
 	};
 
 	self.setter = function(value) {
-		self.find('div').each(function() {
+		self.find('div[data-value]').each(function() {
 			var el = $(this);
 			var is = el.attrd('value') === (value == null ? null : value.toString());
 			el.tclass(cls + '-selected', is);
@@ -9465,9 +9601,8 @@ COMPONENT('radiobutton', 'inline:1', function(self, config) {
 				builder.push(template.format(item[propText], item[propValue]));
 		}
 
-		render = builder.join('');
 		self.find('div[data-value]').remove();
-		self.append(render);
+		self.append(builder.join(''));
 		self.refresh();
 	};
 });
@@ -9765,17 +9900,18 @@ COMPONENT('pin', 'blank:●;count:6;hide:false;mask:true', function(self, config
 	};
 });
 
-COMPONENT('faicons', 'search:Search', function(self, config) {
+COMPONENT('faicons', 'search:Search', function(self, config, cls) {
 
-	// https://gist.github.com/sakalauskas/b0c5049d5dc349713a82f1cb2a30b2fa
-	var icons = 'fas fa-address-book,fas fa-address-card,fas fa-adjust,fas fa-align-center,fas fa-align-justify,fas fa-align-left,fas fa-align-right,fas fa-allergies,fas fa-ambulance,fas fa-american-sign-language-interpreting,fas fa-anchor,fas fa-angle-double-down,fas fa-angle-double-left,fas fa-angle-double-right,fas fa-angle-double-up,fas fa-angle-down,fas fa-angle-left,fas fa-angle-right,fas fa-angle-up,fas fa-archive,fas fa-arrow-alt-circle-down,fas fa-arrow-alt-circle-left,fas fa-arrow-alt-circle-right,fas fa-arrow-alt-circle-up,fas fa-arrow-circle-down,fas fa-arrow-circle-left,fas fa-arrow-circle-right,fas fa-arrow-circle-up,fas fa-arrow-down,fas fa-arrow-left,fas fa-arrow-right,fas fa-arrow-up,fas fa-arrows-alt,fas fa-arrows-alt-h,fas fa-arrows-alt-v,fas fa-assistive-listening-systems,fas fa-asterisk,fas fa-at,fas fa-audio-description,fas fa-backward,fas fa-balance-scale,fas fa-ban,fas fa-band-aid,fas fa-barcode,fas fa-bars,fas fa-baseball-ball,fas fa-basketball-ball,fas fa-bath,fas fa-battery-empty,fas fa-battery-full,fas fa-battery-half,fas fa-battery-quarter,fas fa-battery-three-quarters,fas fa-bed,fas fa-beer,fas fa-bell,fas fa-bell-slash,fas fa-bicycle,fas fa-binoculars,fas fa-birthday-cake,fas fa-blind,fas fa-bold,fas fa-bolt,fas fa-bomb,fas fa-book,fas fa-bookmark,fas fa-bowling-ball,fas fa-box,fas fa-box-open,fas fa-boxes,fas fa-braille,fas fa-briefcase,fas fa-briefcase-medical,fas fa-bug,fas fa-building,fas fa-bullhorn,fas fa-bullseye,fas fa-burn,fas fa-bus,fas fa-calculator,fas fa-calendar,fas fa-calendar-alt,fas fa-calendar-check,fas fa-calendar-minus,fas fa-calendar-plus,fas fa-calendar-times,fas fa-camera,fas fa-camera-retro,fas fa-capsules,fas fa-car,fas fa-caret-down,fas fa-caret-left,fas fa-caret-right,fas fa-caret-square-down,fas fa-caret-square-left,fas fa-caret-square-right,fas fa-caret-square-up,fas fa-caret-up,fas fa-cart-arrow-down,fas fa-cart-plus,fas fa-certificate,fas fa-chart-area,fas fa-chart-bar,fas fa-chart-line,fas fa-chart-pie,fas fa-check,fas fa-check-circle,fas fa-check-square,fas fa-chess,fas fa-chess-bishop,fas fa-chess-board,fas fa-chess-king,fas fa-chess-knight,fas fa-chess-pawn,fas fa-chess-queen,fas fa-chess-rook,fas fa-chevron-circle-down,fas fa-chevron-circle-left,fas fa-chevron-circle-right,fas fa-chevron-circle-up,fas fa-chevron-down,fas fa-chevron-left,fas fa-chevron-right,fas fa-chevron-up,fas fa-child,fas fa-circle,fas fa-circle-notch,fas fa-clipboard,fas fa-clipboard-check,fas fa-clipboard-list,fas fa-clock,fas fa-clone,fas fa-closed-captioning,fas fa-cloud,fas fa-cloud-download-alt,fas fa-cloud-upload-alt,fas fa-code,fas fa-code-branch,fas fa-coffee,fas fa-cog,fas fa-cogs,fas fa-columns,fas fa-comment,fas fa-comment-alt,fas fa-comment-dots,fas fa-comment-slash,fas fa-comments,fas fa-compass,fas fa-compress,fas fa-copy,fas fa-copyright,fas fa-couch,fas fa-credit-card,fas fa-crop,fas fa-crosshairs,fas fa-cube,fas fa-cubes,fas fa-cut,fas fa-database,fas fa-deaf,fas fa-desktop,fas fa-diagnoses,fas fa-dna,fas fa-dollar-sign,fas fa-dolly,fas fa-dolly-flatbed,fas fa-donate,fas fa-dot-circle,fas fa-dove,fas fa-download,fas fa-edit,fas fa-eject,fas fa-ellipsis-h,fas fa-ellipsis-v,fas fa-envelope,fas fa-envelope-open,fas fa-envelope-square,fas fa-eraser,fas fa-euro-sign,fas fa-exchange-alt,fas fa-exclamation,fas fa-exclamation-circle,fas fa-exclamation-triangle,fas fa-expand,fas fa-expand-arrows-alt,fas fa-external-link-alt,fas fa-external-link-square-alt,fas fa-eye,fas fa-eye-dropper,fas fa-eye-slash,fas fa-fast-backward,fas fa-fast-forward,fas fa-fax,fas fa-female,fas fa-fighter-jet,fas fa-file,fas fa-file-alt,fas fa-file-archive,fas fa-file-audio,fas fa-file-code,fas fa-file-excel,fas fa-file-image,fas fa-file-medical,fas fa-file-medical-alt,fas fa-file-pdf,fas fa-file-powerpoint,fas fa-file-video,fas fa-file-word,fas fa-film,fas fa-filter,fas fa-fire,fas fa-fire-extinguisher,fas fa-first-aid,fas fa-flag,fas fa-flag-checkered,fas fa-flask,fas fa-folder,fas fa-folder-open,fas fa-font,fas fa-football-ball,fas fa-forward,fas fa-frown,fas fa-futbol,fas fa-gamepad,fas fa-gavel,fas fa-gem,fas fa-genderless,fas fa-gift,fas fa-glass-martini,fas fa-globe,fas fa-golf-ball,fas fa-graduation-cap,fas fa-h-square,fas fa-hand-holding,fas fa-hand-holding-heart,fas fa-hand-holding-usd,fas fa-hand-lizard,fas fa-hand-paper,fas fa-hand-peace,fas fa-hand-point-down,fas fa-hand-point-left,fas fa-hand-point-right,fas fa-hand-point-up,fas fa-hand-pointer,fas fa-hand-rock,fas fa-hand-scissors,fas fa-hand-spock,fas fa-hands,fas fa-hands-helping,fas fa-handshake,fas fa-hashtag,fas fa-hdd,fas fa-heading,fas fa-headphones,fas fa-heart,fas fa-heartbeat,fas fa-history,fas fa-hockey-puck,fas fa-home,fas fa-hospital,fas fa-hospital-alt,fas fa-hospital-symbol,fas fa-hourglass,fas fa-hourglass-end,fas fa-hourglass-half,fas fa-hourglass-start,fas fa-i-cursor,fas fa-id-badge,fas fa-id-card,fas fa-id-card-alt,fas fa-image,fas fa-images,fas fa-inbox,fas fa-indent,fas fa-industry,fas fa-info,fas fa-info-circle,fas fa-italic,fas fa-key,fas fa-keyboard,fas fa-language,fas fa-laptop,fas fa-leaf,fas fa-lemon,fas fa-level-down-alt,fas fa-level-up-alt,fas fa-life-ring,fas fa-lightbulb,fas fa-link,fas fa-lira-sign,fas fa-list,fas fa-list-alt,fas fa-list-ol,fas fa-list-ul,fas fa-location-arrow,fas fa-lock,fas fa-lock-open,fas fa-long-arrow-alt-down,fas fa-long-arrow-alt-left,fas fa-long-arrow-alt-right,fas fa-long-arrow-alt-up,fas fa-low-vision,fas fa-magic,fas fa-magnet,fas fa-male,fas fa-map,fas fa-map-marker,fas fa-map-marker-alt,fas fa-map-pin,fas fa-map-signs,fas fa-mars,fas fa-mars-double,fas fa-mars-stroke,fas fa-mars-stroke-h,fas fa-mars-stroke-v,fas fa-medkit,fas fa-meh,fas fa-mercury,fas fa-microchip,fas fa-microphone,fas fa-microphone-slash,fas fa-minus,fas fa-minus-circle,fas fa-minus-square,fas fa-mobile,fas fa-mobile-alt,fas fa-money-bill-alt,fas fa-moon,fas fa-motorcycle,fas fa-mouse-pointer,fas fa-music,fas fa-neuter,fas fa-newspaper,fas fa-notes-medical,fas fa-object-group,fas fa-object-ungroup,fas fa-outdent,fas fa-paint-brush,fas fa-pallet,fas fa-paper-plane,fas fa-paperclip,fas fa-parachute-box,fas fa-paragraph,fas fa-paste,fas fa-pause,fas fa-pause-circle,fas fa-paw,fas fa-pen-square,fas fa-pencil-alt,fas fa-people-carry,fas fa-percent,fas fa-phone,fas fa-phone-slash,fas fa-phone-square,fas fa-phone-volume,fas fa-piggy-bank,fas fa-pills,fas fa-plane,fas fa-play,fas fa-play-circle,fas fa-plug,fas fa-plus,fas fa-plus-circle,fas fa-plus-square,fas fa-podcast,fas fa-poo,fas fa-pound-sign,fas fa-power-off,fas fa-prescription-bottle,fas fa-prescription-bottle-alt,fas fa-print,fas fa-procedures,fas fa-puzzle-piece,fas fa-qrcode,fas fa-question,fas fa-question-circle,fas fa-quidditch,fas fa-quote-left,fas fa-quote-right,fas fa-random,fas fa-recycle,fas fa-redo,fas fa-redo-alt,fas fa-registered,fas fa-reply,fas fa-reply-all,fas fa-retweet,fas fa-ribbon,fas fa-road,fas fa-rocket,fas fa-rss,fas fa-rss-square,fas fa-ruble-sign,fas fa-rupee-sign,fas fa-save,fas fa-search,fas fa-search-minus,fas fa-search-plus,fas fa-seedling,fas fa-server,fas fa-share,fas fa-share-alt,fas fa-share-alt-square,fas fa-share-square,fas fa-shekel-sign,fas fa-shield-alt,fas fa-ship,fas fa-shipping-fast,fas fa-shopping-bag,fas fa-shopping-basket,fas fa-shopping-cart,fas fa-shower,fas fa-sign,fas fa-sign-in-alt,fas fa-sign-language,fas fa-sign-out-alt,fas fa-signal,fas fa-sitemap,fas fa-sliders-h,fas fa-smile,fas fa-smoking,fas fa-snowflake,fas fa-sort,fas fa-sort-alpha-down,fas fa-sort-alpha-up,fas fa-sort-amount-down,fas fa-sort-amount-up,fas fa-sort-down,fas fa-sort-numeric-down,fas fa-sort-numeric-up,fas fa-sort-up,fas fa-space-shuttle,fas fa-spinner,fas fa-square,fas fa-square-full,fas fa-star,fas fa-star-half,fas fa-step-backward,fas fa-step-forward,fas fa-stethoscope,fas fa-sticky-note,fas fa-stop,fas fa-stop-circle,fas fa-stopwatch,fas fa-street-view,fas fa-strikethrough,fas fa-subscript,fas fa-subway,fas fa-suitcase,fas fa-sun,fas fa-superscript,fas fa-sync,fas fa-sync-alt,fas fa-syringe,fas fa-table,fas fa-table-tennis,fas fa-tablet,fas fa-tablet-alt,fas fa-tablets,fas fa-tachometer-alt,fas fa-tag,fas fa-tags,fas fa-tape,fas fa-tasks,fas fa-taxi,fas fa-terminal,fas fa-text-height,fas fa-text-width,fas fa-th,fas fa-th-large,fas fa-th-list,fas fa-thermometer,fas fa-thermometer-empty,fas fa-thermometer-full,fas fa-thermometer-half,fas fa-thermometer-quarter,fas fa-thermometer-three-quarters,fas fa-thumbs-down,fas fa-thumbs-up,fas fa-thumbtack,fas fa-ticket-alt,fas fa-times,fas fa-times-circle,fas fa-tint,fas fa-toggle-off,fas fa-toggle-on,fas fa-trademark,fas fa-train,fas fa-transgender,fas fa-transgender-alt,fas fa-trash,fas fa-trash-alt,fas fa-tree,fas fa-trophy,fas fa-truck,fas fa-truck-loading,fas fa-truck-moving,fas fa-tty,fas fa-tv,fas fa-umbrella,fas fa-underline,fas fa-undo,fas fa-undo-alt,fas fa-universal-access,fas fa-university,fas fa-unlink,fas fa-unlock,fas fa-unlock-alt,fas fa-upload,fas fa-user,fas fa-user-circle,fas fa-user-md,fas fa-user-plus,fas fa-user-secret,fas fa-user-times,fas fa-users,fas fa-utensil-spoon,fas fa-utensils,fas fa-venus,fas fa-venus-double,fas fa-venus-mars,fas fa-vial,fas fa-vials,fas fa-video,fas fa-video-slash,fas fa-volleyball-ball,fas fa-volume-down,fas fa-volume-off,fas fa-volume-up,fas fa-warehouse,fas fa-weight,fas fa-wheelchair,fas fa-wifi,fas fa-window-close,fas fa-window-maximize,fas fa-window-minimize,fas fa-window-restore,fas fa-wine-glass,fas fa-won-sign,fas fa-wrench,fas fa-x-ray,fas fa-yen-sign,far fa-address-book,far fa-address-card,far fa-arrow-alt-circle-down,far fa-arrow-alt-circle-left,far fa-arrow-alt-circle-right,far fa-arrow-alt-circle-up,far fa-bell,far fa-bell-slash,far fa-bookmark,far fa-building,far fa-calendar,far fa-calendar-alt,far fa-calendar-check,far fa-calendar-minus,far fa-calendar-plus,far fa-calendar-times,far fa-caret-square-down,far fa-caret-square-left,far fa-caret-square-right,far fa-caret-square-up,far fa-chart-bar,far fa-check-circle,far fa-check-square,far fa-circle,far fa-clipboard,far fa-clock,far fa-clone,far fa-closed-captioning,far fa-comment,far fa-comment-alt,far fa-comments,far fa-compass,far fa-copy,far fa-copyright,far fa-credit-card,far fa-dot-circle,far fa-edit,far fa-envelope,far fa-envelope-open,far fa-eye-slash,far fa-file,far fa-file-alt,far fa-file-archive,far fa-file-audio,far fa-file-code,far fa-file-excel,far fa-file-image,far fa-file-pdf,far fa-file-powerpoint,far fa-file-video,far fa-file-word,far fa-flag,far fa-folder,far fa-folder-open,far fa-frown,far fa-futbol,far fa-gem,far fa-hand-lizard,far fa-hand-paper,far fa-hand-peace,far fa-hand-point-down,far fa-hand-point-left,far fa-hand-point-right,far fa-hand-point-up,far fa-hand-pointer,far fa-hand-rock,far fa-hand-scissors,far fa-hand-spock,far fa-handshake,far fa-hdd,far fa-heart,far fa-hospital,far fa-hourglass,far fa-id-badge,far fa-id-card,far fa-image,far fa-images,far fa-keyboard,far fa-lemon,far fa-life-ring,far fa-lightbulb,far fa-list-alt,far fa-map,far fa-meh,far fa-minus-square,far fa-money-bill-alt,far fa-moon,far fa-newspaper,far fa-object-group,far fa-object-ungroup,far fa-paper-plane,far fa-pause-circle,far fa-play-circle,far fa-plus-square,far fa-question-circle,far fa-registered,far fa-save,far fa-share-square,far fa-smile,far fa-snowflake,far fa-square,far fa-star,far fa-star-half,far fa-sticky-note,far fa-stop-circle,far fa-sun,far fa-thumbs-down,far fa-thumbs-up,far fa-times-circle,far fa-trash-alt,far fa-user,far fa-user-circle,far fa-window-close,far fa-window-maximize,far fa-window-minimize,far fa-window-restore,fab fa-500px,fab fa-accessible-icon,fab fa-accusoft,fab fa-adn,fab fa-adversal,fab fa-affiliatetheme,fab fa-algolia,fab fa-amazon,fab fa-amazon-pay,fab fa-amilia,fab fa-android,fab fa-angellist,fab fa-angrycreative,fab fa-angular,fab fa-app-store,fab fa-app-store-ios,fab fa-apper,fab fa-apple,fab fa-apple-pay,fab fa-asymmetrik,fab fa-audible,fab fa-autoprefixer,fab fa-avianex,fab fa-aviato,fab fa-aws,fab fa-bandcamp,fab fa-behance,fab fa-behance-square,fab fa-bimobject,fab fa-bitbucket,fab fa-bitcoin,fab fa-bity,fab fa-black-tie,fab fa-blackberry,fab fa-blogger,fab fa-blogger-b,fab fa-bluetooth,fab fa-bluetooth-b,fab fa-btc,fab fa-buromobelexperte,fab fa-buysellads,fab fa-cc-amazon-pay,fab fa-cc-amex,fab fa-cc-apple-pay,fab fa-cc-diners-club,fab fa-cc-discover,fab fa-cc-jcb,fab fa-cc-mastercard,fab fa-cc-paypal,fab fa-cc-stripe,fab fa-cc-visa,fab fa-centercode,fab fa-chrome,fab fa-cloudscale,fab fa-cloudsmith,fab fa-cloudversify,fab fa-codepen,fab fa-codiepie,fab fa-connectdevelop,fab fa-contao,fab fa-cpanel,fab fa-creative-commons,fab fa-css3,fab fa-css3-alt,fab fa-cuttlefish,fab fa-d-and-d,fab fa-dashcube,fab fa-delicious,fab fa-deploydog,fab fa-deskpro,fab fa-deviantart,fab fa-digg,fab fa-digital-ocean,fab fa-discord,fab fa-discourse,fab fa-dochub,fab fa-docker,fab fa-draft2digital,fab fa-dribbble,fab fa-dribbble-square,fab fa-dropbox,fab fa-drupal,fab fa-dyalog,fab fa-earlybirds,fab fa-edge,fab fa-elementor,fab fa-ember,fab fa-empire,fab fa-envira,fab fa-erlang,fab fa-ethereum,fab fa-etsy,fab fa-expeditedssl,fab fa-facebook,fab fa-facebook-f,fab fa-facebook-messenger,fab fa-facebook-square,fab fa-firefox,fab fa-first-order,fab fa-firstdraft,fab fa-flickr,fab fa-flipboard,fab fa-fly,fab fa-font-awesome,fab fa-font-awesome-alt,fab fa-font-awesome-flag,fab fa-fonticons,fab fa-fonticons-fi,fab fa-fort-awesome,fab fa-fort-awesome-alt,fab fa-forumbee,fab fa-foursquare,fab fa-free-code-camp,fab fa-freebsd,fab fa-get-pocket,fab fa-gg,fab fa-gg-circle,fab fa-git,fab fa-git-square,fab fa-github,fab fa-github-alt,fab fa-github-square,fab fa-gitkraken,fab fa-gitlab,fab fa-gitter,fab fa-glide,fab fa-glide-g,fab fa-gofore,fab fa-goodreads,fab fa-goodreads-g,fab fa-google,fab fa-google-drive,fab fa-google-play,fab fa-google-plus,fab fa-google-plus-g,fab fa-google-plus-square,fab fa-google-wallet,fab fa-gratipay,fab fa-grav,fab fa-gripfire,fab fa-grunt,fab fa-gulp,fab fa-hacker-news,fab fa-hacker-news-square,fab fa-hips,fab fa-hire-a-helper,fab fa-hooli,fab fa-hotjar,fab fa-houzz,fab fa-html5,fab fa-hubspot,fab fa-imdb,fab fa-instagram,fab fa-internet-explorer,fab fa-ioxhost,fab fa-itunes,fab fa-itunes-note,fab fa-jenkins,fab fa-joget,fab fa-joomla,fab fa-js,fab fa-js-square,fab fa-jsfiddle,fab fa-keycdn,fab fa-kickstarter,fab fa-kickstarter-k,fab fa-korvue,fab fa-laravel,fab fa-lastfm,fab fa-lastfm-square,fab fa-leanpub,fab fa-less,fab fa-line,fab fa-linkedin,fab fa-linkedin-in,fab fa-linode,fab fa-linux,fab fa-lyft,fab fa-magento,fab fa-maxcdn,fab fa-medapps,fab fa-medium,fab fa-medium-m,fab fa-medrt,fab fa-meetup,fab fa-microsoft,fab fa-mix,fab fa-mixcloud,fab fa-mizuni,fab fa-modx,fab fa-monero,fab fa-napster,fab fa-nintendo-switch,fab fa-node,fab fa-node-js,fab fa-npm,fab fa-ns8,fab fa-nutritionix,fab fa-odnoklassniki,fab fa-odnoklassniki-square,fab fa-opencart,fab fa-openid,fab fa-opera,fab fa-optin-monster,fab fa-osi,fab fa-page4,fab fa-pagelines,fab fa-palfed,fab fa-patreon,fab fa-paypal,fab fa-periscope,fab fa-phabricator,fab fa-phoenix-framework,fab fa-php,fab fa-pied-piper,fab fa-pied-piper-alt,fab fa-pied-piper-pp,fab fa-pinterest,fab fa-pinterest-p,fab fa-pinterest-square,fab fa-playstation,fab fa-product-hunt,fab fa-pushed,fab fa-python,fab fa-qq,fab fa-quinscape,fab fa-quora,fab fa-ravelry,fab fa-react,fab fa-readme,fab fa-rebel,fab fa-red-river,fab fa-reddit,fab fa-reddit-alien,fab fa-reddit-square,fab fa-rendact,fab fa-renren,fab fa-replyd,fab fa-resolving,fab fa-rocketchat,fab fa-rockrms,fab fa-safari,fab fa-sass,fab fa-schlix,fab fa-scribd,fab fa-searchengin,fab fa-sellcast,fab fa-sellsy,fab fa-servicestack,fab fa-shirtsinbulk,fab fa-simplybuilt,fab fa-sistrix,fab fa-skyatlas,fab fa-skype,fab fa-slack,fab fa-slack-hash,fab fa-slideshare,fab fa-snapchat,fab fa-snapchat-ghost,fab fa-snapchat-square,fab fa-soundcloud,fab fa-speakap,fab fa-spotify,fab fa-stack-exchange,fab fa-stack-overflow,fab fa-staylinked,fab fa-steam,fab fa-steam-square,fab fa-steam-symbol,fab fa-sticker-mule,fab fa-strava,fab fa-stripe,fab fa-stripe-s,fab fa-studiovinari,fab fa-stumbleupon,fab fa-stumbleupon-circle,fab fa-superpowers,fab fa-supple,fab fa-telegram,fab fa-telegram-plane,fab fa-tencent-weibo,fab fa-themeisle,fab fa-trello,fab fa-tripadvisor,fab fa-tumblr,fab fa-tumblr-square,fab fa-twitch,fab fa-twitter,fab fa-twitter-square,fab fa-typo3,fab fa-uber,fab fa-uikit,fab fa-uniregistry,fab fa-untappd,fab fa-usb,fab fa-ussunnah,fab fa-vaadin,fab fa-viacoin,fab fa-viadeo,fab fa-viadeo-square,fab fa-viber,fab fa-vimeo,fab fa-vimeo-square,fab fa-vimeo-v,fab fa-vine,fab fa-vk,fab fa-vnv,fab fa-vuejs,fab fa-weibo,fab fa-weixin,fab fa-whatsapp,fab fa-whatsapp-square,fab fa-whmcs,fab fa-wikipedia-w,fab fa-windows,fab fa-wordpress,fab fa-wordpress-simple,fab fa-wpbeginner,fab fa-wpexplorer,fab fa-wpforms,fab fa-xbox,fab fa-xing,fab fa-xing-square,fab fa-y-combinator,fab fa-yahoo,fab fa-yandex,fab fa-yandex-international,fab fa-yelp,fab fa-yoast,fab fa-youtube,fab fa-youtube-square'.split(',');
+	var icons = 'ad,address-book,address-card,adjust,air-freshener,align-center,align-justify,align-left,align-right,allergies,ambulance,american-sign-language-interpreting,anchor,angle-double-down,angle-double-left,angle-double-right,angle-double-up,angle-down,angle-left,angle-right,angle-up,angry,ankh,apple-alt,archive,archway,arrow-alt-circle-down,arrow-alt-circle-left,arrow-alt-circle-right,arrow-alt-circle-up,arrow-circle-down,arrow-circle-left,arrow-circle-right,arrow-circle-up,arrow-down,arrow-left,arrow-right,arrow-up,arrows-alt,arrows-alt-h,arrows-alt-v,assistive-listening-systems,asterisk,at,atlas,atom,audio-description,award,baby,baby-carriage,backspace,backward,bacon,bahai,balance-scale,balance-scale-left,balance-scale-right,ban,band-aid,barcode,bars,baseball-ball,basketball-ball,bath,battery-empty,battery-full,battery-half,battery-quarter,battery-three-quarters,bed,beer,bell,bell-slash,bezier-curve,bible,bicycle,biking,binoculars,biohazard,birthday-cake,blender,blender-phone,blind,blog,bold,bolt,bomb,bone,bong,book,book-dead,book-medical,book-open,book-reader,bookmark,border-all,border-none,border-style,bowling-ball,box,box-open,boxes,braille,brain,bread-slice,briefcase,briefcase-medical,broadcast-tower,broom,brush,bug,building,bullhorn,bullseye,burn,bus,bus-alt,business-time,calculator,calendar,calendar-alt,calendar-check,calendar-day,calendar-minus,calendar-plus,calendar-times,calendar-week,camera,camera-retro,campground,candy-cane,cannabis,capsules,car,car-alt,car-battery,car-crash,car-side,caravan,caret-down,caret-left,caret-right,caret-square-down,caret-square-left,caret-square-right,caret-square-up,caret-up,carrot,cart-arrow-down,cart-plus,cash-register,cat,certificate,chair,chalkboard,chalkboard-teacher,charging-station,chart-area,chart-bar,chart-line,chart-pie,check,check-circle,check-double,check-square,cheese,chess,chess-bishop,chess-board,chess-king,chess-knight,chess-pawn,chess-queen,chess-rook,chevron-circle-down,chevron-circle-left,chevron-circle-right,chevron-circle-up,chevron-down,chevron-left,chevron-right,chevron-up,child,church,circle,circle-notch,city,clinic-medical,clipboard,clipboard-check,clipboard-list,clock,clone,closed-captioning,cloud,cloud-download-alt,cloud-meatball,cloud-moon,cloud-moon-rain,cloud-rain,cloud-showers-heavy,cloud-sun,cloud-sun-rain,cloud-upload-alt,cocktail,code,code-branch,coffee,cog,cogs,coins,columns,comment,comment-alt,comment-dollar,comment-dots,comment-medical,comment-slash,comments,comments-dollar,compact-disc,compass,compress,compress-alt,compress-arrows-alt,concierge-bell,cookie,cookie-bite,copy,copyright,couch,credit-card,crop,crop-alt,cross,crosshairs,crow,crown,crutch,cube,cubes,cut,database,deaf,democrat,desktop,dharmachakra,diagnoses,dice,dice-d20,dice-d6,dice-five,dice-four,dice-one,dice-six,dice-three,dice-two,digital-tachograph,directions,divide,dizzy,dna,dog,dollar-sign,dolly,dolly-flatbed,donate,door-closed,door-open,dot-circle,dove,download,drafting-compass,dragon,draw-polygon,drum,drum-steelpan,drumstick-bite,dumbbell,dumpster,dumpster-fire,dungeon,edit,egg,eject,ellipsis-h,ellipsis-v,envelope,envelope-open,envelope-open-text,envelope-square,equals,eraser,ethernet,euro-sign,exchange-alt,exclamation,exclamation-circle,exclamation-triangle,expand,expand-alt,expand-arrows-alt,external-link-alt,external-link-square-alt,eye,eye-dropper,eye-slash,fan,fast-backward,fast-forward,fax,feather,feather-alt,female,fighter-jet,file,file-alt,file-archive,file-audio,file-code,file-contract,file-csv,file-download,file-excel,file-export,file-image,file-import,file-invoice,file-invoice-dollar,file-medical,file-medical-alt,file-pdf,file-powerpoint,file-prescription,file-signature,file-upload,file-video,file-word,fill,fill-drip,film,filter,fingerprint,fire,fire-alt,fire-extinguisher,first-aid,fish,fist-raised,flag,flag-checkered,flag-usa,flask,flushed,folder,folder-minus,folder-open,folder-plus,font,football-ball,forward,frog,frown,frown-open,funnel-dollar,futbol,gamepad,gas-pump,gavel,gem,genderless,ghost,gift,gifts,glass-cheers,glass-martini,glass-martini-alt,glass-whiskey,glasses,globe,globe-africa,globe-americas,globe-asia,globe-europe,golf-ball,gopuram,graduation-cap,greater-than,greater-than-equal,grimace,grin,grin-alt,grin-beam,grin-beam-sweat,grin-hearts,grin-squint,grin-squint-tears,grin-stars,grin-tears,grin-tongue,grin-tongue-squint,grin-tongue-wink,grin-wink,grip-horizontal,grip-lines,grip-lines-vertical,grip-vertical,guitar,h-square,hamburger,hammer,hamsa,hand-holding,hand-holding-heart,hand-holding-usd,hand-lizard,hand-middle-finger,hand-paper,hand-peace,hand-point-down,hand-point-left,hand-point-right,hand-point-up,hand-pointer,hand-rock,hand-scissors,hand-spock,hands,hands-helping,handshake,hanukiah,hard-hat,hashtag,hat-cowboy,hat-cowboy-side,hat-wizard,hdd,heading,headphones,headphones-alt,headset,heart,heart-broken,heartbeat,helicopter,highlighter,hiking,hippo,history,hockey-puck,holly-berry,home,horse,horse-head,hospital,hospital-alt,hospital-symbol,hot-tub,hotdog,hotel,hourglass,hourglass-end,hourglass-half,hourglass-start,house-damage,hryvnia,i-cursor,ice-cream,icicles,icons,id-badge,id-card,id-card-alt,igloo,image,images,inbox,indent,industry,infinity,info,info-circle,italic,jedi,joint,journal-whills,kaaba,key,keyboard,khanda,kiss,kiss-beam,kiss-wink-heart,kiwi-bird,landmark,language,laptop,laptop-code,laptop-medical,laugh,laugh-beam,laugh-squint,laugh-wink,layer-group,leaf,lemon,less-than,less-than-equal,level-down-alt,level-up-alt,life-ring,lightbulb,link,lira-sign,list,list-alt,list-ol,list-ul,location-arrow,lock,lock-open,long-arrow-alt-down,long-arrow-alt-left,long-arrow-alt-right,long-arrow-alt-up,low-vision,luggage-cart,magic,magnet,mail-bulk,male,map,map-marked,map-marked-alt,map-marker,map-marker-alt,map-pin,map-signs,marker,mars,mars-double,mars-stroke,mars-stroke-h,mars-stroke-v,mask,medal,medkit,meh,meh-blank,meh-rolling-eyes,memory,menorah,mercury,meteor,microchip,microphone,microphone-alt,microphone-alt-slash,microphone-slash,microscope,minus,minus-circle,minus-square,mitten,mobile,mobile-alt,money-bill,money-bill-alt,money-bill-wave,money-bill-wave-alt,money-check,money-check-alt,monument,moon,mortar-pestle,mosque,motorcycle,mountain,mouse,mouse-pointer,mug-hot,music,network-wired,neuter,newspaper,not-equal,notes-medical,object-group,object-ungroup,oil-can,om,otter,outdent,pager,paint-brush,paint-roller,palette,pallet,paper-plane,paperclip,parachute-box,paragraph,parking,passport,pastafarianism,paste,pause,pause-circle,paw,peace,pen,pen-alt,pen-fancy,pen-nib,pen-square,pencil-alt,pencil-ruler,people-carry,pepper-hot,percent,percentage,person-booth,phone,phone-alt,phone-slash,phone-square,phone-square-alt,phone-volume,photo-video,piggy-bank,pills,pizza-slice,place-of-worship,plane,plane-arrival,plane-departure,play,play-circle,plug,plus,plus-circle,plus-square,podcast,poll,poll-h,poo,poo-storm,poop,portrait,pound-sign,power-off,pray,praying-hands,prescription,prescription-bottle,prescription-bottle-alt,print,procedures,project-diagram,puzzle-piece,qrcode,question,question-circle,quidditch,quote-left,quote-right,quran,radiation,radiation-alt,rainbow,random,receipt,record-vinyl,recycle,redo,redo-alt,registered,remove-format,reply,reply-all,republican,restroom,retweet,ribbon,ring,road,robot,rocket,route,rss,rss-square,ruble-sign,ruler,ruler-combined,ruler-horizontal,ruler-vertical,running,rupee-sign,sad-cry,sad-tear,satellite,satellite-dish,save,school,screwdriver,scroll,sd-card,search,search-dollar,search-location,search-minus,search-plus,seedling,server,shapes,share,share-alt,share-alt-square,share-square,shekel-sign,shield-alt,ship,shipping-fast,shoe-prints,shopping-bag,shopping-basket,shopping-cart,shower,shuttle-van,sign,sign-in-alt,sign-language,sign-out-alt,signal,signature,sim-card,sitemap,skating,skiing,skiing-nordic,skull,skull-crossbones,slash,sleigh,sliders-h,smile,smile-beam,smile-wink,smog,smoking,smoking-ban,sms,snowboarding,snowflake,snowman,snowplow,socks,solar-panel,sort,sort-alpha-down,sort-alpha-down-alt,sort-alpha-up,sort-alpha-up-alt,sort-amount-down,sort-amount-down-alt,sort-amount-up,sort-amount-up-alt,sort-down,sort-numeric-down,sort-numeric-down-alt,sort-numeric-up,sort-numeric-up-alt,sort-up,spa,space-shuttle,spell-check,spider,spinner,splotch,spray-can,square,square-full,square-root-alt,stamp,star,star-and-crescent,star-half,star-half-alt,star-of-david,star-of-life,step-backward,step-forward,stethoscope,sticky-note,stop,stop-circle,stopwatch,store,store-alt,stream,street-view,strikethrough,stroopwafel,subscript,subway,suitcase,suitcase-rolling,sun,superscript,surprise,swatchbook,swimmer,swimming-pool,synagogue,sync,sync-alt,syringe,table,table-tennis,tablet,tablet-alt,tablets,tachometer-alt,tag,tags,tape,tasks,taxi,teeth,teeth-open,temperature-high,temperature-low,tenge,terminal,text-height,text-width,th,th-large,th-list,theater-masks,thermometer,thermometer-empty,thermometer-full,thermometer-half,thermometer-quarter,thermometer-three-quarters,thumbs-down,thumbs-up,thumbtack,ticket-alt,times,times-circle,tint,tint-slash,tired,toggle-off,toggle-on,toilet,toilet-paper,toolbox,tools,tooth,torah,torii-gate,tractor,trademark,traffic-light,trailer,train,tram,transgender,transgender-alt,trash,trash-alt,trash-restore,trash-restore-alt,tree,trophy,truck,truck-loading,truck-monster,truck-moving,truck-pickup,tshirt,tty,tv,umbrella,umbrella-beach,underline,undo,undo-alt,universal-access,university,unlink,unlock,unlock-alt,upload,user,user-alt,user-alt-slash,user-astronaut,user-check,user-circle,user-clock,user-cog,user-edit,user-friends,user-graduate,user-injured,user-lock,user-md,user-minus,user-ninja,user-nurse,user-plus,user-secret,user-shield,user-slash,user-tag,user-tie,user-times,users,users-cog,utensil-spoon,utensils,vector-square,venus,venus-double,venus-mars,vial,vials,video,video-slash,vihara,voicemail,volleyball-ball,volume-down,volume-mute,volume-off,volume-up,vote-yea,vr-cardboard,walking,wallet,warehouse,water,wave-square,weight,weight-hanging,wheelchair,wifi,wind,window-close,window-maximize,window-minimize,window-restore,wine-bottle,wine-glass,wine-glass-alt,won-sign,wrench,x-ray,yen-sign,yin-yang,r address-book,r address-card,r angry,r arrow-alt-circle-down,r arrow-alt-circle-left,r arrow-alt-circle-right,r arrow-alt-circle-up,r bell,r bell-slash,r bookmark,r building,r calendar,r calendar-alt,r calendar-check,r calendar-minus,r calendar-plus,r calendar-times,r caret-square-down,r caret-square-left,r caret-square-right,r caret-square-up,r chart-bar,r check-circle,r check-square,r circle,r clipboard,r clock,r clone,r closed-captioning,r comment,r comment-alt,r comment-dots,r comments,r compass,r copy,r copyright,r credit-card,r dizzy,r dot-circle,r edit,r envelope,r envelope-open,r eye,r eye-slash,r file,r file-alt,r file-archive,r file-audio,r file-code,r file-excel,r file-image,r file-pdf,r file-powerpoint,r file-video,r file-word,r flag,r flushed,r folder,r folder-open,r frown,r frown-open,r futbol,r gem,r grimace,r grin,r grin-alt,r grin-beam,r grin-beam-sweat,r grin-hearts,r grin-squint,r grin-squint-tears,r grin-stars,r grin-tears,r grin-tongue,r grin-tongue-squint,r grin-tongue-wink,r grin-wink,r hand-lizard,r hand-paper,r hand-peace,r hand-point-down,r hand-point-left,r hand-point-right,r hand-point-up,r hand-pointer,r hand-rock,r hand-scissors,r hand-spock,r handshake,r hdd,r heart,r hospital,r hourglass,r id-badge,r id-card,r image,r images,r keyboard,r kiss,r kiss-beam,r kiss-wink-heart,r laugh,r laugh-beam,r laugh-squint,r laugh-wink,r lemon,r life-ring,r lightbulb,r list-alt,r map,r meh,r meh-blank,r meh-rolling-eyes,r minus-square,r money-bill-alt,r moon,r newspaper,r object-group,r object-ungroup,r paper-plane,r pause-circle,r play-circle,r plus-square,r question-circle,r registered,r sad-cry,r sad-tear,r save,r share-square,r smile,r smile-beam,r smile-wink,r snowflake,r square,r star,r star-half,r sticky-note,r stop-circle,r sun,r surprise,r thumbs-down,r thumbs-up,r times-circle,r tired,r trash-alt,r user,r user-circle,r window-close,r window-maximize,r window-minimize,r window-restore,b 500px,b accessible-icon,b accusoft,b acquisitions-incorporated,b adn,b adobe,b adversal,b affiliatetheme,b airbnb,b algolia,b alipay,b amazon,b amazon-pay,b amilia,b android,b angellist,b angrycreative,b angular,b app-store,b app-store-ios,b apper,b apple,b apple-pay,b artstation,b asymmetrik,b atlassian,b audible,b autoprefixer,b avianex,b aviato,b aws,b bandcamp,b battle-net,b behance,b behance-square,b bimobject,b bitbucket,b bitcoin,b bity,b black-tie,b blackberry,b blogger,b blogger-b,b bluetooth,b bluetooth-b,b bootstrap,b btc,b buffer,b buromobelexperte,b buy-n-large,b buysellads,b canadian-maple-leaf,b cc-amazon-pay,b cc-amex,b cc-apple-pay,b cc-diners-club,b cc-discover,b cc-jcb,b cc-mastercard,b cc-paypal,b cc-stripe,b cc-visa,b centercode,b centos,b chrome,b chromecast,b cloudscale,b cloudsmith,b cloudversify,b codepen,b codiepie,b confluence,b connectdevelop,b contao,b cotton-bureau,b cpanel,b creative-commons,b creative-commons-by,b creative-commons-nc,b creative-commons-nc-eu,b creative-commons-nc-jp,b creative-commons-nd,b creative-commons-pd,b creative-commons-pd-alt,b creative-commons-remix,b creative-commons-sa,b creative-commons-sampling,b creative-commons-sampling-plus,b creative-commons-share,b creative-commons-zero,b critical-role,b css3,b css3-alt,b cuttlefish,b d-and-d,b d-and-d-beyond,b dashcube,b delicious,b deploydog,b deskpro,b dev,b deviantart,b dhl,b diaspora,b digg,b digital-ocean,b discord,b discourse,b dochub,b docker,b draft2digital,b dribbble,b dribbble-square,b dropbox,b drupal,b dyalog,b earlybirds,b ebay,b edge,b elementor,b ello,b ember,b empire,b envira,b erlang,b ethereum,b etsy,b evernote,b expeditedssl,b facebook,b facebook-f,b facebook-messenger,b facebook-square,b fantasy-flight-games,b fedex,b fedora,b figma,b firefox,b firefox-browser,b first-order,b first-order-alt,b firstdraft,b flickr,b flipboard,b fly,b font-awesome,b font-awesome-alt,b font-awesome-flag,b fonticons,b fonticons-fi,b fort-awesome,b fort-awesome-alt,b forumbee,b foursquare,b free-code-camp,b freebsd,b fulcrum,b galactic-republic,b galactic-senate,b get-pocket,b gg,b gg-circle,b git,b git-alt,b git-square,b github,b github-alt,b github-square,b gitkraken,b gitlab,b gitter,b glide,b glide-g,b gofore,b goodreads,b goodreads-g,b google,b google-drive,b google-play,b google-plus,b google-plus-g,b google-plus-square,b google-wallet,b gratipay,b grav,b gripfire,b grunt,b gulp,b hacker-news,b hacker-news-square,b hackerrank,b hips,b hire-a-helper,b hooli,b hornbill,b hotjar,b houzz,b html5,b hubspot,b ideal,b imdb,b instagram,b intercom,b internet-explorer,b invision,b ioxhost,b itch-io,b itunes,b itunes-note,b java,b jedi-order,b jenkins,b jira,b joget,b joomla,b js,b js-square,b jsfiddle,b kaggle,b keybase,b keycdn,b kickstarter,b kickstarter-k,b korvue,b laravel,b lastfm,b lastfm-square,b leanpub,b less,b line,b linkedin,b linkedin-in,b linode,b linux,b lyft,b magento,b mailchimp,b mandalorian,b markdown,b mastodon,b maxcdn,b mdb,b medapps,b medium,b medium-m,b medrt,b meetup,b megaport,b mendeley,b microblog,b microsoft,b mix,b mixcloud,b mizuni,b modx,b monero,b napster,b neos,b nimblr,b node,b node-js,b npm,b ns8,b nutritionix,b odnoklassniki,b odnoklassniki-square,b old-republic,b opencart,b openid,b opera,b optin-monster,b orcid,b osi,b page4,b pagelines,b palfed,b patreon,b paypal,b penny-arcade,b periscope,b phabricator,b phoenix-framework,b phoenix-squadron,b php,b pied-piper,b pied-piper-alt,b pied-piper-hat,b pied-piper-pp,b pied-piper-square,b pinterest,b pinterest-p,b pinterest-square,b playstation,b product-hunt,b pushed,b python,b qq,b quinscape,b quora,b r-project,b raspberry-pi,b ravelry,b react,b reacteurope,b readme,b rebel,b red-river,b reddit,b reddit-alien,b reddit-square,b redhat,b renren,b replyd,b researchgate,b resolving,b rev,b rocketchat,b rockrms,b safari,b salesforce,b sass,b schlix,b scribd,b searchengin,b sellcast,b sellsy,b servicestack,b shirtsinbulk,b shopware,b simplybuilt,b sistrix,b sith,b sketch,b skyatlas,b skype,b slack,b slack-hash,b slideshare,b snapchat,b snapchat-ghost,b snapchat-square,b soundcloud,b sourcetree,b speakap,b speaker-deck,b spotify,b squarespace,b stack-exchange,b stack-overflow,b stackpath,b staylinked,b steam,b steam-square,b steam-symbol,b sticker-mule,b strava,b stripe,b stripe-s,b studiovinari,b stumbleupon,b stumbleupon-circle,b superpowers,b supple,b suse,b swift,b symfony,b teamspeak,b telegram,b telegram-plane,b tencent-weibo,b the-red-yeti,b themeco,b themeisle,b think-peaks,b trade-federation,b trello,b tripadvisor,b tumblr,b tumblr-square,b twitch,b twitter,b twitter-square,b typo3,b uber,b ubuntu,b uikit,b umbraco,b uniregistry,b unity,b untappd,b ups,b usb,b usps,b ussunnah,b vaadin,b viacoin,b viadeo,b viadeo-square,b viber,b vimeo,b vimeo-square,b vimeo-v,b vine,b vk,b vnv,b vuejs,b waze,b weebly,b weibo,b weixin,b whatsapp,b whatsapp-square,b whmcs,b wikipedia-w,b windows,b wix,b wizards-of-the-coast,b wolf-pack-battalion,b wordpress,b wordpress-simple,b wpbeginner,b wpexplorer,b wpforms,b wpressr,b xbox,b xing,b xing-square,b y-combinator,b yahoo,b yammer,b yandex,b yandex-international,b yarn,b yelp,b yoast,b youtube,b youtube-square,b zhihu'.split(',');
+	var iconspro = 'abacus,acorn,ad,address-book,address-card,adjust,air-conditioner,air-freshener,alarm-clock,alarm-exclamation,alarm-plus,alarm-snooze,album,album-collection,alicorn,alien,alien-monster,align-center,align-justify,align-left,align-right,align-slash,allergies,ambulance,american-sign-language-interpreting,amp-guitar,analytics,anchor,angel,angle-double-down,angle-double-left,angle-double-right,angle-double-up,angle-down,angle-left,angle-right,angle-up,angry,ankh,apple-alt,apple-crate,archive,archway,arrow-alt-circle-down,arrow-alt-circle-left,arrow-alt-circle-right,arrow-alt-circle-up,arrow-alt-down,arrow-alt-from-bottom,arrow-alt-from-left,arrow-alt-from-right,arrow-alt-from-top,arrow-alt-left,arrow-alt-right,arrow-alt-square-down,arrow-alt-square-left,arrow-alt-square-right,arrow-alt-square-up,arrow-alt-to-bottom,arrow-alt-to-left,arrow-alt-to-right,arrow-alt-to-top,arrow-alt-up,arrow-circle-down,arrow-circle-left,arrow-circle-right,arrow-circle-up,arrow-down,arrow-from-bottom,arrow-from-left,arrow-from-right,arrow-from-top,arrow-left,arrow-right,arrow-square-down,arrow-square-left,arrow-square-right,arrow-square-up,arrow-to-bottom,arrow-to-left,arrow-to-right,arrow-to-top,arrow-up,arrows,arrows-alt,arrows-alt-h,arrows-alt-v,arrows-h,arrows-v,assistive-listening-systems,asterisk,at,atlas,atom,atom-alt,audio-description,award,axe,axe-battle,baby,baby-carriage,backpack,backspace,backward,bacon,badge,badge-check,badge-dollar,badge-percent,badge-sheriff,badger-honey,bags-shopping,bahai,balance-scale,balance-scale-left,balance-scale-right,ball-pile,ballot,ballot-check,ban,band-aid,banjo,barcode,barcode-alt,barcode-read,barcode-scan,bars,baseball,baseball-ball,basketball-ball,basketball-hoop,bat,bath,battery-bolt,battery-empty,battery-full,battery-half,battery-quarter,battery-slash,battery-three-quarters,bed,bed-alt,bed-bunk,bed-empty,beer,bell,bell-exclamation,bell-on,bell-plus,bell-school,bell-school-slash,bell-slash,bells,betamax,bezier-curve,bible,bicycle,biking,biking-mountain,binoculars,biohazard,birthday-cake,blanket,blender,blender-phone,blind,blinds,blinds-open,blinds-raised,blog,bold,bolt,bomb,bone,bone-break,bong,book,book-alt,book-dead,book-heart,book-medical,book-open,book-reader,book-spells,book-user,bookmark,books,books-medical,boombox,boot,booth-curtain,border-all,border-bottom,border-center-h,border-center-v,border-inner,border-left,border-none,border-outer,border-right,border-style,border-style-alt,border-top,bow-arrow,bowling-ball,bowling-pins,box,box-alt,box-ballot,box-check,box-fragile,box-full,box-heart,box-open,box-up,box-usd,boxes,boxes-alt,boxing-glove,brackets,brackets-curly,braille,brain,bread-loaf,bread-slice,briefcase,briefcase-medical,bring-forward,bring-front,broadcast-tower,broom,browser,brush,bug,building,bullhorn,bullseye,bullseye-arrow,bullseye-pointer,burger-soda,burn,burrito,bus,bus-alt,bus-school,business-time,cabinet-filing,cactus,calculator,calculator-alt,calendar,calendar-alt,calendar-check,calendar-day,calendar-edit,calendar-exclamation,calendar-minus,calendar-plus,calendar-star,calendar-times,calendar-week,camcorder,camera,camera-alt,camera-home,camera-movie,camera-polaroid,camera-retro,campfire,campground,candle-holder,candy-cane,candy-corn,cannabis,capsules,car,car-alt,car-battery,car-building,car-bump,car-bus,car-crash,car-garage,car-mechanic,car-side,car-tilt,car-wash,caravan,caravan-alt,caret-circle-down,caret-circle-left,caret-circle-right,caret-circle-up,caret-down,caret-left,caret-right,caret-square-down,caret-square-left,caret-square-right,caret-square-up,caret-up,carrot,cars,cart-arrow-down,cart-plus,cash-register,cassette-tape,cat,cat-space,cauldron,cctv,certificate,chair,chair-office,chalkboard,chalkboard-teacher,charging-station,chart-area,chart-bar,chart-line,chart-line-down,chart-network,chart-pie,chart-pie-alt,chart-scatter,check,check-circle,check-double,check-square,cheese,cheese-swiss,cheeseburger,chess,chess-bishop,chess-bishop-alt,chess-board,chess-clock,chess-clock-alt,chess-king,chess-king-alt,chess-knight,chess-knight-alt,chess-pawn,chess-pawn-alt,chess-queen,chess-queen-alt,chess-rook,chess-rook-alt,chevron-circle-down,chevron-circle-left,chevron-circle-right,chevron-circle-up,chevron-double-down,chevron-double-left,chevron-double-right,chevron-double-up,chevron-down,chevron-left,chevron-right,chevron-square-down,chevron-square-left,chevron-square-right,chevron-square-up,chevron-up,child,chimney,church,circle,circle-notch,city,clarinet,claw-marks,clinic-medical,clipboard,clipboard-check,clipboard-list,clipboard-list-check,clipboard-prescription,clipboard-user,clock,clone,closed-captioning,cloud,cloud-download,cloud-download-alt,cloud-drizzle,cloud-hail,cloud-hail-mixed,cloud-meatball,cloud-moon,cloud-moon-rain,cloud-music,cloud-rain,cloud-rainbow,cloud-showers,cloud-showers-heavy,cloud-sleet,cloud-snow,cloud-sun,cloud-sun-rain,cloud-upload,cloud-upload-alt,clouds,clouds-moon,clouds-sun,club,cocktail,code,code-branch,code-commit,code-merge,coffee,coffee-pot,coffee-togo,coffin,cog,cogs,coin,coins,columns,comet,comment,comment-alt,comment-alt-check,comment-alt-dollar,comment-alt-dots,comment-alt-edit,comment-alt-exclamation,comment-alt-lines,comment-alt-medical,comment-alt-minus,comment-alt-music,comment-alt-plus,comment-alt-slash,comment-alt-smile,comment-alt-times,comment-check,comment-dollar,comment-dots,comment-edit,comment-exclamation,comment-lines,comment-medical,comment-minus,comment-music,comment-plus,comment-slash,comment-smile,comment-times,comments,comments-alt,comments-alt-dollar,comments-dollar,compact-disc,compass,compass-slash,compress,compress-alt,compress-arrows-alt,compress-wide,computer-classic,computer-speaker,concierge-bell,construction,container-storage,conveyor-belt,conveyor-belt-alt,cookie,cookie-bite,copy,copyright,corn,couch,cow,cowbell,cowbell-more,credit-card,credit-card-blank,credit-card-front,cricket,croissant,crop,crop-alt,cross,crosshairs,crow,crown,crutch,crutches,cube,cubes,curling,cut,dagger,database,deaf,debug,deer,deer-rudolph,democrat,desktop,desktop-alt,dewpoint,dharmachakra,diagnoses,diamond,dice,dice-d10,dice-d12,dice-d20,dice-d4,dice-d6,dice-d8,dice-five,dice-four,dice-one,dice-six,dice-three,dice-two,digging,digital-tachograph,diploma,directions,disc-drive,disease,divide,dizzy,dna,do-not-enter,dog,dog-leashed,dollar-sign,dolly,dolly-empty,dolly-flatbed,dolly-flatbed-alt,dolly-flatbed-empty,donate,door-closed,door-open,dot-circle,dove,download,drafting-compass,dragon,draw-circle,draw-polygon,draw-square,dreidel,drone,drone-alt,drum,drum-steelpan,drumstick,drumstick-bite,dryer,dryer-alt,duck,dumbbell,dumpster,dumpster-fire,dungeon,ear,ear-muffs,eclipse,eclipse-alt,edit,egg,egg-fried,eject,elephant,ellipsis-h,ellipsis-h-alt,ellipsis-v,ellipsis-v-alt,empty-set,engine-warning,envelope,envelope-open,envelope-open-dollar,envelope-open-text,envelope-square,equals,eraser,ethernet,euro-sign,exchange,exchange-alt,exclamation,exclamation-circle,exclamation-square,exclamation-triangle,expand,expand-alt,expand-arrows,expand-arrows-alt,expand-wide,external-link,external-link-alt,external-link-square,external-link-square-alt,eye,eye-dropper,eye-evil,eye-slash,fan,fan-table,farm,fast-backward,fast-forward,faucet,faucet-drip,fax,feather,feather-alt,female,field-hockey,fighter-jet,file,file-alt,file-archive,file-audio,file-certificate,file-chart-line,file-chart-pie,file-check,file-code,file-contract,file-csv,file-download,file-edit,file-excel,file-exclamation,file-export,file-image,file-import,file-invoice,file-invoice-dollar,file-medical,file-medical-alt,file-minus,file-music,file-pdf,file-plus,file-powerpoint,file-prescription,file-search,file-signature,file-spreadsheet,file-times,file-upload,file-user,file-video,file-word,files-medical,fill,fill-drip,film,film-alt,film-canister,filter,fingerprint,fire,fire-alt,fire-extinguisher,fire-smoke,fireplace,first-aid,fish,fish-cooked,fist-raised,flag,flag-alt,flag-checkered,flag-usa,flame,flashlight,flask,flask-poison,flask-potion,flower,flower-daffodil,flower-tulip,flushed,flute,flux-capacitor,fog,folder,folder-minus,folder-open,folder-plus,folder-times,folder-tree,folders,font,font-case,football-ball,football-helmet,forklift,forward,fragile,french-fries,frog,frosty-head,frown,frown-open,function,funnel-dollar,futbol,galaxy,game-board,game-board-alt,game-console-handheld,gamepad,gamepad-alt,garage,garage-car,garage-open,gas-pump,gas-pump-slash,gavel,gem,genderless,ghost,gift,gift-card,gifts,gingerbread-man,glass,glass-champagne,glass-cheers,glass-citrus,glass-martini,glass-martini-alt,glass-whiskey,glass-whiskey-rocks,glasses,glasses-alt,globe,globe-africa,globe-americas,globe-asia,globe-europe,globe-snow,globe-stand,golf-ball,golf-club,gopuram,graduation-cap,gramophone,greater-than,greater-than-equal,grimace,grin,grin-alt,grin-beam,grin-beam-sweat,grin-hearts,grin-squint,grin-squint-tears,grin-stars,grin-tears,grin-tongue,grin-tongue-squint,grin-tongue-wink,grin-wink,grip-horizontal,grip-lines,grip-lines-vertical,grip-vertical,guitar,guitar-electric,guitars,h-square,h1,h2,h3,h4,hamburger,hammer,hammer-war,hamsa,hand-heart,hand-holding,hand-holding-box,hand-holding-heart,hand-holding-magic,hand-holding-seedling,hand-holding-usd,hand-holding-water,hand-lizard,hand-middle-finger,hand-paper,hand-peace,hand-point-down,hand-point-left,hand-point-right,hand-point-up,hand-pointer,hand-receiving,hand-rock,hand-scissors,hand-spock,hands,hands-heart,hands-helping,hands-usd,handshake,handshake-alt,hanukiah,hard-hat,hashtag,hat-chef,hat-cowboy,hat-cowboy-side,hat-santa,hat-winter,hat-witch,hat-wizard,hdd,head-side,head-side-brain,head-side-headphones,head-side-medical,head-vr,heading,headphones,headphones-alt,headset,heart,heart-broken,heart-circle,heart-rate,heart-square,heartbeat,heat,helicopter,helmet-battle,hexagon,highlighter,hiking,hippo,history,hockey-mask,hockey-puck,hockey-sticks,holly-berry,home,home-alt,home-heart,home-lg,home-lg-alt,hood-cloak,horizontal-rule,horse,horse-head,horse-saddle,hospital,hospital-alt,hospital-symbol,hospital-user,hospitals,hot-tub,hotdog,hotel,hourglass,hourglass-end,hourglass-half,hourglass-start,house,house-damage,house-day,house-flood,house-leave,house-night,house-return,house-signal,hryvnia,humidity,hurricane,i-cursor,ice-cream,ice-skate,icicles,icons,icons-alt,id-badge,id-card,id-card-alt,igloo,image,image-polaroid,images,inbox,inbox-in,inbox-out,indent,industry,industry-alt,infinity,info,info-circle,info-square,inhaler,integral,intersection,inventory,island-tropical,italic,jack-o-lantern,jedi,joint,journal-whills,joystick,jug,kaaba,kazoo,kerning,key,key-skeleton,keyboard,keynote,khanda,kidneys,kiss,kiss-beam,kiss-wink-heart,kite,kiwi-bird,knife-kitchen,lambda,lamp,lamp-desk,lamp-floor,landmark,landmark-alt,language,laptop,laptop-code,laptop-medical,lasso,laugh,laugh-beam,laugh-squint,laugh-wink,layer-group,layer-minus,layer-plus,leaf,leaf-heart,leaf-maple,leaf-oak,lemon,less-than,less-than-equal,level-down,level-down-alt,level-up,level-up-alt,life-ring,light-ceiling,light-switch,light-switch-off,light-switch-on,lightbulb,lightbulb-dollar,lightbulb-exclamation,lightbulb-on,lightbulb-slash,lights-holiday,line-columns,line-height,link,lips,lira-sign,list,list-alt,list-music,list-ol,list-ul,location,location-arrow,location-circle,location-slash,lock,lock-alt,lock-open,lock-open-alt,long-arrow-alt-down,long-arrow-alt-left,long-arrow-alt-right,long-arrow-alt-up,long-arrow-down,long-arrow-left,long-arrow-right,long-arrow-up,loveseat,low-vision,luchador,luggage-cart,lungs,mace,magic,magnet,mail-bulk,mailbox,male,mandolin,map,map-marked,map-marked-alt,map-marker,map-marker-alt,map-marker-alt-slash,map-marker-check,map-marker-edit,map-marker-exclamation,map-marker-minus,map-marker-plus,map-marker-question,map-marker-slash,map-marker-smile,map-marker-times,map-pin,map-signs,marker,mars,mars-double,mars-stroke,mars-stroke-h,mars-stroke-v,mask,meat,medal,medkit,megaphone,meh,meh-blank,meh-rolling-eyes,memory,menorah,mercury,meteor,microchip,microphone,microphone-alt,microphone-alt-slash,microphone-slash,microphone-stand,microscope,microwave,mind-share,minus,minus-circle,minus-hexagon,minus-octagon,minus-square,mistletoe,mitten,mobile,mobile-alt,mobile-android,mobile-android-alt,money-bill,money-bill-alt,money-bill-wave,money-bill-wave-alt,money-check,money-check-alt,money-check-edit,money-check-edit-alt,monitor-heart-rate,monkey,monument,moon,moon-cloud,moon-stars,mortar-pestle,mosque,motorcycle,mountain,mountains,mouse,mouse-alt,mouse-pointer,mp3-player,mug,mug-hot,mug-marshmallows,mug-tea,music,music-alt,music-alt-slash,music-slash,narwhal,network-wired,neuter,newspaper,not-equal,notes-medical,object-group,object-ungroup,octagon,oil-can,oil-temp,om,omega,ornament,otter,outdent,outlet,oven,overline,page-break,pager,paint-brush,paint-brush-alt,paint-roller,palette,pallet,pallet-alt,paper-plane,paperclip,parachute-box,paragraph,paragraph-rtl,parking,parking-circle,parking-circle-slash,parking-slash,passport,pastafarianism,paste,pause,pause-circle,paw,paw-alt,paw-claws,peace,pegasus,pen,pen-alt,pen-fancy,pen-nib,pen-square,pencil,pencil-alt,pencil-paintbrush,pencil-ruler,pennant,people-carry,pepper-hot,percent,percentage,person-booth,person-carry,person-dolly,person-dolly-empty,person-sign,phone,phone-alt,phone-laptop,phone-office,phone-plus,phone-rotary,phone-slash,phone-square,phone-square-alt,phone-volume,photo-video,pi,piano,piano-keyboard,pie,pig,piggy-bank,pills,pizza,pizza-slice,place-of-worship,plane,plane-alt,plane-arrival,plane-departure,planet-moon,planet-ringed,play,play-circle,plug,plus,plus-circle,plus-hexagon,plus-octagon,plus-square,podcast,podium,podium-star,police-box,poll,poll-h,poll-people,poo,poo-storm,poop,popcorn,portal-enter,portal-exit,portrait,pound-sign,power-off,pray,praying-hands,prescription,prescription-bottle,prescription-bottle-alt,presentation,print,print-search,print-slash,procedures,project-diagram,projector,pumpkin,puzzle-piece,qrcode,question,question-circle,question-square,quidditch,quote-left,quote-right,quran,rabbit,rabbit-fast,racquet,radar,radiation,radiation-alt,radio,radio-alt,rainbow,raindrops,ram,ramp-loading,random,raygun,receipt,record-vinyl,rectangle-landscape,rectangle-portrait,rectangle-wide,recycle,redo,redo-alt,refrigerator,registered,remove-format,repeat,repeat-1,repeat-1-alt,repeat-alt,reply,reply-all,republican,restroom,retweet,retweet-alt,ribbon,ring,rings-wedding,road,robot,rocket,rocket-launch,route,route-highway,route-interstate,router,rss,rss-square,ruble-sign,ruler,ruler-combined,ruler-horizontal,ruler-triangle,ruler-vertical,running,rupee-sign,rv,sack,sack-dollar,sad-cry,sad-tear,salad,sandwich,satellite,satellite-dish,sausage,save,sax-hot,saxophone,scalpel,scalpel-path,scanner,scanner-image,scanner-keyboard,scanner-touchscreen,scarecrow,scarf,school,screwdriver,scroll,scroll-old,scrubber,scythe,sd-card,search,search-dollar,search-location,search-minus,search-plus,seedling,send-back,send-backward,sensor,sensor-alert,sensor-fire,sensor-on,sensor-smoke,server,shapes,share,share-all,share-alt,share-alt-square,share-square,sheep,shekel-sign,shield,shield-alt,shield-check,shield-cross,ship,shipping-fast,shipping-timed,shish-kebab,shoe-prints,shopping-bag,shopping-basket,shopping-cart,shovel,shovel-snow,shower,shredder,shuttle-van,shuttlecock,sickle,sigma,sign,sign-in,sign-in-alt,sign-language,sign-out,sign-out-alt,signal,signal-1,signal-2,signal-3,signal-4,signal-alt,signal-alt-1,signal-alt-2,signal-alt-3,signal-alt-slash,signal-slash,signal-stream,signature,sim-card,siren,siren-on,sitemap,skating,skeleton,ski-jump,ski-lift,skiing,skiing-nordic,skull,skull-cow,skull-crossbones,slash,sledding,sleigh,sliders-h,sliders-h-square,sliders-v,sliders-v-square,smile,smile-beam,smile-plus,smile-wink,smog,smoke,smoking,smoking-ban,sms,snake,snooze,snow-blowing,snowboarding,snowflake,snowflakes,snowman,snowmobile,snowplow,socks,solar-panel,solar-system,sort,sort-alpha-down,sort-alpha-down-alt,sort-alpha-up,sort-alpha-up-alt,sort-alt,sort-amount-down,sort-amount-down-alt,sort-amount-up,sort-amount-up-alt,sort-circle,sort-circle-down,sort-circle-up,sort-down,sort-numeric-down,sort-numeric-down-alt,sort-numeric-up,sort-numeric-up-alt,sort-shapes-down,sort-shapes-down-alt,sort-shapes-up,sort-shapes-up-alt,sort-size-down,sort-size-down-alt,sort-size-up,sort-size-up-alt,sort-up,soup,spa,space-shuttle,space-station-moon,space-station-moon-alt,spade,sparkles,speaker,speakers,spell-check,spider,spider-black-widow,spider-web,spinner,spinner-third,splotch,spray-can,sprinkler,square,square-full,square-root,square-root-alt,squirrel,staff,stamp,star,star-and-crescent,star-christmas,star-exclamation,star-half,star-half-alt,star-of-david,star-of-life,star-shooting,starfighter,starfighter-alt,stars,starship,starship-freighter,steak,steering-wheel,step-backward,step-forward,stethoscope,sticky-note,stocking,stomach,stop,stop-circle,stopwatch,store,store-alt,stream,street-view,stretcher,strikethrough,stroopwafel,subscript,subway,suitcase,suitcase-rolling,sun,sun-cloud,sun-dust,sun-haze,sunglasses,sunrise,sunset,superscript,surprise,swatchbook,swimmer,swimming-pool,sword,sword-laser,sword-laser-alt,swords,swords-laser,synagogue,sync,sync-alt,syringe,table,table-tennis,tablet,tablet-alt,tablet-android,tablet-android-alt,tablet-rugged,tablets,tachometer,tachometer-alt,tachometer-alt-average,tachometer-alt-fast,tachometer-alt-fastest,tachometer-alt-slow,tachometer-alt-slowest,tachometer-average,tachometer-fast,tachometer-fastest,tachometer-slow,tachometer-slowest,taco,tag,tags,tally,tanakh,tape,tasks,tasks-alt,taxi,teeth,teeth-open,telescope,temperature-down,temperature-frigid,temperature-high,temperature-hot,temperature-low,temperature-up,tenge,tennis-ball,terminal,text,text-height,text-size,text-width,th,th-large,th-list,theater-masks,thermometer,thermometer-empty,thermometer-full,thermometer-half,thermometer-quarter,thermometer-three-quarters,theta,thumbs-down,thumbs-up,thumbtack,thunderstorm,thunderstorm-moon,thunderstorm-sun,ticket,ticket-alt,tilde,times,times-circle,times-hexagon,times-octagon,times-square,tint,tint-slash,tire,tire-flat,tire-pressure-warning,tire-rugged,tired,toggle-off,toggle-on,toilet,toilet-paper,toilet-paper-alt,tombstone,tombstone-alt,toolbox,tools,tooth,toothbrush,torah,torii-gate,tornado,tractor,trademark,traffic-cone,traffic-light,traffic-light-go,traffic-light-slow,traffic-light-stop,trailer,train,tram,transgender,transgender-alt,transporter,transporter-1,transporter-2,transporter-3,transporter-empty,trash,trash-alt,trash-restore,trash-restore-alt,trash-undo,trash-undo-alt,treasure-chest,tree,tree-alt,tree-christmas,tree-decorated,tree-large,tree-palm,trees,triangle,triangle-music,trophy,trophy-alt,truck,truck-container,truck-couch,truck-loading,truck-monster,truck-moving,truck-pickup,truck-plow,truck-ramp,trumpet,tshirt,tty,turkey,turntable,turtle,tv,tv-alt,tv-music,tv-retro,typewriter,ufo,ufo-beam,umbrella,umbrella-beach,underline,undo,undo-alt,unicorn,union,universal-access,university,unlink,unlock,unlock-alt,upload,usb-drive,usd-circle,usd-square,user,user-alien,user-alt,user-alt-slash,user-astronaut,user-chart,user-check,user-circle,user-clock,user-cog,user-cowboy,user-crown,user-edit,user-friends,user-graduate,user-hard-hat,user-headset,user-injured,user-lock,user-md,user-md-chat,user-minus,user-music,user-ninja,user-nurse,user-plus,user-robot,user-secret,user-shield,user-slash,user-tag,user-tie,user-times,user-visor,users,users-class,users-cog,users-crown,users-medical,utensil-fork,utensil-knife,utensil-spoon,utensils,utensils-alt,vacuum,vacuum-robot,value-absolute,vector-square,venus,venus-double,venus-mars,vhs,vial,vials,video,video-plus,video-slash,vihara,violin,voicemail,volcano,volleyball-ball,volume,volume-down,volume-mute,volume-off,volume-slash,volume-up,vote-nay,vote-yea,vr-cardboard,wagon-covered,walker,walkie-talkie,walking,wallet,wand,wand-magic,warehouse,warehouse-alt,washer,watch,watch-calculator,watch-fitness,water,water-lower,water-rise,wave-sine,wave-square,wave-triangle,waveform,waveform-path,webcam,webcam-slash,weight,weight-hanging,whale,wheat,wheelchair,whistle,wifi,wifi-1,wifi-2,wifi-slash,wind,wind-turbine,wind-warning,window,window-alt,window-close,window-frame,window-frame-open,window-maximize,window-minimize,window-restore,windsock,wine-bottle,wine-glass,wine-glass-alt,won-sign,wreath,wrench,x-ray,yen-sign,yin-yang,b 500px,b accessible-icon,b accusoft,b acquisitions-incorporated,b adn,b adobe,b adversal,b affiliatetheme,b airbnb,b algolia,b alipay,b amazon,b amazon-pay,b amilia,b android,b angellist,b angrycreative,b angular,b app-store,b app-store-ios,b apper,b apple,b apple-pay,b artstation,b asymmetrik,b atlassian,b audible,b autoprefixer,b avianex,b aviato,b aws,b bandcamp,b battle-net,b behance,b behance-square,b bimobject,b bitbucket,b bitcoin,b bity,b black-tie,b blackberry,b blogger,b blogger-b,b bluetooth,b bluetooth-b,b bootstrap,b btc,b buffer,b buromobelexperte,b buy-n-large,b buysellads,b canadian-maple-leaf,b cc-amazon-pay,b cc-amex,b cc-apple-pay,b cc-diners-club,b cc-discover,b cc-jcb,b cc-mastercard,b cc-paypal,b cc-stripe,b cc-visa,b centercode,b centos,b chrome,b chromecast,b cloudscale,b cloudsmith,b cloudversify,b codepen,b codiepie,b confluence,b connectdevelop,b contao,b cotton-bureau,b cpanel,b creative-commons,b creative-commons-by,b creative-commons-nc,b creative-commons-nc-eu,b creative-commons-nc-jp,b creative-commons-nd,b creative-commons-pd,b creative-commons-pd-alt,b creative-commons-remix,b creative-commons-sa,b creative-commons-sampling,b creative-commons-sampling-plus,b creative-commons-share,b creative-commons-zero,b critical-role,b css3,b css3-alt,b cuttlefish,b d-and-d,b d-and-d-beyond,b dashcube,b delicious,b deploydog,b deskpro,b dev,b deviantart,b dhl,b diaspora,b digg,b digital-ocean,b discord,b discourse,b dochub,b docker,b draft2digital,b dribbble,b dribbble-square,b dropbox,b drupal,b dyalog,b earlybirds,b ebay,b edge,b elementor,b ello,b ember,b empire,b envira,b erlang,b ethereum,b etsy,b evernote,b expeditedssl,b facebook,b facebook-f,b facebook-messenger,b facebook-square,b fantasy-flight-games,b fedex,b fedora,b figma,b firefox,b firefox-browser,b first-order,b first-order-alt,b firstdraft,b flickr,b flipboard,b fly,b font-awesome,b font-awesome-alt,b font-awesome-flag,b fonticons,b fonticons-fi,b fort-awesome,b fort-awesome-alt,b forumbee,b foursquare,b free-code-camp,b freebsd,b fulcrum,b galactic-republic,b galactic-senate,b get-pocket,b gg,b gg-circle,b git,b git-alt,b git-square,b github,b github-alt,b github-square,b gitkraken,b gitlab,b gitter,b glide,b glide-g,b gofore,b goodreads,b goodreads-g,b google,b google-drive,b google-play,b google-plus,b google-plus-g,b google-plus-square,b google-wallet,b gratipay,b grav,b gripfire,b grunt,b gulp,b hacker-news,b hacker-news-square,b hackerrank,b hips,b hire-a-helper,b hooli,b hornbill,b hotjar,b houzz,b html5,b hubspot,b ideal,b imdb,b instagram,b intercom,b internet-explorer,b invision,b ioxhost,b itch-io,b itunes,b itunes-note,b java,b jedi-order,b jenkins,b jira,b joget,b joomla,b js,b js-square,b jsfiddle,b kaggle,b keybase,b keycdn,b kickstarter,b kickstarter-k,b korvue,b laravel,b lastfm,b lastfm-square,b leanpub,b less,b line,b linkedin,b linkedin-in,b linode,b linux,b lyft,b magento,b mailchimp,b mandalorian,b markdown,b mastodon,b maxcdn,b mdb,b medapps,b medium,b medium-m,b medrt,b meetup,b megaport,b mendeley,b microblog,b microsoft,b mix,b mixcloud,b mizuni,b modx,b monero,b napster,b neos,b nimblr,b node,b node-js,b npm,b ns8,b nutritionix,b odnoklassniki,b odnoklassniki-square,b old-republic,b opencart,b openid,b opera,b optin-monster,b orcid,b osi,b page4,b pagelines,b palfed,b patreon,b paypal,b penny-arcade,b periscope,b phabricator,b phoenix-framework,b phoenix-squadron,b php,b pied-piper,b pied-piper-alt,b pied-piper-hat,b pied-piper-pp,b pied-piper-square,b pinterest,b pinterest-p,b pinterest-square,b playstation,b product-hunt,b pushed,b python,b qq,b quinscape,b quora,b r-project,b raspberry-pi,b ravelry,b react,b reacteurope,b readme,b rebel,b red-river,b reddit,b reddit-alien,b reddit-square,b redhat,b renren,b replyd,b researchgate,b resolving,b rev,b rocketchat,b rockrms,b safari,b salesforce,b sass,b schlix,b scribd,b searchengin,b sellcast,b sellsy,b servicestack,b shirtsinbulk,b shopware,b simplybuilt,b sistrix,b sith,b sketch,b skyatlas,b skype,b slack,b slack-hash,b slideshare,b snapchat,b snapchat-ghost,b snapchat-square,b soundcloud,b sourcetree,b speakap,b speaker-deck,b spotify,b squarespace,b stack-exchange,b stack-overflow,b stackpath,b staylinked,b steam,b steam-square,b steam-symbol,b sticker-mule,b strava,b stripe,b stripe-s,b studiovinari,b stumbleupon,b stumbleupon-circle,b superpowers,b supple,b suse,b swift,b symfony,b teamspeak,b telegram,b telegram-plane,b tencent-weibo,b the-red-yeti,b themeco,b themeisle,b think-peaks,b trade-federation,b trello,b tripadvisor,b tumblr,b tumblr-square,b twitch,b twitter,b twitter-square,b typo3,b uber,b ubuntu,b uikit,b umbraco,b uniregistry,b unity,b untappd,b ups,b usb,b usps,b ussunnah,b vaadin,b viacoin,b viadeo,b viadeo-square,b viber,b vimeo,b vimeo-square,b vimeo-v,b vine,b vk,b vnv,b vuejs,b waze,b weebly,b weibo,b weixin,b whatsapp,b whatsapp-square,b whmcs,b wikipedia-w,b windows,b wix,b wizards-of-the-coast,b wolf-pack-battalion,b wordpress,b wordpress-simple,b wpbeginner,b wpexplorer,b wpforms,b wpressr,b xbox,b xing,b xing-square,b y-combinator,b yahoo,b yammer,b yandex,b yandex-international,b yarn,b yelp,b yoast,b youtube,b youtube-square,b zhihu'.split(',');
 
-	var cls = 'ui-faicons';
 	var cls2 = '.' + cls;
 	var template = '<span data-search="{0}"><i class="{1}"></i></span>';
 	var events = {};
 	var container;
 	var is = false;
+	var ispro = false;
+	var cachekey;
 
 	self.singleton();
 	self.readonly();
@@ -9787,10 +9923,20 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 		container = self.find(cls2 + '-content');
 	};
 
-	self.rendericons = function(){
+	self.rendericons = function(empty) {
+
+		var key = empty ? '1' : '0';
+		if (cachekey === key)
+			return;
+
+		cachekey = key;
 		var builder = [];
-		for (var i = 0; i < icons.length; i++)
-			builder.push(template.format(icons[i].replace(/^.*?-/, '').replace(/-/g, ' ').toSearch(), icons[i]));
+
+		empty && builder.push(template.format('', ''));
+
+		var arr = ispro ? iconspro : icons;
+		for (var i = 0; i < arr.length; i++)
+			builder.push(template.format(arr[i].replace(/^.*?-/, '').replace(/-/g, ' ').toSearch(), arr[i]));
 		self.find(cls2 + '-content').html(builder.join(''));
 	};
 
@@ -9817,6 +9963,43 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 
 	self.make = function() {
 
+		var links = $(document.head).find('link');
+		for (var i = 0; i < links.length; i++) {
+			var href = links[i].getAttribute('href');
+			if (href.indexOf('pro.css') !== -1) {
+				ispro = true;
+				break;
+			}
+		}
+
+		var txt = ' fa-';
+
+		if (ispro) {
+			var tmp = [];
+			for (var i = 0; i < iconspro.length; i++) {
+				var icon = iconspro[i];
+				if (icon.charAt(1) === ' ') {
+					tmp.push('fa' + icon.replace(' ', txt));
+				} else {
+					tmp.push('fas fa-' + icon.replace(' ', txt));
+					tmp.push('far fa-' + icon.replace(' ', txt));
+					tmp.push('fal fa-' + icon.replace(' ', txt));
+					tmp.push('fad fa-' + icon.replace(' ', txt));
+				}
+			}
+			iconspro = tmp;
+			icons = null;
+		} else {
+			iconspro = null;
+			for (var i = 0; i < icons.length; i++) {
+				var icon = icons[i];
+				if (icon.charAt(1) === ' ')
+					icons[i] = 'fa' + icon.replace(' ', txt);
+				else
+					icons[i] = 'fa fa-' + icons[i];
+			}
+		}
+
 		self.aclass(cls + '-container hidden');
 
 		self.event('keydown', 'input', function() {
@@ -9832,6 +10015,7 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 		});
 
 		self.event('click', cls2 + '-content span', function() {
+			self.opt.scope && M.scope(self.opt.scope);
 			self.opt.callback && self.opt.callback($(this).find('i').attr('class'));
 			self.hide();
 		});
@@ -9847,7 +10031,7 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 			self.hide();
 		};
 
-		self.on('reflow + scroll + resize', self.hide);
+		self.on('reflow + scroll + resize + resize2', self.hide);
 		self.redraw();
 	};
 
@@ -9877,6 +10061,9 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 		var search = self.find(cls2 + '-search-input');
 		search.val('');
 		self.find('.clearsearch').rclass2('fa-').aclass('fa-search');
+
+		if (M.scope)
+			opt.scope = M.scope();
 
 		self.target = tmp;
 		self.opt = opt;
@@ -9920,20 +10107,29 @@ COMPONENT('faicons', 'search:Search', function(self, config) {
 			css.top += opt.offsetY;
 
 		is = true;
-		self.rendericons();
-		self.find('.noscrollbar').noscrollbar();
+		self.rendericons(opt.empty);
+		var scrollarea = self.find('.noscrollbar').noscrollbar();
 		self.css(css);
+		if (opt.scrolltop == null || opt.scrolltop)
+			scrollarea[0].scrollTop = 0;
 		search.focus();
 		setTimeout(self.bindevents, 50);
+		clearTimeout2(self.ID);
+	};
+
+	self.clear = function() {
+		container.empty();
+		cachekey = null;
 	};
 
 	self.hide = function() {
 		is = false;
 		self.target = null;
 		self.opt = null;
-		container.empty();
 		self.unbindevents();
 		self.aclass('hidden');
+		container.find('.hidden').rclass('hidden');
+		setTimeout2(self.ID, self.clear, 1000 * 10);
 	};
 });
 
@@ -10415,16 +10611,16 @@ COMPONENT('movable', function(self, config) {
 	};
 });
 
-COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;monthselect:true;yearfrom:-70 years;yearto:5 years', function(self, config) {
+COMPONENT('datepicker', 'today:Set today;firstday:0', function(self, config, cls) {
 
-	var cls = 'ui-datepicker';
 	var cls2 = '.' + cls;
 	var skip = false;
 	var visible = false;
-	var touchdiff;
-	var startX;
+	var current;
+	var elyears, elmonths, elbody;
 
 	self.days = EMPTYARRAY;
+	self.days_short = EMPTYARRAY;
 	self.months = EMPTYARRAY;
 	self.months_short = EMPTYARRAY;
 	self.years_from;
@@ -10437,14 +10633,17 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 	self.configure = function(key, value) {
 		switch (key) {
 			case 'days':
+
 				if (value instanceof Array)
 					self.days = value;
 				else
 					self.days = value.split(',').trim();
 
+				self.days_short = [];
+
 				for (var i = 0; i < DAYS.length; i++) {
 					DAYS[i] = self.days[i];
-					self.days[i] = DAYS[i].substring(0, 2).toUpperCase();
+					self.days_short[i] = DAYS[i].substring(0, 2).toUpperCase();
 				}
 
 				break;
@@ -10468,16 +10667,16 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 
 			case 'yearfrom':
 				if (value.indexOf('current') !== -1)
-					self.years_from = +(new Date().format('yyyy'));
+					self.years_from = +(NOW.format('yyyy'));
 				else
-					self.years_from = +(new Date().add(value).format('yyyy'));
+					self.years_from = +(NOW.add(value).format('yyyy'));
 				break;
 
 			case 'yearto':
 				if (value.indexOf('current') !== -1)
-					self.years_to = +(new Date().format('yyyy'));
+					self.years_to = +(NOW.format('yyyy'));
 				else
-					self.years_to = +(new Date().add(value).format('yyyy'));
+					self.years_to = +(NOW.add(value).format('yyyy'));
 				break;
 		}
 	};
@@ -10499,10 +10698,10 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 
 		var d = new Date(year, month, 1, 12, 0);
 		var output = { header: [], days: [], month: month, year: year };
-		var firstDay = config.firstday;
-		var firstCount = 0;
-		var frm = d.getDay() - firstDay;
-		var today = new Date();
+		var firstday = config.firstday;
+		var firstcount = 0;
+		var frm = d.getDay() - firstday;
+		var today = NOW;
 		var ty = today.getFullYear();
 		var tm = today.getMonth();
 		var td = today.getDate();
@@ -10514,11 +10713,11 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 		if (frm < 0)
 			frm = 7 + frm;
 
-		while (firstCount++ < 7) {
-			output.header.push({ index: firstDay, name: self.days[firstDay] });
-			firstDay++;
-			if (firstDay > 6)
-				firstDay = 0;
+		while (firstcount++ < 7) {
+			output.header.push({ index: firstday, name: self.days_short[firstday] });
+			firstday++;
+			if (firstday > 6)
+				firstday = 0;
 		}
 
 		var index = 0;
@@ -10529,28 +10728,28 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 
 		for (var i = 0; i < days + frm; i++) {
 
-			var obj = { isToday: false, isSelected: false, isEmpty: false, isFuture: false, number: 0, index: ++count };
+			var obj = { today: false, selected: false, empty: false, future: false, number: 0, index: ++count };
 
 			if (i >= frm) {
 				obj.number = ++index;
-				obj.isSelected = sy === year && sm === month && sd === index;
-				obj.isToday = ty === year && tm === month && td === index;
-				obj.isFuture = ty < year;
-				if (!obj.isFuture && year === ty) {
+				obj.selected = sy === year && sm === month && sd === index;
+				obj.today = ty === year && tm === month && td === index;
+				obj.future = ty < year;
+				if (!obj.future && year === ty) {
 					if (tm < month)
-						obj.isFuture = true;
+						obj.future = true;
 					else if (tm === month)
-						obj.isFuture = td < index;
+						obj.future = td < index;
 				}
 
 			} else {
 				indexEmpty++;
 				obj.number = prev + indexEmpty;
-				obj.isEmpty = true;
+				obj.empty = true;
 				cur = d.add('-' + indexEmpty + ' days');
 			}
 
-			if (!obj.isEmpty)
+			if (!obj.empty)
 				cur = d.add(i + ' days');
 
 			obj.month = i >= frm && obj.number <= days ? d.getMonth() : cur.getMonth();
@@ -10563,7 +10762,7 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 
 		for (var i = count; i < 42; i++) {
 			var cur = d.add(i + ' days');
-			var obj = { isToday: false, isSelected: false, isEmpty: true, isFuture: true, number: ++indexEmpty, index: ++count };
+			var obj = { today: false, selected: false, empty: true, future: true, number: ++indexEmpty, index: ++count };
 			obj.month = cur.getMonth();
 			obj.year = cur.getFullYear();
 			obj.date = cur;
@@ -10615,10 +10814,10 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 		if (opt.element) {
 			switch (opt.align) {
 				case 'center':
-					l = Math.ceil((off.left - w / 2) + (w / 2));
+					l = Math.ceil((off.left - s / 2) + (w / 2));
 					break;
 				case 'right':
-					l = (off.left - w) + w;
+					l = (off.left + w) - s;
 					break;
 				default:
 					l = off.left;
@@ -10644,6 +10843,7 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 		if ((!(dt instanceof Date)) || isNaN(dt.getTime()))
 			dt = NOW;
 
+		opt.scope = M.scope ? M.scope() : '';
 		self.opt = opt;
 		self.time = dt.format('HH:mm:ss');
 		self.css({ left: l, top: t });
@@ -10653,7 +10853,6 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 		self.bindevents();
 		self.target = dom;
 		visible = true;
-		return self;
 	};
 
 	self.setdate = function(dt) {
@@ -10666,6 +10865,8 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 			dt.setSeconds(+(time[2] || '0'));
 		}
 
+		self.opt.scope && M.scope(self.opt.scope);
+
 		if (typeof(self.opt.value) === 'string')
 			SET2(self.opt.value, dt);
 		else
@@ -10677,138 +10878,185 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 		self.aclass(cls + ' hidden');
 
 		var conf = {};
+		var reconfigure = false;
 
 		if (!config.days) {
 			conf.days = [];
 			for (var i = 0; i < DAYS.length; i++)
-				conf.days.push(DAYS[i].substring(0, 2).toUpperCase());
+				conf.days.push(DAYS[i]);
+			reconfigure = true;
 		}
 
-		!config.months && (conf.months = MONTHS);
-		self.reconfigure(conf);
+		if (!config.months) {
+			conf.months = MONTHS;
+			reconfigure = true;
+		}
 
-		self.event('click', cls2 + '-today-a', function() {
-			self.setdate(new Date());
-			self.hide();
-		});
+		reconfigure && self.reconfigure(conf);
+		W.$datepicker = self;
 
-		self.event('click touchend', cls2 + '-day', function() {
-			if (Date.now() - touchdiff > 500)
-				return;
-			var arr = this.getAttribute('data-date').split('-');
-			var dt = new Date(+arr[0], +arr[1], +arr[2], 12, 0);
-			self.find(cls2 + '-selected').rclass(cls + '-selected');
-			var el = $(this).aclass(cls + '-selected');
-			skip = !el.hclass(cls + '-disabled');
-			self.setdate(dt);
-			self.hide();
-		});
-
-		self.event('click touchend', cls2 + '-cancel', function() {
-			if (typeof(self.opt.value) === 'string')
-				SET2(self.opt.value, null);
-			else
-				self.opt.callback(null);
-			self.hide();
-		});
-
-		self.event('click', cls2 + '-header', function(e) {
+		self.event('click', function(e) {
 			e.stopPropagation();
 		});
-
-		self.event('change', cls2 + '-year', function(e) {
-
-			clearTimeout2('datepickerhide');
-			e.preventDefault();
-			e.stopPropagation();
-
-			var arr = $(this).attrd('date').split('-');
-			var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
-			dt.setFullYear(this.value);
-			self.date(dt, true);
-		});
-
-		self.event('change', cls2 + '-month', function(e){
-
-			clearTimeout2('datepickerhide');
-			e.preventDefault();
-			e.stopPropagation();
-
-			var arr = $(this).attrd('date').split('-');
-			var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
-			dt.setMonth(this.value);
-			self.date(dt, true);
-		});
-
-		self.event('click', 'button', function(e) {
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			var arr = $(this).attrd('date').split('-');
-			var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
-			switch (this.name) {
-				case 'prev':
-					dt.setMonth(dt.getMonth() - 1);
-					break;
-				case 'next':
-					dt.setMonth(dt.getMonth() + 1);
-					break;
-			}
-
-			self.date(dt, true);
-		});
-
-		self.event('touchstart touchmove', cls2 + '-table',function(e){
-
-			e.stopPropagation();
-			e.preventDefault();
-
-			var x = e.originalEvent.touches[0].pageX;
-
-			if (e.type === 'touchstart') {
-				startX = x;
-				touchdiff = Date.now();
-				return;
-			}
-
-			var diffX = startX - x;
-			if (diffX > 70 || diffX < -70) {
-				var arr = $(this).data('date').split('-');
-				var dt = new Date(+arr[0], +arr[1], 1, 12, 0);
-				dt.setMonth(dt.getMonth() + (diffX > 50 ? 1 : -1));
-				self.date(dt, true);
-			}
-		});
-
-		window.$datepicker = self;
 
 		var hide = function() {
-			visible && window.$datepicker && window.$datepicker.hide();
+			visible && W.$datepicker && W.$datepicker.hide();
 		};
 
 		var hide2 = function() {
 			visible && setTimeout2('datepickerhide', function() {
-				window.$datepicker && window.$datepicker.hide();
+				W.$datepicker && W.$datepicker.hide();
 			}, 20);
 		};
 
 		self.bindevents = function() {
 			if (!visible)
-				$(window).on('scroll click', hide2);
+				$(W).on('scroll click', hide2);
 		};
 
 		self.unbindevents = function() {
 			if (visible)
-				$(window).off('scroll click', hide2);
+				$(W).off('scroll click', hide2);
 		};
 
-		self.on('reflow + scroll + resize', hide);
+		self.on('reflow + scroll + resize + resize2', hide);
+	};
+
+	self.makehtml = function() {
+		var builder = [];
+		builder.push('<div class="{0}-header"><span class="{0}-next"><i class="fa fa-angle-right"></i></span><span class="{0}-prev"><i class="fa fa-angle-left"></i></span><div class="{0}-info"><span class="{0}-month">---</span><span class="{0}-year">---</span></div></div><div class="{0}-years hidden"></div><div class="{0}-months"></div><div class="{0}-body hidden"><div class="{0}-week">'.format(cls));
+		for (var i = 0; i < 7; i++)
+			builder.push('<div></div>');
+		builder.push('</div><div class="{0}-days">'.format(cls));
+
+		for (var i = 0; i < 42; i++)
+			builder.push('<div class="{0}-date"><div></div></div>'.format(cls, i));
+		builder.push('</div></div><div class="{0}-footer"><span class="{0}-now">{2}</span></div>'.format(cls, config.close, config.today));
+		self.html(builder.join(''));
+
+		builder = [];
+		elbody = self.find(cls2 + '-body');
+		elmonths = self.find(cls2 + '-months');
+		for (var i = 0; i < 12; i++)
+			builder.push('<div class="{0}-month" data-index="{1}"><div></div></div>'.format(cls, i));
+		elmonths.html(builder.join(''));
+
+		builder = [];
+		elyears = self.find(cls2 + '-years');
+		for (var i = 0; i < 25; i++)
+			builder.push('<div class="{0}-year"><div></div></div>'.format(cls));
+		elyears.html(builder.join(''));
+
+		self.makehtml = null;
+
+		self.find(cls2 + '-month').on('click', function(e) {
+
+			var el = $(this);
+			var index = el.attrd('index');
+			var h = 'hidden';
+
+			if (index) {
+				current.setMonth(+index);
+				self.date(current, true);
+			} else if (!elmonths.hclass(h))
+				index = 1;
+
+			elyears.aclass(h);
+
+			if (index)
+				elmonths.aclass(h);
+			else {
+				elmonths.find(cls2 + '-today').rclass(cls + '-today');
+				elmonths.find(cls2 + '-month').eq(current.getMonth()).aclass(cls + '-today');
+				elmonths.rclass(h);
+			}
+
+			elbody.tclass(h, !elmonths.hclass(h));
+			e.preventDefault();
+			e.stopPropagation();
+
+		});
+
+		self.find(cls2 + '-year').on('click', function(e) {
+			var el = $(this);
+			var year = el.attrd('year');
+			var h = 'hidden';
+
+			if (year) {
+				current.setFullYear(+year);
+				self.date(current, true);
+			} else if (!elyears.hclass(h))
+				year = 1;
+
+			elmonths.aclass(h);
+
+			if (year)
+				elyears.aclass(h);
+			else {
+				self.years();
+				elyears.rclass(h);
+			}
+
+			elbody.tclass(h, !elyears.hclass(h));
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		self.years = function() {
+			var dom = self.find(cls2 + '-years').find(cls2 + '-year');
+			var year = current.getFullYear();
+			var index = 12;
+			for (var i = 0; i < 25; i++) {
+				var val = year - (index--);
+				$(dom[i]).tclass(cls + '-today', val === year).attrd('year', val).find('div')[0].innerHTML = val;
+			}
+		};
+
+		self.find(cls2 + '-date').on('click', function() {
+			var dt = $(this).attrd('date').split('-');
+			self.setdate(new Date(+dt[0], +dt[1], +dt[2], 12, 0, 0));
+			self.hide();
+		});
+
+		self.find(cls2 + '-now').on('click', function() {
+			self.setdate(new Date());
+			self.hide();
+		});
+
+		self.find(cls2 + '-next').on('click', function(e) {
+
+			if (elyears.hclass('hidden')) {
+				current.setMonth(current.getMonth() + 1);
+				self.date(current, true);
+			} else {
+				current.setFullYear(current.getFullYear() + 25);
+				self.years();
+			}
+
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		self.find(cls2 + '-prev').on('click', function(e) {
+
+			if (elyears.hclass('hidden')) {
+				current.setMonth(current.getMonth() - 1);
+				self.date(current, true);
+			} else {
+				current.setFullYear(current.getFullYear() - 25);
+				self.years();
+			}
+
+			e.preventDefault();
+			e.stopPropagation();
+		});
 	};
 
 	self.date = function(value, skipday) {
 
 		var clssel = cls + '-selected';
+
+		self.makehtml && self.makehtml();
 
 		if (typeof(value) === 'string')
 			value = value.parseDate();
@@ -10834,56 +11082,66 @@ COMPONENT('datepicker', 'today:Set today;firstday:0;close:Close;yearselect:true;
 			return;
 		}
 
-		if (!value)
-			value = NOW = new Date();
+		value = new Date((value || NOW).getTime());
 
 		var output = self.calculate(value.getFullYear(), value.getMonth(), value);
-		var builder = [];
+		var dom = self.find(cls2 + '-date');
+
+		self.find(cls2 + '-body').rclass('hidden');
+		self.find(cls2 + '-months,' + cls2 + '-years').aclass('hidden');
+
+		current = value;
 
 		for (var i = 0; i < 42; i++) {
 
 			var item = output.days[i];
+			var classes = [cls + '-date'];
 
-			if (i % 7 === 0) {
-				builder.length && builder.push('</tr>');
-				builder.push('<tr>');
+			if (item.empty)
+				classes.push(cls + '-disabled');
+
+			if (!empty && item.selected)
+				classes.push(cls + '-selected');
+
+			if (item.today)
+				classes.push(cls + '-day-today');
+
+			var el = $(dom[i]);
+			el.attrd('date', item.year + '-' + item.month + '-' + item.number);
+			el.find('div').html(item.number);
+			el.find('i').remove();
+			el.rclass().aclass(classes.join(' '));
+		}
+
+		if (!skipday) {
+
+			dom = self.find(cls2 + '-week').find('div');
+			for (var i = 0; i < 7; i++)
+				dom[i].innerHTML = output.header[i].name;
+
+			dom = self.find(cls2 + '-months').find(cls2 + '-month');
+			for (var i = 0; i < 12; i++)
+				$(dom[i]).find('div').attrd('index', i)[0].innerHTML = self.months_short[i];
+		}
+
+		self.opt.badges && self.opt.badges(current, function(date) {
+
+			if (!(date instanceof Array))
+				date = [date];
+
+			for (var i = 0; i < date.length; i++) {
+				var dt = date[i].getFullYear() + '-' + date[i].getMonth() + '-' + date[i].getDate();
+				var el = self.find(cls2 + '-date[data-date="{0}"]'.format(dt));
+				if (el.length && !el.find('i').length)
+					el.append('<i class="fa fa-circle"></i>');
 			}
 
-			var classes = [];
+		});
 
-			item.isEmpty && classes.push(cls + '-disabled');
-			classes.push(cls + '-day');
+		var info = self.find(cls2 + '-info');
+		info.find(cls2 + '-month').html(self.months[current.getMonth()]);
+		info.find(cls2 + '-year').html(current.getFullYear());
 
-			!empty && item.isSelected && classes.push(clssel);
-			item.isToday && classes.push(cls + '-day-today');
-			builder.push('<td class="{0}" data-date="{1}-{2}-{3}"><div>{3}</div></td>'.format(classes.join(' '), item.year, item.month, item.number));
-		}
-
-		builder.push('</tr>');
-
-		var header = [];
-		for (var i = 0; i < 7; i++)
-			header.push('<th>{0}</th>'.format(output.header[i].name));
-
-		var years = value.getFullYear();
-		if (config.yearselect) {
-			years = '';
-			var current_year = value.getFullYear();
-			for (var i = self.years_from; i <= self.years_to; i++)
-				years += '<option value="{0}" {1}>{0}</option>'.format(i, i === current_year ? 'selected' : '');
-			years = '<select data-date="{0}-{1}" class="ui-datepicker-year">{2}</select>'.format(output.year, output.month, years);
-		}
-
-		var months = self.months[value.getMonth()];
-		if (config.monthselect) {
-			months = '';
-			var current_month = value.getMonth();
-			for (var i = 0, l = self.months.length; i < l; i++)
-				months += '<option value="{0}" {2}>{1}</option>'.format(i, self.months[i], i === current_month ? 'selected' : '');
-			months = '<select data-date="{0}-{1}" class="ui-datepicker-month">{2}</select>'.format(output.year, output.month, months);
-		}
-
-		self.html('<div class="ui-datepicker-header"><button class="ui-datepicker-header-prev" name="prev" data-date="{0}-{1}"><span class="fa fa-arrow-left"></span></button><div class="ui-datepicker-header-info">{2} {3}</div><button class="ui-datepicker-header-next" name="next" data-date="{0}-{1}"><span class="fa fa-arrow-right"></span></button></div><div class="ui-datepicker-table" data-date="{0}-{1}"><table cellpadding="0" cellspacing="0" border="0"><thead>{4}</thead><tbody>{5}</tbody></table></div>'.format(output.year, output.month, months, years, header.join(''), builder.join('')) + (self.opt.cancel ? ('<div class="ui-datepicker-cancel">' + self.opt.cancel + '</div>') : '') + (config.today ? '<div class="ui-datepicker-today"><span class="link">{0}</span><span class="link ui-datepicker-today-a"><i class="fa fa-datepicker"></i>{1}</span></div>'.format(config.close, config.today) : ''));
 	};
 });
 
@@ -10914,7 +11172,7 @@ COMPONENT('clipboard', function(self) {
 	};
 });
 
-COMPONENT('largeform', 'zindex:30;padding:30;scrollbar:1;scrolltop:1;style:1', function(self, config, cls) {
+COMPONENT('largeform', 'zindex:12;padding:30;scrollbar:1;scrolltop:1;style:1', function(self, config, cls) {
 
 	var cls2 = '.' + cls;
 	var csspos = {};
@@ -10940,10 +11198,7 @@ COMPONENT('largeform', 'zindex:30;padding:30;scrollbar:1;scrolltop:1;style:1', f
 			}, 200);
 		};
 
-		if (W.OP)
-			W.OP.on('resize', resize);
-		else
-			$(W).on('resize', resize);
+		ON('resize2', resize);
 
 		$(document).on('click', cls2 + '-container', function(e) {
 
@@ -11006,7 +11261,12 @@ COMPONENT('largeform', 'zindex:30;padding:30;scrollbar:1;scrolltop:1;style:1', f
 
 		var el = self.find(cls2 + '-title');
 		var th = el.height();
-		csspos = { height: csspos.height - th, width: ui.width() };
+		var w = ui.width();
+
+		if (w > WW)
+			w = WW;
+
+		csspos = { height: csspos.height - th, width: w };
 
 		if (nav)
 			csspos.height -= nav.height();
@@ -12446,7 +12706,7 @@ COMPONENT('textbox', function(self, config) {
 	};
 });
 
-COMPONENT('linechart', 'type:normal;pl:25;pr:0;pt:10;pb:25;prselected:0;limit:0;fill:false;point:5;fillopacity:0.1;offsetX:0;offsetY:10;selected:{{ value | format(0) }};templateY:{{ value | format(0) }};templateX:{{ value }};axisY:true;axisX:true;height:0;width:0', function(self, config, cls) {
+COMPONENT('linechart', 'type:normal;pl:25;pr:0;pt:10;pb:25;prselected:0;limit:0;fill:false;point:5;fillopacity:0.1;offsetX:0;offsetY:10;selected:{{ value | format(0) }};templateY:{{ value | format(0) }};templateX:{{ value }};axisY:true;axisX:true;height:0;width:0;yaxis:4', function(self, config, cls) {
 
 	var svg, g, axis, selected, points, fills, selectedold;
 	var templateX, templateY, templateS;
@@ -12464,7 +12724,9 @@ COMPONENT('linechart', 'type:normal;pl:25;pr:0;pt:10;pb:25;prselected:0;limit:0;
 		g = svg.asvg('g').attr('class', 'lines');
 		points = svg.asvg('g').attr('class', 'points');
 		selected = svg.asvg('text').attr('class', 'selected').attr('text-anchor', 'end');
+
 		W.on('resize', self.resize);
+		self.on('resize', self.resize);
 
 		self.event('click mouseenter', 'circle', function(e) {
 
@@ -12566,7 +12828,7 @@ COMPONENT('linechart', 'type:normal;pl:25;pr:0;pt:10;pb:25;prselected:0;limit:0;
 		for (var i = 0; i < len; i++) {
 			var item = value[i];
 			labels.push(item.name);
-			for (var j = 0, length = item.values.length; j < length; j++) {
+			for (var j = 0; j < item.values.length; j++) {
 				var val = item.values[j];
 				maxY = maxY == null ? val.y : maxY < val.y ? val.y : maxY;
 				minY = minY == null ? val.y : minY > val.y ? val.y : minY;
@@ -12631,7 +12893,7 @@ COMPONENT('linechart', 'type:normal;pl:25;pr:0;pt:10;pb:25;prselected:0;limit:0;
 
 				if (config.type === 'curves') {
 					if (i)
-						data[j].push(self.diagonal(prev[j][0], prev[j][1], mx, my + r));
+						data[j].push(self.diagonal(prev[j][0], prev[j][1] + r, mx, my + r));
 					else
 						data[j].push('M{0} {1}'.format(mx, my + r));
 				} else
@@ -12676,19 +12938,27 @@ COMPONENT('linechart', 'type:normal;pl:25;pr:0;pt:10;pb:25;prselected:0;limit:0;
 		if (typeof(config.avg) === 'number') {
 			var at = 100 - ((config.avg / maxY) * 100);
 			var ay = ((lines.height / 100) * at) + config.pt;
-			axis.asvg('line').attr('x1', 0).attr('x2', width).attr('y1', ay).attr('y2', ay).attr('class', 'axis-avg');
 			T.value = config.avg;
 			axis.asvg('text').aclass('ylabel-avg').attr('transform', 'translate({0},{1})'.format(width - config.pr - config.offsetX, ay - config.offsetY)).text(templateY(T));
+			axis.asvg('line').attr('x1', 0).attr('x2', width).attr('y1', ay).attr('y2', ay).attr('class', 'axis-avg');
 		}
 
 		for (var j = 0; j < len; j++)
 			g.asvg('path').attr('d', data[j].join(' ')).aclass('line' + (j + 1));
 
 		// Y axis
-		for (var i = 5; i > 0; i--) {
-			var val = i * 20;
+		var yaxis = config.yaxis;
+		var m = 100 / yaxis;
+
+		for (var i = yaxis; i > 0; i--) {
+			var val = i * m;
 			var y = ((lines.height / 100) * val) + config.pt;
 			config.axisY && axis.asvg('line').attr('x1', 0).attr('x2', width).attr('y1', y).attr('y2', y).attr('class', 'axis');
+		}
+
+		for (var i = yaxis; i > 0; i--) {
+			var val = i * m;
+			var y = ((lines.height / 100) * val) + config.pt;
 			T.value = ((maxY / 100) * (100 - val)) - minY;
 			axis.asvg('text').aclass('ylabel').attr('transform', 'translate({0},{1})'.format(config.offsetX, y - config.offsetY)).text(templateY(T));
 		}
@@ -12697,6 +12967,8 @@ COMPONENT('linechart', 'type:normal;pl:25;pr:0;pt:10;pb:25;prselected:0;limit:0;
 			for (var j = 0; j < len; j++)
 				fills.asvg('path').attr('d', fill[j].join(' ') + ' Z').aclass('line' + (j + 1) + 'fill').attr('opacity', config.fillopacity);
 		}
+
+		selected.text('');
 	};
 });
 
@@ -12891,6 +13163,7 @@ COMPONENT('approve', 'cancel:Cancel', function(self, config, cls) {
 		self.rclass('hidden');
 		events.bind();
 		self.aclass(cls + '-visible', 5);
+		document.activeElement && document.activeElement.blur();
 	};
 
 	self.hide = function(index) {
@@ -12909,16 +13182,17 @@ COMPONENT('approve', 'cancel:Cancel', function(self, config, cls) {
 	};
 });
 
-COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;limit:80;filterlabel:Filter;height:auto;margin:0;resize:true;reorder:true;sorting:true;boolean:true,on,yes;pluralizepages:# pages,# page,# pages,# pages;pluralizeitems:# items,# item,# items,# items;remember:true;highlight:false;unhighlight:true;autoselect:false;buttonapply:Apply;buttonreset:Reset;allowtitles:false;fullwidth_xs:true;clickid:id;dirplaceholder:Search', function(self, config) {
+COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;minheight:200;clusterize:true;limit:80;filterlabel:Filter;height:auto;margin:0;resize:true;reorder:true;sorting:true;boolean:true,on,yes;pluralizepages:# pages,# page,# pages,# pages;pluralizeitems:# items,# item,# items,# items;remember:true;highlight:false;unhighlight:true;autoselect:false;buttonapply:Apply;buttonreset:Reset;allowtitles:false;fullwidth_xs:true;clickid:id;dirplaceholder:Search;autoformat:1;controls:1', function(self, config) {
 
 	var opt = { filter: {}, filtercache: {}, filtercl: {}, filtervalues: {}, scroll: false, selected: {}, operation: '' };
 	var header, vbody, footer, container, ecolumns, isecolumns = false, ready = false;
-	var sheader, sbody;
+	var sheader, sbody, econtrols;
 	var Theadercol = Tangular.compile('<div class="dg-hcol dg-col-{{ index }}{{ if sorting }} dg-sorting{{ fi }}" data-index="{{ index }}">{{ if sorting }}<i class="dg-sort fa fa-sort"></i>{{ fi }}<div class="dg-label{{ alignheader }}"{{ if labeltitle }} title="{{ labeltitle }}"{{ fi }}{{ if reorder }} draggable="true"{{ fi }}>{{ label | raw }}</div>{{ if filter }}<div class="dg-filter{{ alignfilter }}{{ if filterval != null && filterval !== \'\' }} dg-filter-selected{{ fi }}"><i class="fa dg-filter-cancel fa-times"></i>{{ if options }}<label data-name="{{ name }}">{{ if filterval }}{{ filterval }}{{ else }}{{ filter }}{{ fi }}</label>{{ else }}<input autocomplete="new-password" type="text" placeholder="{{ filter }}" class="dg-filter-input" name="{{ name }}{{ ts }}" data-name="{{ name }}" value="{{ filterval }}" />{{ fi }}</div>{{ else }}<div class="dg-filter-empty">&nbsp;</div>{{ fi }}</div>');
 	var isIE = (/msie|trident/i).test(navigator.userAgent);
 	var isredraw = false;
 	var forcescroll = '';
 	var schemas = {};
+	var controls = { el: null, timeout: null, is: false, cache: {} };
 
 	self.meta = opt;
 
@@ -13039,7 +13313,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 				}
 
 				self.scroll && self.scroll();
-				config.change && SEEX(self.grid.makepath(config.change), null, null, self.grid);
+				config.change && self.grid.SEEX(config.change, null, null, self.grid);
 			}
 		};
 
@@ -13084,14 +13358,36 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 	self.init = function() {
 
-		$(W).on('resize', function() {
-			setTimeout2('datagridresize', function() {
-				SETTER('datagrid', 'resize');
-			}, 500);
+		ON('resize + resize2', function() {
+			setTimeout2('datagridresize', ASETTER('datagrid/resize'), 500);
 		});
+
+		Thelpers.ui_datagrid_autoformat = function(val, type) {
+
+			switch (type) {
+				case 'email':
+					return val && val.length > 2 ? '<a href="mailto:{0}" class="dg-link"><i class="far fa-envelope"></i>{0}</a>'.format(val) : val;
+				case 'phone':
+					return val && val.length > 2 ? '<a href="tel:{0}" class="dg-link"><i class="fas fa-phone"></i>{0}</a>'.format(val) : val;
+				case 'url':
+					return val && val.length > 7 && (/http(s):\/\//i).test(val) ? '<a href="{0}" target="_blank" class="dg-link"><i class="fas fa-globe"></i>{0}</a>'.format(val) : val;
+			}
+
+			return val;
+		};
 
 		Thelpers.ui_datagrid_checkbox = function(val) {
 			return '<div class="dg-checkbox' + (val ? ' dg-checked' : '') + '" data-custom="1"><i class="fa fa-check"></i></div>';
+		};
+
+		Thelpers.ui_datagrid_colorize = function(val, encode) {
+			var hash = HASH(val + '');
+			var color = '#';
+			for (var i = 0; i < 3; i++) {
+				var value = (hash >> (i * 8)) & 0xFF;
+				color += ('00' + value.toString(16)).substr(-2);
+			}
+			return '<span style="background:{0}" class="dg-colorize">{1}</span>'.format(color, encode ? Thelpers.encode(val) : val);
 		};
 	};
 
@@ -13139,7 +13435,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 						opt.filter = {};
 						opt.scroll = '';
 						opt.selected = {};
-						self.rebind(value);
+						self.rebind(value, true);
 						type && self.setter(null);
 					}
 				});
@@ -13171,11 +13467,11 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 	};
 
 	self.fn_in_changed = function(arr) {
-		config.changed && SEEX(self.makepath(config.changed), arr || self.changed(), self);
+		config.changed && self.SEEX(config.changed, arr || self.changed(), self);
 	};
 
 	self.fn_in_checked = function(arr) {
-		config.checked && SEEX(self.makepath(config.checked), arr || self.checked(), self);
+		config.checked && self.SEEX(config.checked, arr || self.checked(), self);
 	};
 
 	self.fn_refresh = function() {
@@ -13190,7 +13486,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 	self.make = function() {
 
 		self.IDCSS = GUID(5);
-		self.aclass('dg dg-noscroll dg-' + self.IDCSS);
+		self.aclass('dg dg-noscroll dg-' + self.IDCSS + (config.height === 'fluid' ? ' dg-fluid' : ''));
 
 		self.find('script').each(function() {
 			var el = $(this);
@@ -13201,28 +13497,107 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 			if (!schemas.default)
 				schemas.default = el.html();
+
+		});
+
+		controls.show = function(dom) {
+
+			if (controls.ishidding || !opt.controls || !config.controls)
+				return;
+
+			var el = $(dom);
+			var off = el.position();
+			var css = {};
+			var clshover = 'dg-row-hover';
+			var index = el.attrd('index');
+			controls.el && controls.el.rclass(clshover);
+			controls.el = $(dom).aclass(clshover);
+
+			var div = controls.cache[index];
+
+			if (div === null) {
+				controls.hide();
+				return;
+			}
+
+			if (!div) {
+				var html = opt.controls(opt.rows[+index]);
+				div = controls.cache[index] = html ? $('<div>' + html + '</div>')[0] : null;
+				controls.cache[index] = div;
+				if (div === null) {
+					controls.hide();
+					return;
+				}
+			}
+
+			while (true) {
+				var child = econtrols[0].firstChild;
+				if (child)
+					econtrols[0].removeChild(child);
+				else
+					break;
+			}
+
+			econtrols[0].appendChild(div);
+			css.top = Math.ceil(off.top - ((econtrols.height() / 2) - (config.rowheight / 2))) - 2;
+			econtrols.css(css).rclass('hidden').aclass('dg-controls-visible', 50).attrd('index', index);
+			controls.timeout = null;
+			controls.is = true;
+			controls.y = self.scrollbarY.scrollTop();
+		};
+
+		controls.hide = function(type) {
+			if (controls.is) {
+
+				// scrollbar
+				if (type === 1) {
+					var y = self.scrollbarY.scrollTop();
+					if (controls.y === y)
+						return;
+				} else if (type === 2) {
+					controls.ishidding = true;
+					setTimeout(function() {
+						controls.ishidding = false;
+					}, 1000);
+				}
+
+				controls.el.rclass('dg-row-hover');
+				controls.el = null;
+				controls.is = false;
+				econtrols.aclass('hidden').rclass('dg-controls-visible');
+			}
+		};
+
+		ON('scroll', function() {
+			controls.hide(1);
+		});
+
+		self.event('mouseenter', '.dg-row', function(e) {
+			controls.timeout && clearTimeout(controls.timeout);
+			controls.timeout = setTimeout(controls.show, controls.is ? 50 : 500, this, e);
 		});
 
 		var pagination = '';
-
 		if (config.exec)
 			pagination = '<div class="dg-footer hidden"><div class="dg-pagination-items hidden-xs"></div><div class="dg-pagination"><button name="page-first" disabled><i class="fa fa-angle-double-left"></i></button><button name="page-prev" disabled><i class="fa fa-angle-left"></i></button><div><input type="text" name="page" maxlength="5" class="dg-pagination-input" /></div><button name="page-next" disabled><i class="fa fa-angle-right"></i></button><button name="page-last" disabled><i class="fa fa-angle-double-right"></i></button></div><div class="dg-pagination-pages"></div></div>';
 
-		self.dom.innerHTML = '<div class="dg-btn-columns"><i class="fa fa-caret-left"></i><span class="fa fa-columns"></span></div><div class="dg-columns hidden"><div><div class="dg-columns-body"></div></div><button class="dg-columns-button" name="columns-apply"><i class="fa fa-check-circle"></i>{1}</button><span class="dt-columns-reset">{2}</span></div><div class="dg-container"><span class="dg-resize-line hidden"></span><div class="dg-header-scrollbar"><div class="dg-header"></div><div class="dg-body-scrollbar"><div class="dg-body"></div></div></div></div>{0}'.format(pagination, config.buttonapply, config.buttonreset);
+		self.dom.innerHTML = '<div class="dg-btn-columns"><i class="fa fa-caret-left"></i><span class="fa fa-columns"></span></div><div class="dg-columns hidden"><div><div class="dg-columns-body"></div></div><button class="dg-columns-button" name="columns-apply"><i class="fa fa-check-circle"></i>{1}</button><span class="dt-columns-reset">{2}</span></div><div class="dg-container"><div class="dg-controls"></div><span class="dg-resize-line hidden"></span><div class="dg-header-scrollbar"><div class="dg-header"></div><div class="dg-body-scrollbar"><div class="dg-body"></div></div></div></div>{0}'.format(pagination, config.buttonapply, config.buttonreset);
 
 		header = self.find('.dg-header');
 		vbody = self.find('.dg-body');
 		footer = self.find('.dg-footer');
 		container = self.find('.dg-container');
 		ecolumns = self.find('.dg-columns');
-
 		sheader = self.find('.dg-header-scrollbar');
 		sbody = self.find('.dg-body-scrollbar');
+		econtrols = self.find('.dg-controls');
 
-		self.scrollbarY = SCROLLBAR(sbody, { visibleY: true, orientation: 'y', controls: container, marginY: isMOBILE ? 0 : 54 });
+		container.on('mouseleave', function() {
+			controls.hide(2);
+		});
+
+		self.scrollbarY = config.height !== 'fluid' ? SCROLLBAR(sbody, { visibleY: true, orientation: 'y', controls: container, marginY: isMOBILE ? 0 : 54 }) : null;
 		self.scrollbarX = SCROLLBAR(sheader, { visibleX: true, orientation: 'x', controls: container });
-
-		// self.scrollbar.sync(sheader, 'x');
 
 		if (schemas.default) {
 			self.rebind(schemas.default);
@@ -13249,7 +13624,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		container.on('contextmenu', function(e) {
 			if (config.contextmenu) {
 				e.preventDefault();
-				EXEC(self.makepath(config.contextmenu), e, self);
+				self.EXEC(config.contextmenu, e, self);
 			}
 		});
 
@@ -13273,8 +13648,11 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		var r = { is: false };
 
 		self.event('click', '.dg-btn-columns', function(e) {
+
 			e.preventDefault();
 			e.stopPropagation();
+
+			controls.hide();
 
 			var cls = 'hidden';
 			if (isecolumns) {
@@ -13298,9 +13676,10 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			var el = $(this);
 			var index = +el.closest('.dg-hcol').attrd('index');
 			var col = opt.cols[index];
-			var opts = col.options instanceof Array ? col.options : GET(col.options);
+			var opts = col.options instanceof Array ? col.options : GET(self.makepath(col.options));
 			var dir = {};
 
+			controls.hide();
 			dir.element = el;
 			dir.items = opts;
 			dir.key = col.otext;
@@ -13316,6 +13695,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		});
 
 		self.event('dblclick', '.dg-col', function(e) {
+			controls.hide();
 			e.preventDefault();
 			e.stopPropagation();
 			self.editcolumn($(this));
@@ -13324,6 +13704,19 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		var dblclick = { ticks: 0, id: null, row: null };
 		r.line = container.find('.dg-resize-line');
 
+		var findclass = function(node) {
+			var count = 0;
+			while (true) {
+				for (var i = 1; i < arguments.length; i++) {
+					if (node.classList.contains(arguments[i]))
+						return true;
+				}
+				node = node.parentNode;
+				if ((count++) > 4)
+					break;
+			}
+		};
+
 		self.event('click', '.dg-row', function(e) {
 
 			var now = Date.now();
@@ -13331,17 +13724,17 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			var type = e.target.tagName;
 			var target = $(e.target);
 
-			if ((type === 'DIV' || type === 'SPAN') && !target.closest('.dg-checkbox').length) {
+			if ((type === 'DIV' || type === 'SPAN')) {
 
 				var cls = 'dg-selected';
 				var elrow = el.closest('.dg-row');
 				var index = +elrow.attrd('index');
 				var row = opt.rows[index];
-				if (row == null)
+				if (!row)
 					return;
 
-				if (config.dblclick && dblclick.ticks && dblclick.ticks > now && dblclick.row === row) {
-					config.dblclick && SEEX(self.makepath(config.dblclick), row, self, elrow, target);
+				if (config.dblclick && dblclick.ticks && dblclick.ticks > now && dblclick.row === row && !findclass(e.target, 'dg-checkbox', 'dg-editable')) {
+					config.dblclick && self.SEEX(config.dblclick, row, self, elrow, target);
 					if (config.highlight && self.selected !== row) {
 						opt.cluster.el.find('.' + cls).rclass(cls);
 						self.selected = row;
@@ -13361,13 +13754,29 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 					if (!config.unhighlight || self.selected !== row) {
 						self.selected = row;
 						elrow.aclass(cls);
-					} else
+						controls.show(el[0]);
+					} else {
 						rowarg = self.selected = null;
+						controls.is && controls.hide();
+					}
+				} else {
+					if (controls.is)
+						controls.hide();
+					else if (rowarg)
+						controls.show(el[0]);
 				}
 
-				config.click && SEEX(self.makepath(config.click), rowarg, self, elrow, target);
+				config.click && self.SEEX(config.click, rowarg, self, elrow, target);
 			}
 		});
+
+		self.reload = function() {
+			self.operation('refresh');
+		};
+
+		self.empty = function() {
+			self.set({ page: 1, pages: 0, count: 0, items: [], limit: 0 });
+		};
 
 		self.released = function(is) {
 			!is && setTimeout(self.resize, 500);
@@ -13375,6 +13784,9 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 		self.event('click', '.dg-filter-cancel,.dt-columns-reset', function() {
 			var el = $(this);
+
+			controls.hide();
+
 			if (el.hclass('dt-columns-reset'))
 				self.resetcolumns();
 			else {
@@ -13406,6 +13818,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		self.event('click', '.dg-label,.dg-sort', function() {
 
 			var el = $(this).closest('.dg-hcol');
+
+			controls.hide();
 
 			if (!el.find('.dg-sort').length)
 				return;
@@ -13448,11 +13862,13 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		});
 
 		self.event('mousedown', function(e) {
+
 			var el = $(e.target);
 
 			if (!el.hclass('dg-resize'))
 				return;
 
+			controls.hide();
 			events.bind();
 
 			var offset = self.element.offset().left;
@@ -13566,6 +13982,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			value.page = val;
 			forcescroll = opt.scroll = 'y';
 			self.operation('page');
+			controls.hide();
 		});
 
 		self.event('change', '.dg-filter-input', function() {
@@ -13582,7 +13999,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 			if (col.options) {
 				if (val)
-					val = (col.options instanceof Array ? col.options : GET(col.options))[+val][col.ovalue];
+					val = (col.options instanceof Array ? col.options : GET(self.makepath(col.options)))[+val][col.ovalue];
 				else
 					val = null;
 			}
@@ -13603,6 +14020,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			opt.operation = 'filter';
 			el.tclass('dg-filter-selected', is);
 			self.fn_refresh();
+			controls.hide();
 		});
 
 		self.select = function(row) {
@@ -13616,11 +14034,10 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 				index = opt.rows.indexOf(row);
 
 			var cls = 'dg-selected';
-
 			if (!row || index === -1) {
 				self.selected = null;
 				opt.cluster && opt.cluster.el.find('.' + cls).rclass(cls);
-				config.highlight && config.click && SEEX(self.makepath(config.click), null, self);
+				config.highlight && config.click && self.SEEX(config.click, null, self);
 				return;
 			}
 
@@ -13632,7 +14049,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 				elrow.aclass(cls);
 			}
 
-			config.click && SEEX(self.makepath(config.click), row, self, elrow, null);
+			config.click && self.SEEX(config.click, row, self, elrow, null);
+			controls.hide();
 		};
 
 		self.event('click', '.dg-checkbox', function() {
@@ -13699,8 +14117,9 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 					break;
 				default:
 					var el = $(this);
-					var row = opt.rows[+el.closest('.dg-row').attrd('index')];
-					config.button && SEEX(self.makepath(config.button), this.name, row, el, e);
+					var index = +el.closest('.dg-row,.dg-controls').attrd('index');
+					var row = opt.rows[index];
+					config.button && self.SEEX(config.button, this.name, row, el, e);
 					break;
 			}
 		});
@@ -13724,7 +14143,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			value.page = 1;
 
 		var keys = Object.keys(opt.filter);
-		SEEX(self.makepath(config.exec), type, keys.length ? opt.filter : null, opt.sort && opt.sort.sort ? [(opt.sort.name + '_' + (opt.sort.sort === 1 ? 'asc' : 'desc'))] : null, value.page, self);
+		self.SEEX(config.exec, type, keys.length ? opt.filter : null, opt.sort && opt.sort.sort ? [(opt.sort.name + '_' + (opt.sort.sort === 1 ? 'asc' : 'desc'))] : null, value.page, self);
 
 		switch (type) {
 			case 'sort':
@@ -13808,7 +14227,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		};
 
 		if (config.change)
-			EXEC(self.makepath(config.change), data, cb, self);
+			self.EXEC(config.change, data, cb, self);
 		else
 			self.datagrid_edit(data, cb);
 	};
@@ -13830,7 +14249,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			var key = keys[i];
 			var col = opt.cols.findItem('name', key);
 			if (col.options) {
-				var items = col.options instanceof Array ? col.options : GET(col.options);
+				var items = col.options instanceof Array ? col.options : GET(self.makepath(col.options));
 				if (items instanceof Array) {
 					var item = items.findItem(col.ovalue, obj[key]);
 					if (item) {
@@ -13852,7 +14271,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 	};
 
-	self.rebind = function(code) {
+	self.rebind = function(code, prerender) {
 
 		if (code.length < 30 && code.indexOf(' ') === -1) {
 			schemas.$current = code;
@@ -13881,6 +14300,13 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 			if (typeof(col) === 'string') {
 				opt.rowclasstemplate = Tangular.compile(col);
+				cols.splice(i, 1);
+				i--;
+				continue;
+			}
+
+			if (col.type === 'controls' || col.type === 'buttons') {
+				opt.controls = col.template ? Tangular.compile(col.template) : null;
 				cols.splice(i, 1);
 				i--;
 				continue;
@@ -13973,14 +14399,23 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 					cls += ' dg-required';
 			}
 
+			if (config.autoformat) {
+				switch (col.type) {
+					case 'number':
+						if (col.monospace == null)
+							col.monospace = true;
+						break;
+				}
+			}
+
 			var isbool = col.type && col.type.substring(0, 4) === 'bool';
 			var TC = Tangular.compile;
 
 			if (col.template) {
 				col.templatecustom = true;
-				col.template = TC((col.template.indexOf('<button') === -1 ? ('<div class="dg-value' + cls + '">{0}</div>') : '{0}').format(col.template));
+				col.template = TC((col.template.indexOf('<button') === -1 ? ('<div class="dg-value' + (col.monospace ? ' dg-monospace' : '') + cls + '">{0}</div>') : '{0}').format(col.template));
 			} else
-				col.template = TC(('<div class="' + (isbool ? 'dg-bool' : 'dg-value') + cls + '"' + (config.allowtitles ? ' title="{{ {0} }}"' : '') + '>{{ {0} }}</div>').format(col.name + (col.currency ? ' | currency(\'{0}\')'.format(col.currency) : col.format != null ? ' | format({0})'.format(col.format && typeof(col.format) === 'string' ? ('\'' + col.format + '\'') : col.format) : '') + (col.empty ? ' | def({0})'.format(col.empty === true || col.empty == '1' ? '' : ('\'' + col.empty + '\'')) : '') + (isbool ? ' | ui_datagrid_checkbox' : '')));
+				col.template = TC(('<div class="' + (isbool ? 'dg-bool' : ('dg-value' + (col.monospace ? ' dg-monospace' : ''))) + cls + '"' + (config.allowtitles ? ' title="{{ {0} }}"' : '') + '>{{ {0} }}</div>').format(col.name + (col.currency ? ' | currency(\'{0}\')'.format(col.currency) : col.format != null ? ' | format({0})'.format(col.format && typeof(col.format) === 'string' ? ('\'' + col.format + '\'') : col.format) : '') + (col.type && config.autoformat ? ' | ui_datagrid_autoformat(\'{0}\')'.format(col.type) : '') + (col.empty ? ' | def({0})'.format(col.empty === true || col.empty == '1' ? '' : ('\'' + col.empty + '\'')) : '') + (isbool ? ' | ui_datagrid_checkbox' : '') + (col.colorize ? (' | ui_datagrid_colorize(' + (col.currency || col.format ? 0 : 1) + ')') : '')));
 
 			if (col.header)
 				col.header = TC(col.header);
@@ -14007,6 +14442,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		cols.quicksort('index');
 		opt.cols = cols;
 		self.rebindcss();
+		prerender && self.rendercols();
+		controls.hide();
 
 		// self.scrollbar.scroll(0, 0);
 	};
@@ -14076,7 +14513,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		for (var i = 0; i < opt.cols.length; i++) {
 			var col = opt.cols[i];
 			if (!col.hidden) {
-				var filteritems = col.options ? col.options instanceof Array ? col.options : GET(col.options) : null;
+				var filteritems = col.options ? col.options instanceof Array ? col.options : GET(self.makepath(col.options)) : null;
 				var filtervalue = opt.filtervalues[col.id];
 				var obj = { index: i, ts: NOW.getTime(), label: col.header(col), filter: col.filter, reorder: config.reorder, sorting: col.sorting, name: col.name, alignfilter: col.alignfilter, alignheader: col.alignheader, filterval: filtervalue == null ? null : filteritems ? filteritems.findValue(col.ovalue, filtervalue, col.otext, '???') : filtervalue, labeltitle: col.title || col.text, options: filteritems };
 				opt.width += col.width;
@@ -14097,17 +14534,19 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 	self.redraw = function(update) {
 		var x = self.scrollbarX.scrollLeft();
-		var y = self.scrollbarY.scrollTop();
+		var y = self.scrollbarY ? self.scrollbarY.scrollTop() : 0;
 		isredraw = update ? 2 : 1;
 		self.refreshfilter();
 		isredraw = 0;
 		self.scrollbarX.scrollLeft(x);
-		self.scrollbarY.scrollTop(y);
+		self.scrollbarY && self.scrollbarY.scrollTop(y);
 	};
 
 	self.redrawrow = function(oldrow, newrow) {
 		var index = opt.rows.indexOf(oldrow);
 		if (index !== -1) {
+
+			controls.cache = {};
 
 			// Replaces old row with a new
 			if (newrow) {
@@ -14128,6 +14567,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 		var index = prepend ? 0 : (opt.rows.push(row) - 1);
 		var model = self.get();
+
+		controls.cache = {};
 
 		if (model == null) {
 			// bad
@@ -14207,6 +14648,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 	self.renderrows = function(rows, noscroll) {
 
 		opt.rows = rows;
+		controls.cache = {};
 
 		var output = [];
 		var plus = 0;
@@ -14217,10 +14659,23 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			plus = (val.page - 1) * val.limit;
 		}
 
-		for (var i = 0, length = rows.length; i < length; i++)
-			output.push(self.renderrow(i, rows[i], plus));
+		var is = false;
 
-		var min = (((opt.height - 120) / config.rowheight) >> 0) + 1;
+		for (var i = 0, length = rows.length; i < length; i++) {
+			var row = rows[i];
+			if (!is && self.selected) {
+				if (self.selected === row) {
+					is = true;
+				} else if (config.clickid && self.selected[config.clickid] === row[config.clickid]) {
+					self.selected = row;
+					is = true;
+				}
+			}
+
+			output.push(self.renderrow(i, rows[i], plus));
+		}
+
+		var min = ((((opt.height || config.minheight) - 120) / config.rowheight) >> 0) + 1;
 		var is = output.length < min;
 		if (is) {
 			for (var i = output.length; i < min + 1; i++)
@@ -14231,7 +14686,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 		if (noscroll) {
 			self.scrollbarX.scrollLeft(0);
-			self.scrollbarY.scrollTop(0);
+			self.scrollbarY && self.scrollbarY.scrollTop(0);
 		}
 
 		opt.render = output;
@@ -14305,6 +14760,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		opt.cluster && opt.cluster.update(opt.render, true);
 		self.scrolling();
 
+		controls.hide();
 		config.remember && self.save();
 	};
 
@@ -14349,31 +14805,57 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		var el;
 		var footerh = opt.footer = footer.length ? footer.height() : 0;
 
-		switch (config.height) {
-			case 'auto':
-				el = self.element;
-				opt.height = (WH - (el.offset().top + config.margin));
-				break;
-			case 'window':
-				opt.height = WH - config.margin;
-				break;
-			case 'parent':
-				el = self.element.parent();
-				opt.height = (el.height() - config.margin);
-				break;
-			default:
-				if (config.height > 0) {
-					opt.height = config.height;
-				} else {
-					el = self.element.closest(config.height);
-					opt.height = ((el.length ? el.height() : 200) - config.margin);
-				}
-				break;
+		if (typeof(config.height) === 'string' && config.height.substring(0, 6) === 'parent') {
+
+			el = self.element.parent();
+
+			var count = +config.height.substring(6);
+			if (count) {
+				for (var i = 0; i < count; i++)
+					el = el.parent();
+			}
+
+			opt.height = (el.height() - config.margin);
+
+		} else {
+			switch (config.height) {
+				case 'auto':
+					var wh = config.parent ? self.parent(config.parent).height() : WH;
+					el = self.element;
+					opt.height = (wh - (el.offset().top + config.margin));
+					break;
+				case 'window':
+					opt.height = WH - config.margin;
+					break;
+				case 'fluid':
+					opt.height = (opt.rows ? opt.rows.length : 0) * config.rowheight;
+					break;
+				default:
+
+					if (config.height > 0) {
+						opt.height = config.height;
+					} else {
+						el = self.element.closest(config.height);
+						opt.height = ((el.length ? el.height() : 200) - config.margin);
+					}
+					break;
+			}
 		}
 
 		var mr = (vbody.parent().css('margin-right') || '').parseInt();
 		var h = opt.height - footerh;
 		var sh = SCROLLBARWIDTH();
+		controls.hide();
+
+		if (config.height === 'fluid') {
+			var mh = config.minheight;
+			if (h < mh)
+				h = mh;
+		} else if (config.height === 'auto') {
+			var mh = config.minheight;
+			if (h < mh)
+				h = mh;
+		}
 
 		var ismobile = isMOBILE && isTOUCH;
 
@@ -14388,7 +14870,6 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		}
 
 		var tmpsh = h - (sh ? (sh + self.scrollbarX.thinknessX - 2) : (footerh - 2));
-
 		resizecache.tmpsh = h;
 		sbody.css('height', tmpsh + self.scrollbarX.marginY + (config.exec && self.scrollbarX.size.empty ? footerh : 0));
 
@@ -14441,8 +14922,9 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			opt.width2 = w;
 		}
 
+		opt.height = h + footerh;
 		self.scrollbarX.resize();
-		self.scrollbarY.resize();
+		self.scrollbarY && self.scrollbarY.resize();
 
 		ready = true;
 		// header.parent().css('width', self.scrollbar.area.width());
@@ -14490,7 +14972,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 
 			if (opt.scroll) {
 
-				if ((/y/).test(opt.scroll))
+				if (self.scrollbarY && (/y/).test(opt.scroll))
 					self.scrollbarY.scrollTop(0);
 
 				if ((/x/).test(opt.scroll)) {
@@ -14527,20 +15009,22 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			var sel = self.selected;
 			if (config.autoselect && output && output.length) {
 				setTimeout(function() {
-					self.select(sel ? output.findItem(config.clickid, sel.id) : output[0]);
+					var index = sel ? output.indexOf(sel) : 0;
+					if (index === -1)
+						index = 0;
+					self.select(output[index]);
 				}, 1);
-			} else if (opt.operation !== 'sort') {
-				self.select(sel ? output.findItem(config.clickid, sel.id) : null);
 			} else {
-				var tmp = sel ? output.findItem(config.clickid, sel.id) : null;
-				tmp && self.select(tmp);
+				var index = sel ? output.indexOf(sel) : -1;
+				self.select(index === -1 ? null : output[index]);
 			}
 		}
 	};
 
 	self.redrawsorting = function() {
-		self.find('.dg-sorting').each(function() {
-			var el = $(this);
+		var arr = self.find('.dg-sorting');
+		for(var i = 0; i < arr.length; i++) {
+			var el = $(arr[i]);
 			var col = opt.cols[+el.attrd('index')];
 			if (col) {
 				var fa = el.find('.dg-sort').rclass2('fa-');
@@ -14556,7 +15040,8 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 						break;
 				}
 			}
-		});
+		}
+		controls.hide();
 	};
 
 	self.resetcolumns = function() {
@@ -14570,6 +15055,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		self.cols(NOOP);
 		ecolumns.aclass('hidden');
 		isecolumns = false;
+		controls.hide();
 	};
 
 	self.resetfilter = function() {
@@ -14582,6 +15068,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			self.operation('refresh');
 		else
 			self.refresh();
+		controls.hide();
 	};
 
 	var pagecache = { pages: -1, count: -1 };
@@ -14592,6 +15079,16 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			return;
 
 		var value = self.get();
+
+		if (!value.page)
+			value.page = 1;
+
+		if (value.pages == null)
+			value.pages = 0;
+
+		if (value.count == null)
+			value.count = 0;
+
 		var is = false;
 
 		if (value.page === 1 || (value.pages != null && value.count != null)) {
@@ -14613,7 +15110,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 					dis = value.page === 1;
 					break;
 				case 'page-last':
-					dis = !value.page || value.page === pagecache.pages;
+					dis = !value.page || value.page >= pagecache.pages;
 					break;
 				case 'page-first':
 					dis = value.page === 1;
@@ -14642,15 +15139,20 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			return;
 		}
 
-		if (config.exec && value == null) {
+		controls.hide();
+
+		if (config.exec && (value == null || value.items == null)) {
 			self.operation('refresh');
-			return;
+			if (value && value.items == null)
+				value.items = [];
+			else
+				return;
 		}
 
 		if (value && value.schema && schemas.$current !== value.schema) {
 			schemas.$current = value.schema;
 			self.selected = null;
-			self.rebind(value.schema);
+			self.rebind(schemas[value.schema], true);
 			setTimeout(function() {
 				self.setter(value, path, type);
 			}, 100);
@@ -14919,7 +15421,7 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 		if (current && current.is) {
 			current.is = false;
 			force && current.el.replaceWith(current.backup);
-			current.input.off();
+			current.input && current.input.off();
 			$(W).off('keydown', current.fn).off('click', current.fn);
 		}
 	};
@@ -14952,6 +15454,10 @@ COMPONENT('datagrid', 'checkbox:true;colwidth:150;rowheight:28;clusterize:true;l
 			var opt = {};
 			opt.element = el;
 			opt.items = meta.col.options;
+
+			if (typeof(opt.items) === 'string')
+				opt.items = self.makepath(opt.items);
+
 			opt.key = meta.col.otext;
 			opt.placeholder = meta.col.dirsearch ? meta.col.dirsearch : '';
 			if (meta.col.dirsearch === false)
@@ -15723,20 +16229,27 @@ COMPONENT('miniform', 'zindex:12', function(self, config, cls) {
 			}, 200);
 		};
 
-		if (W.OP)
-			W.OP.on('resize', resize);
-		else
-			$(W).on('resize', resize);
+		ON('resize2', resize);
 
 		$(document).on('click', cls2 + '-container', function(e) {
+
+			if (e.target === this) {
+				var com = $(this).component();
+				if (com && com.config.closeoutside) {
+					com.set('');
+					return;
+				}
+			}
+
 			var el = $(e.target);
+
 			if (el.hclass(cls + '-container-cell')) {
 				var form = $(this).find(cls2);
 				var c = cls + '-animate-click';
-				form.aclass(c);
-				setTimeout(function() {
-					form.rclass(c);
-				}, 300);
+				form.aclass(c).rclass(c, 300);
+				var com = el.parent().component();
+				if (com && com.config.closeoutside)
+					com.set('');
 			}
 		});
 	}
@@ -15755,12 +16268,50 @@ COMPONENT('miniform', 'zindex:12', function(self, config, cls) {
 	};
 
 	self.hide = function() {
+		if (config.independent)
+			self.hideforce();
+		self.esc(false);
 		self.set('');
+	};
+
+	self.esc = function(bind) {
+		if (bind) {
+			if (!self.$esc) {
+				self.$esc = true;
+				$(W).on('keydown', self.esc_keydown);
+			}
+		} else {
+			if (self.$esc) {
+				self.$esc = false;
+				$(W).off('keydown', self.esc_keydown);
+			}
+		}
+	};
+
+	self.esc_keydown = function(e) {
+		if (e.which === 27 && !e.isPropagationStopped()) {
+			var val = self.get();
+			if (!val || config.if === val) {
+				e.preventDefault();
+				e.stopPropagation();
+				self.hide();
+			}
+		}
+	};
+
+	self.hideforce = function() {
+		if (!self.hclass('hidden')) {
+			self.aclass('hidden');
+			self.release(true);
+			self.find(cls2).rclass(cls + '-animate');
+			W.$$miniform_level--;
+		}
 	};
 
 	self.icon = function(value) {
 		var el = this.rclass2('fa');
 		value.icon && el.aclass(value.icon.indexOf(' ') === -1 ? ('fa fa-' + value.icon) : value.icon);
+		this.tclass('hidden', !value.icon);
 	};
 
 	self.resize = function() {
@@ -15850,10 +16401,8 @@ COMPONENT('miniform', 'zindex:12', function(self, config, cls) {
 		}, 10);
 
 		if (isHidden) {
-			self.aclass('hidden');
-			self.release(true);
-			self.find(cls2).rclass(cls + '-animate');
-			W.$$miniform_level--;
+			if (!config.independent)
+				self.hideforce();
 			return;
 		}
 
@@ -15893,6 +16442,8 @@ COMPONENT('miniform', 'zindex:12', function(self, config, cls) {
 		setTimeout2(self.ID, function() {
 			self.css('z-index', (W.$$miniform_level * config.zindex) + 1);
 		}, 500);
+
+		config.closeesc && self.esc(true);
 	};
 });
 
@@ -16096,10 +16647,7 @@ COMPONENT('floatinginput', 'minwidth:200', function(self, config, cls) {
 			is && self.hide(1);
 		};
 
-		self.on('reflow', fn);
-		self.on('scroll', fn);
-		self.on('resize', fn);
-		$(W).on('scroll', fn);
+		self.on('reflow + scroll + resize + resize2', fn);
 	};
 
 	self.show = function(opt) {
@@ -16203,8 +16751,10 @@ COMPONENT('floatinginput', 'minwidth:200', function(self, config, cls) {
 		self.css(options);
 
 		!isMOBILE && setTimeout(function() {
+			opt.select && input[0].select();
 			input.focus();
 		}, 200);
+
 
 		self.tclass(cls + '-monospace', !!opt.monospace);
 		self.rclass('hidden');
@@ -16214,7 +16764,284 @@ COMPONENT('floatinginput', 'minwidth:200', function(self, config, cls) {
 			is = true;
 			if (self.opt && self.target && self.target.offsetParent)
 				self.aclass(cls + '-visible');
-			else
+			elseCOMPONENT('fullform', 'zindex:12;padding:20;scrollbar:1;scrolltop:1;style:1', function(self, config, cls) {
+
+	var cls2 = '.' + cls;
+	var csspos = {};
+	var nav = false;
+	var init = false;
+
+	if (!W.$$fullform) {
+
+		W.$$fullform_level = W.$$fullform_level || 1;
+		W.$$fullform = true;
+
+		$(document).on('click', cls2 + '-button-close', function() {
+			SET($(this).attrd('path'), '');
+		});
+
+		var resize = function() {
+			setTimeout2(self.name, function() {
+				for (var i = 0; i < M.components.length; i++) {
+					var com = M.components[i];
+					if (com.name === 'fullform' && !HIDDEN(com.dom) && com.$ready && !com.$removed)
+						com.resize();
+				}
+			}, 200);
+		};
+
+		ON('resize2', resize);
+
+		$(document).on('click', cls2 + '-container', function(e) {
+
+			if (e.target === this) {
+				var com = $(this).component();
+				if (com && com.config.closeoutside) {
+					com.set('');
+					return;
+				}
+			}
+
+			var el = $(e.target);
+			if (el.hclass(cls + '-container') && !el.hclass(cls + '-style-2')) {
+				var form = el.find(cls2);
+				var c = cls + '-animate-click';
+				form.aclass(c);
+				setTimeout(function() {
+					form.rclass(c);
+				}, 300);
+			}
+		});
+	}
+
+	self.readonly();
+	self.submit = function() {
+		if (config.submit)
+			self.EXEC(config.submit, self.hide, self.element);
+		else
+			self.hide();
+	};
+
+	self.cancel = function() {
+		config.cancel && self.EXEC(config.cancel, self.hide);
+		self.hide();
+	};
+
+	self.hide = function() {
+		if (config.independent)
+			self.hideforce();
+		self.esc(false);
+		self.set('');
+	};
+
+	self.icon = function(value) {
+		var el = this.rclass2('fa');
+		value.icon && el.aclass(value.icon.indexOf(' ') === -1 ? ('fa fa-' + value.icon) : value.icon);
+	};
+
+	self.resize = function() {
+
+		if (self.hclass('hidden'))
+			return;
+
+		var padding = isMOBILE ? 0 : config.style === 1 ? config.padding : 0;
+		var ui = self.find(cls2);
+		var p = (config.style == 1 ? (padding * 2) : 0);
+
+		csspos.height = WH - (config.style == 1 ? (padding * 2) : padding);
+		csspos.top = padding;
+		ui.css(csspos);
+
+		var el = self.find(cls2 + '-title');
+		var th = el.height();
+
+		csspos = { height: csspos.height - th, width: WW - p };
+
+		if (nav)
+			csspos.height -= nav.height();
+
+		self.find(cls2 + '-body').css(csspos).parent().css({ width: WW - p });
+		self.scrollbar && self.scrollbar.resize();
+		self.element.SETTER('*', 'resize');
+	};
+
+	self.make = function() {
+
+		$(document.body).append('<div id="{0}" class="hidden {4}-container invisible"><div class="{4}"><div data-bind="@config__text span:value.title__change .{4}-icon:@icon" class="{4}-title"><button name="cancel" class="{4}-button-close{3}" data-path="{2}"><i class="fa fa-times"></i></button><i class="{4}-icon"></i><span></span></div><div class="{4}-body"></div></div>'.format(self.ID, config.width || 800, self.path, config.closebutton == false ? ' hidden' : '', cls));
+
+		var scr = self.find('> script');
+		self.template = scr.length ? scr.html().trim() : '';
+		scr.length && scr.remove();
+
+		var el = $('#' + self.ID);
+		var body = el.find(cls2 + '-body')[0];
+
+		while (self.dom.children.length) {
+			var child = self.dom.children[0];
+			if (child.tagName === 'NAV') {
+				nav = $(child);
+				body.parentNode.appendChild(child);
+			} else
+				body.appendChild(child);
+		}
+
+		self.rclass('hidden invisible');
+		self.replace(el, true);
+
+		if (config.scrollbar)
+			self.scrollbar = SCROLLBAR(self.find(cls2 + '-body'), { visibleY: config.visibleY, orientation: 'y' });
+
+		if (config.style === 2)
+			self.aclass(cls + '-style-2');
+
+		self.event('scroll', function() {
+			EMIT('scroll', self.name);
+			EMIT('reflow', self.name);
+		});
+
+		self.event('click', 'button[name]', function() {
+			var t = this;
+			switch (t.name) {
+				case 'submit':
+					self.submit(self.hide);
+					break;
+				case 'cancel':
+					!t.disabled && self[t.name](self.hide);
+					break;
+			}
+		});
+
+		config.enter && self.event('keydown', 'input', function(e) {
+			e.which === 13 && !self.find('button[name="submit"]')[0].disabled && setTimeout(self.submit, 800);
+		});
+	};
+
+	self.configure = function(key, value, init, prev) {
+		if (!init) {
+			switch (key) {
+				case 'width':
+					value !== prev && self.find(cls2).css('max-width', value + 'px');
+					break;
+				case 'closebutton':
+					self.find(cls2 + '-button-close').tclass('hidden', value !== true);
+					break;
+			}
+		}
+	};
+
+	self.esc = function(bind) {
+		if (bind) {
+			if (!self.$esc) {
+				self.$esc = true;
+				$(W).on('keydown', self.esc_keydown);
+			}
+		} else {
+			if (self.$esc) {
+				self.$esc = false;
+				$(W).off('keydown', self.esc_keydown);
+			}
+		}
+	};
+
+	self.esc_keydown = function(e) {
+		if (e.which === 27 && !e.isPropagationStopped()) {
+			var val = self.get();
+			if (!val || config.if === val) {
+				e.preventDefault();
+				e.stopPropagation();
+				self.hide();
+			}
+		}
+	};
+
+	self.hideforce = function() {
+		if (!self.hclass('hidden')) {
+			self.aclass('hidden');
+			self.release(true);
+			self.find(cls2).rclass(cls + '-animate');
+			W.$$fullform_level--;
+		}
+	};
+
+	var allowscrollbars = function() {
+		$('html').tclass(cls + '-noscroll', !!$(cls2 + '-container').not('.hidden').length);
+	};
+
+	self.setter = function(value) {
+
+		setTimeout2(self.name + '-noscroll', allowscrollbars, 50);
+
+		var isHidden = value !== config.if;
+
+		if (self.hclass('hidden') === isHidden) {
+			if (!isHidden) {
+				config.reload && self.EXEC(config.reload, self);
+				config.default && DEFAULT(self.makepath(config.default), true);
+				config.scrolltop && self.scrollbar && self.scrollbar.scrollTop(0);
+			}
+			return;
+		}
+
+		setTimeout2(cls, function() {
+			EMIT('reflow', self.name);
+		}, 10);
+
+		if (isHidden) {
+			if (!config.independent)
+				self.hideforce();
+			return;
+		}
+
+		if (self.template) {
+			var is = self.template.COMPILABLE();
+			self.find(cls2).append(self.template);
+			self.template = null;
+			is && COMPILE();
+		}
+
+		if (W.$$fullform_level < 1)
+			W.$$fullform_level = 1;
+
+		W.$$fullform_level++;
+
+		self.css('z-index', W.$$fullform_level * config.zindex);
+		self.rclass('hidden');
+
+		self.release(false);
+		config.scrolltop && self.scrollbar && self.scrollbar.scrollTop(0);
+
+		config.reload && self.EXEC(config.reload, self);
+		config.default && DEFAULT(self.makepath(config.default), true);
+
+		if (!isMOBILE && config.autofocus) {
+			setTimeout(function() {
+				self.find(typeof(config.autofocus) === 'string' ? config.autofocus : 'input[type="text"],select,textarea').eq(0).focus();
+			}, 1000);
+		}
+
+		self.resize();
+
+		setTimeout(function() {
+			self.rclass('invisible');
+			self.find(cls2).aclass(cls + '-animate');
+			if (!init && isMOBILE) {
+				$('body').aclass('hidden');
+				setTimeout(function() {
+					$('body').rclass('hidden');
+				}, 50);
+			}
+			init = true;
+		}, 300);
+
+		// Fixes a problem with freezing of scrolling in Chrome
+		setTimeout2(self.ID, function() {
+			self.css('z-index', (W.$$fullform_level * config.zindex) + 1);
+		}, 500);
+
+		config.closeesc && self.esc(true);
+	};
+});
+
 				self.hide(1);
 		}, 100);
 	};
@@ -16234,4 +17061,220 @@ COMPONENT('floatinginput', 'minwidth:200', function(self, config, cls) {
 			is = false;
 		}, sleep ? sleep : 100);
 	};
+});
+
+COMPONENT('detail', 'datetimeformat:yyyy-MM-dd HH:mm;dateformat:yyyy-MM-dd;timeformat:HH:mm;defaultgroup:Default', function(self, config, cls) {
+
+	var cls2 = '.' + cls;
+	var types = {};
+	var container;
+	var mapping;
+
+	self.make = function() {
+
+		self.aclass(cls + ' ' + cls + '-style-' + (config.style || 1) + (config.small ? (' ' + cls + '-small') : ''));
+
+		var scr = self.find('script');
+		if (scr.length) {
+			mapping = (new Function('return ' + scr.html().trim()))();
+			for (var i = 0; i < mapping.length; i++) {
+				var item = mapping[i];
+				if (item.show)
+					item.show = FN(item.show);
+			}
+		}
+
+		self.html('<div class="{0}-container"></div>'.format(cls));
+		container = self.find(cls2 + '-container');
+
+		var keys = Object.keys(types);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			types[key].init && types[key].init();
+		}
+	};
+
+	self.nocompile();
+	self.bindvisible();
+
+	self.mapvalue = function(item, raw) {
+		var val = item.path ? item.path.indexOf('.') === -1 ? item.value[item.path] : GET(item.path, item.value) : item.value;
+		return raw ? val : (val === false || val === true ? val : val == null || val === '' ? (item.empty || DEF.empty) : val);
+	};
+
+	self.register = function(name, init, render) {
+		types[name] = {};
+		types[name].init = init;
+		types[name].render = render;
+		init(self);
+	};
+
+	types.template = {};
+	types.template.init = NOOP;
+	types.template.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-template">{1}</div>'.format(cls, Tangular.render(item.template, { value: value, item: item.value })));
+	};
+
+	types.string = {};
+	types.string.init = NOOP;
+	types.string.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-string">{1}</div>'.format(cls, Thelpers.encode(value)));
+	};
+
+	types.password = {};
+	types.password.init = function() {
+		self.event('click', cls2 + '-password', function() {
+			var el = $(this);
+			var html = el.html();
+
+			if (html.substring(0, DEF.empty.length) === DEF.empty) {
+				// no value
+				return;
+			}
+
+			var tmp = el.attrd('value');
+			el.attrd('value', html);
+			el.html(tmp);
+		});
+	};
+	types.password.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-password" data-value="{1}">{2}</div>'.format(cls, Thelpers.encode(value), value ? '************' : DEF.empty));
+	};
+
+	types.number = {};
+	types.number.init = NOOP;
+	types.number.render = function(item, next) {
+		var value = self.mapvalue(item);
+		var format = item.format || config.numberformat;
+		value = format ? value.format(format) : value;
+		next('<div class="{0}-number">{1}</div>'.format(cls, Thelpers.encode(value + '')));
+	};
+
+	types.date = {};
+	types.date.init = NOOP;
+	types.date.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-date">{1}</div>'.format(cls, value ? value.format(item.format || config.dateformat) : ''));
+	};
+
+	types.bool = {};
+	types.bool.init = NOOP;
+	types.bool.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-bool{1}"><span><i class="fa fa-check"></i></span></div>'.format(cls, value ? ' checked' : ''));
+	};
+
+	types.list = {};
+	types.list.init = NOOP;
+	types.list.render = function(item, next) {
+		var value = self.mapvalue(item);
+		var template = '<div class="{0}-list"><span>{1}</span></div>';
+		if (item.detail) {
+			AJAX('GET ' + item.detail.format(encodeURIComponent(value)), function(response) {
+				next(template.format(cls, response[item.dirkey || 'name'] || item.placeholder || DEF.empty));
+			});
+		} else {
+			var arr = typeof(item.items) === 'string' ? GET(item.items) : item.items;
+			var m = (arr || EMPTYARRAY).findValue(item.dirvalue || 'id', value, item.dirkey || 'name', item.placeholder || DEF.empty);
+			next(template.format(cls, m));
+		}
+	};
+
+	types.color = {};
+	types.color.init = NOOP;
+	types.color.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-color"><span><b{1}>&nbsp;</b></span></div>'.format(cls, value ? (' style="background-color:' + value + '"') : ''));
+	};
+
+	types.fontawesome = {};
+	types.fontawesome.init = NOOP;
+	types.fontawesome.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-fontawesome"><i class="{1}"></i></div>'.format(cls, value || ''));
+	};
+
+	types.emoji = {};
+	types.emoji.init = NOOP;
+	types.emoji.render = function(item, next) {
+		var value = self.mapvalue(item);
+		next('<div class="{0}-emoji">{1}</div>'.format(cls, value || DEF.empty));
+	};
+
+	self.render = function(item, index) {
+		var type = types[item.type === 'boolean' ? 'bool' : item.type];
+		var c = cls;
+
+		var meta = { label: item.label || item.name };
+
+		if (item.icon) {
+			var tmp = item.icon;
+			if (tmp.indexOf(' ') === -1)
+				tmp = 'fa fa-' + tmp;
+			meta.icon = '<i class="{0}"></i>'.format(tmp);
+		} else
+			meta.icon = '';
+
+		var el = $('<div class="{2}-item{3}" data-index="{1}"><div class="{0}-key">{{ icon }}{{ label }}</div><div class="{0}-value">&nbsp;</div></div>'.format(cls, index, c, item.required ? (' ' + cls + '-required') : '').arg(meta));
+		type.render(item, function(html) {
+			if (item.note)
+				html += '<div class="{0}-note">{1}</div>'.format(cls, item.note);
+			el.find(cls2 + '-value').html(html);
+		});
+
+		return el;
+	};
+
+	self.setter = function(value) {
+
+		if (!value)
+			value = EMPTYARRAY;
+
+		var raw;
+
+		if (mapping && value && value !== EMPTYARRAY) {
+			raw = value;
+			for (var i = 0; i < mapping.length; i++) {
+				var m = mapping[i];
+				m.value = raw;
+			}
+			value = mapping;
+		}
+
+		container.empty();
+
+		var groups = {};
+
+		for (var i = 0; i < value.length; i++) {
+			var item = value[i];
+
+			if (raw && item.show && !item.show(raw))
+				continue;
+
+			if (config.notnull && self.mapvalue(item, true) == null)
+				continue;
+
+			var g = item.group || config.defaultgroup;
+			if (!groups[g])
+				groups[g] = { html: [] };
+			groups[g].html.push(self.render(item, i));
+		}
+
+		var keys = Object.keys(groups);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			var group = groups[key];
+			var hash = 'g' + HASH(key).toString(36);
+			var el = $(('<div class="{0}-group' + (key.length > 1 ? '' : ' {0}-group-nolabel') + '" data-id="{2}">' + (key.length > 1 ? '<label>{1}</label>' : '') + '<section></section></div>').format(cls, key, hash));
+			var section = el.find('section');
+			for (var j = 0; j < group.html.length; j++)
+				section.append(group.html[j]);
+			container.append(el);
+		}
+
+	};
+
 });

@@ -1,7 +1,6 @@
 NEWSCHEMA('UI/Sources', function(schema) {
 
 	schema.define('id', 'String(30)');
-	schema.define('appid', String, true);
 	schema.define('type', 'String(10)', true);
 	schema.define('name', 'String(50)', true);
 	schema.define('properties', Object);
@@ -38,10 +37,11 @@ NEWSCHEMA('UI/Sources', function(schema) {
 		else
 			model.properties = null;
 
+		model.appid = $.query.id;
+
 		var db = DBMS();
 		var builder = db.modify('tbl_app_source', model, true);
 		builder.id(model.id);
-		builder.where('appid', model.appid);
 		builder.where('isremoved=FALSE');
 		builder.callback($.done(model.id));
 
@@ -185,12 +185,9 @@ NEWSCHEMA('UI', function(schema) {
 			model.settings = null;
 
 		model.dtupdated = NOW;
-		model.appid = $.query.id;
 
 		if (!model.id)
 			model.id = UID();
-
-		var db = DBMS();
 
 		if (!model.sourceid)
 			model.sourceid = null;
@@ -198,6 +195,7 @@ NEWSCHEMA('UI', function(schema) {
 		if (model.type !== 'view')
 			model.isnavigation = false;
 
+		var db = DBMS();
 		db.modify('tbl_app_ui', model, true).id(model.id).where('appid', model.appid).where('isremoved=FALSE').callback($.done(model.id));
 
 		if ($.query.nobackup)
@@ -232,6 +230,9 @@ NEWSCHEMA('UI', function(schema) {
 
 	schema.addWorkflow('sort', function($) {
 
+		if ($.controller && FUNC.notadmin($))
+			return;
+
 		if (!$.query.id || !$.query.apps) {
 			$.success(false);
 			return;
@@ -244,6 +245,45 @@ NEWSCHEMA('UI', function(schema) {
 			db.modify('tbl_app_ui', { position: i }).id(arr[i]).where('appid', $.query.id).where('isremoved=FALSE');
 
 		db.callback($.done());
+	});
+
+});
+
+NEWSCHEMA('UI/Design', function(schema) {
+
+	schema.define('id', UID);
+	schema.define('sourceid', 'String(30)');
+	schema.define('name', 'String(50)', true);
+	schema.define('design', String);
+	schema.define('changelog', String);
+	schema.define('settings', Object)(null);
+	schema.define('onchange', String);
+	schema.define('onload', String);
+	schema.define('onsubmit', String);
+	schema.define('onvalidate', String);
+
+	schema.setSave(function($, model) {
+
+		if ($.controller && FUNC.notadmin($))
+			return;
+
+		var db = DBMS();
+
+		if (!model.sourceid)
+			model.sourceid = undefined;
+
+		db.modify('tbl_app_ui', model).id(model.id).where('isremoved=FALSE').callback($.done(model.id));
+
+		if ($.query.nobackup)
+			return;
+
+		// Creates a backup
+		var data = CLONE(model);
+		data.uid = data.id;
+		data.id = undefined;
+		data.userid = $.user.id;
+
+		db.insert('tbl_app_ui_bk', data);
 	});
 
 });

@@ -51,6 +51,7 @@ exports.install = function() {
 	ROUTE('+DELETE    /api/op/components/                 *UI/Components        --> @remove');
 	ROUTE('+GET       /api/op/ui/                         *UI                   --> @query');
 	ROUTE('+POST      /api/op/ui/                         *UI                   --> @save');
+	ROUTE('+POST      /api/op/ui/{id}/design/             *UI/Design            --> @save');
 	ROUTE('+GET       /api/op/ui/{id}/                    *UI                   --> @read');
 	ROUTE('+DELETE    /api/op/ui/{id}/                    *UI                   --> @remove');
 	ROUTE('+GET       /api/op/ui/sort/                    *UI                   --> @sort');

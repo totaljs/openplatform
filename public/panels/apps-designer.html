@@ -9,7 +9,7 @@
 		</div>
 		<div class="padding npt">
 
-			<div data---="empty__?.items__icon:far fa-plus-circle;parent:auto">
+			<div data---="empty__?.items__icon:fa fa-plus-circle;parent:auto">
 
 				<script type="text/html">@(You need to create a part)</script>
 
@@ -67,7 +67,7 @@
 
 <script>
 
-	var designformtypes = [{ id: 'view', name: 'View', icon: 'fas fa-columns' }, { id: 'largeform', name: 'Large form', icon: 'fab fa-wpforms' }, { id: 'form', name: 'Form', icon: 'far fa-window-maximize' }];
+	var designformtypes = [{ id: 'view', name: '@(View)', icon: 'far fa-columns' }, { id: 'fullform', name: '@(Full form)', icon: 'far fa-window-maximize' }, { id: 'largeform', name: '@(Large form)', icon: 'far fa-window-maximize' }, { id: 'form', name: '@(Form)', icon: 'far fa-window-maximize' }, { id: 'miniform', name: '@(Mini form)', icon: 'far fa-window-maximize' }];
 
 	Thelpers.designformtype = function(val) {
 		return designformtypes.findValue('id', val, 'name', DEF.empty);
@@ -79,15 +79,13 @@
 
 			var model = GET('?');
 			var id = model.appid;
-
 			com.reconfigure({ title: '@(UI): ' + Thelpers.encode(model.name) });
-
 			builder.url_sources = 'GET /api/op/sources/?id=' + id;
-			builder.url_sources_save = 'POST /api/op/sources/';
+			builder.url_sources_save = 'POST /api/op/sources/?id=' + id;
 			builder.url_sources_delete = 'DELETE /api/op/sources/{0}/?id=' + id;
 			builder.url_actions = 'GET /api/op/actions/?id=' + id;
 			builder.url_designs = 'GET /api/op/ui/{0}/?id=' + id;
-			builder.url_designs_save = 'POST /api/op/ui/?id=' + id;
+			builder.url_designs_save = 'POST /api/op/ui/{0}/design/'.format(id);
 			exports.refresh();
 		};
 

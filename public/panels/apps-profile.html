@@ -181,9 +181,10 @@
 				<div data---="checkbox__?.rebuildaccesstoken__checkicon:refresh">@(Re-build access token)</div>
 				<div data---="checkbox__?.rebuildservicetoken__checkicon:refresh">@(Re-build service token)</div>
 			</div>
-			<hr />
+			<hr data-bind="?.typeid__show:value!=='designer'" />
 
 			<div data-bind="?.typeid__show:value==='designer'" class="hidden m">
+				<br />
 				<div class="panel">
 					<label><i class="fas fa-lock mr5"></i>@(Permissions)</label>
 					<div class="padding">
@@ -193,7 +194,7 @@
 						<hr />
 						<div data---="radiobutton__?.allowreadprofile__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number"><span class="fas fa-user-circle mr5"></span><b>@(Can API read user profile?)</b></div>
 						<hr />
-						<div data---="radiobutton__?.allowreadusers__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number"><span class="fas fa-users mr5"></span><b>@(Can API read users?)</b></div>
+						<div data---="radiobutton__?.allowreadusers__inline:false;items:@(Disabled)|0,@(All users - basic data without contact details)|1,@(All users - all data)|2,@(Users which use this app - basic data without contact details)|3,@(Users which use this app - all data)|4;type:number"><span class="fas fa-users mr5"></span><b>@(Can API read users?)</b></div>
 					</div>
 				</div>
 			</div>
