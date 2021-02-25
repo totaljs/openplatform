@@ -927,8 +927,8 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.reference = meta.reference;
 
 			if (refreshmeta || app.autorefresh) {
-				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.applications, 0);
-				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.allowreadusers, 0);
+				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.apps, 0);
+				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.users, 0);
 				app.allowreadprofile = getCleanValue(meta.allowreadprofile, meta.userprofile, 0);
 				app.allownotifications = getCleanValue(meta.allownotifications, meta.notifications, false);
 				app.allowreadmeta = getCleanValue(meta.allowreadmeta, meta.metadata, false);
@@ -1048,6 +1048,7 @@ FUNC.repairgroupsroles = function(callback) {
 				DBMS().query('UPDATE tbl_user SET groupshash=\'{0}\' WHERE array_to_string("groups", \',\')=$1'.format(groupshash), [item.groups.join(',')]).callback(next);
 			else
 				next();
+
 		}, callback);
 	});
 };
@@ -1187,10 +1188,14 @@ FUNC.refreshgroupsroles = function(callback) {
 
 				// Repairs bad group hash
 				var hashes = Object.keys(groupshashes);
-				var db = DBMS();
 
-				hashes.length && db.update('tbl_user', { groupshash: '' }).notin('groupshash', hashes);
-				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash IS NULL OR tbl_user.groupshash=\'\') RETURNING userid');
+				if (hashes.length) {
+					var db = DBMS();
+					db.update('tbl_user', { groupshash: '' }).notin('groupshash', hashes);
+					db.callback(function() {
+						FUNC.repairgroupsroles();
+					});
+				}
 
 				// Releases all sessions
 				if (updatedusers.length) {
@@ -1561,7 +1566,7 @@ FUNC.log = function(type, rowid, message, $) {
 
 	if ($) {
 
-		if ($.model)
+		if ($.model && $.model !== EMPTYOBJECT)
 			obj.data = JSON.stringify(F.is4 ? $.model : $.clean(), stringifyprepare);
 
 		obj.ip = $.ip;

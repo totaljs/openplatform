@@ -98,6 +98,7 @@ CREATE TABLE "public"."tbl_user" (
 CREATE TABLE "public"."tbl_app" (
 	"id" varchar(25) NOT NULL,
 	"workshopid" varchar(25),
+	"typeid" varchar(10),
 	"url" varchar(500),
 	"accesstoken" varchar(50),
 	"name" varchar(30),

@@ -18,10 +18,10 @@
 					<div class="radioimage"><img src="/img/{{ type }}.png" alt="{{ name }}" />{{ name }}</div>
 				</script>
 			</div>
+			<hr />
 			@{fi}
 
 			@{if CONF.allowtheme}
-			<hr />
 			<div>@(Choose a theme color:)</div>
 			<div data---="colorselector__intro.colorscheme__null" style="margin-bottom:5px"></div>
 			@{fi}
@@ -98,7 +98,7 @@
 			<hr />
 			<div class="padding npt npb">
 				<div class="fs12 center">@(Here you can change your password.)</div>
-				<div class="center help" style="margin-top:3px"><i class="far fa-lightbulb"></i>@(Do not want to change the password?) <span class="link" name="next">@(Skip this step)</span></div>
+				<div class="center help" style="margin-top:3px"><i class="far fa-lightbulb"></i>@(Do you not want to change the password?) <span class="link" name="next">@(Skip this step)</span></div>
 			</div>
 			<hr />
 			<div class="col-sm-6">

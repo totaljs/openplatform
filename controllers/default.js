@@ -174,7 +174,7 @@ function oauthauthorize() {
 		if (err)
 			self.invalid(err);
 		else
-			self.redirect(url + '?code=' + self.sessionid.encryptUID(CONF.hashsalt));
+			self.redirect(url + '?code=' + (F.is4 ? self.sessionid.encrypt_uid(CONF.hashsalt) : self.sessionid.encryptUID(CONF.hashsalt)));
 	});
 }
 
@@ -188,7 +188,7 @@ function oauthsession() {
 	}
 
 	var filter = CONVERT(self.body, 'code:String,client_id:String,client_secret:String');
-	var code = filter.code.decryptUID(CONF.hashsalt);
+	var code = F.is4 ? filter.code.decrypt_uid(CONF.hashsalt) : filter.code.decryptUID(CONF.hashsalt);
 
 	if (!code) {
 		self.invalid('error-invalid-accesstoken');
@@ -204,7 +204,8 @@ function oauthsession() {
 
 		DBMS().one('tbl_oauth').fields('name').where('id', filter.client_id).where('accesstoken', filter.client_secret).callback(function(err, response) {
 			if (response) {
-				var accesstoken = F.encrypt({ code: filter.code, userid: profile.id, id: filter.client_id }, CONF.hashsalt);
+				var data = { code: filter.code, userid: profile.id, id: filter.client_id };
+				var accesstoken = F.is4 ? ENCRYPT(data, CONF.hashsalt) : F.encrypt(data, CONF.hashsalt);
 				self.json({ access_token: accesstoken, expire: session.expire });
 			} else
 				self.invalid('error-invalid-accesstoken');
@@ -234,7 +235,7 @@ function oauthprofile() {
 		return;
 	}
 
-	var data = F.decrypt(token, CONF.hashsalt);
+	var data = F.is4 ? DECRYPT(token, CONF.hashsalt) : F.decrypt(token, CONF.hashsalt);
 
 	if (!data) {
 		self.invalid('error-invalid-accesstoken');
