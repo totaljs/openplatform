@@ -133,7 +133,7 @@ db.task(function(responses, response) {
 	"dtcreated" timestamp DEFAULT now(),
 	"dtupdated" timestamp,
 	"isremoved" bool DEFAULT false,
-	CONSTRAINT "tbl_app_ui_sourceid_fkey" FOREIGN KEY ("sourceid") REFERENCES "public"."tbl_app_source"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_app_ui_sourceid_fkey" FOREIGN KEY ("sourceid") REFERENCES "public"."tbl_app_source"("id") ON DELETE CASCADE ON UPDATE SET NULL,
 	CONSTRAINT "tbl_app_ui_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY ("id")
 );`);
