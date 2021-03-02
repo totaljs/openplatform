@@ -927,8 +927,8 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.reference = meta.reference;
 
 			if (refreshmeta || app.autorefresh) {
-				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.apps, 0);
-				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.users, 0);
+				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.applications, 0);
+				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.allowreadusers, 0);
 				app.allowreadprofile = getCleanValue(meta.allowreadprofile, meta.userprofile, 0);
 				app.allownotifications = getCleanValue(meta.allownotifications, meta.notifications, false);
 				app.allowreadmeta = getCleanValue(meta.allowreadmeta, meta.metadata, false);
