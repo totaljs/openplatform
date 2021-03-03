@@ -849,7 +849,6 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	if (!fields || fields.volume)
 		obj.volume = user.volume;
 
-
 	var token;
 
 	if (!fields || fields.badge || (obj.notifications && fields.notify))

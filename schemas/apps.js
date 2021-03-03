@@ -320,7 +320,7 @@ NEWSCHEMA('Apps', function(schema) {
 			var arr = [];
 			for (var i = 0; i < MAIN.apps.length; i++) {
 				var item = MAIN.apps[i];
-				if (!item.workshopid) {
+				if (item.type !== 'designer') {
 					var app = FUNC.makeapp(item, obj.app.allowreadapps);
 					if (app)
 						arr.push(app);
