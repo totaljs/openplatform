@@ -340,7 +340,8 @@ input:invalid { box-shadow: none; }
 .badge-gray { background-color: #606060; }
 .badge-purple { background-color: #967ADC; }
 .badge-pink { background-color: #D770AD; }
-.badge-silver { background-color: #E0E0E0; color: gray; }
+.badge-silver { background-color: #E0E0E0; color: #888; }
+.ui-dark .badge-silver { background-color: #505050; color: #F0F0F0; }
 .badge-large { padding: 2px 6px; font-size: 14px; line-height: 16px; }
 .badge-large .fa { margin-right: 5px; }
 .badge-small { font-size: 10px; padding: 0px 3px 1px; }

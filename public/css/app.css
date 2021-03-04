@@ -119,8 +119,9 @@ hr { border-color: #E0E0E0; }
 .tabmenu2 li:hover { color: #252525; }
 .tabmenu2 li:first-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px }
 .tabmenu2 li:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
-.tabmenu2 .selected { color: white !important; }
+.tabmenu2 .selected { color: #FFF !important; }
 .tabmenu2 i { margin-right: 8px; }
+.ui-dark .tabmenu2 li { background-color: #505050; color: #E0E0E0; }
 
 .inactive { color: #A0A0A0; }
 
