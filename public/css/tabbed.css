@@ -47,7 +47,7 @@ header .datetime > span:hover { background-color: rgba(0,0,0,0.4); }
 .button-status i { transition: all 0.3s; }
 .button-status:hover { opacity: 0.9; }
 .button-status:hover i { transform: scale(1.2); }
-.button-status-warning:before { content: '\f071'; font-family: 'Font Awesome 5 Free'; font-weight: 400; color: #ff7a00; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 15px; z-index: 5; }
+.button-status-warning:before { content: '\f071'; font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Pro'; font-weight: 400; color: #ff7a00; text-align: center; width: 12px; height: 12px; line-height: 12px; border-radius: 100px; position: absolute; font-size: 9px; font-weight: bold; margin: 25px 0 0 15px; z-index: 5; }
 
 .button-window { float: right; width: 45px; height: 44px; line-height: 44px; font-size: 16px; cursor: pointer; text-align: center; border-left: 1px solid #C9C9C9; color: #505050; }
 .light .button-window { color: gray; }
