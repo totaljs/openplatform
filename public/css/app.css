@@ -119,8 +119,9 @@ hr { border-color: #E0E0E0; }
 .tabmenu2 li:hover { color: #252525; }
 .tabmenu2 li:first-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px }
 .tabmenu2 li:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
-.tabmenu2 .selected { color: white !important; }
+.tabmenu2 .selected { color: #FFF !important; }
 .tabmenu2 i { margin-right: 8px; }
+.ui-dark .tabmenu2 li { background-color: #505050; color: #E0E0E0; }
 
 .inactive { color: #A0A0A0; }
 
@@ -184,7 +185,7 @@ h3 .fa { margin-right: 5px; }
 .bg-yellow hr { border-color: #DCDCB7; }
 .bg-smoke { background-color: #F8F8F8; }
 .bg-yellow-fade { background: linear-gradient(#FFFFD5,white); }
-.ui-dark .bg-yellow-fade { background: linear-gradient(#2b2c31,#282828); }
+.ui-dark .bg-yellow-fade { background: linear-gradient(#272727,#292929); }
 
 .ui-dark .bg-smoke { background-color: #282828; }
 .ui-dark .bg-white { background-color: #303030; }
