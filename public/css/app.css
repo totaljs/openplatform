@@ -185,7 +185,7 @@ h3 .fa { margin-right: 5px; }
 .bg-yellow hr { border-color: #DCDCB7; }
 .bg-smoke { background-color: #F8F8F8; }
 .bg-yellow-fade { background: linear-gradient(#FFFFD5,white); }
-.ui-dark .bg-yellow-fade { background: linear-gradient(#2b2c31,#282828); }
+.ui-dark .bg-yellow-fade { background: linear-gradient(#272727,#292929); }
 
 .ui-dark .bg-smoke { background-color: #282828; }
 .ui-dark .bg-white { background-color: #303030; }

@@ -344,8 +344,8 @@ FUNC.meta = function(app, user, serverside) {
 	meta.name = CONF.name;
 	meta.version = MAIN.version;
 
-	meta.colorscheme = CONF.colorscheme;
-	meta.background = CONF.background;
+	// meta.colorscheme = CONF.colorscheme;
+	// meta.background = CONF.background;
 
 	if (app.serververify && !serverside) {
 		var tmp = FUNC.makeprofile(user, app.allowreadprofile, app);
@@ -520,7 +520,7 @@ function checkorigin(origins, ip) {
 FUNC.unauthorized = function(obj, $) {
 	var app = obj.app;
 	var user = obj.user;
-	if (app.origin) {
+	if (app.origin && app.origin.length) {
 		if (checkorigin(app.origin, $.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 			if (!ORIGINERRORS[$.ip]) {
 				FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
