@@ -119,7 +119,7 @@ exports.install = function() {
 	// External
 	ROUTE('GET      /verify/',                            json_verify);
 	ROUTE('GET      /api/verify/',                        json_verify);
-	ROUTE('POST     /api/services/',                      json_service, ['raw']);
+	ROUTE('POST     /api/services/',                      json_service, ['raw'], 1024);
 	ROUTE('GET      /api/online/{id}/',                   json_online);
 	ROUTE('GET      /api/users/                           *Users               --> @public');
 	ROUTE('GET      /api/apps/                            *Apps                --> @public');
