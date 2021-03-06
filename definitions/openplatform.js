@@ -669,7 +669,7 @@ FUNC.makeapp = function(app, type) {
 	obj.author = app.author;
 	obj.type = app.type;
 	obj.mobilemenu = app.mobilemenu;
-	obj.services = Object.keys(app.services);
+	obj.services = app.services ? Object.keys(app.services) : [];
 
 	switch (type) {
 		case 2:
@@ -855,7 +855,7 @@ FUNC.makeprofile = function(user, type, app, fields) {
 		token = FUNC.encodetoken(app, user);
 
 	if (!fields || fields.badge)
-		obj.badge = CONF.url + '/api/badges/?accesstoken=' + token;
+		obj.badge = CONF.url + '/api/badge/?accesstoken=' + token;
 
 	if (obj.notifications && (!fields || fields.notify))
 		obj.notify = CONF.url + '/api/notify/?accesstoken=' + token;

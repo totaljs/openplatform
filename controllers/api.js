@@ -124,6 +124,7 @@ exports.install = function() {
 	ROUTE('GET      /api/users/                           *Users               --> @public');
 	ROUTE('GET      /api/apps/                            *Apps                --> @public');
 	ROUTE('GET      /api/badges/                          *Apps/Badges         --> @exec');
+	ROUTE('GET      /api/badge/                           *Apps/Badges         --> @exec');
 	ROUTE('POST     /api/notify/                          *Apps/Notifications  --> @save');
 	ROUTE('GET      /api/meta/                            *Meta                --> @read');
 	ROUTE('GET      /api/unlock/                          *Account             --> @unlock');
