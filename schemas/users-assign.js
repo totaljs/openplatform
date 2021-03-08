@@ -19,14 +19,14 @@ NEWSCHEMA('Users/Assign', function(schema) {
 		if (model.add && model.add.length) {
 			for (var i = 0; i < model.add.length; i++) {
 				var pggroupid = PG_ESCAPE(model.add[i]);
-				applyfilter(db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_append(groups,{0})'.format(pggroupid)), model.filter).query('NOT ({0}=ANY(groups))'.format(pggroupid));
+				applyfilter(db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groupshash=\'\', groups=array_append(groups,{0})'.format(pggroupid)), model.filter).query('NOT ({0}=ANY(groups))'.format(pggroupid));
 			}
 		}
 
 		if (model.rem && model.rem.length) {
 			for (var i = 0; i < model.rem.length; i++) {
 				var pggroupid = PG_ESCAPE(model.rem[i]);
-				applyfilter(db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_remove(groups,{0})'.format(pggroupid)), model.filter).query('({0}=ANY(groups))'.format(pggroupid));
+				applyfilter(db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groupshash=\'\', groups=array_remove(groups,{0})'.format(pggroupid)), model.filter).query('({0}=ANY(groups))'.format(pggroupid));
 			}
 		}
 

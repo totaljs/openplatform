@@ -2,9 +2,9 @@
 	<div data-scope="appsprofilepanel">
 		<div class="padding npb" data-bind="?__hide:value.id&&value.typeid==='designer'__track:id,typeid">
 
+			<!--
 			<div data-bind="?.id__hide" class="hidden">
-				<!--<div data---="radiobuttonexpert__?.typeid__datasource:external|External|fas fa-laptop-code,designer|Designer|fas fa-brush__'external'">-->
-				<div data---="radiobuttonexpert__?.typeid__datasource:external|External|fas fa-laptop-code__'external'">
+				<div data---="radiobuttonexpert__?.typeid__datasource:external|External|fas fa-laptop-code,designer|Designer|fas fa-brush__'external'">
 					<script type="text/html">
 						<div class="iconbutton">
 							<i class="{{ icon }}"></i>
@@ -14,12 +14,17 @@
 				</div>
 				<div class="clearfix"></div>
 			</div>
+
 			<div data-bind="?.typeid__show:value==='external'">
 				<br data-bind="?.id__hide" />
 				<div data---="input__?.url__required:1;type:url;$delay:1000">@(URL address)</div>
 				<div class="help m"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
 			</div>
+			-->
+			<div data---="input__?.url__required:1;type:url;$delay:1000">@(URL address)</div>
+			<div class="help m"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
 		</div>
+
 		<div data-bind="?.meta.notallowed__show" class="hidden padding">
 			<div class="alert" style="border-color:red">
 				<div class="b"><i class="fa fa-ban mr5 red"></i>@(WARNING)</div>
