@@ -35,7 +35,6 @@ OP.jcomponent = function(notembedded) {
 	});
 
 	OP.onready = function(meta) {
-
 		if (meta.dateformat) {
 
 			DEF.dateformat = meta.dateformat;
@@ -294,6 +293,7 @@ OP.init = function(callback, notembedded) {
 				OP.ready = true;
 				return;
 			}
+
 			if (document.body)
 				document.body.innerHTML = '401: Unauthorized';
 			else
