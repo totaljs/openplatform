@@ -6615,11 +6615,12 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 	var cls2 = '.' + cls;
 	var container, timeout, icon, plus, skipreset = false, skipclear = false, ready = false, input = null, issearch = false;
-	var is = false, selectedindex = 0, resultscount = 0;
+	var is = false, selectedindex = 0, resultscount = 0, skiphide = false;
 	var templateE = '{{ name | encode | ui_directory_helper }}';
 	var templateR = '{{ name | raw }}';
-	var template = '<li data-index="{{ $.index }}" data-search="{{ name }}" {{ if selected }} class="current selected{{ if classname }} {{ classname }}{{ fi }}"{{ else if classname }} class="{{ classname }}"{{ fi }}>{0}</li>';
+	var template = '<li data-index="{{ $.index }}" data-search="{{ $.search }}" {{ if selected }} class="current selected{{ if classname }} {{ classname }}{{ fi }}"{{ else if classname }} class="{{ classname }}"{{ fi }}>{{ if $.checkbox }}<span class="' + cls + '-checkbox"><i class="fa fa-check"></i></span>{{ fi }}{0}</li>';
 	var templateraw = template.format(templateR);
+	var regstrip = /(&nbsp;|<([^>]+)>)/ig;
 	var parentclass;
 
 	template = template.format(templateE);
@@ -6691,17 +6692,42 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 		});
 
 		self.event('click', 'li', function(e) {
+
 			if (self.opt.callback) {
 				self.opt.scope && M.scope(self.opt.scope);
-				self.opt.callback(self.opt.items[+this.getAttribute('data-index')], self.opt.element);
+				var item = self.opt.items[+this.getAttribute('data-index')];
+				if (self.opt.checkbox) {
+					item.selected = !item.selected;
+					$(this).tclass('selected', item.selected);
+					var response = [];
+					for (var i = 0; i < self.opt.items.length; i++) {
+						var m = self.opt.items[i];
+						if (m.selected)
+							response.push(m);
+					}
+					self.opt.callback(response, self.opt.element);
+					skiphide = true;
+				} else
+					self.opt.callback(item, self.opt.element);
 			}
+
 			is = true;
-			self.hide(0);
-			e.preventDefault();
-			e.stopPropagation();
+
+			if (!self.opt.checkbox) {
+				self.hide(0);
+				e.preventDefault();
+				e.stopPropagation();
+			}
+
 		});
 
 		var e_click = function(e) {
+
+			if (skiphide) {
+				skiphide = false;
+				return;
+			}
+
 			var node = e.target;
 			var count = 0;
 
@@ -6770,10 +6796,11 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 					var sel = self.find('li.current');
 					if (self.opt.callback) {
 						self.opt.scope && M.scope(self.opt.scope);
-						if (sel.length)
-							self.opt.callback(self.opt.items[+sel.attrd('index')], self.opt.element);
-						else if (self.opt.custom)
+						var index = +sel.attrd('index');
+						if (self.opt.custom && (!sel.length || index === -1))
 							self.opt.callback(this.value, self.opt.element, true);
+						else
+							self.opt.callback(self.opt.items[index], self.opt.element);
 					}
 					self.hide();
 					break;
@@ -6809,9 +6836,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 			is && self.hide(1);
 		};
 
-		self.on('reflow', fn);
-		self.on('scroll', fn);
-		self.on('resize', fn);
+		self.on('reflow + scroll + resize + resize2', fn);
 		$(W).on('scroll', fn);
 	};
 
@@ -6819,14 +6844,12 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		var counter = 0;
 		var scroller = container.parent();
-		var h = scroller.height();
 		var li = container.find('li');
-		var hli = (li.eq(0).innerHeight() || 30) + 1;
+		var hli = 0;
 		var was = false;
 		var last = -1;
 		var lastselected = 0;
-		var plus = (hli * 2);
-		var sh = (li.length * hli);
+		var plus = 0;
 
 		for (var i = 0; i < li.length; i++) {
 
@@ -6841,9 +6864,10 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 			el.tclass('current', is);
 
 			if (is) {
+				hli = (el.innerHeight() || 30) + 1;
+				plus = (hli * 2);
 				was = true;
 				var t = (hli * (counter || 1));
-				// var p = (t / sh) * 100;
 				scroller[0].scrollTop = t - plus;
 			}
 
@@ -6897,20 +6921,25 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 						var builder = [];
 						var indexer = {};
 						var item;
+						var key = (self.opt.search == true ? self.opt.key : (self.opt.search || self.opt.key)) || 'name';
 
 						for (var i = 0; i < items.length; i++) {
 							item = items[i];
 							if (self.opt.exclude && self.opt.exclude(item))
 								continue;
 							indexer.index = i;
+							indexer.search = item[key] ? item[key].replace(regstrip, '') : '';
+							indexer.checkbox = self.opt.checkbox === true;
 							resultscount++;
 							builder.push(self.opt.ta(item, indexer));
 						}
 
 						if (self.opt.empty) {
 							item = {};
-							item[self.opt.key || 'name'] = self.opt.empty;
-							item.template = '<b>{0}</b>'.format(self.opt.empty);
+							var tmp = self.opt.raw ? '<b>{0}</b>'.format(self.opt.empty) : self.opt.empty;
+							item[self.opt.key || 'name'] = tmp;
+							if (!self.opt.raw)
+								item.template = '<b>{0}</b>'.format(self.opt.empty);
 							indexer.index = -1;
 							builder.unshift(self.opt.ta(item, indexer));
 						}
@@ -6924,13 +6953,22 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 				}, 300, null, val);
 			}
 		} else if (value) {
-			value = value.toSearch();
+			value = value.toSearch().split(' ');
 			var arr = container.find('li');
 			for (var i = 0; i < arr.length; i++) {
 				var el = $(arr[i]);
 				var val = el.attrd('search').toSearch();
-				var is = val.indexOf(value) === -1;
+				var is = false;
+
+				for (var j = 0; j < value.length; j++) {
+					if (val.indexOf(value[j]) === -1) {
+						is = true;
+						break;
+					}
+				}
+
 				el.tclass('hidden', is);
+
 				if (!is)
 					resultscount++;
 			}
@@ -6999,7 +7037,7 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 		var item;
 
 		if (type === 'string') {
-			items = GET(items);
+			items = opt.items = GET(items);
 			type = typeof(items);
 		}
 
@@ -7029,7 +7067,9 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		if (!opt.ajax) {
 			var indexer = {};
+			var key = (opt.search == true ? opt.key : (opt.search || opt.key)) || 'name';
 			for (var i = 0; i < items.length; i++) {
+
 				item = items[i];
 
 				if (typeof(item) === 'string')
@@ -7045,14 +7085,18 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 				} else
 					item.selected = false;
 
+				indexer.checkbox = opt.checkbox === true;
 				indexer.index = i;
+				indexer.search = item[key] ? item[key].replace(regstrip, '') : '';
 				builder.push(opt.ta(item, indexer));
 			}
 
 			if (opt.empty) {
 				item = {};
-				item[opt.key || 'name'] = opt.empty;
-				item.template = '<b>{0}</b>'.format(opt.empty);
+				var tmp = opt.raw ? '<b>{0}</b>'.format(opt.empty) : opt.empty;
+				item[opt.key || 'name'] = tmp;
+				if (!opt.raw)
+					item.template = '<b>{0}</b>'.format(opt.empty);
 				indexer.index = -1;
 				builder.unshift(opt.ta(item, indexer));
 			}
@@ -7081,10 +7125,10 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		switch (opt.align) {
 			case 'center':
-				options.left = Math.ceil((offset.left - width / 2) + (width / 2));
+				options.left = Math.ceil((offset.left - width / 2) + (opt.element.innerWidth() / 2));
 				break;
 			case 'right':
-				options.left = (offset.left - width) + w;
+				options.left = (offset.left - width) + opt.element.innerWidth();
 				break;
 			default:
 				options.left = offset.left;
@@ -7099,6 +7143,19 @@ COMPONENT('directory', 'minwidth:200', function(self, config, cls) {
 
 		if (opt.offsetY)
 			options.top += opt.offsetY;
+
+		var mw = width;
+		var mh = self.height();
+
+		if (options.left < 0)
+			options.left = 10;
+		else if ((mw + options.left) > WW)
+			options.left = (WW - mw) - 10;
+
+		if (options.top < 0)
+			options.top = 10;
+		else if ((mh + options.top) > WH)
+			options.top = (WH - mh) - 10;
 
 		self.css(options);
 
