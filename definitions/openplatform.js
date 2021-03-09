@@ -1562,7 +1562,6 @@ FUNC.log = function(type, rowid, message, $) {
 	obj.message = (message || '').max(200);
 	obj.dtcreated = NOW;
 
-
 	if ($) {
 
 		if ($.model && $.model !== EMPTYOBJECT)

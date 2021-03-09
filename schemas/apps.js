@@ -1,8 +1,7 @@
-const DB_VERSION = {};
 const DB_BADGES_RESET = { countbadges: 0 };
 const DB_BADGESNOTIFICATIONS_RESET = { countbadges: 0, countnotifications: 0 };
-const DB_OPEN = { '+countopen': 1 };
 const DB_NOTIFY_RESET = { countnotifications: 0, dtnotified: null };
+var USAGE_STATS = [];
 
 NEWSCHEMA('Apps', function(schema) {
 
@@ -342,12 +341,6 @@ NEWSCHEMA('Apps', function(schema) {
 			$.invalid('error-apps-404');
 	});
 
-	var usage_insert = function(doc, params) {
-		doc.id = params.id;
-		doc.appid = params.appid;
-		doc.date = NOW;
-	};
-
 	schema.addWorkflow('run', function($) {
 
 		var user = $.user;
@@ -376,7 +369,7 @@ NEWSCHEMA('Apps', function(schema) {
 		}
 
 		data = user.guest ? FUNC.metaguest() : FUNC.meta(app, user);
-		// FUNC.logger('logs', 'run: ' + app.id + ' (' + app.name + ')', '@' + (user.guest ? 'GUEST' : user.name), $.ip);
+		FUNC.log('apps/run', app.id, app.name, $);
 
 		if (data) {
 
@@ -413,25 +406,43 @@ NEWSCHEMA('Apps', function(schema) {
 				data.version = user.apps[$.id].version || '';
 
 				var db = DBMS();
+				var tmp;
 
 				if (data.newversion) {
-					DB_VERSION.version = app.version;
+					tmp = {};
+					tmp.version = app.version;
 					user.apps[$.id].version = app.version;
-					db.mod('tbl_user_app', DB_VERSION).where('id', user.id + $.id);
+					db.mod('tbl_user_app', tmp).where('id', user.id + $.id);
 				}
 
-				DB_OPEN.dtopen = NOW;
-				db.mod('tbl_user_app', DB_OPEN).where('id', user.id + $.id);
+				tmp = {};
+				tmp['+countopen'] = 1;
+				tmp.dtopen = NOW;
+				db.mod('tbl_user_app', tmp).where('id', user.id + $.id);
 
-				var usage = {};
 				var usageid = NOW.format('yyyyMMdd') + $.id;
+				var usage = USAGE_STATS.findItem('id', usageid);
+				var key;
 
-				usage['+count'] = 1;
-				usage['+' + (user.mobile ? 'mobile' : 'desktop')] = 1;
-				usage['+' + (user.desktop === 1 ? 'windowed' : user.desktop === 2 ? 'tabbed' : 'desktop')] = 1;
-				usage['+' + (user.darkmode === 1 ? 'darkmode' : 'lightmode')] = 1;
-				usage.dtupdated = NOW;
-				db.mod('tbl_usage_app', usage, true).where('id', usageid).insert(usage_insert, { id: usageid, appid: $.id });
+				if (!usage) {
+					usage = {};
+					USAGE_STATS.push(usage);
+				}
+
+				usage.id = usageid;
+				usage.appid = $.id;
+
+				key = '+count';
+				usage[key] = (usage[key] || 0) + 1;
+
+				key = '+' + (user.mobile ? 'mobile' : 'desktop');
+				usage[key] = (usage[key] || 0) + 1;
+
+				key = '+' + (user.desktop === 1 ? 'windowed' : user.desktop === 2 ? 'tabbed' : 'desktop');
+				usage[key] = (usage[key] || 0) + 1;
+
+				key = '+' + (user.darkmode === 1 ? 'darkmode' : 'lightmode');
+				usage[key] = (usage[key] || 0) + 1;
 
 				MAIN.session.set2(user.id, user);
 			}
@@ -489,4 +500,32 @@ NEWSCHEMA('Apps/Position', function(schema) {
 		}
 		db.callback($.done());
 	});
+});
+
+
+var usage_insert = function(doc, params) {
+	doc.id = params.id;
+	doc.appid = params.appid;
+	doc.date = NOW;
+};
+
+ON('service', function() {
+
+	if (!USAGE_STATS.length)
+		return;
+
+	var stats = USAGE_STATS.splice(0, 100);
+	var db = DBMS();
+
+	db.debug();
+
+	for (var i = 0; i < stats.length; i++) {
+		var usage = stats[i];
+		var id = usage.id;
+		var appid = usage.appid;
+		usage.id = undefined;
+		usage.appid = undefined;
+		db.mod('tbl_usage_app', usage, true).where('id', id).insert(usage_insert, { id: id, appid: appid });
+	}
+
 });
