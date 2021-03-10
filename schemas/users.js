@@ -175,7 +175,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.deputy && builder.gridfilter('deputy', opt, String);
 		opt.desktop && builder.gridfilter('desktop', opt, Number);
 		opt.inactive && builder.query('inactive=' + (BOOL[opt.inactive] || 'false'));
-		opt.active && builder.query('inactive={0} AND blocked={0}'.format(BOOL[opt.active] || 'false'));
+		opt.active && builder.query('inactive={0} AND blocked={0}'.format(BOOL[opt.active] || 'false') === 'true' ? 'false' : 'true');
 		opt.blocked && builder.query('blocked=' + (BOOL[opt.blocked] || 'false'));
 		opt.darkmode && builder.query('darkmode=' + (BOOL[opt.darkmode] || 'false'));
 		opt.sa && builder.query('sa=' + (BOOL[opt.sa] || 'false'));
