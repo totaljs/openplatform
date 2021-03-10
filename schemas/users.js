@@ -167,7 +167,6 @@ NEWSCHEMA('Users', function(schema) {
 		opt.groupid && builder.gridfilter('groupid', opt, String);
 		opt.company && builder.gridfilter('company', opt, String);
 		opt.gender && builder.where('gender', opt.gender);
-		opt.language && builder.gridfilter('language', opt, String);
 		opt.reference && builder.gridfilter('reference', opt, String);
 		opt.position && builder.gridfilter('position', opt, String);
 		opt.photo && builder.query(opt.photo === 'true' ? 'LENGTH(photo)>0' : '(LENGTH(photo)=0 OR photo IS NULL)');
@@ -176,7 +175,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.deputy && builder.gridfilter('deputy', opt, String);
 		opt.desktop && builder.gridfilter('desktop', opt, Number);
 		opt.inactive && builder.query('inactive=' + (BOOL[opt.inactive] || 'false'));
-		opt.active && builder.query('inactive={0} AND blocked={0}'.format(BOOL[opt.active] || 'false'));
+		opt.active && builder.query('inactive={0} AND blocked={0}'.format(BOOL[opt.active] || 'false') === 'true' ? 'false' : 'true');
 		opt.blocked && builder.query('blocked=' + (BOOL[opt.blocked] || 'false'));
 		opt.darkmode && builder.query('darkmode=' + (BOOL[opt.darkmode] || 'false'));
 		opt.sa && builder.query('sa=' + (BOOL[opt.sa] || 'false'));
