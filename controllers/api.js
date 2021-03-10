@@ -46,6 +46,7 @@ exports.install = function() {
 	ROUTE('+DELETE    /api/op/apps/{id}/                  *Apps                 --> @remove');
 
 	// UI
+	/*
 	ROUTE('+GET       /api/op/components/                 *UI/Components        --> @query');
 	ROUTE('+POST      /api/op/components/                 *UI/Components        --> @save');
 	ROUTE('+DELETE    /api/op/components/                 *UI/Components        --> @remove');
@@ -58,7 +59,7 @@ exports.install = function() {
 	ROUTE('+GET       /api/op/sources/                    *UI/Sources           --> @query');
 	ROUTE('+POST      /api/op/sources/                    *UI/Sources           --> @save');
 	ROUTE('+DELETE    /api/op/sources/{id}/               *UI/Sources           --> @remove');
-	ROUTE('GET        /api/op/actions/                    *UI/Actions           --> @query');
+	ROUTE('GET        /api/op/actions/                    *UI/Actions           --> @query');*/
 
 	// OAuth
 	ROUTE('+GET       /api/op/oauth/                      *OAuth                --> @query');

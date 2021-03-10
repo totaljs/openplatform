@@ -6,7 +6,8 @@ var USAGE_STATS = [];
 NEWSCHEMA('Apps', function(schema) {
 
 	schema.define('previd', 'UID')(null); // internal for re-importing of apps
-	schema.define('typeid', ['external', 'designer'])('external');
+	// schema.define('typeid', ['external', 'designer'])('external');
+	schema.define('typeid', ['external'])('external');
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(40)', true);
 	schema.define('titles', Object); // localized title

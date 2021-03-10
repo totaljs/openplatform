@@ -1,3 +1,5 @@
+// Unused, not stable, not completed
+
 NEWSCHEMA('UI/Sources', function(schema) {
 
 	schema.define('id', 'String(30)');

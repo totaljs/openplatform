@@ -378,6 +378,7 @@ CREATE TABLE "public"."tbl_usage_oauth" (
 	PRIMARY KEY ("id")
 );
 
+/*
 CREATE TABLE "public"."tbl_app_source" (
 	"id" varchar(25) NOT NULL,
 	"appid" varchar(25),
@@ -465,7 +466,7 @@ CREATE TABLE "public"."cl_component" (
 	"id" varchar(100) NOT NULL,
 	"dtcreated" timestamp DEFAULT now(),
 	PRIMARY KEY ("id")
-);
+);*/
 
 -- ==============================
 -- VIEWS
@@ -584,9 +585,11 @@ COMMENT ON COLUMN "public"."tbl_app"."frame" IS 'Frame URL address';
 -- DATA
 -- ==============================
 
+/*
 -- INSERT UI Components
 INSERT INTO "public"."cl_component" ("id") VALUES
 ('https://cdn.componentator.com/designer/components.json');
+*/
 
 -- INSERT DEFAULT CONFIGURATION
 INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VALUES
