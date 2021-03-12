@@ -12,6 +12,7 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('title', 'String(40)', true);
 	schema.define('titles', Object); // localized title
 	schema.define('sn', 'String(50)');
+	schema.define('origintoken', 'String(50)');
 	schema.define('permissions', Boolean);
 	schema.define('autorefresh', Boolean);
 	schema.define('blocked', Boolean);
@@ -123,6 +124,7 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.position = item.position;
 			obj.color = item.color;
 			obj.icon = item.icon;
+			obj.origintoken = item.origintoken;
 			obj.allowguestuser = item.allowguestuser;
 			obj.allownotifications = item.allownotifications;
 			obj.allowreadmeta = item.allowreadmeta;
@@ -140,6 +142,7 @@ NEWSCHEMA('Apps', function(schema) {
 				$.extend && $.extend(obj);
 				$.callback(obj);
 			});
+
 		} else
 			$.invalid('error-apps-404');
 	});
@@ -517,8 +520,6 @@ ON('service', function() {
 
 	var stats = USAGE_STATS.splice(0, 100);
 	var db = DBMS();
-
-	db.debug();
 
 	for (var i = 0; i < stats.length; i++) {
 		var usage = stats[i];

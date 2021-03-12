@@ -22,15 +22,17 @@
 			</div>
 			-->
 			<div data---="input__?.url__required:1;type:url;$delay:1000">@(URL address)</div>
-			<div class="help m"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
+			<div class="help"><i class="fa fa-question-circle"></i>@(URL address to application's meta file)</div>
 		</div>
 
 		<div data-bind="?.meta.notallowed__show" class="hidden padding">
 			<div class="alert" style="border-color:red">
 				<div class="b"><i class="fa fa-ban mr5 red"></i>@(WARNING)</div>
-				<div class="mt5">@(You can't provide this application in your OpenPlatform because <b>the domain name is not defined in allowed domains</b>.)</div>
+				<div class="mt5">@(You can't provide this application in your OpenPlatform because <b>the domain name is not defined in the allowed domains</b>.)</div>
 			</div>
 		</div>
+
+		<br data-bind="?.meta__show" />
 
 		<div class="bg-smoke padding" data-bind="?__template__track:meta__show:value && value.meta">
 			<script type="text/html">
@@ -87,7 +89,7 @@
 				<table class="table table-small nmb table-bordered">
 					<thead>
 						<tr>
-							<th>@(Permissions)</th>
+							<th>@(The application wants these permissions)</th>
 							<th style="width:30px" class="center" title="@(Requirements)">@(R)</th>
 							<th style="width:30px" class="center" title="@(Used requirements)">@(C)</th>
 						</tr>
@@ -175,42 +177,37 @@
 
 			<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX;camouflage:•__''">@(Serial number)</div>
 			<div class="help m"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
+
+			<div class="padding bg-smoke m radius">
+				<div data---="input__?.origintoken__maxlength:50;camouflage:•__''">@(Origin token)</div>
+				<div class="help">@(An origin token is a simple security element if you don't want to check the origin of 3rd party application. The application must send the <code>X-Origin</code> header with this token.) <span class="link exec" data-exec="?/origintoken"><i class="fa fa-retweet"></i>@(Generate token)</span></div>
+			</div>
+
 			<div class="row">
 				<div class="col-md-3">
 					<div data---="input__?.position__maxlength:3;minvalue:0;type:number">@(Position index)</div>
 				</div>
 			</div>
-			<div class="help">@(Lower index means higher position in the list of applications).</div>
-			<hr />
-			<div data---="checkbox__?.blocked__checkicon:lock__false">@(Application is blocked)</div>
-			<div data-bind="?.id__show" class="hidden">
-				<div data---="checkbox__?.rebuildaccesstoken__checkicon:refresh">@(Re-build access token)</div>
-				<div data---="checkbox__?.rebuildservicetoken__checkicon:refresh">@(Re-build service token)</div>
-			</div>
-			<hr data-bind="?.typeid__show:value!=='designer'" />
-
-			<div data-bind="?.typeid__show:value==='designer'" class="hidden m">
-				<br />
-				<div class="panel">
-					<label><i class="fas fa-lock mr5"></i>@(Permissions)</label>
-					<div class="padding">
-						<div data---="checkbox__?.allowreadmeta">@(Can read meta information)</div>
-						<div data---="checkbox__?.allownotifications">@(Allow notifications)</div>
-						<div data---="checkbox__?.allowguest">@(Guest can access to this app)</div>
-						<hr />
-						<div data---="radiobutton__?.allowreadprofile__items:@(Disabled)|0,@(Basic information)|1,@(All information)|2;type:number"><span class="fas fa-user-circle mr5"></span><b>@(Can API read user profile?)</b></div>
-						<hr />
-						<div data---="radiobutton__?.allowreadusers__inline:false;items:@(Disabled)|0,@(All users - basic data without contact details)|1,@(All users - all data)|2,@(Users which use this app - basic data without contact details)|3,@(Users which use this app - all data)|4;type:number"><span class="fas fa-users mr5"></span><b>@(Can API read users?)</b></div>
-					</div>
+			<div class="help m">@(A default position index. A lower index means a higher position in the list of applications. Users can change this position manually.)</div>
+			<div class="panel m">
+				<label><i class="fas fa-lock mr5"></i>@(Custom permissions)</label>
+				<div class="padding">
+					<div data---="checkbox__?.allowreadmeta">@(Read meta information about the platform)</div>
+					<div data---="checkbox__?.allownotifications">@(Allow to send notifications)</div>
+					<hr />
+					<div data---="radiobutton__?.allowreadprofile__inline:false;items:@(Disabled)|0,@(Basic data)|1,@(Basic data with the contact data)|2;type:number"><span class="fas fa-user-circle mr5"></span><b>@(Can the application read a user profile?)</b></div>
+					<hr />
+					<div data---="radiobutton__?.allowreadusers__inline:false;items:@(Disabled)|0,@(All users - basic data)|1,@(All users - basic data with the contact data)|2,@(Users who are using this app - basic data)|3,@(Users who are using this app - basic data with the contact data)|4;type:number"><span class="fas fa-users mr5"></span><b>@(Can the application read users?)</b></div>
 				</div>
 			</div>
 
 			<div data-bind="?.typeid__show:value==='external'">
-				<div data---="checkbox__?.permissions__checkicon:refresh">@(Refresh permissions according to the meta file)</div>
-				<div data---="checkbox__?.autorefresh__checkicon:refresh">@(Application can refresh its permissions automatically)</div>
-				<div class="alert hidden mt10" data-bind="?.autorefresh__show">
-					<i class="fa fa-warning"></i> @(You need to know that allowing refresh permissions automatically <b>is very dangerous step</b>.)
+				<div data---="checkbox__?.blocked__checkicon:lock__false">@(Application is blocked)</div>
+				<div data-bind="?.id__show" class="hidden">
+					<div data---="checkbox__?.rebuildaccesstoken__checkicon:refresh">@(Re-build access token)</div>
+					<div data---="checkbox__?.rebuildservicetoken__checkicon:refresh">@(Re-build service token)</div>
 				</div>
+				<div data---="checkbox__?.permissions__checkicon:refresh">@(Refresh permissions according to the meta file)</div>
 			</div>
 			<div data-bind="?.typeid__hide:value==='external'">
 				<div data---="textboxlist__?.roles__placeholder:@(Type a role and press enter)" class="m"><b>@(Roles)</b></div>
@@ -290,14 +287,16 @@
 				EXEC('appsgrid/refresh');
 				EXEC('usersroles/refresh');
 				EXEC('main/refreshmeta');
-
 				if (!model.id && model.typeid === 'designer') {
 					OP.loading(true);
 					SET('appsdesigner @reset', { appid: response.value, name: model.title });
 					SET('common.panel', 'appsdesigner', 1000);
 				}
-
 			}));
+		};
+
+		exports.origintoken = function() {
+			SET('?.origintoken', GUID(25));
 		};
 
 		exports.resolve = function(el) {
@@ -368,7 +367,7 @@
 
 				if (meta == null || !meta.name) {
 
-					if (value.indexOf('openplatform.json') === -1) {
+					if (value.indexOf('openplatform.json') === -1 && value.length > 10) {
 						if (value.charAt(value.length - 1) !== '/')
 							value += '/';
 						SET('?.url', value + 'openplatform.json');
@@ -386,6 +385,24 @@
 					meta.notallowed = meta.openplatform.indexOf(location.protocol + '//' + location.hostname) === -1;
 
 				SET('?.meta', meta);
+
+				if (!model.id) {
+					model.allowreadapps = meta.allowreadapps || 0;
+					model.allowreadusers = meta.allowreadusers || 0;
+					model.allownotifications = meta.allownotifications == true;
+					model.allowreadprofile = meta.allowreadprofile;
+
+					if (model.allowreadprofile == null)
+						model.allowreadprofile = 1;
+
+					if (model.allowreadusers == null)
+						model.allowreadusers = 0;
+
+					UPD('?.allowreadapps');
+					UPD('?.allowreadprofile');
+					UPD('?.allownotifications');
+					UPD('?.allowreadusers');
+				}
 
 				if (!model.title)
 					SET('?.title', meta.title || meta.name);

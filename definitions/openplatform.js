@@ -520,7 +520,18 @@ function checkorigin(origins, ip) {
 FUNC.unauthorized = function(obj, $) {
 	var app = obj.app;
 	var user = obj.user;
-	if (app.origin && app.origin.length) {
+
+	if (app.origintoken) {
+		var token = $.headers['x-origin'];
+		if (token !== app.origintoken) {
+			$.invalid('error-invalid-origin');
+			if (!ORIGINERRORS[$.ip]) {
+				FUNC.log('error-origin', null, app.name + ':' + app.origintoken + ' != ' + token);
+				ORIGINERRORS[$.ip] = 1;
+			}
+			return true;
+		}
+	} else if (app.origin && app.origin.length) {
 		if (checkorigin(app.origin, $.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 			if (!ORIGINERRORS[$.ip]) {
 				FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
@@ -924,15 +935,17 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.serververify = meta.serververify !== false;
 			app.services = response.services || null;
 			app.reference = meta.reference;
+			app.allowguestuser = getCleanValue(meta.allowguestuser, meta.guestuser, false);
 
+			/*
 			if (refreshmeta || app.autorefresh) {
 				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.apps, 0);
 				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.users, 0);
 				app.allowreadprofile = getCleanValue(meta.allowreadprofile, meta.userprofile, 0);
 				app.allownotifications = getCleanValue(meta.allownotifications, meta.notifications, false);
 				app.allowreadmeta = getCleanValue(meta.allowreadmeta, meta.metadata, false);
-				app.allowguestuser = getCleanValue(meta.allowguestuser, meta.guestuser, false);
-			}
+
+			}*/
 
 			if (meta.origin && meta.origin instanceof Array && meta.origin.length)
 				app.origin = meta.origin;

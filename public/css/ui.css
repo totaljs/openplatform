@@ -1819,3 +1819,86 @@ i.ui-intro-button { margin: 14px 3px 0; cursor: pointer; color: silver; font-siz
 .ui-dark .ui-detail-style-3 .ui-detail-item { background-color: #333; }
 .ui-dark .ui-detail-style-3 .ui-detail-key { color: #999; }
 .ui-dark .ui-detail-style-3 .ui-detail-value { border-left-color: #282828; }
+
+.ui-properties2-container { padding: 0 0 20px 0; }
+.ui-properties2-group:first-child { margin-top: 10px; }
+.ui-properties2-group:last-child section { margin-bottom: 0; }
+.ui-properties2-group { padding: 0; margin-bottom: 20px; border: 1px solid #E0E0E0; border-radius: var(--radius) var(--radius) 0 0; }
+.ui-properties2-2 .ui-properties2-group { border: 0; }
+.ui-properties2-group label { display: block; padding: 10px 15px; font-size: 16px; font-weight: bold; background-color: #F8F8F8; border-radius: var(--radius) var(--radius) 0 0; }
+.ui-properties2-2 label { background: transparent; font-size: 11px; color: #A0A0A0; font-weight: normal; padding-bottom: 5px; }
+.ui-properties2-2 section { background: #FFF; border-radius: 15px; padding: 10px 0; border: 1px solid #F0F0F0; }
+.ui-properties2-group label i { width: 22px; }
+.ui-properties2-group label i:before { content: '\f146'; }
+.ui-properties2-hidden label i:before { content: '\f0fe' !important; }
+.ui-properties2-hidden section { display: none; }
+.ui-properties2-item { padding: 6px 0; background-color: #FFF; font-size: 12px; border-top: 1px solid #EBEBEB; }
+.ui-properties2-2 .ui-properties2-item { border-top-color: #ECECEC; margin: 0 15px; }
+.ui-properties2-2 .ui-properties2-item:last-child div { border-bottom: 0; }
+.ui-properties2-item > i { float: left; width: 24px; height: 24px; margin: 10px 5px 0 0; font-size: 20px; }
+.ui-properties2-2 .ui-properties2-item > i { margin-top: 8px; background: #606060; border-radius: 6px; font-size: 14px; color: #FFF; text-align: center; line-height: 24px; width: 24px; height: 24px; }
+.ui-properties2-isnote > i { margin-top: 17px !important; }
+.ui-properties2-required .ui-properties2-key:after { content: '*'; color: red; margin-left: 5px; font-weight: bold; }
+.ui-properties2-key { float: left; width: 170px; line-height: 24px; padding: 0 5px 0 15px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; color: #707070; }
+.ui-properties2-key i { margin-right: 7px; }
+.ui-properties2-2 .ui-properties2-item { cursor: pointer; }
+.ui-properties2-2 .ui-properties2-value { margin-left: 170px; text-align: right; color: #777; margin-right: 0; line-height: 20px; font-weight: normal !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ui-properties2-2 .ui-properties2-item { font-size: 13px; padding: 0; border-top: 0; }
+.ui-properties2-2 .ui-properties2-item > div { padding: 10px 0 8px; border-bottom: 1px solid #E0E0E0; }
+.ui-properties2-2 .ui-properties2-isicon > div { margin-left: 40px; }
+.ui-properties2-2 .ui-properties2-key { color: #000; padding-left: 0; line-height: 20px; }
+.ui-properties2-2 .ui-properties2-color span b { width: 19px; border-radius: 100%; }
+.ui-properties2-value { margin: 0 10px 0 170px; line-height: 21px; }
+.ui-properties2-note { color: #A0A0A0; font-size: 11px; line-height: 13px; font-weight: normal; }
+.ui-properties2-string, .ui-properties2-number, .ui-properties2-date, .ui-properties2-list, .ui-properties2-menu, .ui-properties2-file { padding: 0; }
+.ui-properties2-string input, .ui-properties2-number input, .ui-properties2-date input { outline: 0; height: 21px; padding: 0; margin: 0; width: 100%; border: 0; line-height: 21px; background-color: transparent; }
+.ui-properties2-2 input { text-align: right; color: #777; height: 17px; }
+.ui-properties2 input:disabled { color: #A0A0A0; }
+.ui-disabled .ui-properties2-value { color: #A0A0A0; cursor: default; }
+.ui-disabled .ui-properties2-value * { cursor: default; }
+.ui-properties2-date > i { float: right; width: 18px; margin: 4px 0 0 0; text-align: right; font-size: 12px; }
+.ui-properties2-date > div { margin-right: 18px; }
+.ui-properties2-bool, .ui-properties2-list, .ui-properties2-menu, .ui-properties2-color, .ui-properties2-fontawesome, .ui-properties2-emoji, .ui-properties2-file { line-height: 22px; }
+.ui-properties2-bool span { width: 32px; height: 18px; display: inline-block; border: 1px solid #E0E0E0; line-height: 15px; font-size: 9px; margin: 3px 0 5px 0; position: relative; cursor: pointer; color: #FFF; vertical-align: top; border-radius: 100px; background: #E0E0E0; transition: all 0.3s; text-align: left; }
+.ui-properties2-2 .ui-properties2-bool span { margin-top: 0; }
+.ui-properties2-bool span i { width: 16px; height: 16px; position: relative; display: inline-block; border-radius: 100px; background: #FFF; transition: margin 0.3s; }
+.ui-properties2-bool .checked { background-color: var(--color); border-color: var(--color); }
+.ui-properties2-bool .checked i { margin-left: 14px; }
+.ui-disabled .ui-properties2-bool .checked { background-color: #A0A0A0; border-color: #A0A0A0; }
+.ui-properties2-fontawesometoggle, .ui-properties2-emojitoggle, .ui-properties2-color { width: 22px; line-height: 22px; display: block; cursor: pointer; font-size: 20px; position: relative; text-align: left; margin-bottom: 3px; display: inline-block; margin-right: 1px; }
+.ui-properties2-2 .ui-properties2-fontawesometoggle, .ui-properties2-2 .ui-properties2-emojitoggle, .ui-properties2-2 .ui-properties2-color { margin-bottom: 0; }
+.ui-properties2-fontawesometoggle { height: 22px; }
+.ui-properties2-2 .ui-properties2-fontawesometoggle { height: auto; }
+.ui-properties2-list, .ui-properties2-menu, .ui-properties2-exec { cursor: pointer; }
+.ui-properties2-list i, .ui-properties2-menu i, .ui-properties2-exec i { margin-left: 7px; }
+.ui-properties2-list i, .ui-properties2-menu i { float: right; width: 20px; line-height: 23px; text-align: right; font-size: 12px; }
+.ui-properties2-list span, .ui-properties2-menu span { display: block; margin-right: 25px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.ui-properties2-2 .ui-properties2-list span, .ui-properties2-2 .ui-properties2-menu span { margin-right: 0 !important; }
+.ui-properties2-2 .ui-properties2-date > i { margin-top: 3px; }
+.ui-properties2-2 .ui-properties2-list span, .ui-properties2-2 .ui-properties2-menu span { margin-right: 18px; }
+.ui-properties2-2 .ui-properties2-list i, .ui-properties2-2 .ui-properties2-menu i { width: 18px; color: #A0A0A0; }
+.ui-properties2-file { cursor: pointer; }
+.ui-properties2-file i { float: right; width: 20px; line-height: 22px; text-align: right; font-size: 10px; }
+.ui-properties2-file span { display: block; margin-right: 25px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.ui-properties2-changed { font-weight: bold; }
+.ui-properties2-changed .ui-properties2-key { color: #000000; }
+.ui-properties2-color { padding: 0; line-height: 12px; }
+.ui-properties2-color span b { height: 18px; display: block; border-radius: var(--radius); color: gray; width: 60px }
+.ui-properties2-invalid { font-weight: bold; color: red !important; }
+.ui-properties2-invalid .ui-properties2-key { border-right-color: red !important; }
+#properties2upload { position: absolute; left: -100px; top: -100px; opacity: 0; }
+
+.ui-dark .ui-properties2-group { border-color: #404040; }
+.ui-dark .ui-properties2-item { border-color: #303030; background-color: #202020; }
+.ui-dark .ui-properties2-item > div { border-bottom-color: #404040; }
+.ui-dark .ui-properties2-2 section, .ui-dark .ui-properties2-2 .ui-properties2-item { background-color: #282828; }
+.ui-dark .ui-properties2-2 section { border-color: #252525; }
+.ui-dark .ui-properties2-key { color: #A0A0A0; }
+.ui-dark .ui-properties2-2 .ui-properties2-key { color: #FFF; }
+.ui-dark .ui-properties2-group label { background-color: #282828; }
+.ui-dark .ui-properties2-2 label { background-color: transparent; }
+.ui-dark .ui-properties2-bool span { border-color: #505050; background-color: #505050; }
+.ui-dark .ui-properties2-bool span.checked { border-color: var(--color); background-color: var(--color); }
+.ui-dark .ui-properties2-changed .ui-properties2-key { color: #FFF; }
+.ui-dark .ui-properties2-note { color: #606060; }
+.ui-dark .ui-properties2-list i, .ui-dark .ui-properties2-menu i, .ui-dark .ui-properties2-date { color: gray; }

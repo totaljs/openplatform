@@ -7,6 +7,7 @@ db.task(function(responses, response) {
 		return;
 
 	db.query('ALTER TABLE tbl_app ADD typeid VARCHAR(10)');
+	db.query('ALTER TABLE tbl_app ADD origintoken VARCHAR(50)');
 	db.query('ALTER TABLE tbl_user ADD oauth2 VARCHAR(25)');
 	db.query('ALTER TABLE tbl_log ADD data JSON');
 	db.query('UPDATE tbl_app SET typeid=\'external\'');
