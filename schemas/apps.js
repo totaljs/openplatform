@@ -33,7 +33,7 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('allowreadprofile', Number);
 	schema.define('allowreadmeta', Boolean);
 
-	schema.required('url', (model) => model.typeid === 'external');
+	// schema.required('url', (model) => model.typeid === 'external');
 
 	schema.setQuery(function($) {
 
