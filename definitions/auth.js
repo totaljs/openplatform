@@ -67,7 +67,6 @@ ON('loaded', function() {
 		db.one('tbl_user_session').fields('locked,profileid,dtlogged').id(meta.sessionid);
 		db.error(404);
 		db.mod('tbl_user_session', { online: true, dtlogged: NOW, '+logged': 1, ip: meta.ip }).id(meta.sessionid).where('userid', meta.userid).where('dtexpire>NOW()').nobind();
-		db.mod('tbl_user', { dtlogged: NOW, online: true }).id(meta.userid).nobind();
 		db.callback(function(err, session) {
 			if (session) {
 				MAIN.readuser(meta.userid, function(err, response) {
@@ -76,6 +75,7 @@ ON('loaded', function() {
 						response.dtlogged2 = session.dtlogged;
 						response.locked = session.locked;
 						response.profileid = session.profileid;
+						DBMS().mod('tbl_user', { dtlogged: NOW, online: true }).id(meta.userid).nobind();
 					}
 					next(err, response);
 				});

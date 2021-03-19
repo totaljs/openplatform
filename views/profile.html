@@ -128,11 +128,17 @@
 
 		<div class="padding npt">
 			<div data-bind="?.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
+				<hr />
 				<div class="padding">
-					<div data---="input__?.password__maxlength:50;type:password;required:1;innerlabel:1;$id:password">@(New password)</div>
-					<div class="help">
-						<span class="link pull-right exec" data-exec="?/password">@(Generate)</span>
-						<i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)
+					<div class="row">
+						<div class="col-xs-6 m">
+							<div data---="input__?.password__maxlength:50;type:password;required:1;$id:password">@(New password)</div>
+							<div class="help"><span class="link pull-right exec" data-exec="?/password">@(Generate)</span></div>
+						</div>
+						<div class="col-xs-6 m">
+							<div data---="input__?.passwordreply__maxlength:50;type:password;required:1">@(Reply password)</div>
+							<div class="help"><i class="fa fa-info-circle"></i>@(Passsword will be encrypted.)</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -198,7 +204,10 @@
 	PLUGIN('profileform', function(exports) {
 
 		exports.reload = function() {
-			DAPI('account_read', 'profileform');
+			DAPI('account_read', function(response) {
+				response.changepassword = NAV.query.password === '1';
+				SET('?', response);
+			});
 		};
 
 		exports.submit = function(hide) {

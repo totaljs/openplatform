@@ -440,6 +440,22 @@
 				user.status = response.status;
 				user.sa = response.sa;
 
+				for (key in response.apps) {
+					if (!user.apps.findItem('id', key)) {
+						common.refreshprofile = true;
+						break;
+					}
+				}
+
+				if (!common.refreshprofile) {
+					for (var i = 0; i < user.apps.length; i++) {
+						if (!response.apps[user.apps[i].id]) {
+							common.refreshprofile = true;
+							break;
+						}
+					}
+				}
+
 				if (user.rev !== response.rev) {
 					// a new revision
 					user.rev = response.rev;
