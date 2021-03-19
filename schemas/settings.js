@@ -91,7 +91,7 @@ NEWSCHEMA('Settings', function(schema) {
 		if (CONF.background && model.background !== CONF.background) {
 			var path = 'backgrounds/' + CONF.background;
 			Fs.unlink(PATH.public(path), NOOP);
-			F.touch('/' + path);
+			TOUCH('/' + path);
 		}
 
 		var db = DBMS();
