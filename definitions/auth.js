@@ -88,8 +88,7 @@ ON('loaded', function() {
 		var mod = { online: false };
 		var db = DBMS();
 
-		if (meta.session.length)
-			db.modify('tbl_user_session', mod).query('online=TRUE').id(meta.sessions);
+		db.modify('tbl_user_session', mod).query('online=TRUE').id(meta.sessions);
 
 		if (meta.users.length)
 			db.modify('tbl_user', mod).query('online=TRUE').id(meta.users);
