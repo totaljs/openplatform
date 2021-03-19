@@ -12,6 +12,7 @@ db.task(function(responses, response) {
 	db.query('ALTER TABLE tbl_app ADD allowsms BOOLEAN DEFAULT false');
 	db.query('ALTER TABLE tbl_user ADD oauth2 VARCHAR(25)');
 	db.query('ALTER TABLE tbl_user ADD checksum VARCHAR(30)');
+	db.query('ALTER TABLE tbl_user ADD profileid VARCHAR(50)');
 	db.query('ALTER TABLE tbl_user_app ADD sounds BOOLEAN default true');
 	db.query('ALTER TABLE tbl_log ADD data JSON');
 	db.query('UPDATE cl_config SET value=\'https://marketplace.openplatform.cloud\' WHERE id=\'marketplace\'');
