@@ -735,6 +735,7 @@ NEWSCHEMA('Users', function(schema) {
 						FUNC.refreshmetadelay();
 						FUNC.log('users/remove', response.id, response.name, $);
 						EMIT('users/remove', id);
+						MAIN.session.refresh(id);
 						$.success();
 					});
 				});
