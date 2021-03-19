@@ -4,7 +4,7 @@ html,body { overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto
 body { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 body.ui-dark { background: #808080 linear-gradient(#5f5e50,#565656); }
 
-header { height: 45px; background: rgba(255,255,255,0.8); box-shadow: 0 3px 10px rgba(0,0,0,0.1); position: absolute; left: 15px; top: 15px; right: 15px; z-index: 1; border-radius: var(--radius); }
+header { height: 45px; background: rgba(255,255,255,0.9); box-shadow: 0 3px 10px rgba(0,0,0,0.1); position: absolute; left: 15px; top: 15px; right: 15px; z-index: 1; border-radius: var(--radius); }
 header .status { float: right; width: 45px; background-color: transparent; height: 45px; border: 0; border-left: 1px solid rgba(0,0,0,0.09); text-align: center; line-height: 45px; font-size: 20px; cursor: pointer; padding: 0; }
 header .status i { transition: all 0.3s; }
 header .status:hover { opacity: 0.9; }
@@ -40,7 +40,7 @@ header .apps .app:hover { background-color: rgba(0,0,0,0.1); }
 .ui-dark header .menu b { background-color: #FFF; }
 .ui-dark header .apps .app:hover { background-color: rgba(255,255,255,0.1); }
 
-footer { height: 30px; background: rgba(255,255,255,0.8); box-shadow: 0 -3px 10px rgba(0,0,0,0.1); position: absolute; left: 15px; bottom: 15px; right: 15px; z-index: 1; border-radius: var(--radius); }
+footer { height: 30px; background: rgba(255,255,255,0.9); box-shadow: 0 -3px 10px rgba(0,0,0,0.1); position: absolute; left: 15px; bottom: 15px; right: 15px; z-index: 1; border-radius: var(--radius); }
 footer .console { font-size: 12px; cursor: pointer; float: left; margin: 7px 0 0 10px; }
 footer .console i { margin-right: 5px; }
 footer .console:hover { opacity: 0.7; }

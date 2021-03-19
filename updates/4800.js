@@ -11,13 +11,14 @@ db.task(function(responses, response) {
 	db.query('ALTER TABLE tbl_app ADD allowmail BOOLEAN DEFAULT false');
 	db.query('ALTER TABLE tbl_app ADD allowsms BOOLEAN DEFAULT false');
 	db.query('ALTER TABLE tbl_user ADD oauth2 VARCHAR(25)');
+	db.query('ALTER TABLE tbl_user ADD checksum VARCHAR(30)');
 	db.query('ALTER TABLE tbl_user_app ADD sounds BOOLEAN default true');
 	db.query('ALTER TABLE tbl_log ADD data JSON');
 	db.query('UPDATE cl_config SET value=\'https://marketplace.openplatform.cloud\' WHERE id=\'marketplace\'');
 	db.insert('cl_config', { id: 'auth_cookie', type: 'string', value: U.random_string(10), name: 'auth_cookie', dtcreated: NOW });
 	db.insert('cl_config', { id: 'auth_secret', type: 'string', value: GUID(10), name: 'auth_secret', dtcreated: NOW });
 
-	db.query('CREATE TABLE "public"."tbl_user_session" (
+	db.query(`CREATE TABLE "public"."tbl_user_session" (
 		"id" varchar(25) NOT NULL,
 		"userid" varchar(25),
 		"profileid" varchar(50),

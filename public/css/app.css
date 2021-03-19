@@ -10,6 +10,8 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .listing figure { width: 33.33%; }
 .listing figure .item { margin: 15px 0 0 15px; border: 1px solid #E0E0E0; border-radius: var(--radius); font-size: 12px; }
 
+.ui-dark .listing figure .item { border-color: #404040; }
+
 @media (min-width:1200px) {
 	.listing figure { width: 25%; }
 }
@@ -39,19 +41,24 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .listingoauth { cursor: pointer; }
 .listingoauth .disabled { background-color: #F8F8F8; color: #999; }
 .listingoauth .disabled .name { text-decoration: line-through; }
-.listingoauth .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; }
+.listingoauth .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; background-color: #F8F8F8; }
 .listingoauth .name b { display: block; margin-right: 25px; }
 .listingoauth .name span { float: right; cursor: pointer; width: 22px; line-height: 34px; text-align: right; color: var(--color); }
 .listingoauth .padding { padding: 10px; }
 .listingoauth .value { font-size: 11px; }
 .listingoauth .value span { color: #777; float: right; }
 
+.ui-dark .listingoauth .disabled { background-color: #303030; color: #999; }
+.ui-dark .listingoauth .name { border-bottom-color: #404040; background-color: #353535; }
+.ui-dark .listingoauth .name span { color: var(--color); }
+.ui-dark .listingoauth .value span { color: #777; }
+
 .listingapps { cursor: pointer; }
 .listingapps .offline { border-color: red !important; }
 .listingapps .disabled { background-color: #F8F8F8; color: #999; }
 .listingapps .name em { color: red; display: none; margin-left: 5px; }
 .listingapps .offline .name em { position: relative; display: inline-block; }
-.listingapps .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; }
+.listingapps .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; background-color: #F8F8F8; }
 .listingapps .name b { display: block; margin-right: 25px; }
 .listingapps .name b i { width: 14px; margin-right: 5px; }
 .listingapps .name span { float: right; cursor: pointer; width: 22px; line-height: 34px; text-align: right; color: var(--color); }
@@ -61,9 +68,20 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .listingapps .value { font-size: 11px; }
 .listingapps .value span { color: #777; float: right; }
 
+.ui-dark .listingapps .offline { border-color: red !important; }
+.ui-dark .listingapps .disabled { background-color: #353535; color: #999; }
+.ui-dark .listingapps .name em { color: red; }
+.ui-dark .listingapps .name { border-bottom-color: #404040; background-color: #303030; }
+.ui-dark .listingapps .name span { color: var(--color); }
+.ui-dark .listingapps .info { color: #A0A0A0; }
+.ui-dark .listingapps .value span { color: #A0A0A0; }
+
 .panel { background-color: transparent; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
 .panel > label { display: block; padding: 15px 15px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: #000; font-weight: bold; }
 .panel > label i { margin-right: 7px; }
+
+.ui-dark .panel { background-color: transparent; border-color: #404040; }
+.ui-dark .panel > label { border-bottom-color: #404040; color: #FFF; }
 
 hr { border-color: #E0E0E0; }
 .ui-dark { border-color: #404040; }
@@ -94,7 +112,7 @@ hr { border-color: #E0E0E0; }
 .ui-validation-modified .cancelmodified { display: inline-block; }
 
 .header { height: 45px; padding: 0 15px 0 0; border-bottom: 1px solid #E0E0E0; text-align: right; }
-.ui-dark .header { border-color: #303030; }
+.ui-dark .header { border-color: #404040; color: #FFF; }
 .header button, .toolbar button { outline: 0; background: linear-gradient(white,#F8F8F8); border: 1px solid #E0E0E0; border-left: 0; font-size: 11px; height: 24px; padding: 0 8px; margin: 0; color: black; min-width: 80px; vertical-align: top; text-align: center; }
 .header button i, .toolbar button i { margin-right: 5px; }
 .header button .fa-plus-circle, .header button .fa-check-circle, .toolbar button .fa-plus-circle, .toolbar button .fa-check-circle { color: #68B25B; }

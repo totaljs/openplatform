@@ -871,16 +871,8 @@ function getCleanValue(a, b, c) {
 	return c;
 }
 
-FUNC.refreshapp = function(app, callback, refreshmeta) {
-
+FUNC.refreshapp = function(app, callback) {
 	var checksum = app.checksum || '';
-
-	if (app.typeid === 'designer') {
-		app.online = true;
-		callback(null, app, false);
-		return;
-	}
-
 	RESTBuilder.GET(app.url).exec(function(err, response, output) {
 
 		if (err || !response.url) {
@@ -890,7 +882,7 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 
 		} else {
 
-			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowreadapps:Number,allowguestuser:Boolean,guestuser:Boolean,applications:Number,allowreadusers:Number,users:Number,userprofile:Number,allowreadprofile:Number,allownotifications:Boolean,notifications:Boolean,allowreadmeta:Boolean,metadata:Boolean,responsive:boolean');
+			var meta = CONVERT(response, 'name:String(30),description:String(100),color:String(8),icon:String(30),url:String(500),author:String(50),type:String(30),version:String(20),email:String(120),width:Number,height:Number,resize:Boolean,mobilemenu:Boolean,serververify:Boolean,reference:String(40),roles:[String],origin:[String],allowguestuser:Boolean,guestuser:Boolean,responsive:boolean');
 
 			app.hostname = output.hostname.replace(/:\d+/, '');
 			app.online = true;
@@ -913,16 +905,6 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.services = response.services || null;
 			app.reference = meta.reference;
 			app.allowguestuser = getCleanValue(meta.allowguestuser, meta.guestuser, false);
-
-			/*
-			if (refreshmeta || app.autorefresh) {
-				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.apps, 0);
-				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.users, 0);
-				app.allowreadprofile = getCleanValue(meta.allowreadprofile, meta.userprofile, 0);
-				app.allownotifications = getCleanValue(meta.allownotifications, meta.notifications, false);
-				app.allowreadmeta = getCleanValue(meta.allowreadmeta, meta.metadata, false);
-
-			}*/
 
 			if (meta.origin && meta.origin instanceof Array && meta.origin.length)
 				app.origin = meta.origin;
