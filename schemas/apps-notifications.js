@@ -23,11 +23,9 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 		var keys = Object.keys(user.apps);
 		for (var i = 0; i < keys.length; i++)
 			user.apps[keys[i]].countnotifications = 0;
-
-		MAIN.session.set2(user.id, user);
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 		FUNC.decodetoken($, function(obj) {
 
 			var user = obj.user;
@@ -43,7 +41,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 				return;
 			}
 
-			var model = $.clean();
 			model.id = UID('notifications');
 			model.userid = user.id;
 			model.appid = app.id;
@@ -92,10 +89,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			user.dtnotified = NOW;
 
 			if (can) {
-
-				// Updates session
-				MAIN.session.set2(user.id, user);
-
 				DB_NOTIFICATION_USER.countnotifications = user.countnotifications;
 				DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;
 
@@ -109,7 +102,7 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 		});
 	});
 
-	schema.addWorkflow('internal', function($) {
+	schema.addWorkflow('internal', function($, model) {
 
 		var user = $.user;
 		var app = MAIN.apps.findItem('id', $.id);
@@ -129,7 +122,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			return;
 		}
 
-		var model = $.clean();
 		model.id = UID('notifications');
 		model.userid = user.id;
 		model.appid = app.id;
@@ -173,9 +165,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 		user.dtnotified = NOW;
 
 		if (can) {
-
-			// Updates session
-			MAIN.session.set2(user.id, user);
 
 			DB_NOTIFICATION_USER.countnotifications = user.countnotifications;
 			DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;

@@ -3,12 +3,11 @@
 	<div class="header">
 		<label><i class="fa fa-bug"></i>@(Reports)</label>
 		<div>
-			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-bullseye"></i>@(Detail)</button>
 			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash red"></i>@(Remove)</button>
 		</div>
 	</div>
 
-	<div data---="datagrid__?.items__height:.ui-layout-section;exec:?/filter;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;noborder:1;margin:45">
+	<div data---="datagrid__?.items__height:.ui-layout-section;exec:?/filter;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;noborder:1;margin:45;button:?/button">
 		<script type="text/plain">
 			[
 				{ name: 'id', text: '@(ID)', width: 140, hide: true },
@@ -19,13 +18,14 @@
 				{ name: 'priority', text: '@(High)', width: 120, type: 'bool', align: 1 },
 				{ name: 'solved', text: '@(Solved)', width: 120, type: 'bool', align: 1 },
 				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]' },
-				{ name: 'dtsolved', text: '@(Solved)', width: 120, align: 1, format: '[.user.dateformat]' }
+				{ name: 'dtsolved', text: '@(Solved)', width: 120, align: 1, format: '[.user.dateformat]' },
+				{ type: 'controls', template: '<button name="edit"><i class="fa fa-bullseye mr5"></i>@(Detail)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>
 	</div>
 </div>
 
-<div data---="importer__common.panel__if:reportsdetail;url:/panels/reports-detail.html"></div>
+<div data---="importer__common.form__if:reportsdetailform;url:/forms/report-detail.html"></div>
 
 <script>
 
@@ -51,6 +51,16 @@
 			exports.refresh();
 		};
 
+		exports.button = function(name, row) {
+			if (name === 'edit') {
+				exports.edit(row);
+			} else if (name === 'remove') {
+				OP.approve('@(Are you sure you want to selected report?)', '"trash-o" @(Remove)', function() {
+					DAPI('reports_remove/' + row.id, exports.refresh);
+				});
+			}
+		};
+
 		exports.filter = function(type, filter, sort, page) {
 
 			if (type === 'init')
@@ -61,7 +71,7 @@
 
 			filter.page = page || 1;
 			filter.sort = sort;
-			AJAX('GET /api/op/reports/', filter, '?.items');
+			DAPI(QUERIFY('reports', filter), '?.items');
 		};
 
 		exports.edit = function(row) {
@@ -69,11 +79,11 @@
 			if (row instanceof jQuery)
 				row = GET('?.selected');
 
-			SETR('reportsdetailpanel', CLONE(row));
-			SET('common.panel', 'reportsdetail');
+			SETR('reportsdetailform', CLONE(row));
+			SET('common.form', 'reportsdetailform');
 		};
 
-		exports.menu = function(el) {
+		exports.remove = function(el) {
 			var checked = GET('?.checked');
 			var selected = GET('?.selected');
 			var arr;
@@ -83,11 +93,11 @@
 			else if (selected)
 				arr = [selected];
 
-			OP.confirm2('@(Are you sure you want to remove selected reports?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
+			OP.approve('@(Are you sure you want to remove selected reports?)', '"trash-o" @(Remove)', function() {
 				OP.loading(true);
 				arr.wait(function(item, next, index) {
 					OP.progress((index / arr.length) * 100);
-					AJAX('DELETE /api/op/reports/' + item.id, next);
+					DAPI('reports_remove/' + item.id, next);
 				}, function() {
 					OP.progress(100);
 					OP.loading(false, 500);

@@ -1,8 +1,11 @@
 <div data-scope="settings">
 	<div class="header">
 		<label><i class="fa fa-cog"></i>@(Settings)</label>
+		<div data---="validation__?__track:verifytoken">
+			<button name="submit" class="submit exec" data-exec="?/submit" disabled><i class="fa fa-floppy-o"></i>@(SAVE)</button>
+		</div>
 	</div>
-	<div data---="viewbox__null__scrollbar:1;parent:.ui-layout-section;margin:100;$class:invisible" class="invisible">
+	<div data---="viewbox__null__scrollbar:1;parent:.ui-layout-section;margin:100;$class:invisible;scrollbarshadow:1" class="invisible">
 		<div class="maxwidthleft">
 			<div class="padding">
 
@@ -25,7 +28,7 @@
 				<div class="row">
 					<div class="col-md-4 m">
 						<div data---="input__?.verifytoken__maxlength:20;camouflage:•">@(Verification token)</div>
-						<div class="help">@(Verification token is a simple security tool against Hijacking data of third-party apps. If you change it, you may lose data in third-party apps.) <span class="link exec" data-exec="?/verifytoken"><i class="fa fa-retweet"></i>@(Generate token)</span></div>
+						<div class="help">@(Verification token is a simple security element against Hijacking data of third-party apps. If you change it, you may lose data in third-party apps.) <span class="link exec" data-exec="?/verifytoken"><i class="fa fa-retweet"></i>@(Generate token)</span></div>
 					</div>
 					<div class="col-md-4 m">
 						<div data---="input__?.cookie_expiration__required:1;maxlength:20">@(Cookie / Session expiration)</div>
@@ -95,6 +98,28 @@
 					</div>
 				</div>
 				<br />
+				<div class="caption"><i class="fas fa-key"></i>@(Total API)</div>
+				<div class="alert m">@(With the <b>Total API key</b>, the OpenPlatform can send SMS messages or email messages. You can obtain Total API key on) <a href="https://platform.totaljs.com/?open=api" target="_blank">Total.js Platform</a>.</div>
+				<div class="row">
+					<div class="col-md-4">
+						<div data---="input__?.totalapi__maxlength:100;camouflage:•__''">@(Total API key)</div>
+					</div>
+				</div>
+				<div data-bind="%settingstotalapiresponse__template">
+					<script type="text/html">
+						{{ if value }}
+							<div class="mt10">
+								{{ if value.credits != null }}
+									<div class="inline-message"><i class="fa fa-check-circle"></i> @(Total API is <b>valid</b>. Balance:) <b>{{ value.credits | format(2) }} &euro;</b></div>
+								{{ else }}
+									<div class="inline-message inline-message-error"><i class="fa fa-warning"></i> @(Total API is <b>invalid</b>).</div>
+								{{ fi }}
+							</div>
+						{{ fi }}
+					</script>
+				</div>
+				<div class="help m"><span class="link exec" data-exec="?/verifytotalapi"><i class="fa fa-angle-right mr5"></i>@(Verify API key)</span></div>
+
 				<div class="caption"><i class="far fa-envelope-o"></i>@(SMTP settings)</div>
 				<div class="row">
 					<div class="col-md-4 m">
@@ -105,20 +130,20 @@
 					</div>
 				</div>
 				<div data---="input__?.smtpsettings__maxlength:200;dirplaceholder:@(Search application);placeholder:localhost;camouflage:•">@(SMTP settings)</div>
-				<div class="help">@(SMTP settings have to be in valid <b>JSON format</b>, according to the Total.js documentation.) <a href="https://docs.totaljs.com/latest/en.html#pages~Troubleshooting~(smtp-settings-for-gmail-office-and-zoho)" target="_blank">@(Documentation)</a></div>
+				<div class="help">@(SMTP settings have to be in valid <b>JSON format</b>, according to the Total.js documentation). <a href="https://docs.totaljs.com/latest/en.html#pages~Troubleshooting~(smtp-settings-for-gmail-office-and-zoho)" target="_blank">@(Documentation)</a></div>
 				<hr />
 				<div data-bind="%settingssmtpresponse__template">
 					<script type="text/html">
 						{{ if value }}
 							{{ if value.success }}
-								<div class="inline-message"><i class="fa fa-check-circle"></i> @(SMTP server is <b>configured correctly</b>.)</div>
+								<div class="inline-message"><i class="fa fa-check-circle"></i> @(SMTP server is <b>configured correctly</b>).</div>
 							{{ else }}
 								<div class="inline-message inline-message-error"><i class="fa fa-warning"></i> {{ value[0].error }}</div>
 							{{ fi }}
 						{{ fi }}
 					</script>
 				</div>
-				<div class="fs12 m">
+				<div class="fs12">
 					<span class="link exec" data-exec="?/verifysmtp"><i class="fa fa-angle-right mr5"></i>@(Verify SMTP server)</span>
 				</div>
 				<br />
@@ -160,7 +185,7 @@
 		var backup;
 
 		exports.refresh = function() {
-			AJAX('GET /api/op/settings/', function(response) {
+			DAPI('settings', function(response) {
 
 				if (response.url === 'https://YOURDOMAIN.com' || !response.url)
 					response.url = location.protocol + '//' + location.hostname;
@@ -168,6 +193,7 @@
 				backup = CLONE(response);
 				SETR('?', response);
 				exports.verifysmtp();
+				exports.verifytotalapi();
 			});
 		};
 
@@ -179,18 +205,32 @@
 			SET('?.verifytoken', GUID(10));
 		};
 
+		exports.verifytotalapi = function() {
+			var p = '%settingstotalapiresponse';
+			var model = GET('?');
+			var data = {};
+			data.totalapi = model.totalapi;
+			if (data.totalapi)
+				DAPI('totalapi', data, p);
+			else
+				NUL(p);
+		};
+
 		exports.verifysmtp = function() {
+			var p = '%settingssmtpresponse';
 			var model = GET('?');
 			var data = {};
 			data.smtp = model.smtp;
 			data.smtpsettings = model.smtpsettings;
-			AJAX('POST /api/op/settings/smtp/', data, '%settingssmtpresponse');
+			if (data.smtp)
+				DAPI('smtp', data, p);
+			else
+				NUL(p);
 		};
 
 		exports.submit = function() {
-			var model = GETR('?');
-			AJAX('POST /api/op/settings/', model, OP.done('@(Settings have been saved successfully)', function() {
-				SET('common.marketplace', model.marketplace);
+			var model = GET('? @reset');
+			DAPI('settings_save', model, OP.done('@(Settings have been saved successfully)', function() {
 				SET('common.allowoauth', model.allowoauth);
 			}));
 		};

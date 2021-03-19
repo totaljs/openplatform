@@ -68,7 +68,7 @@ NEWSCHEMA('Users/Reports', function(schema) {
 			builder.push('<b>Groups:</b> ' + $.user.groups.join(', '));
 			builder.push('<b>Roles:</b> ' + roles.join(', '));
 			builder.push(hr);
-			builder.push(model.body);
+			builder.push(model.body.encode());
 
 			// Send email
 			var subject = model.type + ': ' + app.name + ' (' + CONF.name + ')';

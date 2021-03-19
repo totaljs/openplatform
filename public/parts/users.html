@@ -1,20 +1,19 @@
-<div data-scope="usersgrid">
+<div data-scope="users">
 
 	<div class="header">
 		<label><i class="fa fa-users"></i>@(Users)</label>
 		<div>
 			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
 			<button data-bind="?.items__enabled:value && value.items.length" disabled class="exec hidden-xs" data-exec="?/assign"><i class="fa fa-folder"></i>@(Assign)</button>
-			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
 			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash-o red"></i>@(Remove)</button>
 		</div>
 	</div>
 
-	<div data---="datagrid__?.items__height:.ui-layout-section;exec:?/filter;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;noborder:1;margin:45">
+	<div data---="datagrid__?.items__height:.ui-layout-section;exec:?/filter;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;noborder:1;margin:45;button:?/button">
 		<script type="text/plain">
 			[
 				{ name: 'id', text: '@(ID)', width: 140, hide: true },
-				{ name: 'groupid', text: '@(Group ID)', width: 120 },
+				{ name: 'groupid', text: '@(Group ID)', width: 120, hide: true },
 				{ name: 'online', text: '@(Online)', width: 70, template: '{{ if online }}<span class="badge badge-small badge-green">@(online)</span>{{ fi }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 				{ name: 'photo', text: '@(Photo)', width: 70, template: '{{ if photo }}<i class="fa fa-camera"></i>{{ fi }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 				{ name: 'sa', text: '@(Admin)', width: 70, template: '{{ sa | boolean }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
@@ -40,14 +39,15 @@
 				{ name: 'note', text: '@(Note)', width: 200 },
 				{ name: 'dtlogged', text: '@(Logged)', width: 120, align: 1, format: '[.user.dateformat]' },
 				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]' },
-				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]' }
+				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]' },
+				{ type: 'controls', template: '<button name="edit"><i class="fa fa-pencil mr5"></i>@(Edit)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>
 	</div>
 </div>
 
-<div data---="importer__common.panel__if:usersprofile;url:/panels/users-profile.html"></div>
-<div data---="importer__common.panel__if:usersassign;url:/panels/users-assign.html"></div>
+<div data---="importer__common.form__if:usersform;url:/forms/user.html"></div>
+<div data---="importer__common.form__if:assignform;url:/forms/assign.html"></div>
 
 <script>
 
@@ -55,7 +55,7 @@
 		return val ? '@({0} years old)'.format((NOW.getFullYear() - val.getFullYear())) : '';
 	};
 
-	PLUGIN('usersgrid', function(exports) {
+	PLUGIN('users', function(exports) {
 
 		exports.refresh = function() {
 			NULL('?.items');
@@ -75,7 +75,17 @@
 
 			filter.page = page || 1;
 			filter.sort = sort;
-			AJAX('GET /api/op/users/', filter, '?.items');
+			DAPI(QUERIFY('users', filter), '?.items');
+		};
+
+		exports.button = function(name, row) {
+			if (name === 'edit') {
+				exports.edit(row);
+			} else if (name === 'remove') {
+				OP.approve('@(Are you sure you want to remove "{0}"?)'.format(row.name), '"trash-o" @(Remove)', function() {
+					DAPI('users_remove/' + row.id, exports.refresh);
+				});
+			}
 		};
 
 		exports.edit = function(row) {
@@ -83,7 +93,7 @@
 			if (row instanceof jQuery)
 				row = GET('?.selected');
 
-			AJAX('GET /api/op/users/' + row.id, function(response) {
+			DAPI('users_read/' + (typeof(row) === 'string' ? row : row.id) + ' @showloading', function(response) {
 				if (response && response.id) {
 					response.darkmode = response.darkmode ? 'true' : 'false';
 					response.welcome = false;
@@ -103,20 +113,20 @@
 						response.appsroles[app.id] = app.roles;
 					}
 
-					SETR('usersprofilepanel', response);
-					SET('common.panel', 'usersprofile');
+					SET('usersform @reset @hideloading', response);
+					SET('common.form', 'usersform');
 				}
 			});
 		};
 
 		exports.create = function() {
-			DEFAULT('usersprofilepanel__{password:GUID(20)}');
-			SET('common.panel', 'usersprofile');
+			SET('usersform @default', { password: GUID(20) });
+			SET('common.form', 'usersform');
 		};
 
 		exports.assign = function() {
-			DEFAULT('usersassignpanel__{}');
-			SET('common.panel', 'usersassign');
+			SET('assignform @default', {});
+			SET('common.form', 'assignform');
 		};
 
 		exports.remove = function(el) {
@@ -129,11 +139,11 @@
 			else if (selected)
 				arr = [selected];
 
-			OP.confirm2('@(Are you sure you want to remove selected users?)', ['"trash-o" @(Yes)', '@(Cancel)'], function(index) {
+			OP.approve('@(Are you sure you want to remove selected users?)', '"trash-o" @(Remove)', function() {
 				OP.loading(true);
 				arr.wait(function(item, next, index) {
 					OP.progress((index / arr.length) * 100);
-					AJAX('DELETE /api/op/users/' + item.id, next);
+					DAPI('users_remove/' + item.id, next);
 				}, function() {
 					OP.progress(100);
 					OP.loading(false, 500);

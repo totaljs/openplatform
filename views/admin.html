@@ -1,564 +1,568 @@
-<div data---="layout__common.layout__parent:parent" class="invisible">
+@{layout('')}
 
-	<script type="text/plain">
-		{
-			left: { size: 223 },
-			main: {},
-			xs: {
-				left: { show: false },
-				main: {}
-			},
-			menu: {
-				left: { show: true, size: '100%' },
-				main: { show: false }
-			}
-		}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
+	<meta name="robots" content="all,follow" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-title" content="@{'%name'}" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
+	<script src="@{'%cdn'}/spa.min@18.js"></script>
+	<script>ENVIRONMENT('opadmin');</script>
+	@{import('meta', 'head', 'app.css', 'app.js', 'favicon.ico')}
+</head>
+<body data---="exec" class="invisible@{if user.darkmode} ui-dark@{fi}">
+
+	<script>
+		DEF.languagehtml = '@{user.language}';
+		OP.ready = true;
+		OP.init(function(err, meta) {
+			if (meta) {
+				// resizelayout();
+				setTimeout(function() {
+					W.focus();
+					$('body').rclass('invisible');
+				}, 100);
+			} else
+				W.close();
+		});
 	</script>
 
-	<section data-type="left">
-		<div data---="viewbox__null__parent:.ui-layout-section;scrollbar:1;visibleY:0">
-			<div class="menu" data---="selected__common.page__selector:.item">
+	<div data---="LAZY floatinginput"></div>
+	<div data---="LAZY message__null__style:2"></div>
+	<div data---="LAZY datepicker__null__close:@(Close);today:@(Set today)"></div>
+	<div data---="LAZY directory__null__placeholder:@(Search)"></div>
+	<div data---="LAZY menu__null__style:2"></div>
+	<div data---="LAZY tooltip"></div>
+	<div data---="LAZY colorpicker"></div>
+	<div data---="LAZY faicons__null__search:@(Search)"></div>
 
-				<div class="caption">@(Platform)</div>
-				<div class="item exec" data-exec="main/show" data-if="dashboard">
-					<i class="fa fa-dashboard"></i>
-					<span>@(Dashboard)</span>
+	<div data---="layout__common.layout__parent:parent" class="invisible">
+
+		<script type="text/plain">
+			{
+				left: { size: 223 },
+				main: {},
+				xs: {
+					left: { show: false },
+					main: {}
+				},
+				menu: {
+					left: { show: true, size: '100%' },
+					main: { show: false }
+				}
+			}
+		</script>
+
+		<section data-type="left">
+			<div data---="viewbox__null__parent:.ui-layout-section;scrollbar:1;visibleY:0">
+				<div class="menu" data---="selected__common.page__selector:.item">
+
+					<div class="caption nmt">@(Platform)</div>
+					<div class="item exec" data-exec="main/show" data-if="dashboard">
+						<i class="fa fa-dashboard"></i>
+						<span>@(Dashboard)</span>
+					</div>
+					<div class="item exec" data-exec="main/show" data-if="reports">
+						<i class="fa fa-bug"></i>
+						<span>@(Reports)</span>
+					</div>
+
+					<div class="caption">@(Users)</div>
+					<div class="item exec" data-exec="main/show" data-if="users">
+						<i class="fa fa-users"></i>
+						<span>@(Users)</span>
+					</div>
+					<div class="item exec" data-exec="main/show" data-if="groups">
+						<i class="fa fa-folder"></i>
+						<span>@(Groups)</span>
+					</div>
+					<div class="item exec" data-exec="main/show" data-if="roles">
+						<i class="fa fa-key"></i>
+						<span>@(Roles)</span>
+					</div>
+
+					@{part('users')}
+
+					<div class="caption">@(Applications)</div>
+
+					<div class="item exec hidden red" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
+						<i class="fa fa-shopping-bag"></i>
+						<span>@(Marketplace)</span>
+					</div>
+
+					<div class="item exec" data-exec="main/show" data-if="apps">
+						<i class="fa fa-rocket"></i>
+						<span>@(Applications)</span>
+					</div>
+
+					@{part('applications')}
+
+					<div class="item exec" data-exec="main/show" data-if="oauth" data-bind="common.allowoauth__show">
+						<i class="fa fa-key"></i>
+						<span>@(OAuth 2.0)</span>
+					</div>
+
+					<div class="caption">@(More)</div>
+
+					@{part('more')}
+
+					<div class="item exec" data-exec="main/show" data-if="wiki">
+						<i class="far fa-life-ring"></i>
+						<span>@(Documentation)</span>
+					</div>
+					<div class="item exec" data-exec="main/show" data-if="settings">
+						<i class="fa fa-sliders-h"></i>
+						<span>@(Settings)</span>
+					</div>
+
 				</div>
-				<div class="item exec" data-exec="main/show" data-if="reports">
-					<i class="fa fa-bug"></i>
-					<span>@(Reports)</span>
-				</div>
-				<hr />
-
-				<div class="caption">@(Users)</div>
-				<div class="item exec" data-exec="main/show" data-if="users">
-					<i class="fa fa-users"></i>
-					<span>@(Users)</span>
-				</div>
-				<div class="item exec" data-exec="main/show" data-if="groups">
-					<i class="fa fa-folder"></i>
-					<span>@(Groups)</span>
-				</div>
-				<div class="item exec" data-exec="main/show" data-if="roles">
-					<i class="fa fa-key"></i>
-					<span>@(Roles)</span>
-				</div>
-
-				@{part('users')}
-
-				<hr />
-				<div class="caption">@(Applications)</div>
-
-				<!--
-				<div class="item exec hidden red" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
-					<i class="fa fa-shopping-bag"></i>
-					<span>@(Marketplace)</span>
-				</div>-->
-
-				<div class="item exec" data-exec="main/show" data-if="apps">
-					<i class="fa fa-rocket"></i>
-					<span>@(Applications)</span>
-				</div>
-
-				@{part('applications')}
-
-				<div class="item exec" data-exec="main/show" data-if="oauth" data-bind="common.allowoauth__show">
-					<i class="fa fa-key"></i>
-					<span>@(OAuth 2.0)</span>
-				</div>
-
-				<hr />
-				<div class="caption">@(More)</div>
-
-				@{part('more')}
-
-				<div class="item exec" data-exec="main/show" data-if="wiki">
-					<i class="far fa-life-ring"></i>
-					<span>@(Documentation)</span>
-				</div>
-				<div class="item exec" data-exec="main/show" data-if="settings">
-					<i class="fa fa-sliders-h"></i>
-					<span>@(Settings)</span>
-				</div>
+				<br />
 			</div>
-			<br />
-		</div>
-	</section>
+		</section>
 
-	<section data-type="main" id="mainbody">
-		<div data---="part__common.page__if:dashboard;url:/parts/dashboard.html;reload:dashboard/reload" class="hidden invisible"></div>
-		<div data---="part__common.page__if:users;url:/parts/users-grid.html;reload:usersgrid/reload" class="hidden"></div>
-		<div data---="part__common.page__if:groups;url:/parts/users-groups.html;reload:usersgroups/reload" class="hidden"></div>
-		<div data---="part__common.page__if:roles;url:/parts/users-roles.html;reload:usersroles/reload" class="hidden"></div>
-		<div data---="part__common.page__if:oauth;url:/parts/oauth-grid.html;reload:oauthgrid/reload" class="hidden"></div>
-		<div data---="part__common.page__if:apps;url:/parts/apps-grid.html;reload:appsgrid/reload" class="hidden"></div>
-		<div data---="part__common.page__if:marketplace;url:/parts/marketplace.html;reload:marketplace/reload" class="hidden invisible"></div>
-		<div data---="part__common.page__if:wiki;url:/parts/wiki.html" class="hidden invisible"></div>
-		<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;delay:500" class="hidden invisible"></div>
-		<div data---="part__common.page__if:reports;url:/parts/reports.html;reload:reportsgrid/reload;delay:500" class="hidden invisible"></div>
-		@{part('main')}
-	</section>
+		<section data-type="main" id="mainbody">
+			<div data---="part__common.page__if:dashboard;url:/parts/dashboard.html;reload:dashboard/reload" class="hidden invisible"></div>
+			<div data---="part__common.page__if:users;url:/parts/users.html;reload:users/reload" class="hidden"></div>
+			<div data---="part__common.page__if:groups;url:/parts/groups.html;reload:groups/reload" class="hidden"></div>
+			<div data---="part__common.page__if:roles;url:/parts/roles.html;reload:roles/reload" class="hidden"></div>
+			<div data---="part__common.page__if:oauth;url:/parts/oauth.html;reload:oauth/reload" class="hidden"></div>
+			<div data---="part__common.page__if:apps;url:/parts/apps.html;reload:apps/reload" class="hidden"></div>
+			<div data---="part__common.page__if:marketplace;url:/parts/marketplace.html;reload:marketplace/reload" class="hidden invisible"></div>
+			<div data---="part__common.page__if:wiki;url:/parts/wiki.html" class="hidden invisible"></div>
+			<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;delay:500" class="hidden invisible"></div>
+			<div data---="part__common.page__if:reports;url:/parts/reports.html;reload:reportsgrid/reload;delay:500" class="hidden invisible"></div>
+			@{part('main')}
+		</section>
 
-</div>
+	</div>
 
-<div data---="importer__common.panel__if:appsprofile;url:/panels/apps-profile.html"></div>
-<div data---="importer__common.panel__if:appsdesigner;url:/panels/apps-designer.html"></div>
+	<div data---="importer__common.form__if:appsform;url:/forms/app.html"></div>
 
-<script>
+	<script>
 
-	SET('GET /api/cl/ <5 minutes>', function(response) {
-		SET('%cl', response);
-		SET('languages', response.languages);
-	});
+		DEF.api = '/opapi/';
+		DEF.repeatfocus = false;
 
-	CONFIG('datagrid,serverlisting,listing', 'pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items);');
+		DAPI('codelist <5 minutes>', function(response) {
+			SET('%cl', response);
+			SET('languages', response.languages);
+		});
 
-	MAKE('common', function(obj) {
-		if (!obj.page)
-			obj.page = 'dashboard';
-	});
+		CONFIG('datagrid,serverlisting,listing', 'pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items);');
+		CONFIG('statsbarsimple', 'colors:#3182BD,#FD8D3C,#74C476,#9E9AC8,#969696,#bd6b27,#808080');
 
-	var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
-	var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
-	var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
-	var statusestemplate = '{{ id | status }}';
-	var statuses = [{ id: 0, name: '@(Available)', template: statusestemplate }, { id: 1, name: '@(Busy)', template: statusestemplate }, { id: 2, name: '@(Do not disturb)', template: statusestemplate }, { id: 3, name: '@(Be right back)', template: statusestemplate }, { id: 4, name: '@(Meeting)', template: statusestemplate }, { id: 5, name: '@(Business trip)', template: statusestemplate }, { id: 6, name: '@(Holiday)', template: statusestemplate }, { id: 7, name: '@(Sick)', template: statusestemplate }, { id: 8, name: '@(Off work)', template: statusestemplate }];
-	var contracts = [{ id: 1, name: '@(Permanent)' }, { id: 2, name: '@(Contractor)' }, { id: 3, name: '@(Intern)' }, { id: 4, name: '@(Part-time)' }, { id: 5, name: '@(Customer)' }];
+		MAKE('common', function(obj) {
+			if (!obj.page)
+				obj.page = 'dashboard';
+		});
 
-	MONTHS[0] = '@(January)';
-	MONTHS[1] = '@(February)';
-	MONTHS[2] = '@(March)';
-	MONTHS[3] = '@(April)';
-	MONTHS[4] = '@(May)';
-	MONTHS[5] = '@(Juny)';
-	MONTHS[6] = '@(July)';
-	MONTHS[7] = '@(August)';
-	MONTHS[8] = '@(September)';
-	MONTHS[9] = '@(October)';
-	MONTHS[10] = '@(November)';
-	MONTHS[11] = '@(December)';
-	DAYS[0] = '@(Sunday)';
-	DAYS[1] = '@(Monday)';
-	DAYS[2] = '@(Tuesday)';
-	DAYS[3] = '@(Wednesday)';
-	DAYS[4] = '@(Thursday)';
-	DAYS[5] = '@(Friday)';
-	DAYS[6] = '@(Saturday)';
+		var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
+		var numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
+		var dateformats = [{ id: 'yyyy-MM-dd', name: '@(year-month-day)' }, { id: 'dd.MM.yyyy', name: '@(day.month.year)' }, { id: 'MM.dd.yyyy', name: '@(month.day.year)' }];
+		var statusestemplate = '{{ id | status }}';
+		var statuses = [{ id: 0, name: '@(Available)', template: statusestemplate }, { id: 1, name: '@(Busy)', template: statusestemplate }, { id: 2, name: '@(Do not disturb)', template: statusestemplate }, { id: 3, name: '@(Be right back)', template: statusestemplate }, { id: 4, name: '@(Meeting)', template: statusestemplate }, { id: 5, name: '@(Business trip)', template: statusestemplate }, { id: 6, name: '@(Holiday)', template: statusestemplate }, { id: 7, name: '@(Sick)', template: statusestemplate }, { id: 8, name: '@(Off work)', template: statusestemplate }];
+		var contracts = [{ id: 1, name: '@(Permanent)' }, { id: 2, name: '@(Contractor)' }, { id: 3, name: '@(Intern)' }, { id: 4, name: '@(Part-time)' }, { id: 5, name: '@(Customer)' }];
 
-	ON('@datepicker', function(com) {
-		var fd = FIRSTDATEOFWEEK['@{user.language}'];
-		fd && com.reconfigure({ firstday: fd });
-	});
+		SET('%profilemodes', [{ id: false, type: 'light', name: '@(Light)' }, { id: true, type: 'dark', name: '@(Dark)' }]);
+		SET('%profilevolume', [{ id: 20, name: '@(low)' }, { id: 50, name: '@(medium)' }, { id: 80, name: '@(loud)' }]);
+		SET('%profiledesktop', [{ id: 1, type: 'windowed', name: '@(Windows)' }, { id: 2, type: 'tabbed', name: '@(Tabbed)' }, { id: 3, type: 'portal', name: '@(Portal)' }]);
 
-	CACHEPATH('common.page', '7 days', true);
-	common.marketplace = '@{CONF.marketplace}';
-	common.allowoauth = '@{CONF.allowoauth}'==='true';
+		MONTHS[0] = '@(January)';
+		MONTHS[1] = '@(February)';
+		MONTHS[2] = '@(March)';
+		MONTHS[3] = '@(April)';
+		MONTHS[4] = '@(May)';
+		MONTHS[5] = '@(Juny)';
+		MONTHS[6] = '@(July)';
+		MONTHS[7] = '@(August)';
+		MONTHS[8] = '@(September)';
+		MONTHS[9] = '@(October)';
+		MONTHS[10] = '@(November)';
+		MONTHS[11] = '@(December)';
+		DAYS[0] = '@(Sunday)';
+		DAYS[1] = '@(Monday)';
+		DAYS[2] = '@(Tuesday)';
+		DAYS[3] = '@(Wednesday)';
+		DAYS[4] = '@(Thursday)';
+		DAYS[5] = '@(Friday)';
+		DAYS[6] = '@(Saturday)';
 
-	OP.on('menu', function() {
-		SET('common.layout', common.layout === 'menu' ? '' : 'menu');
-	});
+		ON('@datepicker', function(com) {
+			var fd = FIRSTDATEOFWEEK['@{user.language}'];
+			fd && com.reconfigure({ firstday: fd });
+		});
 
-	WATCH('common.page', function() {
-		if (common.layout)
-			NULL('common.layout');
-	});
+		CACHEPATH('common.page', '7 days', true);
+		common.marketplace = '@{CONF.marketplace}';
+		common.allowoauth = '@{CONF.allowoauth}'==='true';
 
-	OP.appearance();
+		OP.on('menu', function() {
+			SET('common.layout', common.layout === 'menu' ? '' : 'menu');
+		});
 
-	OP.on('appearance', function(profile) {
-		CSS('.dashboard-referrer > span,.button,.submit{background-color:{0}}.selected{background:{0}!important;color:white!important},.color{color:{0}!important}'.format(profile.colorscheme), 'opcustomstyle');
-	});
+		WATCH('common.page', function() {
+			if (common.layout)
+				NULL('common.layout');
+		});
 
-	AJAX('GET /api/profile/', function(user) {
+		OP.jcomponent();
 
-		SET('user', user);
-		DEF.dateformat = user.dateformat;
-		user.timeformat = user.timeformat;
-		user.numberformat = user.numberformat;
+		DAPI('profile', function(user) {
 
-		switch (user.numberformat) {
-			case 1: // 1 000.12
-				DEF.decimalseparator = '.';
-				DEF.thousandsseparator = ' ';
-				break;
-			case 2: // 1 000,12
-				DEF.decimalseparator = ',';
-				DEF.thousandsseparator = ' ';
-				break;
-			case 3: // 1.000,12
-				DEF.decimalseparator = ',';
-				DEF.thousandsseparator = '.';
-				break;
-			case 4: // 1,000.12
-				DEF.decimalseparator = '.';
-				DEF.thousandsseparator = ',';
-				break;
-		}
+			SET('user', user);
+			DEF.dateformat = user.dateformat;
+			user.timeformat = user.timeformat;
+			user.numberformat = user.numberformat;
 
-		ENV('date', user.dateformat);
-	});
+			switch (user.numberformat) {
+				case 1: // 1 000.12
+					DEF.decimalseparator = '.';
+					DEF.thousandsseparator = ' ';
+					break;
+				case 2: // 1 000,12
+					DEF.decimalseparator = ',';
+					DEF.thousandsseparator = ' ';
+					break;
+				case 3: // 1.000,12
+					DEF.decimalseparator = ',';
+					DEF.thousandsseparator = '.';
+					break;
+				case 4: // 1,000.12
+					DEF.decimalseparator = '.';
+					DEF.thousandsseparator = ',';
+					break;
+			}
 
-	OP.on('share', function(data) {
-		if (data && data.type === 'install') {
-			OP.loading(true);
-			OP.loading(false, 3000);
-			data.typeid = 'external';
-			SET('common.page', 'apps');
-			EXEC(true, 'appsgrid/create', data.url);
-		}
-	});
+			ENV('date', user.dateformat);
+		});
 
-	$(W).on('message', function(e) {
+		OP.on('share', function(data) {
+			if (data && data.type === 'install') {
+				OP.loading(true);
+				OP.loading(false, 3000);
+				SET('common.page', 'apps');
+				EXEC(true, 'apps/create', data.url || data.body.url);
+			}
+		});
 
-		var data = PARSE((e.originalEvent && e.originalEvent.data).toString() || '');
-		if (!data || !data.TYPE)
-			return;
-		if (data.TYPE === 'install') {
-			data.typeid = 'external';
-			SET('appsprofilepanel @reset', data);
-			SET('common.panel', 'appsprofile');
-			setTimeout(function() {
-				UPD('appsprofilepanel.title @change');
-			}, 1500);
-		}
-	});
+		$(W).on('message', function(e) {
+			var data = PARSE((e.originalEvent && e.originalEvent.data).toString() || '');
+			if (!data || !data.TYPE)
+				return;
+			if (data.TYPE === 'install') {
+				data.typeid = 'external';
+				SET('appsform @reset', data);
+				SET('common.form', 'appsform');
+				setTimeout(function() {
+					UPD('appsform.title @change');
+				}, 1500);
+			}
+		});
 
-	PLUGIN('main', function(exports) {
+		PLUGIN('main', function(exports) {
 
-		exports.refreshmeta = function() {
-			AJAX('GET /api/op/meta/', function(response) {
+			exports.refreshmeta = function() {
+				DAPI('meta', function(response) {
 
-				for (var i = 0; i < response.groups.length; i++) {
-					var item = response.groups[i];
-					item.text = item.name;
-					item.value = item.id;
+					for (var i = 0; i < response.groups.length; i++) {
+						var item = response.groups[i];
+						item.text = item.name;
+						item.value = item.id;
+					}
+
+					SET('?.meta', response);
+				});
+			};
+
+			exports.refreshapps = function() {
+				DAPI('apps', function(response) {
+					for (var i = 0; i < response.length; i++) {
+						var app = response[i];
+						app.roles && app.roles.quicksort();
+						if (!app.version)
+							app.version = DEF.empty;
+					}
+
+					response.quicksort('title');
+					SET('?.apps', response);
+				});
+			};
+
+			exports.show = function(el) {
+				SET('common.page', el.attrd('if'));
+			};
+
+			exports.refreshmeta();
+			exports.refreshapps();
+		});
+
+		Thelpers.groups = function(value) {
+
+			if (!value.length)
+				return '';
+
+			var arr = [];
+			for (var i = 0; i < value.length; i++) {
+				var group = main.meta.groups.findItem('id', value[i]);
+				if (group)
+					arr.push(group.name);
+			}
+
+			return arr.join(', ');
+		};
+
+		Thelpers.boolean = function(value, color) {
+			return value ? ('<b class="' + (color || 'green') + '">@(yes)</b>') : '@(no)';
+		};
+
+		Thelpers.running = function(value) {
+			if (value === '_admin')
+				return '<b>@(Control panel)</b>';
+			return main.apps.findValue('id', value, 'title', value);
+		};
+
+		Thelpers.runningapps = function(value) {
+			if (!value || !value.length)
+				return DEF.empty;
+
+			value = value.trim();
+
+			if (!value.length)
+				return DEF.empty;
+
+			var builder = [];
+			for (var i = 0; i < value.length; i++)
+				builder.push(Thelpers.running(value[i]));
+
+			return builder.join(', ');
+		};
+
+		Thelpers.status = function(value, icon) {
+			var str;
+			switch (value) {
+				case 1:
+					str = 'spinner status1"></i>@(Busy)';
+					break;
+				case 2:
+					str = 'moon status2"></i>@(Do not disturb)';
+					break;
+				case 3:
+					str = 'door-open status3"></i>@(Be right back)';
+					break;
+				case 4:
+					str = 'brain status4"></i>@(Meeting)';
+					break;
+				case 5:
+					str = 'car status5"></i>@(Business trip)';
+					break;
+				case 6:
+					str = 'umbrella-beach status6"></i>@(Holiday)';
+					break;
+				case 7:
+					str = 'heartbeat status7"></i>@(Sick)';
+					break;
+				case 8:
+					str = 'home status8"></i>@(Off work)';
+					break;
+				default:
+					str = 'smile status0"></i>@(Available)';
+					break;
+			}
+
+			var index = str.indexOf('</i>');
+			var title = str.substring(index + 4);
+
+			return '<i title="' + title + '" class="si fa fa-' + (icon ? str.substring(0, index + 4) : str);
+		};
+
+		Thelpers.time = function(value) {
+
+			if (!value)
+				return;
+
+			var diff = Date.now() - value.parseDate().getTime();
+			var minutes = ((diff / 1000) / 60) >> 0;
+
+			if (minutes <= 1) {
+				var seconds = (diff / 1000) >> 0;
+				if (seconds < 60)
+					return @(seconds + ' ' + Thelpers.pluralize(seconds >> 0, 'seconds', 'second', 'seconds', 'seconds') + ' ago');
+			}
+
+			if (minutes < 60)
+				return minutes < 2 ? '@(less than minute ago)' : @(minutes + ' minutes ago');
+
+			var hours = (minutes / 60) >> 0;
+			if (hours < 24)
+				return @(hours + ' ' + Thelpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
+
+			var days = (hours / 24) >> 0;
+			if (days < 30)
+				return @(days + ' ' + Thelpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
+
+			var months = (days / 29) >> 0;
+			if (months < 12)
+				return @(months + ' ' + Thelpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
+
+			var years = (months / 12) >> 0;
+			return @(years + ' ' + Thelpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
+		};
+
+		COMPONENT('apps', 'toggle:Toggle all', function(self, config, cls) {
+
+			var cls2 = '.' + cls;
+			var apps = [];
+			var checkbox = '<div data-id="{0}" data-type="{1}" class="' + cls + '-checkbox"><i class="fa"></i><span>{2}</span></div>';
+			var skip = false;
+			var cache;
+			var cachearr = [];
+
+			self.make = function() {
+				self.aclass(cls);
+				self.event('click', cls2 + '-checkbox', function() {
+					var el = $(this);
+					var id = decodeURIComponent(el.attrd('id'));
+					var type = el.attrd('type');
+					var appid = type === 'role' ? el.parent().attrd('id') : null;
+					var is = self.check(type, id, null, appid);
+					var model = self.get();
+
+					if (is) {
+						if (appid)
+							model[appid].push(id);
+						else
+							model[id] = [];
+					} else {
+						if (appid)
+							model[appid] = model[appid].remove(id);
+						else {
+							delete model[id];
+							var next = el.next();
+							if (next.hclass(cls + '-roles'))
+								next.find(cls2 + '-checked').rclass(cls + '-checked').find('i').rclass('fa-check');
+						}
+					}
+
+					skip = true;
+					self.set(model);
+					self.change(true);
+				});
+
+				self.event('click', '.link', function() {
+					var arr = $(this).parent().find(cls2 + '-checkbox').toArray();
+					if (arr.length > 3)
+						OP.loading(true);
+					arr.wait(function(el, next) {
+						$(el).trigger('click');
+						setTimeout(next, 50);
+					}, function() {
+						OP.loading(false);
+					});
+				});
+			};
+
+			self.check = function(type, id, is, appid) {
+
+				var key = appid ? (appid + '_' + id) : id;
+				var el = cache[key];
+				if (el == null)
+					return;
+				if (is == null)
+					is = !el.hclass(cls + '-checked');
+				el.tclass(cls + '-checked', is).find('i').tclass('fa-check', is);
+				if (type === 'app') {
+					var next = el.next();
+					if (next.hclass(cls + '-roles'))
+						next.tclass('hidden', !is);
 				}
+				return is;
+			};
 
-				SET('?.meta', response);
-			});
-		};
-
-		exports.refreshapps = function() {
-			AJAX('GET /api/op/apps/', function(response) {
-				for (var i = 0; i < response.length; i++) {
-					var app = response[i];
-					app.roles && app.roles.quicksort();
-					if (!app.version)
-						app.version = DEF.empty;
+			self.configure = function(key, value) {
+				switch (key) {
+					case 'datasource':
+						self.datasource(config.datasource, function(path, value) {
+							apps = CLONE(value);
+							apps.quicksort('title');
+							self.redraw();
+						});
+						break;
 				}
+			};
 
-				SET('?.apps', response);
-			});
-		};
+			self.redraw = function() {
 
-		exports.show = function(el) {
-			SET('common.page', el.attrd('if'));
-		};
-
-		exports.refreshmeta();
-		exports.refreshapps();
-	});
-
-	Thelpers.groups = function(value) {
-
-		if (!value.length)
-			return '';
-
-		var arr = [];
-		for (var i = 0; i < value.length; i++) {
-			var group = main.meta.groups.findItem('id', value[i]);
-			if (group)
-				arr.push(group.name);
-		}
-
-		return arr.join(', ');
-	};
-
-	Thelpers.boolean = function(value, color) {
-		return value ? ('<b class="' + (color || 'green') + '">@(yes)</b>') : '@(no)';
-	};
-
-	Thelpers.running = function(value) {
-		if (value === '_admin')
-			return '<b>@(Control panel)</b>';
-		return main.apps.findValue('id', value, 'title', value);
-	};
-
-	Thelpers.runningapps = function(value) {
-		if (!value || !value.length)
-			return DEF.empty;
-
-		value = value.trim();
-
-		if (!value.length)
-			return DEF.empty;
-
-		var builder = [];
-		for (var i = 0; i < value.length; i++)
-			builder.push(Thelpers.running(value[i]));
-
-		return builder.join(', ');
-	};
-
-	Thelpers.status = function(value, icon) {
-		var str;
-		switch (value) {
-			case 1:
-				str = 'spinner status1"></i>@(Busy)';
-				break;
-			case 2:
-				str = 'moon status2"></i>@(Do not disturb)';
-				break;
-			case 3:
-				str = 'door-open status3"></i>@(Be right back)';
-				break;
-			case 4:
-				str = 'brain status4"></i>@(Meeting)';
-				break;
-			case 5:
-				str = 'car status5"></i>@(Business trip)';
-				break;
-			case 6:
-				str = 'umbrella-beach status6"></i>@(Holiday)';
-				break;
-			case 7:
-				str = 'heartbeat status7"></i>@(Sick)';
-				break;
-			case 8:
-				str = 'home status8"></i>@(Off work)';
-				break;
-			default:
-				str = 'smile status0"></i>@(Available)';
-				break;
-		}
-
-		var index = str.indexOf('</i>');
-		var title = str.substring(index + 4);
-
-		return '<i title="' + title + '" class="si fa fa-' + (icon ? str.substring(0, index + 4) : str);
-	};
-
-	Thelpers.time = function(value) {
-
-		if (!value)
-			return;
-
-		var diff = Date.now() - value.parseDate().getTime();
-		var minutes = ((diff / 1000) / 60) >> 0;
-
-		if (minutes <= 1) {
-			var seconds = (diff / 1000) >> 0;
-			if (seconds < 60)
-				return @(seconds + ' ' + Thelpers.pluralize(seconds >> 0, 'seconds', 'second', 'seconds', 'seconds') + ' ago');
-		}
-
-		if (minutes < 60)
-			return minutes < 2 ? '@(less than minute ago)' : @(minutes + ' minutes ago');
-
-		var hours = (minutes / 60) >> 0;
-		if (hours < 24)
-			return @(hours + ' ' + Thelpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
-
-		var days = (hours / 24) >> 0;
-		if (days < 30)
-			return @(days + ' ' + Thelpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
-
-		var months = (days / 29) >> 0;
-		if (months < 12)
-			return @(months + ' ' + Thelpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
-
-		var years = (months / 12) >> 0;
-		return @(years + ' ' + Thelpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
-	};
-
-	COMPONENT('apps', 'toggle:Toggle all', function(self, config) {
-
-		var cls = 'ui-apps';
-		var cls2 = '.' + cls;
-		var apps = [];
-		var checkbox = '<div data-id="{0}" data-type="{1}" class="' + cls + '-checkbox"><i class="fa"></i><span>{2}</span></div>';
-		var skip = false;
-		var cache;
-		var cachearr = [];
-
-		self.make = function() {
-			self.aclass(cls);
-			self.event('click', cls2 + '-checkbox', function() {
-				var el = $(this);
-				var id = decodeURIComponent(el.attrd('id'));
-				var type = el.attrd('type');
-				var appid = type === 'role' ? el.parent().attrd('id') : null;
-				var is = self.check(type, id, null, appid);
-				var model = self.get();
-
-				if (is) {
-					if (appid)
-						model[appid].push(id);
-					else
-						model[id] = [];
-				} else {
-					if (appid)
-						model[appid] = model[appid].remove(id);
-					else {
-						delete model[id];
-						var next = el.next();
-						if (next.hclass(cls + '-roles'))
-							next.find(cls2 + '-checked').rclass(cls + '-checked').find('i').rclass('fa-check');
+				var builder = [];
+				for (var i = 0; i < apps.length; i++) {
+					var item = apps[i];
+					builder.push(checkbox.format(item.id, 'app', item.title));
+					if (item.roles.length) {
+						builder.push('<div class="{0}-roles hidden" data-id="{1}">'.format(cls, item.id));
+						for (var j = 0; j < item.roles.length; j++)
+							builder.push(checkbox.format(encodeURIComponent(item.roles[j]), 'role', Thelpers.encode(item.roles[j]), item.id));
+						builder.push('<span class="link">{0}</span>'.format(config.toggle));
+						builder.push('</div>');
 					}
 				}
 
-				skip = true;
-				self.set(model);
-				self.change(true);
-			});
+				self.html(builder.join(''));
 
-			self.event('click', '.link', function() {
-				var arr = $(this).parent().find(cls2 + '-checkbox').toArray();
-				if (arr.length > 3)
-					OP.loading(true);
-				arr.wait(function(el, next) {
-					$(el).trigger('click');
-					setTimeout(next, 50);
-				}, function() {
-					OP.loading(false);
+				cache = {};
+				cachearr = [];
+
+				self.find(cls2 + '-checkbox').each(function() {
+					var el = $(this);
+					var type = el.attrd('type');
+					var id = decodeURIComponent(el.attrd('id'));
+					if (type === 'role') {
+						var appid = el.parent().attrd('id');
+						cache[appid + '_' + id] = el;
+					} else
+						cache[id] = el;
+					cachearr.push(el);
 				});
-			});
-		};
 
-		self.check = function(type, id, is, appid) {
+				self.refresh();
+			};
 
-			var key = appid ? (appid + '_' + id) : id;
-			var el = cache[key];
-			if (el == null)
-				return;
-			if (is == null)
-				is = !el.hclass(cls + '-checked');
-			el.tclass(cls + '-checked', is).find('i').tclass('fa-check', is);
-			if (type === 'app') {
-				var next = el.next();
-				if (next.hclass(cls + '-roles'))
-					next.tclass('hidden', !is);
-			}
-			return is;
-		};
+			self.setter = function(value) {
 
-		self.configure = function(key, value) {
-			switch (key) {
-				case 'datasource':
-					self.datasource(config.datasource, function(path, value) {
-						apps = CLONE(value);
-						apps.quicksort('title');
-						self.redraw();
-					});
-					break;
-			}
-		};
-
-		self.redraw = function() {
-
-			var builder = [];
-			for (var i = 0; i < apps.length; i++) {
-				var item = apps[i];
-				builder.push(checkbox.format(item.id, 'app', item.title));
-				if (item.roles.length) {
-					builder.push('<div class="{0}-roles hidden" data-id="{1}">'.format(cls, item.id));
-					for (var j = 0; j < item.roles.length; j++)
-						builder.push(checkbox.format(encodeURIComponent(item.roles[j]), 'role', Thelpers.encode(item.roles[j]), item.id));
-					builder.push('<span class="link">{0}</span>'.format(config.toggle));
-					builder.push('</div>');
+				if (skip || !value) {
+					skip = false;
+					return;
 				}
-			}
 
-			self.html(builder.join(''));
-
-			cache = {};
-			cachearr = [];
-
-			self.find(cls2 + '-checkbox').each(function() {
-				var el = $(this);
-				var type = el.attrd('type');
-				var id = decodeURIComponent(el.attrd('id'));
-				if (type === 'role') {
-					var appid = el.parent().attrd('id');
-					cache[appid + '_' + id] = el;
-				} else
-					cache[id] = el;
-				cachearr.push(el);
-			});
-
-			self.refresh();
-		};
-
-		self.setter = function(value) {
-
-			if (skip || !value) {
-				skip = false;
-				return;
-			}
-
-			for (var i = 0; i < cachearr.length; i++) {
-				var el = cachearr[i];
-				el.rclass(cls + '-checked');
-				el.find('i').rclass('fa-check');
-				if (el.attrd('type') === 'app') {
-					var next = el.next();
-					if (next.hclass(cls + '-roles'))
-						next.aclass('hidden');
+				for (var i = 0; i < cachearr.length; i++) {
+					var el = cachearr[i];
+					el.rclass(cls + '-checked');
+					el.find('i').rclass('fa-check');
+					if (el.attrd('type') === 'app') {
+						var next = el.next();
+						if (next.hclass(cls + '-roles'))
+							next.aclass('hidden');
+					}
 				}
-			}
 
-			var keys = Object.keys(value);
-			for (var i = 0; i < keys.length; i++) {
-				var key = keys[i];
-				self.check('app', key, true);
-				var roles = value[key];
-				for (var j = 0; j < roles.length; j++)
-					self.check('role', roles[j], true, key);
-			}
-		};
+				var keys = Object.keys(value);
+				for (var i = 0; i < keys.length; i++) {
+					var key = keys[i];
+					self.check('app', key, true);
+					var roles = value[key];
+					for (var j = 0; j < roles.length; j++)
+						self.check('role', roles[j], true, key);
+				}
+			};
 
-	});
-
-	if (!isMOBILE) {
-		$(document).on('mouseenter mouseleave', '.tooltip', function(e) {
-			if (e.type === 'mouseenter') {
-				var el = $(this);
-				var opt = {};
-				opt.element = el;
-				opt.html = el.attrd('title');
-				opt.align = 'bottom';
-				opt.timeout = 1500;
-				SETTER('tooltip/show', opt);
-			} else
-				SETTER('!tooltip/hide');
 		});
-	}
 
-	function refresh_components(callback) {
-		AJAX('GET /api/op/components/', function(response) {
-			if (W.builder)
-				W.builder.components = response;
-			SET('common.components', response);
-			if (callback && typeof(callback) === 'function')
-				callback();
-		});
-	}
+	</script>
 
-	ON('builder', function(builder) {
-		builder.proicons = true;
-		builder.url_sources = 'GET /api/op/sources/';
-		builder.url_sources_save = 'POST /api/op/op/sources/';
-		builder.url_sources_delete = 'DELETE /api/op/sources/{0}/';
-		builder.url_actions = 'GET /api/op/actions/';
-		builder.url_designs = 'GET /api/op/ui/{0}/';
-		builder.url_designs_save = 'POST /api/op/ui/';
-		builder.components = common.components;
-	});
+	@{components('openplatform_admin')}
 
-	refresh_components(function() {
-		IMPORT('https://cdn.componentator.com/designer/builder@1.html', '#mainbody');
-	});
-
-</script>
-
-@{components('openplatform_admin')}
+</body>
+</html>

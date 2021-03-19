@@ -1,8 +1,10 @@
 NEWSCHEMA('Apps/Logs', function(schema) {
+
 	schema.define('appid', 'UID');
 	schema.define('body', 'String(500)', true);
 	schema.define('type', ['error', 'info', 'warning', 'success', 'alert'])('info');
-	schema.setInsert(function($) {
+
+	schema.setInsert(function($, model) {
 
 		if ($.user.guest) {
 			$.invalid('error-permissions');
@@ -10,7 +12,8 @@ NEWSCHEMA('Apps/Logs', function(schema) {
 		}
 
 		$.model.userid = $.user.id;
-		DBMS().insert('tbl_user_log', $.model);
+		DBMS().insert('tbl_user_log', model);
 		$.success();
 	});
+
 });

@@ -2,10 +2,10 @@ NEWSCHEMA('Users/Password', function(schema) {
 
 	schema.define('name', 'String(120)', true);
 
-	schema.addWorkflow('exec', function($) {
+	schema.addWorkflow('exec', function($, model) {
 
 		var db = DBMS();
-		db.read('tbl_user').where('login', $.model.name).fields('id,firstname,lastname,middlename,name,language,email,otp,inactive,blocked');
+		db.read('tbl_user').where('login', model.name).fields('id,firstname,lastname,middlename,name,language,email,otp,inactive,blocked');
 		db.error('error-credentials');
 		db.callback(function(err, response) {
 
@@ -27,7 +27,7 @@ NEWSCHEMA('Users/Password', function(schema) {
 			model.lastname = response.lastname;
 			model.middlename = response.middlename;
 			model.name = response.name;
-			model.login = $.model.name;
+			model.login = model.name;
 			model.token = ENCRYPT({ id: response.id, date: NOW, type: 'password' }, CONF.secretpassword);
 			model.email = response.email;
 

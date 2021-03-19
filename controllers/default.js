@@ -5,9 +5,9 @@ exports.install = function() {
 	ROUTE('+GET  /welcome/');
 
 	ROUTE('GET /*', login, ['unauthorize']);
-	ROUTE('GET /marketplace/');
-	ROUTE('GET /logout/', logout);
-	ROUTE('GET /lock/', lock);
+	ROUTE('+GET /marketplace/');
+	ROUTE('+GET /logout/', logout);
+	ROUTE('+GET /lock/', lock);
 	ROUTE('+GET /_intro/', 'intro');
 	ROUTE('+GET /_profile/', 'profile');
 	ROUTE('+GET /access/{token}/', accesstoken);
@@ -170,11 +170,11 @@ function oauthauthorize() {
 		return;
 	}
 
-	DBMS().one('tbl_oauth').fields('id').where('id', id).query('blocked=FALSE').error('error-invalid-clientkey').callback(function(err) {
+	DBMS().one('tbl_oauth').fields('id').id(id).query('blocked=FALSE').error('error-invalid-clientkey').callback(function(err) {
 		if (err)
 			self.invalid(err);
 		else
-			self.redirect(url + '?code=' + (F.is4 ? self.sessionid.encrypt_uid(CONF.hashsalt) : self.sessionid.encryptUID(CONF.hashsalt)));
+			self.redirect(url + '?code=' + self.sessionid.encrypt_uid(CONF.hashsalt));
 	});
 }
 
@@ -188,29 +188,25 @@ function oauthsession() {
 	}
 
 	var filter = CONVERT(self.body, 'code:String,client_id:String,client_secret:String');
-	var code = F.is4 ? filter.code.decrypt_uid(CONF.hashsalt) : filter.code.decryptUID(CONF.hashsalt);
+	var code = filter.code.decrypt_uid(CONF.hashsalt);
 
 	if (!code) {
 		self.invalid('error-invalid-accesstoken');
 		return;
 	}
 
-	MAIN.session.get(code, function(err, profile, session) {
-
-		if (!profile) {
-			self.invalid('error-invalid-accesstoken');
-			return;
-		}
-
-		DBMS().one('tbl_oauth').fields('name').where('id', filter.client_id).where('accesstoken', filter.client_secret).callback(function(err, response) {
-			if (response) {
-				var data = { code: filter.code, userid: profile.id, id: filter.client_id };
-				var accesstoken = F.is4 ? ENCRYPT(data, CONF.hashsalt) : F.encrypt(data, CONF.hashsalt);
-				self.json({ access_token: accesstoken, expire: session.expire });
-			} else
-				self.invalid('error-invalid-accesstoken');
-		});
-
+	var db = DBMS();
+	db.one('tbl_user_session').fields('userid,dtexpire').id(code).where('dtexpire<=NOW()').set('session');
+	db.err('error-invalid-accesstoken');
+	db.one('tbl_oauth').fields('name').id(filter.client_id).where('accesstoken', filter.client_secret);
+	db.err('error-invalid-accesstoken');
+	db.callback(function(err, response) {
+		if (response) {
+			var data = { code: filter.code, userid: response.session.userid, id: filter.client_id };
+			var accesstoken = ENCRYPT(data, CONF.hashsalt);
+			self.json({ access_token: accesstoken, expire: response.session.dtexpire });
+		} else
+			self.invalid(err);
 	});
 }
 
@@ -243,9 +239,9 @@ function oauthprofile() {
 	}
 
 	var db = DBMS();
-	db.one('tbl_oauth').where('id', data.id).fields('allowreadprofile').query('blocked=FALSE').set('oauth');
+	db.one('tbl_oauth').id(data.id).fields('allowreadprofile').query('blocked=FALSE').set('oauth');
 	db.err('error-invalid-accesstoken');
-	db.one('tbl_user').where('id', data.userid).fields('id,supervisorid,deputyid,groupid,directory,directoryid,statusid,status,photo,name,linker,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,language,reference,locality,position,colorscheme,repo,roles,groups,inactive,blocked,notifications,notificationsemail,notificationsphone,sa,darkmode,inactive,sounds,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,middlename,contractid,ou,desktop').set('user');
+	db.one('tbl_user').id(data.userid).fields('id,supervisorid,deputyid,groupid,directory,directoryid,statusid,status,photo,name,linker,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,language,reference,locality,position,colorscheme,repo,roles,groups,inactive,blocked,notifications,notificationsemail,notificationsphone,sa,darkmode,inactive,sounds,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,middlename,contractid,ou,desktop').set('user');
 	db.err('error-invalid-accesstoken');
 	db.callback(function(err, response) {
 
@@ -328,6 +324,7 @@ function accesstoken(token) {
 			url += '&';
 
 		self.redirect(url + builder.join('&'));
+
 	}, self);
 }
 
@@ -372,16 +369,9 @@ function logout() {
 
 function lock() {
 	var self = this;
-	MAIN.session.get(self.sessionid, function(err, profile, meta) {
-		if (meta) {
-			meta.settings = (meta.settings || '').replace('locked:0', 'locked:1');
-			if (meta.settings.indexOf('locked:1') === -1)
-				meta.settings = (meta.settings ? ';' : '') + 'locked:1';
-			var expire = CONF.cookie_expiration || '3 days';
-			MAIN.session.set(meta.sessionid, meta.id, profile, expire, meta.note, meta.settings);
-		}
-		self.redirect('/');
-	});
+	DBMS().modify('tbl_user_session', { locked: true }).id(self.sessionid);
+	self.user.locked = true;
+	self.redirect('/');
 }
 
 function process404() {

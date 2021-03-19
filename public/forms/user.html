@@ -1,6 +1,5 @@
-<div data---="largeform__common.panel__if:usersprofile;reload:usersprofilepanel/reload;submit:usersprofilepanel/submit;icon:user;autofocus:1;width:800" class="hidden">
-	<div data-scope="usersprofilepanel">
-
+<div data---="largeform__common.form__if:usersform;reload:?/reload;submit:?/submit;icon:user;autofocus:1;width:800" class="hidden" data-scope="usersform">
+	<div>
 		<div class="accountphoto">
 			<div data---="preview__?.photo__url:/api/upload/photo/;width:300;height:300;format:/photos/{0}"></div>
 			<div class="help center"><i class="fa fa-camera"></i>@(300x300 pixels)</div>
@@ -185,43 +184,47 @@
 			<div class="caption">@(Behaviour)</div>
 			<div class="row">
 				<div class="col-md-4 m">
-					<div data---="checkbox__?.blocked__checkicon:lock__false">@(User is blocked)</div>
-					<div data---="checkbox__?.inactive__checkicon:power-off__false">@(User is inactive)</div>
+					<div data---="checkbox__?.blocked__null__false">@(User is blocked)</div>
+					<div data---="checkbox__?.inactive__null__false">@(User is inactive)</div>
 					<div data---="checkbox__?.sa__false">@(User is <b>administrator</b>)</div>
-					<div data---="checkbox__?.welcome__checkicon:envelope-o__true">@(Send welcome email)</div>
+					<div data---="checkbox__?.welcome__null__true">@(Send welcome email)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="checkbox__?.notifications__checkicon:bell__true">@(Enable notifications)</div>
-					<div data---="checkbox__?.notificationsemail__checkicon:bell__true">@(Enable email notifications)</div>
-					<div data---="checkbox__?.notificationsphone__checkicon:bell__true">@(Enable phone notifications)</div>
+					<div data---="checkbox__?.notifications__null__true">@(Enable notifications)</div>
+					<div data---="checkbox__?.notificationsemail__null__true">@(Enable email notifications)</div>
+					<div data---="checkbox__?.notificationsphone__null__true">@(Enable phone notifications)</div>
 				</div>
 				<div class="col-md-4 m">
-					<div data---="checkbox__?.sounds__checkicon:volume-up__true">@(Enable sounds)</div>
+					<div data---="checkbox__?.sounds__null__true">@(Enable sounds)</div>
 					<div data-bind="?.id__show" class="hidden">
-						<div data---="checkbox__?.rebuildtoken__checkicon:refresh__false">@(Re-build verification token)</div>
+						<div data---="checkbox__?.rebuildtoken__null__false">@(Re-build verification token)</div>
 					</div>
 					<div data-bind="?.id__show" class="hidden">
-						<div data---="checkbox__?.rebuildaccesstoken__checkicon:refresh__false">@(Re-build access token)</div>
+						<div data---="checkbox__?.rebuildaccesstoken__null__false">@(Re-build access token)</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="caption"><i class="fa fa-lock"></i>@(Appearance)</div>
+			<div data---="colorselector__?.colorscheme__null__'#4285f4'" class="m"></div>
 
-			<div class="row">
-				<div class="col-md-9 m">
-					<div data---="colorselector__?.colorscheme__null__'#4285f4'"></div>
+			<div class="pull-left">
+				<div class="fs12">@(User interface mode):</div>
+				<div data---="radiobuttonexpert__?.desktop__datasource:%profiledesktop;type:number" class="mt5 m">
+					<script type="text/html">
+						<div class="radioimage"><img src="/img/{{ type }}.png" width="50" alt="{{ name }}" />{{ name }}</div>
+					</script>
 				</div>
 			</div>
-
-			<div class="row">
-				<div class="col-md-6 m">
-					<div data---="radiobutton__?.desktop__items:@(Windowed mode)|1,@(Tabbed mode)|2,@(Portal mode)|3;type:number__1"><span class="gray">@(Desktop mode)</span></div>
-				</div>
-				<div class="col-md-6 m">
-					<div data---="radiobutton__?.darkmode__items:@(Light theme)|false,@(Dark theme)|true__'false'"><span class="gray">@(Theme)</span></div>
+			<div class="pull-left" style="margin-left:20px">
+				<div class="fs12">@(Choose light or dark mode):</div>
+				<div data---="radiobuttonexpert__?.darkmode__datasource:%profilemodes;type:boolean" class="mt5 m">
+					<script type="text/html">
+						<div class="radioimage"><img src="/img/{{ type }}.png" width="50" alt="{{ name }}" />{{ name }}</div>
+					</script>
 				</div>
 			</div>
+			<div class="clearfix"></div>
 
 			<div class="caption"><i class="fa fa-lock"></i>@(Credentials)</div>
 			<div class="row">
@@ -251,6 +254,7 @@
 			<div class="caption"><i class="fa fa-rocket"></i>@(Explicitly allowed apps)</div>
 			<div data---="apps__?.appsroles__datasource:main.apps__{}" class="m"></div>
 			<div>
+				<div data---="extend__null__name:usersform"></div>
 				<div class="caption"><i class="fa fa-box mr5"></i>@(Dynamic repository)</div>
 				<!-- <div data---="objecteditor__?.repo"></div> -->
 				<div data---="textarea__?.repo__monospace:true;height:150;placeholder:{}"></div>
@@ -258,33 +262,33 @@
 			</div>
 		</div>
 	</div>
-	<nav class="buttons" data---="validation__usersprofilepanel">
+	<nav class="buttons" data---="validation__usersform">
 		<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 </div>
 
 <script>
-	PLUGIN('usersprofilepanel', function(exports) {
+	PLUGIN('usersform', function(exports) {
 
 		exports.reload = function(com) {
 			var model = GET('?');
 			com.reconfigure({ title: model.id ? '@(Edit user)' : '@(Create user)' });
 		};
 
-		exports.submit = function() {
-			var model = GETR('?');
+		exports.submit = function(hide) {
+			var model = GET('? @reset');
 			if (model.invalidrepo) {
 				OP.confirm2('@(__Dynamic repository contains invalid format!__ Are you really sure you want to save user profile?)', ['"floppy-o" @(Save)', '@(Cancel)'], function() {
 					exports.scope();
-					exports.submitforce();
+					exports.submitforce(hide);
 				});
 			} else
-				exports.submitforce();
+				exports.submitforce(hide);
 		};
 
-		exports.submitforce = function() {
-			var model = CLONE(GETR('?'));
+		exports.submitforce = function(hide) {
+			var model = CLONE(GET('? @reset'));
 			model.darkmode = model.darkmode === 'true';
 			var keys = Object.keys(model.appsroles || EMPTYOBJECT);
 
@@ -310,8 +314,8 @@
 			model.repo = model.repo && !model.invalidrepo ? JSON.stringify(JSON.parse(model.repo)) : null;
 			model.appsroles = undefined;
 
-			AJAX('POST /api/op/users/' + (model.id || ''), model, OP.done('@(User has been saved successfully)', function() {
-				NULL('common.panel');
+			DAPI(model.id ? ('users_update/' + model.id) : 'users_insert', model, OP.done('@(User has been saved successfully)', function() {
+				hide();
 				EXEC('usersgrid/refresh');
 			}));
 		};
@@ -323,19 +327,19 @@
 		};
 
 		exports.searchcompany = function(q, next) {
-			AJAX('GET /api/op/companies/', { q: q }, next);
+			DAPI(QUERIFY('search_companies', { q: q }), next);
 		};
 
 		exports.searchlocality = function(q, next) {
-			AJAX('GET /api/op/locations/', { q: q }, next);
+			DAPI(QUERIFY('search_locations', { q: q }), next);
 		};
 
 		exports.searchposition = function(q, next) {
-			AJAX('GET /api/op/positions/', { q: q }, next);
+			DAPI(QUERIFY('search_positions', { q: q }), next);
 		};
 
 		exports.searchgroupid = function(q, next) {
-			AJAX('GET /api/op/groupids/', { q: q }, next);
+			DAPI(QUERIFY('search_groupids', { q: q }), next);
 		};
 
 		exports.loginemail = function() {
@@ -348,19 +352,19 @@
 			opt.offsetY = 20;
 			opt.placeholder = '@(Search users)';
 			opt.items = function(q, next) {
-				AJAX('GET /api/op/users/', { q: q, limit: 10, fields: 'id,name', skipme: 1 }, function(response) {
+				DAPI(QUERIFY('users', { q: q, limit: 10, fields: 'id,name', skipme: 1 }), function(response) {
 					next(response.items);
 				});
 			};
 			opt.callback = function(val) {
 				next(val.id);
 			};
-			SETTER('directory', 'show', opt);
+			SETTER('directory/show', opt);
 		};
 
 		WATCH('?.firstname + ?.lastname', function(path, value) {
-			if (usersprofilepanel.firstname && usersprofilepanel.lastname && !usersprofilepanel.name)
-				SET('?.name', usersprofilepanel.firstname + ' ' + usersprofilepanel.lastname);
+			if (usersform.firstname && usersform.lastname && !usersform.name)
+				SET('?.name', usersform.firstname + ' ' + usersform.lastname);
 		});
 
 		WATCH('?.repo', function(path, value) {

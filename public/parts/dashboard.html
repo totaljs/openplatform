@@ -3,7 +3,7 @@
 	.dashboard-referrer figure > div:last-child { margin-right: 60px; }
 	.dashboard-referrer figure > div:first-child { width: 60px; text-align: right; float: right; font-weight: bold; border-left: 1px solid #E0E0E0; padding: 0 5px; }
 	.dashboard-referrer figure > div { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-	.dashboard-referrer > span { position: absolute; left: 0; margin-top: -5px; height: 2px; border-radius: 2px 2px 0 0; opacity: 0.5; }
+	.dashboard-referrer > span { position: absolute; left: 0; margin-top: -5px; height: 2px; border-radius: 2px 2px 0 0; opacity: 0.5; background-color: var(--color); }
 	.ui-dark .dashboard-referrer { background-color: #202020; color: #C0C0C0; }
 	.ui-dark .dashboard-referrer figure > div:first-child { border-left-color: #303030; }
 
@@ -34,7 +34,7 @@
 </style>
 
 <div data-scope="dashboard">
-	<div data---="viewbox__null__scrollbar:1;parent:window">
+	<div data---="viewbox__null__scrollbar:1;parent:window;scrollbarshadow:1">
 		<div class="totalvisitors">
 			@(Total:) <b data-bind="?.online.logged__html:(value || 0).pluralize('@(# users, # user, # users, # users)')"></b>
 			<div class="help nmt">@(Max. online) <b data-bind="?.online.maxonline__text:value||0">---</b></div>
@@ -43,6 +43,7 @@
 			<div class="onlinevisitors-count"><i class="fa fa-circle online"></i><b data-bind="?.online.online__html:isMOBILE?(value||0):(value||0).pluralize('@(# users, # user, # users, # users)')"></b><span class="badge badge-green">@(online)</span></div>
 		</div>
 		<div class="padding bg-smoke npb">
+			<div data-bind="?.online.version__text b" class="m help nmt">@(OpenPlatform version): <b></b></div>
 			<div class="row">
 				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
@@ -124,7 +125,7 @@
 				<tbody data-bind="?.online.users__template__changes">
 					<script type="text/html">
 					{{ foreach m in value }}
-					<tr>
+					<tr class="exec pointer" data-exec="?/user" data-id="{{ m.id }}">
 						<td>{{ m.name | initials }} {{ m.name }} {{ if m.position }}<span class="gray">/ {{ m.position }}</span>{{ fi }}</td>
 						<td class="right col-xs-4">{{ m.dtlogged | time2 }}<i class="far fa-clock ml5"></i></td>
 					</tr>
@@ -298,6 +299,12 @@
 			return value;
 		};
 
+		exports.user = function(el) {
+			var id = el.attrd('id');
+			SET('common.page', 'users');
+			EXEC(true, 'users/edit', id);
+		};
+
 		exports.reload = function() {
 			WAIT('main.apps', exports.refresh);
 		};
@@ -307,7 +314,7 @@
 		};
 
 		exports.refresh = function() {
-			AJAX('GET /api/op/dashboard/', function(response) {
+			DAPI('dashboard', function(response) {
 				SET('?.year', NOW.getFullYear());
 				SET('?.meta', response);
 			});
@@ -318,14 +325,14 @@
 			// browser tab is focused
 			// defined condition is valid
 			WAIT('main.apps', function() {
-				AJAX('GET /api/op/dashboard/online/', function(response) {
+				DAPI('dashboard_online', function(response) {
 					SET('?.online', prepare(response));
 				});
 			});
 		}, 15000, true);
 
 		WATCH('?.year', function(path, value) {
-			AJAX('GET /api/op/dashboard/' + value, function(response) {
+			DAPI('dashboard_yearly/' + value, function(response) {
 
 				var slogged = [];
 				var smaxlonline = [];

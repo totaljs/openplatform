@@ -37,8 +37,9 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('oauthopenplatform', 'URL');
 	schema.define('oauthkey', 'String(30)');
 	schema.define('oauthsecret', 'String(50)');
+	schema.define('totalapi', 'String(100)');
 
-	schema.setGet(function($) {
+	schema.setRead(function($) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
@@ -144,5 +145,16 @@ NEWSCHEMA('Settings/SMTP', function(schema) {
 			} else
 				$.success();
 		});
+	});
+});
+
+NEWSCHEMA('Settings/TotalAPI', function(schema) {
+
+	schema.define('totalapi', 'String(100)', true);
+
+	schema.addWorkflow('exec', function($, model) {
+		if ($.controller && FUNC.notadmin($))
+			return;
+		TotalAPI(model.totalapi, 'check', EMPTYOBJECT, $.callback);
 	});
 });

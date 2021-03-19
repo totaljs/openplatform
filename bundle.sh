@@ -3,17 +3,28 @@ mkdir -p .bundle/
 cd .bundle
 cp -a ../controllers/ controllers
 cp -a ../definitions/ definitions
-cp -a ../modules/ modules
+cp -a ../schemas/ schemas
 cp -a ../public/ public
 cp -a ../resources/ resources
-cp -a ../schemas/ schemas
 cp -a ../views/ views
-cp -a ../versions versions
-cp -a ../updates updates
+cp -a ../guest.json guest.json
+mv controllers/api.js controllers/op-api.js
+mv controllers/default.js controllers/op-default.js
 
-total4 bundle openplatform.bundle
-cp openplatform.bundle ../openplatform.bundle
+# Flat file database
+# mv definitions/database-bk.js definitions/database.js
+
+cd definitions
+for f in *.js; do mv "$f" "`echo op-$f`"; done
+
+cd ../schemas
+for f in *.js; do mv "$f" "`echo op-$f`"; done
+
 cd ..
 
+total4 --bundle ../openplatform.bundle
+# cp openplatform.package ../openplatform@4.bundle
+
+cd ..
 rm -rf .bundle
 echo "DONE"

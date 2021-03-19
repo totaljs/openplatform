@@ -1,13 +1,2 @@
-name                        : OpenPlatform v4
-author                      : Peter Širka
-version                     : 4.0.0
-
-allow_custom_titles         : true
-cookie          (genearte)  : 10
-cookie_expiration           : 1 week
-secretpassword  (generate)  : 10
-// hashmode                 : sha256
-// hashsalt                 : SALT_FOR_PASSWORDS
-
-cdn                         : //cdn.componentator.com
-database                    : postgresql://user:pass@localhost:5432/openplatform
+// PostgreSQL database:
+database                 : postgresql://user:password@localhost:5432/database

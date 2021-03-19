@@ -1,4 +1,4 @@
-<div data-scope="usersroles">
+<div data-scope="roles">
 
 	<div class="header">
 		<label><i class="fa fa-key"></i>@(Roles (read-only))</label>
@@ -9,20 +9,18 @@
 			[
 				{ name: 'name', text: '@(Name)', width: 200, template: '{{ name | bgcolor }}' },
 				{ name: 'roles', text: '@(Groups)', width: 350, template: '{{ groups | join }}', search: true, sort: false },
-				{ name: 'apps', text: '@(Applications)', width: 350, template: '{{ apps | join }}', search: true, sort: false }
+				{ name: 'apps', text: '@(Applications)', width: 500, template: '{{ apps | join }}', search: true, sort: false }
 			]
 		</script>
 	</div>
 </div>
 
-<div data---="importer__common.panel__if:group;url:/panels/users-group.html"></div>
-
 <script>
 
-	PLUGIN('usersroles', function(exports) {
+	PLUGIN('roles', function(exports) {
 
 		exports.refresh = function() {
-			AJAX('GET /api/op/groups/', function(groups) {
+			DAPI('groups', function(groups) {
 
 				var arr = [];
 				var roles = main.meta.roles;

@@ -1,0 +1,70 @@
+.killed { opacity: 0; z-index: 0; }
+.status0 { color: #68B25B !important; }
+.status1 { color: #C55140 !important; }
+.status2 { color: #EAB34C !important; }
+.status3 { color: #B76DCF !important; }
+.status4 { color: #6DCFA8 !important; }
+.status5 { color: #6DAFCF !important; }
+.status6 { color: #A1CF6D !important; }
+.status7 { color: #D06D6D !important; animation: large 1s forwards infinite; }
+.status8 { color: #D60000 !important; }
+.ui-directory { z-index: 150 !important; }
+.ui-largeform-container{background-color:rgba(0,0,0,0.8);}
+.ui-form-container{background-color:rgba(0,0,0,0.8);}
+
+.notificationslist { padding: 15px 10px; }
+.notificationslist figure { border: 2px solid #E0E0E0; margin: 10px 10px 15px; border-radius: var(--radius); cursor: pointer; }
+.notificationslist figure .date { font-size: 12px; color: #888; padding: 10px 10px 0; }
+.notificationslist figure .app { font-size: 14px; padding: 0 10px; font-weight: bold; color: #000; }
+.notificationslist figure .app i { width: 14px; margin-right: 5px; }
+.notificationslist figure .body { border-top: 2px solid #E0E0E0; margin-top: 10px; padding: 10px; }
+.notificationslist .type2 { border-color: #D60000; }
+.notificationslist .type1 { border-color: #A1CF6D; }
+
+.ui-dark .notificationslist figure { border-color: #404040; }
+.ui-dark .notificationslist figure .date { color: #D0D0D0; }
+.ui-dark .notificationslist figure .app { color: #FFF; }
+.ui-dark .notificationslist figure .body { border-top-color: #404040; }
+.ui-dark .notificationslist .type2 { border-color: #D60000; }
+.ui-dark .notificationslist .type1 { border-color: #A1CF6D; }
+
+.listingsessions figure { border: 2px solid #E0E0E0; margin: 10px 10px 20px; border-radius: var(--radius); cursor: pointer; }
+.listingsessions .current { background-color: #F8F8F8; }
+.listingsessions .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; }
+.listingsessions .name b i { color: var(--color); width: 14px; margin-right: 8px; }
+.listingsessions .name b { display: block; margin-right: 25px; }
+.listingsessions .name span { float: right; cursor: pointer; width: 22px; line-height: 34px; text-align: right; color: red; }
+.listingsessions .padding { padding: 10px; }
+.listingsessions .value { font-size: 11px; }
+.listingsessions .value span { color: #777; float: right; }
+
+.ui-dark .listingsessions figure { border-color: #404040; }
+.ui-dark .listingsessions .current { background-color: #303030; }
+.ui-dark .listingsessions .name { border-bottom-color: #404040; color: #FFF }
+.ui-dark .listingsessions .value span { color: #D0D0D0; }
+
+.membersform button { border: 0; background: transparent; border: 1px solid #E0E0E0; border-radius: var(--radius); font-size: 12px; height: 30px; font-weight: bold; padding: 0 10px; }
+.membersform button i { margin-right: 5px; color: #68B25B; }
+.membersform button:hover { border-color: #D0D0D0; }
+.membersform button:disabled { color: #C0C0C0; background-color: #F8F8F8; border-color: #E0E0E0; }
+.membersform button:disabled i { color: #C0C0C0; }
+
+.ui-dark .membersform button { border-color: #404040; }
+.ui-dark .membersform button i { color: #68B25B; }
+.ui-dark .membersform button:hover { border-color: #505050; }
+.ui-dark .membersform button:disabled { color: #777; background-color: #303030; border-color: #404040; }
+.ui-dark .membersform button:disabled i { color: #777; }
+
+.listingmembers { padding-top: 10px; }
+.listingmembers figure { border: 2px solid #E0E0E0; margin: 10px 15px 20px; border-radius: var(--radius); cursor: pointer; }
+.listingmembers .unregistered { background-color: #F8F8F8; }
+.listingmembers .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; }
+.listingmembers .name b i { color: var(--color); width: 14px; margin-right: 8px; }
+.listingmembers .name b { display: block; margin-right: 25px; }
+.listingmembers .name span { float: right; cursor: pointer; width: 22px; line-height: 34px; text-align: right; color: red; }
+.listingmembers .padding { padding: 10px; font-size: 12px; }
+.listingmembers a { color: #777; }
+
+.ui-dark .listingmembers figure { border-color: #404040; }
+.ui-dark .listingmembers .unregistered { background-color: #303030; }
+.ui-dark .listingmembers .name { border-bottom-color: #404040; color: #FFF }

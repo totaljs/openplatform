@@ -3,6 +3,9 @@ var DDOS = {};
 
 NEWSCHEMA('Account', function(schema) {
 
+	schema.encrypt && schema.encrypt();
+	schema.compress && schema.compress();
+
 	schema.define('email', 'Email', true);
 	schema.define('notifications', Boolean);
 	schema.define('notificationsemail', Boolean);
@@ -27,7 +30,7 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('background', 'String(150)');
 
-	schema.setGet(function($) {
+	schema.setRead(function($) {
 
 		if ($.user.guest) {
 			$.invalid('error-permissions');
@@ -58,14 +61,13 @@ NEWSCHEMA('Account', function(schema) {
 		db.callback($.done());
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
 		if ($.user.guest) {
 			$.invalid('error-permissions');
 			return;
 		}
 
-		var model = $.clean();
 		var user = $.user;
 		var path;
 
@@ -73,7 +75,7 @@ NEWSCHEMA('Account', function(schema) {
 		if (user.background && user.background !== CONF.background && model.background !== user.background) {
 			path = 'backgrounds/' + user.background;
 			Fs.unlink(PATH.public(path), NOOP);
-			F.touch('/' + path);
+			TOUCH('/' + path);
 		}
 
 		var isoauth =  $.user.checksum === 'oauth2';
@@ -112,7 +114,6 @@ NEWSCHEMA('Account', function(schema) {
 			else if (!model.otpsecret)
 				model.otpsecret = undefined;
 		}
-
 
 		var modified = false;
 
@@ -202,7 +203,7 @@ NEWSCHEMA('Account', function(schema) {
 		DBMS().modify('tbl_user', model).where('id', $.user.id).error('error-users-404').callback(function(err, response) {
 			if (response) {
 				user.rev = GUID(5);
-				MAIN.session.update2($.user.id, user);
+				MAIN.session.refresh(user.id, $.sessionid);
 				FUNC.log('account/update', $.user.id, 'Updated account: ' + $.user.name, $);
 				EMIT('users/update', user.id, 'account');
 				$.success();
@@ -248,14 +249,34 @@ NEWSCHEMA('Account', function(schema) {
 		}
 
 		FUNC.log('account/unlock', $.user.id, 'Unlock screen', $);
-
-		MAIN.session.get($.sessionid, function(err, profile, meta) {
-			meta.settings = (meta.settings || '').replace('locked:1', 'locked:0');
-			var expire = CONF.cookie_expiration || '3 days';
-			MAIN.session.set($.sessionid, profile.id, profile, expire, meta.note, meta.settings, $.done());
+		DBMS().modify('tbl_user_session', { locked: false }).id($.sessionid).done($, function() {
+			$.user.locked = false;
+			$.user.dtlogged2 = NOW;
 			delete DDOS[id];
+			$.success();
 		});
 	});
+
+	schema.addWorkflow('current', function($) {
+		FUNC.profile($.user, function(err, data) {
+			data && (data.ip = $.ip);
+			data.config = { allowdesktopfluid: CONF.allowdesktopfluid, name: CONF.name, allowstatus: CONF.allowstatus, welcome: CONF.welcome, allowprofile: CONF.allowprofile, allowmembers: CONF.allowmembers, maxmembers: CONF.maxmembers };
+			$.callback(data);
+		});
+	});
+
+	schema.addWorkflow('live', function($) {
+		var running = $.query.running;
+
+		if ($.user.running !== running) {
+			$.user.running = running;
+			DBMS().modify('tbl_user', { running: (running || '').split(',').trim() }).id($.user.id);
+		}
+
+		$.user.ping = NOW;
+		$.callback(FUNC.profilelive($.user));
+	});
+
 });
 
 ON('service', function(counter) {

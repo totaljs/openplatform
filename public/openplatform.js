@@ -35,7 +35,6 @@ OP.jcomponent = function(notembedded) {
 	});
 
 	OP.onready = function(meta) {
-
 		if (meta.dateformat) {
 
 			DEF.dateformat = meta.dateformat;
@@ -70,6 +69,9 @@ OP.jcomponent = function(notembedded) {
 			ENV('date', DEF.dateformat);
 			ENV('ts', ts);
 		}
+
+		OP.$appearance = 1;
+		OP.send('appearance');
 
 		EMIT('opready');
 		SET('common.ready', true, 500);
@@ -294,6 +296,7 @@ OP.init = function(callback, notembedded) {
 				OP.ready = true;
 				return;
 			}
+
 			if (document.body)
 				document.body.innerHTML = '401: Unauthorized';
 			else
@@ -659,6 +662,11 @@ OP.$process = function(data) {
 		return;
 	}
 
+	if (data.type === 'focus') {
+		window.focus();
+		return;
+	}
+
 	if (data.type === 'appearance' && OP.$appearance) {
 
 		var head = document.head || document.getElementsByTagName('head')[0];
@@ -692,7 +700,7 @@ OP.$process = function(data) {
 
 		window.OPCOLOR = d.colorscheme;
 
-		style.appendChild(document.createTextNode(':root{--opcolor:' + d.colorscheme + '}.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000') + '}.opborder,.opborderhover:hover{border-color:' + d.colorscheme + '!important}.opbg,.opbghover:hover{background-color:' + d.colorscheme + '!important}.opfg,.opfghover:hover{color:' + d.colorscheme + '!important}'));
+		style.appendChild(document.createTextNode(':root{--opcolor:' + d.colorscheme + ';--color:' + d.colorscheme + '}.opbody{background-color:#' + (d.darkmode ? '202020' : 'FFF') + '}body.opbody{color:#' + (d.darkmode ? 'E0E0E0' : '000') + '}.opborder,.opborderhover:hover{border-color:' + d.colorscheme + '!important}.opbg,.opbghover:hover{background-color:' + d.colorscheme + '!important}.opfg,.opfghover:hover{color:' + d.colorscheme + '!important}'));
 		style.id = 'opstyle';
 		head.appendChild(style);
 	}

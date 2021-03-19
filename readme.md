@@ -1,6 +1,6 @@
-# OpenPlatform v4.0.0
+# OpenPlatform v4.8
 
-- [Documentation](https://docs.totaljs.com)
+- [Documentation](https://docs.totaljs.com/openplatform/)
 - [Join Total.js Telegram](https://t.me/totaljs)
 - [Support](https://www.totaljs.com/support/)
 
@@ -12,8 +12,8 @@ OpenPlatform is a simple enterprise-ready platform for running, integrating and 
 - perform `npm install`
 - create a database
 - execute `database.sql`
-- update connection strings in `/config` file
-- run openplatform `$ node debug.js`
+- update database connection string in the `/config` file
+- run openplatform `$ node index.js`
 - default login is `admin` default password is `admin`
 
 ## Requirements

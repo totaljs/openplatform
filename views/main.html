@@ -1,0 +1,813 @@
+<div data---="LAZY features__null__placeholder:@(What are you looking for?)"></div>
+<div data---="LAZY clipboard"></div>
+<div data---="LAZY confirm"></div>
+<div data---="LAZY approve__null__cancel:@(Cancel)"></div>
+<div data---="LAZY snackbar__null__button:@(OK);timeout:6000"></div>
+<div data---="LAZY datepicker__null__close:@(Close);today:@(Set today)"></div>
+<div data---="LAZY menu__null__style:2"></div>
+<div data---="LAZY directory__null__placeholder:@(Search)"></div>
+<div data---="LAZY message__null__button:@(Close);style:2"></div>
+<div data---="LAZY tooltip"></div>
+<div data---="LAZY floatinginput"></div>
+<div data---="LAZY audio__user.volume"></div>
+<div data---="nativenotifications"></div>
+<div data---="loading" class="hidden"></div>
+<div data---="shortcuts"></div>
+<div data---="markdown"></div>
+<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
+<div data---="console__common.consolewindow__datasource:common.console"></div>
+
+<div data---="importer__common.form__if:reportbugform;url:/forms/report.html"></div>
+<div data---="importer__common.form__if:screenshot;url:/forms/screenshot.html"></div>
+<div data---="importer__common.form__if:statusform;url:/forms/status.html"></div>
+<div data---="importer__common.form__if:sessionsform;url:/forms/sessions.html"></div>
+<div data---="importer__common.form__if:membersform;url:/forms/members.html"></div>
+<div data---="importer__common.form__if:notifications;url:/forms/notifications.html"></div>
+<div data---="importer__common.form__if:profileform;url:/_profile/"></div>
+
+<script>
+	var FIRSTDATEOFWEEK = { sk: 1, cs: 1, hr: 1, bg: 1, bs: 1, az: 1, sq: 1, de: 1, hu: 1, pl: 1, uk: 1, tr: 1, tk: 1, tt: 1, sv: 1, es: 1, sl: 1, sr: 1, ru: 1, ro: 1, pt: 1, no: 1, nb: 1, nn: 1, mk: 1, lb: 1, lv: 1, la: 1, it: 1, el: 1, ka: 1, fr: 1, da: 1 };
+	var common = {};
+
+	common.electron = navigator.userAgent.indexOf('Electron') !== -1 && W.require != null;
+	common.electronpadding = 0;
+	common.cdn = '@{'%cdn'}';
+	common.cluster = '@{F.id}';
+	common.defaultappid = '@{'%defaultappid'}';
+	common.livecounter = 0;
+	common.liverefreshing = false;
+	common.welcome = '@{user.welcome}' === 'true';
+	common.maxmembers = +'@{CONF.maxmembers}';
+	common.muted = {};
+	common.form = '';
+	common.notifications = false;
+	common.data = {};
+	common.startmenu = false;
+	common.startmenuapps = true;
+	common.console = {};
+	common.consolewindow = false;
+	common.consolecount = 0;
+	common.wikishow = false;
+	common.wiki = EMPTYARRAY;
+	common.running = {};
+
+	MONTHS[0] = '@(January)';
+	MONTHS[1] = '@(February)';
+	MONTHS[2] = '@(March)';
+	MONTHS[3] = '@(April)';
+	MONTHS[4] = '@(May)';
+	MONTHS[5] = '@(Juny)';
+	MONTHS[6] = '@(July)';
+	MONTHS[7] = '@(August)';
+	MONTHS[8] = '@(September)';
+	MONTHS[9] = '@(October)';
+	MONTHS[10] = '@(November)';
+	MONTHS[11] = '@(December)';
+	DAYS[0] = '@(Sunday)';
+	DAYS[1] = '@(Monday)';
+	DAYS[2] = '@(Tuesday)';
+	DAYS[3] = '@(Wednesday)';
+	DAYS[4] = '@(Thursday)';
+	DAYS[5] = '@(Friday)';
+	DAYS[6] = '@(Saturday)';
+
+	DEF.languagehtml = '@{user.language}';
+	DEF.api = '/opapi/';
+
+	common.electron && (function() {
+		var Electron = require('electron');
+		process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+		common.META = Electron.remote ? Electron.remote.getGlobal('META') || EMPTYOBJECT : Electron.ipcRenderer.sendSync('getMeta');
+		common.Electron = Electron;
+		Electron.ipcRenderer.send('setTitle', document.title);
+		if (common.META.version && navigator.userAgent.indexOf('Macintosh') !== -1)
+			$('body').aclass('electron');
+	})();
+
+	CACHEPATH('common.statusid', '6 hours');
+	CACHEPATH('common.focused', '1 week');
+
+	WATCH('common.consolewindow', function() {
+		SET('common.consolecount', 0, 1000);
+	});
+
+	ON('@flag showloading', function() {
+		SETTER('loading/show');
+	});
+
+	ON('@flag hideloading', function() {
+		SETTER('loading/hide', 1000);
+	});
+
+	PLUGIN('openplatform', function(exports) {
+
+		exports.positions = function(callback) {
+
+			var data = [];
+
+			for (var i = 0; i < user.apps.length; i++) {
+				var item = user.apps[i];
+				if (!item.internal)
+					data.push({ id: item.id, position: item.position });
+			}
+
+			if (data.length)
+				DAPI('positions', { apps: data }, callback);
+			else
+				callback && callback();
+		};
+
+		exports.favorite = function(appid, callback) {
+			if (typeof(appid) !== 'string')
+				appid = appid.id;
+			DAPI('favorite/' + appid, function(response) {
+				var app = user.apps.findItem('id', appid);
+				app.favorite = response.value;
+				UPD('user.apps', 'favorite');
+				callback && callback();
+			});
+		};
+
+		function updatebadges() {
+			UPD('user.apps', 'badges');
+		}
+
+		exports.open = function(appid, data, callback) {
+
+			if (appid instanceof jQuery) {
+				data = null;
+				callback = null;
+				appid = appid.attrd('id');
+			}
+
+			var app = user.apps.findItem('id', appid);
+			if (!app)
+				return;
+
+			if (app.isopening)
+				return;
+
+			if (app.countbadges || app.countnotifications) {
+				app.countbadges = 0;
+				app.countnotifications = 0;
+				app.isrunning && DAPI('reset/' + app.id, NOOP);
+				setTimeout2('badges', updatebadges, 1000);
+			}
+
+			if (app.isrunning) {
+				SETTER('processes/focus', app);
+				data && app.send('share', data);
+				callback && callback(app);
+				return;
+			}
+
+			// Maybe is killing
+			if (app.islaunched)
+				return;
+
+			app.isopening = true;
+			EMIT('app_open', app);
+			DAPI('open/' + appid, function(response) {
+				app.isopening = false;
+				app.isrunning = true;
+				app.isloading = false;
+				app.data = data;
+				app.meta = response;
+				app.callback = callback;
+				EMIT('app_open', app);
+				UPD('user.apps', 'open');
+			});
+
+		};
+
+		exports.reload = function(appid) {
+			var app = user.apps.findItem('id', appid);
+			app && app.send('reload');
+		};
+
+		exports.restart = function(appid) {
+			var app = user.apps.findItem('id', appid);
+			if (app) {
+				app.meta = null;
+				UPD('user.apps');
+				EMIT('app_restart', app);
+				setTimeout(AEXEC('?/open', app.id), 1000);
+			}
+		};
+
+		exports.focus = function(appid) {
+			var app = user.apps.findItem('id', appid);
+			app && SETTER('processes/focus', app);
+		};
+
+		exports.close = exports.kill = function(appid, callback) {
+			if (appid instanceof jQuery)
+				appid = appid.attrd('id');
+			var app = user.apps.findItem('id', appid);
+			if (app && app.isrunning) {
+				app.meta = null;
+				app.progress = 0;
+				app.isloading = false;
+				UPD('user.apps', 'kill');
+			}
+		};
+
+		exports.appearance = function() {
+			var checksum = user.colorscheme + '_' + user.darkmode;
+			if (common.appearance !== checksum) {
+				common.appearance = checksum;
+				CSS(':root{--color:{0}}'.format(user.colorscheme), 'op_appearance');
+				$('body').tclass('ui-dark', user.darkmode).tclass('ui-light', !user.darkmode);
+				SETTER('processes/send_all', 'appearance', { darkmode: user.darkmode, colorscheme: user.colorscheme });
+			}
+		};
+
+		exports.notifications = function() {
+			SET('common.form', 'notifications');
+		};
+
+		exports.init = function() {
+
+			SET('common.ready', true);
+			NAV.query.notifications && SET('common.form', 'notifications', 2000);
+
+			if (NAV.query.password && !user.guest)
+				exports.profile();
+
+			if (user.config.allowprofile && common.welcome || NAV.query.welcome) {
+				SET('common.intro', 'welcome');
+				IMPORT('/_intro/');
+			}
+
+			if (NAV.query.open) {
+				var appsearch = NAV.query.open.toLowerCase();
+				for (var i = 0; i < user.apps.length; i++) {
+					var tmp = user.apps[i];
+					var name = (tmp.name + ' ' + tmp.title).toLowerCase();
+					if (name.indexOf(appsearch) !== -1) {
+						exports.open(tmp.id);
+						break;
+					}
+				}
+			}
+
+			var skip = false;
+			if (common.defaultappid) {
+				if (user.apps.findItem('id', common.defaultappid)) {
+					EXEC('openplatform/open', common.defaultappid);
+					skip = true;
+				}
+			}
+
+			if (!skip) {
+				var ls = localStorage;
+				if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
+					ls.setItem('welcome', '1');
+					skip = true;
+					var app = user.apps.findItem('id', '_welcome');
+					app && EXEC('openplatform/open', app.id);
+				}
+			}
+
+			if (!skip)
+				EMIT('app_empty');
+		};
+
+		exports.refresh_profile = function(callback) {
+			DAPI('profile', function(response) {
+
+				if (W.user == EMPTYOBJECT || !W.user) {
+					response.apps.quicksort('position');
+
+					response.noapps = !response.apps.findItem(function(app) {
+						return !app.internal;
+					});
+
+					DEF.dateformat = response.dateformat;
+					DEF.languagehtml = response.language;
+
+					switch (response.numberformat) {
+						case 1: // 1 000.12
+							DEF.decimalseparator = '.';
+							DEF.thousandsseparator = ' ';
+							break;
+						case 2: // 1 000,12
+							DEF.decimalseparator = ',';
+							DEF.thousandsseparator = ' ';
+							break;
+						case 3: // 1.000,12
+							DEF.decimalseparator = ',';
+							DEF.thousandsseparator = '.';
+							break;
+						case 4: // 1,000.12
+							DEF.decimalseparator = '.';
+							DEF.thousandsseparator = ',';
+							break;
+					}
+
+					var ts = (DEF.timeformat === 12 ? '!' : '') + (DEF.dateformat + ' - HH:mm') + (DEF.timeformat === 12 ? ' a' : '');
+					ENV('date', DEF.dateformat);
+					ENV('ts', ts);
+					SET('user', response);
+					exports.appearance();
+					exports.init();
+					return;
+				}
+
+				user.repo = response.repo;
+				user.name = response.name;
+				user.team = response.team;
+				user.colorscheme = response.colorscheme;
+				user.countnotifications = response.countnotifications;
+				user.darkmode = response.darkmode;
+				user.dateformat = response.dateformat;
+				user.desktop = response.desktop;
+				user.directoryid = response.directoryid;
+				user.ip = response.ip;
+				user.language = response.language;
+				user.member = response.member;
+				user.numberformat = response.numberformat;
+				user.openplatformid = response.openplatformid;
+				user.photo = response.photo;
+				user.rev = response.rev;
+				user.sa = response.sa;
+				user.sounds = response.sounds;
+				user.status = response.status;
+				user.statusid = response.statusid;
+				user.test = response.test;
+				user.timeformat = response.timeformat;
+				user.version = response.version;
+				user.volume = response.volume;
+				user.noapps = true;
+
+				var remove = [];
+				for (var i = 0; i < user.apps.length; i++) {
+					var app = user.apps[i];
+					var item = response.apps.findItem('id', app.id);
+					if (item) {
+						app.icon = item.icon;
+						app.countbadges = item.countbadges;
+						app.countnotifications = item.countnotifications;
+						app.favorite = item.favorite;
+						app.height = item.height;
+						app.linker = item.linker;
+						app.mobilemenu = item.mobilemenu;
+						app.mutenotifications = item.mutenotifications;
+						app.name = item.name;
+						app.notifications = item.notifications;
+						app.online = item.online;
+						app.position = item.position;
+						app.resize = item.resize;
+						app.online = item.online;
+						app.responsive = item.responsive;
+						app.screenshots = item.screenshots;
+						app.title = item.title;
+						app.type = item.type;
+						app.version = item.version;
+						app.width = item.width;
+						if (!item.internal)
+							user.noapps = false;
+					} else {
+						app.meta = null;
+						remove.push(app.id);
+					}
+				}
+
+				for (var i = 0; i < response.apps.length; i++) {
+					var app = response.apps[i];
+					var item = user.apps.findItem('id', app.id);
+					if (!item) {
+						user.apps.push(app);
+						if (!app.internal)
+							user.noapps = false;
+					}
+				}
+
+				user.apps.quicksort('position');
+				UPD('user', 'profile');
+				exports.appearance();
+
+				remove.length && setTimeout(function(remove) {
+					for (var i = 0; i < remove.length; i++)
+						user.apps = user.apps.remove('id', remove[i]);
+					UPD('user.apps', 'remove');
+				}, 2000, remove);
+			});
+		};
+
+		var liverefreshing = false;
+
+		exports.refresh_live = function(callback) {
+
+			if (liverefreshing)
+				return;
+
+			liverefreshing = true;
+
+			var running = [];
+			for (var i = 0; i < user.apps.length; i++) {
+				var app = user.apps[i];
+				if (app.isrunning)
+					running.push(app.id);
+			}
+
+			DAPI(QUERIFY('live', { running: running.join(',') }), function(response) {
+
+				if (!response || typeof(response) === 'string') {
+					// maybe blocked
+					location.reload(true);
+					return;
+				}
+
+				if (response.desktop !== user.desktop) {
+					// layout changed
+					location.reload(true);
+					return;
+				}
+
+				if (user.darkmode !== response.darkmode || user.colorscheme !== response.colorscheme || user.background !== response.background) {
+					user.darkmode = response.darkmode;
+					user.colorscheme = response.colorscheme;
+					user.background = response.background;
+					exports.appearance();
+				}
+
+				user.name = response.name;
+				user.photo = response.photo;
+				user.test = response.test;
+				user.volume = response.value;
+				user.statusid = response.statusid;
+				user.status = response.status;
+				user.sa = response.sa;
+
+				if (user.rev !== response.rev) {
+					// a new revision
+					user.rev = response.rev;
+					SETTER('processes/send_all', 'revision', user.rev);
+					common.refreshprofile = true;
+				}
+
+				if (user.countnotifications !== response.countnotifications) {
+					var old = user.countnotifications;
+					user.countnotifications = response.countnotifications;
+					if (user.countnotifications > old) {
+						FUNC.playsound('notifications');
+						FUNC.faviconbadge(user.countnotifications);
+						common.Electron && common.Electron.ipcRenderer.send('setBadge', { count: user.countnotifications });
+						SETTER('nativenotifications/append', '@(Alert!)', '@(You have {0}.)'.format(user.countnotifications.pluralize(@('# unread notifications', '# unread notification', '# unread notifications', '# unread notifications'))), function() {
+							SET('common.form', 'notifications');
+						}, '/icon.png');
+						if (common.form === 'notifications')
+							EXEC('notifications/refresh');
+					} else
+						FUNC.faviconbadge(false);
+				}
+
+				user.noapps = true;
+				var remove = [];
+
+				for (var i = 0; i < user.apps.length; i++) {
+					var app = user.apps[i];
+					var ua = response.apps[app.id];
+
+					if (app.internal)
+						continue;
+
+					if (ua == null) {
+						// app not found
+						remove.push(app.id);
+						app.meta = null;
+						continue;
+					}
+
+					if (app.countbadges !== ua.countbadges) {
+						app.countbadges = ua.countbadges || 0;
+						app.countbadges && FUNC.playsound('badges');
+					}
+
+					app.countnotifications = ua.countnotifications;
+					app.notifications = ua.notifications;
+					user.noapps = false;
+				}
+
+				liverefreshing = false;
+				UPD('user', 'live');
+
+				remove.length && setTimeout(function(remove) {
+					for (var i = 0; i < remove.length; i++)
+						user.apps = user.apps.remove('id', remove[i]);
+					UPD('user.apps', 'remove');
+				}, 2000, remove);
+			});
+		};
+
+		exports.mainmenu = function(visible) {
+			if (visible instanceof jQuery)
+				visible = undefined;
+			$('body').tclass('menushow', visible);
+		};
+
+		exports.sessions = function() {
+			SET('common.form', 'sessionsform');
+		};
+
+		exports.lock = function() {
+			SETTER('loading/show');
+			SETTER('processes/kill');
+			setTimeout(function() {
+				location.href = '/lock/';
+			}, 1500);
+		};
+
+		exports.logout = function() {
+			SETTER('loading/show');
+			SETTER('processes/kill');
+			setTimeout(function() {
+				location.href = '/logout/';
+			}, 1500);
+		};
+
+		exports.members = function() {
+			SET('common.form', 'membersform');
+		};
+
+		exports.profile = function() {
+			if (!user.guest)
+				SET('common.form', 'profileform');
+		};
+
+		exports.status = function(opt) {
+			opt.items = [{ id: 0, name: '@(Available)', icon: 'fa fa-smile status0"' }, { id: 1, name: '@(Busy)', icon: 'fa fa-spinner fa-spin status1' }, { id: 2, name: '@(Do not disturb)', icon: 'fa fa-moon status2' }, { id: 3, name: '@(Be right back)', icon: 'fa fa-door-open status3' }, { id: 4, name: '@(Meeting)', icon: 'fa fa-brain status4' }, { id: 5, name: '@(Business trip)', icon: 'fa fa-car status5' }, { id: 6, name: '@(Holiday)', icon: 'fa fa-umbrella-beach status6' }, { id: 7, name: '@(Sick)', icon: 'fa fa-heartbeat status7' }, { id: 8, name: '@(Off work)', icon: 'fa fa-home status8' }];
+			opt.callback = function(item) {
+				DAPI('status', { statusid: item.id }, function() {
+					user.statusid = item.id;
+					SET('common.statusid', user.statusid);
+					UPD('user', 'status');
+				});
+			};
+			SETTER('menu/show', opt);
+		};
+
+		exports.console = function() {
+			TOGGLE('common.consolewindow');
+		};
+
+		exports.mobilemenu = function(appid) {
+			var app = typeof(appid) === 'string' ? user.apps.findItem('id', appid) : appid;
+			app && app.send('menu');
+		};
+
+		exports.menu = function(appid, opt) {
+			var app = typeof(appid) === 'string' ? user.apps.findItem('id', appid) : appid;
+			app && SETTER('processes/inlinemenu', app, opt);
+		};
+
+		ON('app_options', function(app, opt, next) {
+
+			opt.items = [];
+
+			if (opt.appitems) {
+				for (var i = 0; i < opt.appitems.length; i++)
+					opt.items.push(opt.appitems[i]);
+				opt.items.push('-');
+			}
+
+			if (!app.internal) {
+				opt.items.push({ name: !app.sounds ? '<strong>@(Enable sounds)</strong>' : '@(Mute sounds)', icon: !app.sounds ? 'volume-up red' : 'volume-mute', value: 'mutesounds' });
+				opt.items.push({ name: app.notifications ? '@(Mute notifications)' : '<strong>@(Enable notifications)</strong>', icon: (app.notifications ? '!far fa-bell-slash' : 'bell red'), value: 'mutenotifications' });
+				opt.items.push('-');
+				opt.items.push({ name: app.favorite ? '@(Unfavorite)' : '@(Favorite)', icon: (app.favorite ? 'far fa-heart' : 'fas fa-heart red'), value: 'favorite' });
+				opt.items.push({ name: '@(Print)', icon: 'print', value: 'print' });
+				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'refresh' });
+				opt.items.push({ name: '@(Changelog)', icon: 'history', value: 'changelog' });
+				opt.items.push({ name: '@(Report a bug)', icon: 'bug', value: 'report' });
+				opt.items.push('-');
+			}
+
+			opt.items.push({ name: '@(Close application)', icon: 'times-circle red', value: 'close' });
+
+			next();
+		});
+
+		exports.play = function(appid, name) {
+			if ((!appid || !common.muted[appid]) && user.sounds)
+				SETTER('audio/play', '/sounds/' + name + '.mp3');
+		};
+
+		exports.refresh_profile();
+
+		var counter = 0;
+
+		setInterval(function() {
+
+			counter++;
+
+			if (counter % 24 === 0 || common.refreshprofile) {
+				common.refreshprofile = false;
+				exports.scope();
+				exports.refresh_profile();
+			} else if (document.hasFocus() || counter % 5 === 0) {
+				exports.scope();
+				exports.refresh_live();
+			}
+
+			if (counter > 99999999)
+				counter = 0;
+
+		}, 8000);
+	});
+
+	SETTER(true, 'shortcuts/register', 'F1', function() {
+
+		var items = [];
+
+		for (var i = 0; i < user.apps.length; i++) {
+			var app = user.apps[i];
+			items.push({ TYPE: 'app', id: app.id, name: app.title, icon: Thelpers.icon(app.icon), keywords: app.name });
+		}
+
+		if (user.guest && user.locking)
+			items.push({ name: '@(Lock screen)', icon: 'lock', TYPE: 'lock' });
+
+		items.push({ name: '@(Sign out)', icon: 'power-off', TYPE: 'logout' });
+		EMIT('features', items);
+
+		setTimeout(function() {
+			SETTER('features/show', items, function(item) {
+				switch (item.TYPE) {
+					case 'app':
+						EXEC('openplatform/open', item.id);
+						break;
+					case 'logoff':
+					case 'lock':
+						EXEC('openplatform/' + item.TYPE);
+						break;
+					default:
+						item.exec && EXEC(item.exec);
+						break;
+				}
+			}, true);
+		}, 200);
+
+	}, true);
+
+	SETTER(true, 'shortcuts', 'register', 'alt+tab,cmd+tab,ctrl+tab', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		EMIT('nextwindow');
+	}, true);
+
+	SETTER(true, 'shortcuts', 'register', 'alt+w,cmd+w,alt+F3', function(e) {
+		common.focused && EXEC('openplatform/close', common.focused);
+		e.preventDefault();
+		e.stopPropagation();
+	}, true);
+
+	SETTER(true, 'shortcuts', 'register', 'alt+r,F5', function(e) {
+		common.focused && EXEC('openplatform/reload', common.focused);
+		e.preventDefault();
+		e.stopPropagation();
+	}, true);
+
+	SETTER(true, 'shortcuts/register', 'esc', function(e) {
+		if (common.form) {
+			NUL('common.form');
+			e.preventDefault();
+			e.stopPropagation();
+		}
+
+		var body = $('body');
+		if (body.hclass('menushow'))
+			body.rclass('menushow');
+	}, true);
+
+	Thelpers.status = function(value, icon) {
+		var str;
+		switch (value) {
+			case 1:
+				str = 'spinner fa-spin status1"></i>@(Busy)';
+				break;
+			case 2:
+				str = 'moon status2"></i>@(Do not disturb)';
+				break;
+			case 3:
+				str = 'door-open status3"></i>@(Be right back)';
+				break;
+			case 4:
+				str = 'brain status4"></i>@(Meeting)';
+				break;
+			case 5:
+				str = 'car status5"></i>@(Business trip)';
+				break;
+			case 6:
+				str = 'umbrella-beach status6"></i>@(Holiday)';
+				break;
+			case 7:
+				str = 'heartbeat status7"></i>@(Sick)';
+				break;
+			case 8:
+				str = 'home status8"></i>@(Off work)';
+				break;
+			default:
+				str = 'smile status0"></i>@(Available)';
+				break;
+		}
+
+		var index = str.indexOf('</i>');
+		var title = str.substring(index + 4);
+
+		return '<i title="' + title + '" class="fa fa-' + (icon ? str.substring(0, index + 4) : str);
+	};
+
+	Thelpers.icon = function(val) {
+		return 'fa-' + ((/\sfar|fab|fas|fal$/).test(val) ? val : (val + ' fa'));
+	};
+
+	Thelpers.time2 = function(value) {
+
+		if (!value)
+			return;
+
+		var diff = Date.now() - (value instanceof Date ? value : value.parseDate()).getTime();
+
+		var minutes = ((diff / 1000) / 60) >> 0;
+		if (minutes < 60) {
+			if (minutes < 3)
+				return '@(now)';
+			return @(minutes + ' minutes ago');
+		}
+
+		var hours = (minutes / 60) >> 0;
+		if (hours < 24)
+			return @(hours + ' ' + Thelpers.pluralize(hours, 'hours', 'hour', 'hours', 'hours') + ' ago');
+
+		var days = (hours / 24) >> 0;
+		if (days < 30)
+			return @(days + ' ' + Thelpers.pluralize(days, 'days', 'day', 'days', 'days') + ' ago');
+
+		var months = (days / 29) >> 0;
+		if (months < 12)
+			return @(months + ' ' + Thelpers.pluralize(months, 'months', 'month', 'months', 'months') + ' ago');
+
+		var years = (months / 12) >> 0;
+		return @(years + ' ' + Thelpers.pluralize(years, 'years', 'year', 'years', 'years') + ' ago');
+	};
+
+	Thelpers.datetime = function(value) {
+		var today = value.format('yyyyMMdd');
+		if (today === NOW.format('yyyyMMdd'))
+			return '<span class="badge badge-green badge-small b">@(TODAY)</span> ' + value.format('HH:mm');
+		else
+			return value.format('dd.MMM. HH:mm');
+	};
+
+	Thelpers.time = function(value) {
+		return value ? '<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(), Thelpers.time2(value), value.format(null)) : value;
+	};
+
+	ON('nextwindow', function() {
+
+		if (!common.focused)
+			return;
+
+		var index = user.apps.findIndex('id', common.focused);
+
+		for (var i = index + 1; i < user.apps.length; i++) {
+			var tmp = user.apps[i];
+			if (tmp.isrunning) {
+				EXEC('openplatform/focus', tmp.id);
+				return;
+			}
+		}
+
+		for (var i = 0; i < index; i++) {
+			var tmp = user.apps[i];
+			if (tmp.isrunning) {
+				EXEC('openplatform/focus', tmp.id);
+				return;
+			}
+		}
+	});
+
+	ON('knockknock', function(counter) {
+
+		$('.ta-time').each(function() {
+			var el = $(this);
+			el.html(Thelpers.time(new Date(+el.attrd('time'))));
+		});
+
+		/*
+		var dt = NOW.add('-30 minutes');
+		var close = [];
+
+		for (var i = 0; i < user.apps.length; i++) {
+			var app = user.apps[i];
+			if (app.id === common.focused && dt > app.dtfocused)
+				close.push(app.id);
+		}
+
+		for (var i = 0; i < close.length; i++)
+			EXEC('openplatform/close', close[i]);*/
+	});
+
+</script>

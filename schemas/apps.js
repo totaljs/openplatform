@@ -1,17 +1,18 @@
-const DB_VERSION = {};
 const DB_BADGES_RESET = { countbadges: 0 };
 const DB_BADGESNOTIFICATIONS_RESET = { countbadges: 0, countnotifications: 0 };
-const DB_OPEN = { '+countopen': 1 };
 const DB_NOTIFY_RESET = { countnotifications: 0, dtnotified: null };
+var USAGE_STATS = [];
 
 NEWSCHEMA('Apps', function(schema) {
 
 	schema.define('previd', 'UID')(null); // internal for re-importing of apps
-	schema.define('typeid', ['external', 'designer'])('external');
+	// schema.define('typeid', ['external', 'designer'])('external');
+	schema.define('typeid', ['external'])('external');
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(40)', true);
 	schema.define('titles', Object); // localized title
 	schema.define('sn', 'String(50)');
+	schema.define('origintoken', 'String(50)');
 	schema.define('permissions', Boolean);
 	schema.define('autorefresh', Boolean);
 	schema.define('blocked', Boolean);
@@ -32,14 +33,14 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('allowreadprofile', Number);
 	schema.define('allowreadmeta', Boolean);
 
-	schema.required('url', (model) => model.typeid === 'external');
+	// schema.required('url', (model) => model.typeid === 'external');
 
 	schema.setQuery(function($) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		var isadminarea = $.req && $.req.uri && $.req.uri.pathname ? $.req.uri.pathname.indexOf('/op/apps/') !== -1 : false;
+		var isadminarea = $.req && $.req.uri && $.req.uri.pathname ? $.req.uri.pathname.indexOf('/opapi/') !== -1 : false;
 		var arr = [];
 		for (var i = 0; i < MAIN.apps.length; i++) {
 			var app = MAIN.apps[i];
@@ -102,7 +103,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 	});
 
-	schema.setGet(function($) {
+	schema.setRead(function($) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
@@ -123,33 +124,26 @@ NEWSCHEMA('Apps', function(schema) {
 			obj.position = item.position;
 			obj.color = item.color;
 			obj.icon = item.icon;
+			obj.origintoken = item.origintoken;
 			obj.allowguestuser = item.allowguestuser;
 			obj.allownotifications = item.allownotifications;
 			obj.allowreadmeta = item.allowreadmeta;
 			obj.allowreadprofile = item.allowreadprofile;
 			obj.allowreadusers = item.allowreadusers;
 
-			if (item.typeid === 'designer') {
-				obj.roles = item.roles;
-				obj.origin = item.origin;
-				obj.version = item.version;
-			}
-
 			DBMS().query('SELECT COUNT(1)::int4 as running FROM tbl_user WHERE inactive=FALSE AND online=TRUE AND running && $1', [[obj.id]]).first().callback(function(err, response) {
 				obj.count = response.running;
 				$.extend && $.extend(obj);
 				$.callback(obj);
 			});
+
 		} else
 			$.invalid('error-apps-404');
 	});
 
-	schema.addWorkflow('check', function($) {
-
+	schema.addWorkflow('check', function($, model) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.model;
 		var app = MAIN.apps.findItem('url', model.url);
 		if (app && app.id !== $.id)
 			$.invalid('error-apps-exists');
@@ -157,21 +151,16 @@ NEWSCHEMA('Apps', function(schema) {
 			$.success();
 	});
 
-	schema.addWorkflow('refresh', function($) {
-
+	schema.addWorkflow('refresh', function($, model) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.model;
 		FUNC.refreshapp(model, $.done(), !model.id || model.permissions);
 	});
 
-	schema.setInsert(function($) {
+	schema.setInsert(function($, model) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.clean();
 
 		if (model.typeid === 'designer')
 			model.name = model.title;
@@ -221,12 +210,10 @@ NEWSCHEMA('Apps', function(schema) {
 		});
 	});
 
-	schema.setUpdate(function($) {
+	schema.setUpdate(function($, model) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.clean();
 
 		if (model.typeid === 'designer')
 			model.name = model.title;
@@ -320,7 +307,7 @@ NEWSCHEMA('Apps', function(schema) {
 			var arr = [];
 			for (var i = 0; i < MAIN.apps.length; i++) {
 				var item = MAIN.apps[i];
-				if (!item.workshopid) {
+				if (item.type !== 'designer') {
 					var app = FUNC.makeapp(item, obj.app.allowreadapps);
 					if (app)
 						arr.push(app);
@@ -336,17 +323,10 @@ NEWSCHEMA('Apps', function(schema) {
 		if (app) {
 			app.favorite = app.favorite == null ? true : !app.favorite;
 			DBMS().modify('tbl_user_app', { favorite: app.favorite }).where('id', user.id + $.id);
-			MAIN.session.set2(user.id, user);
 			$.success(true, app.favorite);
 		} else
 			$.invalid('error-apps-404');
 	});
-
-	var usage_insert = function(doc, params) {
-		doc.id = params.id;
-		doc.appid = params.appid;
-		doc.date = NOW;
-	};
 
 	schema.addWorkflow('run', function($) {
 
@@ -376,7 +356,7 @@ NEWSCHEMA('Apps', function(schema) {
 		}
 
 		data = user.guest ? FUNC.metaguest() : FUNC.meta(app, user);
-		// FUNC.logger('logs', 'run: ' + app.id + ' (' + app.name + ')', '@' + (user.guest ? 'GUEST' : user.name), $.ip);
+		FUNC.log('apps/run', app.id, app.name, $);
 
 		if (data) {
 
@@ -413,27 +393,45 @@ NEWSCHEMA('Apps', function(schema) {
 				data.version = user.apps[$.id].version || '';
 
 				var db = DBMS();
+				var tmp;
 
 				if (data.newversion) {
-					DB_VERSION.version = app.version;
+					tmp = {};
+					tmp.version = app.version;
 					user.apps[$.id].version = app.version;
-					db.mod('tbl_user_app', DB_VERSION).where('id', user.id + $.id);
+					db.mod('tbl_user_app', tmp).where('id', user.id + $.id);
 				}
 
-				DB_OPEN.dtopen = NOW;
-				db.mod('tbl_user_app', DB_OPEN).where('id', user.id + $.id);
+				tmp = {};
+				tmp['+countopen'] = 1;
+				tmp.dtopen = NOW;
+				db.mod('tbl_user_app', tmp).where('id', user.id + $.id);
 
-				var usage = {};
 				var usageid = NOW.format('yyyyMMdd') + $.id;
+				var usage = USAGE_STATS.findItem('id', usageid);
+				var key;
 
-				usage['+count'] = 1;
-				usage['+' + (user.mobile ? 'mobile' : 'desktop')] = 1;
-				usage['+' + (user.desktop === 1 ? 'windowed' : user.desktop === 2 ? 'tabbed' : 'desktop')] = 1;
-				usage['+' + (user.darkmode === 1 ? 'darkmode' : 'lightmode')] = 1;
-				usage.dtupdated = NOW;
-				db.mod('tbl_usage_app', usage, true).where('id', usageid).insert(usage_insert, { id: usageid, appid: $.id });
+				if (!usage) {
+					usage = {};
+					USAGE_STATS.push(usage);
+				}
 
-				MAIN.session.set2(user.id, user);
+				usage.id = usageid;
+				usage.appid = $.id;
+
+				key = '+count';
+				usage[key] = (usage[key] || 0) + 1;
+
+				key = '+' + (user.mobile ? 'mobile' : 'desktop');
+				usage[key] = (usage[key] || 0) + 1;
+
+				key = '+' + (user.desktop === 1 ? 'windowed' : user.desktop === 2 ? 'tabbed' : 'desktop');
+				usage[key] = (usage[key] || 0) + 1;
+
+				key = '+' + (user.darkmode === 1 ? 'darkmode' : 'lightmode');
+				usage[key] = (usage[key] || 0) + 1;
+
+				// MAIN.session.set2(user.id, user);
 			}
 
 			if (app.typeid === 'designer')
@@ -450,43 +448,97 @@ NEWSCHEMA('Apps', function(schema) {
 		var user = $.user;
 
 		if (!user.apps[$.id]) {
-			$.invalid('error-apps-404');
+			$.invalid(404);
 			return;
 		}
 
 		user.apps[$.id].countnotifications = 0;
 		user.apps[$.id].countbadges = 0;
-		MAIN.session.set2(user.id, user);
 		DBMS().modify('tbl_user_app', DB_BADGESNOTIFICATIONS_RESET).where('id', $.user.id + $.id);
 		$.success(true);
 	});
 
-	schema.addWorkflow('mute', function($) {
+	schema.addWorkflow('mute_notifications', function($) {
 		var user = $.user;
 		if (user.apps[$.id]) {
 			var model = { notifications: (user.apps[$.id].notifications == null || user.apps[$.id].notifications == true) ? false : true };
-			DBMS().modify('tbl_user_app', model).where('id', $.user.id + $.id);
+			DBMS().modify('tbl_user_app', model).id($.user.id + $.id);
 			user.apps[$.id].notifications = model.notifications;
-			MAIN.session.set2(user.id, user);
 			$.success(true, model.notifications);
 		} else
-			$.invalid('error-apps-404');
+			$.invalid(404);
 	});
+
+	schema.addWorkflow('mute_sounds', function($) {
+		var user = $.user;
+		if (user.apps[$.id]) {
+			var model = { sounds: (user.apps[$.id].sounds == null || user.apps[$.id].sounds == true) ? false : true };
+			DBMS().modify('tbl_user_app', model).id($.user.id + $.id);
+			user.apps[$.id].sounds = model.sounds;
+			$.success(true, model.sounds);
+		} else
+			$.invalid(404);
+	});
+
+	schema.addWorkflow('dnsresolver', function($) {
+
+		if (!$.user.sa) {
+			$.invalid('error-permissions');
+			return;
+		}
+
+		if ((/^http(s)+\:\/\/.*?\.\w{2,}$/i).test($.query.domain || '')) {
+			U.resolve(self.query.domain, function(err, response, param, addresses) {
+				$.callback(err ? EMPTYARRAY : (addresses || [response.host] || EMPTYARRAY));
+			});
+		} else
+			$.callback(EMPTYARRAY);
+	});
+
 });
 
 NEWSCHEMA('Apps/Position', function(schema) {
-	schema.define('apps', '[Object]');
-	schema.setSave(function($) {
+	schema.define('id', 'String(25)', true);
+	schema.define('position', Number);
+});
+
+NEWSCHEMA('Apps/Positions', function(schema) {
+	schema.define('apps', '[Apps/Position]');
+	schema.setSave(function($, model) {
 		var user = $.user;
-		var apps = $.model.apps;
+		var apps = model.apps;
 		var db = DBMS();
 		for (var i = 0; i < apps.length; i++) {
 			var app = apps[i];
-			if (app == null || typeof(app) !== 'object' || app.id[0] === '_')
-				continue;
 			user.apps[app.id].position = app.position;
-			db.modify('tbl_user_app', { position: app.position }).where('id', user.id + app.id);
+			db.modify('tbl_user_app', { position: app.position }).id(user.id + app.id);
 		}
 		db.callback($.done());
 	});
+});
+
+
+var usage_insert = function(doc, params) {
+	doc.id = params.id;
+	doc.appid = params.appid;
+	doc.date = NOW;
+};
+
+ON('service', function() {
+
+	if (!USAGE_STATS.length)
+		return;
+
+	var stats = USAGE_STATS.splice(0, 100);
+	var db = DBMS();
+
+	for (var i = 0; i < stats.length; i++) {
+		var usage = stats[i];
+		var id = usage.id;
+		var appid = usage.appid;
+		usage.id = undefined;
+		usage.appid = undefined;
+		db.mod('tbl_usage_app', usage, true).where('id', id).insert(usage_insert, { id: id, appid: appid });
+	}
+
 });

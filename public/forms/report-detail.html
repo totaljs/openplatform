@@ -1,5 +1,5 @@
-<div data---="form__common.panel__if:reportsdetail;reload:reportsdetailpanel/reload;title:@(Report detail);submit:reportsdetailpanel/submit;icon:user;scrollbar:false;width:700" class="hidden">
-	<div data-scope="reportsdetailpanel" class="padding npt">
+<div data---="form__common.form__if:reportsdetailform;reload:?/reload;title:@(Report detail);submit:?/submit;icon:user;scrollbar:false;width:700" class="hidden" data-scope="reportsdetailform">
+	<div class="padding npt">
 
 		<div data-bind="?__template">
 			<script type="text/html">
@@ -45,8 +45,9 @@
 				</div>
 				<div class="alert mt15" data-bind="?.solved__hide">Make the issue solved: <span class="link exec green b" data-exec="?/solve"><i class="fa fa-check-circle mr5"></i>@(Mark as solved)</span></div>
 				<pre style="white-space:pre-wrap;padding:15px 0;margin:0;font-family:Arial">{{ value.body }}</pre>
+
 				{{ if value.screenshot }}
-				<div><img src="/api/op/reports/{{ value.id }}/screenshot/" class="screenshot img-responsive" alt="@(Screenshot)" /></div>
+				<div><img src="/internal/screenshots/{{ value.id }}/" class="screenshot img-responsive" alt="@(Screenshot)" /></div>
 				{{ fi }}
 			</script>
 		</div>
@@ -57,12 +58,13 @@
 </div>
 
 <script>
-	PLUGIN('reportsdetailpanel', function(exports) {
+	PLUGIN('reportsdetailform', function(exports) {
 		exports.solve = function() {
-			AJAX('GET /api/op/reports/{0}/solved/'.format(reportsdetailpanel.id), function() {
-				reportsdetailpanel.dtsolved = NOW;
-				reportsdetailpanel.solved = true;
-				UPD('reportsdetailpanel');
+			var model = GET('?');
+			DAPI('reports_solved/' + model.id, function() {
+				model.dtsolved = NOW;
+				model.solved = true;
+				UPD('reportsdetailform');
 				EXEC('reportsgrid/refresh');
 			});
 		};

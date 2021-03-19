@@ -1,6 +1,6 @@
 {
-	"name": "OpenPlatform",
-	"short_name": "OpenPlatform",
+	"name": "@{config.name}",
+	"short_name": "@{config.name}",
 	"icons": [
 		{
 			"src": "/icon.png",

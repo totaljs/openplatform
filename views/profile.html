@@ -1,6 +1,6 @@
 @{layout('')}
 
-<div data---="largeform__common.form__if:profileform;icon:user-circle;width:700;title:@(My account);reload:profileform/reload;submit:profileform/submit;zindex:100" class="hidden">
+<div data---="largeform__common.form__if:profileform;icon:user-circle;width:700;title:@(My account);reload:profileform/reload;submit:profileform/submit;zindex:50" class="hidden">
 	<div data-scope="profileform">
 
 		<div class="col-md-4 col-md-offset-4 col-xs-6 col-xs-offset-3">
@@ -35,6 +35,7 @@
 
 			@{if CONF.allowtheme || CONF.allowbackground}
 			<div class="padding npb@{if user.checksum === 'oauth2'} npt@{fi}">
+				<hr class="nmt" />
 				@{if CONF.allowtheme}
 				<div data---="colorselector__?.colorscheme__null" style="margin-bottom:5px"></div>
 				@{fi}
@@ -95,7 +96,7 @@
 			<hr class="nmt" />
 			<div data-bind="%totpqrcode__template" class="padding">
 				<script type="text/html">
-					<div class="caption"><i class="fa fa-qrcode"></i>@(Scan QR Code for 2FA)</div>
+					<div class="caption"><i class="fa fa-qrcode mr5"></i>@(Scan QR Code for 2FA)</div>
 					<div class="help m">@(First of all, you need to download the app for Android or iOS, and you need to scan this QR Code into it. The application will generate a different password before you sign-in each time.)</div>
 					<table class="table table-small table-bordered">
 						<tr>
@@ -168,11 +169,11 @@
 				</div>
 			</div>
 			<div class="col-md-4 col-xs-6">
-				<div data---="input__?.locking__type:number;forcevalidation:0;placeholder:@(In minutes)">@(Idle time)</div>
+				<div data---="input__?.locking__type:number;forcevalidation:0;maxlength:2;placeholder:@(disabled)">@(Idle time)</div>
 				<div class="help m"><i class="fa fa-clock"></i>@(Must be defined in minutes.)</div>
 			</div>
 			<div class="col-md-4 col-xs-6">
-				<div data---="input__?.pin__maxlength:4;mask:####;maskregexp:\d,\d,\d,\d;placeholder:@(In minutes)">@(PIN code)</div>
+				<div data---="input__?.pin__maxlength:4;align:1;mask:####;maskregexp:\d,\d,\d,\d;placeholder:@(In minutes)">@(PIN code)</div>
 				<div class="help m"><i class="fa fa-calculator"></i>@(Only 4 numbers.)</div>
 			</div>
 			<div class="clearfix"></div>
@@ -188,39 +189,31 @@
 
 <script>
 
+	DEF.api = '/opapi/';
 	SET('%profilemodes', [{ id: false, type: 'light', name: '@(Light)' }, { id: true, type: 'dark', name: '@(Dark)' }]);
 	SET('%profilevolume', [{ id: 20, name: '@(low)' }, { id: 50, name: '@(medium)' }, { id: 80, name: '@(loud)' }]);
 	SET('%profiledesktop', [{ id: 1, type: 'windowed', name: '@(Windows)' }, { id: 2, type: 'tabbed', name: '@(Tabbed)' }, { id: 3, type: 'portal', name: '@(Portal)' }]);
-	SET('GET /api/cl/ <5 minutes>', '%cl');
+	DAPI('codelist <5 minutes>', '%cl');
 
 	PLUGIN('profileform', function(exports) {
 
 		exports.reload = function() {
-			SET('GET /api/account/', 'profileform');
+			DAPI('account_read', 'profileform');
 		};
 
 		exports.submit = function(hide) {
-			SETTER('loading', 'show');
-			var model = CLONE(GETR('?'));
+			SETTER('loading/show');
+			var model = GET('? @reset');
 
 			if (!model.changepassword)
 				delete model.password;
 
-			AJAX('POST /api/account/', model, function(response) {
-				SETTER('loading', 'hide', 500);
-				if (response.success) {
-					hide();
-					SETTER('snackbar/success', '@(Your account has been updated successfully.)');
-					refresh_profiledata();
-				} else
-					SETTER('message', 'warning', response[0].error);
-			});
+			DAPI('account_save @showloading', model, ASETTER('message/response @hideloading', function(response) {
+				SETTER('snackbar/success', '@(Your account has been updated successfully.)');
+				EXEC('openplatform/refresh_live');
+				hide();
+			}));
 		};
-
-		WATCH('?.locking', function(path, value, type) {
-			if (value <= 0)
-				SET('?.locking', '@(disabled)');
-		});
 
 		WATCH('?.otp', function(path, value, type) {
 			if (value && type === 2) {
@@ -233,15 +226,14 @@
 			}
 		});
 
+		WATCH('?.locking', function(path, value) {
+			if (value === 0)
+				NUL('?.locking');
+		});
+
 		WATCH('%totpcode', function(path, value, type) {
-			if (value.trim().length === 6) {
-				AJAX('POST /api/account/totp/verify/', { code: value, secret: profileform.otpsecret }, function(response) {
-					if (response instanceof Array)
-						OP.message(response, 'warning');
-					else
-						OP.message('@(Your code is valid. __Do not forget to save settings__.)');
-				});
-			}
+			if (value.trim().length === 6)
+				DAPI('account_totp_verify', { code: value, secret: profileform.otpsecret }, ASETTER('message/response', '@(Your code is valid. __Do not forget to save settings__.)'.markdown(MD_LINE)));
 		});
 
 		exports.password = function() {
@@ -250,7 +242,7 @@
 		};
 
 		exports.totp = function() {
-			AJAX('GET /api/account/totp/', function(response) {
+			DAPI('account_totp', function(response) {
 				SET('?.otpsecret', response.secret);
 				SET('%totpqrcode', response);
 				var pin = exports.element.FIND('pin');

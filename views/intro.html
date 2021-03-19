@@ -98,7 +98,7 @@
 			<hr />
 			<div class="padding npt npb">
 				<div class="fs12 center">@(Here you can change your password.)</div>
-				<div class="center help" style="margin-top:3px"><i class="far fa-lightbulb"></i>@(Do you not want to change the password?) <span class="link" name="next">@(Skip this step)</span></div>
+				<div class="center help" style="margin-top:3px"><i class="far fa-lightbulb"></i>@(Do you not want to change the password?) <span class="link next">@(Skip this step)</span></div>
 			</div>
 			<hr />
 			<div class="col-sm-6">
@@ -121,30 +121,28 @@
 	SET('%intromodes', [{ id: false, type: 'light', name: '@(Light)' }, { id: true, type: 'dark', name: '@(Dark)' }]);
 	SET('%introdesktop', [{ id: 1, type: 'windowed', name: '@(Windowed)' }, { id: 2, type: 'tabbed', name: '@(Tabbed)' }, { id: 3, type: 'portal', name: '@(Portal)' }]);
 
-	SET('GET /api/account/', 'intro');
-	SET('GET /api/cl/ <5 minutes>', '%cl');
+	DAPI('account_read', 'intro');
+	DAPI('codelist <5 minutes>', '%cl');
 
 	PLUGIN('intro', function(exports) {
 
-		WATCH('?.colorscheme + ?.darkmode', function(path, value) {
+		WATCH('?.colorscheme + ?.darkmode', function() {
 			var val = GET('?');
-			refresh_color({ colorscheme: val.colorscheme, darkmode: !!val.darkmode });
+			user.colorscheme = val.colorscheme;
+			user.darkmode = !!val.darkmode;
+			EXEC('openplatform/appearance');
 		});
 
-		exports.submit = function() {
+		exports.submit = function(hide) {
 
-			var model = GETR('?');
+			var model = GET('? @reset');
 			var password = '';
 
 			if (model.password && model.passwordreply && model.password === model.passwordreply)
 				password = model.password;
 
 			model.password = password;
-
-			AJAX('POST /api/account/', model, function(response) {
-				if (model.desktop !== user.desktop)
-					location.href = '/';
-			});
+			DAPI('account_save @showloading', model, ASETTER('message/response @hideloading', AEXEC('openplatform/refresh_live')));
 		};
 
 	});

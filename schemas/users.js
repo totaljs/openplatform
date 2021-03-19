@@ -23,9 +23,9 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('contractid', Number);
 	schema.define('statusid', Number);
 	schema.define('status', 'String(70)');
-	schema.define('firstname', 'Capitalize(40)', true);
-	schema.define('lastname', 'Capitalize(40)', true);
-	schema.define('middlename', 'Capitalize(40)');
+	schema.define('firstname', 'Name(40)', true);
+	schema.define('lastname', 'Name(40)', true);
+	schema.define('middlename', 'Name(40)');
 	schema.define('gender', ['male', 'female'], true);
 	schema.define('email', 'Email', true);
 	schema.define('phone', 'Phone');
@@ -93,13 +93,14 @@ NEWSCHEMA('Users', function(schema) {
 				return;
 			}
 
-			$.extend && $.extend(response);
-
-			MAIN.session.count($.id, function(err, meta) {
-				response.session = meta;
-				$.callback(response);
+			$.extend(response, function() {
+				DBMS().query('SELECT (SELECT COUNT(1)::int4 FROM tbl_user_session WHERE online=TRUE AND userid={0}) as used, (SELECT COUNT(1)::int4 FROM tbl_user_session WHERE online=FALSE AND userid={0}) as free'.format(PG_ESCAPE($.id))).first().callback(function(err, session) {
+					if (session)
+						session.count = session.used + session.free;
+					response.session = session;
+					$.callback(response);
+				});
 			});
-
 		});
 	});
 
@@ -300,31 +301,31 @@ NEWSCHEMA('Users', function(schema) {
 			MAIL(model.email, TRANSLATOR(model.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', $.model, model.language);
 		}
 
-		$.extend && $.extend(model);
+		$.extend(model, function() {
+			DBMS().insert('tbl_user', model).callback(function(err) {
 
-		DBMS().add('tbl_user', model).callback(function(err) {
+				if (err) {
+					$.invalid(err);
+					return;
+				}
 
-			if (err) {
-				$.invalid(err);
-				return;
-			}
-
-			if (apps && apps.length > 0) {
-				model.apps = apps;
-				processapps(model, function() {
+				if (apps && apps.length > 0) {
+					model.apps = apps;
+					processapps(model, function() {
+						FUNC.refreshgroupsrolesdelay();
+						FUNC.refreshmetadelay();
+						$.success(model.id);
+						EMIT('users/create', model.id);
+						FUNC.log('users/create', model.id, model.name, $);
+					});
+				} else {
 					FUNC.refreshgroupsrolesdelay();
 					FUNC.refreshmetadelay();
 					$.success(model.id);
 					EMIT('users/create', model.id);
 					FUNC.log('users/create', model.id, model.name, $);
-				});
-			} else {
-				FUNC.refreshgroupsrolesdelay();
-				FUNC.refreshmetadelay();
-				$.success(model.id);
-				EMIT('users/create', model.id);
-				FUNC.log('users/create', model.id, model.name, $);
-			}
+				}
+			});
 		});
 	});
 
@@ -667,46 +668,46 @@ NEWSCHEMA('Users', function(schema) {
 			if ((!keys || keys.colorscheme) && response.colorscheme !== model.colorscheme)
 				data.colorscheme = model.colorscheme;
 
-			$.extend && $.extend(data);
+			$.extend(data, function() {
+				if ($.model.welcome) {
+					var mailmodel = {};
+					mailmodel.firstname = response.firstname;
+					mailmodel.id = response.id;
+					mailmodel.token = ENCRYPT({ id: response.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
+					mailmodel.login = response.login;
+					MAIL(model.email, TRANSLATOR(response.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', mailmodel, response.language);
+				}
 
-			if ($.model.welcome) {
-				var mailmodel = {};
-				mailmodel.firstname = response.firstname;
-				mailmodel.id = response.id;
-				mailmodel.token = ENCRYPT({ id: response.id, date: NOW, type: 'welcome' }, CONF.secretpassword);
-				mailmodel.login = response.login;
-				MAIL(model.email, TRANSLATOR(response.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', mailmodel, response.language);
-			}
+				var id = response.id;
+				response.dbms.replace(data).save(function() {
+					if (!keys || keys.apps) {
+						model.id = id;
+						processapps(model, function() {
+							$.success(id);
+							FUNC.log('users/update', id, model.name, $);
+							EMIT('users/update', id);
+							MAIN.session.refresh(id);
 
-			var id = response.id;
-			response.dbms.replace(data).save(function() {
-				if (!keys || keys.apps) {
-					model.id = id;
-					processapps(model, function() {
+							if (!keys || keys.apps || keys.groups)
+								FUNC.refreshgroupsrolesdelay();
+
+							if (!keys || keys.company || keys.groups || keys.locality || keys.language || keys.directory)
+								FUNC.refreshmetadelay();
+
+						});
+					} else {
 						$.success(id);
 						FUNC.log('users/update', id, model.name, $);
 						EMIT('users/update', id);
-						MAIN.session.release2(id);
+						MAIN.session.refresh(id);
 
 						if (!keys || keys.apps || keys.groups)
 							FUNC.refreshgroupsrolesdelay();
 
 						if (!keys || keys.company || keys.groups || keys.locality || keys.language || keys.directory)
 							FUNC.refreshmetadelay();
-
-					});
-				} else {
-					$.success(id);
-					FUNC.log('users/update', id, model.name, $);
-					EMIT('users/update', id);
-					MAIN.session.release2(id);
-
-					if (!keys || keys.apps || keys.groups)
-						FUNC.refreshgroupsrolesdelay();
-
-					if (!keys || keys.company || keys.groups || keys.locality || keys.language || keys.directory)
-						FUNC.refreshmetadelay();
-				}
+					}
+				});
 			});
 		});
 	});
@@ -728,14 +729,14 @@ NEWSCHEMA('Users', function(schema) {
 				db.modify('tbl_user', { supervisorid: response.supervisorid || null }).where('supervisorid', id);
 				db.modify('tbl_user', { deputyid: response.deputyid || null }).where('deputyid', id);
 
-				$.extend && $.extend();
-
-				// Removes data
-				db.remove('tbl_user').where('id', id).callback(function() {
-					FUNC.refreshmetadelay();
-					FUNC.log('users/remove', response.id, response.name, $);
-					EMIT('users/remove', id);
-					$.success();
+				$.extend(null, function() {
+					// Removes data
+					db.remove('tbl_user').where('id', id).callback(function() {
+						FUNC.refreshmetadelay();
+						FUNC.log('users/remove', response.id, response.name, $);
+						EMIT('users/remove', id);
+						$.success();
+					});
 				});
 
 			} else
@@ -863,19 +864,35 @@ NEWSCHEMA('Users', function(schema) {
 	}, 'statusid:Number,contractid:Number,page:Number,limit:Number,statusid:Number');
 
 	schema.addWorkflow('companies', function($) {
-		DBMS().query('SELECT company as id, company as name FROM tbl_user WHERE LENGTH(company)>0 AND company LIKE $1 GROUP BY company LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+
+		var filter = $.query.q ? ' AND company LIKE $1' : '';
+		var params = $.query.q ? ['%' + $.query.q + '%'] : EMPTYARRAY;
+
+		DBMS().query('SELECT company as id, company as name FROM tbl_user WHERE LENGTH(company)>0{0} GROUP BY company LIMIT 5'.format(filter), params).callback($.callback);
 	});
 
 	schema.addWorkflow('positions', function($) {
-		DBMS().query('SELECT position as id, position as name FROM tbl_user WHERE LENGTH(position)>0 AND position LIKE $1 GROUP BY position LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+
+		var filter = $.query.q ? ' AND position LIKE $1' : '';
+		var params = $.query.q ? ['%' + $.query.q + '%'] : EMPTYARRAY;
+
+		DBMS().query('SELECT position as id, position as name FROM tbl_user WHERE LENGTH(position)>0{0} GROUP BY position LIMIT 5'.format(filter), params).callback($.callback);
 	});
 
 	schema.addWorkflow('locations', function($) {
-		DBMS().query('SELECT locality as id, locality as name FROM tbl_user WHERE LENGTH(locality)>0 AND locality LIKE $1 GROUP BY locality LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+
+		var filter = $.query.q ? ' AND position LIKE $1' : '';
+		var params = $.query.q ? ['%' + $.query.q + '%'] : EMPTYARRAY;
+
+		DBMS().query('SELECT locality as id, locality as name FROM tbl_user WHERE LENGTH(locality)>0{0} GROUP BY locality LIMIT 5'.format(filter), params).callback($.callback);
 	});
 
 	schema.addWorkflow('groupids', function($) {
-		DBMS().query('SELECT groupid as id, groupid as name FROM tbl_user WHERE LENGTH(groupid)>0 AND groupid LIKE $1 GROUP BY groupid LIMIT 5', ['%' + $.query.q + '%']).callback($.callback);
+
+		var filter = $.query.q ? ' AND position LIKE $1' : '';
+		var params = $.query.q ? ['%' + $.query.q + '%'] : EMPTYARRAY;
+
+		DBMS().query('SELECT groupid as id, groupid as name FROM tbl_user WHERE LENGTH(groupid)>0{0} GROUP BY groupid LIMIT 5'.format(filter), params).callback($.callback);
 	});
 
 });

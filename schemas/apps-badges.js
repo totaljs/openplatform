@@ -16,7 +16,7 @@ NEWSCHEMA('Apps/Badges', function(schema) {
 				else
 					ua.countbadges = 1;
 
-				MAIN.session.set2(user.id, user);
+				// MAIN.session.set2(user.id, user);
 
 				DB_BADGES.countbadges = ua.countbadges;
 				DBMS().mod('tbl_user_app', DB_BADGES).where('id', user.id + app.id);
@@ -45,10 +45,8 @@ NEWSCHEMA('Apps/Badges', function(schema) {
 			else
 				ua.countbadges = 1;
 
-			MAIN.session.set2(user.id, user);
-
 			DB_BADGES.countbadges = ua.countbadges;
-			DBMS().mod('tbl_user_app', DB_BADGES).where('id', user.id + app.id).error('FET');
+			DBMS().mod('tbl_user_app', DB_BADGES).id(user.id + app.id);
 		}
 
 		// Response

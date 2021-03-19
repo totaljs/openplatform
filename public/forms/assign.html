@@ -1,5 +1,5 @@
-<div data---="form__common.panel__if:usersassign;reload:usersassignpanel/reload;title:@(Assign groups);submit:usersassignpanel/submit;icon:user;scrollbar:false;width:500" class="hidden">
-	<div data-scope="usersassignpanel" class="padding">
+<div data---="form__common.form__if:assignform;reload:?/reload;title:@(Assign groups);submit:?/submit;icon:user;scrollbar:false;width:500" class="hidden" data-scope="assignform">
+	<div class="padding">
 		<div class="alert m"><i class="fa fa-warning"></i> @(The selected groups below will be applied for all users according to the current user-grid filter.)</div>
 		<div class="caption"><i class="fa fa-plus-circle green"></i>@(Insert groups)</div>
 		<div data---="checkboxlist__?.add__datasource:main.meta.groups__[]"></div>
@@ -7,19 +7,19 @@
 		<div class="caption"><i class="fa fa-minus-circle red"></i>@(Remove groups)</div>
 		<div data---="checkboxlist__?.rem__datasource:main.meta.groups__[]"></div>
 	</div>
-	<nav data---="validation__usersassignpanel">
+	<nav data---="validation__?">
 		<button name="submit" disabled><i class="fa fa-check-circle"></i>@(APPLY)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 </div>
 
 <script>
-	PLUGIN('usersassignpanel', function(exports) {
+	PLUGIN('assignform', function(exports) {
 
-		exports.submit = function() {
+		exports.submit = function(hide) {
 			var model = GETR('?');
 
-			var ug = PLUGIN('usersgrid');
+			var ug = PLUGIN('users');
 			if (ug == null) {
 				// plugin not found
 				return;
@@ -35,9 +35,9 @@
 			delete model.filter.page;
 			delete model.filter.sort;
 
-			AJAX('POST /api/op/users/assign/', model, OP.done('@(Groups have been applied successfully)', function(response) {
-				NULL('common.panel');
-				EXEC('usersgrid/refresh');
+			DAPI('users_assign', model, OP.done('@(Groups have been applied successfully)', function() {
+				EXEC('users/refresh');
+				hide();
 			}));
 		};
 	});

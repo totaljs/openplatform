@@ -1,170 +1,30 @@
-const ONLINE = { online: true, dtlogged: null };
-const USERS_PROFILE_SKIP = { roles: 1 };
-const REQUEST_FLAGS = ['post', 'keepalive', 'json'];
-
 exports.install = function() {
 
-	ROUTE('+GET     /api/cl/', cl);
-
-	// Users
-	ROUTE('+GET       /api/op/users/                      *Users                --> @query');
-	ROUTE('+GET       /api/op/users/{id}/                 *Users                --> @read');
-	ROUTE('+POST      /api/op/users/                      *Users                --> @check @insert (response)');
-	ROUTE('+POST      /api/op/users/{id}/                 *Users                --> @check @patch (response)');
-	ROUTE('+PATCH     /api/op/users/{id}/                 *Users                --> @check @patch (response)');
-	ROUTE('+DELETE    /api/op/users/{id}/                 *Users                --> @remove');
-	ROUTE('+POST      /api/op/users/assign/               *Users/Assign         --> @exec');
-	ROUTE('+POST      /api/op/reports/                    *Users/Reports        --> @insert', 1024 * 2); // 2 MB
-
-	// Users/Groups
-	ROUTE('+GET       /api/op/groups/                     *Users/Groups         --> @query');
-	ROUTE('+PATCH     /api/op/groups/                     *Users/Groups         --> @patch');
-	ROUTE('+DELETE    /api/op/groups/                     *Users/Groups         --> @remove');
-	ROUTE('+GET       /api/op/marketplace/                *Meta                 --> @marketplace');
-
-	// Platform
-	ROUTE('+GET       /api/op/dashboard/                  *Dashboard            --> @read');
-	ROUTE('+GET       /api/op/dashboard/online/           *Dashboard            --> @online');
-	ROUTE('+GET       /api/op/dashboard/{year}/           *Dashboard            --> @yearly');
-	ROUTE('+GET       /api/op/reports/                    *Users/Reports        --> @query');
-	ROUTE('+GET       /api/op/reports/{id}/screenshot/    *Users/Reports        --> @screenshot');
-	ROUTE('+GET       /api/op/reports/{id}/solved/        *Users/Reports        --> @solved');
-	ROUTE('+DELETE    /api/op/reports/{id}/               *Users/Reports        --> @remove');
-
-	// Codelists
-	ROUTE('+GET       /api/op/companies/                  *Users                --> @companies');
-	ROUTE('+GET       /api/op/locations/                  *Users                --> @locations');
-	ROUTE('+GET       /api/op/positions/                  *Users                --> @positions');
-	ROUTE('+GET       /api/op/groupids/                   *Users                --> @groupids');
-
-	// Apps
-	ROUTE('+GET       /api/op/apps/                       *Apps                 --> @query');
-	ROUTE('+GET       /api/op/apps/{id}/                  *Apps                 --> @read');
-	ROUTE('+GET       /api/op/apps/meta/                  *Apps                 --> @meta');
-	ROUTE('+POST      /api/op/apps/                       *Apps                 --> @check @refresh @insert (response)');
-	ROUTE('+POST      /api/op/apps/{id}/                  *Apps                 --> @check @refresh @update (response)');
-	ROUTE('+DELETE    /api/op/apps/{id}/                  *Apps                 --> @remove');
-
-	// UI
-	ROUTE('+GET       /api/op/components/                 *UI/Components        --> @query');
-	ROUTE('+POST      /api/op/components/                 *UI/Components        --> @save');
-	ROUTE('+DELETE    /api/op/components/                 *UI/Components        --> @remove');
-	ROUTE('+GET       /api/op/ui/                         *UI                   --> @query');
-	ROUTE('+POST      /api/op/ui/                         *UI                   --> @save');
-	ROUTE('+GET       /api/op/ui/{id}/                    *UI                   --> @read');
-	ROUTE('+DELETE    /api/op/ui/{id}/                    *UI                   --> @remove');
-	ROUTE('+GET       /api/op/ui/sort/                    *UI                   --> @sort');
-	ROUTE('+GET       /api/op/sources/                    *UI/Sources           --> @query');
-	ROUTE('+POST      /api/op/sources/                    *UI/Sources           --> @save');
-	ROUTE('+DELETE    /api/op/sources/{id}/               *UI/Sources           --> @remove');
-	ROUTE('GET        /api/op/actions/                    *UI/Actions           --> @query');
-
-	// OAuth
-	ROUTE('+GET       /api/op/oauth/                      *OAuth                --> @query');
-	ROUTE('+POST      /api/op/oauth/                      *OAuth                --> @insert');
-	ROUTE('+POST      /api/op/oauth/{id}/                 *OAuth                --> @update');
-	ROUTE('+DELETE    /api/op/oauth/{id}/                 *OAuth                --> @remove');
-
-	// Settings
-	ROUTE('+GET       /api/op/settings/                   *Settings             --> @read');
-	ROUTE('+POST      /api/op/settings/                   *Settings             --> @save');
-	ROUTE('+POST      /api/op/settings/smtp/              *Settings/SMTP        --> @exec');
-
-	// For unauthorized
-	ROUTE('-POST      /api/login/                         *Users/Login          --> @exec');
-	ROUTE('-POST      /api/login/otp/                     *Users/Login          --> @otp');
-	ROUTE('-POST      /api/password/                      *Users/Password       --> @exec');
-
-	// Account
-	ROUTE('+GET       /api/account/                       *Account              --> @read');
-	ROUTE('+POST      /api/account/                       *Account              --> @check @save (response)');
-	ROUTE('+GET       /api/account/totp/                  *Account/Totp         --> @generate');
-	ROUTE('+POST      /api/account/totp/verify/           *Account/Totp         --> @verify');
-	ROUTE('+POST      /api/account/status/                *Account/Status       --> @save');
-
-	ROUTE('+GET       /api/notifications/                 *Apps/Notifications   --> @query');
-	ROUTE('+GET       /api/notifications/clear/           *Apps/Notifications   --> @clear');
-
 	// Profile
-	ROUTE('+GET     /api/profile/',                json_profile_full);
-	ROUTE('+GET     /api/profile/{id}/             *Apps               --> @run');
-	ROUTE('+GET     /api/profile/{id}/favorite/    *Apps               --> @favorite');
-	ROUTE('+GET     /api/profile/{id}/reset/       *Apps               --> @reset');
-	ROUTE('+GET     /api/profile/{id}/mute/        *Apps               --> @mute');
-	ROUTE('+POST    /api/profile/logger/           *Apps/Logs          --> @insert');
-	ROUTE('+POST    /api/profile/apps/positions/   *Apps/Position      --> @save');
-	ROUTE('+GET     /api/profile/live/',           json_profile);
-
-	ROUTE('+POST    /api/upload/photo/',           json_upload_photo, 1024 * 2);
-	ROUTE('+POST    /api/upload/background/',      json_upload_background, ['upload'], 1024 * 5);
-
-	ROUTE('+GET     /api/op/meta/',                json_meta_query);
-	ROUTE('+GET     /api/op/sessions/',            json_sessions);
-	ROUTE('+DELETE  /api/op/sessions/{id}/',       json_sessions_remove);
-
-	ROUTE('+GET     /api/op/members/               *Users/Team --> @query');
-	ROUTE('+POST    /api/op/members/               *Users/Team --> @save');
-	ROUTE('+GET     /api/op/members/check/         *Users/Team --> @check');
-
-	ROUTE('+POST    /api/op/config/                *Apps/Config        --> @save');
-	ROUTE('+GET     /api/op/config/                *Apps/Config        --> @read');
+	ROUTE('+POST    /api/upload/photo/', json_upload_photo, 1024 * 2);
+	ROUTE('+POST    /api/upload/background/', json_upload_background, ['upload'], 1024 * 5);
 
 	// Because of security reasons
-	// ROUTE('+POST    /api/op/mail/                  *Mail               --> @send');
-
-	ROUTE('+POST    /api/op/notify/{id}/                       *Apps/Notifications  --> @internal');
-	ROUTE('+GET     /api/op/badges/{id}/                       *Apps/Badges         --> @internal');
+	// ROUTE('+POST    /api/op/mail/                  *Mail                 --> @send');
 
 	// External
-	ROUTE('GET      /verify/',                            json_verify);
-	ROUTE('GET      /api/verify/',                        json_verify);
-	ROUTE('POST     /api/services/',                      json_service, ['raw']);
-	ROUTE('GET      /api/online/{id}/',                   json_online);
-	ROUTE('GET      /api/users/                           *Users               --> @public');
-	ROUTE('GET      /api/apps/                            *Apps                --> @public');
-	ROUTE('GET      /api/badges/                          *Apps/Badges         --> @exec');
-	ROUTE('POST     /api/notify/                          *Apps/Notifications  --> @save');
-	ROUTE('GET      /api/meta/                            *Meta                --> @read');
-	ROUTE('GET      /api/unlock/                          *Account             --> @unlock');
-	ROUTE('GET      /guest/',                             redirect_guest);
-	ROUTE('+GET     /builder/{id}/', 'builder');
-
-	// Other
-	ROUTE('+GET     /api/op/dnsresolver/', dnsresolver);
+	ROUTE('GET     /api/users/                    *Users                --> public');
+	ROUTE('GET     /api/apps/                     *Apps                 --> public');
+	ROUTE('GET     /api/badges/                   *Apps/Badges          --> exec');
+	ROUTE('GET     /api/badge/                    *Apps/Badges          --> exec');
+	ROUTE('POST    /api/notify/                   *Apps/Notifications   --> save');
+	ROUTE('POST    /api/mail/                     *Apps/Mail            --> exec');
+	ROUTE('POST    /api/sms/                      *Apps/SMS             --> exec');
+	ROUTE('GET     /api/meta/                     *Meta                 --> read');
+	ROUTE('GET     /api/verify/', json_verify);
+	ROUTE('POST    /api/services/', json_service, ['raw'], 1024);
+	ROUTE('GET     /verify/', json_verify);
+	ROUTE('GET     /guest/', redirect_guest);
+	ROUTE('+GET    /internal/screenshots/{id}/    *Users/Reports        --> screenshot');
 
 	// CORS
 	CORS();
 };
-
-function dnsresolver() {
-	var self = this;
-
-	if (!self.user.sa) {
-		self.invalid('error-permissions');
-		return;
-	}
-
-	if ((/^http(s)+\:\/\/.*?\.\w{2,}$/i).test(self.query.domain || '')) {
-		U.resolve(self.query.domain, function(err, response, param, addresses) {
-			self.json(err ? EMPTYARRAY : (addresses || [response.host] || EMPTYARRAY));
-		});
-	} else {
-		self.json(EMPTYARRAY);
-	}
-
-}
-
-function cl() {
-	var self = this;
-	var obj = {};
-	obj.numberformats = [{ id: 1, name: '100 000.123' }, { id: 2, name: '100 000,123' }, { id: 3, name: '100.100,123' }, { id: 4, name: '100,100.123' }];
-	obj.dateformats = [{ id: 'yyyy-MM-dd', name: TRANSLATE(self.user.language, 'year-month-day') }, { id: 'dd.MM.yyyy', name: TRANSLATE(self.user.language, 'day.month.year') }, { id: 'MM.dd.yyyy', name: TRANSLATE(self.user.language, 'month.day.year') }];
-	obj.timeformats = [{ id: 24, name: TRANSLATE(self.user.language, '24 hour clock') }, { id: 12, name: TRANSLATE(self.user.language, '12 hour clock') }];
-	var db = DBMS();
-	db.output(obj);
-	db.find('cl_language').fields('id,name').set('languages');
-	db.callback(self.callback());
-}
 
 function json_verify() {
 	var self = this;
@@ -183,15 +43,6 @@ function json_verify() {
 		else
 			self.invalid('error-offline');
 	});
-}
-
-function json_meta_query() {
-	var self = this;
-	if (self.user.directory) {
-		var obj = MAIN.metadirectories[self.user.directory];
-		self.json(obj ? obj : EMPTYOBJECT);
-	} else
-		self.json(MAIN.meta);
 }
 
 function json_upload_photo() {
@@ -225,69 +76,6 @@ function json_upload_background() {
 	file.move(U.join(path, id), () => self.json(id));
 }
 
-function json_online(id) {
-	var self = this;
-	MAIN.session.contains2(id, function(err, user) {
-		if (user) {
-			ONLINE.online = user.online;
-			ONLINE.dtlogged = user.dtlogged;
-		} else {
-			ONLINE.online = false;
-			ONLINE.dtlogged = null;
-		}
-		self.json(ONLINE);
-	});
-}
-
-function json_profile() {
-
-	var self = this;
-	var running = self.query.running;
-
-	if (self.user.running !== running) {
-		self.user.running = running;
-		DBMS().modify('tbl_user', { running: (running || '').split(',').trim() }).where('id', self.user.id);
-	}
-
-	self.user.ping = NOW;
-	self.json(FUNC.profilelive(this.user), null, null, skip);
-}
-
-function json_profile_full() {
-	var self = this;
-	FUNC.profile(self.user, function(err, data) {
-		data && (data.ip = self.ip);
-		self.json(data);
-	});
-}
-
-function skip(k, v) {
-	return USERS_PROFILE_SKIP[k] ? undefined : v;
-}
-
-function json_sessions() {
-	var self = this;
-	MAIN.session.list(self.user.id, function(err, sessions) {
-		var data = [];
-		for (var i = 0; i < sessions.length; i++) {
-			var item = sessions[i];
-			data.push({ id: item.sessionid, note: item.note, used: item.used, created: item.created, current: item.sessionid === self.sessionid });
-		}
-		self.json(data);
-	});
-}
-
-function json_sessions_remove(id) {
-	var self = this;
-	MAIN.session.get(id, function(err, item, meta) {
-		if (meta && meta.id === self.user.id) {
-			MAIN.session.remove(meta.sessionid);
-			self.success(true, meta.sessionid === self.sessionid);
-		} else
-			self.invalid('error-session');
-	});
-}
-
 function redirect_guest() {
 	var self = this;
 	CONF.guest && self.cookie(CONF.cookie, 'guest', '1 day');
@@ -317,7 +105,7 @@ function json_service() {
 			if (serviceid === 'mail')
 				$WORKFLOW('Mail', 'send', self.body, self.callback());
 			else {
-				self.body = F.version < 4000 ? U.parseJSON(self.body, true) : self.body.toString('utf8').parseJSON(true);
+				self.body = self.body.toString('utf8').parseJSON(true);
 				OPERATION('api_' + serviceid, obj.app, self.callback(), self);
 			}
 			return;
@@ -359,34 +147,22 @@ function json_service() {
 		headers['X-OpenPlatform'] = MAIN.id + '-' + obj.user.directoryid + '-' + CONF.verifytoken + '-' + obj.user.id + '-' + app.servicetoken;
 		headers['Content-Type'] = self.headers['content-type'];
 
-		if (F.version < 4000) {
-			REQUEST(endpoint, REQUEST_FLAGS, self.body, function(err, response, status, headers) {
-				if (err) {
-					self.status = status < 400 ? 500 : status;
-					self.invalid(err);
-				} else {
-					self.status = status;
-					self.content(response, headers['content-type']);
-				}
-			}, null, headers);
-		} else {
-			var opt = {};
-			opt.keepalive = true;
-			opt.url = endpoint;
-			opt.headers = headers;
-			opt.method = 'POST';
-			opt.encoding = 'binary';
-			opt.body = self.buffer;
-			opt.callback = function(err, response) {
-				if (err) {
-					self.status = response.status < 400 ? 500 : response.status;
-					self.invalid(err);
-				} else {
-					self.status = response.status;
-					self.binary(response.body, response.headers['content-type']);
-				}
-			};
-			REQUEST(opt);
-		}
+		var opt = {};
+		opt.keepalive = true;
+		opt.url = endpoint;
+		opt.headers = headers;
+		opt.method = 'POST';
+		opt.encoding = 'binary';
+		opt.body = self.buffer;
+		opt.callback = function(err, response) {
+			if (err) {
+				self.status = response.status < 400 ? 500 : response.status;
+				self.invalid(err);
+			} else {
+				self.status = response.status;
+				self.binary(response.body, response.headers['content-type']);
+			}
+		};
+		REQUEST(opt);
 	});
 }

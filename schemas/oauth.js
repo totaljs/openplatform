@@ -16,7 +16,7 @@ NEWSCHEMA('OAuth', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		DBMS().find('tbl_oauth').callback($.callback);
+		DBMS().find('tbl_oauth').sort('dtcreated', true).callback($.callback);
 	});
 
 	schema.setInsert(function($) {

@@ -13,13 +13,13 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="robots" content="all,follow" />
 	@{head}
-	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18.css" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
 	<style type="text/css">
 		/*auto*/
 
 		html,body { overflow: hidden; height: 100%; }
-		body { background-color: #F0F0F0; color: black; background: radial-gradient(#FFFFFF, #C0C0C0); font-size: 12px; }
+		body { background-color: #F0F0F0; color: black; background: radial-gradient(#FFFFFF, #C0C0C0); font-size: 14px; }
 		form { padding: 0; margin: 0; }
 
 		.panel { max-width: 330px; width: 100%; position: absolute; left: 50%; top: 50%; margin: -240px 0 0 -140px; background-color: white; border-radius: 3px; transition: all 0.5s; transform: scale(1.5); border: 1px solid #D0D0D0; box-shadow: 0 0 30px rgba(0,0,0,0.05); }
@@ -34,16 +34,7 @@
 		h1 { color: black; margin: 0; padding: 22px 0 20px; font-family: Arial; text-align: center; font-size: 16px; border-bottom: 1px solid #E0E0E0; color: black }
 		h1 .fa { margin-right: 10px; }
 
-		.ui-error { margin: 0 0 15px; padding: 0; list-style-type: none; padding: 10px 0; color: #BE3A48; font-family: Arial; font-size: 12px; border-top: 1px solid #E0E0E0; }
-		.ui-error .fa { width: 16px; }
 		.fs12 { font-size: 12px; }
-
-		.ui-pin-input { width: 44px; border: 2px solid black; position: relative; display: inline-block; margin: 0 8px 8px 0; border-radius: 4px; padding: 8px 2px; background-color: white; }
-		.ui-pin-input input { width: 100%; border: 0; background-color: white; outline: 0; font-size: 20px; text-align: center; font-weight: bold; border-radius: 0; appearance: none; color: black; }
-		.ui-pin-invalid .ui-pin-input, .ui-pin-invalid input { background-color: #FFF3F3; }
-		.ui-disabled .ui-pin-input { background-color: #F0F0F0; border-color: #D0D0D0; }
-		.ui-disabled .ui-pin-input input { background-color: #F0F0F0; cursor: not-allowed; color: gray; }
-
 		.hidden { display: none; }
 		.m { margin-bottom: 15px; }
 
@@ -51,10 +42,10 @@
 		.success .fa { margin-right: 8px; }
 
 		.color { color:@{if CONF.colorscheme}@{CONF.colorscheme}@{else}#4285F4@{fi}; }
-		button { background-color: @{if CONF.colorscheme}@{CONF.colorscheme}@{else}#4285F4@{fi}; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 40px; text-transform: uppercase; font-size: 14px; }
-		button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
-		button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
-		button .fa { margin-right: 5px; }
+		.panel button { background-color: @{if CONF.colorscheme}@{CONF.colorscheme}@{else}#4285F4@{fi}; border: 0; color: white; cursor: pointer; outline: 0; width: 100%; border-radius: 2px; height: 40px; text-transform: uppercase; font-size: 14px; }
+		.panel button:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); opacity: 0.9; }
+		.panel button:disabled { background-color: #E0E0E0; color: silver; cursor: not-allowed; box-shadow: none; opacity: 1; }
+		.panel button .fa { margin-right: 5px; }
 		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 15px 0 0 0; border-top: 1px solid #E0E0E0; padding: 10px; }
 
 		@media(max-width: 768px) {
@@ -63,53 +54,12 @@
 
 		.alert { color: #856404; background-color: #FFFFD5; border: 1px solid #e8e6bd; border-radius: 3px; padding: 10px 15px; font-size: 12px; line-height: 16px; }
 		.gray { color: gray; }
-
-		.ui-input { position: relative; font-size: 13px; }
-		.ui-input-required .ui-input-control { border-color: #D0D0D0; }
-		.ui-input-label { margin-bottom: 3px; font-size: 12px; }
-		.ui-input-label i { margin-right: 4px; }
-		.ui-input-required .ui-input-label:before { content: '***'; color: red; margin-right: 3px; }
-		.ui-input-control { border: 1px solid #E0E0E0; border-radius: 3px; height: 32px; background-color: white; }
-		.ui-input-input { padding: 6px 2px 0 6px; position: relative; line-height: 20px; }
-		.ui-input-placeholder { position: absolute; color: gray; margin: 0; user-select: none; cursor: text; width: 100%; text-align: left; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
-		.ui-input-control input { border: 0; outline: 0; background-color: white; width: 100%; padding: 0; margin: 0; line-height: 15px; font-size: 13px; color: black; font-family: Arial; }
-		.ui-input-control input::-ms-expand { display: none; }
-		.ui-input-icon-left { width: 32px; height: 30px; line-height: 32px; float: left; text-align: center; border-right: 1px solid #E0E0E0; }
-		.ui-input-icon-right { width: 32px; height: 30px; line-height: 32px; float: right; border-left: 1px solid #E0E0E0; text-align: center; }
-		.ui-input-required .ui-input-icon-left { border-color: #D0D0D0; }
-		.ui-input-required .ui-input-icon-right { border-color: #D0D0D0; }
-		.ui-input-ricon .ui-input-input { margin-right: 35px; }
-		.ui-input-licon .ui-input-input { margin-left: 32px; }
-		.ui-input-ricon .fa-times, .ui-input-licon .fa-times { color: red; }
-		.ui-input-click { cursor: pointer; }
-		.ui-input-error { margin-top: 7px; font-size: 11px; color: red; }
-		.ui-input .right input, .ui-input .right .ui-input-placeholder { text-align: right; }
-		.ui-input .center input, .ui-input .center .ui-input-placeholder { text-align: center; }
-		.ui-input-dropdown, .ui-input-dropdown input, .ui-input-dropdown .ui-input-placeholder { cursor: pointer; }
-		.ui-input-invalid .ui-input-control, .ui-input-invalid .ui-input-icon-left, .ui-input-invalid .ui-input-icon-right { border-color: red; }
-		.ui-input.ui-disabled .ui-input-control { background-color: #F0F0F0; }
-		.ui-input.ui-disabled input { background-color: #F0F0F0; color: #A0A0A0; }
-		.ui-input.ui-disabled .ui-input-placeholder { color: #A0A0A0; }
-		.ui-input.ui-disabled .ui-input-icon-left, .ui-input.ui-disabled .ui-input-icon-right { color: gray; }
-		.ui-input-increment { padding: 5px 0 0; }
-		.ui-input-increment i { display: block; line-height: 10px; font-size: 15px; cursor: pointer; }
-		.ui-input-inner { line-height: 17px; }
-		.ui-input-inner .ui-input-label { position: absolute; z-index: 1; margin: 11px 0 0 7px; font-size: 13px; }
-		.ui-input-inner.ui-input-binded .ui-input-label { font-size: 11px; margin-top: 3px; color: gray; }
-		.ui-input-inner .ui-input-input { padding-top: 9px; }
-		.ui-input-binded.ui-input-inner .ui-input-input { padding-top: 15px; }
-		.ui-input-inner .ui-input-control { height: 38px; }
-		.ui-input-inner .ui-input-icon-left, .ui-input-inner .ui-input-icon-right { height: 37px; line-height: 37px; }
-		.ui-input-inner.ui-input-required .ui-input-label:before { content: '*'; }
-		.ui-input-inner .ui-input-increment { padding: 8px 0 0; }
-		.ui-input-inner .ui-input-increment i { line-height: 10px; }
-		.ui-input-masked input { letter-spacing: 1px; font-family: Menlo,Consolas,monospace; }
-
-		.ui-radiobutton { font-size: 13px !important; }
-
 	</style>
+	@{import('ui.css', 'ui.js')}
 </head>
 <body data---="exec">
+
+	<div data---="message__null__style:2;close:@(Close)"></div>
 
 	<div class="panel">
 		<h1><i class="fa fa-lock"></i>@{CONF.name}</h1>
@@ -120,8 +70,7 @@
 				<form method="POST" action="/" id="login">
 					<div class="m" data---="input__form.name__icon2:user;required:1;autofocus:1;autofill:1;$id:formname">@(Login name)</div>
 					<div class="m" data---="input__form.password__icon2:lock;required:1;type:password;autofill:1">@(Password)</div>
-					<div data---="error__form.response"></div>
-					<div class="m">
+					<div class="m fs12">
 						<div><a href="#password" class="exec gray" data-exec="toggletype"><i class="fa fa-chevron-right mr5"></i>@(Reset password)</a></div>
 						@{if CONF.guest}
 						<div><a href="/guest/"><i class="fa fa-chevron-right mr5"></i>@(Sign-in as a guest)</a></div>
@@ -141,11 +90,10 @@
 					<div class="help">@(<b>Your profile has enabled two-factor authorization.</b> Please type a code from your mobile application:)</div>
 					<div class="m mt10" data---="pin__otp.password__mask:false__''"></div>
 				</div>
-				<div data---="error__otp.response"></div>
 				<div data---="validation__otp">
-					<button type="button" class="b otpsubmit" name="submit" disabled="disabled"><i class="fa fa-unlock"></i>@(Confirm)</button>
+					<button type="button" class="b otpsubmit" name="submit" disabled="disabled"><i class="fa fa-check-circle"></i>@(Confirm)</button>
 				</div>
-				<div class="mt5">
+				<div class="mt10 fs12">
 					<span class="link exec" data-exec="toggletype"><i class="fa fa-angle-right mr5"></i>@(Back to Sign-in form)</span>
 				</div>
 			</div>
@@ -153,11 +101,10 @@
 			<div data-bind="common.type__show:value === 'password'" class="hidden">
 				<form method="POST" onsubmit="return false" action="/">
 					<div class="m" data---="input__password.name__icon2:user;required:1;autofill:1;$id:passwordname;placeholder:@(Login name or email address)">@(Login name)</div>
-					<div data---="error__password.response"></div>
 					<div data---="validation__password">
 						<button type="button" class="b" name="submit" disabled="disabled"><i class="fa fa-lock"></i>@(Reset password)</button>
 					</div>
-					<div class="mt5 fs12">
+					<div class="mt10 fs12">
 						<div><span class="link exec" data-exec="toggletype"><i class="fa fa-angle-right mr5"></i>@(Back to Sign-in form)</span></div>
 					</div>
 				</form>
@@ -172,1047 +119,101 @@
 
 	<script>
 
-	var common = { type: 'login' };
+		var common = { type: 'login' };
+		DEF.api = '/opapi/';
 
-	$('#login').submit(function(e) {
-		e.preventDefault();
-	});
+		$('#login').submit(function(e) {
+			e.preventDefault();
+		});
 
-	COMPONENT('validation', 'delay:100;flags:visible', function(self, config) {
+		setTimeout(function() {
+			$('.panel').aclass('panelshow');
+		}, 200);
 
-		var path, elements = null;
-		var def = 'button[name="submit"]';
-		var flags = null;
-		var tracked = false;
-		var reset = 0;
-		var cls = 'ui-validation';
-		var old;
-		var track;
-
-		self.readonly();
-
-		self.make = function() {
-			elements = self.find(config.selector || def);
-			path = self.path.replace(/\.\*$/, '');
-		};
-
-		self.configure = function(key, value, init) {
-			switch (key) {
-				case 'selector':
-					if (!init)
-						elements = self.find(value || def);
-					break;
-				case 'flags':
-					if (value) {
-						flags = value.split(',');
-						for (var i = 0; i < flags.length; i++)
-							flags[i] = '@' + flags[i];
-					} else
-						flags = null;
-					break;
-				case 'track':
-					track = value.split(',').trim();
-					break;
+		WATCH('otp.password', function(path, value) {
+			if (value && value.length === 6 && value.indexOf(' ') === -1) {
+				setTimeout(function() {
+					$('.otpsubmit').trigger('click');
+				}, 500);
 			}
-		};
+		});
 
-		self.setter = function(value, path, type) {
+		function togglesignup() {
+			SET('common.type', 'signup');
+		}
 
-			var is = path === self.path || path.length < self.path.length;
+		function toggletype() {
+			if (common.type === 'password' || common.type === 'otp') {
+				SET('common.type', 'login');
+				SET('password.response', null);
+				setTimeout(function() {
+					FIND('#formname').find('input').focus();
+				}, 200);
+			} else {
+				SET('common.type', 'password');
+				setTimeout(function() {
+					FIND('#passwordname').find('input').focus();
+				}, 200);
+			}
+		}
 
-			if (reset !== is) {
-				reset = is;
-				self.tclass(cls + '-modified', !reset);
+		$(document).on('keyup', 'input', function(e) {
+			e.which === 13 && $('button').trigger('click');
+		});
+
+		$(document).on('click', 'button', function() {
+
+			if (common.type === 'password')	{
+				if (!CAN('password.*'))
+					return;
+			} else if (common.type === 'otp') {
+				if (!CAN('otp.*'))
+					return;
+			} else {
+				if (!CAN('form.*'))
+					return;
 			}
 
-			if ((type === 1 || type === 2) && track && track.length) {
-				for (var i = 0; i < track.length; i++) {
-					if (path.indexOf(track[i]) !== -1) {
-						tracked = 1;
-						return;
-					}
-				}
-				if (tracked === 1) {
-					tracked = 2;
-					setTimeout(function() {
-						tracked = 0;
-					}, config.delay * 3);
-				}
-			}
-		};
+			if (BLOCKED('managerlogin', 2000))
+				return;
 
-		self.state = function(type, what) {
-			if (type === 3 || what === 3)
-				tracked = 0;
-			setTimeout2(self.ID, function() {
-				var disabled = tracked ? !VALID(path, flags) : DISABLED(path, flags);
-				if (!disabled && config.if)
-					disabled = !EVALUATE(self.path, config.if);
-				if (disabled !== old) {
-					elements.prop('disabled', disabled);
-					self.tclass(cls + '-ok', !disabled);
-					self.tclass(cls + '-no', disabled);
-					//self.tclass(cls + '-modified',
-					old = disabled;
-				}
-			}, config.delay);
-		};
-	});
+			RESET('password.*');
+			RESET('form.*');
+			RESET('otp.*');
 
+			if (common.type === 'password')	{
+				DAPI('password', password, ASETTER('message/response', function(response) {
+					SET('password.response', response);
+					response.success && SET('password.name', '', true);
+				}));
+			} else if (common.type === 'otp') {
+				otp.name = form.name;
+				DAPI('login_otp', otp, ASETTER('message/response', function(response) {
+					SET('otp.response', response);
+					response.success && location.reload(true);
+				}));
+			} else {
+				DAPI('login', form, ASETTER('message/response', function(response) {
+					if (response.value === 'otp') {
+						SET('common.type', 'otp');
+						$('#login').submit();
+						setTimeout(function() {
+							$('.ui-pin-input:first-child').find('input').focus();
+						}, 200);
+					} else {
 
-	COMPONENT('input', 'maxlength:200;dirkey:name;dirvalue:id;increment:1;autovalue:name;direxclude:false;forcevalidation:1;searchalign:1;after:\\:', function(self, config) {
-
-		var cls = 'ui-input';
-		var cls2 = '.' + cls;
-		var input, placeholder, dirsource, binded, customvalidator, mask, isdirvisible = false, nobindcamouflage = false, focused = false;
-
-		self.nocompile();
-		self.bindvisible(20);
-
-		self.init = function() {
-			Thelpers.ui_input_icon = function(val) {
-				return val.charAt(0) === '!' ? ('<span class="ui-input-icon-custom">' + val.substring(1) + '</span>') : ('<i class="fa fa-' + val + '"></i>');
-			};
-			W.ui_input_template = Tangular.compile(('{{ if label }}<div class="{0}-label">{{ if icon }}<i class="fa fa-{{ icon }}"></i>{{ fi }}{{ label | raw }}{{ after | raw }}</div>{{ fi }}<div class="{0}-control{{ if licon }} {0}-licon{{ fi }}{{ if ricon || (type === \'number\' && increment) }} {0}-ricon{{ fi }}">{{ if ricon || (type === \'number\' && increment) }}<div class="{0}-icon-right{{ if type === \'number\' && increment }} {0}-increment{{ else if riconclick || type === \'date\' || type === \'time\' || (type === \'search\' && searchalign === 1) || type === \'password\' }} {0}-click{{ fi }}">{{ if type === \'number\' }}<i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i>{{ else }}{{ ricon | ui_input_icon }}{{ fi }}</div>{{ fi }}{{ if licon }}<div class="{0}-icon-left{{ if liconclick || (type === \'search\' && searchalign !== 1) }} {0}-click{{ fi }}">{{ licon | ui_input_icon }}</div>{{ fi }}<div class="{0}-input{{ if align === 1 || align === \'center\' }} center{{ else if align === 2 || align === \'right\' }} right{{ fi }}">{{ if placeholder && !innerlabel }}<div class="{0}-placeholder">{{ placeholder }}</div>{{ fi }}<input type="{{ if !dirsource && type === \'password\' }}password{{ else }}text{{ fi }}"{{ if autofill }} autocomplete="on" name="{{ PATH }}"{{ else }} name="input' + Date.now() + '" autocomplete="new-password"{{ fi }}{{ if dirsource }} readonly{{ else }} data-jc-bind=""{{ fi }}{{ if maxlength > 0}} maxlength="{{ maxlength }}"{{ fi }}{{ if autofocus }} autofocus{{ fi }} /></div></div>{{ if error }}<div class="{0}-error hidden"><i class="fa fa-warning"></i> {{ error }}</div>{{ fi }}').format(cls));
-		};
-
-		self.make = function() {
-
-			if (!config.label)
-				config.label = self.html();
-
-			if (isMOBILE && config.autofocus)
-				config.autofocus = false;
-
-			config.PATH = self.path.replace(/\./g, '_');
-
-			self.aclass(cls + ' invisible');
-			self.rclass('invisible', 100);
-			self.redraw();
-
-			self.event('input change', function() {
-				if (nobindcamouflage)
-					nobindcamouflage = false;
-				else
-					self.check();
-			});
-
-			self.event('focus', 'input', function() {
-
-				if (config.disabled)
-					return $(this).blur();
-
-				focused = true;
-				self.camouflage(false);
-				self.aclass(cls + '-focused');
-				config.autocomplete && EXEC(self.makepath(config.autocomplete), self, input.parent());
-				if (config.autosource) {
-					var opt = {};
-					opt.element = self.element;
-					opt.search = GET(self.makepath(config.autosource));
-					opt.callback = function(value) {
-						var val = typeof(value) === 'string' ? value : value[config.autovalue];
-						if (config.autoexec) {
-							EXEC(self.makepath(config.autoexec), value, function(val) {
-								self.set(val, 2);
-								self.change();
-								self.bindvalue();
-							});
-						} else {
-							self.set(val, 2);
-							self.change();
-							self.bindvalue();
-						}
-					};
-					SETTER('autocomplete', 'show', opt);
-				} else if (config.mask) {
-					setTimeout(function(input) {
-						input.selectionStart = input.selectionEnd = 0;
-					}, 50, this);
-				} else if (config.dirsource && (config.autofocus != false && config.autofocus != 0)) {
-					if (!isdirvisible)
-						self.find(cls2 + '-control').trigger('click');
-				}
-			});
-
-			self.event('paste', 'input', function(e) {
-				if (config.mask) {
-					var val = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
-					self.set(val.replace(/\s|\t/g, ''));
-					e.preventDefault();
-				}
-			});
-
-			self.event('keydown', 'input', function(e) {
-
-				var t = this;
-				var code = e.which;
-
-				if (t.readOnly || config.disabled) {
-					// TAB
-					if (e.keyCode !== 9) {
-						if (config.dirsource) {
-							self.find(cls2 + '-control').trigger('click');
+						// Possible redirect
+						if (response.value && response.value.indexOf('/') !== -1) {
+							location.href = response.value;
 							return;
 						}
-						e.preventDefault();
-						e.stopPropagation();
+
+						SET('form.response', response);
+						response.success && location.reload(true);
 					}
-					return;
-				}
-
-				if (!config.disabled && config.dirsource && (code === 13 || code > 30)) {
-					self.find(cls2 + '-control').trigger('click');
-					return;
-				}
-
-				if (config.mask) {
-
-					if (e.metaKey) {
-						if (code === 8 || code === 127) {
-							e.preventDefault();
-							e.stopPropagation();
-						}
-						return;
-					}
-
-					if (code === 32) {
-						e.preventDefault();
-						e.stopPropagation();
-						return;
-					}
-
-					var beg = e.target.selectionStart;
-					var end = e.target.selectionEnd;
-					var val = t.value;
-					var c;
-
-					if (code === 8 || code === 127) {
-
-						if (beg === end) {
-							c = config.mask.substring(beg - 1, beg);
-							t.value = val.substring(0, beg - 1) + c + val.substring(beg);
-							self.curpos(beg - 1);
-						} else {
-							for (var i = beg; i <= end; i++) {
-								c = config.mask.substring(i - 1, i);
-								val = val.substring(0, i - 1) + c + val.substring(i);
-							}
-							t.value = val;
-							self.curpos(beg);
-						}
-
-						e.preventDefault();
-						return;
-					}
-
-					if (code > 40) {
-
-						var cur = String.fromCharCode(code);
-
-						if (mask && mask[beg]) {
-							if (!mask[beg].test(cur)) {
-								e.preventDefault();
-								return;
-							}
-						}
-
-						c = config.mask.charCodeAt(beg);
-						if (c !== 95) {
-							beg++;
-							while (true) {
-								c = config.mask.charCodeAt(beg);
-								if (c === 95 || isNaN(c))
-									break;
-								else
-									beg++;
-							}
-						}
-
-						if (c === 95) {
-
-							val = val.substring(0, beg) + cur + val.substring(beg + 1);
-							t.value = val;
-							beg++;
-
-							while (beg < config.mask.length) {
-								c = config.mask.charCodeAt(beg);
-								if (c === 95)
-									break;
-								else
-									beg++;
-							}
-
-							self.curpos(beg);
-						} else
-							self.curpos(beg + 1);
-
-						e.preventDefault();
-						e.stopPropagation();
-					}
-				}
-
-			});
-
-			self.event('blur', 'input', function() {
-				focused = false;
-				self.camouflage(true);
-				self.rclass(cls + '-focused');
-			});
-
-			self.event('click', cls2 + '-control', function() {
-
-				if (!config.dirsource || config.disabled || isdirvisible)
-					return;
-
-				isdirvisible = true;
-				setTimeout(function() {
-					isdirvisible = false;
-				}, 500);
-
-				var opt = {};
-				opt.element = self.find(cls2 + '-control');
-				opt.items = dirsource;
-				opt.offsetY = -1 + (config.diroffsety || 0);
-				opt.offsetX = 0 + (config.diroffsetx || 0);
-				opt.placeholder = config.dirplaceholder;
-				opt.render = config.dirrender ? GET(self.makepath(config.dirrender)) : null;
-				opt.custom = !!config.dircustom;
-				opt.offsetWidth = 2;
-				opt.minwidth = config.dirminwidth || 200;
-				opt.maxwidth = config.dirmaxwidth;
-				opt.key = config.dirkey || config.key;
-				opt.empty = config.dirempty;
-
-				if (config.dirsearch === false)
-					opt.search = false;
-
-				var val = self.get();
-				opt.selected = val;
-
-				if (config.direxclude === false) {
-					for (var i = 0; i < dirsource.length; i++) {
-						var item = dirsource[i];
-						if (item)
-							item.selected = typeof(item) === 'object' && item[config.dirvalue] === val;
-					}
-				} else {
-					opt.exclude = function(item) {
-						return item ? item[config.dirvalue] === val : false;
-					};
-				}
-
-				opt.callback = function(item, el, custom) {
-
-					// empty
-					if (item == null) {
-						input.val('');
-						self.set(null, 2);
-						self.change();
-						self.check();
-						return;
-					}
-
-					var val = custom || typeof(item) === 'string' ? item : item[config.dirvalue || config.value];
-					if (custom && typeof(config.dircustom) === 'string') {
-						var fn = GET(config.dircustom);
-						fn(val, function(val) {
-							self.set(val, 2);
-							self.change();
-							self.bindvalue();
-						});
-					} else if (custom) {
-						if (val) {
-							self.set(val, 2);
-							self.change();
-							self.bindvalue();
-						}
-					} else {
-						self.set(val, 2);
-						self.change();
-						self.bindvalue();
-					}
-				};
-
-				SETTER('directory', 'show', opt);
-			});
-
-			self.event('click', cls2 + '-placeholder,' + cls2 + '-label', function(e) {
-				if (!config.disabled) {
-					if (config.dirsource) {
-						e.preventDefault();
-						e.stopPropagation();
-						self.find(cls2 + '-control').trigger('click');
-					} else if (!config.camouflage || $(e.target).hclass(cls + '-placeholder'))
-						input.focus();
-				}
-			});
-
-			self.event('click', cls2 + '-icon-left,' + cls2 + '-icon-right', function(e) {
-
-				if (config.disabled)
-					return;
-
-				var el = $(this);
-				var left = el.hclass(cls + '-icon-left');
-				var opt;
-
-				if (config.dirsource && left && config.liconclick) {
-					e.preventDefault();
-					e.stopPropagation();
-				}
-
-				if (!left && !config.riconclick) {
-					if (config.type === 'date') {
-						opt = {};
-						opt.element = self.element;
-						opt.value = self.get();
-						opt.callback = function(date) {
-							self.change(true);
-							self.set(date);
-						};
-						SETTER('datepicker', 'show', opt);
-					} else if (config.type === 'time') {
-						opt = {};
-						opt.element = self.element;
-						opt.value = self.get();
-						opt.callback = function(date) {
-							self.change(true);
-							self.set(date);
-						};
-						SETTER('timepicker', 'show', opt);
-					} else if (config.type === 'search')
-						self.set('');
-					else if (config.type === 'password')
-						self.password();
-					else if (config.type === 'number') {
-						var n = $(e.target).hclass('fa-caret-up') ? 1 : -1;
-						self.change(true);
-						self.inc(config.increment * n);
-					}
-					return;
-				}
-
-				if (left && config.liconclick)
-					EXEC(self.makepath(config.liconclick), self, el);
-				else if (config.riconclick)
-					EXEC(self.makepath(config.riconclick), self, el);
-				else if (left && config.type === 'search')
-					self.set('');
-
-			});
-		};
-
-		self.camouflage = function(is) {
-			if (config.camouflage) {
-				if (is) {
-					var t = input[0];
-					var arr = t.value.split('');
-					for (var i = 0; i < arr.length; i++)
-						arr[i] = typeof(config.camouflage) === 'string' ? config.camouflage : '*';
-					nobindcamouflage = true;
-					t.value = arr.join('');
-				} else {
-					nobindcamouflage = true;
-					var val = self.get();
-					input[0].value = val == null ? '' : val;
-				}
-				self.tclass(cls + '-camouflaged', is);
+				}));
 			}
-		};
-
-		self.curpos = function(pos) {
-			var el = input[0];
-			if (el.createTextRange) {
-				var range = el.createTextRange();
-				range.move('character', pos);
-				range.select();
-			} else if (el.selectionStart) {
-				el.focus();
-				el.setSelectionRange(pos, pos);
-			}
-		};
-
-		self.validate = function(value) {
-
-			if ((!config.required || config.disabled) && !self.forcedvalidation())
-				return true;
-
-			if (config.dirsource)
-				return !!value;
-
-			if (customvalidator)
-				return customvalidator(value);
-
-			if (self.type === 'date')
-				return value instanceof Date && !isNaN(value.getTime());
-
-			if (value == null)
-				value = '';
-			else
-				value = value.toString();
-
-			if (config.mask && typeof(value) === 'string' && value.indexOf('_') !== -1)
-				return false;
-
-			if (config.minlength && value.length < config.minlength)
-				return false;
-
-			switch (self.type) {
-				case 'email':
-					return value.isEmail();
-				case 'phone':
-					return value.isPhone();
-				case 'url':
-					return value.isURL();
-				case 'currency':
-				case 'number':
-					value = value.parseFloat();
-					if ((config.minvalue != null && value < config.minvalue) || (config.maxvalue != null && value > config.maxvalue))
-						return false;
-					return config.minvalue == null ? value > 0 : true;
-			}
-
-			return value.length > 0;
-		};
-
-		self.offset = function() {
-			var offset = self.element.offset();
-			var control = self.find(cls2 + '-control');
-			var width = control.width() + 2;
-			return { left: offset.left, top: control.offset().top + control.height(), width: width };
-		};
-
-		self.password = function(show) {
-			var visible = show == null ? input.attr('type') === 'text' : show;
-			input.attr('type', visible ? 'password' : 'text');
-			self.find(cls2 + '-icon-right').find('i').tclass(config.ricon, visible).tclass('fa-eye-slash', !visible);
-		};
-
-		self.getterin = self.getter;
-		self.getter = function(value, realtime, nobind) {
-
-			if (nobindcamouflage)
-				return;
-
-			if (config.mask && config.masktidy) {
-				var val = [];
-				for (var i = 0; i < value.length; i++) {
-					if (config.mask.charAt(i) === '_')
-						val.push(value.charAt(i));
-				}
-				value = val.join('');
-			}
-			self.getterin(value, realtime, nobind);
-		};
-
-		self.setterin = self.setter;
-
-		self.setter = function(value, path, type) {
-
-			if (config.mask) {
-				if (value) {
-					if (config.masktidy) {
-						var index = 0;
-						var val = [];
-						for (var i = 0; i < config.mask.length; i++) {
-							var c = config.mask.charAt(i);
-							if (c === '_')
-								val.push(value.charAt(index++) || '_');
-							else
-								val.push(c);
-						}
-						value = val.join('');
-					}
-
-					// check values
-					if (mask) {
-						var arr = [];
-						for (var i = 0; i < mask.length; i++) {
-							var c = value.charAt(i);
-							if (mask[i] && mask[i].test(c))
-								arr.push(c);
-							else
-								arr.push(config.mask.charAt(i));
-						}
-						value = arr.join('');
-					}
-				} else
-					value = config.mask;
-			}
-
-			self.setterin(value, path, type);
-			self.bindvalue();
-
-			config.camouflage && !focused && setTimeout(self.camouflage, type === 1 ? 1000 : 1, true);
-
-			if (config.type === 'password')
-				self.password(true);
-		};
-
-		self.check = function() {
-
-			var is = !!input[0].value;
-
-			if (binded === is)
-				return;
-
-			binded = is;
-			placeholder && placeholder.tclass('hidden', is);
-			self.tclass(cls + '-binded', is);
-
-			if (config.type === 'search')
-				self.find(cls2 + '-icon-' + (config.searchalign === 1 ? 'right' : 'left')).find('i').tclass(config.searchalign === 1 ? config.ricon : config.licon, !is).tclass('fa-times', is);
-		};
-
-		self.bindvalue = function() {
-			if (dirsource) {
-
-				var value = self.get();
-				var item;
-
-				for (var i = 0; i < dirsource.length; i++) {
-					item = dirsource[i];
-					if (typeof(item) === 'string') {
-						if (item === value)
-							break;
-						item = null;
-					} else if (item[config.dirvalue || config.value] === value) {
-						item = item[config.dirkey || config.key];
-						break;
-					} else
-						item = null;
-				}
-
-				if (value && item == null && config.dircustom)
-					item = value;
-
-				input.val(item || '');
-			}
-			self.check();
-		};
-
-		self.redraw = function() {
-
-			if (!config.ricon) {
-				if (config.dirsource)
-					config.ricon = 'angle-down';
-				else if (config.type === 'date') {
-					config.ricon = 'calendar';
-					if (!config.align && !config.innerlabel)
-						config.align = 1;
-				} else if (config.type === 'time') {
-					config.ricon = 'clock-o';
-					if (!config.align && !config.innerlabel)
-						config.align = 1;
-				} else if (config.type === 'search')
-					if (config.searchalign === 1)
-						config.ricon = 'search';
-					else
-						config.licon = 'search';
-				else if (config.type === 'password')
-					config.ricon = 'eye';
-				else if (config.type === 'number') {
-					if (!config.align && !config.innerlabel)
-						config.align = 1;
-				}
-			}
-
-			self.tclass(cls + '-masked', !!config.mask);
-			self.html(W.ui_input_template(config));
-			input = self.find('input');
-			placeholder = self.find(cls2 + '-placeholder');
-		};
-
-		self.configure = function(key, value) {
-			switch (key) {
-				case 'dirsource':
-					self.datasource(value, function(path, value) {
-						dirsource = value;
-						self.bindvalue();
-					});
-					self.tclass(cls + '-dropdown', !!value);
-					break;
-				case 'disabled':
-					self.tclass('ui-disabled', value == true);
-					input.prop('readonly', value === true);
-					self.reset();
-					break;
-				case 'required':
-					self.tclass(cls + '-required', value == true);
-					self.reset();
-					break;
-				case 'type':
-					self.type = value;
-					break;
-				case 'validate':
-					customvalidator = value ? (/\(|=|>|<|\+|-|\)/).test(value) ? FN('value=>' + value) : (function(path) { return function(value) { return GET(path)(value); }; })(value) : null;
-					break;
-				case 'innerlabel':
-					self.tclass(cls + '-inner', value);
-					break;
-				case 'maskregexp':
-					if (value) {
-						mask = value.toLowerCase().split(',');
-						for (var i = 0; i < mask.length; i++) {
-							var m = mask[i];
-							if (!m || m === 'null')
-								mask[i] = '';
-							else
-								mask[i] = new RegExp(m);
-						}
-					} else
-						mask = null;
-					break;
-				case 'mask':
-					config.mask = value.replace(/#/g, '_');
-					break;
-			}
-		};
-
-		self.formatter(function(path, value) {
-			if (value) {
-				switch (config.type) {
-					case 'lower':
-						return value.toString().toLowerCase();
-					case 'upper':
-						return value.toString().toUpperCase();
-					case 'date':
-						return value.format(config.format || 'yyyy-MM-dd');
-					case 'time':
-						return value.format(config.format || 'HH:mm');
-					case 'number':
-						return config.format ? value.format(config.format) : value;
-				}
-			}
-
-			return value;
 		});
-
-		self.parser(function(path, value) {
-			if (value) {
-				var tmp;
-				switch (config.type) {
-					case 'date':
-						tmp = self.get();
-						if (tmp)
-							tmp = tmp.format('HH:mm');
-						else
-							tmp = '';
-						return value + (tmp ? (' ' + tmp) : '');
-					case 'lower':
-						value = value.toLowerCase();
-						break;
-					case 'upper':
-						value = value.toUpperCase();
-						break;
-					case 'time':
-						tmp = value.split(':');
-						var dt = self.get();
-						if (dt == null)
-							dt = new Date();
-						dt.setHours(+(tmp[0] || '0'));
-						dt.setMinutes(+(tmp[1] || '0'));
-						dt.setSeconds(+(tmp[2] || '0'));
-						value = dt;
-						break;
-				}
-			}
-			return value ? config.spaces === false ? value.replace(/\s/g, '') : value : value;
-		});
-
-		self.state = function(type) {
-			if (!type)
-				return;
-			var invalid = config.required ? self.isInvalid() : self.forcedvalidation() ? self.isInvalid() : false;
-			if (invalid === self.$oldstate)
-				return;
-			self.$oldstate = invalid;
-			self.tclass(cls + '-invalid', invalid);
-			config.error && self.find(cls2 + '-error').tclass('hidden', !invalid);
-		};
-
-		self.forcedvalidation = function() {
-
-			if (!config.forcevalidation)
-				return false;
-
-			if (self.type === 'number')
-				return false;
-
-			var val = self.get();
-			return (self.type === 'phone' || self.type === 'email') && (val != null && (typeof(val) === 'string' && val.length !== 0));
-		};
-	});
-
-	COMPONENT('error', function(self, config) {
-
-		self.readonly();
-
-		self.make = function() {
-			self.aclass('ui-error hidden');
-		};
-
-		self.setter = function(value) {
-
-			if (!(value instanceof Array) || !value.length) {
-				self.tclass('hidden', true);
-				return;
-			}
-
-			var builder = [];
-			for (var i = 0, length = value.length; i < length; i++)
-				builder.push('<div><span class="fa {1}"></span>{0}</div>'.format(value[i].error, 'fa-' + (config.icon || 'times-circle')));
-
-			self.html(builder.join(''));
-			self.tclass('hidden', false);
-		};
-	});
-
-	COMPONENT('exec', function(self, config) {
-		self.readonly();
-		self.blind();
-		self.make = function() {
-			self.event('click', config.selector || '.exec', function(e) {
-				var el = $(this);
-				var attr = el.attr('data-exec');
-				var path = el.attr('data-path');
-				attr && EXEC(attr, el, e);
-				path && SET(path, new Function('return ' + el.attr('data-value'))());
-			});
-		};
-	});
-
-	setTimeout(function() {
-		$('.panel').aclass('panelshow');
-	}, 200);
-
-	WATCH('otp.password', function(path, value) {
-		if (value && value.length === 6 && value.indexOf(' ') === -1) {
-			setTimeout(function() {
-				$('.otpsubmit').trigger('click');
-			}, 500);
-		}
-	});
-
-	function togglesignup() {
-		SET('common.type', 'signup');
-	}
-
-	function toggletype() {
-		if (common.type === 'password' || common.type === 'otp') {
-			SET('common.type', 'login');
-			SET('password.response', null);
-			setTimeout(function() {
-				FIND('#formname').find('input').focus();
-			}, 200);
-		} else {
-			SET('common.type', 'password');
-			setTimeout(function() {
-				FIND('#passwordname').find('input').focus();
-			}, 200);
-		}
-	}
-
-	$(document).on('keyup', 'input', function(e) {
-		e.which === 13 && $('button').trigger('click');
-	});
-
-	$(document).on('click', 'button', function() {
-
-		if (common.type === 'password')	{
-			if (!CAN('password.*'))
-				return;
-		} else if (common.type === 'otp') {
-			if (!CAN('otp.*'))
-				return;
-		} else {
-			if (!CAN('form.*'))
-				return;
-		}
-
-		if (BLOCKED('managerlogin', 2000))
-			return;
-
-		RESET('password.*');
-		RESET('form.*');
-		RESET('otp.*');
-
-		if (common.type === 'password')	{
-			AJAX('POST /api/password/', password, function(response) {
-				SET('password.response', response);
-				response.success && SET('password.name', '', true);
-			});
-		} else if (common.type === 'otp') {
-			otp.name = form.name;
-			AJAX('POST /api/login/otp/', otp, function(response) {
-				SET('otp.response', response);
-				response.success && location.reload(true);
-			});
-		} else {
-			AJAX('POST /api/login/', form, function(response) {
-				if (response.value === 'otp') {
-					SET('common.type', 'otp');
-					$('#login').submit();
-					setTimeout(function() {
-						$('.ui-pin-input:first-child').find('input').focus();
-					}, 200);
-				} else {
-
-					// Possible redirect
-					if (response.value && response.value.indexOf('/') !== -1) {
-						location.href = response.value;
-						return;
-					}
-
-					SET('form.response', response);
-					response.success && location.reload(true);
-				}
-			});
-		}
-	});
-
-	COMPONENT('pin', 'blank:●;count:6;hide:false;mask:true', function(self, config) {
-
-		var reg_validation = /[0-9]/;
-		var inputs = null;
-		var skip = false;
-		var count = 0;
-
-		self.nocompile && self.nocompile();
-
-		self.validate = function(value, init) {
-			return init ? true : config.required || config.disabled ? !!(value && value.indexOf(' ') === -1) : true;
-		};
-
-		self.configure = function(key, value, init) {
-			switch (key) {
-				case 'count':
-					!init && self.redraw();
-					break;
-				case 'disabled':
-					self.find('input').prop('disabled', value);
-					self.tclass('ui-disabled', value);
-					!init && !value && self.state(1, 1);
-					break;
-			}
-		};
-
-		self.redraw = function() {
-			var builder = [];
-			count = config.count;
-			for (var i = 0; i < count; i++)
-				builder.push('<div data-index="{0}" class="ui-pin-input"><input type="{1}" maxlength="1" autocomplete="pin{2}" name="pin{2}" pattern="[0-9]" /></div>'.format(i, isMOBILE ? 'tel' : 'text', Date.now() + i));
-			self.html(builder.join(''));
-		};
-
-		self.make = function() {
-
-			self.aclass('ui-pin');
-			self.redraw();
-
-			self.event('keypress', 'input', function(e) {
-				var c = e.which;
-				var t = this;
-				if (c >= 48 && c <= 57) {
-					var c = String.fromCharCode(e.charCode);
-					if (t.value !== c)
-						t.value = c;
-
-					if (config.mask) {
-						if (config.hide) {
-							self.maskforce(t);
-						} else
-							self.mask();
-					}
-					else {
-						t.setAttribute('data-value', t.value);
-						self.getter();
-					}
-
-					setTimeout(function(el) {
-						var next = el.parent().next().find('input');
-						next.length && next.focus();
-					}, 50, $(t));
-				} else if (c > 30)
-					e.preventDefault();
-			});
-
-			self.event('keydown', 'input', function(e) {
-				e.which === 8 && setTimeout(function(el) {
-					if (!el.val()) {
-						el.attrd('value', '');
-						var prev = el.parent().prev().find('input');
-						prev.val() && prev.focus();
-						self.mask();
-					}
-				}, 50, $(this));
-			});
-
-			inputs = self.find('input');
-		};
-
-		self.maskforce2 = function() {
-			self.maskforce(this);
-		};
-
-		self.maskforce = function(input) {
-			if (input.value && reg_validation.test(input.value)) {
-				input.setAttribute('data-value', input.value);
-				input.value = config.blank;
-				self.getter();
-			}
-		};
-
-		self.mask = function() {
-			setTimeout2(self.id + '.mask', function() {
-				inputs.each(self.maskforce2);
-			}, 300);
-		};
-
-		self.getter = function() {
-			setTimeout2(self.id + '.getter', function() {
-				var value = '';
-
-				inputs.each(function() {
-					value += this.getAttribute('data-value') || ' ';
-				});
-
-				if (self.get() !== value) {
-					self.change(true);
-					skip = true;
-					self.set(value);
-				}
-
-			}, 100);
-		};
-
-		self.setter = function(value) {
-
-			if (skip) {
-				skip = false;
-				return;
-			}
-
-			if (value == null)
-				value = '';
-
-			inputs.each(function(index) {
-				this.setAttribute('data-value', value.substring(index, index + 1));
-				this.value = value ? config.blank : '';
-			});
-		};
-
-		self.state = function(type) {
-			if (!type)
-				return;
-			var invalid = config.required ? self.isInvalid() : false;
-			if (invalid === self.$oldstate)
-				return;
-			self.$oldstate = invalid;
-			self.tclass('ui-pin-invalid', invalid);
-		};
-	});
 	</script>
 
 </body>

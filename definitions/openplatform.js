@@ -1,12 +1,9 @@
 // DB
 require('dbms').init(CONF.database, ERROR('DBMS'));
-
-DBMS.measure && DBMS.measure(true);
+// DBMS.measure && DBMS.measure(true);
 
 // Constants
 const Fs = require('fs');
-const DB_ONLINE = { online: true };
-const DB_OFFLINE = { online: false };
 const DB_LOGGED = { online: true };
 const DDOS_MAX_ATTEMPS = 10;
 
@@ -39,34 +36,10 @@ MAIN.logout = function(controller) {
 		controller.redirect('/');
 };
 
-// Total.js Session management
-MAIN.session = SESSION();
-
-// Loads a specified user session
-MAIN.session.ondata = function(meta, next) {
-	readuser(meta.id, function(err, user) {
-
-		if (err || !user) {
-			next(err, null);
-			return;
-		}
-
-		user.rev = GUID(5); // revision
-		DB_ONLINE.dtlogged = NOW;
-		DBMS().modify('tbl_user', DB_ONLINE).where('id', meta.id);
-		next(null, user);
-	});
-};
-
-MAIN.session.onrelease = function(item) {
-	MAIN.session.contains2(item.id, function(err, data) {
-		if (!data)
-			DBMS().modify('tbl_user', DB_OFFLINE).where('id', item.id);
-	});
-};
+MAIN.readuser = readuser;
 
 FUNC.loginid = function(controller, userid, callback, note) {
-	FUNC.cookie(controller.req, userid, callback, note);
+	FUNC.cookie(controller, userid, callback, note);
 };
 
 FUNC.clearcache = function(userid) {
@@ -124,14 +97,17 @@ FUNC.login = function(login, password, callback) {
 };
 
 FUNC.logout = function(controller) {
-	controller.cookie(CONF.cookie, '', '-5 days');
-	controller.user.online = false;
-	MAIN.session.remove(controller.sessionid);
-	DBMS().modify('tbl_user', DB_OFFLINE).where('id', controller.user.id);
+
+	if (controller.sessionid) {
+		DBMS().remove('tbl_user_session').id(controller.sessionid);
+		MAIN.session.logout(controller);
+	} else if (controller.user && controller.user.guest)
+		controller.cookie(MAIN.session.cookie, '', '-1 day');
+
 	MAIN.logout(controller);
 };
 
-FUNC.cookie = function(req, user, sessionid, callback, note) {
+FUNC.cookie = function(controller, user, sessionid, callback, note) {
 
 	if (typeof(sessionid) === 'function') {
 		note = callback;
@@ -139,7 +115,6 @@ FUNC.cookie = function(req, user, sessionid, callback, note) {
 		sessionid = null;
 	}
 
-	var opt = {};
 	var id;
 
 	if (typeof(user) === 'string') {
@@ -148,21 +123,21 @@ FUNC.cookie = function(req, user, sessionid, callback, note) {
 	} else
 		id = user.id;
 
-	opt.name = CONF.cookie;
-	opt.key = CONF.cookie_key || 'auth';
-	opt.sessionid = sessionid || UID();
-	opt.id = id;
-	opt.expire = CONF.cookie_expiration || '3 days';
-	opt.data = user;
-	opt.note = note;
+	DB_LOGGED.verifytoken = GUID(15);
 
-	// Beause of new verification token
-	MAIN.session.release2(id);
+	var expiration = CONF.cookie_expiration || '3 days';
 
-	MAIN.session.setcookie(req, opt, function() {
-		DB_LOGGED.verifytoken = U.GUID(15);
-		DBMS().modify('tbl_user', DB_LOGGED).where('id', id);
-		callback && callback();
+	if (!sessionid)
+		sessionid = UID();
+
+	var db = DBMS();
+	db.insert('tbl_user_session', { id: sessionid, userid: id, dtcreated: NOW, ip: controller.ip, ua: controller.ua, referrer: note, dtexpire: NOW.add(expiration) });
+	db.modify('tbl_user', DB_LOGGED).id(id);
+
+	db.callback(function() {
+		MAIN.session.authcookie(controller, sessionid, id, expiration);
+		MAIN.session.refresh(id);
+		callback();
 	});
 };
 
@@ -192,6 +167,7 @@ FUNC.profile = function(user, callback) {
 	meta.desktop = user.desktop;
 	meta.repo = user.repo;
 	meta.rev = user.rev;
+	meta.profileid = user.profileid;
 
 	if (user.guest)
 		meta.guest = true;
@@ -217,16 +193,17 @@ FUNC.profile = function(user, callback) {
 		var app = MAIN.apps[i];
 		var userapp = user.apps[app.id];
 		if (app && !app.blocked && userapp)
-			meta.apps.push({ id: app.id, favorite: userapp.favorite, icon: app.icon, title: app.titles ? (app.titles[user.language] || app.title) : app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: app.allownotifications, mutenotifications: userapp.notifications === false, responsive: app.responsive, countnotifications: userapp.countnotifications, countbadges: userapp.countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: userapp.position == null ? app.position : userapp.position, color: app.color, workshopid: app.workshopid });
+			meta.apps.push({ id: app.id, favorite: userapp.favorite, icon: app.icon, title: app.titles ? (app.titles[user.language] || app.title) : app.title, name: app.name, online: app.online, version: app.version, linker: app.linker, notifications: userapp.notifications !== false, sounds: userapp.sounds !== false, responsive: app.responsive, countnotifications: userapp.countnotifications, countbadges: userapp.countbadges, width: app.width, height: app.height, screenshots: app.screenshots == true, resize: app.resize == true, type: app.type, mobilemenu: app.mobilemenu !== false, position: userapp.position == null ? app.position : userapp.position, color: app.color });
 	}
 
+	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: TRANSLATOR(user.language, '@(Welcome)'), name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false, position: 1000 });
+
 	if (user.sa)
-		meta.apps.push({ id: '_admin', icon: 'cog', title: TRANSLATOR(user.language, '@(Control panel)'), name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: true });
+		meta.apps.push({ id: '_admin', icon: 'cog', title: TRANSLATOR(user.language, '@(Control panel)'), name: 'Admin', online: true, internal: true, linker: '_admin', width: 1280, height: 960, resize: true, mobilemenu: true, position: 1001 });
 
-	CONF.welcome && meta.apps.push({ id: '_welcome', icon: 'flag', title: TRANSLATOR(user.language, '@(Welcome)'), name: 'Welcome', online: true, internal: true, linker: CONF.welcome, width: 800, height: 600, resize: false, mobilemenu: false });
-
+	/*
 	if (!user.guest)
-		meta.apps.push({ id: '_account', icon: 'user-circle', title: TRANSLATOR(user.language, '@(Account)'), name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });
+		meta.apps.push({ id: '_account', icon: 'user-circle', title: TRANSLATOR(user.language, '@(Account)'), name: 'Account', online: true, internal: true, linker: '_account', width: 550, height: 800, resize: false, mobilemenu: false });*/
 
 	callback(null, meta);
 };
@@ -344,8 +321,8 @@ FUNC.meta = function(app, user, serverside) {
 	meta.name = CONF.name;
 	meta.version = MAIN.version;
 
-	meta.colorscheme = CONF.colorscheme;
-	meta.background = CONF.background;
+	// meta.colorscheme = CONF.colorscheme;
+	// meta.background = CONF.background;
 
 	if (app.serververify && !serverside) {
 		var tmp = FUNC.makeprofile(user, app.allowreadprofile, app);
@@ -520,7 +497,18 @@ function checkorigin(origins, ip) {
 FUNC.unauthorized = function(obj, $) {
 	var app = obj.app;
 	var user = obj.user;
-	if (app.origin) {
+
+	if (app.origintoken) {
+		var token = $.headers['x-origin'];
+		if (token !== app.origintoken) {
+			$.invalid('error-invalid-origin');
+			if (!ORIGINERRORS[$.ip]) {
+				FUNC.log('error-origin', null, app.name + ':' + app.origintoken + ' != ' + token);
+				ORIGINERRORS[$.ip] = 1;
+			}
+			return true;
+		}
+	} else if (app.origin && app.origin.length) {
 		if (checkorigin(app.origin, $.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 			if (!ORIGINERRORS[$.ip]) {
 				FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
@@ -669,7 +657,7 @@ FUNC.makeapp = function(app, type) {
 	obj.author = app.author;
 	obj.type = app.type;
 	obj.mobilemenu = app.mobilemenu;
-	obj.services = Object.keys(app.services);
+	obj.services = app.services ? Object.keys(app.services) : [];
 
 	switch (type) {
 		case 2:
@@ -849,14 +837,13 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	if (!fields || fields.volume)
 		obj.volume = user.volume;
 
-
 	var token;
 
 	if (!fields || fields.badge || (obj.notifications && fields.notify))
 		token = FUNC.encodetoken(app, user);
 
 	if (!fields || fields.badge)
-		obj.badge = CONF.url + '/api/badges/?accesstoken=' + token;
+		obj.badge = CONF.url + '/api/badge/?accesstoken=' + token;
 
 	if (obj.notifications && (!fields || fields.notify))
 		obj.notify = CONF.url + '/api/notify/?accesstoken=' + token;
@@ -925,15 +912,17 @@ FUNC.refreshapp = function(app, callback, refreshmeta) {
 			app.serververify = meta.serververify !== false;
 			app.services = response.services || null;
 			app.reference = meta.reference;
+			app.allowguestuser = getCleanValue(meta.allowguestuser, meta.guestuser, false);
 
+			/*
 			if (refreshmeta || app.autorefresh) {
-				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.applications, 0);
-				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.allowreadusers, 0);
+				app.allowreadapps = getCleanValue(meta.allowreadapps, meta.apps, 0);
+				app.allowreadusers = getCleanValue(meta.allowreadusers, meta.users, 0);
 				app.allowreadprofile = getCleanValue(meta.allowreadprofile, meta.userprofile, 0);
 				app.allownotifications = getCleanValue(meta.allownotifications, meta.notifications, false);
 				app.allowreadmeta = getCleanValue(meta.allowreadmeta, meta.metadata, false);
-				app.allowguestuser = getCleanValue(meta.allowguestuser, meta.guestuser, false);
-			}
+
+			}*/
 
 			if (meta.origin && meta.origin instanceof Array && meta.origin.length)
 				app.origin = meta.origin;
@@ -1096,12 +1085,6 @@ FUNC.refreshgroupsroles = function(callback) {
 			MAIN.rolescache[item.id] = obj;
 		}
 
-		var updatedusers = [];
-		var fnupdatecount = function(response) {
-			for (var i = 0; i < response.length; i++)
-				updatedusers.push(response[i].userid);
-		};
-
 		// Clean apps
 		DBMS().query('SELECT groups, COUNT(1)::int4 as count FROM tbl_user GROUP BY groups').callback(function(err, response) {
 
@@ -1117,8 +1100,10 @@ FUNC.refreshgroupsroles = function(callback) {
 				var groupshash = item.groups.join(',').crc32(true) + '';
 				groupshashes[groupshash] = 1;
 
-				if (groupshash == 0)
-					return next();
+				if (groupshash == 0) {
+					DBMS().query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash=\'0\' OR tbl_user.groupshash=\'\')').callback(next);
+					return;
+				}
 
 				var appskeys = {};
 				var notexist = [];
@@ -1152,7 +1137,7 @@ FUNC.refreshgroupsroles = function(callback) {
 				for (var i = 0; i < apps.length; i++)
 					appsid.push(PG_ESCAPE(apps[i]));
 
-				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash=$1{0}) RETURNING userid'.format((appsid && appsid.length ? ' AND appid NOT IN ({0})'.format(appsid.join(',')) : '')), [groupshash]).data(fnupdatecount);
+				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash=$1{0})'.format((appsid && appsid.length ? ' AND appid NOT IN ({0})'.format(appsid.join(',')) : '')), [groupshash]);
 
 				for (var i = 0; i < appsid.length; i++) {
 
@@ -1179,7 +1164,7 @@ FUNC.refreshgroupsroles = function(callback) {
 
 					roles = Object.keys(roles);
 					db.query('UPDATE tbl_user_app SET roles=$1 WHERE appid={0} AND inherited=TRUE AND userid IN (SELECT id FROM tbl_user WHERE tbl_user.groupshash=$2)'.format(appsid[i]), [roles, groupshash]);
-					db.query('INSERT INTO tbl_user_app (id, userid, appid, roles, inherited, notifications, countnotifications, countbadges, countopen, dtcreated, position) SELECT id||{0}, id, {0}, $1, TRUE, TRUE, 0, 0, 0, NOW(), {1} FROM tbl_user WHERE tbl_user.groupshash=$2 AND NOT EXISTS(SELECT 1 FROM tbl_user_app WHERE tbl_user_app.id=tbl_user.id||{0}) RETURNING userid'.format(appsid[i], app.position || 0), [roles, groupshash]).data(fnupdatecount);
+					db.query('INSERT INTO tbl_user_app (id, userid, appid, roles, inherited, notifications, countnotifications, countbadges, countopen, dtcreated, position) SELECT id||{0}, id, {0}, $1, TRUE, TRUE, 0, 0, 0, NOW(), {1} FROM tbl_user WHERE tbl_user.groupshash=$2 AND NOT EXISTS(SELECT 1 FROM tbl_user_app WHERE tbl_user_app.id=tbl_user.id||{0})'.format(appsid[i], app.position || 0), [roles, groupshash]);
 				}
 
 				db.callback(next);
@@ -1198,14 +1183,8 @@ FUNC.refreshgroupsroles = function(callback) {
 				}
 
 				// Releases all sessions
-				if (updatedusers.length) {
-					if (updatedusers.length > 1000)
-						MAIN.session.release();
-					else {
-						for (var i = 0; i < updatedusers.length; i++)
-							MAIN.session.release2(updatedusers[i]);
-					}
-				}
+				if (MAIN.session)
+					MAIN.session.sessions = {};
 
 				callback && callback();
 			});
@@ -1352,11 +1331,9 @@ ON('ready', function() {
 				FUNC.refreshgroupsroles(function() {
 					checkuser(function() {
 						FUNC.loadguest(function() {
-							recovery(function() {
-								PAUSESERVER('initialization');
-								refresh_apps();
-								EMIT('loaded');
-							});
+							PAUSESERVER('initialization');
+							refresh_apps();
+							EMIT('loaded');
 						});
 					});
 				});
@@ -1370,7 +1347,7 @@ function readuser(id, callback) {
 	var db = DBMS();
 	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2');
 	db.error('error-users-404');
-	db.query('SELECT b.id,a.notifications,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
+	db.query('SELECT b.id,a.notifications,a.sounds,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 
 	if (CONF.allowmembers) {
 		db.query('SELECT userid FROM tbl_user_member').where('email', db.get('tbl_user.email')).set('member');
@@ -1470,86 +1447,6 @@ FUNC.updateroles = function(callback) {
 	});
 };
 
-function recovery(next) {
-	Fs.readFile(PATH.databases('users.json'), function(err, data) {
-
-		if (err) {
-			next();
-			return;
-		}
-
-		var users = data.toString('utf8').parseJSON(true);
-
-		Fs.readFile(PATH.databases('apps.json'), function(err, data) {
-
-			var apps = data ? data.toString('utf8').parseJSON(true) : [];
-			var groups = {};
-
-			for (var i = 0; i < users.length; i++) {
-				var user = users[i];
-				if (user.groups) {
-					for (var j = 0; j < user.groups.length; j++)
-						groups[user.groups[j]] = 1;
-				}
-			}
-
-			var groups = Object.keys(groups);
-			groups.wait(function(item, next) {
-				$PATCH('Users/Groups', { id: item, name: item, note: 'Re-imported' }, function(err) {
-					if (err)
-						console.log('Error re-import group:', err, item);
-					next();
-				});
-			}, function() {
-
-				// IMPORT users
-				users.wait(function(item, next) {
-					item.apps = undefined;
-					item.previd = item.id;
-					item.roles = undefined;
-					$INSERT('Users', item, function(err) {
-						if (err)
-							console.log('Error re-import user:', err, item.name);
-						next();
-					});
-
-				}, function() {
-					// IMPORT APPS
-					apps.wait(function(item, next) {
-						item.previd = item.id;
-						item.settings = undefined;
-						var model = $MAKE('Apps', item);
-						model.$async(function(err) {
-							if (err)
-								console.log('Error re-import app:', err, item.title);
-							next();
-						}).$workflow('refresh').$insert();
-					}, function() {
-						Fs.readFile(PATH.databases('settings.json'), function(err, data) {
-
-							if (data) {
-								// update settings
-								$GET('Settings', '', function(err, model) {
-									$SAVE('Settings', U.copy(data.toString('utf8').parseJSON(true), model), function(err) {
-										if (err)
-											console.log('Error re-import settings:', err);
-										next();
-									});
-								});
-							} else
-								next();
-
-							Fs.rename(PATH.databases('apps.json'), PATH.databases('apps_bk.json'), NOOP);
-							Fs.rename(PATH.databases('users.json'), PATH.databases('users_bk.json'), NOOP);
-							Fs.rename(PATH.databases('settings.json'), PATH.databases('settings_bk.json'), NOOP);
-						});
-					});
-				});
-			});
-		});
-	});
-}
-
 function stringifyprepare(key, value) {
 	if (key !== 'password' && value != null)
 		return value;
@@ -1562,7 +1459,6 @@ FUNC.log = function(type, rowid, message, $) {
 	obj.rowid = rowid;
 	obj.message = (message || '').max(200);
 	obj.dtcreated = NOW;
-
 
 	if ($) {
 
@@ -1667,7 +1563,7 @@ ON('service', function(counter) {
 	if (counter % 60 === 0)
 		FUNC.reconfigure();
 
-	MAIN.session.count(usage_online);
+	DBMS().query('SELECT COUNT(1)::int4 as used FROM tbl_user_session WHERE online=TRUE').first().callback(usage_online);
 	SIMPLECACHE = {};
 });
 

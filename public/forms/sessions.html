@@ -1,19 +1,19 @@
-<div data---="form__common.form__if:sessionsform;icon:history;width:600;title:@(My open sessions);reload:sessionsform/reload" class="hidden">
-	<div class="padding npb">
-		<div class="m">@(Open sessions:)</div>
-		<table data-bind="sessionsform.items__template" class="mt5 table">
-			<script type="text/html" data-size="0,120px,120px">
-				<tbody>
-					{{ foreach m in value }}
-					<tr data-index="{{ $index }}">
-						<td class="fs12 {{ if m.current }}b opfg{{ else }}gray{{ fi }}"><i class="fa fa-desktop color mr5"></i> {{ m.note }}</td>
-						<td class="fs12 right silver hidden-xs">{{ m.used | time }}</td>
-						<td class="fs12 right"><span class="link red ml5 exec" data-exec="sessionsform/cancel"><i class="fa fa-times mr5"></i>@(Cancel)</span></td>
-					</tr>
-					{{ end }}
-				</tbody>
+<div data---="form__common.form__if:sessionsform;icon:history;width:850;title:@(My open sessions);reload:?/reload" class="hidden" data-scope="sessionsform">
+	<div class="padding">
+		<div data---="masonry__?__sm:50;md:33.33;lg:33.33" class="listing listingsessions">
+			<script type="text/html">
+				<figure>
+					<div class="item{{ if value.current }} current{{ fi }}" data-id="{{ value.id }}">
+						<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="fas fa-trash-o"></i></span><b class="hellip"><i class="fa {{ value.ua | deviceicon }} mr5"></i>{{ value.ua }}</b></div>
+						<div class="padding">
+							<div class="value"><span><a href="https://tools.keycdn.com/geo?host={{ value.ip | ipparser }}" target="_blank">{{ value.ip | ipparser }}</a></span>@(IP address)</div>
+							<div class="value"><span>{{ value.dtcreated | format('[ts]') }}</span>@(Created)</div>
+							<div class="value"><span>{{ value.dtlogged | format('[ts]') }}</span>@(Updated)</div>
+						</div>
+					</div>
+				</figure>
 			</script>
-		</table>
+		</div>
 	</div>
 	<nav>
 		<button name="cancel" class="userbg" style="max-width:100%;width:100%">@(Close)</button>
@@ -24,17 +24,27 @@
 	PLUGIN('sessionsform', function(exports) {
 
 		exports.reload = function() {
-			AJAX('GET /api/op/sessions/', 'sessionsform.items');
+			DAPI('sessions', '?');
 		};
 
 		exports.cancel = function(el) {
 			var row = el.closest('tr');
 			var indexer = +row.attrd('index');
-			var sessions = GET('?.items');
+			var sessions = GET('?');
 			var session = sessions[indexer];
 			SETTER('approve/show', '@(Are you sure you want to cancel selected session?)', '"trash-o" @(Yes)', function() {
-				AJAX('DELETE /api/op/sessions/{id}'.arg(session), exports.reload);
+				DAPI('sessions_remove/' + session.id, exports.reload);
 			});
 		};
 	});
+
+	Thelpers.ipparser = function(value) {
+		var index = value.indexOf('/');
+		return index === -1 ? value : value.substring(0, index);
+	};
+
+	Thelpers.deviceicon = function(value) {
+		return (/iphone|android|ipad/i).test(value) ? 'fa-tablet' : 'fa-desktop';
+	};
+
 </script>

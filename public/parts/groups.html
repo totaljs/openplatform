@@ -1,15 +1,14 @@
-<div data-scope="usersgroups">
+<div data-scope="groups">
 
 	<div class="header">
 		<label><i class="fa fa-folder"></i>@(Groups)</label>
 		<div>
 			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
-			<button data-bind="?.selected__enabled" disabled class="exec" data-exec="?/edit"><i class="fa fa-pencil"></i>@(Edit)</button>
 			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash-o red"></i>@(Remove)</button>
 		</div>
 	</div>
 
-	<div data---="datagrid__?.items__height:.ui-layout-section;noborder:1;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;margin:45">
+	<div data---="datagrid__?.items__height:.ui-layout-section;noborder:1;highlight:true;click:?.selected;dblclick:?/edit;checked:?.checked;margin:45;button:?/button">
 		<script type="text/plain">
 			[
 				{ name: 'id', text: '@(ID)', width: 200 },
@@ -18,20 +17,21 @@
 				{ name: 'roles', text: '@(Roles)', width: 350, template: '{{ roles | joinbgcolor(\' \') }}', search: true },
 				{ name: 'apps2', text: '@(Applications)', width: 350, template: '{{ apps2 | join }}', search: true, sort: false },
 				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: 'dd.MM.yyyy', filter: false },
-				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: 'dd.MM.yyyy', filter: false }
+				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: 'dd.MM.yyyy', filter: false },
+				{ type: 'controls', template: '<button name="edit"><i class="fa fa-pencil mr5"></i>@(Edit)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>
 	</div>
 </div>
 
-<div data---="importer__common.panel__if:group;url:/panels/users-group.html"></div>
+<div data---="importer__common.form__if:groupsform;url:/forms/group.html"></div>
 
 <script>
 
-	PLUGIN('usersgroups', function(exports) {
+	PLUGIN('groups', function(exports) {
 
 		exports.refresh = function() {
-			AJAX('GET /api/op/groups/', function(response) {
+			DAPI('groups', function(response) {
 				var apps = main.apps;
 				for (var i = 0; i < response.length; i++) {
 					var item = response[i];
@@ -75,13 +75,23 @@
 			if (row instanceof jQuery)
 				row = GET('?.selected');
 
-			SETR('usersgroupspanel', CLONE(row));
-			SET('common.panel', 'group');
+			SET('groupsform @reset', CLONE(row));
+			SET('common.form', 'groupsform');
 		};
 
 		exports.create = function(row) {
-			SETR('usersgroupspanel', { appsroles: {} });
-			SET('common.panel', 'group');
+			SET('groupsform @default', { appsroles: {} });
+			SET('common.form', 'groupsform');
+		};
+
+		exports.button = function(name, row) {
+			if (name === 'edit') {
+				exports.edit(row);
+			} else if (name === 'remove') {
+				OP.approve('@(Are you sure you want to remove "{0}"?)'.format(row.name), '"trash-o" @(Remove)', function() {
+					DAPI('groups_remove?id=' + encodeURIComponent(row.id), exports.refresh);
+				});
+			}
 		};
 
 		exports.remove = function(el) {
@@ -94,11 +104,11 @@
 			else if (selected)
 				arr = [selected];
 
-			OP.confirm2('@(Are you sure you want to remove selected groups?)', ['"trash-o" @(Yes)', '@(Cancel)'], function() {
+			OP.approve('@(Are you sure you want to remove selected groups?)', '"trash-o" @(Remove)', function() {
 				OP.loading(true);
 				arr.wait(function(item, next, index) {
 					OP.progress((index / arr.length) * 100);
-					AJAX('DELETE /api/op/groups/?id=' + encodeURIComponent(item.id), next);
+					DAPI('groups_remove?id=' + encodeURIComponent(item.id), next);
 				}, function() {
 					OP.progress(100);
 					OP.loading(false, 500);

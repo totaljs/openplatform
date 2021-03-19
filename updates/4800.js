@@ -1,20 +1,43 @@
 var db = DBMS();
 
-db.query('SELECT 1 as r FROM information_schema.tables WHERE table_schema=\'public\' AND table_name=\'cl_component\'').first();
+db.query('SELECT 1 as r FROM information_schema.columns WHERE table_name=\'tbl_app\' and column_name=\'typeid\'').first();
 db.task(function(responses, response) {
 
 	if (response)
 		return;
 
 	db.query('ALTER TABLE tbl_app ADD typeid VARCHAR(10)');
+	db.query('ALTER TABLE tbl_app ADD origintoken VARCHAR(50)');
+	db.query('ALTER TABLE tbl_app ADD allowmail BOOLEAN DEFAULT false');
+	db.query('ALTER TABLE tbl_app ADD allowsms BOOLEAN DEFAULT false');
 	db.query('ALTER TABLE tbl_user ADD oauth2 VARCHAR(25)');
+	db.query('ALTER TABLE tbl_user_app ADD sounds BOOLEAN default true');
 	db.query('ALTER TABLE tbl_log ADD data JSON');
-	db.query('UPDATE tbl_app SET typeid=\'external\'');
 	db.query('UPDATE cl_config SET value=\'https://marketplace.openplatform.cloud\' WHERE id=\'marketplace\'');
+	db.insert('cl_config', { id: 'auth_cookie', type: 'string', value: U.random_string(10), name: 'auth_cookie', dtcreated: NOW });
+	db.insert('cl_config', { id: 'auth_secret', type: 'string', value: GUID(10), name: 'auth_secret', dtcreated: NOW });
+
+	db.query('CREATE TABLE "public"."tbl_user_session" (
+		"id" varchar(25) NOT NULL,
+		"userid" varchar(25),
+		"profileid" varchar(50),
+		"ip" cidr,
+		"ua" varchar(50),
+		"referrer" varchar(150),
+		"locked" bool DEFAULT false,
+		"logged" int4 DEFAULT 0,
+		"online" bool DEFAULT false,
+		"dtexpire" timestamp,
+		"dtcreated" timestamp,
+		"dtlogged" timestamp,
+		CONSTRAINT "tbl_user_session_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+		PRIMARY KEY ("id")
+	)`);
 
 	db.query(`CREATE OR REPLACE VIEW view_user AS
 	SELECT a.id,
 		a.supervisorid,
+		a.profileid,
 		a.deputyid,
 		a.groupid,
 		a.directory,
@@ -75,97 +98,6 @@ db.task(function(responses, response) {
 		CASE WHEN (length(a.supervisorid) > 0) THEN (SELECT c.name FROM tbl_user c WHERE c.id=a.supervisorid LIMIT 1) ELSE ''::text END AS supervisor,
 		a.oauth2
 	FROM tbl_user a`);
-
-	db.query(`CREATE TABLE "public"."tbl_app_source" (
-	"id" varchar(25) NOT NULL,
-	"appid" varchar(25),
-	"type" varchar(10),
-	"name" varchar(50),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"properties" json,
-	"url" json,
-	"static" bool DEFAULT false,
-	"local" bool DEFAULT false,
-	"isremoved" bool DEFAULT false,
-	"dtcreated" timestamp DEFAULT now(),
-	"dtupdated" timestamp,
-	CONSTRAINT "tbl_app_source_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY ("id")
-);`);
-
-	db.query(`CREATE TABLE "public"."tbl_app_source_bk" (
-	"id" serial,
-	"appid" varchar(25),
-	"uid" varchar(25),
-	"userid" varchar(25),
-	"type" varchar(10),
-	"name" varchar(50),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"properties" json,
-	"url" json,
-	"static" bool DEFAULT false,
-	"local" bool DEFAULT false,
-	"isremoved" bool DEFAULT false,
-	"dtcreated" timestamp DEFAULT now(),
-	"dtupdated" timestamp,
-	PRIMARY KEY ("id")
-);`);
-
-	db.query(`CREATE TABLE "public"."tbl_app_ui" (
-	"id" varchar(40) NOT NULL,
-	"appid" varchar(25),
-	"sourceid" varchar(25),
-	"type" varchar(20),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"name" varchar(50),
-	"design" text,
-	"settings" json,
-	"changelog" varchar(100),
-	"isnavigation" bool DEFAULT false,
-	"onchange" text,
-	"onvalidate" text,
-	"onload" text,
-	"onsubmit" text,
-	"position" int2 DEFAULT 0,
-	"dtcreated" timestamp DEFAULT now(),
-	"dtupdated" timestamp,
-	"isremoved" bool DEFAULT false,
-	CONSTRAINT "tbl_app_ui_sourceid_fkey" FOREIGN KEY ("sourceid") REFERENCES "public"."tbl_app_source"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT "tbl_app_ui_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY ("id")
-);`);
-
-	db.query(`CREATE TABLE "public"."tbl_app_ui_bk" (
-	"id" serial,
-	"uid" varchar(40),
-	"appid" varchar(25),
-	"userid" varchar(25),
-	"sourceid" varchar(25),
-	"type" varchar(20),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"name" varchar(50),
-	"changelog" varchar(100),
-	"design" text,
-	"settings" json,
-	"onchange" text,
-	"onvalidate" text,
-	"onload" text,
-	"onsubmit" text,
-	"dtcreated" timestamp DEFAULT now(),
-	PRIMARY KEY ("id")
-);`);
-
-	db.query(`CREATE TABLE "public"."cl_component" (
-	"id" varchar(100) NOT NULL,
-	"dtcreated" timestamp DEFAULT now(),
-	PRIMARY KEY ("id")
-);`);
-
-	db.query(`INSERT INTO "public"."cl_component" ("id") VALUES('https://cdn.componentator.com/designer/components.json')`);
 
 });
 

@@ -1,58 +1,106 @@
-AUTH(function($) {
-
-	if (CONF.guest && $.cookie(CONF.cookie) === 'guest') {
-		$.success(MAIN.guest);
-		return;
-	}
-
-	if ($.query.accesstoken) {
-		$.invalid();
-		return;
-	}
+ON('loaded', function() {
 
 	var opt = {};
-	opt.key = CONF.cookie_key || 'auth';
-	opt.name = CONF.cookie || '__opu';
-	opt.expire = CONF.cookie_expiration || '3 days';
-	opt.ddos = 5;
 
-	MAIN.session.getcookie($, opt, function(err, profile, meta, init) {
+	opt.secret = CONF.auth_secret;
+	opt.cookie = CONF.auth_cookie;
+	opt.strict = false;
+	opt.expire = '5 minutes';
+	opt.ddos = 10;
+	opt.options = { samesite: 'lax' };
 
-		if (profile == null) {
+	opt.onauthorize = function($) {
+
+		if ($.query.accesstoken) {
 			$.invalid();
-			return;
+			return true;
 		}
 
-		var locked = false;
+		if (CONF.guest && $.cookie(CONF.auth_cookie) === 'guest') {
+			$.success(MAIN.guest);
+			return true;
+		}
 
-		if (profile.locking && profile.pin && meta.used && !$.req.mobile && meta.used < NOW.add('-' + profile.locking + ' minutes'))
+	};
+
+	opt.onsession = function(session, $, init) {
+
+		var user = session.data;
+		var locked = user.locked == true;
+
+		$.req.$langauge = user.language;
+
+		if (!locked && (user.locking && user.pin && user.dtlogged2 && !$.req.mobile && user.dtlogged2 < NOW.add('-' + user.locking + ' minutes'))) {
 			locked = true;
-
-		$.req.$language = profile.language;
-		$.req.locked = (meta.settings ? meta.settings.indexOf('locked:1') != -1 : false) || locked;
-
-		profile.ip = $.ip;
-
-		if (profile.desktop == null)
-			profile.desktop = 1;
-
-		if (profile.online === false || locked) {
-			profile.online = true;
-			MAIN.session.set(meta.sessionid, meta.id, profile, opt.expire, meta.note, 'locked:' + (locked ? 1 : 0));
+			DBMS().query('UPDATE tbl_user_session SET locked=true WHERE id=' + PG_ESCAPE(session.sessionid));
 		}
+
+		$.req.$language = user.language;
+		$.req.locked = locked;
+
+		user.ip = $.ip;
+
+		if (user.desktop == null)
+			user.desktop = 1;
+
+		if (user.online === false || locked)
+			user.online = true;
 
 		if (init) {
-			profile.mobile = $.req.mobile;
-			profile.ua = ($.headers['user-agent'] || '').parseUA();
-			FUNC.usage_logged(profile);
+			user.mobile = $.req.mobile;
+			user.ua = ($.headers['user-agent'] || '').parseUA();
+			FUNC.usage_logged(user);
 		}
 
-		if ($.req.locked)
-			$.invalid(profile);
-		else
-			$.success(profile);
+		if ($.req.url === '/logout/')
+			return;
 
-	});
+		if ($.req.locked) {
+			$.invalid(user);
+			return true;
+		}
+
+	};
+
+	opt.onread = function(meta, next) {
+		var db = DBMS();
+		db.one('tbl_user_session').fields('locked,profileid,dtlogged').id(meta.sessionid);
+		db.error(404);
+		db.mod('tbl_user_session', { online: true, dtlogged: NOW, '+logged': 1, ip: meta.ip }).id(meta.sessionid).where('userid', meta.userid).where('dtexpire>NOW()').nobind();
+		db.mod('tbl_user', { dtlogged: NOW, online: true }).id(meta.userid).nobind();
+		db.callback(function(err, session) {
+			if (session) {
+				MAIN.readuser(meta.userid, function(err, response) {
+					if (response) {
+						response.rev = GUID(5);
+						response.dtlogged2 = session.dtlogged;
+						response.locked = session.locked;
+						response.profileid = session.profileid;
+					}
+					next(err, response);
+				});
+			} else
+				next();
+		});
+	};
+
+	opt.onfree = function(meta) {
+		var mod = { online: false };
+		var db = DBMS();
+
+		if (meta.session.length)
+			db.modify('tbl_user_session', mod).query('online=TRUE').id(meta.sessions);
+
+		if (meta.users.length)
+			db.modify('tbl_user', mod).query('online=TRUE').id(meta.users);
+	};
+
+	AUTH(opt);
+	MAIN.session = opt;
+
+	var db = DBMS();
+	db.query('UPDATE tbl_user_session SET online=FALSE WHERE online=TRUE');
+	db.query('UPDATE tbl_user SET online=FALSE WHERE online=TRUE');
+
+	LOCALIZE(req => req.query.language);
 });
-
-LOCALIZE(req => req.query.language);

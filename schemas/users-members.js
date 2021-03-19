@@ -1,62 +1,46 @@
-NEWSCHEMA('Users/Team', function(schema) {
+NEWSCHEMA('Users/Members', function(schema) {
 
-	schema.define('email', '[String]');
+	schema.define('email', 'Email');
 
 	schema.setQuery(function($) {
-		DBMS().find('tbl_user_member').fields('email').where('userid', $.user.id).callback(function(err, response) {
-			for (var i = 0; i < response.length; i++)
-				response[i] = response[i].email;
-			$.callback(response);
-		});
+		DBMS().query('SELECT a.id, a.email, b.name, b.photo, a.dtcreated FROM tbl_user_member a LEFT JOIN tbl_user b ON b.email=a.email WHERE userid=' + PG_ESCAPE($.user.id)).callback($.callback);
 	});
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
-		var addresses = $.model.email;
+		DBMS().count('tbl_user_member').where('userid', $.user.id).done($, function(response) {
 
-		if (CONF.maxmembers && addresses.length > CONF.maxmembers) {
-			$.invalid('error-members-limit');
-			return;
-		}
-
-		var db = DBMS();
-
-		db.find('tbl_user_member').fields('id,email').where('userid', $.user.id).callback(function(err, response) {
-
-			var remove = [];
-			var change = false;
-
-			for (var i = 0; i < addresses.length; i++) {
-				var email = addresses[i];
-				var member = response.findItem('email', email);
-				if (member == null) {
-					change = true;
-					db.insert('tbl_user_member', { id: UID(), userid: $.user.id, email: email, dtcreated: NOW });
-				} else
-					member.is = true;
+			if (CONF.maxmembers && response > CONF.maxmembers) {
+				$.invalid('@(You have exceed a maximum count of members)');
+				return;
 			}
 
-			for (var i = 0; i < response.length; i++) {
-				if (!response[i].is) {
-					change = true;
-					remove.push(response[i].id);
-				}
+			if ($.user.email === model.email) {
+				$.invalid('@(You can\'t add your email address to your member list)');
+				return;
 			}
 
-			FUNC.log('account/members', $.user.id, addresses.join(', '), $);
+			var db = DBMS();
 
-			remove.length && db.remove('tbl_user_member').in('id', remove);
+			db.check('tbl_user_member').where('userid', $.user.id).where('email', model.email);
+			db.error('@(Email is already registered in your member list)', true);
+
+			model.id = UID();
+			model.userid = $.user.id;
+			model.email = model.email;
+			model.dtcreated = NOW;
+
+			db.insert('tbl_user_member', model).where('email', model.email);
 			db.callback($.done());
-			change && FUNC.clearcache($.user.id);
+
+			FUNC.log('users/members', $.user.id, model.email, $);
+			FUNC.clearcache($.user.id);
 		});
 
 	});
 
-	schema.addWorkflow('check', function($) {
-		if ($.filter.email)
-			DBMS().one('tbl_user').fields('name').where('email', $.filter.email).callback($.callback);
-		else
-			$.invalid('error-users-404');
-	}, 'email:email');
+	schema.setRemove(function($) {
+		DBMS().remove('tbl_user_member').id($.id).where('userid', $.user.id).callback($.done());
+	});
 
 });

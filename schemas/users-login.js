@@ -54,6 +54,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 					return;
 				}
 
+				/*
 				var opt = {};
 				opt.name = CONF.cookie || '__opu';
 				opt.key = CONF.cookie_key || 'auth';
@@ -62,11 +63,13 @@ NEWSCHEMA('Users/Login', function(schema) {
 				opt.expire = CONF.cookie_expiration || '3 days';
 				opt.data = null;
 				opt.note = ($.headers['user-agent'] || '').parseUA() + ' (' + $.ip + ')';
-				opt.settings = 'locked:0';
+				opt.settings = 'locked:0';*/
 
 				EMIT('users/login', response.id);
 				FUNC.log('login', response.id, response.name, $);
-				MAIN.session.setcookie($.controller, opt, $.done());
+				FUNC.cookie($, response.id, $.done());
+				// MAIN.session.authcookie($, UID(), response.id, CONF.cookie_expiration);
+				// MAIN.session.setcookie($.controller, opt, $.done());
 			});
 
 		});
@@ -104,6 +107,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 					return;
 				}
 
+				/*
 				var opt = {};
 				opt.name = CONF.cookie || '__opu';
 				opt.key = CONF.cookie_key || 'auth';
@@ -112,11 +116,13 @@ NEWSCHEMA('Users/Login', function(schema) {
 				opt.expire = CONF.cookie_expiration || '3 days';
 				opt.data = null;
 				opt.note = ($.headers['user-agent'] || '').parseUA() + ' (' + $.ip + ')';
-				opt.settings = 'locked:0';
+				opt.settings = 'locked:0';*/
 
 				EMIT('users/login', response.id);
 				FUNC.log('login', response.id, response.name, $);
-				MAIN.session.setcookie($.controller, opt, $.done());
+				FUNC.cookie($, response.id, $.done());
+				// MAIN.session.setcookie($.controller, opt, $.done());
+				// MAIN.session.authcookie($, UID(), response.id, CONF.cookie_expiration);
 			});
 
 		});

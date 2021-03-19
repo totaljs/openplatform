@@ -1,5 +1,5 @@
-<div data---="form__common.panel__if:oauthprofile;reload:oauthprofilepanel/reload;submit:oauthprofilepanel/submit;icon:rocket;autofocus:1;width:500" class="hidden">
-	<div data-scope="oauthprofilepanel">
+<div data---="miniform__common.form__if:oauthform;reload:?/reload;submit:?/submit;icon:rocket;autofocus:1;width:500" class="hidden" data-scope="oauthform">
+	<div>
 		<div class="padding">
 			<div data---="input__?.name__required:1;maxlength:50" class="m">@(Access name)</div>
 			<div data---="checkbox__?.blocked__reverse:1">@(Allow access)</div>
@@ -13,14 +13,14 @@
 			<div data---="radiobutton__?.allowreadprofile__items:@(Read basic information)|1,@(Read all information)|2;type:number__1" class="nmb"></div>
 		</div>
 	</div>
-	<nav data---="validation__oauthprofilepanel">
+	<nav data---="validation__?">
 		<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 </div>
 
 <script>
-	PLUGIN('oauthprofilepanel', function(exports) {
+	PLUGIN('oauthform', function(exports) {
 
 		exports.reload = function(com) {
 			var model = GET('?');
@@ -29,9 +29,10 @@
 
 		exports.submit = function() {
 			var model = CLONE(GETR('?'));
-			AJAX('POST /api/op/oauth/' + (model.id || ''), model, OP.done('@(OAuth 2.0 access has been saved successfully)', function() {
-				NULL('common.panel');
-				EXEC('oauthgrid/refresh');
+			var action = 'oauth_' + (model.id ? ('update/' + model.id) : 'insert');
+			DAPI(action, model, OP.done('@(OAuth 2.0 access has been saved successfully)', function() {
+				NULL('common.form');
+				EXEC('oauth/refresh');
 			}));
 		};
 	});

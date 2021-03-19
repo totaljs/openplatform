@@ -1,7 +1,6 @@
-<div data---="form__common.panel__if:group;reload:usersgroupspanel/reload;icon:folder;submit:usersgroupspanel/submit;autofocus:1" class="hidden">
-	<div data-scope="usersgroupspanel">
+<div data---="largeform__common.form__if:groupsform;reload:?/reload;icon:folder;submit:?/submit;autofocus:1" class="hidden"  data-scope="groupsform">
+	<div>
 		<div class="padding npb">
-
 			<div data---="input__?.name__required:true;maxlength:50">@(Group name)</div>
 			<div class="help m">@(Type a group name)</div>
 
@@ -18,22 +17,24 @@
 			<div data---="apps__?.appsroles__datasource:main.apps"></div>
 		</div>
 	</div>
-	<nav data---="validation__usersgroupspanel">
+	<nav data---="validation__?">
 		<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>
 </div>
 
 <script>
-	PLUGIN('usersgroupspanel', function(exports) {
+
+	PLUGIN('groupsform', function(exports) {
+
 		exports.reload = function(com) {
 			var model = GET('?');
 			com.reconfigure({ title: model.id ? '@(Edit group)' : '@(Create group)' });
 		};
 
-		exports.submit = function() {
+		exports.submit = function(hide) {
 			OP.loading(true);
-			var model = CLONE(GETR('?'));
+			var model = CLONE(GET('? @reset'));
 			var keys = Object.keys(model.appsroles);
 
 			model.apps = [];
@@ -46,16 +47,16 @@
 			model.$roles = undefined;
 			model.ROW = undefined;
 
-			AJAX('PATCH /api/op/groups/', model, OP.done('@(Group has been saved successfully)', function() {
-				NULL('common.panel');
-				EXEC('usersgroups/refresh');
+			DAPI('groups_update', model, OP.done('@(Group has been saved successfully)', function() {
+				hide();
+				EXEC('groups/refresh');
 				EXEC('main/refreshmeta');
 				OP.loading(false, 1000);
 			}));
 		};
 
 		WATCH('?.name', function(path, value) {
-			if (!usersgroupspanel.id && value)
+			if (!groupsform.id && value)
 				SET('?.id', value.slug().replace(/-/g, ''));
 		});
 	});

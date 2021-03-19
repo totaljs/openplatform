@@ -24,6 +24,7 @@ CREATE TABLE "public"."tbl_user" (
 	"supervisorid" varchar(25),
 	"deputyid" varchar(25),
 	"groupid" varchar(30),
+	"profileid" varchar(50),
 	"oauth2" varchar(25),
 	"accesstoken" varchar(50),
 	"verifytoken" varchar(20),
@@ -97,10 +98,11 @@ CREATE TABLE "public"."tbl_user" (
 
 CREATE TABLE "public"."tbl_app" (
 	"id" varchar(25) NOT NULL,
-	"workshopid" varchar(25),
 	"typeid" varchar(10),
 	"url" varchar(500),
+	"origintoken" varchar(50),
 	"accesstoken" varchar(50),
+	"checksum" varchar(30),
 	"name" varchar(30),
 	"title" varchar(40),
 	"titles" json, -- localized titles
@@ -127,7 +129,9 @@ CREATE TABLE "public"."tbl_app" (
 	"height" int2,
 	"settings" jsonb,
 	"services" jsonb,
-	"allownotifications" bool,
+	"allownotifications" bool DEFAULT true,
+	"allowmail" bool DEFAULT false,
+	"allowsms" bool DEFAULT false,
 	"allowreadusers" int2 DEFAULT '0'::smallint,
 	"allowreadapps" int2 DEFAULT '0'::smallint,
 	"allowreadprofile" int2 DEFAULT '0'::smallint,
@@ -136,7 +140,6 @@ CREATE TABLE "public"."tbl_app" (
 	"mobilemenu" bool DEFAULT false,
 	"autorefresh" bool DEFAULT false,
 	"serververify" bool DEFAULT true,
-	"checksum" varchar(30),
 	"responsive" bool DEFAULT false,
 	"blocked" bool DEFAULT false,
 	"screenshots" bool DEFAULT false,
@@ -157,6 +160,7 @@ CREATE TABLE "public"."tbl_user_app" (
 	"roles" _varchar,
 	"position" int2 DEFAULT 0,
 	"settings" varchar(100),
+	"sounds" bool DEFAULT true,
 	"notifications" bool DEFAULT true,
 	"inherited" bool DEFAULT false,
 	"favorite" bool DEFAULT false,
@@ -201,6 +205,23 @@ CREATE TABLE "public"."tbl_user_log" (
 	"dtcreated" timestamp DEFAULT now(),
 	CONSTRAINT "tbl_user_log_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
 	CONSTRAINT "tbl_user_log_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE
+);
+
+CREATE TABLE "public"."tbl_user_session" (
+	"id" varchar(25) NOT NULL,
+	"userid" varchar(25),
+	"profileid" varchar(50),
+	"ip" cidr,
+	"ua" varchar(50),
+	"referrer" varchar(150),
+	"locked" bool DEFAULT false,
+	"logged" int4 DEFAULT 0,
+	"online" bool DEFAULT false,
+	"dtexpire" timestamp,
+	"dtcreated" timestamp,
+	"dtlogged" timestamp,
+	CONSTRAINT "tbl_user_session_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
 );
 
 CREATE TABLE "public"."tbl_log" (
@@ -259,13 +280,6 @@ CREATE TABLE "public"."tbl_user_member" (
 	"dtcreated" timestamp,
 	CONSTRAINT "tbl_user_member_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
 	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_settings" (
-	"id" varchar(30),
-	"body" jsonb,
-	"dtupdated" timestamp,
-	"dtcreated" timestamp
 );
 
 CREATE TABLE "public"."cl_role" (
@@ -378,6 +392,7 @@ CREATE TABLE "public"."tbl_usage_oauth" (
 	PRIMARY KEY ("id")
 );
 
+/*
 CREATE TABLE "public"."tbl_app_source" (
 	"id" varchar(25) NOT NULL,
 	"appid" varchar(25),
@@ -435,7 +450,7 @@ CREATE TABLE "public"."tbl_app_ui" (
 	"dtcreated" timestamp DEFAULT now(),
 	"dtupdated" timestamp,
 	"isremoved" bool DEFAULT false,
-	CONSTRAINT "tbl_app_ui_sourceid_fkey" FOREIGN KEY ("sourceid") REFERENCES "public"."tbl_app_source"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_app_ui_sourceid_fkey" FOREIGN KEY ("sourceid") REFERENCES "public"."tbl_app_source"("id") ON DELETE CASCADE ON UPDATE SET NULL,
 	CONSTRAINT "tbl_app_ui_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY ("id")
 );
@@ -465,7 +480,7 @@ CREATE TABLE "public"."cl_component" (
 	"id" varchar(100) NOT NULL,
 	"dtcreated" timestamp DEFAULT now(),
 	PRIMARY KEY ("id")
-);
+);*/
 
 -- ==============================
 -- VIEWS
@@ -476,6 +491,7 @@ CREATE VIEW view_user AS
 		a.supervisorid,
 		a.deputyid,
 		a.groupid,
+		a.profileid,
 		a.directory,
 		a.directoryid,
 		a.statusid,
@@ -584,12 +600,17 @@ COMMENT ON COLUMN "public"."tbl_app"."frame" IS 'Frame URL address';
 -- DATA
 -- ==============================
 
+/*
 -- INSERT UI Components
-INSERT INTO "public"."cl_component" ("id") VALUES('https://cdn.componentator.com/designer/components.json');
+INSERT INTO "public"."cl_component" ("id") VALUES
+('https://cdn.componentator.com/designer/components.json');
+*/
 
 -- INSERT DEFAULT CONFIGURATION
 INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VALUES
 ('accesstoken', 'string', (SELECT md5(random()::text)), 'accesstoken', NOW()),
+('auth_cookie', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10), 'auth_cookie', NOW()),
+('auth_secret', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10), 'auth_secret', NOW()),
 ('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),
 ('allowbackground', 'boolean', 'true', 'allowbackground', NOW()),
 ('allowclock', 'boolean', 'true', 'allowclock', NOW()),
