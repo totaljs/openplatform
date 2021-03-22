@@ -392,96 +392,6 @@ CREATE TABLE "public"."tbl_usage_oauth" (
 	PRIMARY KEY ("id")
 );
 
-/*
-CREATE TABLE "public"."tbl_app_source" (
-	"id" varchar(25) NOT NULL,
-	"appid" varchar(25),
-	"type" varchar(10),
-	"name" varchar(50),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"properties" json,
-	"url" json,
-	"static" bool DEFAULT false,
-	"local" bool DEFAULT false,
-	"isremoved" bool DEFAULT false,
-	"dtcreated" timestamp DEFAULT now(),
-	"dtupdated" timestamp,
-	CONSTRAINT "tbl_app_source_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_app_source_bk" (
-	"id" serial,
-	"appid" varchar(25),
-	"uid" varchar(25),
-	"userid" varchar(25),
-	"type" varchar(10),
-	"name" varchar(50),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"properties" json,
-	"url" json,
-	"static" bool DEFAULT false,
-	"local" bool DEFAULT false,
-	"isremoved" bool DEFAULT false,
-	"dtcreated" timestamp DEFAULT now(),
-	"dtupdated" timestamp,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_app_ui" (
-	"id" varchar(40) NOT NULL,
-	"appid" varchar(25),
-	"sourceid" varchar(25),
-	"type" varchar(20),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"name" varchar(50),
-	"design" text,
-	"settings" json,
-	"changelog" varchar(100),
-	"isnavigation" bool DEFAULT false,
-	"onchange" text,
-	"onvalidate" text,
-	"onload" text,
-	"onsubmit" text,
-	"position" int2 DEFAULT 0,
-	"dtcreated" timestamp DEFAULT now(),
-	"dtupdated" timestamp,
-	"isremoved" bool DEFAULT false,
-	CONSTRAINT "tbl_app_ui_sourceid_fkey" FOREIGN KEY ("sourceid") REFERENCES "public"."tbl_app_source"("id") ON DELETE CASCADE ON UPDATE SET NULL,
-	CONSTRAINT "tbl_app_ui_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_app_ui_bk" (
-	"id" serial,
-	"uid" varchar(40),
-	"appid" varchar(25),
-	"userid" varchar(25),
-	"sourceid" varchar(25),
-	"type" varchar(20),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"name" varchar(50),
-	"changelog" varchar(100),
-	"design" text,
-	"settings" json,
-	"onchange" text,
-	"onvalidate" text,
-	"onload" text,
-	"onsubmit" text,
-	"dtcreated" timestamp DEFAULT now(),
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."cl_component" (
-	"id" varchar(100) NOT NULL,
-	"dtcreated" timestamp DEFAULT now(),
-	PRIMARY KEY ("id")
-);*/
-
 -- ==============================
 -- VIEWS
 -- ==============================
@@ -607,10 +517,11 @@ INSERT INTO "public"."cl_component" ("id") VALUES
 */
 
 -- INSERT DEFAULT CONFIGURATION
+-- INSERT DEFAULT CONFIGURATION
 INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VALUES
 ('accesstoken', 'string', (SELECT md5(random()::text)), 'accesstoken', NOW()),
-('auth_cookie', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10), 'auth_cookie', NOW()),
-('auth_secret', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10), 'auth_secret', NOW()),
+('auth_cookie', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_cookie', NOW()),
+('auth_secret', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_secret', NOW()),
 ('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),
 ('allowbackground', 'boolean', 'true', 'allowbackground', NOW()),
 ('allowclock', 'boolean', 'true', 'allowclock', NOW()),
