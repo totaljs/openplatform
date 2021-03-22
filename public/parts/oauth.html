@@ -19,7 +19,7 @@
 						{{ foreach m in value }}
 						<figure>
 							<div class="item exec{{ if m.blocked }} disabled{{ fi }}" data-exec="?/secrets" data-id="{{ m.id }}">
-								<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="far fa-chevron-circle-down"></i></span><b class="hellip">{{ m.name }}</b></div>
+								<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="far fa-arrow-alt-circle-down"></i></span><b class="hellip">{{ m.name }}</b></div>
 								<div class="padding">
 									<div class="value"><span>{{ m.dtcreated | format }}</span>@(Created)</div>
 									<div class="value"><span>{{ m.dtupdated | format }}</span>@(Updated)</div>
@@ -70,10 +70,10 @@
 			opt.element = el;
 			opt.align = 'right';
 			opt.items = [];
-			opt.items.push({ id: 'detail', name: '@(Show secrets)', icon: 'far fa-eye' });
+			opt.items.push({ id: 'detail', name: '@(Show secrets)', icon: 'fa fa-eye' });
 			opt.items.push('-');
-			opt.items.push({ id: 'edit', name: '@(Edit)', icon: 'far fa-pencil' });
-			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'far fa-trash-alt red' });
+			opt.items.push({ id: 'edit', name: '@(Edit)', icon: 'fa fa-pencil' });
+			opt.items.push({ id: 'remove', name: '@(Remove)', icon: 'fa fa-trash-alt red' });
 			opt.callback = function(selected) {
 				switch (selected.id) {
 					case 'edit':
