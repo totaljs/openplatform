@@ -517,11 +517,11 @@ INSERT INTO "public"."cl_component" ("id") VALUES
 */
 
 -- INSERT DEFAULT CONFIGURATION
--- INSERT DEFAULT CONFIGURATION
 INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VALUES
 ('accesstoken', 'string', (SELECT md5(random()::text)), 'accesstoken', NOW()),
 ('auth_cookie', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_cookie', NOW()),
 ('auth_secret', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_secret', NOW()),
+('cdn', 'string', '//cdn.componentator.com', 'cdn', NOW()),
 ('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),
 ('allowbackground', 'boolean', 'true', 'allowbackground', NOW()),
 ('allowclock', 'boolean', 'true', 'allowclock', NOW()),
