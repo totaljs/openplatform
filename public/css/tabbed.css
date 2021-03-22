@@ -20,6 +20,9 @@ header .menu b { width: 8px; height: 8px; background-color: #000; float: left; m
 header .menu span { width: 24px; display: inline-block; }
 header .apps { margin: 0 230px 0 45px; overflow: hidden; height: 45px; font-size: 16px; }
 header .apps .app { float: left; width: 45px; height: 45px; line-height: 45px; text-align: center; cursor: pointer; }
+header .apps .app .icon-running { display: none; position: absolute; margin: 10px 0 0 30px; font-size: 10px; }
+header .apps .app.running .icon-running { display: block; }
+header .apps .app.running { color: var(--color); }
 header .apps .app:hover { background-color: rgba(0,0,0,0.1); }
 
 @media (max-width:768px) {

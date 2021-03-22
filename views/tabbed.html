@@ -41,8 +41,9 @@
 						<script type="text/html">
 							{{ foreach m in value }}
 								{{ if !m.internal }}
-								<div class="app exec" data-exec="view/open" data-id="{{ m.id }}" title="{{ m.title }}" draggable="true">
+								<div class="app exec{{ if m.isrunning }} running{{ fi }}" data-exec="view/open" data-id="{{ m.id }}" title="{{ m.title }}" draggable="true">
 									{{ if m.countbadges || m.countnotifications }}<span class="badges"></span>{{ fi }}
+									<div class="icon-running"><i class="fas fa-running"></i></div>
 									<div class="icon"><i class="{{ m.icon | icon }}"></i></div>
 								</div>
 								{{ fi }}

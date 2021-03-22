@@ -38,7 +38,7 @@ header hr { border-color: rgba(0,0,0,0.1); margin: 15px 0; }
 .header .initials { width: 34px; height: 34px; border-radius: var(--radius); color: #FFF; text-align: center; line-height: 34px; display: block; background-color: var(--color); font-weight: bold; }
 .header .name { font-size: 11px; }
 .header .title { font-size: 12px; font-weight: bold; }
-.header .test { position: absolute; font-size: 9px; background-color: red; color: #FFF; padding: 1px 5px; line-height: 9px; border-radius: var(--radius); margin: 48px 0 0 10px; width: 34px; }
+.header .test { position: absolute; font-size: 9px; background-color: red; color: #FFF; padding: 1px 5px; line-height: 9px; border-radius: var(--radius); margin: 48px 0 0 10px; width: 34px; z-index: 10; }
 
 .ui-dark .header { border-bottom-color: rgba(255,255,255,0.1); }
 .ui-dark header .datetime { border-top-color: rgba(255,255,255,0.1); }
