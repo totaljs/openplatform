@@ -126,7 +126,7 @@
 					<script type="text/html">
 					{{ foreach m in value }}
 					<tr class="exec pointer" data-exec="?/user" data-id="{{ m.id }}">
-						<td>{{ m.name | initials }} {{ m.name }} {{ if m.position }}<span class="gray">/ {{ m.position }}</span>{{ fi }}</td>
+						<td>{{ m.name | initials(true) }} {{ m.name }} {{ if m.position }}<span class="gray">/ {{ m.position }}</span>{{ fi }}</td>
 						<td class="right col-xs-4">{{ m.dtlogged | time2 }}<i class="far fa-clock ml5"></i></td>
 					</tr>
 					{{ end }}
