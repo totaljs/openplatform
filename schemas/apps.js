@@ -248,7 +248,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 		$.extend && $.extend(model);
 
-		DBMS().modify('tbl_app', model).where('id', $.id).callback(function(err, response) {
+		DBMS().modify('tbl_app', model).id($.id).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
 					FUNC.log('apps/update', $.id, model.name, $);
@@ -271,7 +271,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 		$.extend && $.extend(app);
 
-		DBMS().remove('tbl_app').where('id', $.id).callback(function() {
+		DBMS().remove('tbl_app').id($.id).callback(function() {
 			FUNC.refreshapps(function() {
 				FUNC.updateroles($.done());
 			});
@@ -322,7 +322,7 @@ NEWSCHEMA('Apps', function(schema) {
 		var app = user.apps[$.id];
 		if (app) {
 			app.favorite = app.favorite == null ? true : !app.favorite;
-			DBMS().modify('tbl_user_app', { favorite: app.favorite }).where('id', user.id + $.id);
+			DBMS().modify('tbl_user_app', { favorite: app.favorite }).id(user.id + $.id);
 			$.success(true, app.favorite);
 		} else
 			$.invalid('error-apps-404');
@@ -383,9 +383,9 @@ NEWSCHEMA('Apps', function(schema) {
 
 				if (user.apps[$.id].countbadges || (notifications && !user.countnotifications)) {
 					var db = DBMS();
-					user.apps[$.id].countbadges && db.modify('tbl_user_app', DB_BADGES_RESET).where('id', $.user.id + $.id);
+					user.apps[$.id].countbadges && db.modify('tbl_user_app', DB_BADGES_RESET).id($.user.id + $.id);
 					if (notifications && !user.countnotifications)
-						db.modify('tbl_user', DB_NOTIFY_RESET).where('id', $.user.id);
+						db.modify('tbl_user', DB_NOTIFY_RESET).id($.user.id);
 				}
 
 				user.apps[$.id].countbadges = 0;
@@ -399,13 +399,13 @@ NEWSCHEMA('Apps', function(schema) {
 					tmp = {};
 					tmp.version = app.version;
 					user.apps[$.id].version = app.version;
-					db.mod('tbl_user_app', tmp).where('id', user.id + $.id);
+					db.mod('tbl_user_app', tmp).id(user.id + $.id);
 				}
 
 				tmp = {};
 				tmp['+countopen'] = 1;
 				tmp.dtopen = NOW;
-				db.mod('tbl_user_app', tmp).where('id', user.id + $.id);
+				db.mod('tbl_user_app', tmp).id(user.id + $.id);
 
 				var usageid = NOW.format('yyyyMMdd') + $.id;
 				var usage = USAGE_STATS.findItem('id', usageid);
@@ -454,7 +454,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 		user.apps[$.id].countnotifications = 0;
 		user.apps[$.id].countbadges = 0;
-		DBMS().modify('tbl_user_app', DB_BADGESNOTIFICATIONS_RESET).where('id', $.user.id + $.id);
+		DBMS().modify('tbl_user_app', DB_BADGESNOTIFICATIONS_RESET).id($.user.id + $.id);
 		$.success(true);
 	});
 
@@ -538,7 +538,7 @@ ON('service', function() {
 		var appid = usage.appid;
 		usage.id = undefined;
 		usage.appid = undefined;
-		db.mod('tbl_usage_app', usage, true).where('id', id).insert(usage_insert, { id: id, appid: appid });
+		db.mod('tbl_usage_app', usage, true).id(id).insert(usage_insert, { id: id, appid: appid });
 	}
 
 });

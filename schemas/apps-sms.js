@@ -3,7 +3,7 @@ NEWSCHEMA('Apps/SMS', function(schema) {
 	schema.define('to', 'Phone', true);
 	schema.define('body', String, true);
 
-	schema.addWorkflow('exec', function($) {
+	schema.addWorkflow('exec', function($, model) {
 		FUNC.decodetoken($, function(obj) {
 			if (obj.app.allowsms) {
 				if (CONF.totalapi) {

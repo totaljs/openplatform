@@ -220,36 +220,33 @@ NEWSCHEMA('Users', function(schema) {
 
 	}, 'statusid:Number,contractid:Number,page:Number,limit:Number,statusid:Number');
 
-	schema.addWorkflow('check', function($) {
+	schema.addWorkflow('check', function($, model) {
 
-		if (!$.model.email && !$.model.login)
+		if (!model.email && !model.login)
 			return $.success();
 
 		var internal = $.options ? $.options.internal : false;
 		var id = ($.controller == null && model.previd ? model.previd : (internal ? $.options.id : '') || $.id) || 'x';
 		var db = DBMS();
 
-		if ($.model.email) {
-			db.check('tbl_user').query('email=$1 AND id<>$2', [$.model.email, id]);
+		if (model.email) {
+			db.check('tbl_user').query('email=$1 AND id<>$2', [model.email, id]);
 			db.err('error-users-email', true);
 		}
 
-		if ($.model.login) {
-			db.check('tbl_user').query('login=$1 AND id<>$2', [$.model.login, id]);
+		if (model.login) {
+			db.check('tbl_user').query('login=$1 AND id<>$2', [model.login, id]);
 			db.err('error-users-login', true);
 		}
 
 		db.callback($.done());
 	});
 
-	schema.setInsert(function($) {
+	schema.setInsert(function($, model) {
 
 		var internal = $.options ? $.options.internal : false;
-
 		if (!internal && $.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.clean();
 
 		if (model.groups) {
 			for (var i = 0; i < model.groups.length; i++) {
@@ -329,17 +326,14 @@ NEWSCHEMA('Users', function(schema) {
 		});
 	});
 
-	schema.setPatch(function($) {
+	schema.setPatch(function($, model) {
 
 		// Possibilities
 		// $.options.internal + $.options.id + $.options.keys
 
 		var internal = $.options ? $.options.internal : false;
-
 		if (!internal && $.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.clean();
 
 		if (model.groups) {
 			for (var i = 0; i < model.groups.length; i++) {
@@ -406,16 +400,9 @@ NEWSCHEMA('Users', function(schema) {
 				data.linker = model.linker = model.name.slug();
 			}
 
-			// Removing older photo
+			// Removing older background
 			if ((!keys || keys.background) && response.background && model.background !== response.background) {
 				var path = Path.join(FUNC.uploadir('backgrounds'), response.background);
-				Fs.unlink(path, NOOP);
-				TOUCH('/' + path);
-			}
-
-			// Removing older photo
-			if ((!keys || keys.photo) && response.photo && model.photo !== response.photo) {
-				var path = Path.join(FUNC.uploadir('photos'), response.photo);
 				Fs.unlink(path, NOOP);
 				TOUCH('/' + path);
 			}

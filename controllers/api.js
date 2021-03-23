@@ -6,9 +6,6 @@ exports.install = function() {
 	ROUTE('+POST    /api/upload/photo/', json_upload_photo, 1024 * 2);
 	ROUTE('+POST    /api/upload/background/', json_upload_background, ['upload'], 1024 * 5);
 
-	// Because of security reasons
-	// ROUTE('+POST    /api/op/mail/                  *Mail                 --> @send');
-
 	// External
 	ROUTE('GET     /api/users/                    *Users                --> public');
 	ROUTE('GET     /api/apps/                     *Apps                 --> public');
@@ -71,7 +68,7 @@ function json_upload_photo() {
 	}
 
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-	var path = FUNC.uploadir('photos');
+	var path = FUNC.uploadir('backgrounds');
 	PATH.mkdir(path);
 	base64.base64ToFile(U.join(path, id), () => self.json(id));
 }

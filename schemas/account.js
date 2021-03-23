@@ -45,7 +45,7 @@ NEWSCHEMA('Account', function(schema) {
 		$.extend && $.extend(builder);
 	});
 
-	schema.addWorkflow('check', function($) {
+	schema.addWorkflow('check', function($, model) {
 
 		if ($.user.guest) {
 			$.invalid('error-permissions');
@@ -56,7 +56,7 @@ NEWSCHEMA('Account', function(schema) {
 			return $.success();
 
 		var db = DBMS();
-		db.check('tbl_user').query('email=$1 AND id<>$2', [$.model.email, $.user.id]);
+		db.check('tbl_user').query('email=$1 AND id<>$2', [model.email, $.user.id]);
 		db.err('error-users-email', true);
 		db.callback($.done());
 	});
@@ -79,14 +79,6 @@ NEWSCHEMA('Account', function(schema) {
 		}
 
 		var isoauth =  $.user.checksum === 'oauth2';
-
-		// Removing older photo
-		/*
-		if (user.photo && model.photo !== user.photo) {
-			path = 'photos/' + user.photo;
-			Fs.unlink(PATH.public(path), NOOP);
-			F.touch('/' + path);
-		}*/
 
 		if (CONF.allownickname && model.name && !isoauth) {
 			var name = FUNC.nicknamesanitize(model.name);
@@ -200,7 +192,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		$.extend && $.extend(model);
 
-		DBMS().modify('tbl_user', model).where('id', $.user.id).error('error-users-404').callback(function(err, response) {
+		DBMS().modify('tbl_user', model).id($.user.id).error('error-users-404').callback(function(err, response) {
 			if (response) {
 				user.rev = GUID(5);
 				MAIN.session.refresh(user.id, $.sessionid);

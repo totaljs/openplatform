@@ -1446,7 +1446,7 @@ FUNC.log = function(type, rowid, message, $) {
 	if ($) {
 
 		if ($.model && $.model !== EMPTYOBJECT)
-			obj.data = JSON.stringify(F.is4 ? $.model : $.clean(), stringifyprepare);
+			obj.data = JSON.stringify($.model, stringifyprepare);
 
 		obj.ip = $.ip;
 

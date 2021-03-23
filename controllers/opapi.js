@@ -38,7 +38,7 @@ exports.install = function() {
 	ROUTE('+API    /opapi/    -groups                   *Users/Groups         --> query');
 	ROUTE('+API    /opapi/    #groups_update            *Users/Groups         --> patch');
 	ROUTE('+API    /opapi/    -groups_remove            *Users/Groups         --> remove');
-	ROUTE('+API    /opapi/    -marketplace              *Meta                 --> marketplace');
+	ROUTE('+API    /opapi/    -marketplace              *Codelist             --> marketplace');
 
 	// Reports
 	ROUTE('+API    /opapi/    -reports                  *Users/Reports        --> query');

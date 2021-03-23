@@ -19,12 +19,11 @@ NEWSCHEMA('OAuth', function(schema) {
 		DBMS().find('tbl_oauth').sort('dtcreated', true).callback($.callback);
 	});
 
-	schema.setInsert(function($) {
+	schema.setInsert(function($, model) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		var model = $.model;
 		model.id = UID();
 		model.accesstoken = GUID(35);
 		model.dtcreated = NOW;
@@ -33,12 +32,10 @@ NEWSCHEMA('OAuth', function(schema) {
 		FUNC.log('oauth/create', model.id, model.name, $);
 	});
 
-	schema.setUpdate(function($) {
+	schema.setUpdate(function($, model) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.model;
 
 		model.dtupdated = NOW;
 
@@ -46,7 +43,7 @@ NEWSCHEMA('OAuth', function(schema) {
 			model.accesstoken = GUID(35);
 
 		delete model.rebuild;
-		DBMS().modify('tbl_oauth', model).where('id', $.id).callback($.done($.id));
+		DBMS().modify('tbl_oauth', model).id($.id).callback($.done($.id));
 		FUNC.log('oauth/update', $.id, model.name, $);
 	});
 
@@ -55,7 +52,7 @@ NEWSCHEMA('OAuth', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		DBMS().remove('tbl_oauth').where('id', $.id).callback($.done($.id));
+		DBMS().remove('tbl_oauth').id($.id).callback($.done($.id));
 		FUNC.log('oauth/remove', $.id, '', $);
 	});
 

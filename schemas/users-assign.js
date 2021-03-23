@@ -6,12 +6,11 @@ NEWSCHEMA('Users/Assign', function(schema) {
 	schema.define('rem', '[String(50)]');
 	schema.define('filter', 'Object');
 
-	schema.addWorkflow('exec', function($) {
+	schema.addWorkflow('exec', function($, model) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		var model = $.model;
 		var db = DBMS();
 
 		FUNC.log('users/assign', null, 'Add: ' + model.add.join(',') + ', Rem: ' + model.rem.join(','), $);

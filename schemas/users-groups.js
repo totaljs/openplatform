@@ -33,12 +33,11 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		$.callback(arr);
 	});
 
-	schema.setPatch(function($) {
+	schema.setPatch(function($, model) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		var model = $.clean();
 		var id = model.id || UID();
 		var insert = false;
 		var apps = model.apps;
@@ -51,7 +50,7 @@ NEWSCHEMA('Users/Groups', function(schema) {
 
 		$.extend && $.extend(model);
 
-		db.upd('tbl_group', model, true).where('id', id).insert(function(doc) {
+		db.upd('tbl_group', model, true).id(id).insert(function(doc) {
 			doc.dtcreated = NOW;
 			doc.dtupdated = undefined;
 			doc.id = id;

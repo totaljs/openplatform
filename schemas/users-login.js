@@ -5,14 +5,14 @@ NEWSCHEMA('Users/Login', function(schema) {
 	schema.define('name', 'String(120)', true);
 	schema.define('password', 'String(50)', true);
 
-	schema.addWorkflow('exec', function($) {
+	schema.addWorkflow('exec', function($, model) {
 
 		if (DDOS[$.ip] > 5) {
 			$.invalid('error-blocked-ip');
 			return;
 		}
 
-		FUNC.login($.model.name, $.model.password, function(err, userid) {
+		FUNC.login(model.name, model.password, function(err, userid) {
 
 			if (!userid) {
 
@@ -31,7 +31,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 				return;
 			}
 
-			DBMS().one('tbl_user').where('id', userid).fields('id,name,blocked,inactive').callback(function(err, response) {
+			DBMS().one('tbl_user').id(userid).fields('id,name,blocked,inactive').callback(function(err, response) {
 
 				if (response == null) {
 
@@ -54,31 +54,18 @@ NEWSCHEMA('Users/Login', function(schema) {
 					return;
 				}
 
-				/*
-				var opt = {};
-				opt.name = CONF.cookie || '__opu';
-				opt.key = CONF.cookie_key || 'auth';
-				opt.sessionid = UID();
-				opt.id = response.id;
-				opt.expire = CONF.cookie_expiration || '3 days';
-				opt.data = null;
-				opt.note = ($.headers['user-agent'] || '').parseUA() + ' (' + $.ip + ')';
-				opt.settings = 'locked:0';*/
-
 				EMIT('users/login', response.id);
 				FUNC.log('login', response.id, response.name, $);
 				FUNC.cookie($, response.id, $.done());
-				// MAIN.session.authcookie($, UID(), response.id, CONF.cookie_expiration);
-				// MAIN.session.setcookie($.controller, opt, $.done());
 			});
 
 		});
 
 	});
 
-	schema.addWorkflow('otp', function($) {
+	schema.addWorkflow('otp', function($, model) {
 
-		FUNC.loginotp($.model.name, $.model.password, function(err, userid) {
+		FUNC.loginotp(model.name, model.password, function(err, userid) {
 
 			if (err) {
 				$.invalid(err);
@@ -90,7 +77,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 				return;
 			}
 
-			DBMS().one('tbl_user').where('id', userid).fields('id,name,blocked,inactive').callback(function(err, response) {
+			DBMS().one('tbl_user').id(userid).fields('id,name,blocked,inactive').callback(function(err, response) {
 
 				if (response == null) {
 					$.invalid('error-credentials');
@@ -107,22 +94,9 @@ NEWSCHEMA('Users/Login', function(schema) {
 					return;
 				}
 
-				/*
-				var opt = {};
-				opt.name = CONF.cookie || '__opu';
-				opt.key = CONF.cookie_key || 'auth';
-				opt.sessionid = UID();
-				opt.id = response.id;
-				opt.expire = CONF.cookie_expiration || '3 days';
-				opt.data = null;
-				opt.note = ($.headers['user-agent'] || '').parseUA() + ' (' + $.ip + ')';
-				opt.settings = 'locked:0';*/
-
 				EMIT('users/login', response.id);
 				FUNC.log('login', response.id, response.name, $);
 				FUNC.cookie($, response.id, $.done());
-				// MAIN.session.setcookie($.controller, opt, $.done());
-				// MAIN.session.authcookie($, UID(), response.id, CONF.cookie_expiration);
 			});
 
 		});

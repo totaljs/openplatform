@@ -14,9 +14,8 @@ NEWSCHEMA('Users/Reports', function(schema) {
 		DBMS().list('view_user_report').autofill($, 'id:UID,solved:Boolean,dtcreated:Date,dtsolved:Date,ip:String,username:String,userphoto:String,userposition:String,appname:String,appicon:String,screenshot:Number', '', 'dtcreated_desc', 100).callback($.callback);
 	});
 
-	schema.setInsert(function($) {
+	schema.setInsert(function($, model) {
 
-		var model = $.clean();
 		var screenshot = model.screenshot;
 
 		model.id = UID();
@@ -28,7 +27,7 @@ NEWSCHEMA('Users/Reports', function(schema) {
 
 		var db = DBMS();
 
-		db.read('tbl_app').fields('email').error('error-apps-404').where('id', model.appid).callback(function(err, response) {
+		db.read('tbl_app').fields('email').error('error-apps-404').id(model.appid).callback(function(err, response) {
 
 			if (err) {
 				$.invalid(err);
@@ -91,13 +90,13 @@ NEWSCHEMA('Users/Reports', function(schema) {
 	schema.addWorkflow('solved', function($) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-		DBMS().modify('tbl_user_report', { solved: true, dtsolved: NOW }).where('id', $.id).callback($.done());
+		DBMS().modify('tbl_user_report', { solved: true, dtsolved: NOW }).id($.id).callback($.done());
 	});
 
 	schema.addWorkflow('screenshot', function($) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-		DBMS().one('tbl_user_report').where('id', $.id).fields('screenshot').callback(function(err, response) {
+		DBMS().one('tbl_user_report').id($.id).fields('screenshot').callback(function(err, response) {
 			if (response && response.screenshot)
 				$.controller.binary(response.screenshot, 'image/jpeg');
 			else
@@ -109,7 +108,7 @@ NEWSCHEMA('Users/Reports', function(schema) {
 	schema.setRemove(function($) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-		DBMS().remove('tbl_user_report').where('id', $.id).callback($.done());
+		DBMS().remove('tbl_user_report').id($.id).callback($.done());
 	});
 
 });

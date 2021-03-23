@@ -11,7 +11,7 @@ NEWSCHEMA('Apps/Logs', function(schema) {
 			return;
 		}
 
-		$.model.userid = $.user.id;
+		model.userid = $.user.id;
 		DBMS().insert('tbl_user_log', model);
 		$.success();
 	});
