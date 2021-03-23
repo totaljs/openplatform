@@ -16,7 +16,7 @@
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
-	@{import('meta', 'head', 'windowed.css', 'windowed.js', 'favicon.ico')}
+	@{import('meta', 'head', 'main.css + windowed.css + ui.css', 'main.js + windowed.js + ui.js', 'favicon.ico')}
 	<script>var user = EMPTYOBJECT</script>
 </head>
 <body data---="exec" class="noscroll@{if user.darkmode} ui-dark@{fi} invisible" data-bind="common.ready__visible">

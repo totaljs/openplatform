@@ -1,4 +1,5 @@
 const Fs = require('fs');
+const Path = require('path');
 
 NEWSCHEMA('Settings', function(schema) {
 
@@ -89,8 +90,8 @@ NEWSCHEMA('Settings', function(schema) {
 
 		// Removing older background
 		if (CONF.background && model.background !== CONF.background) {
-			var path = 'backgrounds/' + CONF.background;
-			Fs.unlink(PATH.public(path), NOOP);
+			var path = Path.join(FUNC.uploadir('backgrounds'), CONF.background);
+			Fs.unlink(path, NOOP);
 			TOUCH('/' + path);
 		}
 

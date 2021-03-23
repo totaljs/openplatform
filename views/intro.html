@@ -1,8 +1,8 @@
 @{layout('')}
 
-<div data---="intro__common.intro__if:welcome;selected:ui-intro-selected;exec:intro/submit;next:@(Next);close:@(Done)" class="hidden">
+<div data---="intro__common.intro__if:welcome;selected:ui-intro-selected;exec:intro/submit;next:@(Next);close:@(Done);height: @lg=320 @md=320 @sm=320 @xs=440" class="hidden">
 	<figure>
-		<div class="m"><i class="fa fa-flag fa-4x usercolor"></i></div>
+		<div class="m"><i class="fa fa-flag fa-4x color"></i></div>
 		<div>@(Welcome <b>@{user.name}</b> to <b>@{'%name'}</b>)</div>
 	</figure>
 
@@ -33,7 +33,7 @@
 	<figure>
 		<div class="m"><i class="far usercolor fa-calendar fa-3x"></i></div>
 		<div>@(Date/Time and language settings)</div>
-		<div class="padding npt left">
+		<div class="padding npt left npb">
 			<hr />
 			<div class="col-sm-6 m">
 				<div data---="input__intro.dateformat__dirsource:%cl.dateformats;dirsearch:false">@(Date format)</div>
@@ -65,26 +65,26 @@
 	@{fi}
 
 	<figure>
-		<div class="m"><i class="far usercolor fa-bell fa-3x"></i></div>
+		<div class="m"><i class="far color fa-bell fa-3x"></i></div>
 		<div>@(Additional settings)</div>
 		<div class="padding left gray npt">
 			<hr />
-			<div class="col-sm-8">
+			<div class="col-sm-8 col-xs-8">
 				<div class="mt5">@(Enable notifications)</div>
 			</div>
-			<div class="col-sm-4 right">
+			<div class="col-sm-4 col-xs-4 right">
 				<div data---="togglebutton__intro.notifications"></div>
 			</div>
-			<div class="col-sm-8">
-				<div class="mt5">@(Enable mail notifications)</div>
+			<div class="col-sm-8 col-xs-8">
+				<div class="mt5">@(Enable email notifications)</div>
 			</div>
-			<div class="col-sm-4 right">
+			<div class="col-sm-4 col-xs-4 right">
 				<div data---="togglebutton__intro.notificationsemail"></div>
 			</div>
-			<div class="col-sm-8">
+			<div class="col-sm-8 col-xs-8">
 				<div class="mt5">@(Enable sounds)</div>
 			</div>
-			<div class="col-sm-4 right">
+			<div class="col-sm-4 col-xs-4 right">
 				<div data---="togglebutton__intro.sounds"></div>
 			</div>
 			<div class="clearfix"></div>
@@ -92,19 +92,19 @@
 	</figure>
 
 	<figure>
-		<div class="mt10"><i class="fa usercolor fa-key fa-3x"></i></div>
+		<div class="mt10"><i class="fa color fa-key fa-3x"></i></div>
 		<div class="mt10">@(Change your password)</div>
-		<div class="padding left gray npt">
+		<div class="padding left gray npt npb">
 			<hr />
 			<div class="padding npt npb">
 				<div class="fs12 center">@(Here you can change your password.)</div>
 				<div class="center help" style="margin-top:3px"><i class="far fa-lightbulb"></i>@(Do you not want to change the password?) <span class="link next">@(Skip this step)</span></div>
 			</div>
 			<hr />
-			<div class="col-sm-6">
+			<div class="col-sm-6 m">
 				<div data---="input__intro.password__maxlength:30;type:password">@(New password)</div>
 			</div>
-			<div class="col-sm-6">
+			<div class="col-sm-6 m">
 				<div data---="input__intro.passwordreply__maxlength:30;type:password">@(Password again)</div>
 			</div>
 			<div class="clearfix"></div>

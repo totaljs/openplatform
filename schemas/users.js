@@ -407,13 +407,17 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			// Removing older photo
+			if ((!keys || keys.background) && response.background && model.background !== response.background) {
+				var path = Path.join(FUNC.uploadir('backgrounds'), response.background);
+				Fs.unlink(path, NOOP);
+				TOUCH('/' + path);
+			}
+
+			// Removing older photo
 			if ((!keys || keys.photo) && response.photo && model.photo !== response.photo) {
-				var path = 'photos/' + response.photo;
-				Fs.unlink(PATH.public(path), NOOP);
-				if (F.is4)
-					TOUCH('/' + path);
-				else
-					F.touch('/' + path);
+				var path = Path.join(FUNC.uploadir('photos'), response.photo);
+				Fs.unlink(path, NOOP);
+				TOUCH('/' + path);
 			}
 
 			if ((!keys || keys.password) && model.password && !model.password.startsWith('***'))

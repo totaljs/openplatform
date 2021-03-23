@@ -3,6 +3,7 @@ require('dbms').init(CONF.database, ERROR('DBMS'));
 // DBMS.measure && DBMS.measure(true);
 
 // Constants
+const Path = require('path');
 const Fs = require('fs');
 const DB_LOGGED = { online: true };
 const DDOS_MAX_ATTEMPS = 10;
@@ -1603,4 +1604,9 @@ FUNC.usage_logged = function(user) {
 	var browserid = id + user.ua.hash(true).toString(16);
 	model_browser['+count'] = 1;
 	db.modify('tbl_usage_browser', model_browser, true).where('id', browserid).insert(usage_browser_insert, { name: user.ua, id: browserid, mobile: user.mobile });
+};
+
+FUNC.uploadir = function(type) {
+	var path = CONF.upload ? Path.join(CONF.upload, type) : PATH.public(type);
+	return path;
 };

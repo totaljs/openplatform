@@ -1,3 +1,5 @@
+const Path = require('path');
+
 exports.install = function() {
 
 	// Profile
@@ -24,7 +26,20 @@ exports.install = function() {
 
 	// CORS
 	CORS();
+
+	ROUTE('FILE /photos/*.*', handle_images);
+	ROUTE('FILE /backgrounds/*.*', handle_images);
 };
+
+const IMAGES = { jpg: 1, jpeg: 1, png: 1, webp: 1, gif: 1, apng: 1, svg: 1 };
+
+function handle_images(req, res) {
+	if (IMAGES[req.extension]) {
+		var path = FUNC.uploadir(req.split[0]);
+		res.file(Path.join(path, req.split[1]));
+	} else
+		res.throw404();
+}
 
 function json_verify() {
 	var self = this;
@@ -46,6 +61,7 @@ function json_verify() {
 }
 
 function json_upload_photo() {
+
 	var self = this;
 	var base64 = self.body.file;
 
@@ -55,7 +71,7 @@ function json_upload_photo() {
 	}
 
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-	var path = PATH.public('photos');
+	var path = FUNC.uploadir('backgrounds');
 	PATH.mkdir(path);
 	base64.base64ToFile(U.join(path, id), () => self.json(id));
 }
@@ -69,10 +85,9 @@ function json_upload_background() {
 		return;
 	}
 
-	var path = PATH.public('backgrounds');
-	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
-
+	var path = FUNC.uploadir('backgrounds');
 	PATH.mkdir(path);
+	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
 	file.move(U.join(path, id), () => self.json(id));
 }
 

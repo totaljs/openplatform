@@ -71,6 +71,8 @@ footer .sa i { margin-right: 5px; }
 
 .ui-dark footer { background: rgba(0,0,0,0.8); box-shadow: 0 -3px 10px rgba(0,0,0,0.3); }
 
+.iframe { background-color: #FFF; }
+.ui-dark .iframe { background-color: #202020; }
 .iframe iframe { width: 100%; height: 100%; border-radius: 0 0 var(--radius) var(--radius); }
 .disable iframe { pointer-events: none; }
 
@@ -94,7 +96,7 @@ footer .sa i { margin-right: 5px; }
 .focused { box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
 .animation .focused .process-title { display: none; }
 .focused .process-title { visibility: visible; }
-.process-title { height: 26px; background-color: rgba(255,255,255,0.8); border-radius: var(--radius) var(--radius) 0 0; font-size: 12px; visibility: hidden; }
+.process-title { height: 26px; background-color: rgba(255,255,255,0.8); border-radius: var(--radius) var(--radius) 0 0; font-size: 12px; visibility: hidden; border-bottom: 1px solid rgba(0,0,0,0.1); }
 .process-title label { line-height: 26px; margin: 0 70px 0 10px; display: block; }
 .process-title label i { width: 13px; margin-right: 5px; }
 .process-title .close { float: right; width: 26px; height: 26px; border-left: 1px solid rgba(0,0,0,0.1); text-align: center; line-height: 26px; color: red; cursor: pointer; }
@@ -106,7 +108,7 @@ footer .sa i { margin-right: 5px; }
 .process-loading > div > div > i { font-size: 50px; color: var(--color); }
 .process-loading > div label { display: block; margin-top: 15px; font-size: 12px; }
 
-.ui-dark .process-title { background-color: rgba(50,50,50,0.8); }
+.ui-dark .process-title { background-color: rgba(50,50,50,0.8); border-bottom-color: rgba(255,255,255,0.1); }
 .ui-dark .process-title .close { border-left-color: rgba(255,255,255,0.1); }
 .ui-dark .process-loading { background-color: rgba(0,0,0,0.9); }
 

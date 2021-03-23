@@ -319,6 +319,15 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 		if (!target.length)
 			target = el.filter('.iframe');
 
+		if (common.focused) {
+			var apps = self.get();
+			if (apps) {
+				var focused = apps.findItem('id', common.focused);
+				focused && focused.window.rclass('focused');
+			}
+		}
+
+		app.window.aclass('focused');
 		target.append(template_iframe);
 		app.iframe = app.window.find('iframe');
 		app.iframe[0].$loaded = 0;

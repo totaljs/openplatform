@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="@{'%cdn'}/spa.min@18@{if CONF.proicons}pro@{fi}.css" />
 	<script src="@{'%cdn'}/spa.min@18.js"></script>
 	<script>ENVIRONMENT('opadmin');</script>
-	@{import('meta', 'head', 'app.css', 'app.js', 'favicon.ico')}
+	@{import('meta', 'head', 'ui.css + app.css', 'app.js + openplatform.js + ui.js', 'favicon.ico')}
 </head>
 <body data---="exec" class="invisible@{if user.darkmode} ui-dark@{fi}">
 

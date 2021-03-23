@@ -1,3 +1,4 @@
+.color { color: var(--color); }
 .killed { opacity: 0; z-index: 0; }
 .status0 { color: #68B25B !important; }
 .status1 { color: #C55140 !important; }
