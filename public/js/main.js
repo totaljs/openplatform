@@ -319,11 +319,11 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 		if (!target.length)
 			target = el.filter('.iframe');
 
-		if (common.focused) {
+		if (common.focused && common.focused !== app.id) {
 			var apps = self.get();
 			if (apps) {
 				var focused = apps.findItem('id', common.focused);
-				focused && focused.window.rclass('focused');
+				focused && focused.window && focused.window.rclass('focused');
 			}
 		}
 
