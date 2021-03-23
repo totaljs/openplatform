@@ -1328,7 +1328,7 @@ ON('ready', function() {
 // Reads a user
 function readuser(id, callback) {
 	var db = DBMS();
-	db.read('tbl_user').where('id', id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2');
+	db.read('tbl_user').id(id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2');
 	db.error('error-users-404');
 	db.query('SELECT b.id,a.notifications,a.sounds,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 
@@ -1470,7 +1470,7 @@ function refresh_apps() {
 
 		FUNC.refreshapp(app, function(err, item, update) {
 			if (update) {
-				DBMS().modify('tbl_app', item).where('id', item.id).callback(function() {
+				DBMS().modify('tbl_app', item).id(item.id).callback(function() {
 					EMIT('apps.sync', item.id);
 					next();
 				});
@@ -1515,7 +1515,7 @@ var usage_online = function(err, response) {
 	if (response.used !== usage_online_cache) {
 		usage_online_cache = response.used;
 		var id = NOW.format('yyyyMMdd');
-		DBMS().modify('tbl_usage', { online: usage_online_cache, '>maxonline': usage_online_cache }, true).where('id', id).insert(usage_logged_insert);
+		DBMS().modify('tbl_usage', { online: usage_online_cache, '>maxonline': usage_online_cache }, true).id(id).insert(usage_logged_insert);
 	}
 };
 
@@ -1599,11 +1599,11 @@ FUNC.usage_logged = function(user) {
 
 	var db = DBMS();
 	model.dtupdated = model_browser.dtupdated = NOW;
-	db.modify('tbl_usage', model, true).where('id', id).insert(usage_logged_insert);
+	db.modify('tbl_usage', model, true).id(id).insert(usage_logged_insert);
 
 	var browserid = id + user.ua.hash(true).toString(16);
 	model_browser['+count'] = 1;
-	db.modify('tbl_usage_browser', model_browser, true).where('id', browserid).insert(usage_browser_insert, { name: user.ua, id: browserid, mobile: user.mobile });
+	db.modify('tbl_usage_browser', model_browser, true).id(browserid).insert(usage_browser_insert, { name: user.ua, id: browserid, mobile: user.mobile });
 };
 
 FUNC.uploadir = function(type) {
