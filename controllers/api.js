@@ -71,7 +71,7 @@ function json_upload_photo() {
 	}
 
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-	var path = FUNC.uploadir('backgrounds');
+	var path = FUNC.uploadir('photos');
 	PATH.mkdir(path);
 	base64.base64ToFile(U.join(path, id), () => self.json(id));
 }
