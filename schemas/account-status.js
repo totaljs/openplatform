@@ -21,6 +21,7 @@ NEWSCHEMA('Account/Status', function(schema) {
 		DBMS().modify('tbl_user', model).id($.user.id);
 		FUNC.log('account/status', $.user.id, model.statusid + ': ' + model.status, $);
 		EMIT('account/update', $.user.id);
+		MAIN.session.refresh($.user.id, $.sessionid);
 		$.success();
 	});
 

@@ -1,5 +1,4 @@
-const DB_BADGES_RESET = { countbadges: 0 };
-const DB_BADGESNOTIFICATIONS_RESET = { countbadges: 0, countnotifications: 0 };
+const DB_RESET = { countbadges: 0, countnotifications: 0 };
 const DB_NOTIFY_RESET = { countnotifications: 0, dtnotified: null };
 var USAGE_STATS = [];
 
@@ -371,7 +370,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 			} else {
 
-				var notifications = user.countnotifications;
+				var isreset = user.apps[$.id].countnotifications || user.apps[$.id].countbadges;
 
 				data.notifications = user.apps[$.id].notifications !== false;
 				user.countnotifications -= user.apps[$.id].countnotifications;
@@ -381,18 +380,14 @@ NEWSCHEMA('Apps', function(schema) {
 
 				user.apps[$.id].countnotifications = 0;
 
-				if (user.apps[$.id].countbadges || (notifications && !user.countnotifications)) {
-					var db = DBMS();
-					user.apps[$.id].countbadges && db.modify('tbl_user_app', DB_BADGES_RESET).id($.user.id + $.id);
-					if (notifications && !user.countnotifications)
-						db.modify('tbl_user', DB_NOTIFY_RESET).id($.user.id);
-				}
+				var db = DBMS();
+
+				isreset && db.modify('tbl_user_app', DB_RESET).id($.user.id + $.id);
 
 				user.apps[$.id].countbadges = 0;
 				data.newversion = user.apps[$.id].version !== app.version;
 				data.version = user.apps[$.id].version || '';
 
-				var db = DBMS();
 				var tmp;
 
 				if (data.newversion) {

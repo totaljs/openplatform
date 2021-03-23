@@ -25,7 +25,6 @@ MAIN.version = 4800;           // Current version of OpenPlatform
 
 MAIN.meta = {};
 MAIN.metadirectories = {};
-MAIN.notifications = {};
 
 // Temporary
 var USERS = {};
@@ -246,12 +245,6 @@ FUNC.profilelive = function(user) {
 		meta.status = user.status;
 
 	meta.apps = user.apps;
-
-	if (MAIN.notifications[user.id]) {
-		meta.notifications = MAIN.notifications[user.id];
-		delete MAIN.notifications[user.id];
-	}
-
 	return meta;
 };
 

@@ -94,8 +94,17 @@ ON('loaded', function() {
 			db.modify('tbl_user', mod).query('online=TRUE').id(meta.users);
 	};
 
+
 	AUTH(opt);
 	MAIN.session = opt;
+
+	opt.update = function(userid, fn) {
+		for (var m in opt.sessions) {
+			var session = opt.sessions[m];
+			if (session.userid === userid)
+				fn(session.data);
+		}
+	};
 
 	var db = DBMS();
 	db.query('UPDATE tbl_user_session SET online=FALSE WHERE online=TRUE');

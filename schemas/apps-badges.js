@@ -16,10 +16,13 @@ NEWSCHEMA('Apps/Badges', function(schema) {
 				else
 					ua.countbadges = 1;
 
-				// MAIN.session.set2(user.id, user);
-
 				DB_BADGES.countbadges = ua.countbadges;
 				DBMS().mod('tbl_user_app', DB_BADGES).id(user.id + app.id);
+
+				MAIN.session.update(user.id, function(session) {
+					session.apps[app.id].countbadges = ua.countbadges;
+				});
+
 			}
 
 			// Response
@@ -47,47 +50,14 @@ NEWSCHEMA('Apps/Badges', function(schema) {
 
 			DB_BADGES.countbadges = ua.countbadges;
 			DBMS().mod('tbl_user_app', DB_BADGES).id(user.id + app.id);
+
+			MAIN.session.update(user.id, function(session) {
+				session.apps[app.id].countbadges = ua.countbadges;
+			});
 		}
 
 		// Response
 		$.success();
-
-	});
-
-	schema.addWorkflow('all', function($) {
-
-		var app = MAIN.apps.findItem('id', $.id || $.options.id);
-		if (!app) {
-			$.invalid('error-apps-404');
-			return;
-		}
-
-		var model = {};
-		model['+countbadges'] = 1;
-		DBMS().mod('tbl_user_app', model).where('appid', app.id);
-
-		MAIN.session.listlive(function(err, items) {
-
-			var update = [];
-
-			for (var i = 0; i < items.length; i++) {
-				var item = items[i];
-				if (item.data.apps && item.data.apps[app.id]) {
-					var appdata = item.data.apps[app.id];
-					if (appdata.countbadges)
-						appdata.countbadges++;
-					else
-						appdata.countbadges = 1;
-					update.push(item);
-				}
-			}
-
-			update.length && update.wait(function(item, next) {
-				MAIN.session.update(item.id, item.data, null, null, null, next);
-			});
-
-			$.success(true, update.length);
-		});
 
 	});
 

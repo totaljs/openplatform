@@ -48,13 +48,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			model.ip = $.ip;
 			model.userappid = user.id + app.id;
 
-			if (user.online) {
-				if (MAIN.notifications[model.userid])
-					MAIN.notifications[model.userid].push(model);
-				else
-					MAIN.notifications[model.userid] = [model];
-			}
-
 			var can = true;
 			var ua;
 
@@ -93,10 +86,16 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 				DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;
 
 				var db = DBMS();
-				db.mod('tbl_user', DB_NOTIFICATION_USER).where('id', user.id);
-				db.mod('tbl_user_app', DB_NOTIFICATION_APP).where('id', user.id + app.id);
+				db.mod('tbl_user', DB_NOTIFICATION_USER).id(user.id);
+				db.mod('tbl_user_app', DB_NOTIFICATION_APP).id(user.id + app.id);
 				db.add('tbl_user_notification', model);
 				db.callback($.done());
+
+				MAIN.session.update(user.id, function(session) {
+					session.apps[app.id].countnotifications = ua.countnotifications;
+					session.countnotifications = user.countnotifications;
+				});
+
 			} else
 				$.success();
 		});
@@ -128,13 +127,6 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 		model.dtcreated = NOW;
 		model.ip = $.ip;
 		model.userappid = user.id + app.id;
-
-		if (user.online) {
-			if (MAIN.notifications[model.userid])
-				MAIN.notifications[model.userid].push(model);
-			else
-				MAIN.notifications[model.userid] = [model];
-		}
 
 		var can = true;
 		var ua;
@@ -170,10 +162,16 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			DB_NOTIFICATION_APP.countnotifications = ua.countnotifications;
 
 			var db = DBMS();
-			db.mod('tbl_user', DB_NOTIFICATION_USER).where('id', user.id);
-			db.mod('tbl_user_app', DB_NOTIFICATION_APP).where('id', user.id + app.id);
+			db.mod('tbl_user', DB_NOTIFICATION_USER).id(user.id);
+			db.mod('tbl_user_app', DB_NOTIFICATION_APP).id(user.id + app.id);
 			db.add('tbl_user_notification', model);
 			db.callback($.done());
+
+			MAIN.session.update(user.id, function(session) {
+				session.apps[app.id].countnotifications = ua.countnotifications;
+				session.countnotifications = user.countnotifications;
+			});
+
 		} else
 			$.success();
 	});
@@ -181,8 +179,9 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 	schema.addWorkflow('clear', function($) {
 		var db = DBMS();
 		db.rem('tbl_user_notification').where('userid', $.user.id);
-		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).where('id', $.user.id);
+		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).id($.user.id);
 		db.mod('tbl_user_app', DB_NOTIFICATIONS_RESET).where('userid', $.user.id);
+		MAIN.session.refresh($.user.id, $.sessionid);
 		$.success();
 	});
 
