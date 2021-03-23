@@ -18,6 +18,7 @@ db.task(function(responses, response) {
 	db.query('UPDATE cl_config SET value=\'https://marketplace.openplatform.cloud\' WHERE id=\'marketplace\'');
 	db.insert('cl_config', { id: 'auth_cookie', type: 'string', value: U.random_string(10), name: 'auth_cookie', dtcreated: NOW });
 	db.insert('cl_config', { id: 'auth_secret', type: 'string', value: GUID(10), name: 'auth_secret', dtcreated: NOW });
+	db.insert('cl_config', { id: 'cdn', type: 'string', value: CONF.cdn, name: 'cdn', dtcreated: NOW });
 
 	db.query(`CREATE TABLE "public"."tbl_user_session" (
 		"id" varchar(25) NOT NULL,
