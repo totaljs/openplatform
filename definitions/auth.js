@@ -46,7 +46,7 @@ ON('loaded', function() {
 		if (user.online === false || locked)
 			user.online = true;
 
-		if (init) {
+		if (init && (!user.dtlogged2 || user.dtlogged2.format('yyyyMMdd') !== NOW.format('yyyyMMdd'))) {
 			user.mobile = $.req.mobile;
 			user.ua = ($.headers['user-agent'] || '').parseUA();
 			FUNC.usage_logged(user);
