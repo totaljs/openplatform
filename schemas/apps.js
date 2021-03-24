@@ -334,16 +334,13 @@ NEWSCHEMA('Apps', function(schema) {
 
 		switch ($.id) {
 			case '_admin':
-			case '_database':
-			case '_account':
+				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: '/' + $.id.substring(1) + '/', settings: null, id: $.id, mobilemenu: true };
+				$.callback(data);
+				return;
+
 			case '_welcome':
-
-				if ($.id !== '_account' && $.id !== '_welcome' && !user.sa) {
-					$.invalid('error-permissions');
-					return;
-				}
-
-				data = { datetime: NOW, ip: $.ip, accesstoken: $.id + '-' + user.accesstoken + '-' + user.id + '-' + user.verifytoken, url: $.id === '_welcome' ? CONF.welcome : '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: $.id !== '_account' && $.id !== '_welcome' && $.id !== '_settings' };
+			case '_account':
+				data = { datetime: NOW, ip: $.ip, accesstoken: $.id.substring(1) + '-0-' + user.id + '-0', url: $.id === '_welcome' ? CONF.welcome : '/{0}/'.format($.id.substring(1)), settings: null, id: $.id, mobilemenu: false };
 				$.callback(data);
 				return;
 		}
