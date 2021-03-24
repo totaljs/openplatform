@@ -436,6 +436,7 @@ NEWSCHEMA('Users', function(schema) {
 			}
 
 			if (!keys || keys.repo) {
+
 				if (response.repo && typeof(response.repo) === 'object')
 					response.repo = JSON.stringify(response.repo);
 
@@ -660,6 +661,7 @@ NEWSCHEMA('Users', function(schema) {
 				data.colorscheme = model.colorscheme;
 
 			$.extend(data, function() {
+
 				if ($.model.welcome) {
 					var mailmodel = {};
 					mailmodel.firstname = response.firstname;

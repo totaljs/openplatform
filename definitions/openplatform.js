@@ -527,7 +527,7 @@ FUNC.unauthorized = function(obj, $) {
 };
 
 FUNC.notadmin = function($) {
-	if (!$.user.sa) {
+	if ($.user && !$.user.sa) {
 		$.invalid('error-permissions');
 		return true;
 	}
