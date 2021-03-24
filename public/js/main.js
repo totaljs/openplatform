@@ -857,7 +857,7 @@ $(W).on('message', function(e) {
 		case 'play':
 		case 'stop':
 
-			if (!app.internal && app.sounds)
+			if (!app.internal && !app.sounds)
 				return;
 
 			var custom = false;
