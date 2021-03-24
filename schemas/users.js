@@ -37,7 +37,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('note', 'String(80)');
 	schema.define('login', 'String(120)');
 	schema.define('locking', Number); // in minutes (0 = disabled)
-	schema.define('password', 'String(70)'); // optional 30, but 70 is because of backward compatibility
+	schema.define('password', 'String(70)');
 	schema.define('groups', '[String]');
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('checksum', 'String(30)'); // a custom helper
