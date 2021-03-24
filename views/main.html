@@ -239,6 +239,8 @@
 				IMPORT('/_intro/');
 			}
 
+			var skip = false;
+
 			if (NAV.query.open) {
 				var appsearch = NAV.query.open.toLowerCase();
 				for (var i = 0; i < user.apps.length; i++) {
@@ -246,27 +248,23 @@
 					var name = (tmp.name + ' ' + tmp.title).toLowerCase();
 					if (name.indexOf(appsearch) !== -1) {
 						exports.open(tmp.id);
+						skip = true;
 						break;
 					}
 				}
 			}
 
-			var skip = false;
-			if (common.defaultappid) {
+			if (!skip && common.defaultappid) {
 				if (user.apps.findItem('id', common.defaultappid)) {
 					EXEC('openplatform/open', common.defaultappid);
 					skip = true;
 				}
 			}
 
-			if (!skip) {
-				var ls = localStorage;
-				if (ls.getItem('welcome') !== '1' || NAV.query.welcome) {
-					ls.setItem('welcome', '1');
-					skip = true;
-					var app = user.apps.findItem('id', '_welcome');
-					app && EXEC('openplatform/open', app.id);
-				}
+			if (!skip || NAV.query.welcome) {
+				skip = true;
+				var app = user.apps.findItem('id', '_welcome');
+				app && EXEC('openplatform/open', app.id);
 			}
 
 			if (!skip)
