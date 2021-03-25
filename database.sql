@@ -522,6 +522,7 @@ INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VA
 ('auth_cookie', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_cookie', NOW()),
 ('auth_secret', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_secret', NOW()),
 ('cdn', 'string', '//cdn.componentator.com', 'cdn', NOW()),
+('allow_custom_titles', 'boolean', 'true', 'allow_custom_titles', NOW()),
 ('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),
 ('allowbackground', 'boolean', 'true', 'allowbackground', NOW()),
 ('allowclock', 'boolean', 'true', 'allowclock', NOW()),

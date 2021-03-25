@@ -30,7 +30,7 @@
 		<header class="animation">
 			<div class="header">
 				<div class="test" data-bind="user.test__show">@(TEST)</div>
-				<div class="photo" data-bind="user__template__track:name,photo__changes">
+				<div class="photo" data-bind="common.profile__template__changes">
 					<script type="text/html">
 						{{ if value.photo }}
 						<img src="/photos/{{ value.photo }}" class="exec" data-exec="openplatform/profile" />
@@ -300,6 +300,10 @@
 					background = value;
 					CSS(value ? '.bg{background:url(/backgrounds/{0}) 50% 50%;background-size:cover}'.format(value) : '', 'bg');
 				}
+			}, true);
+
+			WATCH('user', function(path, value) {
+				value && SET('common.profile', { photo: value.photo, name: value.name });
 			}, true);
 
 			ON('menu', function(el, app) {
