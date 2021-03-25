@@ -30,7 +30,7 @@
 		<header class="animation">
 			<div class="header">
 				<div class="test" data-bind="user.test__show">@(TEST)</div>
-				<div class="photo" data-bind="!user__template__track:name,photo__changes">
+				<div class="photo" data-bind="user__template__track:name,photo__changes">
 					<script type="text/html">
 						{{ if value.photo }}
 						<img src="/photos/{{ value.photo }}" class="exec" data-exec="openplatform/profile" />
@@ -50,23 +50,26 @@
 
 			</div>
 			<div data---="viewbox__user.apps__margin:@{if CONF.allowclock}100@{else}55@{fi};scrollbar:1;visibleY:0;scrollbarshadow:1" class="invisible">
-				<div class="apps">
-					<div data---="movable__null__selector:.app;exec:view/sort" data-bind="user.apps__template:.app">
-						<script type="text/html">
-							{{ foreach m in value }}
-								{{ if !m.internal && m.online }}
-								<div class="app exec{{ if m.isrunning }} running{{ fi }}" data-exec="view/open" data-id="{{ m.id }}" draggable="true">
-									<span class="close exec" data-exec="view/inlineclose" data-prevent="true"><i class="fas fa-times"></i></span>
-									{{ if m.countbadges || m.countnotifications }}<span class="badges"></span>{{ fi }}
-									<div class="icon"><i class="{{ m.icon | icon }}"></i></div>
-									<div class="name">{{ m.title }}</div>
-								</div>
-								{{ fi }}
-							{{ end }}
-						</script>
+				<div data-bind="user.noapps__hide">
+					<div class="apps">
+						<div data---="movable__null__selector:.app;exec:view/sort" data-bind="user.apps__template:.app">
+							<script type="text/html">
+								{{ foreach m in value }}
+									{{ if !m.internal && m.online }}
+									<div class="app exec{{ if m.isrunning }} running{{ fi }}" data-exec="view/open" data-id="{{ m.id }}" draggable="true">
+										<span class="close exec" data-exec="view/inlineclose" data-prevent="true"><i class="fas fa-times"></i></span>
+										{{ if m.countbadges || m.countnotifications }}<span class="badges"></span>{{ fi }}
+										<div class="icon"><i class="{{ m.icon | icon }}"></i></div>
+										<div class="name">{{ m.title }}</div>
+									</div>
+									{{ fi }}
+								{{ end }}
+							</script>
+						</div>
 					</div>
+					<hr />
 				</div>
-				<hr />
+				<br data-bind="user.noapps__show" />
 				<div class="apps">
 				@{if !user.guest}
 
