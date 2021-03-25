@@ -111,6 +111,8 @@
 					data.push({ id: item.id, position: item.position });
 			}
 
+			user.apps.quicksort('position');
+
 			if (data.length)
 				DAPI('positions', { apps: data }, callback);
 			else
