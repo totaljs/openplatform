@@ -37,7 +37,8 @@ db.task(function(responses, response) {
 		PRIMARY KEY ("id")
 	)`);
 
-	db.query(`CREATE OR REPLACE VIEW view_user AS
+	db.query('DROP VIEW view_user');
+	db.query(`CREATE VIEW view_user AS
 	SELECT a.id,
 		a.supervisorid,
 		a.profileid,
