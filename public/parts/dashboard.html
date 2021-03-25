@@ -217,7 +217,7 @@
 						<div class="dashboard-referrer">
 							<span style="width:{{ m.percentage }}%"></span>
 							<figure>
-								<div>{{ m.percentage }}%</div>
+								<div>{{ m.percentage | format(1) }} %</div>
 								<div>{{ m.name }}</div>
 							</figure>
 						</div>
@@ -235,7 +235,7 @@
 						<div class="dashboard-referrer">
 							<span style="width:{{ m.percentage }}%"></span>
 							<figure>
-								<div>{{ m.percentage }}%</div>
+								<div>{{ m.percentage | format(1) }} %</div>
 								<div>{{ m.name }}</div>
 							</figure>
 						</div>
