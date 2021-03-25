@@ -29,15 +29,15 @@
 	<div data---="animation__null__style:6">
 		<header class="animation">
 			<div class="header">
-
 				<div class="test" data-bind="user.test__show">@(TEST)</div>
-
-				<div class="photo">
-					@{if user.photo && user.photo.indexOf('empty') === -1}
-					<img src="/photos/@{user.photo}" class="exec" data-exec="openplatform/profile" />
-					@{else}
-					<div class="exec" data-exec="openplatform/profile" data-bind="user.name__!html:Thelpers.initials(value)"></div>
-					@{fi}
+				<div class="photo" data-bind="!user__template__track:name,photo__changes">
+					<script type="text/html">
+						{{ if value.photo }}
+						<img src="/photos/{{ value.photo }}" class="exec" data-exec="openplatform/profile" />
+						{{ else }}
+						<div class="exec" data-exec="openplatform/profile">{{ value.name | initials }}</div>
+						{{ fi }}
+					</script>
 				</div>
 				@{if !user.guest}
 				<button class="notifications exec" data-exec="openplatform/notifications"><span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span><i class="far fa-bell"></i></button>

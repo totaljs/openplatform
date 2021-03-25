@@ -76,6 +76,7 @@ NEWSCHEMA('Account', function(schema) {
 			path = 'backgrounds/' + user.background;
 			Fs.unlink(PATH.public(path), NOOP);
 			TOUCH('/' + path);
+			user.background = model.background;
 		}
 
 		var isoauth =  $.user.checksum === 'oauth2';
