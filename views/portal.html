@@ -30,7 +30,7 @@
 		<header class="animation">
 			<div class="header">
 				<div class="test" data-bind="user.test__show">@(TEST)</div>
-				<div class="photo" data-bind="common.profile__template__changes">
+				<div class="photo" data-bind="!common.profile__template__changes">
 					<script type="text/html">
 						{{ if value.photo }}
 						<img src="/photos/{{ value.photo }}" class="exec" data-exec="openplatform/profile" />
