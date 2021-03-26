@@ -8,6 +8,10 @@ FUNC.focus = function() {
 };
 
 Thelpers.initials = function(value, counted) {
+
+	if (typeof(value) !== 'string')
+		return '';
+
 	var index = value.indexOf('.');
 	var arr = value.substring(index + 1).replace(/\s{2,}/g, ' ').trim().split(' ');
 	var initials = ((arr[0].substring(0, 1) + (arr[1] || '').substring(0, 1))).toUpperCase();
