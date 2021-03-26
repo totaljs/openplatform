@@ -38,6 +38,7 @@
 	<div data---="LAZY directory__null__placeholder:@(Search)"></div>
 	<div data---="LAZY menu__null__style:2"></div>
 	<div data---="LAZY tooltip"></div>
+	<div data---="LAZY info"></div>
 	<div data---="LAZY colorpicker"></div>
 	<div data---="LAZY faicons__null__search:@(Search)"></div>
 
@@ -71,7 +72,10 @@
 						<i class="fa fa-bug"></i>
 						<span>@(Reports)</span>
 					</div>
-
+					<div class="item exec" data-exec="main/show" data-if="logs">
+						<i class="fas fa-history"></i>
+						<span>@(Logs)</span>
+					</div>
 					<div class="caption">@(Users)</div>
 					<div class="item exec" data-exec="main/show" data-if="users">
 						<i class="fa fa-users"></i>
@@ -128,6 +132,7 @@
 		<section data-type="main" id="mainbody">
 			<div data---="part__common.page__if:dashboard;url:/parts/dashboard.html;reload:dashboard/reload" class="hidden invisible"></div>
 			<div data---="part__common.page__if:users;url:/parts/users.html;reload:users/reload" class="hidden"></div>
+			<div data---="part__common.page__if:logs;url:/parts/logs.html;reload:logs/reload" class="hidden"></div>
 			<div data---="part__common.page__if:groups;url:/parts/groups.html;reload:groups/reload" class="hidden"></div>
 			<div data---="part__common.page__if:roles;url:/parts/roles.html;reload:roles/reload" class="hidden"></div>
 			<div data---="part__common.page__if:oauth;url:/parts/oauth.html;reload:oauth/reload" class="hidden"></div>

@@ -83,6 +83,8 @@ exports.install = function() {
 	ROUTE('+API    /opapi/    -config_read/id           *Apps/Config          --> read');
 	ROUTE('+API    /opapi/    -notifications            *Apps/Notifications   --> query');
 	ROUTE('+API    /opapi/    -notifications_clear      *Apps/Notifications   --> clear');
+	ROUTE('+API    /opapi/    -logs                     *Logs                 --> query');
+	ROUTE('+API    /opapi/    -logs_clear               *Logs                 --> clear');
 
 	// Members
 	ROUTE('+API    /opapi/    -members                  *Users/Members        --> query');

@@ -14,7 +14,7 @@ db.task(function(responses, response) {
 	db.query('ALTER TABLE tbl_user ADD checksum VARCHAR(30)');
 	db.query('ALTER TABLE tbl_user ADD profileid VARCHAR(50)');
 	db.query('ALTER TABLE tbl_user_app ADD sounds BOOLEAN default true');
-	db.query('ALTER TABLE tbl_log ADD data JSON');
+	db.query('ALTER TABLE tbl_log ADD data TEXT');
 	db.query('UPDATE cl_config SET value=\'https://marketplace.openplatform.cloud\' WHERE id=\'marketplace\'');
 	db.insert('cl_config', { id: 'auth_cookie', type: 'string', value: U.random_string(10), name: 'auth_cookie', dtcreated: NOW });
 	db.insert('cl_config', { id: 'auth_secret', type: 'string', value: GUID(10), name: 'auth_secret', dtcreated: NOW });

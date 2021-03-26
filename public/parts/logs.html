@@ -1,0 +1,83 @@
+<div data-scope="logs">
+
+	<div class="header">
+		<label><i class="fas fa-history"></i>@(Logs)</label>
+		<div>
+			<button class="exec" data-exec="?/clear"><i class="fa fa-trash red"></i>@(Clear)</button>
+		</div>
+	</div>
+
+	<div data---="datagrid__?.items__height:.ui-layout-section;exec:?/filter;dblclick:?/detail;highlight:true;noborder:1;margin:45">
+		<script type="text/plain">
+			[
+				{ name: 'type', text: '@(Type)', width: 200 },
+				{ name: 'userid', text: '@(User ID)', width: 140, hide: true },
+				{ name: 'username', text: '@(User)', width: 200 },
+				{ name: 'ua', text: '@(Device)', width: 200 },
+				{ name: 'ip', text: '@(IP address)', width: 200, align: 1 },
+				{ name: 'dtcreated', text: '@(Created)', width: 140, align: 1, format: '[ts]' },
+				{ name: 'data', text: '@(Data)', width: 500, sort: false, hide: true }
+			]
+		</script>
+	</div>
+</div>
+
+<div data---="panel__common.form__if:logform;icon:fas fa-history;title:@(Log detail);width:500" data-scope="logform" class="hidden invisible">
+	<div>
+		<div data---="detail__?__style:3;defaultgroup:@(Data)" style="padding:10px">
+			<script type="text/plain">
+				[
+					{ name: '@(Type)', path: 'type', type: 'string' },
+					{ name: '@(User ID)', path: 'userid', type: 'string' },
+					{ name: '@(User name)', path: 'username', type: 'string' },
+					{ name: '@(IP address)', path: 'ip', type: 'string' },
+					{ name: '@(Device)', path: 'ua', type: 'string' },
+					{ name: '@(Created)', path: 'dtcreated', type: 'date', format: '[ts]' }
+				]
+			</script>
+		</div>
+		<div class="padding npt">
+			<pre class="json" data-bind="?.data__html:Thelpers.jsonformat(PARSE(value))"></pre>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	PLUGIN('logs', function(exports) {
+
+		exports.refresh = function() {
+			NULL('?.items');
+		};
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.detail = function(row, grid, el) {
+			if (row) {
+				SET('logform', row);
+				SET('common.form', 'logform');
+			}
+		};
+
+		exports.clear = function() {
+			OP.approve('@(Are you sure you want to clear all logs?)', '"trash-o" @(Clear)', function() {
+				DAPI('logs_clear', exports.refresh);
+			});
+		};
+
+		exports.filter = function(type, filter, sort, page) {
+
+			if (type === 'init')
+				return;
+
+			if (filter == null)
+				filter = {};
+
+			filter.page = page || 1;
+			filter.sort = sort;
+			DAPI(QUERIFY('logs', filter), '?.items');
+		};
+	});
+</script>
