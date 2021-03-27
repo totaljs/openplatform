@@ -13,7 +13,7 @@ NEWSCHEMA('Users/Assign', function(schema) {
 
 		var db = DBMS();
 
-		FUNC.log('users/assign', null, 'Add: ' + model.add.join(',') + ', Rem: ' + model.rem.join(','), $);
+		db.log($, model);
 
 		if (model.add && model.add.length) {
 			for (var i = 0; i < model.add.length; i++) {

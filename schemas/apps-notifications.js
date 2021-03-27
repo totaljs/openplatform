@@ -181,6 +181,7 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 		db.rem('tbl_user_notification').where('userid', $.user.id);
 		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).id($.user.id);
 		db.mod('tbl_user_app', DB_NOTIFICATIONS_RESET).where('userid', $.user.id);
+		db.log($);
 		MAIN.session.refresh($.user.id, $.sessionid);
 		$.success();
 	});

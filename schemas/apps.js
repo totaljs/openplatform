@@ -196,10 +196,10 @@ NEWSCHEMA('Apps', function(schema) {
 
 		$.extend && $.extend(model);
 
-		DBMS().insert('tbl_app', model).callback(function(err, response) {
+		var db = DBMS();
+		db.insert('tbl_app', model).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
-					FUNC.log('apps/create', model.id, model.name, $);
 					EMIT('apps/create', model.id);
 					FUNC.refreshguest();
 					FUNC.updateroles($.done(model.id));
@@ -207,6 +207,7 @@ NEWSCHEMA('Apps', function(schema) {
 			} else
 				$.invalid(err);
 		});
+		db.log($, model, model.name);
 	});
 
 	schema.setUpdate(function($, model) {
@@ -247,10 +248,11 @@ NEWSCHEMA('Apps', function(schema) {
 
 		$.extend && $.extend(model);
 
-		DBMS().modify('tbl_app', model).id($.id).callback(function(err, response) {
+		var db = DBMS();
+
+		db.mod('tbl_app', model).id($.id).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
-					FUNC.log('apps/update', $.id, model.name, $);
 					EMIT('apps/update', $.id);
 					FUNC.refreshguest();
 					FUNC.updateroles($.done($.id));
@@ -258,6 +260,8 @@ NEWSCHEMA('Apps', function(schema) {
 			} else
 				$.invalid(err || 'error-apps-404');
 		});
+
+		db.log($, model, model.name);
 	});
 
 	schema.setRemove(function($) {
@@ -266,15 +270,16 @@ NEWSCHEMA('Apps', function(schema) {
 			return;
 
 		var app = MAIN.apps.findItem('id');
-		FUNC.log('apps/remove', $.id, app ? app.name : '', $);
 
 		$.extend && $.extend(app);
 
-		DBMS().remove('tbl_app').id($.id).callback(function() {
+		var db = DBMS();
+		db.remove('tbl_app').id($.id).callback(function() {
 			FUNC.refreshapps(function() {
 				FUNC.updateroles($.done());
 			});
 		});
+		db.log($, null, app ? app.name : '');
 	});
 
 	schema.addWorkflow('meta', function($) {
@@ -320,9 +325,16 @@ NEWSCHEMA('Apps', function(schema) {
 		var user = $.user;
 		var app = user.apps[$.id];
 		if (app) {
+
 			app.favorite = app.favorite == null ? true : !app.favorite;
-			DBMS().modify('tbl_user_app', { favorite: app.favorite }).id(user.id + $.id);
 			$.success(true, app.favorite);
+
+			var db = DBMS();
+			db.modify('tbl_user_app', { favorite: app.favorite }).id(user.id + $.id);
+
+			app = MAIN.apps.findItem('id', $.id);
+			db.log($, null, app.name);
+
 		} else
 			$.invalid('error-apps-404');
 	});
@@ -351,8 +363,11 @@ NEWSCHEMA('Apps', function(schema) {
 			return;
 		}
 
+		var db = DBMS();
+
+		db.log($, null, app.name);
+
 		data = user.guest ? FUNC.metaguest() : FUNC.meta(app, user);
-		FUNC.log('apps/run', app.id, app.name, $);
 
 		if (data) {
 
@@ -376,8 +391,6 @@ NEWSCHEMA('Apps', function(schema) {
 					user.countnotifications = 0;
 
 				user.apps[$.id].countnotifications = 0;
-
-				var db = DBMS();
 
 				isreset && db.modify('tbl_user_app', DB_RESET).id($.user.id + $.id);
 
@@ -453,10 +466,15 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.addWorkflow('mute_notifications', function($) {
 		var user = $.user;
 		if (user.apps[$.id]) {
+			var app = MAIN.apps.findItem('id', $.id);
 			var model = { notifications: (user.apps[$.id].notifications == null || user.apps[$.id].notifications == true) ? false : true };
-			DBMS().modify('tbl_user_app', model).id($.user.id + $.id);
+
 			user.apps[$.id].notifications = model.notifications;
 			$.success(true, model.notifications);
+
+			var db = DBMS();
+			db.modify('tbl_user_app', model).id($.user.id + $.id);
+			db.log($, null, app.name);
 		} else
 			$.invalid(404);
 	});
@@ -464,10 +482,15 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.addWorkflow('mute_sounds', function($) {
 		var user = $.user;
 		if (user.apps[$.id]) {
+			var app = MAIN.apps.findItem('id', $.id);
 			var model = { sounds: (user.apps[$.id].sounds == null || user.apps[$.id].sounds == true) ? false : true };
-			DBMS().modify('tbl_user_app', model).id($.user.id + $.id);
+
 			user.apps[$.id].sounds = model.sounds;
 			$.success(true, model.sounds);
+
+			var db = DBMS();
+			db.modify('tbl_user_app', model).id($.user.id + $.id);
+			db.log($, null, app.name);
 		} else
 			$.invalid(404);
 	});
@@ -505,6 +528,7 @@ NEWSCHEMA('Apps/Positions', function(schema) {
 			user.apps[app.id].position = app.position;
 			db.modify('tbl_user_app', { position: app.position }).id(user.id + app.id);
 		}
+		db.log($, model);
 		db.callback($.done());
 	});
 });

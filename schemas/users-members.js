@@ -31,16 +31,19 @@ NEWSCHEMA('Users/Members', function(schema) {
 			model.dtcreated = NOW;
 
 			db.insert('tbl_user_member', model).where('email', model.email);
+			db.log($, model, model.email);
 			db.callback($.done());
 
-			FUNC.log('users/members', $.user.id, model.email, $);
 			FUNC.clearcache($.user.id);
 		});
 
 	});
 
 	schema.setRemove(function($) {
-		DBMS().remove('tbl_user_member').id($.id).where('userid', $.user.id).callback($.done());
+		var db = DBMS();
+		db.read('tbl_user_member').fields('email').id($.id).where('userid', $.user.id).error(404).data(response => db.log($, null, response.email));
+		db.remove('tbl_user_member').id($.id);
+		db.callback($.done());
 	});
 
 });

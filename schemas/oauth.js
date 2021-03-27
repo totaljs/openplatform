@@ -28,8 +28,9 @@ NEWSCHEMA('OAuth', function(schema) {
 		model.accesstoken = GUID(35);
 		model.dtcreated = NOW;
 		delete model.rebuild;
-		DBMS().insert('tbl_oauth', model).callback($.done(model.id));
-		FUNC.log('oauth/create', model.id, model.name, $);
+		var db = DBMS();
+		db.insert('tbl_oauth', model).callback($.done(model.id));
+		db.log($, model, model.name);
 	});
 
 	schema.setUpdate(function($, model) {
@@ -43,8 +44,9 @@ NEWSCHEMA('OAuth', function(schema) {
 			model.accesstoken = GUID(35);
 
 		delete model.rebuild;
-		DBMS().modify('tbl_oauth', model).id($.id).callback($.done($.id));
-		FUNC.log('oauth/update', $.id, model.name, $);
+		var db = DBMS();
+		db.modify('tbl_oauth', model).id($.id).callback($.done($.id));
+		db.log($, model, model.name);
 	});
 
 	schema.setRemove(function($) {
@@ -52,8 +54,12 @@ NEWSCHEMA('OAuth', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		DBMS().remove('tbl_oauth').id($.id).callback($.done($.id));
-		FUNC.log('oauth/remove', $.id, '', $);
+		var db = DBMS();
+		db.one('tbl_oauth').fields('name').error(404).data(function(response) {
+			db.log($, null, response.name);
+		});
+		db.rem('tbl_oauth').id($.id);
+		db.callback($.done($.id));
 	});
 
 });

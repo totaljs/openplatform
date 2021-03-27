@@ -5,8 +5,7 @@ NEWSCHEMA('Users/Password', function(schema) {
 	schema.addWorkflow('exec', function($, model) {
 
 		var db = DBMS();
-		db.read('tbl_user').where('login', model.name).fields('id,firstname,lastname,middlename,name,language,email,otp,inactive,blocked');
-		db.error('error-credentials');
+		db.read('tbl_user').where('login', model.name).fields('id,firstname,lastname,middlename,name,language,email,otp,inactive,blocked').error('error-credentials').data(response => db.log($, model, response.name));
 		db.callback(function(err, response) {
 
 			if (err) {
@@ -31,7 +30,6 @@ NEWSCHEMA('Users/Password', function(schema) {
 			model.token = ENCRYPT({ id: response.id, date: NOW, type: 'password' }, CONF.secretpassword);
 			model.email = response.email;
 
-			FUNC.log('password', response.id, response.name, $);
 			EMIT('users/password', response.id);
 			MAIL(model.email, '@(Password recovery)', '/mails/password', model, response.language);
 			$.success();

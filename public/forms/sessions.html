@@ -4,7 +4,7 @@
 			<script type="text/html">
 				<figure>
 					<div class="item{{ if value.current }} current{{ fi }}" data-id="{{ value.id }}">
-						<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="fas fa-trash-o"></i></span><b class="hellip"><i class="fa {{ value.ua | deviceicon }} mr5"></i>{{ value.ua }}</b></div>
+						<div class="name">{{ if !value.current }}<span class="exec" data-exec="?/cancel" data-prevent="true"><i class="fas fa-trash-o"></i></span>{{ fi }}<b class="hellip"><i class="fa {{ value.ua | deviceicon }} mr5"></i>{{ value.ua }}</b></div>
 						<div class="padding">
 							<div class="value"><span><a href="https://tools.keycdn.com/geo?host={{ value.ip | ipparser }}" target="_blank">{{ value.ip | ipparser }}</a></span>@(IP address)</div>
 							<div class="value"><span>{{ value.dtcreated | format('[ts]') }}</span>@(Created)</div>
@@ -28,12 +28,9 @@
 		};
 
 		exports.cancel = function(el) {
-			var row = el.closest('tr');
-			var indexer = +row.attrd('index');
-			var sessions = GET('?');
-			var session = sessions[indexer];
+			var id = el.closest('.item').attrd('id');
 			SETTER('approve/show', '@(Are you sure you want to cancel selected session?)', '"trash-o" @(Yes)', function() {
-				DAPI('sessions_remove/' + session.id, exports.reload);
+				DAPI('sessions_remove/' + id, exports.reload);
 			});
 		};
 	});

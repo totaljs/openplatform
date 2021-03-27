@@ -5,10 +5,10 @@ NEWSCHEMA('Account/Totp', function(schema) {
 
 	schema.addWorkflow('verify', function($, model) {
 		var output = MODULE('totp').totpverify(model.secret, model.code);
-		if (output == null)
-			$.invalid('error-totp');
-		else
+		if (output)
 			$.callback(output);
+		else
+			$.invalid('error-totp');
 	});
 
 	schema.addWorkflow('generate', function($) {

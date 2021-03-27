@@ -313,16 +313,14 @@ NEWSCHEMA('Users', function(schema) {
 						FUNC.refreshmetadelay();
 						$.success(model.id);
 						EMIT('users/create', model.id);
-						FUNC.log('users/create', model.id, model.name, $);
 					});
 				} else {
 					FUNC.refreshgroupsrolesdelay();
 					FUNC.refreshmetadelay();
 					$.success(model.id);
 					EMIT('users/create', model.id);
-					FUNC.log('users/create', model.id, model.name, $);
 				}
-			});
+			}).log($, model, model.name);
 		});
 	});
 
@@ -672,12 +670,11 @@ NEWSCHEMA('Users', function(schema) {
 				}
 
 				var id = response.id;
-				response.dbms.replace(data).save(function() {
+				response.dbms.replace(data).log($, data, response.name).save(function() {
 					if (!keys || keys.apps) {
 						model.id = id;
 						processapps(model, function() {
 							$.success(id);
-							FUNC.log('users/update', id, model.name, $);
 							EMIT('users/update', id);
 							MAIN.session.refresh(id);
 
@@ -690,7 +687,6 @@ NEWSCHEMA('Users', function(schema) {
 						});
 					} else {
 						$.success(id);
-						FUNC.log('users/update', id, model.name, $);
 						EMIT('users/update', id);
 						MAIN.session.refresh(id);
 
@@ -726,11 +722,11 @@ NEWSCHEMA('Users', function(schema) {
 					// Removes data
 					db.remove('tbl_user').where('id', id).callback(function() {
 						FUNC.refreshmetadelay();
-						FUNC.log('users/remove', response.id, response.name, $);
 						EMIT('users/remove', id);
 						MAIN.session.refresh(id);
 						$.success();
 					});
+					db.log($, null, response.name);
 				});
 
 			} else

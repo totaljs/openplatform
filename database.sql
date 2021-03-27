@@ -197,16 +197,6 @@ CREATE TABLE "public"."tbl_user_config" (
 	CONSTRAINT "tbl_user_config_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE
 );
 
-CREATE TABLE "public"."tbl_user_log" (
-	"userid" varchar(25),
-	"appid" varchar(25),
-	"type" varchar(10),
-	"body" varchar(500),
-	"dtcreated" timestamp DEFAULT now(),
-	CONSTRAINT "tbl_user_log_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_user_log_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE
-);
-
 CREATE TABLE "public"."tbl_user_session" (
 	"id" varchar(25) NOT NULL,
 	"userid" varchar(25),
@@ -228,8 +218,8 @@ CREATE TABLE "public"."tbl_log" (
 	"id" serial,
 	"userid" varchar(25),
 	"rowid" varchar(50),
-	"type" varchar(25),
-	"message" varchar(200),
+	"type" varchar(80),
+	"message" varchar(500),
 	"username" varchar(60),
 	"ua" varchar(30),
 	"data" text,

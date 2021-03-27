@@ -369,7 +369,10 @@ function logout() {
 
 function lock() {
 	var self = this;
-	DBMS().modify('tbl_user_session', { locked: true }).id(self.sessionid);
+	var db = DBMS();
+	db.modify('tbl_user_session', { locked: true }).id(self.sessionid);
+	self.ID = 'Lock';
+	db.log(self);
 	self.user.locked = true;
 	self.redirect('/');
 }

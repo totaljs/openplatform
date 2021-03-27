@@ -38,6 +38,27 @@ MAIN.logout = function(controller) {
 
 MAIN.readuser = readuser;
 
+DBMS.audit(function($, data, message) {
+
+	var model = {};
+	model.type = $.ID;
+	model.userid = $.user ? $.user.id : null;
+	model.username = $.user ? $.user.name : '';
+	model.message = message;
+	model.ua = $.ua;
+	model.rowid = $.id || null;
+	model.ip = $.ip;
+	model.dtcreated = NOW = new Date();
+
+	if (data) {
+		data.password = undefined;
+		data.screenshot = undefined;
+		model.data = JSON.stringify(data);
+	}
+
+	this.insert('tbl_log', model).nobind();
+});
+
 FUNC.loginid = function(controller, userid, callback, note) {
 	FUNC.cookie(controller, userid, callback, note);
 };
@@ -99,7 +120,10 @@ FUNC.login = function(login, password, callback) {
 FUNC.logout = function(controller) {
 
 	if (controller.sessionid) {
-		DBMS().remove('tbl_user_session').id(controller.sessionid);
+		var db = DBMS();
+		db.remove('tbl_user_session').id(controller.sessionid);
+		controller.ID = 'Logout';
+		db.log(controller);
 		MAIN.session.logout(controller);
 	} else if (controller.user && controller.user.guest)
 		controller.cookie(MAIN.session.cookie, '', '-1 day');
@@ -404,7 +428,7 @@ FUNC.decodetoken = function($, callback) {
 	var sign = $.query.accesstoken;
 	if (!sign || sign.length < 30) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		AUDIT('tokens', $, 'FUNC.decodetoken:sign==empty', sign);
+		FUNC.log('error-token', null, 'FUNC.decodetoken:sign==empty', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -433,7 +457,7 @@ FUNC.decodetoken = function($, callback) {
 
 	if (app == null) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		AUDIT('tokens', $, 'FUNC.decodetoken:app==null', sign);
+		FUNC.log('error-token', null, 'FUNC.decodetoken:app==null', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -551,7 +575,6 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (!sign || sign.length < 30) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		// AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==empty', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -565,7 +588,6 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (!sign) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		// AUDIT('tokens', $, 'FUNC.decodeauthtoken:sign==null', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -579,7 +601,6 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	if (app == null) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		// AUDIT('tokens', $, 'FUNC.decodeauthtoken:app==null', sign);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}

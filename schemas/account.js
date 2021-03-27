@@ -193,16 +193,14 @@ NEWSCHEMA('Account', function(schema) {
 
 		$.extend && $.extend(model);
 
-		DBMS().modify('tbl_user', model).id($.user.id).error('error-users-404').callback(function(err, response) {
-			if (response) {
-				user.rev = GUID(5);
-				MAIN.session.refresh(user.id, $.sessionid);
-				FUNC.log('account/update', $.user.id, 'Updated account: ' + $.user.name, $);
-				EMIT('users/update', user.id, 'account');
-				$.success();
-			} else
-				$.invalid(err);
+		var db = DBMS();
+		db.modify('tbl_user', model).id($.user.id).error('error-users-404').done($, function() {
+			user.rev = GUID(5);
+			MAIN.session.refresh(user.id, $.sessionid);
+			EMIT('users/update', user.id, 'account');
+			$.success();
 		});
+		db.log($, model);
 	});
 
 	schema.addWorkflow('unlock', function($) {
@@ -231,6 +229,7 @@ NEWSCHEMA('Account', function(schema) {
 			DDOS[id] = 1;
 
 		if (DDOS[id] > 4) {
+			delete DDOS[id];
 			FUNC.logout($.controller);
 			return;
 		}
@@ -241,13 +240,16 @@ NEWSCHEMA('Account', function(schema) {
 			return;
 		}
 
-		FUNC.log('account/unlock', $.user.id, 'Unlock screen', $);
-		DBMS().modify('tbl_user_session', { locked: false }).id($.sessionid).done($, function() {
+		var db = DBMS();
+
+		db.mod('tbl_user_session', { locked: false }).id($.sessionid).done($, function() {
 			$.user.locked = false;
 			$.user.dtlogged2 = NOW;
 			delete DDOS[id];
 			$.success();
 		});
+
+		db.log($);
 	});
 
 	schema.addWorkflow('current', function($) {

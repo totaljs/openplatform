@@ -13,15 +13,16 @@ NEWSCHEMA('Account/Sessions', function(schema) {
 
 	schema.setRemove(function($) {
 		var id = $.id;
+		var db = DBMS();
 		var session = MAIN.session.sessions[id];
-		if (session && session.userid === $.user.id) {
-			DBMS().remove('tbl_user_session').id(id).done($, function() {
-				var iscurrent = session.sessionid === $.sessionid;
-				delete MAIN.session.sessions[id];
-				$.success(true, iscurrent);
-			});
-		} else
-			$.invalid('@(Invalid session identifier)');
+		var iscurrent = session && session.sessionid === $.sessionid;
+
+		if (session)
+			delete MAIN.session.sessions[id];
+
+		db.one('tbl_user_session').fields('ua').id(id).where('userid', $.user.id).error('@(Invalid session identifier)').data(response => db.log($, null, response.ua));
+		db.rem('tbl_user_session').id(id);
+		db.callback($.done(iscurrent));
 	});
 
 });

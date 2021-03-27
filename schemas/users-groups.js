@@ -75,11 +75,12 @@ NEWSCHEMA('Users/Groups', function(schema) {
 			}
 		}
 
+		db.log($, model, model.name);
+
 		db.callback(function() {
 			FUNC.refreshgroupsroles(function() {
 				FUNC.refreshmeta($.done(id));
 				EMIT('groups/' + (insert ? 'create' : 'udpate'), id);
-				FUNC.log('groups/' + (insert ? 'create' : 'update'), id, model.name, $);
 			});
 		});
 	});
@@ -98,10 +99,11 @@ NEWSCHEMA('Users/Groups', function(schema) {
 
 		var pgid = PG_ESCAPE(id);
 		var db = DBMS();
+
+		db.read('tbl_group').fields('name').query('id=' + pgid).error(404).data(response => db.log($, null, response.name));
 		db.remove('tbl_group').query('id=' + pgid);
 		db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_remove(groups,{0}) WHERE ({0}=ANY(groups))'.format(pgid));
 		db.callback(function() {
-			FUNC.log('groups/remove', id, group.name, $);
 			FUNC.refreshgroupsroles(function() {
 				FUNC.refreshmeta($.done());
 				EMIT('groups/remove', id);

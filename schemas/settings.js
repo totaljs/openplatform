@@ -117,7 +117,7 @@ NEWSCHEMA('Settings', function(schema) {
 		}
 
 		EMIT('settings/update');
-		FUNC.log('settings/update', null, '', $);
+		db.log($, model);
 		db.callback(() => FUNC.reconfigure($.done()));
 	});
 
