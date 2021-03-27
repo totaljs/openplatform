@@ -37,10 +37,12 @@ NEWSCHEMA('Users/Reports', function(schema) {
 			if (screenshot)
 				model.screenshot = screenshot.base64ToBuffer();
 
+			var app = MAIN.apps.findItem('id', model.appid);
+
 			$.extend && $.extend(model);
 			db.insert('tbl_user_report', model).callback($.done());
+			db.log($, model, app.name);
 
-			var app = MAIN.apps.findItem('id', model.appid);
 			var builder = [];
 			var hr = '<div style="margin:15px 0 0;height:5px;border:0;border-top:1px solid #E0E0E0"></div>';
 
@@ -90,7 +92,9 @@ NEWSCHEMA('Users/Reports', function(schema) {
 	schema.addWorkflow('solved', function($) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-		DBMS().modify('tbl_user_report', { solved: true, dtsolved: NOW }).id($.id).callback($.done());
+		var db = DBMS();
+		db.modify('tbl_user_report', { solved: true, dtsolved: NOW }).id($.id).callback($.done());
+		db.log($, null, $.id);
 	});
 
 	schema.addWorkflow('screenshot', function($) {
@@ -108,7 +112,9 @@ NEWSCHEMA('Users/Reports', function(schema) {
 	schema.setRemove(function($) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-		DBMS().remove('tbl_user_report').id($.id).callback($.done());
+		var db = DBMS();
+		db.remove('tbl_user_report').id($.id).callback($.done());
+		db.log($, null, $.id);
 	});
 
 });

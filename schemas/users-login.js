@@ -31,7 +31,9 @@ NEWSCHEMA('Users/Login', function(schema) {
 				return;
 			}
 
-			DBMS().one('tbl_user').id(userid).fields('id,name,blocked,inactive').callback(function(err, response) {
+			var db = DBMS();
+
+			db.one('tbl_user').id(userid).fields('id,name,blocked,inactive').callback(function(err, response) {
 
 				if (response == null) {
 
@@ -54,8 +56,8 @@ NEWSCHEMA('Users/Login', function(schema) {
 					return;
 				}
 
+				db.log($, model, response.name);
 				EMIT('users/login', response.id);
-				FUNC.log('login', response.id, response.name, $);
 				FUNC.cookie($, response.id, $.done());
 			});
 
@@ -77,7 +79,8 @@ NEWSCHEMA('Users/Login', function(schema) {
 				return;
 			}
 
-			DBMS().one('tbl_user').id(userid).fields('id,name,blocked,inactive').callback(function(err, response) {
+			var db = DBMS();
+			db.one('tbl_user').id(userid).fields('id,name,blocked,inactive').callback(function(err, response) {
 
 				if (response == null) {
 					$.invalid('error-credentials');
@@ -94,8 +97,8 @@ NEWSCHEMA('Users/Login', function(schema) {
 					return;
 				}
 
+				db.log($, model, response.name);
 				EMIT('users/login', response.id);
-				FUNC.log('login', response.id, response.name, $);
 				FUNC.cookie($, response.id, $.done());
 			});
 

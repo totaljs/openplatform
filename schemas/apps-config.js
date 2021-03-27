@@ -15,8 +15,8 @@ NEWSCHEMA('Apps/Config', function(schema) {
 		var id = $.user.id + $.id;
 		DBMS().modify('tbl_user_config', { body: model.body, dtupdated: NOW }, true).id(id).insert(function(doc) {
 			doc.id = id;
-			doc.appid = obj.app.id;
-			doc.userid = obj.user.id;
+			doc.appid = $.id;
+			doc.userid = $.user.id;
 			doc.dtupdated = undefined;
 			doc.dtcreated = NOW;
 		}).callback($.done());

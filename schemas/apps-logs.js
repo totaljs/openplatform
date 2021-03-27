@@ -11,8 +11,25 @@ NEWSCHEMA('Apps/Logs', function(schema) {
 			return;
 		}
 
+		var app = MAIN.apps.findItem('id', model.appid);
+		if (!app) {
+			$.invalid('error-apps-404');
+			return;
+		}
+
+		model.type = app.name + '.' + model.type;
+		model.message = model.body;
 		model.userid = $.user.id;
-		DBMS().insert('tbl_user_log', model);
+		model.username = $.user.name;
+		model.rowid = model.appid;
+		model.ip = $.ip;
+		model.ua = $.ua;
+		model.dtcreated = NOW;
+
+		delete model.appid;
+		delete model.body;
+
+		DBMS().insert('tbl_log', model);
 		$.success();
 	});
 

@@ -9,7 +9,6 @@ NEWSCHEMA('Mail', function(schema) {
 		var mail = model.type === 'html' ? MAIL(model.email, model.subject, 'mails/template', model, NOOP, $.user.language) : LOGMAIL(model.email, model.subject, model.body);
 		mail.reply($.user.email);
 		$.success();
-		AUDIT('audit', $, 'Mail/send', model.subject);
 	});
 
 });

@@ -45,7 +45,10 @@ DBMS.audit(function($, data, message) {
 	model.userid = $.user ? $.user.id : null;
 	model.username = $.user ? $.user.name : '';
 	model.message = message;
-	model.ua = $.ua || ($.headers['user-agent'] || ''.toString(30));
+
+	if ($.headers)
+		model.ua = $.ua || ($.headers['user-agent'] || '').toString(30);
+
 	model.rowid = $.id || null;
 	model.ip = $.ip;
 	model.dtcreated = NOW = new Date();
@@ -106,7 +109,9 @@ FUNC.login = function(login, password, callback) {
 				callback(null, 'otp');
 			} else {
 
-				if (response.password === password.hash(CONF.hashmode || 'sha256', CONF.hashsalt)) {
+				if (FUNC.customlogin) {
+					FUNC.customlogin(login, password, response, (err, userid) => callback(err, userid));
+				} else if (response.password === password.hash(CONF.hashmode || 'sha256', CONF.hashsalt)) {
 					callback(null, response.id);
 					return;
 				}
@@ -1468,8 +1473,8 @@ FUNC.log = function(type, rowid, message, $) {
 			obj.ua = $.user.ua;
 			obj.userid = $.user.id;
 			obj.username = $.user.name;
-		} else
-			obj.ua = $.ua || ($.headers['user-agent'] || ''.toString(30));
+		} else if ($.headers)
+			obj.ua = $.ua || ($.headers['user-agent'] || '').toString(30);
 
 	}
 

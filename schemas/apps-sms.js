@@ -9,7 +9,6 @@ NEWSCHEMA('Apps/SMS', function(schema) {
 				if (CONF.totalapi) {
 					model.from = CONF.name;
 					TotalAPI('sms', model, $.done());
-					AUDIT('audit', $, 'SMS/send', obj.app.name);
 				} else
 					$.invalid('@(Invalid Total API token)');
 			} else
