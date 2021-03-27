@@ -454,7 +454,6 @@ FUNC.decodetoken = function($, callback) {
 	var sign = $.query.accesstoken;
 	if (!sign || sign.length < 30) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		FUNC.log('Error/Token', $.query, 'FUNC.decodetoken:sign==empty', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -483,7 +482,7 @@ FUNC.decodetoken = function($, callback) {
 
 	if (app == null) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		FUNC.log('Error/Token', $.query, 'FUNC.decodetoken:app==null', $);
+		FUNC.log('Error/Token', arr[0], 'FUNC.decodetoken:app==null', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
