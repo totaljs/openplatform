@@ -49,7 +49,9 @@ DBMS.audit(function($, data, message) {
 	if ($.headers)
 		model.ua = $.ua || ($.headers['user-agent'] || '').toString(30);
 
-	model.rowid = $.id || null;
+	if ($.id)
+		model.rowid = $.id.substring(50);
+
 	model.ip = $.ip;
 	model.dtcreated = NOW = new Date();
 

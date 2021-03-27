@@ -766,7 +766,7 @@ $(W).on('message', function(e) {
 				SETTER('message/warning', '<div style="margin-bottom:10px;font-size:16px" class="b"><i class="{0} mr5"></i>{1}</div>'.format(FUNC.icon(app.icon), app.title) + data.body[0].error.markdown(MD_LINE));
 			} else {
 				FUNC.playsound('done', app.id);
-				EMIT('app_success', app, data.body);
+				EMIT('app_success', app, data.body, true);
 			}
 			break;
 

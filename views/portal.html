@@ -279,17 +279,21 @@
 				}
 			});
 
-			ON('app_success', function(app, msg) {
+			ON('app_success', function(app, msg, nosound) {
 				var el = app.window.find('.process-message').aclass('process-message-success').html('<i class="fas fa-check-circle"></i>' + Thelpers.encode(msg));
-				FUNC.playsound('success', app);
+				if (!nosound)
+					FUNC.playsound('success', app);
 				setTimeout2('titlemessage', function() {
 					el.rclass2('process-message-');
 				}, 2500);
 			});
 
-			ON('app_warning', function(app, msg) {
+			ON('app_warning', function(app, msg, nosound) {
 				var el = app.window.find('.process-message').aclass('process-message-warning').html('<i class="fas fa-exclamation-triangle"></i>' + Thelpers.encode(msg));
-				FUNC.playsound('alert', app);
+
+				if (!nosound)
+					FUNC.playsound('alert', app);
+
 				setTimeout2('titlemessage', function() {
 					el.rclass2('process-message-');
 				}, 2500);
