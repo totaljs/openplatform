@@ -45,7 +45,7 @@ DBMS.audit(function($, data, message) {
 	model.userid = $.user ? $.user.id : null;
 	model.username = $.user ? $.user.name : '';
 	model.message = message;
-	model.ua = $.ua;
+	model.ua = $.ua || ($.headers['user-agent'] || ''.toString(30));
 	model.rowid = $.id || null;
 	model.ip = $.ip;
 	model.dtcreated = NOW = new Date();
@@ -428,7 +428,7 @@ FUNC.decodetoken = function($, callback) {
 	var sign = $.query.accesstoken;
 	if (!sign || sign.length < 30) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		FUNC.log('error-token', null, 'FUNC.decodetoken:sign==empty', $);
+		FUNC.log('Error/Token', $.query, 'FUNC.decodetoken:sign==empty', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -457,7 +457,7 @@ FUNC.decodetoken = function($, callback) {
 
 	if (app == null) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		FUNC.log('error-token', null, 'FUNC.decodetoken:app==null', $);
+		FUNC.log('Error/Token', $.query, 'FUNC.decodetoken:app==null', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
@@ -521,7 +521,7 @@ FUNC.unauthorized = function(obj, $) {
 		if (token !== app.origintoken) {
 			$.invalid('error-invalid-origin');
 			if (!ORIGINERRORS[$.ip]) {
-				FUNC.log('error-origin', null, app.name + ':' + app.origintoken + ' != ' + token);
+				FUNC.log('Error/Origin', null, app.name + ':' + app.origintoken + ' != ' + token);
 				ORIGINERRORS[$.ip] = 1;
 			}
 			return true;
@@ -529,7 +529,7 @@ FUNC.unauthorized = function(obj, $) {
 	} else if (app.origin && app.origin.length) {
 		if (checkorigin(app.origin, $.ip) == -1 && app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 			if (!ORIGINERRORS[$.ip]) {
-				FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
+				FUNC.log('Error/Origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
 				ORIGINERRORS[$.ip] = 1;
 			}
 			$.invalid('error-invalid-origin');
@@ -537,7 +537,7 @@ FUNC.unauthorized = function(obj, $) {
 		}
 	} else if (app.hostname !== $.ip && (!$.user || $.user.id !== user.id)) {
 		if (!ORIGINERRORS[$.ip]) {
-			FUNC.log('error-origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
+			FUNC.log('Error/Origin', null, app.name + ':' + app.hostname + ' != ' + $.ip);
 			ORIGINERRORS[$.ip] = 1;
 		}
 		$.invalid('error-invalid-origin');
@@ -1468,11 +1468,11 @@ FUNC.log = function(type, rowid, message, $) {
 			obj.ua = $.user.ua;
 			obj.userid = $.user.id;
 			obj.username = $.user.name;
-		}
+		} else
+			obj.ua = $.ua || ($.headers['user-agent'] || ''.toString(30));
 
 	}
 
-	LOGGER('audit', JSON.stringify(obj));
 	DBMS().insert('tbl_log', obj);
 };
 
