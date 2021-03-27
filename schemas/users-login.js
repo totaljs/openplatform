@@ -14,6 +14,11 @@ NEWSCHEMA('Users/Login', function(schema) {
 
 		FUNC.login(model.name, model.password, function(err, userid) {
 
+			if (err) {
+				$.invalid(err);
+				return;
+			}
+
 			if (!userid) {
 
 				if (DDOS[$.ip])
@@ -35,7 +40,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 
 			db.one('tbl_user').id(userid).fields('id,name,blocked,inactive').callback(function(err, response) {
 
-				if (response == null) {
+				if (!response) {
 
 					if (DDOS[$.ip])
 						DDOS[$.ip]++;

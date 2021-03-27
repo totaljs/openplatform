@@ -23,6 +23,8 @@
 				{ name: 'groups', text: '@(Groups)', width: 250, template: '{{ groups | groups }}', sort: false, options: 'main.meta.groups' },
 				{ name: 'statusid', text: '@(Status)', width: 120, template: '{{ statusid | status }}', sort: false, options: 'statuses', otext: 'name', ovalue: 'id' },
 				{ name: 'reference', text: '@(Reference)', width: 150 },
+				{ name: 'dn', text: '@(DN)', width: 350, hide: true },
+				{ name: 'ou', text: '@(OU)', width: 350, template: '{{ ou | ou }}', hide: true },
 				{ name: 'contractid', text: '@(Contract)', width: 150, template: '{{ contractid | contract }}', sort: false, options: 'contracts', otext: 'name', ovalue: 'id' },
 				{ name: 'position', text: '@(Position)', width: 150, hide: true },
 				{ name: 'email', text: '@(Email)', width: 200 },
@@ -53,6 +55,10 @@
 
 	Thelpers.age = function(val) {
 		return val ? '@({0} years old)'.format((NOW.getFullYear() - val.getFullYear())) : '';
+	};
+
+	Thelpers.ou = function(val) {
+		return val ? val.join('/') : '';
 	};
 
 	PLUGIN('users', function(exports) {

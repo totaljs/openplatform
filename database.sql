@@ -61,6 +61,7 @@ CREATE TABLE "public"."tbl_user" (
 	"checksum" varchar(30),
 	"note" varchar(80),
 	"repo" jsonb,
+	"dn" varchar(500),
 	"ou" _varchar,
 	"roles" _varchar,
 	"groups" _varchar,
@@ -447,6 +448,7 @@ CREATE VIEW view_user AS
 		a.dtlogged,
 		a.dtmodified,
 		a.oauth2,
+		a.dn,
 		CASE WHEN (length(a.deputyid) > 0) THEN (SELECT b.name FROM tbl_user b WHERE b.id = a.deputyid LIMIT 1) ELSE ''::text END AS deputy,
 		CASE WHEN (length(a.supervisorid) > 0) THEN (SELECT c.name FROM tbl_user c WHERE c.id=a.supervisorid LIMIT 1) ELSE ''::text END AS supervisor
 	FROM tbl_user a;
@@ -484,6 +486,7 @@ CREATE INDEX tbl_user_member_idx_user ON tbl_user_member(userid text_ops);
 CREATE INDEX tbl_user_idx_group ON tbl_user(groupshash text_ops);
 CREATE INDEX tbl_user_notification_idx_query ON tbl_user_notification(userappid text_ops);
 CREATE INDEX tbl_user_idx_reference ON tbl_user(reference text_ops);
+CREATE INDEX tbl_user_inx_dn ON tbl_user(dn text_ops);
 
 -- ==============================
 -- COMMENTS
@@ -515,6 +518,7 @@ INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VA
 ('allow_custom_titles', 'boolean', 'true', 'allow_custom_titles', NOW()),
 ('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),
 ('allowbackground', 'boolean', 'true', 'allowbackground', NOW()),
+('allowpassword', 'boolean', 'true', 'allowpassword', NOW()),
 ('allowclock', 'boolean', 'true', 'allowclock', NOW()),
 ('allowcreate', 'string', '', 'allowcreate', NOW()),
 ('allowdesktop', 'boolean', 'true', 'allowdesktop', NOW()),

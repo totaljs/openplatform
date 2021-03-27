@@ -15,7 +15,7 @@ var DDOS = {};
 var ORIGINERRORS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4800;           // Current version of OpenPlatform
+MAIN.version = 4900;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -102,22 +102,41 @@ FUNC.nicknamesanitize = function(value) {
 };
 
 FUNC.login = function(login, password, callback) {
-	DBMS().read('tbl_user').fields('id,password,otp,otpsecret').query('login=$1 OR email=$1', [login]).callback(function(err, response) {
+
+	var db = DBMS();
+	var builder = db.read('tbl_user');
+
+	if (!FUNC.customlogin)
+		builder.fields('id,password,otp,otpsecret,repo');
+
+	builder.query('(login=$1 OR email=$1)', [login]);
+
+	var done = function(err, id, response) {
+
+		if (err || !id) {
+			callback(err);
+			return;
+		}
+
+		if (response.otp) {
+			if (!OTP[login])
+				OTPCOUNT++;
+			OTP[login] = { date: NOW.add('2 minutes'), id: response.id, otpsecret: response.otpsecret };
+			callback(null, 'otp');
+			return;
+		}
+
+		callback(err, id);
+	};
+
+	builder.callback(function(err, response) {
 		if (response) {
-			if (response.otp) {
-				if (!OTP[login])
-					OTPCOUNT++;
-				OTP[login] = { date: NOW.add('2 minutes'), id: response.id, otpsecret: response.otpsecret };
-				callback(null, 'otp');
-			} else {
-
-				if (FUNC.customlogin) {
-					FUNC.customlogin(login, password, response, (err, userid) => callback(err, userid));
-				} else if (response.password === password.hash(CONF.hashmode || 'sha256', CONF.hashsalt)) {
-					callback(null, response.id);
-					return;
-				}
-
+			if (FUNC.customlogin) {
+				FUNC.customlogin(login, password, response, (err, is) => done(err, !err && is ? response.id : null, response));
+				return;
+			} else if (response.password === password.hash(CONF.hashmode || 'sha256', CONF.hashsalt)) {
+				done(null, response.id, response);
+				return;
 			}
 		}
 		callback();
@@ -180,9 +199,9 @@ FUNC.profile = function(user, callback) {
 	meta.version = MAIN.version;
 	meta.name = user.name;
 	meta.photo = user.photo;
-	// meta.locality = user.locality;
-	// meta.ou = user.ou;
-	// meta.company = user.company;
+	meta.locality = user.locality;
+	meta.ou = user.ou;
+	meta.company = user.company;
 	meta.sa = user.sa;
 	meta.apps = [];
 	meta.countnotifications = user.countnotifications;
@@ -797,6 +816,12 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	if (user.locality && (!fields || fields.locality))
 		obj.locality = user.locality;
 
+	if (user.ou && (!fields || fields.ou))
+		obj.ou = user.ou instanceof Array ? user.ou.join('/') : user.ou;
+
+	if (user.dn && (!fields || fields.dn))
+		obj.dn = user.dn;
+
 	if (user.reference && (!fields || fields.locality))
 		obj.reference = user.reference;
 
@@ -996,6 +1021,7 @@ FUNC.loadguest = function(callback) {
 			delete user.supervisorid;
 			delete user.deputyid;
 			delete user.ou;
+			delete user.dn;
 			delete user.ougroups;
 
 			if (!user.company)
@@ -1198,9 +1224,7 @@ FUNC.refreshgroupsroles = function(callback) {
 
 FUNC.refreshapps = function(callback) {
 	DBMS().find('tbl_app').sort('dtcreated', true).callback(function(err, response) {
-
 		var fa = { fa: 1, fas: 1, far: 1, fab: 1, fal: 1 };
-
 		for (var i = 0; i < response.length; i++) {
 			var item = response[i];
 			item.icon = item.icon.replace('fa-', '');
@@ -1210,7 +1234,6 @@ FUNC.refreshapps = function(callback) {
 					item.icon = tmp[1] + ' ' + tmp[0];
 			}
 		}
-
 		MAIN.apps = response || EMPTYARRAY;
 		callback && callback();
 	});
@@ -1249,6 +1272,7 @@ FUNC.refreshmeta = function(callback, directory) {
 	db.query('SELECT position as name FROM tbl_user' + plus + ' GROUP BY position ORDER BY 1', arg).set('positions');
 	db.query('SELECT language as name FROM tbl_user' + plus + ' GROUP BY language ORDER BY 1', arg).set('languages');
 	db.query('SELECT directory as name FROM tbl_user' + plus + ' GROUP BY directory ORDER BY 1', arg).set('directories');
+	db.query('SELECT ou as name FROM tbl_user' + plus + ' GROUP BY ou ORDER BY 1', arg).set('ou');
 	db.query('SELECT id, name, note, dtcreated, dtupdated FROM tbl_group ORDER BY 2').set('groups');
 	db.query('SELECT id, name FROM cl_role ORDER BY 2').set('roles');
 
@@ -1261,6 +1285,15 @@ FUNC.refreshmeta = function(callback, directory) {
 		meta.groups = prepare(response.groups, 0, 1);
 		meta.roles = prepare(response.roles, 0, 1);
 		meta.languages = prepare(response.languages);
+		meta.ou = [];
+
+		for (var i = 0; i < response.ou.length; i++) {
+			var ou = response.ou[i];
+			if (ou && ou.name) {
+				var name = ou.name.join('/');
+				meta.ou.push({ id: name, name: name });
+			}
+		}
 
 		if (directory) {
 			MAIN.metadirectories[directory] = meta;
@@ -1460,7 +1493,10 @@ FUNC.log = function(type, rowid, message, $) {
 
 	var obj = {};
 	obj.type = type;
-	obj.rowid = rowid;
+
+	if (rowid)
+		obj.rowid = rowid.max(50);
+
 	obj.message = (message || '').max(200);
 	obj.dtcreated = NOW;
 
@@ -1571,11 +1607,6 @@ ON('service', function(counter) {
 	SIMPLECACHE = {};
 });
 
-if (global.UPDATE)
-	global.UPDATE([4400, 4500, 4600, 4700, 4800], ERROR('Update'), 'updates');
-else
-	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');
-
 var usage_logged_insert = function(doc) {
 	doc.id = NOW.format('yyyyMMdd');
 	doc.date = NOW;
@@ -1631,3 +1662,8 @@ FUNC.uploadir = function(type) {
 	var path = CONF.upload ? Path.join(CONF.upload, type) : PATH.public(type);
 	return path;
 };
+
+if (global.UPDATE)
+	global.UPDATE([4400, 4500, 4600, 4700, 4800, 4900], ERROR('Update'), 'updates');
+else
+	OBSOLETE('Total.js', 'You need to update Total.js framework for a newest version and restart OpenPlatform');

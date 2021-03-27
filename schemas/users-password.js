@@ -4,6 +4,11 @@ NEWSCHEMA('Users/Password', function(schema) {
 
 	schema.addWorkflow('exec', function($, model) {
 
+		if (CONF.allowpassword === false) {
+			$.invalid('error-permissions');
+			return;
+		}
+
 		var db = DBMS();
 		db.read('tbl_user').where('login', model.name).fields('id,firstname,lastname,middlename,name,language,email,otp,inactive,blocked').error('error-credentials').data(response => db.log($, model, response.name));
 		db.callback(function(err, response) {

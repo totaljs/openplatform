@@ -132,7 +132,6 @@
 			</div>
 		</div>
 		<div class="padding npb">
-			<div class="caption">@(Employee data)</div>
 			<div class="row">
 				<div class="col-md-4 m">
 					<div data---="input__?.company__maxlength:40;dircustom:true;direxclude:false;dirsource:?/searchcompany;dirempty:@(Empty);dirplaceholder:@(Search or type a new)__''">@(Company)</div>
@@ -169,6 +168,13 @@
 					<div data---="input__?.note__maxlength:80__''">@(Note)</div>
 					<div class="help">@(Internal custom note for the user.)</div>
 				</div>
+			</div>
+
+			<div class="padding bg-smoke m radius">
+				<div data---="input__?.ou__dirsource:main.meta.ou;dircustom:1;dirplaceholder:@(Search or type a new);dirempty:@(Empty)">@(Organization unit)</div>
+				<div class="help m">@(Units must be separated by the slash <code>/</code>)</div>
+				<div data---="input__?.dn__maxlength:500">@(Distinguished name)</div>
+				<div class="help">@(Names must be separated by the comman <code>,</code>)</div>
 			</div>
 
 			<div class="row">
@@ -316,7 +322,7 @@
 
 			DAPI(model.id ? ('users_update/' + model.id) : 'users_insert', model, OP.done('@(User has been saved successfully)', function() {
 				hide();
-				EXEC('usersgrid/refresh');
+				EXEC('users/refresh');
 			}));
 		};
 

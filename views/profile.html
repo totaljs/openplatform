@@ -85,7 +85,9 @@
 				@{if user.checksum !== 'oauth2'}
 				<div class="col-md-6">
 					<div data---="checkbox__?.otp" class="b">@(Enable 2FA one-time password)</div>
-					<div data---="checkbox__?.changepassword" class="b red">@(Change password)</div>
+					@{if CONF.allowpassword !== false}
+						<div data---="checkbox__?.changepassword" class="b red">@(Change password)</div>
+					@{fi}
 				</div>
 				@{fi}
 				<div class="clearfix"></div>
@@ -127,6 +129,7 @@
 		</div>
 
 		<div class="padding npt">
+			@{if CONF.allowpassword !== false}
 			<div data-bind="?.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<hr />
 				<div class="padding">
@@ -142,6 +145,7 @@
 					</div>
 				</div>
 			</div>
+			@{fi}
 			<div class="padding npt npb">
 				<hr />
 			</div>

@@ -71,7 +71,9 @@
 					<div class="m" data---="input__form.name__icon2:user;required:1;autofocus:1;autofill:1;$id:formname">@(Login name)</div>
 					<div class="m" data---="input__form.password__icon2:lock;required:1;type:password;autofill:1">@(Password)</div>
 					<div class="m fs12">
+						@{if CONF.allowpassword !== false}
 						<div><a href="#password" class="exec gray" data-exec="toggletype"><i class="fa fa-chevron-right mr5"></i>@(Reset password)</a></div>
+						@{fi}
 						@{if CONF.guest}
 						<div><a href="/guest/"><i class="fa fa-chevron-right mr5"></i>@(Sign-in as a guest)</a></div>
 						@{fi}

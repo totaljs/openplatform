@@ -1,5 +1,3 @@
-MAIN.fields = ['id', 'supervisorid', 'deputyid', 'groupid', 'directory', 'directoryid', 'statusid', 'status', 'name', 'firstname', 'lastname', 'gender', 'email', 'phone', 'company', 'ou', 'language', 'reference', 'position', 'locality', 'login', 'password', 'locking', 'groups', 'colorscheme', 'background', 'blocked', 'customer', 'darkmode', 'notifications', 'notificationsemail', 'notificationsphone', 'dateformat', 'timeformat', 'numberformat', 'volume', 'sa', 'inactive', 'sounds', 'dtbirth', 'dtbeg', 'dtend', 'dtcreated', 'dtmodified', 'dtupdated', 'dtnofified', 'apps', 'verifytoken', 'accesstoken', 'pin', 'search', 'linker', 'ougroups', 'repo', 'online', 'photo', 'countbadges', 'countnotifications', 'dtlogged'];
-
 const Fs = require('fs');
 const BOOL = { '1': 'true', 'true': 'true' };
 const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1, repo: 1, checksum: 1 };
@@ -18,7 +16,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('deputyid', 'UID')(null);
 	schema.define('groupid', 'String(30)');
 	// schema.define('directory', 'Lower(25)');
-	// schema.define('ou', 'String(100)');
+	schema.define('ou', 'String(500)');
 	schema.define('photo', 'String(150)');
 	schema.define('contractid', Number);
 	schema.define('statusid', Number);
@@ -35,6 +33,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('position', 'String(40)');
 	schema.define('locality', 'String(40)');
 	schema.define('note', 'String(80)');
+	schema.define('dn', 'String(500)');
 	schema.define('login', 'String(120)');
 	schema.define('locking', Number); // in minutes (0 = disabled)
 	schema.define('password', 'String(70)');
@@ -173,6 +172,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.photo && builder.query(opt.photo === 'true' ? 'LENGTH(photo)>0' : '(LENGTH(photo)=0 OR photo IS NULL)');
 		opt.supervisor && builder.gridfilter('supervisor', opt, String);
 		opt.note && builder.gridfilter('note', opt, String);
+		opt.dn && builder.gridfilter('dn', opt, String);
 		opt.deputy && builder.gridfilter('deputy', opt, String);
 		opt.desktop && builder.gridfilter('desktop', opt, Number);
 		opt.inactive && builder.query('inactive=' + (BOOL[opt.inactive] || 'false'));
@@ -191,6 +191,7 @@ NEWSCHEMA('Users', function(schema) {
 		opt.phone && builder.gridfilter('phone', opt, String);
 		opt.email && builder.gridfilter('email', opt, String);
 		opt.group && builder.query('$1=ANY (groups)', [opt.group]);
+		opt.ou && builder.query('ou && $1', [opt.ou.split('/')]);
 		opt.modified && builder.where('dtmodified', '>', opt.modified);
 		opt.logged && builder.where('dtlogged', '<', opt.logged);
 		opt.dtupdated && builder.gridfilter('dtupdated', opt, Date);
@@ -270,6 +271,7 @@ NEWSCHEMA('Users', function(schema) {
 		model.accesstoken = U.GUID(40);
 		model.dtupdated = NOW;
 		model.dtmodified = NOW;
+		model.ou = model.ou ? model.ou.split('/').trim() : null;
 
 		model.rebuildaccesstoken = undefined;
 		model.rebuildtoken = undefined;
@@ -557,6 +559,18 @@ NEWSCHEMA('Users', function(schema) {
 
 			if ((!keys || keys.language) && response.language !== model.language) {
 				data.language = model.language;
+				modified = true;
+			}
+
+			var ou = response.ou ? response.ou.join('/') : null;
+
+			if ((!keys || keys.ou) && ou !== model.ou) {
+				data.ou = model.ou ? model.ou.split('/').trim() : null;
+				modified = true;
+			}
+
+			if ((!keys || keys.dn) && response.dn !== model.dn) {
+				data.dn = model.dn;
 				modified = true;
 			}
 
@@ -940,6 +954,9 @@ FUNC.users_read = function(id, callback) {
 			callback(err);
 			return;
 		}
+
+		if (response.ou)
+			response.ou = response.ou.join('/');
 
 		delete response.otpsecret;
 		delete response.password;
