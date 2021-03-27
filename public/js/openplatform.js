@@ -1,6 +1,6 @@
 var OP = {};
 
-OP.version = 428;
+OP.version = 429;
 OP.callbacks = {};
 OP.events = {};
 OP.is = parent !== window;
@@ -16,14 +16,30 @@ OP.interval = setInterval(function() {
 
 OP.jcomponent = function(notembedded) {
 
+	var qt = '';
+	var qr = '';
+	var ql = '';
+
+	function cachetoken() {
+		qt = NAV.query.openplatform;
+		qr = NAV.query.rev;
+		ql = NAV.query.language;
+	}
+
+	cachetoken();
+
 	ON('request', function(opt) {
+
+		if (!qt)
+			cachetoken();
+
 		var index = opt.url.indexOf('?');
 		var raw = index === -1 ? opt.url : opt.url.substring(0, index);
 		raw = raw.substring(raw.indexOf('/', 9) + 1);
 		var end = raw.substring(raw.length - 10);
 		index = end.indexOf('.');
 		if (index === -1)
-			opt.headers.Authorization = 'base64 ' + btoa(NAV.query.openplatform + ',' + NAV.query.rev + ',' + NAV.query.language);
+			opt.headers.Authorization = 'base64 ' + btoa(qt + ',' + qr + ',' + ql);
 	});
 
 	ON('@flag showloading', function() {
@@ -72,7 +88,6 @@ OP.jcomponent = function(notembedded) {
 
 		OP.$appearance = 1;
 		OP.send('appearance');
-
 		EMIT('opready');
 		SET('common.ready', true, 500);
 	};

@@ -480,14 +480,29 @@ FUNC.decodetoken = function($, callback) {
 	var app = MAIN.apps.findItem('id', arr[0]);
 	var user = USERS[arr[1]];
 
-	if (app == null) {
+	if (!app) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+		$.model = { url: $.url, query: $.query };
 		FUNC.log('Error/Token', arr[0], 'FUNC.decodetoken:app==null', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
 
-	if (user == null) {
+	if (user) {
+		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '';
+		if (tmp === arr[2]) {
+			var obj = { app: app, user: user };
+			if (FUNC.unauthorized(obj, $)) {
+				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+			} else {
+				SIMPLECACHE[sign] = obj;
+				callback(obj);
+			}
+		} else {
+			DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+			$.invalid('error-invalid-accesstoken');
+		}
+	} else {
 		// reads user from DB
 		readuser(arr[1], function(err, user) {
 			if (user == null) {
@@ -509,20 +524,6 @@ FUNC.decodetoken = function($, callback) {
 				}
 			}
 		});
-	} else {
-		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '';
-		if (tmp === arr[2]) {
-			var obj = { app: app, user: user };
-			if (FUNC.unauthorized(obj, $)) {
-				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-			} else {
-				SIMPLECACHE[sign] = obj;
-				callback(obj);
-			}
-		} else {
-			DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-			$.invalid('error-invalid-accesstoken');
-		}
 	}
 };
 
@@ -546,6 +547,7 @@ FUNC.unauthorized = function(obj, $) {
 		if (token !== app.origintoken) {
 			$.invalid('error-invalid-origin');
 			if (!ORIGINERRORS[$.ip]) {
+				console.log($.req.url);
 				FUNC.log('Error/Origin', null, app.name + ':' + app.origintoken + ' != ' + token);
 				ORIGINERRORS[$.ip] = 1;
 			}
