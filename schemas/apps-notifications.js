@@ -13,7 +13,7 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 	schema.setQuery(function($) {
 
 		var db = DBMS();
-		db.all('tbl_user_notification').where('userid', $.user.id).callback($.callback).take(100).sort('dtcreated', true);
+		db.all('tbl_user_notification').fields('id,appid,type,title,body,data,ip,dtcreated,unread').where('userid', $.user.id).callback($.callback).take(100).sort('dtcreated', true);
 		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).where('id', $.user.id);
 		db.mod('tbl_user_app', DB_NOTIFICATIONS_RESET).where('userid', $.user.id);
 		db.mod('tbl_user_notification', DB_NOTIFICATIONS_UNREAD).where('userid', $.user.id).where('unread', true);
