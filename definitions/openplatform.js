@@ -482,7 +482,7 @@ FUNC.decodetoken = function($, callback) {
 
 	if (!app) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		$.model = { url: $.url, query: $.query };
+		$.model = { url: $.req.url };
 		FUNC.log('Error/Token', arr[0], 'FUNC.decodetoken:app==null', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
@@ -547,7 +547,6 @@ FUNC.unauthorized = function(obj, $) {
 		if (token !== app.origintoken) {
 			$.invalid('error-invalid-origin');
 			if (!ORIGINERRORS[$.ip]) {
-				console.log($.req.url);
 				FUNC.log('Error/Origin', null, app.name + ':' + app.origintoken + ' != ' + token);
 				ORIGINERRORS[$.ip] = 1;
 			}
@@ -1499,7 +1498,7 @@ FUNC.log = function(type, rowid, message, $) {
 		obj.rowid = rowid.max(50);
 
 	obj.message = (message || '').max(200);
-	obj.dtcreated = NOW;
+	obj.dtcreated = NOW = new Date();
 
 	if ($) {
 

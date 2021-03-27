@@ -348,10 +348,11 @@ button { outline: 0; }
 /* Updated: 2020-12-29 21:08 */
 .animation{visibility:hidden}.ui-animation-1-init{transition:all 0.2s;opacity:0}.ui-animation-1-run{opacity:1}.ui-animation-2-init{transition:all 0.2s;transform:scale(1.5)}.ui-animation-2-run{transform:scale(1)}.ui-animation-3-init{transition:all 0.2s;transform:scale(0.5)}.ui-animation-3-run{transform:scale(1)}.ui-animation-4-init{transition:all 0.2s;transform:rotateY(-90deg)}.ui-animation-4-run{transform:rotateY(-1deg)}.ui-animation-5-init{transition:all 0.2s;transform:translate(-100px);opacity:0}.ui-animation-5-run{transform:translate(0);opacity:1}.ui-animation-6-init{transition:all 0.2s;transform:translate(0,-100px);opacity:0}.ui-animation-6-run{transform:translate(0,0);opacity:1}
 /* End: j-Animation */
+
 /* Component: Tangular-JsonFormat */
 /* Version: 1 */
 /* Updated: 2021-01-28 10:30 */
-.json{font-family:Menlo,Consolas,monospace;color:#000;tab-size:2;overflow:hidden}.json-key{color:#1A8B95}.json-number{color:#2F6447}.json-true{color:#1B7F16}.json-false{color:#9C251D}.json-null{color:#777;font-style:italic}.json-uid{color:#1A4795}.json-color i{margin-right:5px;vertical-align:middle}.json-icon{color:#451393}.json-icon i{margin-right:5px;vertical-align:middle}.json-date{color:#4C167F}.ui-dark .json{color:#A0A0A0}
+.json{font-family:Menlo,Consolas,monospace;color:#000;tab-size:2;overflow:hidden;white-space:pre-wrap}.json-key{color:#1A8B95}.json-number{color:#2F6447}.json-true{color:#1B7F16}.json-false{color:#9C251D}.json-null{color:#777;font-style:italic}.json-uid{color:#1A4795}.json-color i{margin-right:5px;vertical-align:middle}.json-icon{color:#451393}.json-icon i{margin-right:5px;vertical-align:middle}.json-date{color:#4C167F}.ui-dark .json{color:#A0A0A0}
 /* End: Tangular-JsonFormat */
 
 /* Component: j-Panel */
