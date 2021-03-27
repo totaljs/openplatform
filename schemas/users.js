@@ -120,7 +120,7 @@ NEWSCHEMA('Users', function(schema) {
 			opt.page = 1;
 
 		if (!opt.limit)
-			opt.limit = 500;
+			opt.limit = 100;
 
 		if (opt.limit > 1000)
 			opt.limit = 1000;
