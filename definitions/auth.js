@@ -92,8 +92,9 @@ ON('loaded', function() {
 
 		if (meta.users.length)
 			db.modify('tbl_user', mod).query('online=TRUE').id(meta.users);
-	};
 
+		db.log({ ID: 'Sessions.free' }, null, 'Expired: ' + meta.sessions.length + ', offline: ' + meta.users.length);
+	};
 
 	AUTH(opt);
 	MAIN.session = opt;
