@@ -482,7 +482,7 @@ FUNC.decodetoken = function($, callback) {
 
 	if (!app) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-		$.model = { url: $.req.url, referer: $.req.headers.referer };
+		$.model = { url: $.req.url, headers: $.req.headers };
 		FUNC.log('Error/Token', arr[0], 'FUNC.decodetoken:app==null', $);
 		$.invalid('error-invalid-accesstoken');
 		return;
