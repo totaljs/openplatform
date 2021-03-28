@@ -16,6 +16,7 @@ CREATE TABLE "public"."cl_language" (
 	"id" varchar(2) NOT NULL,
 	"name" varchar(50),
 	"spoken" varchar(40),
+	"active" boolean DEFAULT true,
 	PRIMARY KEY ("id")
 );
 

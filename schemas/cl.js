@@ -10,7 +10,7 @@ NEWSCHEMA('Codelist', function(schema) {
 		obj.timeformats = [{ id: 24, name: TRANSLATE($.user.language, '24 hour clock') }, { id: 12, name: TRANSLATE($.user.language, '12 hour clock') }];
 		var db = DBMS();
 		db.output(obj);
-		db.find('cl_language').fields('id,name').set('languages');
+		db.find('cl_language').fields('id,name').where('active=TRUE').set('languages');
 		db.callback($.callback);
 	});
 

@@ -8,7 +8,8 @@ db.task(function(responses, response) {
 
 	db.query('ALTER TABLE tbl_log ALTER COLUMN "type" SET DATA TYPE varchar(60)');
 	db.query('ALTER TABLE tbl_log ALTER COLUMN "message" SET DATA TYPE varchar(500)');
-	db.query('ALTER TABLE tbl_log ADD data TEXT');
+	db.query('ALTER TABLE tbl_log ALTER COLUMN "data" SET DATA TYPE text');
+	db.query('ALTER TABLE cl_language ADD active boolean DEFAULT \'TRUE\'');
 	db.query('ALTER TABLE tbl_user ADD dn VARCHAR(500)');
 	db.query('DROP TABLE tbl_user_log');
 	db.insert('cl_config', { id: 'allowpassword', type: 'boolean', value: 'true', name: 'allowpassword', dtcreated: NOW });
