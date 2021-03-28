@@ -47,8 +47,11 @@ function json_verify() {
 	}
 
 	FUNC.decodeauthtoken(self, function(obj) {
+
 		var app = obj.app;
 		var user = obj.user;
+
+		app.origintoken && self.header('X-Origin', app.origintoken);
 
 		if (user.online)
 			self.json(FUNC.meta(app, user, true));
@@ -113,6 +116,7 @@ function json_service() {
 	FUNC.decodetoken(self, function(obj) {
 
 		if (appid === 'openplatform') {
+
 			self.user = obj.user;
 			if (serviceid === 'mail')
 				$WORKFLOW('Mail', 'send', self.body, self.callback());
@@ -158,6 +162,8 @@ function json_service() {
 		var headers = {};
 		headers['X-OpenPlatform'] = MAIN.id + '-' + obj.user.directoryid + '-' + CONF.verifytoken + '-' + obj.user.id + '-' + app.servicetoken;
 		headers['Content-Type'] = self.headers['content-type'];
+
+		app.origintoken && self.header('X-Origin', app.origintoken);
 
 		var opt = {};
 		opt.keepalive = true;
