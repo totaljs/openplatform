@@ -87,8 +87,9 @@ footer .sa i { margin-right: 5px; }
 .ui-windowed-item { position: absolute; border-radius: var(--radius); box-shadow: 0 3px 25px rgba(0,0,0,0.2); background-color: #FFF; z-index: 80; }
 .ui-windowed-title { border: 1px solid #E0E0E0; border-radius: var(--radius) var(--radius) 0 0; height: 32px; }
 .ui-windowed-control { float: right; width: 30px; text-align: center; border-left: 1px solid #E0E0E0; line-height: 30px; cursor: pointer; font-size: 13px; }
+.ui-windowed-control:last-child { border-radius: 0 0 var(--radius) 0; }
 .ui-windowed-control:hover { background-color: #F9F9F9; }
-.ui-windowed-control.fa-times { color: red; }
+.ui-windowed-control.fa-times { color: red; border-radius: 0 var(--radius) 0 0; }
 .ui-windowed-title span { cursor: default; line-height: 31px; display: block; margin-right: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 0 0 10px; font-weight: bold; }
 .ui-windowed-nomove .ui-windowed-title span { cursor: default; }
 .ui-windowed-title span i { margin-right: 5px; }
