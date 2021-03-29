@@ -6,7 +6,8 @@ const STATUS = {
 	'4': 'Meeting',
 	'5': 'Business trip',
 	'6': 'Holiday',
-	'7': 'Sick'
+	'7': 'Sick',
+	'8': 'Off work'
 };
 
 NEWSCHEMA('Account/Status', function(schema) {

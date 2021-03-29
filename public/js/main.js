@@ -17,6 +17,10 @@ Thelpers.photo = function(value) {
 	return value ? ('/photos/' + value) : '/img/photo.jpg';
 };
 
+Thelpers.icon = function(val) {
+	return (val.indexOf('fa-') === -1) ? ('fa-' + ((/\sfar|fab|fas|fal$/).test(val) ? val : (val + ' fa'))) : val;
+};
+
 Thelpers.encodedata = function(value) {
 	return encodeURIComponent(value || '');
 };

@@ -1224,15 +1224,14 @@ FUNC.refreshgroupsroles = function(callback) {
 
 FUNC.refreshapps = function(callback) {
 	DBMS().find('tbl_app').sort('dtcreated', true).callback(function(err, response) {
-		var fa = { fa: 1, fas: 1, far: 1, fab: 1, fal: 1 };
 		for (var i = 0; i < response.length; i++) {
 			var item = response[i];
-			item.icon = item.icon.replace('fa-', '');
-			if (item.icon.indexOf(' ') !== -1) {
-				var tmp = item.icon.split(' ');
-				if (fa[tmp[0]])
-					item.icon = tmp[1] + ' ' + tmp[0];
-			}
+
+			if (!item.icon)
+				item.icon = 'rocket';
+
+			if (item.icon.indexOf('fa-') === -1)
+				item.icon = 'fa-' + item.icon + (item.icon.indexOf(' ') === -1 ? ' fa' : '');
 		}
 		MAIN.apps = response || EMPTYARRAY;
 		callback && callback();

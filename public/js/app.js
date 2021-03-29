@@ -14,10 +14,6 @@ Thelpers.bgcolor = function(val) {
 	return '<span style="background-color:{0}" class="tbgcolor">{1}</span>'.format(TBG[+sum % val.length] || TBG[0], val);
 };
 
-Thelpers.icon = function(val) {
-	return Thelpers.encode('fa-' + ((/\sfar$/).test(val) ? val : (val + ' fa')));
-};
-
 Thelpers.join = function(val, divider) {
 	return val ? Thelpers.encode(val.join(divider == null ? ', ' : divider)) : '';
 };
@@ -50,6 +46,10 @@ var TTIC = ['#1abc9c','#2ecc71','#3498db','#9b59b6','#34495e','#16a085','#2980b9
 
 Thelpers.time2 = function(value) {
 	return '<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(), Thelpers.time(value), value.format(null));
+};
+
+Thelpers.icon = function(val) {
+	return (val.indexOf('fa-') === -1) ? ('fa-' + ((/\sfar|fab|fas|fal$/).test(val) ? val : (val + ' fa'))) : val;
 };
 
 ON('knockknock', function() {

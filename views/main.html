@@ -735,10 +735,6 @@
 		return '<i title="' + title + '" class="fa fa-' + (icon ? str.substring(0, index + 4) : str);
 	};
 
-	Thelpers.icon = function(val) {
-		return 'fa-' + ((/\sfar|fab|fas|fal$/).test(val) ? val : (val + ' fa'));
-	};
-
 	Thelpers.time2 = function(value) {
 
 		if (!value)
