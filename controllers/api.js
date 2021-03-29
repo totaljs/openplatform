@@ -80,7 +80,7 @@ function json_upload_background() {
 	var self = this;
 	var file = self.files[0];
 
-	if (file == null) {
+	if (!file) {
 		self.invalid('error-file-type');
 		return;
 	}
@@ -93,7 +93,7 @@ function json_upload_background() {
 
 function redirect_guest() {
 	var self = this;
-	CONF.guest && self.cookie(CONF.cookie, 'guest', '1 day');
+	CONF.guest && self.cookie(CONF.auth_cookie, 'guest', '1 day');
 	self.redirect('/');
 }
 
