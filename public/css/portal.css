@@ -20,7 +20,7 @@ header .menu b { width: 8px; height: 8px; background-color: #000; float: left; m
 header .menu span { width: 24px; display: inline-block; }
 header .apps { font-size: 14px; padding: 0 10px; }
 header .apps:first-child { padding-top: 10px; }
-header .apps .app { height: 28px; line-height: 28px; cursor: pointer; border-radius: var(--radius); margin-bottom: 4px; }
+header .apps .app { height: 28px; line-height: 28px; cursor: pointer; border-radius: var(--radius); margin-bottom: 4px; position: relative; }
 header .apps .running { background-color: #FFF !important; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
 header .apps .app .icon { float: left; width: 14px; margin: 0 12px 0 10px; color: var(--color); text-align: center; }
 header .apps .app .close { float: right; margin-right: 5px; font-size: 11px; width: 25px; height: 25px; text-align: right; padding-right: 5px; color: rgba(0,0,0,0.5); display: none; }
