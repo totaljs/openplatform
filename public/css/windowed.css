@@ -51,7 +51,7 @@ footer .sa i { margin-right: 5px; }
 
 .menushow .startmenu { display: block; }
 .startmenu { position: absolute; width: 500px; left: 15px; top: 60px; z-index: 100; background: rgba(255,255,255,0.9); height: 400px; box-shadow: 0 10px 10px rgba(0,0,0,0.1); border-radius: var(--radius); display: none; }
-.startmenu .app { height: 34px; line-height: 34px; cursor: pointer; border-radius: var(--radius); }
+.startmenu .app { height: 34px; line-height: 34px; cursor: pointer; border-radius: var(--radius); position: relative; }
 .startmenu .app .icon { float: left; width: 30px; text-align: center; color: var(--color); }
 .startmenu .app .name { margin-left: 30px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
 .startmenu .app:hover { background-color: var(--color); color: #FFF; }
@@ -59,7 +59,7 @@ footer .sa i { margin-right: 5px; }
 .startmenu .dynamic { width: 300px; margin-right: 200px; }
 .startmenu .static { float: right; width: 200px; border-left: 1px solid rgba(0,0,0,0.09); height: 400px; }
 .startmenu .items { padding: 8px; }
-.startmenu .app .badges { border-radius: 100px; background-color: red; width: 6px; height: 6px; position: absolute; margin: 13px 0 0 -33px; }
+.startmenu .app .badges { border-radius: 100px; background-color: red; width: 6px; height: 6px; position: absolute; margin: 14px 0 0 -3px; }
 .startmenu .search { height: 40px; border-bottom: 1px solid rgba(0,0,0,0.09); padding: 5px 5px 0; }
 .startmenu .search input { font-size: 14px; }
 .startmenu .search i { font-size: 14px; line-height: 30px; }
