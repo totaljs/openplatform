@@ -760,6 +760,9 @@ OP.emit = function(name, a, b, c, d, e) {
 	if (events && events.length) {
 		for (var i = 0; i < events.length; i++)
 			events[i](a, b, c, d, e);
+	} else {
+		if (name === 'help' || name === 'changelog')
+			OP.send(name, null);
 	}
 };
 

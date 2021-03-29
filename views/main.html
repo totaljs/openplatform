@@ -14,7 +14,7 @@
 <div data---="loading" class="hidden"></div>
 <div data---="shortcuts"></div>
 <div data---="markdown"></div>
-<div data---="wiki__common.wikishow__datasource:common.wiki"></div>
+<div data---="wiki__common.wikishow__datasource:common.wiki;width:600"></div>
 <div data---="console__common.consolewindow__datasource:common.console"></div>
 
 <div data---="importer__common.form__if:reportbugform;url:/forms/report.html"></div>
@@ -173,6 +173,8 @@
 				app.isopening = false;
 				app.isrunning = true;
 				app.isloading = false;
+				app.newversion = response.newversion;
+				app.oldversion = response.version;
 				app.data = data;
 				app.meta = response;
 				app.callback = callback;
@@ -596,6 +598,7 @@
 				opt.items.push({ name: '@(Print)', icon: 'print', value: 'print' });
 				opt.items.push({ name: '@(Refresh)', icon: 'refresh', value: 'refresh' });
 				opt.items.push({ name: '@(Changelog)', icon: 'history', value: 'changelog' });
+				opt.items.push({ name: '@(Help)', icon: 'life-ring color', value: 'help' });
 				opt.items.push({ name: '@(Report a bug)', icon: 'bug', value: 'report' });
 				opt.items.push('-');
 			}
@@ -799,6 +802,14 @@
 				return;
 			}
 		}
+	});
+
+	ON('app_nowiki', function() {
+		SETTER('message/warning', '@(Help is not defined for this application).');
+	});
+
+	ON('app_nochangelog', function() {
+		SETTER('message/warning', '@(The changelog is not defined for this application).');
 	});
 
 	ON('knockknock', function(counter) {

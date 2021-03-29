@@ -410,7 +410,8 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 						app.send('print');
 						break;
 					case 'changelog':
-						app.send('changelog', app.oldversion);
+					case 'help':
+						app.send(selected.value, app.oldversion || app.version);
 						break;
 					case 'close':
 						app.meta = null;
@@ -551,6 +552,12 @@ $(W).on('message', function(e) {
 			break;
 
 		case 'help':
+
+			if (!data.body.body) {
+				EMIT('app_nowiki', app);
+				return;
+			}
+
 			// markdown help
 			SET('common.wiki', data.body.body || EMPTYARRAY);
 			var is = common.wiki ? common.wiki.length > 0 : false;
@@ -559,6 +566,12 @@ $(W).on('message', function(e) {
 			break;
 
 		case 'changelog':
+
+			if (!data.body.body) {
+				EMIT('app_nochangelog', app);
+				return;
+			}
+
 			// markdown help
 			SET('common.wiki', data.body.body || EMPTYARRAY);
 			var is = common.wiki ? common.wiki.length > 0 : false;
