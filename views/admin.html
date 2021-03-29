@@ -63,11 +63,12 @@
 			<div data---="viewbox__null__parent:.ui-layout-section;scrollbar:1;visibleY:0">
 				<div class="menu" data---="selected__common.page__selector:.item">
 
-					<div class="caption nmt">@(Platform)</div>
+					<div class="caption nmt" data-name="platform">@(Platform)</div>
 					<div class="item exec" data-exec="main/show" data-if="dashboard">
 						<i class="fa fa-dashboard"></i>
 						<span>@(Dashboard)</span>
 					</div>
+
 					<div class="item exec" data-exec="main/show" data-if="reports">
 						<i class="fa fa-bug"></i>
 						<span>@(Reports)</span>
@@ -76,7 +77,8 @@
 						<i class="fas fa-history"></i>
 						<span>@(Logs)</span>
 					</div>
-					<div class="caption">@(Users)</div>
+
+					<div class="caption" data-name="users">@(Users)</div>
 					<div class="item exec" data-exec="main/show" data-if="users">
 						<i class="fa fa-users"></i>
 						<span>@(Users)</span>
@@ -92,8 +94,7 @@
 
 					@{part('users')}
 
-					<div class="caption">@(Applications)</div>
-
+					<div class="caption" data-name="applications">@(Applications)</div>
 					<div class="item exec hidden red" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
 						<i class="fa fa-shopping-bag"></i>
 						<span>@(Marketplace)</span>
@@ -110,8 +111,7 @@
 						<i class="fa fa-key"></i>
 						<span>@(OAuth 2.0)</span>
 					</div>
-
-					<div class="caption">@(More)</div>
+					<div class="caption" data-name="more">@(More)</div>
 
 					@{part('more')}
 
@@ -147,6 +147,7 @@
 	</div>
 
 	<div data---="importer__common.form__if:appsform;url:/forms/app.html"></div>
+	<div data---="extend__null__name:admin"></div>
 
 	<script>
 
@@ -567,6 +568,7 @@
 
 	</script>
 
+	@{view('extension')}
 	@{components('openplatform_admin')}
 
 </body>
