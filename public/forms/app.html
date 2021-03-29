@@ -30,6 +30,10 @@
 					<div class="value">{{ value.meta.name | def }}</div>
 				</div>
 				<div class="keyvalue">
+					<div class="key">@(Version)</div>
+					<div class="value">{{ value.meta.version | def }}</div>
+				</div>
+				<div class="keyvalue">
 					<div class="key">@(Description)</div>
 					<div class="value">{{ value.meta.description | def }}</div>
 				</div>
@@ -67,58 +71,6 @@
 					<div class="value red">{{ value.meta.hostname | def }}</div>
 				</div>
 
-				<br />
-				<table class="table table-small nmb table-bordered">
-					<thead>
-						<tr>
-							<th>@(The application wants these permissions)</th>
-							<th style="width:30px" class="center" title="@(Requirements)">@(R)</th>
-							<th style="width:30px" class="center" title="@(Used requirements)">@(C)</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>@(Notifications)</td>
-							<td class="center">{{ value.meta.allownotifications | checkbox }}</td>
-							<td class="center">{{ value.allownotifications | checkbox }}</td>
-						</tr>
-						<tr>
-							<td>@(Server-side verification)</td>
-							<td class="center">{{ value.meta.serververify | checkbox }}</td>
-							<td class="center">{{ value.serververify | checkbox }}</td>
-						</tr>
-						<tr>
-							<td>@(Optimized for mobile devices)</td>
-							<td class="center">{{ value.meta.responsive | checkbox }}</td>
-							<td class="center">{{ value.responsive | checkbox }}</td>
-						</tr>
-						<tr>
-							<td>@(Optimized for guest user)</td>
-							<td class="center">{{ value.meta.allowguest | checkbox }}</td>
-							<td class="center">{{ value.allowguest | checkbox }}</td>
-						</tr>
-						<tr>
-							<td>@(Can read meta information)</td>
-							<td class="center">{{ value.meta.allowreadmeta | checkbox }}</td>
-							<td class="center">{{ value.allowreadmeta | checkbox }}</td>
-						</tr>
-						<tr>
-							<td>@(Can read user profile)</td>
-							<td class="center">{{ value.meta.allowreadprofile | checkbox }}</td>
-							<td class="center">{{ value.allowreadprofile | checkbox }}</td>
-						</tr>
-						<tr>
-							<td>@(Can read users)</td>
-							<td class="center">{{ value.meta.allowreadusers | checkbox }}</td>
-							<td class="center">{{ value.allowreadusers | checkbox }}</td>
-						</tr>
-						<tr>
-							<td>@(Can read apps)</td>
-							<td class="center">{{ value.meta.allowreadapps | checkbox }}</td>
-							<td class="center">{{ value.allowreadapps | checkbox }}</td>
-						</tr>
-					</tbody>
-				</table>
 			</script>
 		</div>
 		<div class="padding">
@@ -141,21 +93,6 @@
 				</div>
 			</div>
 			<div class="m help"><span class="exec link" data-exec="?/localize"><i class="fa fa-language"></i>@(Add localization)</span></div>
-
-			<div data-bind="?.typeid__show:value==='designer'" class="hidden">
-				<div class="row">
-					<div class="col-md-3 col-xs-3 m">
-						<div data---="input__?.icon__type:icon;required:1">@(Icon)</div>
-					</div>
-					<!--
-					<div class="col-md-3 col-xs-3 m">
-						<div data---="input__?.color__type:color">@(Color)</div>
-					</div>-->
-					<div class="col-md-3 col-xs-3 m">
-						<div data---="input__?.version__maxlength:10;align:1">@(Version)</div>
-					</div>
-				</div>
-			</div>
 
 			<div data---="input__?.sn__maxlength:50;placeholder:XXXX-XXXX-XXXX-XXXX;camouflage:•__''">@(Serial number)</div>
 			<div class="help m"><i class="fa fa-question-circle"></i>@(Enter a serial number if the author requires it)</div>
@@ -198,7 +135,7 @@
 			</div>
 		</div>
 	</div>
-	<nav data---="validation__appsform">
+	<nav data---="validation__appsform__validonly:1">
 		<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SAVE)</button>
 		<button name="cancel">@(Cancel)</button>
 	</nav>

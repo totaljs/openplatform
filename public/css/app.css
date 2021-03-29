@@ -41,7 +41,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .listingoauth { cursor: pointer; }
 .listingoauth .disabled { background-color: #F8F8F8; color: #999; }
 .listingoauth .disabled .name { text-decoration: line-through; }
-.listingoauth .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; background-color: #F8F8F8; }
+.listingoauth .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; background-color: #F8F8F8; border-radius: var(--radius) var(--radius) 0 0; }
 .listingoauth .name b { display: block; margin-right: 25px; }
 .listingoauth .name span { float: right; cursor: pointer; width: 22px; line-height: 34px; text-align: right; color: var(--color); }
 .listingoauth .padding { padding: 10px; }
@@ -58,7 +58,7 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .listingapps .disabled { background-color: #F8F8F8; color: #999; }
 .listingapps .name em { color: red; display: none; margin-left: 5px; }
 .listingapps .offline .name em { position: relative; display: inline-block; }
-.listingapps .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; background-color: #F8F8F8; }
+.listingapps .name { line-height: 34px; border-bottom: 1px solid #E0E0E0; padding: 0 10px; font-size: 14px; background-color: #F8F8F8; border-radius: var(--radius) var(--radius) 0 0; }
 .listingapps .name b { display: block; margin-right: 25px; }
 .listingapps .name b i { width: 14px; margin-right: 5px; }
 .listingapps .name span { float: right; cursor: pointer; width: 22px; line-height: 34px; text-align: right; color: var(--color); }
