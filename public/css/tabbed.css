@@ -73,7 +73,7 @@ footer .sa i { margin-right: 5px; }
 .disable iframe { pointer-events: none; }
 
 .ui-main { position: absolute; top: 75px; }
-.process { position: absolute; }
+.process { position: absolute; border-radius: var(--radius); }
 .focused { box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
 .focused .process-title { visibility: visible; }
 .animation .focused .process-title { display: none; }
@@ -85,7 +85,7 @@ footer .sa i { margin-right: 5px; }
 .process-title .menu { float: right; width: 26px; height: 26px; text-align: center; line-height: 26px; cursor: pointer; }
 .process-title .mobilemenu { float: right; width: 30px; height: 26px; text-align: center; line-height: 26px; cursor: pointer; border-right: 1px solid rgba(0,0,0,0.1); color: var(--color); display: none; }
 .jc-xs .process-title .mobilemenu, .jc-sm .process-title .mobilemenu { display: block; }
-.process-loading { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; }
+.process-loading { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; border-radius: 0 0 var(--radius) var(--radius); }
 .process-loading > div { width: 250px; text-align: center; }
 .process-loading > div > div > i { font-size: 50px; color: var(--color); }
 .process-loading > div label { display: block; margin-top: 15px; font-size: 12px; }
@@ -94,7 +94,7 @@ footer .sa i { margin-right: 5px; }
 .ui-dark .process-title .close { border-left-color: rgba(255,255,255,0.1); }
 .ui-dark .process-loading { background-color: rgba(0,0,0,0.9); }
 
-.process-offline { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; }
+.process-offline { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; border-radius: 0 0 var(--radius) var(--radius); }
 .process-offline > div { width: 250px; text-align: center; color: #D60000; }
 .process-offline > div > div i { font-size: 50px; }
 .process-offline > div label { display: block; margin-top: 15px; font-size: 12px; }
@@ -109,7 +109,7 @@ footer .sa i { margin-right: 5px; }
 .process-message-success { background-color: #68B25B; display: block; }
 .process-message-warning { background-color: #E73323; display: block; }
 
-.iframe { background-color: #FFF; }
+.iframe { background-color: #FFF; border-radius: var(--radius); }
 .ui-dark .iframe { background-color: #202020; }
 
 .killed { display: none; }

@@ -77,7 +77,7 @@ footer .sa i { margin-right: 5px; }
 	.startmenu { width: 300px; }
 }
 
-.iframe iframe { width: 100%; height: 100%; }
+.iframe iframe { width: 100%; height: 100%; border-radius: 0 0 border-radius: var(--radius) var(--radius); }
 .ui-windowed { overflow: hidden; }
 
 /* Component: j-Windows */
@@ -126,7 +126,7 @@ footer .sa i { margin-right: 5px; }
 
 .disable iframe { pointer-events: none; }
 
-.process-loading { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; }
+.process-loading { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; border-radius: 0 0 border-radius: var(--radius) var(--radius); }
 .process-loading > div { width: 250px; text-align: center; }
 .process-loading > div > div > i { font-size: 50px; color: var(--color); }
 .process-loading > div label { display: block; margin-top: 15px; font-size: 12px; }
