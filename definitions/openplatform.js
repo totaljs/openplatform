@@ -1349,6 +1349,7 @@ function checkuser(next) {
 			model.language = 'en';
 			model.dtbeg = NOW;
 			$INSERT('Users', model, next);
+			next();
 		} else
 			next();
 	});
