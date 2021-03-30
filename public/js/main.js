@@ -115,8 +115,6 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 
 		SETTER('!menu/hide');
 
-		var apps = self.get();
-
 		if (app.countbadges || app.countnotifications) {
 			app.countbadges = 0;
 			app.countnotifications = 0;
@@ -125,6 +123,8 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 
 		if (!force && common.focused === app.id)
 			return;
+
+		var apps = self.get();
 
 		for (var i = 0; i < apps.length; i++) {
 			var item = apps[i];
