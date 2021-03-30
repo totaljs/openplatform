@@ -138,11 +138,11 @@ FUNC.login = function(login, password, callback) {
 			} else if (CONF.ldap_active && response.dn) {
 				var opt = {};
 				opt.ldap = FUNC.ldap_host();
-				opt.user = CONF.ldap_user;
-				opt.password = CONF.ldap_password;
+				opt.user = response.dn;
+				opt.password = password;
 				LDAP(opt, function(err, profile) {
 					if (profile)
-						callback(null, true);
+						done(null, response.id, response);
 					else
 						callback();
 				});
