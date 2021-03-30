@@ -107,7 +107,7 @@ FUNC.login = function(login, password, callback) {
 	var builder = db.read('tbl_user');
 
 	if (!FUNC.customlogin)
-		builder.fields('id,password,otp,otpsecret,repo');
+		builder.fields('id,password,otp,otpsecret,repo,dn');
 
 	builder.query('login=$1', [login]);
 
@@ -130,6 +130,7 @@ FUNC.login = function(login, password, callback) {
 	};
 
 	builder.callback(function(err, response) {
+
 		if (response) {
 			if (FUNC.customlogin) {
 				FUNC.customlogin(login, password, response, (err, is) => done(err, !err && is ? response.id : null, response));
