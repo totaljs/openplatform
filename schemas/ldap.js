@@ -159,7 +159,6 @@ function import_users(callback) {
 		var updated = [];
 		var countupdated = 0;
 		var countinserted = 0;
-		var countremoved = 0;
 
 		response.wait(function(item, next) {
 
@@ -167,6 +166,16 @@ function import_users(callback) {
 
 			model.reference = item.sAMAccountName;
 			model.checksum = item.whenChanged;
+
+			if (!model.reference) {
+				next();
+				return;
+			}
+
+			if (CONF.ldap_user.indexOf(model.reference) !== -1) {
+				next();
+				return;
+			}
 
 			var user = users.findItem('reference', model.reference);
 			if (user) {
