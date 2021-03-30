@@ -109,7 +109,7 @@ FUNC.login = function(login, password, callback) {
 	if (!FUNC.customlogin)
 		builder.fields('id,password,otp,otpsecret,repo');
 
-	builder.query('(login=$1 OR email=$1)', [login]);
+	builder.query('login=$1', [login]);
 
 	var done = function(err, id, response) {
 
@@ -133,6 +133,18 @@ FUNC.login = function(login, password, callback) {
 		if (response) {
 			if (FUNC.customlogin) {
 				FUNC.customlogin(login, password, response, (err, is) => done(err, !err && is ? response.id : null, response));
+				return;
+			} else if (CONF.ldap_active && response.dn) {
+				var opt = {};
+				opt.ldap = FUNC.ldap_host();
+				opt.user = CONF.ldap_user;
+				opt.password = CONF.ldap_password;
+				LDAP(opt, function(err, profile) {
+					if (profile)
+						callback(null, true);
+					else
+						callback();
+				});
 				return;
 			} else if (response.password === password.hash(CONF.hashmode || 'sha256', CONF.hashsalt)) {
 				done(null, response.id, response);
