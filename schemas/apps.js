@@ -459,7 +459,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 		user.apps[$.id].countnotifications = 0;
 		user.apps[$.id].countbadges = 0;
-		DBMS().modify('tbl_user_app', DB_BADGESNOTIFICATIONS_RESET).id($.user.id + $.id);
+		DBMS().modify('tbl_user_app', DB_RESET).id($.user.id + $.id);
 		$.success(true);
 	});
 
