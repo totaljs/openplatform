@@ -95,6 +95,7 @@
 					@{part('users')}
 
 					<div class="caption" data-name="applications">@(Applications)</div>
+
 					<div class="item exec hidden red" data-exec="main/show" data-if="marketplace" data-bind="common.marketplace__show">
 						<i class="fa fa-shopping-bag"></i>
 						<span>@(Marketplace)</span>
@@ -119,6 +120,12 @@
 						<i class="far fa-life-ring"></i>
 						<span>@(Documentation)</span>
 					</div>
+
+					<div class="item exec" data-exec="main/show" data-if="ldap">
+						<i class="fas fa-coins"></i>
+						<span>@(LDAP)</span>
+					</div>
+
 					<div class="item exec" data-exec="main/show" data-if="settings">
 						<i class="fa fa-sliders-h"></i>
 						<span>@(Settings)</span>
@@ -141,6 +148,7 @@
 			<div data---="part__common.page__if:wiki;url:/parts/wiki.html" class="hidden invisible"></div>
 			<div data---="part__common.page__if:settings;url:/parts/settings.html;reload:settings/reload;delay:500" class="hidden invisible"></div>
 			<div data---="part__common.page__if:reports;url:/parts/reports.html;reload:reportsgrid/reload;delay:500" class="hidden invisible"></div>
+			<div data---="part__common.page__if:ldap;url:/parts/ldap.html;reload:ldap/reload;delay:500" class="hidden invisible"></div>
 			@{part('main')}
 		</section>
 
@@ -217,35 +225,6 @@
 		});
 
 		OP.jcomponent();
-
-		DAPI('profile', function(user) {
-
-			SET('user', user);
-			DEF.dateformat = user.dateformat;
-			user.timeformat = user.timeformat;
-			user.numberformat = user.numberformat;
-
-			switch (user.numberformat) {
-				case 1: // 1 000.12
-					DEF.decimalseparator = '.';
-					DEF.thousandsseparator = ' ';
-					break;
-				case 2: // 1 000,12
-					DEF.decimalseparator = ',';
-					DEF.thousandsseparator = ' ';
-					break;
-				case 3: // 1.000,12
-					DEF.decimalseparator = ',';
-					DEF.thousandsseparator = '.';
-					break;
-				case 4: // 1,000.12
-					DEF.decimalseparator = '.';
-					DEF.thousandsseparator = ',';
-					break;
-			}
-
-			ENV('date', user.dateformat);
-		});
 
 		OP.on('share', function(data) {
 			if (data && data.type === 'install') {

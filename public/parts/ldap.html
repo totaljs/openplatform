@@ -1,0 +1,73 @@
+<div data---="viewbox__common.page__scrollbar:1;visibleY:1;parent:window" data-scope="ldap">
+	<div class="padding">
+		<br />
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<div class="panel m">
+					<label><i class="fas fa-coins"></i>@(LDAP settings) <b class="badge badge-red">@(beta)</b></label>
+					<div class="padding">
+						<div data---="checkbox__?.active">@(<b>LDAP</b> is active)</div>
+						<hr />
+						<div data---="input__?.url__required:1__'ldap://localhost:389'">@(URI address)</div>
+						<div class="help">@(Must be in the form <code>ldap://hostname:port</code>)</div>
+						<br />
+						<div data---="input__?.dn__required:1__''">@(DN / Distinguished name)</div>
+						<div class="help">@(Example: <code>ou=USERS,dc=example,dc=com</code>)</div>
+						<br />
+						<div class="caption">@(Service account)</div>
+						<div class="row">
+							<div class="col-sm-6 m">
+								<div data---="input__?.user__required:1__''">@(User name)</div>
+							</div>
+							<div class="col-sm-6 m">
+								<div data---="input__?.password__required:1;camouflage:1__''">@(Password)</div>
+							</div>
+						</div>
+						<hr style="margin-top:10px" />
+						<div class="row">
+							<div class="col-sm-5">
+								<div data---="input__?.interval__required:1;align:1__'30 minutes'">@(Import interval)</div>
+							</div>
+						</div>
+					</div>
+					<div class="padding bg-smoke">
+						<div data---="input__?.mapping__placeholder:USERFIELD=LDAPFIELD, USERFIELD=LDAPFIELD__''">@(Additional mapping)</div>
+					</div>
+					<div class="padding" data---="validation__?">
+						<button class="button b exec" name="submit" data-exec="?/submit" disabled><i class="fa fa-check-circle mr5"></i>@(SUBMIT)</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br />
+	</div>
+</div>
+
+<script>
+
+	PLUGIN('ldap', function(exports) {
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.refresh = function() {
+			DAPI('ldap', '? @default');
+		};
+
+		exports.submit = function() {
+			var model = GET('? @reset');
+
+			var save = function() {
+				DAPI('ldap_save', model, OP.done('@(LDAP settings have been saved)'));
+			};
+
+			if (model.active)
+				DAPI('ldap_test', model, OP.done(save));
+			else
+				save();
+		};
+
+	});
+
+</script>

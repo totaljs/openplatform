@@ -86,6 +86,7 @@ NEWSCHEMA('Users/Groups', function(schema) {
 	});
 
 	schema.setRemove(function($) {
+
 		if ($.controller && FUNC.notadmin($))
 			return;
 

@@ -60,6 +60,7 @@ CREATE TABLE "public"."tbl_user" (
 	"colorscheme" varchar(7),
 	"background" varchar(150),
 	"checksum" varchar(30),
+	"stamp" varchar(25),
 	"note" varchar(80),
 	"repo" jsonb,
 	"dn" varchar(500),

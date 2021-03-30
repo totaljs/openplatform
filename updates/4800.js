@@ -6,6 +6,7 @@ db.task(function(responses, response) {
 	if (response)
 		return;
 
+	db.query('ALTER TABLE tbl_log ADD data JSON');
 	db.query('ALTER TABLE tbl_app ADD typeid VARCHAR(10)');
 	db.query('ALTER TABLE tbl_app ADD origintoken VARCHAR(50)');
 	db.query('ALTER TABLE tbl_app ADD allowmail BOOLEAN DEFAULT false');

@@ -6,6 +6,8 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
   --monospace : Menlo, Consolas, monospace;
 }
 
+.color { color: var(--color) !important; }
+
 .listing { display: flex; flex-flow: row wrap; margin: 0 15px 0 0; }
 .listing figure { width: 33.33%; }
 .listing figure .item { margin: 15px 0 0 15px; border: 1px solid #E0E0E0; border-radius: var(--radius); font-size: 12px; }
@@ -76,8 +78,8 @@ html,body { padding: 0; margin: 0; background-color: white; overflow: hidden; he
 .ui-dark .listingapps .info { color: #A0A0A0; }
 .ui-dark .listingapps .value span { color: #A0A0A0; }
 
-.panel { background-color: transparent; border-radius: 3px; box-shadow: 0 3px 30px rgba(0,0,0,0.03); border: 1px solid #E0E0E0; }
-.panel > label { display: block; padding: 15px 15px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: #000; font-weight: bold; }
+.panel { background-color: transparent; border-radius: var(--radius); border: 1px solid #E0E0E0; }
+.panel > label { display: block; padding: 15px 20px; border-bottom: 1px solid #E0E0E0; font-size: 16px; color: #000; font-weight: bold; }
 .panel > label i { margin-right: 7px; }
 
 .ui-dark .panel { background-color: transparent; border-color: #404040; }

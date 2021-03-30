@@ -1,6 +1,6 @@
 const Fs = require('fs');
 const BOOL = { '1': 'true', 'true': 'true' };
-const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1, repo: 1, checksum: 1 };
+const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1, repo: 1, checksum: 1, stamp: 1 };
 
 function isdatemodified(dt1, dt2) {
 	if (dt1 instanceof Date && dt2 instanceof Date)
@@ -64,6 +64,7 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('dtend', Date);
 	schema.define('apps', '[Object]');  // [{ id: UID, roles: [] }]
 	schema.define('oauth2', 'UID');
+	schema.define('stamp', 'String(25)');
 
 	var fields = { id: 1, name: 1, online: 1, dtcreated: 1, dtupdated: 1, dtmodified: 1, dtlogged: 1 };
 	var fieldsall = ['id', 'name', 'online', 'dtcreated', 'dtupdated', 'dtmodified', 'dtlogged', 'note', 'running'];

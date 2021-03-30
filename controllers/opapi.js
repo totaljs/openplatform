@@ -57,6 +57,12 @@ exports.install = function() {
 	ROUTE('+API    /opapi/    +smtp                     *Settings/SMTP        --> exec');
 	ROUTE('+API    /opapi/    +totalapi                 *Settings/TotalAPI    --> exec');
 
+	// LDAP
+	ROUTE('+API    /opapi/    -ldap                     *LDAP                 --> read');
+	ROUTE('+API    /opapi/    -ldap_import              *LDAP                 --> import', [1000 * 60 * 5]);
+	ROUTE('+API    /opapi/    +ldap_test                *LDAP                 --> test');
+	ROUTE('+API    /opapi/    +ldap_save                *LDAP                 --> save');
+
 	// Search
 	ROUTE('+API    /opapi/    -search_companies         *Users                --> companies');
 	ROUTE('+API    /opapi/    -search_locations         *Users                --> locations');

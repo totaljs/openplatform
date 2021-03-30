@@ -109,7 +109,7 @@ footer .sa i { margin-right: 5px; }
 .process-message-success { background-color: #68B25B; display: block; }
 .process-message-warning { background-color: #E73323; display: block; }
 
-.iframe { background-color: #FFF; border-radius: var(--radius); }
+.iframe { background-color: #FFF; border-radius: 0 0 var(--radius) var(--radius); }
 .ui-dark .iframe { background-color: #202020; }
 
 .killed { display: none; }

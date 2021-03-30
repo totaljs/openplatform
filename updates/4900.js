@@ -11,8 +11,11 @@ db.task(function(responses, response) {
 	db.query('ALTER TABLE tbl_log ALTER COLUMN "data" SET DATA TYPE text');
 	db.query('ALTER TABLE cl_language ADD active boolean DEFAULT \'TRUE\'');
 	db.query('ALTER TABLE tbl_user ADD dn VARCHAR(500)');
+	db.query('ALTER TABLE tbl_user ADD stamp VARCHAR(25)');
 	db.query('DROP TABLE tbl_user_log');
 	db.insert('cl_config', { id: 'allowpassword', type: 'boolean', value: 'true', name: 'allowpassword', dtcreated: NOW });
+	db.insert('cl_config', { id: 'allow_custom_titles', type: 'boolean', value: 'true', name: 'allow_custom_titles', dtcreated: NOW });
+	db.insert('cl_config', { id: 'cdn', type: 'string', value: '//cdn.componentator.com', name: 'cdn', dtcreated: NOW });
 
 	db.query('DROP VIEW view_user');
 	db.query(`CREATE VIEW view_user AS

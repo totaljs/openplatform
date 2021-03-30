@@ -4,7 +4,7 @@
 		<label><i class="fa fa-users"></i>@(Users)</label>
 		<div>
 			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(New)</button>
-			<button data-bind="?.items__enabled:value && value.items.length" disabled class="exec hidden-xs" data-exec="?/assign"><i class="fa fa-folder"></i>@(Assign)</button>
+			<button class="exec" data-exec="?/options"><i class="fa fa-cog"></i>@(Options)</button>
 			<button data-bind="?__enabled:value&&((value.checked&&value.checked.length)||value.selected)__track:checked,selected" class="exec" data-exec="?/remove" disabled><i class="fa fa-trash-o red"></i>@(Remove)</button>
 		</div>
 	</div>
@@ -39,9 +39,9 @@
 				{ name: 'supervisor', text: '@(Supervisor)', width: 200 },
 				{ name: 'running', text: '@(Running)', width: 200, template: '{{ running | runningapps }}', filter: false, sort: false },
 				{ name: 'note', text: '@(Note)', width: 200 },
-				{ name: 'dtlogged', text: '@(Logged)', width: 120, align: 1, format: '[.user.dateformat]' },
-				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[.user.dateformat]' },
-				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]' },
+				{ name: 'dtlogged', text: '@(Logged)', width: 120, align: 1, format: '[ts]' },
+				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[ts]' },
+				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[ts]' },
 				{ type: 'controls', template: '<button name="edit"><i class="fa fa-pencil mr5"></i>@(Edit)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>
@@ -71,6 +71,20 @@
 			WAIT('%cl', exports.refresh);
 		};
 
+		exports.options = function(el) {
+			var opt = {};
+			opt.element = el;
+			opt.items = [];
+			opt.items.push({ id: 'ldap', name: '@(Synchronize LDAP users)', icon: 'fas fa-sync' });
+			opt.items.push({ id: 'assign', name: '@(Assign groups)', icon: 'fa fa-folder' });
+			opt.align = 'right';
+			opt.callback = function(item) {
+				exports.scope();
+				exports[item.id]();
+			};
+			SETTER('menu/show', opt);
+		};
+
 		exports.filter = function(type, filter, sort, page) {
 
 			if (type === 'init')
@@ -81,7 +95,7 @@
 
 			filter.page = page || 1;
 			filter.sort = sort;
-			DAPI(QUERIFY('users', filter), '?.items');
+			DAPI(QUERIFY('users', filter) + ' @showloading', '?.items @hideloading');
 		};
 
 		exports.button = function(name, row) {
@@ -92,6 +106,12 @@
 					DAPI('users_remove/' + row.id, exports.refresh);
 				});
 			}
+		};
+
+		exports.ldap = function() {
+			OP.approve('@(Are you sure you want to synchronize users from LDAP?)', '"check-circle" @(Synchronize)', function() {
+				DAPI('ldap_import @showloading', OP.done(exports.refresh));
+			});
 		};
 
 		exports.edit = function(row) {

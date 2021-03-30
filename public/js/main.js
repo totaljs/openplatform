@@ -735,11 +735,7 @@ $(W).on('message', function(e) {
 				}
 
 				data.body.app = { id: app.id, name: app.name, type: app.type };
-				EXEC('openplatform/open', target.id, data.body);
-				/*
-					if (data.body.silent !== true)
-						SETTER('processes/focus', target);
-				*/
+				EXEC('openplatform/open', target.id, data.body)
 			}
 
 			break;
