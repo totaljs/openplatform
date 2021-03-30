@@ -91,6 +91,7 @@
 		</div>
 	</figure>
 
+	@{if !CONF.ldap_active || !user.dn}
 	<figure>
 		<div class="mt10"><i class="fa color fa-key fa-3x"></i></div>
 		<div class="mt10">@(Change your password)</div>
@@ -113,6 +114,8 @@
 				<div class="help red nmb b hidden npt" data-bind="intro__show:value&&value.password!==value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="fa fa-warning"></i>@(Passwords do not match.)</div>
 			</div>
 		</div>
+		@{fi}
+
 	</figure>
 </div>
 

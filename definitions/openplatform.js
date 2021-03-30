@@ -1394,7 +1394,7 @@ ON('ready', function() {
 // Reads a user
 function readuser(id, callback) {
 	var db = DBMS();
-	db.read('tbl_user').id(id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2');
+	db.read('tbl_user').id(id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2,dn,stamp');
 	db.error('error-users-404');
 	db.query('SELECT b.id,a.notifications,a.sounds,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
 
