@@ -115,9 +115,6 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 
 		SETTER('!menu/hide');
 
-		if (!force && common.focused === app.id)
-			return;
-
 		var apps = self.get();
 
 		if (app.countbadges || app.countnotifications) {
@@ -125,6 +122,9 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 			app.countnotifications = 0;
 			DAPI('reset/' + app.id, NOOP);
 		}
+
+		if (!force && common.focused === app.id)
+			return;
 
 		for (var i = 0; i < apps.length; i++) {
 			var item = apps[i];
@@ -142,6 +142,7 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 		SET('common.focused', app.id);
 		EMIT('app_focus', app, true);
 		self.update('focus');
+
 	};
 
 	var $W = $(W);
