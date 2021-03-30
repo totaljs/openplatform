@@ -206,7 +206,7 @@ function import_users(callback) {
 			var arr = model.name.split(' ');
 			model.firstname = arr[0];
 			model.lastname = arr[1];
-			model.login = item.cn;
+			model.login = item.sAMAccountName;
 			model.email = item.mail || item.userPrincipalName;
 			model.dn = item.distinguishedName;
 			model.stamp = stamp;
