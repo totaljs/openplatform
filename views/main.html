@@ -231,7 +231,9 @@
 		};
 
 		exports.rendermode = function(value, path, el) {
-			el.rclass2('mode-').aclass('mode-' + value || 'test').text(value || 'test');
+			if (!value)
+				value = 'test';
+			el.rclass2('mode-').aclass('mode-' + value).text(value);
 		};
 
 		exports.init = function() {
