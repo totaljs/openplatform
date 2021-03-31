@@ -191,6 +191,16 @@ function import_users(callback) {
 
 			} else {
 				model.name = item.displayName;
+
+				if (!model.name) {
+					FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty name', { model: model, ldap: item });
+					next();
+					return;
+				}
+
+				var arr = model.name.split(' ');
+				model.firstname = arr[0];
+				model.lastname = arr[1];
 				model.gender = 'male';
 				model.dateformat = 'dd.MM.yyyy';
 				model.numberformat = 2;
@@ -203,9 +213,6 @@ function import_users(callback) {
 				countinserted++;
 			}
 
-			var arr = model.name.split(' ');
-			model.firstname = arr[0];
-			model.lastname = arr[1];
 			model.login = item.sAMAccountName;
 			model.email = item.mail || item.userPrincipalName;
 			model.dn = item.distinguishedName;
@@ -227,7 +234,7 @@ function import_users(callback) {
 			}
 
 			var ctrl = EXEC((model.id ? '#' : '+') + 'Users --> ' + (model.id ? 'patch' : 'insert'), model, function(err) {
-				err && FUNC.log('LDAP/Error.users', model.reference, model.reference + ': ' + err + '', { model: model });
+				err && FUNC.log('LDAP/Error.users', model.reference, model.reference + ': ' + err + '', { model: model, ldap: item });
 				next();
 			});
 

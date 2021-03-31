@@ -14,6 +14,17 @@
 					<div style="margin-top:3px">@(Changing the URL address, will result in the loss of data in third-party apps. URL address is a unique identificator of OpenPlatform. Each third-party app creates a unique identificator of OpenPlatform from URL address and verification token.)</div>
 				</div>
 
+				<div data---="radiobuttonexpert__?.mode__datasource:dev|DEV|fas fa-tools,test|TEST|fas fa-flask,prod|PROD|fa fa-globe">
+					<script type="text/html">
+						<div class="iconbutton">
+							<i class="{{ icon }}"></i>
+							<span>{{ name }}</span>
+						</div>
+					</script>
+				</div>
+				<div class="clearfix"></div>
+				<br />
+
 				<div class="row">
 					<div class="col-md-4 m b">
 						<div data---="input__?.url__required:1;maxlength:500;type:url">@(URL address)</div>
@@ -56,7 +67,6 @@
 				<hr />
 				<div class="row">
 					<div class="col-md-4">
-						<div data---="checkbox__?.test">@(This is <b>Test environment</b>)</div>
 						<div data---="checkbox__?.guest">@(Allow <b>Guest user</b>)</div>
 						<div data---="checkbox__?.rebuildaccesstoken">@(Re-build access token)</div>
 						<div data---="checkbox__?.allowoauth">@(Enable OAuth 2.0)</div>
@@ -130,7 +140,7 @@
 					</div>
 				</div>
 				<div data---="input__?.smtpsettings__maxlength:200;dirplaceholder:@(Search application);placeholder:localhost;camouflage:•">@(SMTP settings)</div>
-				<div class="help">@(SMTP settings have to be in valid <b>JSON format</b>, according to the Total.js documentation). <a href="https://docs.totaljs.com/latest/en.html#pages~Troubleshooting~(smtp-settings-for-gmail-office-and-zoho)" target="_blank">@(Documentation)</a></div>
+				<div class="help">@(SMTP settings have to be in valid <b>JSON format</b>, according to the Total.js documentation). <a href="https://docs.totaljs.com/total4/4047d003kk51c/#6ce08001ug51c" target="_blank">@(Documentation)</a></div>
 				<hr />
 				<div data-bind="%settingssmtpresponse__template">
 					<script type="text/html">

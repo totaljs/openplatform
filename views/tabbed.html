@@ -55,7 +55,7 @@
 		</header>
 		<footer class="animation" data-animation="style:1">
 			<div class="sa hidden" data-bind="user.sa__show"><i class="fas fa-unlock-alt"></i>@(SA)</div>
-			<div class="test hidden" data-bind="user.test__show">@(TEST)</div>
+			<div class="mode" data-bind="user.mode__exec:openplatform/rendermode"></div>
 			<div class="user exec" data-exec="openplatform/profile">
 				<i class="fa fa-user-circle"></i><span data-bind="user.name__text"></span>
 			</div>

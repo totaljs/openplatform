@@ -50,21 +50,24 @@ footer .console i { margin-right: 5px; }
 footer .console:hover { opacity: 0.7; }
 footer .user { float: right; font-size: 12px; line-height: 30px; margin-right: 10px; cursor: pointer; }
 footer .user i { margin-right: 5px; }
-footer .test { float: right; background-color: red; color: #FFF; border-radius: var(--radius); font-size: 11px; padding: 0 3px; line-height: 14px; margin: 7px 10px 0 0; }
+footer .mode { float: right; color: #FFF; border-radius: var(--radius); font-size: 11px; padding: 0 3px; line-height: 14px; margin: 7px 10px 0 0; text-transform: uppercase; }
+footer .mode-test { background-color: #E73323; }
+footer .mode-dev { background-color: #5C1DC4; }
+footer .mode-prod { display: none; }
 footer .sa { float: right; background-color: var(--color); color: #FFF; height: 30px; line-height: 30px; font-size: 11px; padding: 0 7px; font-weight: bold; border-radius: 0 var(--radius) var(--radius) 0; }
 footer .sa i { margin-right: 5px; }
 
 .ui-dark footer { background: rgba(0,0,0,0.8); box-shadow: 0 -3px 10px rgba(0,0,0,0.3); }
 
 .menushow .startmenu { display: block; }
-.startmenu { position: absolute; width: 240px; left: 15px; top: 70px; z-index: 100; background: rgba(255,255,255,0.9); box-shadow: 0 10px 10px rgba(0,0,0,0.1); border-radius: var(--radius); display: none; }
+.startmenu { position: absolute; width: 240px; left: 15px; top: 70px; z-index: 100; background: #FFF; box-shadow: 0 10px 10px rgba(0,0,0,0.1); border-radius: var(--radius); display: none; }
 .startmenu .app { height: 34px; line-height: 34px; cursor: pointer; border-radius: var(--radius); }
 .startmenu .app .icon { float: left; width: 30px; text-align: center; color: var(--color); }
 .startmenu .app:hover { background-color: var(--color); color: #FFF; }
 .startmenu .app:hover .icon { color: #FFF; }
 .startmenu .items { padding: 8px; }
 
-.ui-dark .startmenu { background: rgba(0,0,0,0.9); }
+.ui-dark .startmenu { background: #111; }
 .ui-dark .startmenu .app:hover { background-color: var(--color); color: #FFF; }
 .ui-dark .startmenu .static { border-left-color: rgba(255,255,255,0.09); }
 .ui-dark .startmenu .search { border-bottom-color: rgba(255,255,255,0.09); }

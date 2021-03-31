@@ -242,9 +242,10 @@ FUNC.profile = function(user, callback) {
 	if (bg)
 		meta.background = bg;
 
-	if (CONF.test === true)
+	if (CONF.mode !== 'prod')
 		meta.test = true;
 
+	meta.mode = CONF.mode;
 	meta.status = user.status;
 
 	if (user.directory)
@@ -301,8 +302,7 @@ FUNC.profilelive = function(user) {
 	if (bg)
 		meta.background = bg;
 
-	if (CONF.test === true)
-		meta.test = true;
+	meta.mode = CONF.mode || 'test';
 
 	if (user.status)
 		meta.status = user.status;

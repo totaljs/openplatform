@@ -14,7 +14,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
 	schema.define('sender', 'Email');
-	schema.define('test', Boolean);
+	schema.define('mode', ['dev', 'prod', 'test'])('prod');
 	schema.define('defaultappid', 'UID');
 	schema.define('guest', Boolean);
 	schema.define('allowstatus', Boolean);

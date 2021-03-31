@@ -121,6 +121,9 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 			DAPI('reset/' + app.id, NOOP);
 		}
 
+		if (!app.window)
+			return;
+
 		if (!force && common.focused === app.id)
 			return;
 

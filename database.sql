@@ -543,6 +543,7 @@ INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VA
 ('marketplace', 'string', 'https://marketplace.openplatform.cloud', 'marketplace', NOW()),
 ('maxmembers', 'number', '10', 'maxmembers', NOW()),
 ('name', 'string', 'OpenPlatform', 'name', NOW()),
+('mode', 'string', 'dev', 'mode', NOW()),
 ('sender', 'string', 'info@totaljs.com', 'sender', NOW()),
 ('smtp', 'string', 'localhost', 'smtp', NOW()),
 ('smtpsettings', 'json', '{"user":"","password":"","timeout":2000}', 'smtpsettings', NOW()),

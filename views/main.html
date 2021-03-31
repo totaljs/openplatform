@@ -230,6 +230,10 @@
 			SET('common.form', 'notifications');
 		};
 
+		exports.rendermode = function(value, path, el) {
+			el.rclass2('mode-').aclass('mode-' + value || 'test').text(value || 'test');
+		};
+
 		exports.init = function() {
 
 			SET('common.ready', true);

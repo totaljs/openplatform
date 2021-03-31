@@ -43,7 +43,10 @@ footer .console i { margin-right: 5px; }
 footer .console:hover { opacity: 0.7; }
 footer .user { float: right; font-size: 12px; line-height: 30px; margin-right: 10px; cursor: pointer; }
 footer .user i { margin-right: 5px; }
-footer .test { float: right; background-color: red; color: #FFF; border-radius: var(--radius); font-size: 11px; padding: 0 3px; line-height: 14px; margin: 7px 10px 0 0; }
+footer .mode { float: right; color: #FFF; border-radius: var(--radius); font-size: 11px; padding: 0 3px; line-height: 14px; margin: 7px 10px 0 0; text-transform: uppercase; }
+footer .mode-test { background-color: #E73323; }
+footer .mode-dev { background-color: #5C1DC4; }
+footer .mode-prod { display: none; }
 footer .sa { float: right; background-color: var(--color); color: #FFF; height: 30px; line-height: 30px; font-size: 11px; padding: 0 7px; font-weight: bold; }
 footer .sa i { margin-right: 5px; }
 

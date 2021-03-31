@@ -16,6 +16,7 @@ db.task(function(responses, response) {
 	db.insert('cl_config', { id: 'allowpassword', type: 'boolean', value: 'true', name: 'allowpassword', dtcreated: NOW });
 	db.insert('cl_config', { id: 'allow_custom_titles', type: 'boolean', value: 'true', name: 'allow_custom_titles', dtcreated: NOW });
 	db.insert('cl_config', { id: 'cdn', type: 'string', value: '//cdn.componentator.com', name: 'cdn', dtcreated: NOW });
+	db.insert('cl_config', { id: 'mode', type: 'string', value: 'test', name: 'mode', dtcreated: NOW });
 
 	db.query('DROP VIEW view_user');
 	db.query(`CREATE VIEW view_user AS

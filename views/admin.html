@@ -215,16 +215,18 @@
 		common.marketplace = '@{CONF.marketplace}';
 		common.allowoauth = '@{CONF.allowoauth}'==='true';
 
+		OP.jcomponent();
+
 		OP.on('menu', function() {
 			SET('common.layout', common.layout === 'menu' ? '' : 'menu');
 		});
 
-		WATCH('common.page', function() {
-			if (common.layout)
-				NULL('common.layout');
+		OP.on('ready', function() {
+			WATCH('common.page', function() {
+				if (common.layout)
+					NULL('common.layout');
+			}, true);
 		});
-
-		OP.jcomponent();
 
 		OP.on('share', function(data) {
 			if (data && data.type === 'install') {
