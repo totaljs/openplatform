@@ -423,6 +423,9 @@ NEWSCHEMA('Users', function(schema) {
 				modified = true;
 			}
 
+			if ((!keys || keys.stamp) && response.stamp !== model.stamp)
+				data.stamp = model.stamp;
+
 			if ((!keys || keys.sa) && response.sa !== model.sa) {
 				data.sa = model.sa;
 				modified = true;

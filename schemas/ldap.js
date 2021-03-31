@@ -165,7 +165,6 @@ function import_users(callback) {
 			var model = {};
 
 			model.reference = item.sAMAccountName;
-			model.checksum = item.whenChanged;
 
 			if (!model.reference) {
 				next();
@@ -176,6 +175,8 @@ function import_users(callback) {
 				next();
 				return;
 			}
+
+			model.checksum = (item.displayName + '_' + item.distinguishedName + '_' + (item.mail || item.userPrincipalName)).makeid();
 
 			var user = users.findItem('reference', model.reference);
 			if (user) {
