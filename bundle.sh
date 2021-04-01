@@ -6,7 +6,6 @@ cp -a ../definitions/ definitions
 cp -a ../modules/ modules
 cp -a ../schemas/ schemas
 cp -a ../public/ public
-cp -a ../resources/ resources
 cp -a ../views/ views
 cp -a ../updates/ updates
 cp -a ../guest.json guest.json
