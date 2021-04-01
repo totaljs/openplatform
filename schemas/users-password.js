@@ -2,6 +2,8 @@ NEWSCHEMA('Users/Password', function(schema) {
 
 	schema.define('name', 'String(120)', true);
 
+	CONF.default_language && schema.setResource(CONF.default_language);
+
 	schema.addWorkflow('exec', function($, model) {
 
 		if (CONF.allowpassword === false) {
