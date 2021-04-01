@@ -161,9 +161,7 @@
 
 		$(document).on('keyup', 'input', function(e) {
 			e.which === 13 && $('button').trigger('click');
-		});
-
-		$(document).on('click', 'button', function() {
+		}).on('click', 'button', function() {
 
 			if (common.type === 'password')	{
 				if (!CAN('password.*'))
@@ -216,6 +214,7 @@
 				}));
 			}
 		});
+
 	</script>
 
 </body>
