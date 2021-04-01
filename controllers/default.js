@@ -332,6 +332,9 @@ function login() {
 
 	var self = this;
 
+	if (CONF.default_language)
+		self.language = CONF.default_language;
+
 	if (self.req.locked) {
 		// locked
 		self.view('locked');
