@@ -176,7 +176,20 @@ function import_users(callback) {
 				return;
 			}
 
-			model.checksum = (item.displayName + '_' + item.distinguishedName + '_' + (item.mail || item.userPrincipalName)).makeid();
+			var groups = [];
+
+			if (item.memberOf) {
+				if (!(item.memberOf instanceof Array))
+					item.memberOf = [item.memberOf];
+				for (var i = 0; i < item.memberOf.length; i++) {
+					var dn = item.memberOf[i].split(',', 1)[0];
+					var index = dn.indexOf('=');
+					if (index !== -1)
+						groups.push(dn.substring(index + 1));
+				}
+			}
+
+			model.checksum = (item.displayName + '_' + item.distinguishedName + '_' + (item.mail || item.userPrincipalName) + '_' + groups.join(',')).makeid();
 
 			var user = users.findItem('reference', model.reference);
 			if (user) {
@@ -191,6 +204,7 @@ function import_users(callback) {
 				}
 
 			} else {
+
 				model.name = item.displayName;
 
 				if (!model.name) {
@@ -217,22 +231,13 @@ function import_users(callback) {
 			model.login = item.sAMAccountName;
 			model.email = item.mail || item.userPrincipalName;
 			model.dn = item.distinguishedName;
+			model.groups = groups;
 			model.stamp = stamp;
 			model.inactive = false;
 
 			// OP_NAME=LDAP_NAME
 			for (var key in map)
 				model[key] = item[map[key]];
-
-			if (item.memberOf) {
-				model.groups = [];
-				for (var i = 0; i < item.memberOf.length; i++) {
-					var dn = item.memberOf[i].split(',', 1)[0];
-					var index = dn.indexOf('=');
-					if (index !== -1)
-						model.groups.push(dn.substring(index + 1));
-				}
-			}
 
 			var ctrl = EXEC((model.id ? '#' : '+') + 'Users --> ' + (model.id ? 'patch' : 'insert'), model, function(err) {
 				err && FUNC.log('LDAP/Error.users', model.reference, model.reference + ': ' + err + '', { model: model, ldap: item });
