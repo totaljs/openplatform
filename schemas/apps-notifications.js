@@ -14,9 +14,9 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 
 		var db = DBMS();
 		db.all('tbl_user_notification').fields('id,appid,type,title,body,data,ip,dtcreated,unread').where('userid', $.user.id).callback($.callback).take(100).sort('dtcreated', true);
-		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).where('id', $.user.id);
+		db.mod('tbl_user', DB_NOTIFICATIONS_RESET2).id($.user.id);
 		db.mod('tbl_user_app', DB_NOTIFICATIONS_RESET).where('userid', $.user.id);
-		db.mod('tbl_user_notification', DB_NOTIFICATIONS_UNREAD).where('userid', $.user.id).where('unread', true);
+		db.mod('tbl_user_notification', DB_NOTIFICATIONS_UNREAD).where('userid', $.user.id).where('unread=TRUE');
 
 		var user = $.user;
 		user.countnotifications = 0;
@@ -88,7 +88,7 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 				var db = DBMS();
 				db.mod('tbl_user', DB_NOTIFICATION_USER).id(user.id);
 				db.mod('tbl_user_app', DB_NOTIFICATION_APP).id(user.id + app.id);
-				db.add('tbl_user_notification', model);
+				db.ins('tbl_user_notification', model);
 				db.callback($.done());
 
 				MAIN.session.update(user.id, function(session) {
@@ -164,7 +164,7 @@ NEWSCHEMA('Apps/Notifications', function(schema) {
 			var db = DBMS();
 			db.mod('tbl_user', DB_NOTIFICATION_USER).id(user.id);
 			db.mod('tbl_user_app', DB_NOTIFICATION_APP).id(user.id + app.id);
-			db.add('tbl_user_notification', model);
+			db.ins('tbl_user_notification', model);
 			db.callback($.done());
 
 			MAIN.session.update(user.id, function(session) {

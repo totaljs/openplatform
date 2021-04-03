@@ -40,7 +40,7 @@ NEWSCHEMA('Account', function(schema) {
 		var builder = DBMS().read('tbl_user');
 		builder.error('error-users-404');
 		builder.fields('name,status,email,notifications,notificationsemail,notificationsphone,phone,photo,darkmode,sounds,volume,language,colorscheme,desktop,background,otp,locking,dateformat,timeformat,numberformat,checksum');
-		builder.where('id', $.user.id);
+		builder.id($.user.id);
 		builder.callback($.callback);
 		$.extend && $.extend(builder);
 	});

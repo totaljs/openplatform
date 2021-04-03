@@ -1,6 +1,5 @@
 // DB
 require('dbms').init(CONF.database, ERROR('DBMS'));
-// DBMS.measure && DBMS.measure(true);
 
 // Constants
 const Path = require('path');
@@ -519,10 +518,7 @@ FUNC.decodetoken = function($, callback) {
 	} else {
 		// reads user from DB
 		readuser(arr[1], function(err, user) {
-			if (user == null) {
-				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
-				$.invalid('error-invalid-accesstoken');
-			} else {
+			if (user) {
 				var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '';
 				if (tmp === arr[2]) {
 					var obj = { app: app, user: user };
@@ -536,6 +532,9 @@ FUNC.decodetoken = function($, callback) {
 					$.invalid('error-invalid-accesstoken');
 					DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
 				}
+			} else {
+				DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
+				$.invalid('error-invalid-accesstoken');
 			}
 		});
 	}
@@ -637,14 +636,14 @@ FUNC.decodeauthtoken = function($, callback) {
 		return null;
 
 	var app = MAIN.apps.findItem('id', arr[0]);
-	var user = USERS[arr[1]];
 
-	if (app == null) {
+	if (!app) {
 		DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
 		$.invalid('error-invalid-accesstoken');
 		return;
 	}
 
+	var user = USERS[arr[1]];
 	if (user) {
 
 		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);

@@ -537,7 +537,6 @@ NEWSCHEMA('Users', function(schema) {
 
 			if (!keys || keys.groups) {
 
-
 				tmp = [];
 				for (var i = 0; i < model.groups.length; i++) {
 					var item = model.groups[i];
@@ -948,7 +947,7 @@ FUNC.users_read = function(id, callback) {
 		// reference
 		db.one('tbl_user').where('reference', id.substring(1));
 	} else
-		db.one('tbl_user').where('id', id);
+		db.one('tbl_user').id(id);
 
 	db.err('error-users-404');
 	db.all('tbl_user_app').where('userid', db.get('tbl_user.id')).query('inherited=FALSE').fields('appid as id,roles').set('apps');

@@ -12,6 +12,7 @@ NEWSCHEMA('Account/Sessions', function(schema) {
 	});
 
 	schema.setRemove(function($) {
+
 		var id = $.id;
 		var db = DBMS();
 		var session = MAIN.session.sessions[id];
