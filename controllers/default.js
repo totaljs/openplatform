@@ -272,8 +272,8 @@ function oauthprofile() {
 		usage.dtupdated = NOW;
 
 		var db = DBMS();
-		db.mod('tbl_usage_oauth', usage, true).where('id', usageid).insert(usage_oauth_insert, { id: usageid, oauthid: data.id });
-		db.mod('tbl_oauth', { dtused: NOW }).where('id', data.id);
+		db.mod('tbl_usage_oauth', usage, true).id(usageid).insert(usage_oauth_insert, { id: usageid, oauthid: data.id });
+		db.mod('tbl_oauth', { dtused: NOW }).id(data.id);
 
 		user.blocked = undefined;
 		user.inactive = undefined;
