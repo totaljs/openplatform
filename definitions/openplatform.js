@@ -1481,7 +1481,9 @@ FUNC.updateroles = function(callback) {
 				db.remove('cl_role').query('id=' + pgid);
 
 				// removes role from users
-				db.query('UPDATE tbl_user SET roles=array_remove(roles,{0}) WHERE ({0}=ANY(roles))'.format(pgid));
+				// unused
+				// db.query('UPDATE tbl_user SET roles=array_remove(roles,{0}) WHERE ({0}=ANY(roles))'.format(pgid));
+
 				EMIT('roles.remove', diff.rem[i]);
 			}
 

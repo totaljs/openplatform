@@ -131,7 +131,7 @@ NEWSCHEMA('Users', function(schema) {
 			var builder = DBMS().list('tbl_user_removed');
 			opt.modified && builder.where('dtcreated', '>', NOW.add('-' + opt.modified));
 			builder.paginate(opt.page, opt.limit);
-			builder.callback(callback);
+			builder.callback($.callback);
 			return;
 		}
 
@@ -201,12 +201,19 @@ NEWSCHEMA('Users', function(schema) {
 		opt.dtlogged && builder.gridfilter('dtlogged', opt, Date);
 
 		if (opt.fields) {
-			var fields = opt.fields.split(',');
-			for (var i = 0; i < fields.length; i++) {
-				var field = fields[i];
+			var rf = opt.fields.split(',');
+			var plus = [];
+			for (var i = 0; i < rf.length; i++) {
+				var field = rf[i];
 				if (fields[field])
-					builder.fields(key);
+					plus.push(field);
 			}
+
+			if (plus.length)
+				builder.fields(plus.join(','));
+			else
+				builder.fields(fieldsall);
+
 		} else
 			builder.fields(fieldsall);
 

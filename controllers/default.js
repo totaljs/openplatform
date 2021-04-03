@@ -88,9 +88,9 @@ function oauthsync() {
 
 				// Download photo
 				if ((!user || response.photo !== user.photo) && response.photo) {
-					var path = PATH.public('photos');
+					var path = FUNC.uploadir('photos');
 					PATH.mkdir(path);
-					DOWNLOAD(CONF.oauthopenplatform + '/photos/' + response.photo, path + '/' + response.photo, NOOP);
+					DOWNLOAD(CONF.oauthopenplatform + '/photos/' + response.photo, PATH.join(path, response.photo), NOOP);
 				}
 
 				response.checksum = 'oauth2';
