@@ -1,3 +1,4 @@
+const Path = require('path');
 const Fs = require('fs');
 const BOOL = { '1': 'true', 'true': 'true' };
 const BLACKLIST = { login: 1, password: 1, rebuildaccesstoken: 1, rebuildtoken: 1, pin: 1, apps: 1, welcome: 1, background: 1, volume: 1, previd: 1, otpsecret: 1, repo: 1, checksum: 1, stamp: 1 };
@@ -733,7 +734,7 @@ NEWSCHEMA('Users', function(schema) {
 		var db = DBMS();
 		var id = $.id;
 
-		db.read('tbl_user').where('id', id).fields('id,supervisorid,deputyid,name,reference,groupid,groups,contractid').callback(function(err, response) {
+		db.read('tbl_user').id(id).fields('id,supervisorid,deputyid,name,reference,groupid,groups,contractid').callback(function(err, response) {
 			if (response) {
 
 				db.insert('tbl_user_removed', { id: id, reference: response.reference, groupid: response.groupid, groups: response.groups, contractid: response.contractid, dtcreated: NOW });
@@ -744,7 +745,7 @@ NEWSCHEMA('Users', function(schema) {
 
 				$.extend(null, function() {
 					// Removes data
-					db.remove('tbl_user').where('id', id).callback(function() {
+					db.remove('tbl_user').id(id).callback(function() {
 						FUNC.refreshmetadelay();
 						EMIT('users/remove', id);
 						MAIN.session.refresh(id);
@@ -927,7 +928,7 @@ function processapps(model, callback) {
 
 			var item = response.findItem('appid', id);
 			if (item)
-				db.update('tbl_user_app', { roles: app.roles, appid: id, inherited: false, dtupdated: NOW }).where('id', model.id + id);
+				db.update('tbl_user_app', { roles: app.roles, appid: id, inherited: false, dtupdated: NOW }).id(model.id + id);
 			else {
 				var appdata = MAIN.apps.findItem('id', id);
 				db.insert('tbl_user_app', { id: model.id + id, userid: model.id, appid: id, dtcreated: NOW, inherited: false, roles: app.roles, position: appdata.position || 0 });
