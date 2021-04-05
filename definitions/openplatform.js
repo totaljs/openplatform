@@ -67,8 +67,28 @@ FUNC.loginid = function(controller, userid, callback, note) {
 	FUNC.cookie(controller, userid, callback, note);
 };
 
-FUNC.clearcache = function(userid) {
-	delete USERS[userid];
+FUNC.clearcache = function(userid, appid) {
+
+	if (!appid && !userid) {
+		SIMPLECACHE = {};
+		USERS = {};
+		return;
+	}
+
+	for (var m in SIMPLECACHE) {
+		var cache = SIMPLECACHE[m];
+		if ((appid && cache.app.id === appid) || (userid && cache.user.id === userid))
+			delete SIMPLECACHE[m];
+	}
+
+	if (userid) {
+		for (var m in USERS) {
+			var cache = USERS[m];
+			if (cache.id === userid)
+				delete USERS[m];
+		}
+	}
+
 };
 
 FUNC.loginotp = function(login, code, callback) {
@@ -871,6 +891,7 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	if (!fields || fields.member)
 		obj.member = user.member;
 
+	/*
 	if (!fields || fields.roles) {
 		var appdata = user.apps ? user.apps[app.id] : null;
 		var appsroles = appdata ? appdata.roles.slice(0) : user.appsroles ? user.appsroles.slice(0) : null;
@@ -883,6 +904,13 @@ FUNC.makeprofile = function(user, type, app, fields) {
 			}
 		} else
 			obj.roles = appsroles ? appsroles : EMPTYARRAY;
+	}*/
+
+	if (!fields || fields.roles) {
+		if (user.appsroles)
+			obj.roles = user.appsroles;
+		else
+			obj.roles = user.apps && user.apps[app.id] ? user.apps[app.id].roles : EMPTYARRAY;
 	}
 
 	if (!fields || fields.groups)
@@ -1220,9 +1248,7 @@ FUNC.refreshgroupsroles = function(callback) {
 				if (hashes.length) {
 					var db = DBMS();
 					db.update('tbl_user', { groupshash: '' }).notin('groupshash', hashes);
-					db.callback(function() {
-						FUNC.repairgroupsroles();
-					});
+					db.callback(() => FUNC.repairgroupsroles());
 				}
 
 				// Releases all sessions
@@ -1396,7 +1422,7 @@ function readuser(id, callback) {
 	var db = DBMS();
 	db.read('tbl_user').id(id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2,dn,stamp');
 	db.error('error-users-404');
-	db.query('SELECT b.id,a.notifications,a.sounds,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a INNER JOIN tbl_app b ON b.id=a.appid WHERE a.userid=$1', [id]).set('apps');
+	db.query('SELECT a.appid as id,a.notifications,a.sounds,a.countnotifications,a.countbadges,a.roles,a.favorite,a.position,a.inherited,a.version FROM tbl_user_app a WHERE a.userid=$1', [id]).set('apps');
 
 	if (CONF.allowmembers) {
 		db.query('SELECT userid FROM tbl_user_member').where('email', db.get('tbl_user.email')).set('member');
@@ -1594,8 +1620,6 @@ ON('service', function(counter) {
 
 	if (counter % 10 === 0) {
 		refresh_apps();
-		if (!CONF.allow_sessions_unused)
-			MAIN.session.releaseunused('1 hour');
 		USERS = {}; // clears cache
 		DDOS = {};
 		ORIGINERRORS = {};
@@ -1614,11 +1638,18 @@ ON('service', function(counter) {
 	}
 
 	// Auto-reconfiguration
-	if (counter % 60 === 0)
+	if (counter % 60 === 0) {
 		FUNC.reconfigure();
+	}
+
+	if (counter % 360 === 0) {
+		// delete old sessions
+		DBMS().remove('tbl_user_session').where('dtexpire', '<', NOW);
+	}
 
 	DBMS().query('SELECT COUNT(1)::int4 as used FROM tbl_user_session WHERE online=TRUE').first().callback(usage_online);
 	SIMPLECACHE = {};
+
 });
 
 var usage_logged_insert = function(doc) {

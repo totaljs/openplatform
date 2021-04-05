@@ -702,6 +702,7 @@ NEWSCHEMA('Users', function(schema) {
 							$.success(id);
 							EMIT('users/update', id);
 							MAIN.session.refresh(id);
+							FUNC.clearcache(id);
 
 							if (!keys || keys.apps || keys.groups)
 								FUNC.refreshgroupsrolesdelay();
@@ -714,6 +715,7 @@ NEWSCHEMA('Users', function(schema) {
 						$.success(id);
 						EMIT('users/update', id);
 						MAIN.session.refresh(id);
+						FUNC.clearcache(id);
 
 						if (!keys || keys.apps || keys.groups)
 							FUNC.refreshgroupsrolesdelay();
@@ -749,6 +751,7 @@ NEWSCHEMA('Users', function(schema) {
 						FUNC.refreshmetadelay();
 						EMIT('users/remove', id);
 						MAIN.session.refresh(id);
+						FUNC.clearcache(id);
 						$.success();
 					});
 					db.log($, null, response.name);
@@ -896,7 +899,7 @@ NEWSCHEMA('Users', function(schema) {
 
 	schema.addWorkflow('locations', function($) {
 
-		var filter = $.query.q ? ' AND position LIKE $1' : '';
+		var filter = $.query.q ? ' AND locality LIKE $1' : '';
 		var params = $.query.q ? ['%' + $.query.q + '%'] : EMPTYARRAY;
 
 		DBMS().query('SELECT locality as id, locality as name FROM tbl_user WHERE LENGTH(locality)>0{0} GROUP BY locality LIMIT 5'.format(filter), params).callback($.callback);
@@ -904,7 +907,7 @@ NEWSCHEMA('Users', function(schema) {
 
 	schema.addWorkflow('groupids', function($) {
 
-		var filter = $.query.q ? ' AND position LIKE $1' : '';
+		var filter = $.query.q ? ' AND groupid LIKE $1' : '';
 		var params = $.query.q ? ['%' + $.query.q + '%'] : EMPTYARRAY;
 
 		DBMS().query('SELECT groupid as id, groupid as name FROM tbl_user WHERE LENGTH(groupid)>0{0} GROUP BY groupid LIMIT 5'.format(filter), params).callback($.callback);

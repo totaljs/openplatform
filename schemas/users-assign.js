@@ -35,6 +35,7 @@ NEWSCHEMA('Users/Assign', function(schema) {
 			else {
 				$.success();
 				FUNC.repairgroupsroles(function() {
+					FUNC.clearcache();
 					FUNC.refreshgroupsrolesdelay();
 				});
 			}

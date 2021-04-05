@@ -30,7 +30,7 @@ NEWSCHEMA('Dashboard', function(schema) {
 			return;
 		var db = DBMS();
 		var year = ($.id ? +$.id : NOW.getFullYear());
-		db.query(`WITH months AS (SELECT date_part('month', date) as month FROM tbl_usage WHERE date_part('year', date)={0} GROUP BY 1) SELECT month, (SELECT ARRAY[SUM(logged)::int4, MAX(mobile)::int4, SUM(desktop)::int4, MAX(maxonline)::int4, SUM(windowed)::int4, SUM(portal)::int4, SUM(tabbed)::int4, SUM(lightmode)::int4, SUM(darkmode)::int4] FROM tbl_usage WHERE date_part('month', date)=month) as stats FROM months`.format(year)).set('usage');
+		db.query(`WITH months AS (SELECT date_part('month', date) as month FROM tbl_usage WHERE date_part('year', date)={0} GROUP BY 1) SELECT month, (SELECT ARRAY[SUM(logged)::int4, SUM(mobile)::int4, SUM(desktop)::int4, MAX(maxonline)::int4, SUM(windowed)::int4, SUM(portal)::int4, SUM(tabbed)::int4, SUM(lightmode)::int4, SUM(darkmode)::int4] FROM tbl_usage WHERE date_part('month', date)=month) as stats FROM months`.format(year)).set('usage');
 		db.query(`SELECT appid, SUM(count)::int4 as count FROM tbl_usage_app WHERE date_part('year', date)={0} GROUP BY appid ORDER BY 2 DESC LIMIT 50`.format(year)).set('apps');
 		db.query(`SELECT name, SUM(count)::int4 as count FROM tbl_usage_browser WHERE date_part('year', date)={0} GROUP BY name ORDER BY 2 DESC LIMIT 50`.format(year)).set('browsers');
 		db.callback($.callback);

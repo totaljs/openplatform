@@ -85,21 +85,8 @@ NEWSCHEMA('Apps', function(schema) {
 			arr.push(obj);
 		}
 
-		DBMS().query('SELECT unnest(running) as appid, COUNT(1)::int4 as count FROM tbl_user WHERE online=TRUE AND running IS NOT NULL GROUP BY appid').callback(function(err, response) {
-
-			for (var i = 0; i < response.length; i++) {
-				var item = response[i];
-				if (item.appid[0] !== '_') {
-					var app = arr.findItem('id', item.appid);
-					if (app)
-						app.count = item.count;
-				}
-			}
-
-			$.extend && $.extend(arr);
-			$.callback(arr);
-		});
-
+		$.extend && $.extend(arr);
+		$.callback(arr);
 	});
 
 	schema.setRead(function($) {
@@ -256,6 +243,7 @@ NEWSCHEMA('Apps', function(schema) {
 					EMIT('apps/update', $.id);
 					FUNC.refreshguest();
 					FUNC.updateroles($.done($.id));
+					FUNC.clearcache(null, $.id);
 				});
 			} else
 				$.invalid(err || 'error-apps-404');
@@ -277,6 +265,7 @@ NEWSCHEMA('Apps', function(schema) {
 		db.remove('tbl_app').id($.id).callback(function() {
 			FUNC.refreshapps(function() {
 				FUNC.updateroles($.done());
+				FUNC.clearcache(null, $.id);
 			});
 		});
 		db.log($, null, app ? app.name : '');
