@@ -325,9 +325,13 @@
 				user.repo = response.repo;
 				user.name = response.name;
 				user.team = response.team;
-				user.colorscheme = response.colorscheme;
 				user.countnotifications = response.countnotifications;
-				user.darkmode = response.darkmode;
+
+				if (!common.intro) {
+					user.darkmode = response.darkmode;
+					user.colorscheme = response.colorscheme;
+				}
+
 				user.dateformat = response.dateformat;
 				user.desktop = response.desktop;
 				user.directoryid = response.directoryid;
@@ -434,8 +438,10 @@
 				}
 
 				if (user.darkmode !== response.darkmode || user.colorscheme !== response.colorscheme || user.background !== response.background) {
-					user.darkmode = response.darkmode;
-					user.colorscheme = response.colorscheme;
+					if (!common.intro) {
+						user.darkmode = response.darkmode;
+						user.colorscheme = response.colorscheme;
+					}
 					user.background = response.background;
 					exports.appearance();
 				}
