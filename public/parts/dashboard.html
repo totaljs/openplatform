@@ -36,8 +36,8 @@
 <div data-scope="dashboard">
 	<div data---="viewbox__null__scrollbar:1;parent:window;scrollbarshadow:1">
 		<div class="totalvisitors">
-			@(Total:) <b data-bind="?.online.total.visitors__html:(value || 0).format(0) + ' ' + (value || 0).pluralize('@(visitors, visitor, visitors, visitors)')"></b>
-			<div class="help nmt">@(Max. online) <b data-bind="?.online.total.maxonline__text:value||0">---</b></div>
+			@(Total:) <b data-bind="?.total.visitors__html:(value || 0).format(0) + ' ' + (value || 0).pluralize('@(visitors, visitor, visitors, visitors)')"></b>
+			<div class="help nmt">@(Max. online) <b data-bind="?.total.maxonline__text:value||0">---</b></div>
 		</div>
 		<div class="onlinevisitors">
 			<div class="onlinevisitors-count"><i class="fa fa-circle online"></i><b data-bind="?.online.online__html:isMOBILE?(value||0):(value||0).pluralize('@(# users, # user, # users, # users)')"></b><span class="badge badge-green">@(online)</span></div>
@@ -311,6 +311,7 @@
 			DAPI('dashboard', function(response) {
 				SET('?.year', NOW.getFullYear());
 				SET('?.meta', response);
+				DAPI('dashboard_total', '?.total');
 			});
 		};
 

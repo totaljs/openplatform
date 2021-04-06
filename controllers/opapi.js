@@ -48,6 +48,7 @@ exports.install = function() {
 
 	// Dashboard
 	ROUTE('+API    /opapi/    -dashboard                *Dashboard            --> read');
+	ROUTE('+API    /opapi/    -dashboard_total          *Dashboard            --> total');
 	ROUTE('+API    /opapi/    -dashboard_online         *Dashboard            --> online');
 	ROUTE('+API    /opapi/    -dashboard_yearly/year    *Dashboard            --> yearly');
 
