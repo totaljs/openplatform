@@ -231,7 +231,7 @@ function oauthprofile() {
 		return;
 	}
 
-	var data = F.is4 ? DECRYPT(token, CONF.hashsalt) : F.decrypt(token, CONF.hashsalt);
+	var data = DECRYPT(token, CONF.hashsalt);
 
 	if (!data) {
 		self.invalid('error-invalid-accesstoken');

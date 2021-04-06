@@ -43,7 +43,7 @@
 			<div class="onlinevisitors-count"><i class="fa fa-circle online"></i><b data-bind="?.online.online__html:isMOBILE?(value||0):(value||0).pluralize('@(# users, # user, # users, # users)')"></b><span class="badge badge-green">@(online)</span></div>
 		</div>
 		<div class="padding bg-smoke npb">
-			<div data-bind="?.online.version__text b" class="m help nmt">@(OpenPlatform version): <b></b></div>
+			<div data-bind="?.online.version__text b" class="m help nmt"><span data-bind="?.online.embedded__show" class="badge badge-green mr5">@(Embedded)</span>@(OpenPlatform version): <b></b></div>
 			<div class="row">
 				<div class="col-md-2 col-xs-6 m">
 					<div class="keyvalue2">
@@ -277,24 +277,18 @@
 				}
 			}
 
-			if (value.mobile !== null) {
-				value.devices = [];
-				value.devices.push({ name: '@(Mobile)', value: value.mobile });
-				value.devices.push({ name: '@(Desktop)', value: value.desktop });
-			}
+			value.devices = [];
+			value.devices.push({ name: '@(Mobile)', value: value.mobile || 0 });
+			value.devices.push({ name: '@(Desktop)', value: value.desktop || 0 });
 
-			if (value.windowed !== null) {
-				value.modes = [];
-				value.modes.push({ name: '@(Windowed)', value: value.windowed });
-				value.modes.push({ name: '@(Tabbed)', value: value.tabbed });
-				value.modes.push({ name: '@(Portal)', value: value.portal });
-			}
+			value.modes = [];
+			value.modes.push({ name: '@(Windowed)', value: value.windowed || 0 });
+			value.modes.push({ name: '@(Tabbed)', value: value.tabbed || 0 });
+			value.modes.push({ name: '@(Portal)', value: value.portal || 0 });
 
-			if (value.darkmode !== null) {
-				value.themes = [];
-				value.themes.push({ name: '@(Light)', value: value.lightmode });
-				value.themes.push({ name: '@(Dark)', value: value.darkmode });
-			}
+			value.themes = [];
+			value.themes.push({ name: '@(Light)', value: value.lightmode || 0 });
+			value.themes.push({ name: '@(Dark)', value: value.darkmode || 0 });
 
 			return value;
 		};

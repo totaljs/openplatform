@@ -217,8 +217,9 @@ function import_users(callback) {
 				model.firstname = arr[0];
 				model.lastname = arr[1];
 				model.gender = 'male';
-				model.dateformat = 'dd.MM.yyyy';
-				model.numberformat = 2;
+				model.timeformat = CONF.timerformat || 24;
+				model.dateformat = CONF.dateformat || 'yyyy-MM-dd';
+				model.numberformat = CONF.numberformat || 1;
 				model.volume = 50;
 				model.sounds = true;
 				model.notifications = true;

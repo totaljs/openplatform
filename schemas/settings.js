@@ -17,6 +17,10 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('mode', ['dev', 'prod', 'test'])('prod');
 	schema.define('defaultappid', 'UID');
 	schema.define('guest', Boolean);
+	schema.define('language', 'Lower(2)');
+	schema.define('dateformat', ['yyyy-MM-dd', 'dd.MM.yyyy', 'MM.dd.yyyy'])('yyyy-MM-dd'); // date format
+	schema.define('timeformat', [12, 24])(24); // 12 or 24
+	schema.define('numberformat', [1, 2, 3, 4])(1); // 1: "1 000.10", 2: "1 000,10", 3: "100,000.00", 4: "100.000,00"
 	schema.define('allowstatus', Boolean);
 	schema.define('allowdesktop', Boolean);
 	schema.define('allowmembers', Boolean);
