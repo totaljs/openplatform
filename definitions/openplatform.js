@@ -1623,8 +1623,10 @@ ON('service', function(counter) {
 		USERS = {}; // clears cache
 		DDOS = {};
 		ORIGINERRORS = {};
-		CONF.allownotifications && emailnotifications();
 	}
+
+	if (counter % 5 === 0)
+		CONF.allownotifications && emailnotifications();
 
 	if (OTPCOUNT) {
 		var keys = Object.keys(OTP);
