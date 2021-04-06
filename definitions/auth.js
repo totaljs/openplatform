@@ -23,7 +23,7 @@ ON('loaded', function() {
 
 	};
 
-	opt.onsession = function(session, $, init) {
+	opt.onsession = function(session, $) {
 
 		var user = session.data;
 		var locked = user.locked == true;
@@ -46,7 +46,7 @@ ON('loaded', function() {
 		if (user.online === false || locked)
 			user.online = true;
 
-		if (init && (!user.dtlogged2 || user.dtlogged2.format('yyyyMMdd') !== NOW.format('yyyyMMdd'))) {
+		if (!user.dtlogged2 || user.dtlogged2.format('yyyyMMdd') !== NOW.format('yyyyMMdd')) {
 			user.mobile = $.req.mobile;
 			user.ua = ($.headers['user-agent'] || '').parseUA();
 			FUNC.usage_logged(user);
