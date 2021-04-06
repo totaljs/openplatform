@@ -227,26 +227,32 @@
 			SET('?.verifytoken', GUID(10));
 		};
 
-		exports.verifytotalapi = function() {
-			var p = '%settingstotalapiresponse';
+		exports.verifytotalapi = function(el) {
+			var p = '%settingstotalapiresponse @hideloading';
 			var model = GET('?');
 			var data = {};
 			data.totalapi = model.totalapi;
-			if (data.totalapi)
+			if (data.totalapi) {
+				if (el instanceof jQuery)
+					OP.loading(true);
 				DAPI('totalapi', data, p);
-			else
+			} else
 				NUL(p);
 		};
 
-		exports.verifysmtp = function() {
-			var p = '%settingssmtpresponse';
+		exports.verifysmtp = function(el) {
+
+			var p = '%settingssmtpresponse @hideloading';
 			var model = GET('?');
 			var data = {};
 			data.smtp = model.smtp;
 			data.smtpsettings = model.smtpsettings;
-			if (data.smtp)
+
+			if (data.smtp) {
+				if (el instanceof jQuery)
+					OP.loading(true);
 				DAPI('smtp', data, p);
-			else
+			} else
 				NUL(p);
 		};
 
