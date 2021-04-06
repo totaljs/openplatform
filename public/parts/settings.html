@@ -212,11 +212,13 @@
 		exports.refresh = function() {
 			DAPI('settings', function(response) {
 
-				if (response.url === 'https://YOURDOMAIN.com' || !response.url)
+				if (response.url === 'https://YOURDOMAIN.com' || !response.url) {
 					response.url = location.protocol + '//' + location.hostname;
+					UPD('?.url @change', 1000);
+				}
 
 				backup = CLONE(response);
-				SETR('?', response);
+				SET('? @reset', response);
 				exports.verifysmtp();
 				exports.verifytotalapi();
 			});
