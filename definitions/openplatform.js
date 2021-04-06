@@ -1599,7 +1599,7 @@ function emailnotifications() {
 
 			var msg = Mail.create(TRANSLATOR(user.language, '@(Unread notifications)'), VIEW('mails/notifications', user, null, null, user.language));
 			msg.to(user.email);
-			msg.from(CONF.mail_address_from, CONF.name);
+			msg.from(CONF.mail_from || CONF.mail_address_from, CONF.name);
 			messages.push(msg);
 		}
 

@@ -1,5 +1,4 @@
 const DB_RESET = { countbadges: 0, countnotifications: 0 };
-const DB_NOTIFY_RESET = { countnotifications: 0, dtnotified: null };
 var USAGE_STATS = [];
 
 NEWSCHEMA('Apps', function(schema) {
