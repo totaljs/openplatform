@@ -129,7 +129,7 @@
 		</div>
 
 		<div class="padding npt">
-			@{if CONF.allowpassword !== false && (!CONF.ldap_active || !user.dn) }}
+			@{if CONF.allowpassword !== false && (!CONF.ldap_active || !user.dn)}
 			<div data-bind="?.changepassword__show:!!value" class="hidden bg-smoke" style="margin-top:15px">
 				<hr />
 				<div class="padding">
