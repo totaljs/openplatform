@@ -16,8 +16,8 @@
 				{ name: 'note', text: '@(Note)', width: 300, sort: false },
 				{ name: 'roles', text: '@(Roles)', width: 350, template: '{{ roles | joinbgcolor(\' \') }}', search: true },
 				{ name: 'apps2', text: '@(Applications)', width: 350, template: '{{ apps2 | join }}', search: true, sort: false },
-				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: 'dd.MM.yyyy', filter: false },
-				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: 'dd.MM.yyyy', filter: false },
+				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[ts]', filter: false },
+				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[ts]', filter: false },
 				{ type: 'controls', template: '<button name="edit"><i class="fa fa-pencil mr5"></i>@(Edit)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>

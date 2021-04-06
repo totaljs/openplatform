@@ -17,8 +17,8 @@
 				{ name: 'body', text: '@(Message)', width: 400 },
 				{ name: 'priority', text: '@(High)', width: 120, type: 'bool', align: 1 },
 				{ name: 'solved', text: '@(Solved)', width: 120, type: 'bool', align: 1 },
-				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[.user.dateformat]' },
-				{ name: 'dtsolved', text: '@(Solved)', width: 120, align: 1, format: '[.user.dateformat]' },
+				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[ts]' },
+				{ name: 'dtsolved', text: '@(Solved)', width: 120, align: 1, format: '[ts]' },
 				{ type: 'controls', template: '<button name="edit"><i class="fa fa-bullseye mr5"></i>@(Detail)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>

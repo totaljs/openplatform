@@ -1,5 +1,3 @@
-const Fs = require('fs');
-
 NEWSCHEMA('Users/Reports', function(schema) {
 
 	schema.define('appid', 'UID', true);
@@ -11,7 +9,7 @@ NEWSCHEMA('Users/Reports', function(schema) {
 	schema.setQuery(function($) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-		DBMS().list('view_user_report').autofill($, 'id:UID,solved:Boolean,dtcreated:Date,dtsolved:Date,ip:String,username:String,userphoto:String,userposition:String,appname:String,appicon:String,screenshot:Number', '', 'dtcreated_desc', 100).callback($.callback);
+		DBMS().list('tbl_user_report').autofill($, 'id:UID,solved:Boolean,dtcreated:Date,dtsolved:Date,ip:String,username:String,useremail:String,userphoto:String,userposition:String,appname:String,appicon:String,screenshot:Number', '', 'dtcreated_desc', 100).callback($.callback);
 	});
 
 	schema.setInsert(function($, model) {
@@ -23,22 +21,24 @@ NEWSCHEMA('Users/Reports', function(schema) {
 		model.userid = $.user.id;
 		model.ip = $.ip;
 		model.solved = false;
-		model.screenshot = undefined;
+		model.screenshot = screenshot ? true : false;
+		model.username = $.user.name;
+		model.useremail = $.user.email;
+		model.userposition = $.user.position;
 
 		var db = DBMS();
 
-		db.read('tbl_app').fields('email').error('error-apps-404').id(model.appid).callback(function(err, response) {
+		db.read('tbl_app').fields('icon,email,title,name').error('error-apps-404').id(model.appid).callback(function(err, response) {
 
 			if (err) {
 				$.invalid(err);
 				return;
 			}
 
-			if (screenshot)
-				model.screenshot = screenshot.base64ToBuffer();
+			model.appname = (response.title || response.name).max(50);
+			model.appicon = response.icon;
 
 			var app = MAIN.apps.findItem('id', model.appid);
-
 			$.extend && $.extend(model);
 			db.insert('tbl_user_report', model).callback($.done());
 			db.log($, model, app.name);
@@ -75,12 +75,10 @@ NEWSCHEMA('Users/Reports', function(schema) {
 			var subject = model.type + ': ' + app.name + ' (' + CONF.name + ')';
 
 			if (screenshot) {
-				var filename = PATH.temp('screenshot' + GUID(12) + '.jpg');
-				screenshot.base64ToFile(filename, function() {
-					var mail = LOGMAIL(response.email, subject, builder.join('\n')).reply($.user.email);
+				FILESTORAGE('reports').save(model.id, 'screenshot.jpg', screenshot.base64ToBuffer(), function() {
+					var mail = LOGMAIL(app.email, subject, builder.join('\n')).reply($.user.email);
 					model.ispriority && mail.high();
-					mail.attachment(filename, 'screenshot.jpg');
-					mail.callback(() => Fs.unlink(filename, NOOP));
+					mail.attachmentfs('reports', model.id, 'screenshot.jpg');
 				});
 			} else {
 				var mail = LOGMAIL(response.email, subject, builder.join('\n')).reply($.user.email);
@@ -93,28 +91,30 @@ NEWSCHEMA('Users/Reports', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 		var db = DBMS();
-		db.modify('tbl_user_report', { solved: true, dtsolved: NOW }).id($.id).callback($.done());
-		db.log($, null, $.id);
+		db.one('reports').id($.id).fields('username,appname').data(response => db.log($, null, response.username + ' - ' + response.appname));
+		db.err(404);
+		db.mod('reports', { solved: true, dtsolved: NOW }).id($.id);
+		db.callback($.done());
 	});
 
 	schema.addWorkflow('screenshot', function($) {
 		if ($.controller && FUNC.notadmin($))
 			return;
-		DBMS().one('tbl_user_report').id($.id).fields('screenshot').callback(function(err, response) {
-			if (response && response.screenshot)
-				$.controller.binary(response.screenshot, 'image/jpeg');
-			else
-				$.controller.throw404();
-			$.cancel();
-		});
+		$.controller.filefs('reports', $.id);
+		$.cancel();
 	});
 
 	schema.setRemove(function($) {
+
 		if ($.controller && FUNC.notadmin($))
 			return;
+
 		var db = DBMS();
-		db.remove('tbl_user_report').id($.id).callback($.done());
-		db.log($, null, $.id);
+		db.one('tbl_user_report').id($.id).fields('username,appname').data(response => db.log($, null, response.username + ' - ' + response.appname));
+		db.err(404);
+		db.rem('tbl_user_report').id($.id);
+		db.callback($.done());
+		FILESTORAGE('reports').remove($.id);
 	});
 
 });

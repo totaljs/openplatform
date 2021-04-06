@@ -256,13 +256,17 @@ CREATE TABLE "public"."tbl_user_report" (
 	"subject" varchar(100),
 	"body" text,
 	"ip" cidr,
-	"screenshot" bytea,
+	"username" varchar(50),
+	"useremail" varchar(120),
+	"userphoto" varchar(80),
+	"userposition" varchar(40),
+	"appname" varchar(50),
+	"appicon" varchar(30),
+	"screenshot" boolean DEFAULT false,
 	"solved" bool DEFAULT false,
 	"priority" bool DEFAULT false,
 	"dtsolved" timestamp,
 	"dtcreated" timestamp DEFAULT now(),
-	CONSTRAINT "tbl_report_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_report_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
 	PRIMARY KEY ("id")
 );
 
@@ -454,28 +458,6 @@ CREATE VIEW view_user AS
 		CASE WHEN (length(a.deputyid) > 0) THEN (SELECT b.name FROM tbl_user b WHERE b.id = a.deputyid LIMIT 1) ELSE ''::text END AS deputy,
 		CASE WHEN (length(a.supervisorid) > 0) THEN (SELECT c.name FROM tbl_user c WHERE c.id=a.supervisorid LIMIT 1) ELSE ''::text END AS supervisor
 	FROM tbl_user a;
-
-CREATE VIEW view_user_report AS
-	SELECT a.id,
-		a.userid,
-		a.appid,
-		a.type,
-		a.subject,
-		a.body,
-		a.ip,
-		a.solved,
-		a.priority,
-		a.dtsolved,
-		a.dtcreated,
-		length(a.screenshot) AS screenshot,
-		b.name AS username,
-		b.photo AS userphoto,
-		b."position" AS userposition,
-		c.title AS appname,
-		c.icon AS appicon
-	FROM tbl_user_report a
-		LEFT JOIN tbl_user b ON b.id = a.userid
-		LEFT JOIN tbl_app c ON c.id = a.appid;
 
 -- ==============================
 -- INDEXES

@@ -17,10 +17,6 @@ db.task(function(responses, response) {
 	db.insert('cl_config', { id: 'allow_custom_titles', type: 'boolean', value: 'true', name: 'allow_custom_titles', dtcreated: NOW });
 	db.insert('cl_config', { id: 'cdn', type: 'string', value: '//cdn.componentator.com', name: 'cdn', dtcreated: NOW });
 	db.insert('cl_config', { id: 'mode', type: 'string', value: 'test', name: 'mode', dtcreated: NOW });
-	db.insert('cl_config', { id: 'language', type: 'string', value: 'en', name: 'language', dtcreated: NOW });
-	db.insert('cl_config', { id: 'dateformat', type: 'string', value: 'yyyy-MM-dd', name: 'dateformat', dtcreated: NOW });
-	db.insert('cl_config', { id: 'timeformat', type: 'number', value: '24', name: 'timeformat', dtcreated: NOW });
-	db.insert('cl_config', { id: 'numberformat', type: 'number', value: '1', name: 'numberformat', dtcreated: NOW });
 
 	db.query('DROP VIEW view_user');
 	db.query(`CREATE VIEW view_user AS
