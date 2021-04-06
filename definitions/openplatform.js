@@ -361,7 +361,7 @@ FUNC.reconfigure = function(callback) {
 			CONF[item.id] = val;
 		}
 
-		CONF.mail_smtp && Mail.use(CONF.mail_smtp, CONF.mail_smtp_options, ERROR('SMTP server'));
+		CONF.mail_smtp && Mail.use(CONF.mail_smtp, CONF.mail_smtp_options, err => err && FUNC.log('Error/SMTP', null, CONF.mail_smtp + ': ' + err));
 		MAIN.id = CONF.url.crc32(true);
 		callback && callback();
 		EMIT('configure');
