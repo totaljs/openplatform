@@ -10,6 +10,7 @@ db.task(function(responses, response) {
 	db.insert('cl_config', { id: 'dateformat', type: 'string', value: 'yyyy-MM-dd', name: 'dateformat', dtcreated: NOW });
 	db.insert('cl_config', { id: 'timeformat', type: 'number', value: '24', name: 'timeformat', dtcreated: NOW });
 	db.insert('cl_config', { id: 'numberformat', type: 'number', value: '1', name: 'numberformat', dtcreated: NOW });
+	db.insert('cl_config', { id: 'desktop', type: 'number', value: '3', name: 'desktop', dtcreated: NOW });
 
 	db.query('DROP VIEW view_user_report');
 	db.query('DROP TABLE tbl_user_report');

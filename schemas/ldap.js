@@ -226,7 +226,7 @@ function import_users(callback) {
 				model.notifications = true;
 				model.notificationsemail = true;
 				model.notificationsphone = true;
-				model.desktop = 3;
+				model.desktop = CONF.desktop || 3;
 				countinserted++;
 			}
 

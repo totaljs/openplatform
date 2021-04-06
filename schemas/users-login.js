@@ -6,7 +6,7 @@ NEWSCHEMA('Users/Login', function(schema) {
 	schema.define('password', 'String(50)', true);
 
 	ON('configure', function() {
-		CONF.default_language && schema.setResource(CONF.default_language);
+		CONF.language && schema.setResource(CONF.language);
 	});
 
 	schema.addWorkflow('exec', function($, model) {

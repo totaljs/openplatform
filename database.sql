@@ -502,6 +502,7 @@ INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VA
 ('language', 'string', 'en', 'language', NOW()),
 ('dateformat', 'string', 'yyyy-MM-dd', 'dateformat', NOW()),
 ('timeformat', 'number', '24', 'timeformat', NOW()),
+('desktop', 'number', '3', 'desktop', NOW()),
 ('numberformat', 'number', '1', 'numberformat', NOW()),
 ('allow_custom_titles', 'boolean', 'true', 'allow_custom_titles', NOW()),
 ('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),

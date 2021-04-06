@@ -332,8 +332,8 @@ function login() {
 
 	var self = this;
 
-	if (CONF.default_language)
-		self.language = CONF.default_language;
+	if (CONF.language)
+		self.language = CONF.language;
 
 	if (self.req.locked) {
 		// locked
