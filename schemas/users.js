@@ -733,9 +733,14 @@ NEWSCHEMA('Users', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		var db = DBMS();
 		var id = $.id;
 
+		if ($.user.id === id) {
+			$.invalid('error-users-current');
+			return;
+		}
+
+		var db = DBMS();
 		db.read('tbl_user').id(id).fields('id,supervisorid,deputyid,name,reference,groupid,groups,contractid').callback(function(err, response) {
 			if (response) {
 

@@ -94,9 +94,10 @@
 				if (response.success) {
 					location.href = '/';
 				} else {
-					SETTER('message/warning', response[0].error);
+					SETTER('message/warning', response[0].error, ASETTER('pin/focus'));
 					SET('form.response', response);
 					NUL('form.response', 1500);
+					NUL('form.pin');
 				}
 
 			}, 'session');

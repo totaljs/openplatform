@@ -37,4 +37,4 @@ error-nooauth                : OAuth 2.0 service is inactive.
 error-noaccesstoken          : Access Token service is inactive.
 error-oauthsync              : Unhandled problem with synchronization accounts via OAuth 2.0
 error-oauthfields            : OAuth 2.0 doesn't send all information about the user
-error-components-exists      : UI component is already registered in the system
+error-users-current          : You can't remove your profile

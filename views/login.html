@@ -181,17 +181,22 @@
 			RESET('form.*');
 			RESET('otp.*');
 
-			if (common.type === 'password')	{
+			if (common.type === 'password') {
 				DAPI('password', password, ASETTER('message/response', function(response) {
 					SET('password.response', response);
 					response.success && SET('password.name', '', true);
 				}));
 			} else if (common.type === 'otp') {
 				otp.name = form.name;
-				DAPI('login_otp', otp, ASETTER('message/response', function(response) {
-					SET('otp.response', response);
-					response.success && location.reload(true);
-				}));
+				DAPI('login_otp', otp, function(response) {
+					if (response instanceof Array) {
+						NUL('otp.password');
+						SETTER('message/warning', response[0].error, ASETTER('pin/focus'));
+					} else {
+						SET('otp.response', response);
+						response.success && location.reload(true);
+					}
+				});
 			} else {
 				DAPI('login', form, ASETTER('message/response', function(response) {
 					if (response.value === 'otp') {
