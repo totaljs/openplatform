@@ -7,12 +7,16 @@ NEWSCHEMA('Dashboard', function(schema) {
 	});
 
 	schema.addWorkflow('online', function($) {
+
 		if ($.controller && FUNC.notadmin($))
 			return;
+
 		var date = NOW;
 		var db = DBMS();
+
 		db.one('tbl_usage').where('date', date);
 		db.que('SELECT id,appid,count,mobile,desktop,windowed,tabbed,portal,lightmode,darkmode,date,dtupdated,(SELECT COUNT(1)::int4 as count FROM tbl_user WHERE online=TRUE AND running && ARRAY[appid]) AS running FROM tbl_usage_app WHERE date=$1', [date]).set('apps').sort('count', true);
+		db.que('SELECT SUM(logged)::int4 as visitors, MAX(maxonline) as maxonline FROM tbl_usage').first().set('total');
 		db.all('tbl_usage_browser').where('date', date).set('browsers').sort('count', true);
 		db.all('tbl_user').fields('id,name,position,dtlogged').take(10).query('dtlogged IS NOT NULL').sort('dtlogged', true).set('users');
 		db.que('SELECT (SELECT COUNT(1)::int4 FROM tbl_user_session WHERE online=TRUE) as used, (SELECT COUNT(1)::int4 FROM tbl_user_session WHERE online=FALSE) as free').first().set('sessions');
