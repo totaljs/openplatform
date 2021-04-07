@@ -19,7 +19,7 @@ header .desktop { float: right; background: transparent; height: 45px; width: 10
 header .menu b { width: 8px; height: 8px; background-color: #000; float: left; margin: 1px; }
 header .menu span { width: 24px; display: inline-block; }
 header .apps { font-size: 14px; padding: 0 10px; }
-header .apps:first-child { padding-top: 10px; }
+header .apps:first-child { padding-top: 15px; }
 header .apps .app { height: 28px; line-height: 28px; cursor: pointer; border-radius: var(--radius); margin-bottom: 4px; position: relative; }
 header .apps .running { background-color: #FFF !important; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
 header .apps .app .icon { float: left; width: 14px; margin: 0 12px 0 10px; color: var(--color); text-align: center; }
