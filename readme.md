@@ -13,7 +13,7 @@ OpenPlatform is a simple enterprise-ready platform for running, integrating and 
 - create a database
 - execute `database.sql`
 - update database connection string in the `/config` file
-- run openplatform `$ node index.js`
+- run it `$ node index.js`
 - default login is `admin` default password is `admin`
 
 ## Requirements
