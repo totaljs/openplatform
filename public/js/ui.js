@@ -60,10 +60,7 @@ var MD_LINE = { wrap: false, headlines: false, tables: false, code: false, ul: f
 var MD_NOTIFICATION = { wrap: false, headlines: false };
 
 W.SENDCOMMAND = function(type, body) {
-	for (var i = 0; i < dashboard.apps.length; i++) {
-		var app = dashboard.apps[i];
-		SETTER('processes', 'sendcommanddata', app.id, { type: type, body: body });
-	}
+	SETTER('processes/send_all', 'command', { type: type, body: body });
 };
 
 MD_NOTIFICATION.custom = function(val) {
