@@ -50,6 +50,9 @@
 
 			</div>
 			<div data---="viewbox__user.apps__margin:@{if CONF.allowclock}100@{else}55@{fi};scrollbar:1;visibleY:0;scrollbarshadow:1" class="invisible">
+
+				@{part('menu')}
+
 				<div data-bind="user.noapps__hide">
 					<div class="apps">
 						<div data---="movable__null__selector:.app;exec:view/sort" data-bind="user.apps__template:.app">

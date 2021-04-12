@@ -4,6 +4,7 @@ html,body { overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto
 body { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 body.ui-dark { background: #808080 linear-gradient(#5f5e50,#565656); }
 
+
 header { width: 200px; background: rgba(255,255,255,0.8); box-shadow: 0 3px 10px rgba(0,0,0,0.1); position: absolute; left: 15px; top: 15px; bottom: 15px; z-index: 1; border-radius: var(--radius); }
 header .status { float: right; width: 45px; background-color: transparent; height: 45px; border: 0; border-left: 1px solid rgba(0,0,0,0.09); text-align: center; line-height: 45px; font-size: 20px; cursor: pointer; padding: 0; }
 header .status i { transition: all 0.3s; }
@@ -37,7 +38,7 @@ header hr { border-color: rgba(0,0,0,0.1); margin: 15px 0; }
 .header .photo img { width: 34px; height: 34px; border-radius: var(--radius); }
 .header .initials { width: 34px; height: 34px; border-radius: var(--radius); color: #FFF; text-align: center; line-height: 34px; display: block; background-color: var(--color); font-weight: bold; }
 .header .name { font-size: 11px; }
-.header .title { font-size: 12px; font-weight: bold; }
+.header .title { font-size: 12px; font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .header .mode { position: absolute; font-size: 9px; color: #FFF; padding: 1px 5px; line-height: 9px; border-radius: var(--radius); margin: 48px 0 0 10px; width: 34px; z-index: 10; text-transform: uppercase; text-align: center; }
 .header .mode-test { background-color: #E73323; }
 .header .mode-dev { background-color: #5C1DC4; }
