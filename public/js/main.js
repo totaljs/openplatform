@@ -145,7 +145,6 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 		SET('common.focused', app.id);
 		EMIT('app_focus', app, true);
 		self.update('focus');
-
 	};
 
 	var $W = $(W);
@@ -359,13 +358,17 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 	};
 
 	self.setter = function(value) {
+
 		var change = false;
+		var isrunning = false;
+
 		if (value) {
 			for (var i = 0; i < value.length; i++) {
 				var item = value[i];
 				if (item.meta) {
 					if (!item.islaunched)
 						self.make_iframe(item);
+					isrunning = true;
 				} else {
 					if (item.isrunning) {
 						item.isrunning = false;
@@ -379,6 +382,7 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 			}
 		}
 
+		$('html').tclass('isrunning', isrunning);
 		change && self.update('list');
 	};
 
