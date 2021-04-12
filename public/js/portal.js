@@ -32,56 +32,6 @@ COMPONENT('time', function(self, config, cls) {
 	};
 });
 
-COMPONENT('scroller', '', function(self, config, cls) {
-
-	var scrollbar;
-	var area;
-
-	self.blind();
-	self.readonly();
-
-	self.make = function() {
-
-		self.aclass(cls);
-
-		scrollbar = document.createElement('DIV');
-		area = document.createElement('DIV');
-		scrollbar.classList.add(cls + '-scrollbar');
-		area.classList.add(cls + '-area');
-
-		for (var i = 0; i < self.dom.children.length; i++)
-			area.appendChild(self.dom.children[i]);
-
-		scrollbar.appendChild(area);
-		self.dom.appendChild(scrollbar);
-
-		self.resize();
-	};
-
-	self.resize = function() {
-		setTimeout2(self.ID, self.resizeforce, 200);
-	};
-
-	self.resizeforce = function() {
-
-		var w = 0;
-
-		for (var i = 0; i < area.children.length; i++) {
-			var child = area.children[i];
-			w += $(child).width();
-		}
-
-		var css = {};
-		css.width = w;
-		$(area).css(css);
-	};
-
-	self.setter = function() {
-		self.resize();
-	};
-
-});
-
 COMPONENT('main', 'padding:15;margin:80', function(self, config, cls) {
 
 	self.make = function() {

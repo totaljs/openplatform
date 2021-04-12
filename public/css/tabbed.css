@@ -121,7 +121,7 @@ footer .sa i { margin-right: 5px; }
 .ui-menu-items { box-shadow: 0 0 20px rgba(0,0,0,0.2); }
 
 .ui-scroller { height: 45px; overflow: hidden; border-left: 1px solid rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.1); }
-.ui-scroller-scrollbar { overflow-x: scroll; height: 60px; position: relative; }
+.ui-scroller-scrollbar { overflow-x: scroll; height: 70px; position: relative; overflow-y: hidden; }
 .ui-scroller-area { position: absolute; height: 45px; width: 10000px; }
 
 .ui-dark .ui-scroller { border-left-color: rgba(255,255,255,0.1); border-right-color: rgba(255,255,255,0.1); }
