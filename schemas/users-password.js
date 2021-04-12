@@ -14,7 +14,7 @@ NEWSCHEMA('Users/Password', function(schema) {
 		}
 
 		var db = DBMS();
-		db.read('tbl_user').where('login', model.name).fields('id,firstname,lastname,middlename,name,language,email,otp,inactive,blocked').error('error-credentials').data(response => db.log($, model, response.name));
+		db.read('tbl_user').where('login', model.name).fields('id,firstname,lastname,middlename,name,language,email,otp,inactive,blocked,dn').error('error-credentials').data(response => db.log($, model, response.name));
 		db.callback(function(err, response) {
 
 			if (err) {
@@ -22,7 +22,10 @@ NEWSCHEMA('Users/Password', function(schema) {
 				return;
 			}
 
-			if (response.blocked) {
+			if (response.dn) {
+				$.invalid('error-password-dn');
+				return;
+			} else if (response.blocked) {
 				$.invalid('error-blocked');
 				return;
 			} else if (response.inactive) {
