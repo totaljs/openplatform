@@ -222,6 +222,7 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 		}
 
 		var data = {};
+
 		data.openplatform = true;
 		data.type = type;
 		data.body = message;
@@ -232,8 +233,12 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 		if (callbackid)
 			data.callback = callbackid;
 
-		app.window[0].scrollTop = -1;
-		app.iframe[0].contentWindow.postMessage(STRINGIFY(data), '*');
+		if (app.window)
+			app.window[0].scrollTop = -1;
+
+		if (app.frame)
+			app.iframe[0].contentWindow.postMessage(STRINGIFY(data), '*');
+
 		return true;
 	};
 
@@ -743,7 +748,7 @@ $(W).on('message', function(e) {
 				}
 
 				data.body.app = { id: app.id, name: app.name, type: app.type };
-				EXEC('openplatform/open', target.id, data.body)
+				EXEC('openplatform/open', target.id, data.body);
 			}
 
 			break;
