@@ -3,18 +3,19 @@
 		<br />
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3">
-				<div class="panel m">
+				<div class="panel m" data-bind="?.active__exec:?/isactivated">
 					<label><i class="fas fa-coins"></i>@(LDAP settings) <b class="badge badge-red">@(beta)</b></label>
 					<div class="padding">
-						<div data---="checkbox__?.active">@(<b>LDAP</b> is active)</div>
+						<div data---="checkbox__?.active">@(<b>LDAP</b> is activated)</div>
 						<hr />
 						<div data---="input__?.url__required:1__'ldap://localhost:389'">@(URI address)</div>
 						<div class="help">@(Must be in the form <code>ldap://hostname:port</code>)</div>
 						<br />
 						<div data---="input__?.dn__required:1__''">@(DN / Distinguished name)</div>
-						<div class="help">@(Example: <code>ou=USERS,dc=example,dc=com</code>)</div>
+						<div class="help">@(Example: <code>ou=USERS,dc=example,dc=com</code>. The DN will be used for searching groups and users.)</div>
 						<br />
 						<div class="caption">@(Service account)</div>
+						<div class="help nmt m">@(The service account is needed for obtaining groups and users according to the above <b>DN</b>.)</div>
 						<div class="row">
 							<div class="col-sm-6 m">
 								<div data---="input__?.user__required:1__''">@(User name)</div>
@@ -26,12 +27,14 @@
 						<hr style="margin-top:10px" />
 						<div class="row">
 							<div class="col-sm-5">
-								<div data---="input__?.interval__required:1;align:1__'30 minutes'">@(Import interval)</div>
+								<div data---="input__?.interval__required:1;align:1__'30 minutes'">@(Sync. interval)</div>
 							</div>
 						</div>
+						<div class="help">@(Synchronization interval determines an interval for synchronization groups and users via LDAP. The interval can be defined in minutes, hours, or days.)</div>
 					</div>
 					<div class="padding bg-smoke">
 						<div data---="input__?.mapping__placeholder:USERFIELD=LDAPFIELD, USERFIELD=LDAPFIELD__''">@(Additional mapping)</div>
+						<div class="help">@(With the help of additional mapping, you can map a user's values from LDAP to the OpenPlatform database.)</div>
 					</div>
 					<div class="padding" data---="validation__?">
 						<button class="button b exec" name="submit" data-exec="?/submit" disabled><i class="fa fa-check-circle mr5"></i>@(SUBMIT)</button>
@@ -49,6 +52,10 @@
 
 		exports.reload = function() {
 			exports.refresh();
+		};
+
+		exports.isactivated = function(value, path, el) {
+			el.css('border', '2px solid ' + (value ? '#68B25B' : '#E73323'));
 		};
 
 		exports.refresh = function() {
