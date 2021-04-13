@@ -236,7 +236,7 @@ COMPONENT('processes', 'margin:0;parent:auto', function(self, config) {
 		if (app.window)
 			app.window[0].scrollTop = -1;
 
-		if (app.frame)
+		if (app.iframe)
 			app.iframe[0].contentWindow.postMessage(STRINGIFY(data), '*');
 
 		return true;
