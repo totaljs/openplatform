@@ -526,7 +526,7 @@ INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VA
 ('cookie_expiration', 'string', '3 days', 'cookie_expiration', NOW()),
 ('defaultappid', 'string', '', 'defaultappid', NOW()),
 ('email', 'string', 'info@totaljs.com', 'email', NOW()),
-('guest', 'boolean', 'true', 'guest', NOW()),
+('guest', 'boolean', 'false', 'guest', NOW()),
 ('marketplace', 'string', 'https://marketplace.openplatform.cloud', 'marketplace', NOW()),
 ('maxmembers', 'number', '10', 'maxmembers', NOW()),
 ('name', 'string', 'OpenPlatform', 'name', NOW()),

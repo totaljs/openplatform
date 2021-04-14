@@ -51,6 +51,10 @@
 	common.wiki = EMPTYARRAY;
 	common.running = {};
 
+	@{if CONF.allowrememberopenapps}
+	common.rememberopenapps = true;
+	@{fi}
+
 	MONTHS[0] = '@(January)';
 	MONTHS[1] = '@(February)';
 	MONTHS[2] = '@(March)';
@@ -134,6 +138,22 @@
 			UPD('user.apps', 'badges');
 		}
 
+		exports.remember = function() {
+			if (common.rememberopenapps) {
+				var running = [];
+				for (var i = 0; i < user.apps.length; i++) {
+					var m = user.apps[i];
+					if (m.isrunning) {
+						if (m.isfocused)
+							running.push(m.id);
+						else
+							running.unshift(m.id);
+					}
+				}
+				PREF.set('running', running, '1 year');
+			}
+		};
+
 		exports.open = function(appid, data, callback) {
 
 			if (appid instanceof jQuery) {
@@ -159,6 +179,7 @@
 			if (app.isrunning) {
 				SETTER('processes/focus', app);
 				data && app.send('share', data);
+				exports.remember();
 				callback && callback(app);
 				return;
 			}
@@ -180,6 +201,7 @@
 				app.callback = callback;
 				EMIT('app_open', app);
 				UPD('user.apps', 'open');
+				exports.remember();
 			});
 
 		};
@@ -250,6 +272,7 @@
 			}
 
 			var skip = false;
+			var app;
 
 			if (NAV.query.open) {
 				var appsearch = NAV.query.open.toLowerCase();
@@ -271,22 +294,38 @@
 				}
 			}
 
-			if (!skip || NAV.query.welcome) {
-				skip = true;
-				var app = user.apps.findItem('id', '_welcome');
-				app && EXEC('openplatform/open', app.id);
-			}
+			if (!skip) {
+				if (common.rememberopenapps && PREF.running && PREF.running.length) {
+					PREF.running.slice(0).wait(function(id, next) {
+						var app = user.apps.findItem('id', id);
+						if (app) {
+							EXEC('openplatform/open', app.id);
+							setTimeout(next, 500);
+						} else
+							next();
+					});
+				} else {
 
-			if (!skip)
-				EMIT('app_empty');
+					if (NAV.query.welcome) {
+						app = user.apps.findItem('id', '_welcome');
+						if (app) {
+							skip = true;
+							EXEC('openplatform/open', app.id);
+						}
+					}
+
+					if (!skip)
+						EMIT('app_empty');
+				}
+			}
 		};
 
 		exports.refresh_profile = function(callback) {
 			DAPI('profile', function(response) {
 
 				if (W.user == EMPTYOBJECT || !W.user) {
-					response.apps.quicksort('position');
 
+					response.apps.quicksort('position');
 					response.noapps = !response.apps.findItem(function(app) {
 						return !app.internal;
 					});

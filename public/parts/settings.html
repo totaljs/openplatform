@@ -9,6 +9,8 @@
 		<div class="maxwidthleft">
 			<div class="padding">
 
+				<div data-bind="?.init__show" class="red fs12 m"><i class="fas fa-bell-exclamation mr5"></i><b>@(OpenPlatform is not configured)</b>.<br />@(Please follow the settings below and <b>submit the form</b>.)</div>
+
 				<div class="alert m">
 					<div><i class="fa fa-warning mr5"></i><strong>@(WARNING)</strong></div>
 					<div style="margin-top:3px">@(Changing the URL address, will result in the loss of data in third-party apps. URL address is a unique identificator of OpenPlatform. Each third-party app creates a unique identificator of OpenPlatform from URL address and verification token.)</div>
@@ -72,20 +74,21 @@
 						<div data---="checkbox__?.allowoauth">@(Enable OAuth 2.0)</div>
 						<div data---="checkbox__?.allowaccesstoken">@(Allow apps to access via Access Token)</div>
 						<div data---="checkbox__?.allowpassword">@(Allow to change password)</div>
+						<div data---="checkbox__?.allowclock">@(Show clock)</div>
 					</div>
 					<div class="col-md-4">
 						<div data---="checkbox__?.allownotifications">@(Allow e-mail notifications)</div>
-						<div data---="checkbox__?.allowclock">@(Show clock)</div>
 						<div data---="checkbox__?.allowstatus">@(Allow custom user statuses)</div>
 						<div data---="checkbox__?.allowbackground">@(Allow to change backgrounds)</div>
 						<div data---="checkbox__?.allowmembers">@(Allow users to add own members)</div>
-					</div>
-					<div class="col-md-4">
 						<div data---="checkbox__?.allowprofile">@(Users can change their profile)</div>
 						<div data---="checkbox__?.allowtheme">@(Allow to change color themes)</div>
+					</div>
+					<div class="col-md-4">
 						<div data---="checkbox__?.allowappearance">@(Allow to change appearance)</div>
 						<div data---="checkbox__?.allownickname">@(Allow to change nickname)</div>
 						<div data---="checkbox__?.allowdesktop">@(Allow to change desktop mode)</div>
+						<div data---="checkbox__?.allowrememberopenapps">@(Allow to remember last open apps)</div>
 					</div>
 				</div>
 				<hr />
@@ -95,10 +98,10 @@
 						<div data---="input__?.defaultappid__dirsource:main.apps;dirkey:title;dirempty:@(No application)">@(Default application)</div>
 					</div>
 					<div class="col-md-4 m">
-						<div data---="input__?.marketplace__maxlength:500;type:url;placeholder:https://domain.com/marketplace.html;icon:shopping-basket">@(Link to Marketplace)</div>
+						<div data---="input__?.marketplace__maxlength:500;type:url;placeholder:https://domain.com/marketplace.html;icon:shopping-basket">@(Link to the Marketplace)</div>
 					</div>
 					<div class="col-md-4 m">
-						<div data---="input__?.welcome__maxlength:500;type:url;placeholder:https://domain.com/welcome.html">@(Link to Welcome page)</div>
+						<div data---="input__?.welcome__maxlength:500;type:url;placeholder:https://domain.com/welcome.html">@(Link to the Welcome page)</div>
 					</div>
 				</div>
 				<div class="row">
@@ -214,6 +217,7 @@
 
 				if (response.url === 'https://YOURDOMAIN.com' || !response.url) {
 					response.url = location.protocol + '//' + location.hostname;
+					response.init = true;
 					UPD('?.url @change', 1000);
 				}
 

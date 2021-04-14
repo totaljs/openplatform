@@ -114,9 +114,18 @@
 				<div class="help red nmb b hidden npt" data-bind="intro__show:value&&value.password!==value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="fa fa-warning"></i>@(Passwords do not match.)</div>
 			</div>
 		</div>
-		@{fi}
-
 	</figure>
+	@{fi}
+
+	@{if user.sa && CONF.url === 'https://YOURDOMAIN.com'}
+	<figure>
+		<div class="m"><i class="fa fa-cog fa-5x fa-spin red"></i></div>
+		<div class="padding">
+			<div class="red m b" style="font-size:16px">@(OpenPlatform is not configured)</div>@(First, you need to set up Total.js OpenPlatform. Open the <b>Control panel</b> and set up your platform.)
+		</div>
+	</figure>
+	@{fi}
+
 </div>
 
 <script>

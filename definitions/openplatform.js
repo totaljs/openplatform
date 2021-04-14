@@ -1561,10 +1561,6 @@ FUNC.log = function(type, rowid, message, $) {
 
 function refresh_apps() {
 	MAIN.apps.wait(function(app, next) {
-
-		if (app.workshopid)
-			return next();
-
 		FUNC.refreshapp(app, function(err, item, update) {
 			if (update) {
 				DBMS().modify('tbl_app', item).id(item.id).callback(function() {
