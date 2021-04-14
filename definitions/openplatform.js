@@ -37,6 +37,11 @@ MAIN.logout = function(controller) {
 
 MAIN.readuser = readuser;
 
+function auditjson(key, value) {
+	if (key !== 'password' && key !== 'screenshot')
+		return value;
+}
+
 DBMS.audit(function($, data, message) {
 
 	var model = {};
@@ -54,11 +59,8 @@ DBMS.audit(function($, data, message) {
 	model.ip = $.ip;
 	model.dtcreated = NOW = new Date();
 
-	if (data) {
-		data.password = undefined;
-		data.screenshot = undefined;
-		model.data = JSON.stringify(data);
-	}
+	if (data)
+		model.data = JSON.stringify(data, auditjson);
 
 	this.insert('tbl_log', model).nobind();
 });
