@@ -1,6 +1,6 @@
 var OP = {};
 
-OP.version = 429;
+OP.version = 430;
 OP.callbacks = {};
 OP.events = {};
 OP.is = parent !== window;
@@ -632,6 +632,10 @@ OP.send = function(type, body, callback) {
 };
 
 OP.on = function(name, callback) {
+
+	if (name === 'ready' && OP.ready)
+		callback();
+
 	if (name === 'print' || name === 'options')
 		OP.events[name] = null;
 	!OP.events[name] && (OP.events[name] = []);
