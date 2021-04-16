@@ -87,7 +87,7 @@ footer .sa i { margin-right: 5px; }
 .process-title .close { float: right; width: 26px; height: 26px; border-left: 1px solid rgba(0,0,0,0.1); text-align: center; line-height: 26px; color: red; cursor: pointer; }
 .process-title .menu { float: right; width: 26px; height: 26px; text-align: center; line-height: 26px; cursor: pointer; }
 .process-title .mobilemenu { float: right; width: 30px; height: 26px; text-align: center; line-height: 26px; cursor: pointer; border-right: 1px solid rgba(0,0,0,0.1); color: var(--color); display: none; }
-.jc-xs .process-title .mobilemenu, .jc-sm .process-title .mobilemenu { display: block; }
+.mobilemenu.jc-xs .process-title .mobilemenu, .jc-sm .process-title .mobilemenu { display: block; }
 .process-loading { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; border-radius: 0 0 var(--radius) var(--radius); }
 .process-loading > div { width: 250px; text-align: center; }
 .process-loading > div > div > i { font-size: 50px; color: var(--color); }

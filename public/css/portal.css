@@ -4,7 +4,6 @@ html,body { overflow: hidden; -ms-overflow-style: none; overflow-scrolling: auto
 body { background: #808080 linear-gradient(#899aa4,#e9d0aa); }
 body.ui-dark { background: #808080 linear-gradient(#5f5e50,#565656); }
 
-
 header { width: 200px; background: rgba(255,255,255,0.8); box-shadow: 0 3px 10px rgba(0,0,0,0.1); position: absolute; left: 15px; top: 15px; bottom: 15px; z-index: 1; border-radius: var(--radius); }
 header .status { float: right; width: 45px; background-color: transparent; height: 45px; border: 0; border-left: 1px solid rgba(0,0,0,0.09); text-align: center; line-height: 45px; font-size: 20px; cursor: pointer; padding: 0; }
 header .status i { transition: all 0.3s; }
@@ -92,6 +91,7 @@ footer .sa i { margin-right: 5px; }
 .menushow .ui-main { display: none; }
 .mobilemenu-buttons button b { width: 8px; height: 8px; background-color: #000; float: left; margin: 1px; }
 .mobilemenu-buttons button span { width: 24px; display: inline-block; height: 16px; }
+.processes .mobilemenu { display: none; }
 
 .ui-dark .mobilemenu-buttons { background: rgba(0,0,0,0.8); }
 .ui-dark .mobilemenu-buttons button { background: transparent; }
@@ -109,7 +109,7 @@ footer .sa i { margin-right: 5px; }
 .process-title .close { float: right; width: 26px; height: 26px; border-left: 1px solid rgba(0,0,0,0.1); text-align: center; line-height: 26px; color: red; cursor: pointer; }
 .process-title .menu { float: right; width: 26px; height: 26px; text-align: center; line-height: 26px; cursor: pointer; }
 .process-title .mobilemenu { float: right; width: 30px; height: 26px; text-align: center; line-height: 26px; cursor: pointer; border-right: 1px solid rgba(0,0,0,0.1); color: var(--color); display: none; }
-.jc-xs .process-title .mobilemenu, .jc-sm .process-title .mobilemenu { display: block; }
+.mobilemenu.jc-xs .process-title .mobilemenu, .jc-sm .process-title .mobilemenu { display: block; }
 .process-loading { z-index: 2; position: absolute; background-color: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; border-radius: 0 0 var(--radius) var(--radius) }
 .process-loading > div { width: 250px; text-align: center; }
 .process-loading > div > div > i { font-size: 50px; color: var(--color); }
