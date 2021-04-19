@@ -273,8 +273,22 @@
 
 			var skip = false;
 			var app;
+			var data;
 
-			if (NAV.query.open) {
+			if (NAV.query.share) {
+
+				try {
+					data = PARSE('{' + decodeURIComponent(atob(NAV.query.share)) + '}');
+				} catch (e) {}
+
+				if (data) {
+					exports.open(data.id, null, function(app) {
+						app.send('link', data);
+					});
+					skip = true;
+				}
+
+			} else if (NAV.query.open) {
 				var appsearch = NAV.query.open.toLowerCase();
 				for (var i = 0; i < user.apps.length; i++) {
 					var tmp = user.apps[i];

@@ -682,6 +682,7 @@ $(W).on('message', function(e) {
 			if (app && navigator.userAgent === data.body.ua) {
 
 				var meta = {};
+				meta.id = app.id;
 				meta.openplatformurl = location.origin;
 				meta.name = app.name;
 				meta.title = app.title;
