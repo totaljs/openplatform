@@ -163,7 +163,8 @@ function json_service() {
 		headers['X-OpenPlatform'] = MAIN.id + '-' + obj.user.directoryid + '-' + CONF.verifytoken + '-' + obj.user.id + '-' + app.servicetoken;
 		headers['Content-Type'] = self.headers['content-type'];
 
-		app.origintoken && self.header('X-Origin', app.origintoken);
+		if (app.origintoken)
+			headers['X-Origin'] = app.origintoken;
 
 		var opt = {};
 		opt.keepalive = true;
