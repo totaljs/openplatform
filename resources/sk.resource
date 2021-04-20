@@ -3,7 +3,7 @@
 // Updated: 2020-02-29 10:51
 
 error-invalid-url            : Neplatná URL adresa OpenPlatformy.
-error-users-404              : Užívateľ sa nenašiel.
+error-users-404              : Používateľ sa nenašiel.
 error-users-group            : Skupina "@" sa nenašla.
 error-users-role             : Rola "@" sa nenašla.
 error-permissions            : Nemáte požadované práva.
@@ -13,50 +13,203 @@ error-blocked                : Váš účet bol zablokovaný.
 error-settings-smtp          : Chyba SMTP: @.
 error-inactive               : Váš účet je neaktívny.
 error-invalid-origin         : Vaša IP adresa nie je na zozname povolených adries.
-error-accessible             : Užívateľ nie je prístupný.
-error-notifications          : Užívateľ má veľa neprečítaných notifikácií.
-error-notifications-muted    : Užívateľ má zablokované notifikácie pre túto aplikáciu.
-error-offline                : Užívateľ je offline
+error-accessible             : Používateľ nie je prístupný.
+error-notifications-muted    : Používateľ má zablokované notifikácie pre túto aplikáciu.
+error-offline                : Používateľ je offline
 error-file-type              : Neplatný typ súboru.
 error-apps-404               : Aplikácia sa nenašla.
-error-apps-offline           : Aplikácia je offline.
 error-apps-exists            : Aplikácia už existuje v databáze.
 error-pin                    : PIN je neplatný.
-error-services-app           : Neplatná aplikácia.
-error-services-notsupported  : Aplikácia nepodporuje služby.
-error-services-endpoint      : Aplikácia nemá definovaný "@" koncový bod.
-error-services-invalid       : Služby nie sú definované.
 error-totp                   : Token je neplatný.
-error-smtp                   : Musíte definovať SMTP server.
-error-otp-code               : Kód je neplatný.
-error-otp-session            : Kód je expirovaný.
 error-blocked-ip             : Vaša IP adresa bola zablokovaná.
 error-users-email            : Emailová adresa je už registrovaná v databáze.
 error-users-login            : Prihlasovacie meno je už registrované v databáze.
 error-members-limit          : Prekročili ste maximálny počet členov.
+error-invalid-clientkey      : Chybný kľúč
 
-// definitions/openplatform.js
-T8259n1                      : Účet
+// schemas/account-sessions.js
+T93gaqk                       : Chybný session identifikátor
 
-// schemas/users-password.js
-T1k12zx6                     : Obnova hesla
+// schemas/ldap.js
+T1wlwh4                       : LDAP je neaktívny
 
-// schemas/users.js
-T97cku9                      : Vitajte v {0}
+// schemas/users-members.js
+T7qlsr9                       : Prekročili ste maximálny počet členov
+
+// schemas/users-members.js
+Tdxxn1g                       : Nemôžete použiť Vašu emailovú adresu
+
+// schemas/users-members.js
+T1rgso9a                      : Emailová adresa je už registrovaná
+
+// views/admin.html
+T706k13                       : # strán,# strana,# strany,# strán
+Tmm5bl3                       : # položiek,# položka,# položky,# položiek
+
+// views/admin.html, public/parts/logs.html
+T1evv3                        : Logy
 
 // views/intro.html
+T1odzu8f                      : <b>Vzhľad</b>. Môžete si zvoliť tmavú alebo svetlú tému. Nie všetky aplikácie môžu podporovať vzhľad.
+
+// views/intro.html
+T1al0vwd                      : Chcete zmeniť prístupové heslo?
+T1y1qmus                      : Skôr ako začnete, nakonfigurujte OpenPlatformu. Otvorte <b>Nastavenie</b> a tam nastavte Vašu platformu.
+
+// views/intro.html, public/parts/settings.html
+T93ioe6                       : OpenPlatform nie je nakonfigurovaná
+
+// views/login.html
+Trozuju                       : <b>Váš profil má zapnutú dvojúrovňovú autentifikáciu.</b> Zadajte kód z Vašej mobilnej aplikácie:
+
+// views/main.html
+T4k19p1                       : Odstrániť z obľúbených
+T1a2kjx                       : Tlačiť
+T1c4m9                        : Pomocník
+T19j6wbk                      : Pomocník nie je k dispozícii v tejto aplikácii
+T1tin0as                      : Informácie o zmenách nie sú prístupné v tejto aplikácii
+T179lgs7                      : Konzola
+T1fblr                        : Menu
+T4w248t                       : Mobilné menu
+
+// views/profile.html
+T1s6kdfb                      : Najprv si musíte stiahnúť aplikáciu pre Váš Android alebo iOS a potom musíte naskenovať QR kód do mobilnej aplikácie.
+T1sksnqp                      : Zopakovať heslo
+Tsg6gtm                       : Obrazovka sa uzamkne len na stolových počítačoch po uplynutí doby nečinnosti.
+
+// public/forms/app.html
+Tvstnq4                       : Nemôžete použiť túto aplikáciu, pretože doména Vašej OpenPlatformy nie je v zozname povolených platforiem.
+T14jtx5w                      : Získaný server
+T7foi3j                       : Token pôvodu
+T12kxbz8                      : An origin token is a simple security element if you don't want to check the origin of 3rd party application. The application must send the <code>X-Origin</code> header with this token.
+T1j4r3q                       : A default position index. A lower index means a higher position in the list of applications. Users can change this position manually.
+T54rgxh                       : Voliteľné práva
+T50hk6y                       : Čítanie informácie o tejto OpenPlatforme
+Tej3ntq                       : Povoliť odosielať notifikácie
+T1u5kvt7                      : Povoliť odosielať emaily
+Tmz40t9                       : Povoliť odosielať SMS správy
+T5jsqzg                       : Zablokované
+Tdeqyrg                       : Základné údaje
+Tts1fu7                       : Základné údaje a kontaktné údaje
+Tzzxf1t                       : Môže aplikácia čítať informácie o používateľovi?
+T1vbjm86                      : Všetci používatelia - základné údaje
+Tbfhe49                       : Všetci používatelia - základné údaje a kontaktné údaje
+T11chhce                      : Používatelia, ktorí používajú aplikáciu - základné údaje
+T1rhh3sx                      : Používatelia, ktorí používajú aplikáciu - základné údaje a kontaktné údaje
+Ts7da1e                       : Môže aplikácia čítať používateľov?
+Trjdd7v                       : Upraviť aplikáciu
+T8ibtvm                       : Pridať aplikáciu
+T1daxiwb                      : OpenPlatform sa pokúsi získať IP adresu z doménového mena
+T18yra0v                      : Zadajte URL adresu s protokolom
+
+
+T16mwz5u                      : DÔLEŽITÉ
+T1q7xtsu                      : Môžete povoliť čítať údaje v aplikáciách Vašmi definovaným členom. Avšak nie všetky aplikácie môžu podporovať členstvo.
+T1kh4kxk                      : Pridať člena
+T1k2zwde                      : Limit <b></b>
+T6vokqj                       : Nezaregistrovaný
+T1vfxego                      : Systém automaticky spáruje registrovaných používaľov podľa emailovej adresy
+T12n70ln                      : Naozaj chcete vymazať "{0}"?
+T1jcwb83                      : Dobrá práca, nemáte žiadne notifikácie
+T9jlmef                       : Názov prístupu
+T1ciihbv                      : Povoliť prístup
+T66yk9z                       : Zadajte URL adresu Vašej aplikácie
+T1h37v4g                      : Základné údaje
+T1rxviyr                      : Čítať všetky informácie
+T4cuo1f                       : Upraviť OAuth2 prístup
+T23vlu2                       : Pridať OAuth2 prístup
+T17ib7vr                      : OAuth 2.0 prístup bol úspešne uložený
+T8wznbh                       : Hlásenie bolo úspešne odoslané
+T13xsfh                       : Prázdne
+T1e3g46p                      : Organizačná štruktúra
+T1naduvd                      : Jednotky musia byť oddelené cez lomítko <code>/</code>
+Tbhp18n                       : Distinguished name
+T13klkoj                      : Názvy musia byť oddelené cez čiarku <code>,</code>
+T1eo1                         : Pridať
+T1qpwgk9                      : Nemáte definované žiadne aplikácie
+T19f3x7n                      : offline
+Tbupqhp                       : Prístupový token
+T1dlw2az                      : Treťostranové
+Thzt98r                       : Dizajnér
+Tcft7nw                       : Ste si istý, že chcete vymazať vybranú aplikáciu?
+T1cspnq8                      : Zobraziť prístupový token
+T1ghsykn                      : návštevníkov, návštevník, návštevníci, návštevníkov
+Te2d0oa                       : Embedded
+Tnpsjw5                       : OpenPlatform verzia
+T1pd6yd8                      : LDAP nastavenie
+T1sqgg                        : beta
+T1m5x0bx                      : <b>LDAP</b> je aktivovaný
+T1ch5n34                      : URI adresa
+Tpr1ha4                       : Musí byť vo formáte <code>ldap://hostname:port</code>
+T1baqoku                      : DN / Distinguished name
+T1ua0c9a                      : Príklad: <code>ou=USERS,dc=example,dc=com</code>. DN bude použité na vyhľadanie skupín a používateľov.
+T1hab2jm                      : Servisný účet
+T19yi21x                      : Servisný účet je potrebný pre získanie skupín a používateľov podľa vyššie uvedeného <b>DN</b>.
+Tt8fm2a                       : Synch. interval
+Tmggfx5                       : Synchronizačný interval určuje interval pre synchronizáciu skupín a používateľov cez LDAP. Interval môže byť definovaný v EN: minutes, hours, alebo days.
+Tbu7ldh                       : Dodatočné mapovanie
+T1b4oin0                      : S dodatočným mapovaním si môžete namapovať ďalšie informácie o užívateľov z LDAPu do OpenPlatformy.
+T13yiahz                      : LDAP nastavenie bolo úspešne uložené.
+T11si7c0                      : Meno užívateľa
+T12tbn1                       : Vyčistiť
+Tp3gepc                       : ID užívateľa
+Txsr3hy                       : Zariadenie
+T19hvu                        : Dáta
+T1sg1ozx                      : Detail logu
+Tbki3pm                       : Naozaj chcete vymazať všetky logy?
+T1v9mptn                      : Nemáte definované žiadne OAuth tokeny
+T1kpnh                        : Použitý
+T7a6s0m                       : OAuth key
+T17h8lll                      : OAuth secret
+Tj2lwhs                       : Zobraziť citlivé údaje
+T1sezjo5                      : Naozaj chcete vymazať vybraný OAuth prístup?
+Th2e4wq                       : Naozaj chcete vymazať vybrané hlásenie?
+Tz013fz                       : Nasledujte nastavenie uvedené nižšie a <b>odošlite formulár</b>.
+T53gnie                       : Verifikačný token je jednoduchý bezpečnostný mechanizmus, ktorý zabraňuje Hijackingu dát pre treťostranové aplikácie. Ak zmeníte token, tak môžete prísť v niektorých aplikáciách o Vaše dáta.
+T15k0bns                      : 500x250 pixlov s priehľadným pozadím
+T1tl7y9a                      : Povoliť OAuth 2.0
+Tkexee5                       : Povoliť prístup aplikáciam cez prístupový token
+Ttapmf1                       : Povoliť zmenu hesla
+Ttl7vn                        : Pamätať si posledne otvorené aplikácie
+Tqmxfkt                       : Odkaz na marketplace
+Tthevwb                       : Odkaz na uvítaciu stránku
+Ty7jyiy                       : Formát času
+Tnkgs8u                       : Total API
+Tn6j1kl                       : S <b>Total API kľúčom</b> môže OpenPlatforma odosielať SMS a emailové správy. Kľúč môžete získať na
+Ta51oal                       : Total API key
+T1sanw53                      : Total API je <b>platné</b>. Zostatok:
+Tvdtddu                       : Total API je <b>neplatné</b>
+T1ogq01e                      : Overiť API kľúč
+Tkuj21z                       : SMTP nastavenie môže byť definované iba v <b>JSON formáte</b> podľa Total.js dokumentácie
+Tijgge1                       : SMTP server je <b>správne nastavený</b>
+Teqxgzm                       : Spojiť OpenPlatformu s inou OpenPlatformou
+T1nbhhx2                      : Prístup do OpenPlatformy bude plne pod kontrolou OpenPlatformy na definovaje URL adrese. Priame <b>prihlasovanie bude zablokované</b> a užívatelia nebudú môcť zmeniť svoje osobné údaje v tejto OpenPlatforme.
+T111byy0                      : OAuth 2 key
+T1eejjyf                      : OAuth 2 secret
+T2jq3w4                       : Odstrániť OAuth 2.0 nastavenie
+T19wb9u                       : Fotka
+T1oq                          : DN
+T1ye                          : OU
+T1n37inz                      : Synchronizovať LDAP používateľov
+Tyxpy9q                       : Naozaj chcete synchronizovať používateľov cez LDAP?
+T1rgn0a8                      : Synchronizovať
+T1axkz2o                      : Máte <b>neprečítané notifikácie</b> v @{'%name'}. Prihláste sa do @{'%name'} a prečítajte si notifikácie
+Tc7e7ws                       : Resetovať heslo
+Tz9wfon                       : Použili ste funkciu resetovanie hesla. Prosím kliknite na nižšie uvedené tlačítko a resetujte si Vaše prihlasovacie heslo. Ak ste tento email dostali omylom, tak ho ignorujte.
+T1pvjyum                      : Vážený používateľ, vitajte v <b>@{'%name'}</b>. Sme veľmi radi, že ste sa pripojili do našej platformy. Prosíme Vás, aby ste sa prihlásili do Vášho účtu cez uvedený odkaz nižšie.
+T8259n1                      : Účet
+T1k12zx6                     : Obnova hesla
+T97cku9                      : Vitajte v {0}
+
 T1fytv                       : Ďalej
 T19s4i                       : Hotovo
 T1cq7y21                     : Vitajte <b>@{user.name}</b> v <b>@{'%name'}</b>
-T1o1m48u                     : <b>Vzhľad</b>. Nastavte si svetlý alebo tmavý vzhľad. Niektoré aplikácie nemusia podporovať toto nastavenie.
 Tu8n9w6                      : Zvoľte si farbu
 T12t2574                     : Nastavenie dátumu a jazyka
 T5vwhg4                      : Módy zobrazenia
 Twdcm3g                      : Ďalšie nastavenia
-Tahfcv0                      : Povoliť emailové notifikácie
 Txvjst4                      : Zmeniť heslo
 T1og4vx1                     : Tu môžete zmeniť Vaše heslo.
-T1vxa1wc                     : Nechce si zmeniť Vaše heslo?
 T1798ngt                     : Preskočiť tento krok
 Tl9l5tn                      : Heslo znova
 T8sqjse                      : Heslo bude zmenené.
@@ -72,14 +225,11 @@ Tjxmd5r                      : 300x300 pixlov
 T1qbu0rf                     : Telefónne číslo
 Tfox2zr                      : Povoliť e-mailové upozornenia
 T153zr95                     : Povoliť telefonické upozornenia
-T1g769v8                     : Oknový
-Tylmz4n                      : Záložkový
-Tmk70zb                      : Portálový
 Tiartc7                      : Desktopový režim
 T16c1s3t                     : Formát dátumu
 Tc7s58u                      : Formát čísla
-T13j09kg                     : 24 hod. formát
-T143zj1t                     : 12 hod. formát
+T13j09kg                     : 24-hodinový formát
+T143zj1t                     : 12-hodinový formát
 
 // views/layout.html, views/portal.html, views/tabbed.html, views/windowed.html
 Tiqodsz                      : Nastaviť dnes
@@ -97,20 +247,11 @@ T1w75szs                     : Prezývka
 T1lh0u0v                     : Používateľské rozhranie
 Tro1p43                      : Zvoľte svetlý alebo tmavý režim
 T16gw3sq                     : Hlasitosť
-T1dzt6kc                     : Obrazovka bude zamknutá len na stolových počítačoch po zadanom čase nečinnosti.
 T1dujmg3                     : Okná
 
 // public/forms/members.html
 T1bgm1wi                     : Povoliť členov
-Tlaeqvm                      : Nižšie uvedeným užívateľom môžete povoliť prístup čítať Vaše data v aplikáciách tretích strán. Užívatelia budú mať prístup na základe podmienok definovaných v aplikáciách, nie všetky aplikácie podporujú túto funkciu.
 T1dof79j                     : # členov,# člen, # členovia, # členov
-Txu7k5o                      : Limit <b></b>.
-Tyxngn4                      : Zadajte adresu a stlačte enter
-Txjc932                      : Emailové adresy
-T1y0sgmh                     : Systém automaticky páruje registrovaných užívateľov podľa emailovej adresy
-Tpolgq9                      : Použiť zmeny
-Tv4u4vx                      : Váš zoznam členov bol úspešne aktualizovaný.
-
 
 // views/account.html, public/panels/apps-profile.html
 Tvg4swg                      : Emailová adresa
@@ -131,7 +272,6 @@ T1zbrm                       : vysoký
 T1e9a75j                     : Povoliť dvojfaktorovú autentifikáciu
 T41pkh7                      : Zmeniť heslo
 T1qw6zkv                     : Naskenuj QR kód pre dvojfaktorovú autentifikáciu
-Ttztvpr                      : Najprv si musíte stiahnuť aplikáciu pre Android alebo iOS a potom do nej naskenovať tento QR kód. Pred každým prihlásením vygeneruje aplikácia iné heslo.
 T1xmn50n                     : Jednorazové heslo
 T11picit                     : Váš súkromný kľúč:
 T84ve76                      : Zadajte kód z aplikácie tu:
@@ -260,8 +400,7 @@ T66xbij                      : Odhlásiť
 // views/login.html
 Tg5c0qh                      : Pošleme Vám email s inštrukciami ako znovu nastaviť heslo.
 Tb4wo6k                      : Znovu nastaviť heslo
-T4g34gm                      : Prihlásiť sa ako užívateľ
-T1idgtct                     : <b>Váš profil má zapnutú dvoj faktorovú autorizáciu.</b> Prosím napíšte kód z Vašej mobilnej aplikácie:
+T4g34gm                      : Prihlásiť sa ako používateľ
 T179d1nk                     : Potvrdiť
 Tl2bq6z                      : Naspäť na prihlasovací formulár
 T1hlkrwx                     : Prihlasovacie meno alebo email
@@ -286,7 +425,6 @@ T7pqagh                      : Moje relácie
 Tjz5ash                      : Uzamknúť obrazovku
 T5fk7f                       : Stlmiť zvuky
 Tcyuekh                      : Vypnúť oznámenia
-T5zosin                      : Snímka obrazovky
 T19hc5a3                     : Obnoviť
 T1l7jiwk                     : Zoznam zmien
 T8oof7s                      : Zatvoriť aplikáciu
@@ -299,7 +437,6 @@ T1ozoljr                     : 'pred ' + hours + ' ' + Thelpers.pluralize (hours
 T15oy67r                     : 'pred ' + days + ' ' + Thelpers.pluralize (days, 'dňami', 'dňom', 'dňami', 'dňami')
 T13dhn3z                     : 'pred ' + months + ' ' + Thelpers.pluralize (months, 'mesiacmi', 'mesiacom', 'mesiacmi', 'mesiacmi')
 T1fn7sxj                     : 'pred ' + years + ' ' + Thelpers.pluralize (years, 'rokmi', 'rokom', 'rokmi', 'rokmi')
-T10y10er                     : Zobraziť okno
 
 // views/portal.html, views/tabbed.html, views/windowed.html, public/forms/sessions.html
 T12tjh4                      : Zavrieť
@@ -311,26 +448,11 @@ Ty97he0                      : Upozornenia
 T1n8zbe1                     : Nahlásiť chybu
 
 // views/tabbed.html, views/windowed.html
-T63bulk                      : Superadministrátor
 T21a                         : SA
-T1br2gy                      : Štart
 Tcv29oy                      : Resetovať okná
-Trfds5r                      : Môžete zadať svoj stav
-
-// views/tabbed.html
-Tl1oufn                      : Nastavenia aplikácie
-Tjf0pi6                      : Menu aplikácie
-
-// views/tabbed.html, public/forms/status.html
-T73oi4m                      : Môj status
 
 // views/windowed.html
-Tc8ocnt                      : Zobraziť plochu
-Thoziru                      : Vyhľadávanie aplikácií
-T1laks77                     : OFFLINE
-T4a3rki                      : Obnoviť veľkosť
 Tig3mpo                      : Obľúbené
-T1x27amq                     : Minimalizovať okno
 
 // public/forms/notifications.html
 T1bmlup                      : DNES
@@ -345,7 +467,6 @@ T1lvq5xg                     : Snímka obrazovky nedokáže zobraziť rovnaké z
 T1xlh605                     : Vytvorte snímku obrazovky z aplikácie
 T19ynf42                     : Vysoká priorita
 T14mox7c                     : ODOSLAŤ
-T1rbcwzl                     : Správa bola úspešne odoslaná.
 
 // public/forms/report.html, public/forms/sessions.html, public/panels/apps-profile.html, public/panels/users-assign.html, public/panels/users-group.html, public/panels/users-profile.html, public/parts/apps-grid.html, public/parts/settings.html, public/parts/users-grid.html, public/parts/users-groups.html
 Tx9d2fu                      : Zrušiť
@@ -362,49 +483,26 @@ T17i0zgc                     : Naozaj chcete zrušiť vybratú reláciu?
 // public/forms/sessions.html, public/parts/apps-grid.html, public/parts/users-grid.html, public/parts/users-groups.html
 T1whz                        : Áno
 
-// public/forms/status.html
-T155ewpq                     : Zadajte aktuálny stav
-T9setj8                      : POUŽIŤ STAV
-
 // public/panels/apps-profile.html, public/parts/settings.html
 Tttxmoz                      : URL adresa
 
 // public/panels/apps-profile.html
 T1527o23                     : URL adresa meta súboru aplikácie
-T5t2s0c                      : Stiahnuté meta-údaje
+T5t2s0c                      : Stiahnuté metaúdaje
 T19eat6q                     : Čítaj ma
 T1y3d9ek                     : Popis
 Tyrdm7f                      : Podporované role
 T1jma0u6                     : Povolený pôvod
-T1abzfj8                     : Povolenia
-T1ayih0w                     : Požiadavky
-T2a                          : R
-Tgcvyer                      : Použité požiadavky
-T1v                          : C
-T19zkd3u                     : Overenie na strane servera
-T1tt1bv3                     : Optimalizované pre mobilné zariadenia
-Tegrqwz                      : Optimalizované pre hostí
-Tej1a3v                      : Dokáže čítať meta informácie
-T1fy484u                     : Dokáže čítať užívateľský profil
-T1vdixym                     : Dokáže čítať používateľov
-T15469n0                     : Dokáže čítať aplikácie
 T13pu4cq                     : Hlavné nastavenia
 T1peacu8                     : Lokalizované tituly
 Tg6xxw8                      : Pridať lokalizáciu
 Th35djp                      : Sériové číslo
 Trp2eug                      : Ak to vyžaduje autor, zadajte sériové číslo
 T2u34fv                      : Index polohy
-Tifmwlr                      : Dolný index znamená vyššiu pozíciu v zozname aplikácií
 T11sjnja                     : Aplikácia je blokovaná
 T7hk0f6                      : Vygenerovať nový service token
-T1oh6q0y                     : Aktualizovať meta-data
-Twfh77u                      : Aplikácia môže automaticky obnoviť svoje povolenia
-T1d1h8za                     : Mali by ste vedieť, že povolenie automatického obnovovania oprávnení <b> je veľmi nebezpečný krok </b>.
 T1czxuzm                     : Vlastné nastavenia aplikácií
-T1undwey                     : Úprava aplikácie
-T12476ep                     : Pridať aplikáciu
 T1tvgtjy                     : Aplikácia bola úspešne uložená
-T1e9grd9                     : Túto aplikáciu nemôžete prevádzkovať, pretože <b>doména aplikácie nie je definovaná v zozname povolených domén</b>.
 
 // public/panels/apps-profile.html, public/panels/users-profile.html, public/parts/users-grid.html, public/parts/users-groups.html, public/parts/users-locations.html, public/parts/users-roles.html
 T1fvl7                       : Meno
@@ -424,7 +522,7 @@ T1ie7x                       : ULOŽIŤ
 
 // public/panels/users-assign.html
 T1ekbk05                     : Priradiť skupiny
-T9ifjye                      : Vybraté skupiny uvedené nižšie sa použijú pre všetkých používateľov podľa aktuálneho filtra užívateľskej siete.
+T9ifjye                      : Vybraté skupiny uvedené nižšie sa použijú pre všetkých používateľov podľa aktuálneho filtra používateľskej siete.
 T9bit7                       : Vložte skupiny
 Tshmg9c                      : Odstrániť skupiny
 T117eq6                      : POUŽIŤ
@@ -450,7 +548,7 @@ T1g64y                       : Poznámka
 Truk5j4                      : Hľadať alebo zadať nový
 Tk5ybwu                      : Neplatný formát.
 T8fhahp                      : Musia byť definované v JSON formáte.
-Tdno78s                      : __Dynamický sklad obsahuje neplatný formát__. Ste si istý, že aj napriek tomu chcete uložiť profil užívateľa?
+Tdno78s                      : __Dynamický sklad obsahuje neplatný formát__. Ste si istý, že aj napriek tomu chcete uložiť profil používateľa?
 T1j2ql                       : Uložiť
 T16gb8ct                     : Interné údaje
 T1fnasze                     : yyyy-MM-dd HH:mm
@@ -467,9 +565,8 @@ T3rzx48                      : Typ zmluvy
 T1o7r2wn                     : Začiatok zamestnania
 T9gniuo                      : Ukončenie zamestnania
 T8bvpk                       : Dátum narodenia
-T1ey79s1                     : Vlastný definovaný stav užívateľa
+T1ey79s1                     : Vlastný definovaný stav používateľa
 Tf5jum                       : Stav definovaný používateľom
-T1dq7lbw                     : Údaje o zamestnancovi
 Twibidx                      : Miesto
 T1qspbg3                     : Vyberte používateľa
 T1b8an57                     : Vyberte <b> Supervisor </b>
@@ -497,9 +594,6 @@ Tigj0b3                      : Vytvoriť používateľa
 T7z8qu1                      : Používateľ bol úspešne uložený
 T1flucvk                     : Vyhľadávanie používateľov
 Tfn3psj                      : Spustené aplikácie
-Tww05y7                      : Svetlá téma
-T1c19upr                     : Tmavá téma
-T1c3a21                      : Téma
 Twd1kgs                      : Prihlasovacie údaje
 
 // public/panels/users-profile.html, public/parts/users-groups.html, public/parts/users-locations.html
@@ -526,13 +620,8 @@ Tdfplqh                      : Pozícia
 
 // public/parts/apps-grid.html
 T17vyq                       : Aplikácie
-Tlaikn                       : workshop
-Tmev895                      : Profil
-T1fbqd                       : Meta
 Tnvmsfy                      : Služby
 T127avgi                     : Mobilné
-Tnsz9ui                      : Obnovené
-T1cmsyog                     : Naozaj chcete odstrániť vybrané aplikácie?
 
 // public/parts/apps-grid.html, public/parts/users-grid.html, public/parts/users-groups.html, public/parts/users-locations.html
 T1ocg                        : Nový
@@ -550,10 +639,10 @@ T1yockbw                     : blokovaný
 T1eug509                     : URL pre vytvorenie účtu
 T1urigui                     : Odblokuje odkaz na vytvorenie účtu na prihlasovacej obrazovke
 T15eoif2                     : Povoliť e-mailové notifikácie
-Tr86c59                      : Povoliť užívateľom zadávať ich stav
-T3zihhm                      : Povoliť užívateľom definovať členov
-Tz1r4li                      : Povoliť užívateľom zmeniť vzhľad
-Tac8jo0                      : Povoliť užívateľom zmeniť prezývku
+Tr86c59                      : Povoliť používateľom zadávať ich stav
+T3zihhm                      : Povoliť používateľom definovať členov
+Tz1r4li                      : Povoliť používateľom zmeniť vzhľad
+Tac8jo0                      : Povoliť používateľom zmeniť prezývku
 Tv3rkyz                      : Max. povolených členov
 Tk4uq5z                      : zablokovuje limitáciu
 Tugxn5o                      : VAROVANIE
@@ -561,33 +650,25 @@ T1mzkjcd                     : Zmena adresy URL bude mať za následok stratu ú
 Tr01vwu                      : OpenPlatform meno
 T17p4uej                     : E-mail podpory
 T1reuuhg                     : Overovací token
-T12gemhg                     : Overovací token je jednoduchý bezpečnostný nástroj proti únosom údajov aplikácií tretích strán. Ak ho zmeníte, môžete stratiť údaje v aplikáciách tretích strán.
 T1ufwq7i                     : Generovanie znaku
 T1kgcfnq                     : Cookie / relácia expirácia
 Tsufc8t                      : Zadajte čas vypršania platnosti vo formáte: <code> 2 dni </code> alebo <code> 3 minúty </code>
-T15qe514                     : Testovacie prostredie
 Tivtqxv                      : Povoliť neregistrovaných <b>Hostí</b>
 Tlicjt7                      : Zobraziť hodiny
 Tsqan7f                      : Užívatelia môžu zmeniť svoj profil
 Trlqe6h                      : Povoliť zmenu režimu pracovnej plochy
 T1em6vtv                     : Povoliť zmenu pozadia
 T1ezgqx5                     : Povoliť zmenu farebných motívov
-Tyyah5m                      : Povoliť celú šírku v portálovom režime
 T13qq4y9                     : Žiadna aplikácia
 T12spakx                     : Predvolená aplikácia
-T2ojg7g                      : Odkaz na obchod
-T1w7m14c                     : Odkaz na Úvodnú stránku
 T1e7nx65                     : SMTP nastavenia
 Titpmq5                      : SMTP server
 T1em8u79                     : E-mailová adresa odosielateľa
 T171n20o                     : Vyhľadať aplikáciu
-T70e9yf                      : Nastavenia SMTP musia byť v platnom <b> formáte JSON </b> podľa dokumentácie Total.js.
-T6i9ob9                      : Server SMTP je <b> správne nakonfigurovaný </b>.
 T8exume                      : Overenie servera SMTP
 Txgsqvt                      : Nastavenia boli úspešne uložené
 
 // public/parts/users-grid.html
-Twl9frj                      : Priradiť
 T11ksof                      : Správca
 Tz7qr4x                      : Pohlavie
 Thuap0r                      : Referencia
@@ -604,32 +685,21 @@ Tphxixg                      : Naozaj chcete odstrániť vybratých používate�
 // public/parts/users-groups.html
 Tgdx3fy                      : Naozaj chcete odstrániť vybratých používateľov?
 
-// public/parts/users-locations.html
-Tdcc2f2                      : Lokality
-
 // public/parts/users-roles.html
 T1b1xagb                     : Role (iba na čítanie)
 
 // views/mails/notifications.html, views/mails/password.html, views/mails/welcome.html
-T1coyp0e                     : Máte <b>neprečítané &#128276; notifikácie</b> v @{'%name'}. Prihláste sa do @{'%name'} a tam si môžete prečítajte všetky notifikácie.
-T19keq                       : Milý
 T84q297                      : Posledné notifikácie
-
-// views/mails/password.html
-T1y8461c                     : Použili ste obnovenie hesla. Kliknutím na tlačidlo nižšie obnovíte svoje heslo. Ak ste tento e-mail dostali omylom, môžete ho ignorovať.
 
 // views/mails/password.html, views/mails/welcome.html
 T1q65kk7                     : Kliknite na odkaz nižšie:
 
-// views/mails/welcome.html
-Tgdswej                      : Vážený užívateľ, vitajte v <b>@{'%name'}</b>. Sme veľmi radi, že ste sa pripojili do našej platformy. Prihláste sa do Vášho účtu za pomoci nižšie uvedeného odkazu.
-
 // public/parts/dashboard.html
 T15ixk0m                     : Celkom:
-Tra3apz                      : # užívateľov, # užívateľ, # užívatelia, # užívateľov
+Tra3apz                      : # používateľov, # používateľ, # používatelia, # používateľov
 T1r5fxe1                     : Max. online
-T1bq6qkq                     : Prihlásení užívatelia
-Tcxtxbl                      : Max. online užívateľov
+T1bq6qkq                     : Prihlásení používatelia
+Tcxtxbl                      : Max. online používateľov
 T1tlgqn8                     : Požiadavky
 T14exqv                      : Súbory
 T1hbr8vx                     : Zariadenia
@@ -650,7 +720,7 @@ T1ud38jh                     : Ste si istý, že chcete vymazať vybrané hláse
 T1h6dz8f                     : Spustené
 
 // public/panels/reports-detail.html, public/parts/reports.html
-T1kpnv                       : Užívateľ
+T1kpnv                       : Poúžívateľ
 T1had92o                     : Aplikácia
 T151r95x                     : Vyriešené
 
