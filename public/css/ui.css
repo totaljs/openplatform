@@ -49,7 +49,7 @@ button { outline: 0; }
 
 .ui-preview-label { margin-bottom: 5px; font-size: 12px; text-align: left; }
 .ui-preview-label .fa { margin-right: 5px; }
-.ui-preview img { margin-left: auto; margin-right: auto; border-radius: 100%; border: 2px solid #E0E0E0; cursor: pointer; }
+.ui-preview img { margin-left: auto; margin-right: auto; border-radius: var(--radius); border: 2px solid #E0E0E0; cursor: pointer; }
 .ui-dark .ui-preview img { border-color: #404040; }
 
 .ui-colorselector { margin: 0; padding: 0; list-style-type: none; height: 35px; }

@@ -5,6 +5,7 @@ exports.install = function() {
 	// Profile
 	ROUTE('+POST    /api/upload/photo/', json_upload_photo, 1024 * 2);
 	ROUTE('+POST    /api/upload/background/', json_upload_background, ['upload'], 1024 * 5);
+	ROUTE('+POST    /api/upload/logo/', json_upload_logo, 1024 * 5);
 
 	// External
 	ROUTE('GET     /api/users/                    *Users                --> public');
@@ -26,13 +27,14 @@ exports.install = function() {
 
 	ROUTE('FILE /photos/*.*', handle_images);
 	ROUTE('FILE /backgrounds/*.*', handle_images);
+	ROUTE('FILE /logos/*.*', handle_images);
 };
 
 const IMAGES = { jpg: 1, jpeg: 1, png: 1, webp: 1, gif: 1, apng: 1, svg: 1 };
 
 function handle_images(req, res) {
 	if (IMAGES[req.extension]) {
-		var path = FUNC.uploadir(req.split[0]);
+		var path = FUNC.uploaddir(req.split[0]);
 		res.file(Path.join(path, req.split[1]));
 	} else
 		res.throw404();
@@ -71,7 +73,7 @@ function json_upload_photo() {
 	}
 
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.jpg';
-	var path = FUNC.uploadir('photos');
+	var path = FUNC.uploaddir('photos');
 	PATH.mkdir(path);
 	base64.base64ToFile(U.join(path, id), () => self.json(id));
 }
@@ -85,10 +87,26 @@ function json_upload_background() {
 		return;
 	}
 
-	var path = FUNC.uploadir('backgrounds');
+	var path = FUNC.uploaddir('backgrounds');
 	PATH.mkdir(path);
 	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.' + U.getExtension(file.filename);
 	file.move(U.join(path, id), () => self.json(id));
+}
+
+function json_upload_logo() {
+
+	var self = this;
+	var base64 = self.body.file;
+
+	if (!base64) {
+		$.invalid('error-file-type');
+		return;
+	}
+
+	var id = NOW.format('yyyyMMddHHmm') + '_' + U.GUID(8) + '.png';
+	var path = FUNC.uploaddir('logos');
+	PATH.mkdir(path);
+	base64.base64ToFile(U.join(path, id), () => self.json(id));
 }
 
 function redirect_guest() {

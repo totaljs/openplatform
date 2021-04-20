@@ -411,7 +411,7 @@ NEWSCHEMA('Users', function(schema) {
 
 			// Removing older background
 			if ((!keys || keys.background) && response.background && model.background !== response.background) {
-				var path = Path.join(FUNC.uploadir('backgrounds'), response.background);
+				var path = Path.join(FUNC.uploaddir('backgrounds'), response.background);
 				Fs.unlink(path, NOOP);
 				TOUCH('/' + path);
 			}

@@ -62,7 +62,14 @@
 	<div data---="message__null__style:2;close:@(Close)"></div>
 
 	<div class="panel">
+		@{if CONF.logo}
+		<div style="padding:5px">
+			<img src="/logos/@{CONF.logo}" alt="@{CONF.name}" border="0" class="img-responsive img-rounded" />
+		</div>
+		<hr class="nmb nmt" />
+		@{else}
 		<h1><i class="fa fa-lock"></i>@{CONF.name}</h1>
+		@{fi}
 		<div data-bind="password.response__show:value && value.success === true" class="success hidden"><i class="fa fa-check-circle mr5"></i>@(We sent you email with instructions for resetting of your password.)</div>
 		<div class="padding">
 

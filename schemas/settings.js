@@ -11,6 +11,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('email', 'Email', true);
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('background', 'String(150)');
+	schema.define('logo', 'String(150)');
 	schema.define('smtp', 'String(100)');
 	schema.define('smtpsettings', 'JSON');
 	schema.define('sender', 'Email');
@@ -97,7 +98,7 @@ NEWSCHEMA('Settings', function(schema) {
 
 		// Removing older background
 		if (CONF.background && model.background !== CONF.background) {
-			var path = Path.join(FUNC.uploadir('backgrounds'), CONF.background);
+			var path = Path.join(FUNC.uploaddir('backgrounds'), CONF.background);
 			Fs.unlink(path, NOOP);
 			TOUCH('/' + path);
 		}

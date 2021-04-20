@@ -74,7 +74,7 @@ FUNC.reportbug = function(appid, type, body, high) {
 	app.send('screenshotmake', common.cdn);
 };
 
-COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;customize:1;schema:{file\\:base64,name\\:filename}', function(self, config) {
+COMPONENT('preview', 'type:jpg;width:200;height:100;background:#FFFFFF;quality:90;customize:1;schema:{file\\:base64,name\\:filename}', function(self, config) {
 
 	var empty, img, canvas, name, content = null;
 
@@ -111,8 +111,11 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;customi
 		canvas.width = config.width;
 		canvas.height = config.height;
 		var ctx = canvas.getContext('2d');
-		ctx.fillStyle = config.background;
-		ctx.fillRect(0, 0, config.width, config.height);
+		if (config.type === 'jpg') {
+			ctx.fillStyle = config.background;
+			ctx.fillRect(0, 0, config.width, config.height);
+		} else
+			ctx.clearRect(0, 0, config.width, config.height);
 		empty = canvas.toDataURL('image/png');
 		canvas = null;
 	};
@@ -131,8 +134,12 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;customi
 		var ctx = canvas.getContext('2d');
 		canvas.width = config.width;
 		canvas.height = config.height;
-		ctx.fillStyle = config.background;
-		ctx.fillRect(0, 0, config.width, config.height);
+
+		if (config.type === 'jpg') {
+			ctx.fillStyle = config.background;
+			ctx.fillRect(0, 0, config.width, config.height);
+		} else
+			ctx.clearRect(0, 0, config.width, config.height);
 
 		var w = 0;
 		var h = 0;
@@ -198,7 +205,7 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;customi
 		}
 
 		ctx.drawImage(image, x, y, w, h);
-		var base64 = canvas.toDataURL('image/jpeg', config.quality * 0.01);
+		var base64 = canvas.toDataURL('image/' + (config.type === 'jpg' ? 'jpeg' : 'png'), config.quality * 0.01);
 		img.attr('src', base64);
 		self.upload(base64);
 	};
@@ -272,7 +279,7 @@ COMPONENT('preview', 'width:200;height:100;background:#FFFFFF;quality:90;customi
 
 	self.upload = function(base64) {
 		if (base64) {
-			var data = (new Function('base64', 'filename', 'return ' + config.schema))(base64, name);
+			var data = (new Function('base64', 'filename', 'return ' + config.schema))(base64, 'picture.' + config.type);
 			SETTER('loading', 'show');
 			AJAX('POST ' + config.url.env(true), data, function(response, err) {
 				SETTER('loading', 'hide', 100);

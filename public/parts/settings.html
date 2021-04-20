@@ -54,18 +54,21 @@
 				</div>
 
 				<div class="caption">@(Appearance)</div>
+
 				<div class="row">
+					<div class="col-md-3 m">
+						<div data---="preview__?.logo__type:png;url:/api/upload/logo/;width:500;height:250;format:/logos/{0}"></div>
+						<div class="help center"><i class="fa fa-camera"></i>@(500x250 pixels with the transparent background)</div>
+					</div>
 					<div class="col-md-6 m">
+						<br />
 						<div data---="colorselector__settings.colorscheme__null__'#4285f4'"></div>
+						<div style="font-size:12px">
+							<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
+							<div data---="singleupload__settings.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
+						</div>
 					</div>
 				</div>
-
-				<div style="font-size:12px">
-					<div style="float:left" class="mr5"><i class="fa fa-camera mr5"></i>@(Background image:)</div>
-					<div data---="singleupload__settings.background__url:/api/upload/background/;title:{{}};accept:image/*" class="b ui-singleupload">@(Upload image)</div>
-				</div>
-				<div class="clearfix"></div>
-
 				<hr />
 				<div class="row">
 					<div class="col-md-4">

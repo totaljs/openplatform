@@ -88,7 +88,7 @@ function oauthsync() {
 
 				// Download photo
 				if ((!user || response.photo !== user.photo) && response.photo) {
-					var path = FUNC.uploadir('photos');
+					var path = FUNC.uploaddir('photos');
 					PATH.mkdir(path);
 					DOWNLOAD(CONF.oauthopenplatform + '/photos/' + response.photo, PATH.join(path, response.photo), NOOP);
 				}

@@ -380,7 +380,23 @@ NEWSCHEMA('Apps', function(schema) {
 
 				user.apps[$.id].countnotifications = 0;
 
-				isreset && db.modify('tbl_user_app', DB_RESET).id($.user.id + $.id);
+				if (isreset) {
+					db.modify('tbl_user_app', DB_RESET).id($.user.id + $.id);
+
+					var isresetprofile = true;
+
+					for (var key in user.apps) {
+						if (key !== $.id) {
+							var tmp = user.apps[key];
+							if (tmp.countnotifications) {
+								isresetprofile = false;
+								break;
+							}
+						}
+					}
+
+					isresetprofile && db.modify('tbl_user', DB_RESET).id($.user.id);
+				}
 
 				user.apps[$.id].countbadges = 0;
 				data.newversion = user.apps[$.id].version !== app.version;
@@ -431,6 +447,7 @@ NEWSCHEMA('Apps', function(schema) {
 				data.url = '/builder/' + $.id + '/';
 
 			$.callback(data);
+
 		} else
 			$.invalid('error-apps-404');
 
