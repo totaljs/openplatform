@@ -27,7 +27,7 @@ exports.install = function() {
 
 	ROUTE('FILE /photos/*.*', handle_images);
 	ROUTE('FILE /backgrounds/*.*', handle_images);
-	ROUTE('FILE /logos/*.*', handle_images);
+	ROUTE('FILE /logos/*.png', handle_images);
 };
 
 const IMAGES = { jpg: 1, jpeg: 1, png: 1, webp: 1, gif: 1, apng: 1, svg: 1 };
