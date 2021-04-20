@@ -27,7 +27,6 @@ NEWSCHEMA('Users/Members', function(schema) {
 
 			model.id = UID();
 			model.userid = $.user.id;
-			model.email = model.email;
 			model.dtcreated = NOW;
 
 			db.insert('tbl_user_member', model).where('email', model.email);
