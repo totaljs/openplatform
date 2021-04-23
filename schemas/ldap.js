@@ -124,6 +124,102 @@ function import_groups(callback) {
 	});
 }
 
+FUNC.ldap_import = function(login, callback) {
+
+	var opt = {};
+	opt.ldap = FUNC.ldap_host();
+	opt.type = 'profile';
+	opt.dn = CONF.ldap_dn;
+	opt.user = CONF.ldap_user;
+	opt.password = CONF.ldap_password;
+	opt.login = login;
+
+	LDAP(opt, async function(err, item) {
+
+		if (err) {
+			callback(err);
+			return;
+		}
+
+		if (!item.sAMAccountName) {
+			callback(409);
+			return;
+		}
+
+		var map = {};
+		var mapper = (CONF.ldap_mapper || '').split(/,|;/);
+
+		for (var i = 0; i < mapper.length; i++) {
+			var tmp = mapper[i].split(/=|:/).trim();
+			if (tmp[0] && tmp[1])
+				map[tmp[0]] = tmp[1];
+		}
+
+		var model = {};
+
+		model.reference = item.sAMAccountName;
+
+		if (CONF.ldap_user.indexOf(model.reference) !== -1) {
+			callback(409);
+			return;
+		}
+
+		var groups = [];
+
+		if (item.memberOf) {
+			if (!(item.memberOf instanceof Array))
+				item.memberOf = [item.memberOf];
+			for (var i = 0; i < item.memberOf.length; i++) {
+				var dn = item.memberOf[i].split(',', 1)[0];
+				var index = dn.indexOf('=');
+				if (index !== -1)
+					groups.push(dn.substring(index + 1));
+			}
+		}
+
+		model.checksum = (item.displayName + '_' + item.distinguishedName + '_' + (item.mail || item.userPrincipalName) + '_' + groups.join(',')).makeid();
+		model.name = item.displayName;
+
+		if (!model.name) {
+			FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty name', { model: model, ldap: item });
+			callback(409);
+			return;
+		}
+
+		var arr = model.name.split(' ');
+		model.firstname = arr[0];
+		model.lastname = arr[1];
+		model.gender = 'male';
+		model.language = CONF.language || 'en';
+		model.timeformat = CONF.timerformat || 24;
+		model.dateformat = CONF.dateformat || 'yyyy-MM-dd';
+		model.numberformat = CONF.numberformat || 1;
+		model.volume = 50;
+		model.sounds = true;
+		model.notifications = true;
+		model.notificationsemail = true;
+		model.notificationsphone = true;
+		model.desktop = CONF.desktop || 3;
+
+		model.login = item.sAMAccountName;
+		model.email = item.mail || item.userPrincipalName;
+		model.dn = item.distinguishedName;
+		model.groups = groups;
+		model.inactive = false;
+
+		// OP_NAME=LDAP_NAME
+		for (var key in map)
+			model[key] = item[map[key]];
+
+		EXEC('+Users --> insert', model, function(err, response) {
+			err && FUNC.log('LDAP/Error.users', model.reference, model.reference + ': ' + err + '', { model: model, ldap: item });
+			callback(err, response.value);
+		});
+
+	});
+
+};
+
 function import_users(callback) {
 
 	if (!CONF.ldap_active) {

@@ -5,7 +5,7 @@ exports.install = function() {
 	ROUTE('+API    /opapi/    -meta                     *Codelist             --> meta');
 
 	// Sign-in
-	ROUTE('-API    /opapi/    +login                    *Users/Login          --> exec');
+	ROUTE('-API    /opapi/    +login                    *Users/Login          --> exec', [10000]);
 	ROUTE('-API    /opapi/    +login_otp                *Users/Login          --> otp');
 	ROUTE('-API    /opapi/    +password                 *Users/Password       --> exec');
 
@@ -36,7 +36,7 @@ exports.install = function() {
 
 	// Groups
 	ROUTE('+API    /opapi/    -groups                   *Users/Groups         --> query');
-	ROUTE('+API    /opapi/    #groups_update            *Users/Groups         --> patch');
+	ROUTE('+API    /opapi/    #groups_update            *Users/Groups         --> patch', [1000 * 60]);
 	ROUTE('+API    /opapi/    -groups_remove            *Users/Groups         --> remove');
 	ROUTE('+API    /opapi/    -marketplace              *Codelist             --> marketplace');
 
