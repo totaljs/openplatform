@@ -16,6 +16,7 @@
 .notificationslist { padding: 15px 10px; }
 .notificationslist figure { border: 2px solid #E0E0E0; margin: 10px 10px 15px; border-radius: var(--radius); cursor: pointer; }
 .notificationslist figure .date { font-size: 12px; color: #888; padding: 10px 10px 0; }
+.notificationslist .unread { background-color: #FFFEF6; }
 .notificationslist figure .app { font-size: 14px; padding: 0 10px; font-weight: bold; color: #000; }
 .notificationslist figure .app i { width: 14px; margin-right: 5px; }
 .notificationslist figure .body { border-top: 2px solid #E0E0E0; margin-top: 10px; padding: 10px; }
@@ -26,6 +27,7 @@
 .ui-dark .notificationslist figure .date { color: #D0D0D0; }
 .ui-dark .notificationslist figure .app { color: #FFF; }
 .ui-dark .notificationslist figure .body { border-top-color: #404040; }
+.ui-dark .notificationslist .unread { background-color: #312424; }
 .ui-dark .notificationslist .type2 { border-color: #D60000; }
 .ui-dark .notificationslist .type1 { border-color: #A1CF6D; }
 
