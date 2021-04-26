@@ -118,7 +118,7 @@
 					<hr />
 					<div data---="radiobutton__?.allowreadprofile__inline:false;items:@(Disabled)|0,@(Basic data)|1,@(Basic data with the contact data)|2;type:number"><span class="fas fa-user-circle mr5"></span><b>@(Can the application read a user profile?)</b></div>
 					<hr />
-					<div data---="radiobutton__?.allowreadusers__inline:false;items:@(Disabled)|0,@(All users - basic data)|1,@(All users - basic data with the contact data)|2,@(Users who are using this app - basic data)|3,@(Users who are using this app - basic data with the contact data)|4;type:number"><span class="fas fa-users mr5"></span><b>@(Can the application read users?)</b></div>
+					<div data---="radiobutton__?.allowreadusers__inline:false;datasource:%allowreadusers;type:number"><span class="fas fa-users mr5"></span><b>@(Can the application read users?)</b></div>
 				</div>
 			</div>
 			<div data---="extend__null__name:appsform"></div>
@@ -143,6 +143,8 @@
 </div>
 
 <script>
+
+	SET('%allowreadusers', [{ name: '@(Disabled)', id: 0 },{ name: '@(All users - basic data)', id: 1 },{ name: '@(All users - basic data with the contact data)', id: 2 }, { name: '@(Users who are using this app - basic data)', id: 3 }, { name: '@(Users who are using this app - basic data with the contact data)', id: 4 }]);
 
 	Thelpers.joinobject = function(val, divider) {
 		var keys = Object.keys(val || EMPTYOBJECT);
