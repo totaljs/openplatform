@@ -158,7 +158,8 @@ T19hvu                        : Dáta
 T1sg1ozx                      : Detail logu
 Tbki3pm                       : Naozaj chcete vymazať všetky logy?
 T1v9mptn                      : Nemáte definované žiadne OAuth tokeny
-T1kpnh                        : Použitý
+T1kpnh                        : Použité
+T1l4wamu                      : nepoužité
 T7a6s0m                       : OAuth key
 T17h8lll                      : OAuth secret
 Tj2lwhs                       : Zobraziť citlivé údaje
