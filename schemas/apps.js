@@ -142,6 +142,12 @@ NEWSCHEMA('Apps', function(schema) {
 		FUNC.refreshapp(model, $.done(), !model.id || model.permissions);
 	});
 
+	schema.addWorkflow('refreshall', function($) {
+		if ($.controller && FUNC.notadmin($))
+			return;
+		FUNC.refreshappsmeta($.done());
+	});
+
 	schema.setInsert(function($, model) {
 
 		if ($.controller && FUNC.notadmin($))

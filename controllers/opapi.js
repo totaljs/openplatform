@@ -32,7 +32,11 @@ exports.install = function() {
 	ROUTE('+API    /opapi/    +apps_insert              *Apps                 --> check refresh insert (response)');
 	ROUTE('+API    /opapi/    +apps_update/id           *Apps                 --> check refresh update (response)');
 	ROUTE('+API    /opapi/    -apps_remove/id           *Apps                 --> remove');
+	ROUTE('+API    /opapi/    -apps_refresh             *Apps                 --> refreshall');
 	ROUTE('+API    /opapi/    -dnsresolver              *Apps                 --> dnsresolver');
+
+	// Roles
+	ROUTE('+API    /opapi/    -roles                    *Roles                --> query');
 
 	// Groups
 	ROUTE('+API    /opapi/    -groups                   *Users/Groups         --> query');

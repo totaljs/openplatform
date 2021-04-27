@@ -14,7 +14,7 @@ var DDOS = {};
 var ORIGINERRORS = {};
 
 MAIN.id = 0;                   // Current ID of OpenPlatform
-MAIN.version = 4901;           // Current version of OpenPlatform
+MAIN.version = 4902;           // Current version of OpenPlatform
 // MAIN.guest                  // Contains a guest user instance
 // MAIN.apps                   // List of all apps
 // MAIN.roles                  // List of all roles (Array)
@@ -1100,7 +1100,7 @@ FUNC.loadguest = function(callback) {
 };
 
 FUNC.refreshgroupsrolesdelay = function() {
-	setTimeout2('refreshgroupsrolesdelay', FUNC.refreshgroupsroles, 2000);
+	setTimeout2('refreshgroupsrolesdelay', FUNC.refreshgroupsroles, 10000, 3);
 };
 
 // Repairs empty groups
@@ -1125,10 +1125,22 @@ FUNC.repairgroupsroles = function(callback) {
 	});
 };
 
+var grouprefreshing = false;
+var groupwaiting = 0;
 
-FUNC.refreshgroupsroles = function(callback) {
+FUNC.refreshgroupsroles = function(callback, init) {
+
+	if (grouprefreshing) {
+		groupwaiting++;
+		callback && callback();
+		return;
+	}
+
+	grouprefreshing = true;
+	groupwaiting = 0;
 
 	var db = DBMS();
+
 	db.query('SELECT id, name, note, dtcreated, dtupdated FROM tbl_group ORDER BY 2').set('groups');
 	db.query('SELECT id, name FROM cl_role ORDER BY 2').set('roles');
 	db.query('SELECT id, groupid, appid, roles FROM tbl_group_app ORDER BY 2').set('appsroles');
@@ -1168,6 +1180,26 @@ FUNC.refreshgroupsroles = function(callback) {
 			MAIN.rolescache[item.id] = obj;
 		}
 
+		var done = function() {
+
+			// Releases all sessions
+			if (MAIN.session)
+				MAIN.session.sessions = {};
+
+			if (groupwaiting)
+				FUNC.refreshgroupsrolesdelay();
+
+			groupwaiting = 0;
+			grouprefreshing = false;
+
+			callback && callback();
+		};
+
+		if (init) {
+			done();
+			return;
+		}
+
 		// Clean apps
 		DBMS().query('SELECT groups, COUNT(1)::int4 as count FROM tbl_user GROUP BY groups').callback(function(err, response) {
 
@@ -1194,12 +1226,11 @@ FUNC.refreshgroupsroles = function(callback) {
 				for (var i = 0; i < item.groups.length; i++) {
 					var g = item.groups[i];
 					var group = MAIN.groupscache[g];
-					if (group == null) {
-						notexist.push(g);
-					} else {
+					if (group) {
 						for (var j = 0; j < group.apps.length; j++)
 							appskeys[group.apps[j]] = 1;
-					}
+					} else
+						notexist.push(g);
 				}
 
 				var db = DBMS();
@@ -1220,7 +1251,7 @@ FUNC.refreshgroupsroles = function(callback) {
 				for (var i = 0; i < apps.length; i++)
 					appsid.push(PG_ESCAPE(apps[i]));
 
-				db.query('DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash=$1{0})'.format((appsid && appsid.length ? ' AND appid NOT IN ({0})'.format(appsid.join(',')) : '')), [groupshash]);
+				db.query('WITH rows AS (DELETE FROM tbl_user_app WHERE inherited=TRUE AND userid IN (SELECT tbl_user.id FROM tbl_user WHERE tbl_user.groupshash=$1{0}) RETURNING 1) SELECT count(1)::int FROM rows'.format((appsid && appsid.length ? ' AND appid NOT IN ({0})'.format(appsid.join(',')) : '')), [groupshash]);
 
 				for (var i = 0; i < appsid.length; i++) {
 
@@ -1246,15 +1277,15 @@ FUNC.refreshgroupsroles = function(callback) {
 					}
 
 					roles = Object.keys(roles);
-					db.query('UPDATE tbl_user_app SET roles=$1 WHERE appid={0} AND inherited=TRUE AND userid IN (SELECT id FROM tbl_user WHERE tbl_user.groupshash=$2)'.format(appsid[i]), [roles, groupshash]);
-					db.query('INSERT INTO tbl_user_app (id, userid, appid, roles, inherited, notifications, countnotifications, countbadges, countopen, dtcreated, position) SELECT id||{0}, id, {0}, $1, TRUE, TRUE, 0, 0, 0, NOW(), {1} FROM tbl_user WHERE tbl_user.groupshash=$2 AND NOT EXISTS(SELECT 1 FROM tbl_user_app WHERE tbl_user_app.id=tbl_user.id||{0})'.format(appsid[i], app.position || 0), [roles, groupshash]);
+					db.query('UPDATE tbl_user_app SET roles=$1, dtupdated=NOW() WHERE appid={0} AND roles<>$1 AND inherited=TRUE AND userid IN (SELECT id FROM tbl_user WHERE tbl_user.groupshash=$2)'.format(appsid[i]), [roles, groupshash]);
+					db.query('INSERT INTO tbl_user_app (id, userid, appid, roles, inherited, notifications, countnotifications, countbadges, countopen, dtcreated, position) SELECT id||{0}, id, {0}, $1, TRUE, TRUE, 0, 0, 0, NOW(), {1} FROM tbl_user WHERE tbl_user.groupshash=$2 AND NOT EXISTS(SELECT 1 FROM tbl_user_app WHERE tbl_user_app.id=tbl_user.id||{0} LIMIT 1)'.format(appsid[i], app.position || 0), [roles, groupshash]);
 				}
 
 				db.callback(next);
 
 			}, function() {
 
-				// Repairs bad group hash
+				// Repairs bad group hashes
 				var hashes = Object.keys(groupshashes);
 
 				if (hashes.length) {
@@ -1263,11 +1294,7 @@ FUNC.refreshgroupsroles = function(callback) {
 					db.callback(() => FUNC.repairgroupsroles());
 				}
 
-				// Releases all sessions
-				if (MAIN.session)
-					MAIN.session.sessions = {};
-
-				callback && callback();
+				done();
 			});
 		});
 	});
@@ -1289,30 +1316,30 @@ FUNC.refreshapps = function(callback) {
 	});
 };
 
-FUNC.refreshmeta = function(callback, directory) {
+var refreshmeta_remove = function(item) {
+	return !item.name;
+};
 
-	var remove = function(item) {
-		return !item.name;
-	};
+var refreshmeta_prepare = function(arr, isou, gr) {
+	// gr means "group or roles"
+	for (var i = 0; i < arr.length; i++) {
 
-	var prepare = function(arr, isou, gr) {
-		// gr means "group or roles"
-		for (var i = 0; i < arr.length; i++) {
+		if (!arr[i].id)
+			arr[i].id = arr[i].name;
 
-			if (!arr[i].id)
-				arr[i].id = arr[i].name;
-
-			if (isou)
-				arr[i].name = arr[i].name.replace(/\//g, ' / ');
-			if (gr) {
-				delete arr[i].dtcreated;
-				delete arr[i].dtupdated;
-				delete arr[i].note;
-			}
+		if (isou)
+			arr[i].name = arr[i].name.replace(/\//g, ' / ');
+		if (gr) {
+			delete arr[i].dtcreated;
+			delete arr[i].dtupdated;
+			delete arr[i].note;
 		}
-		arr = arr.remove(remove);
-		return arr;
-	};
+	}
+	arr = arr.remove(refreshmeta_remove);
+	return arr;
+};
+
+FUNC.refreshmeta = function(callback, directory) {
 
 	var db = DBMS();
 	var arg = directory ? [directory || ''] : undefined;
@@ -1329,12 +1356,12 @@ FUNC.refreshmeta = function(callback, directory) {
 	db.callback(function(err, response) {
 
 		var meta = {};
-		meta.localities = prepare(response.localities);
-		meta.positions = prepare(response.positions);
-		meta.directories = prepare(response.directories);
-		meta.groups = prepare(response.groups, 0, 1);
-		meta.roles = prepare(response.roles, 0, 1);
-		meta.languages = prepare(response.languages);
+		meta.localities = refreshmeta_prepare(response.localities);
+		meta.positions = refreshmeta_prepare(response.positions);
+		meta.directories = refreshmeta_prepare(response.directories);
+		meta.groups = refreshmeta_prepare(response.groups, 0, 1);
+		meta.roles = refreshmeta_prepare(response.roles, 0, 1);
+		meta.languages = refreshmeta_prepare(response.languages);
 		meta.ou = [];
 
 		for (var i = 0; i < response.ou.length; i++) {
@@ -1423,7 +1450,7 @@ ON('ready', function() {
 							EMIT('loaded');
 						});
 					});
-				});
+				}, true);
 			});
 		});
 	});
@@ -1571,7 +1598,7 @@ FUNC.log = function(type, rowid, message, $) {
 	DBMS().insert('tbl_log', obj);
 };
 
-function refresh_apps() {
+function refresh_apps(callback) {
 	MAIN.apps.wait(function(app, next) {
 		FUNC.refreshapp(app, function(err, item, update) {
 			if (update) {
@@ -1585,8 +1612,10 @@ function refresh_apps() {
 			}
 		});
 
-	}, FUNC.updateroles);
+	}, () => FUNC.updateroles(callback));
 }
+
+FUNC.refreshappsmeta = refresh_apps;
 
 function emailnotifications() {
 
@@ -1648,9 +1677,8 @@ ON('service', function(counter) {
 	}
 
 	// Auto-reconfiguration
-	if (counter % 60 === 0) {
+	if (counter % 60 === 0)
 		FUNC.reconfigure();
-	}
 
 	if (counter % 360 === 0) {
 		// delete old sessions

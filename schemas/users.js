@@ -364,6 +364,7 @@ NEWSCHEMA('Users', function(schema) {
 
 		var rebuildaccesstoken = model.rebuildaccesstoken;
 		var rebuildtoken = model.rebuildtoken;
+		var updategroups = false;
 
 		model.previd = undefined;
 
@@ -373,7 +374,7 @@ NEWSCHEMA('Users', function(schema) {
 		if (id[0] === '@')
 			builder.where('reference', id.substring(1));
 		else
-			builder.where('id', id);
+			builder.id(id);
 
 		builder.orm().callback(function(err, response) {
 
@@ -558,11 +559,13 @@ NEWSCHEMA('Users', function(schema) {
 					model.groups.sort();
 
 				var grouphash = model.groups ? (model.groups.join(',').crc32(true) + '') : '';
-				if (response.grouphash !== grouphash)
-					modified = true;
 
-				data.groupshash = grouphash;
-				data.groups = model.groups;
+				if (response.groupshash !== grouphash) {
+					updategroups = true;
+					modified = true;
+					data.groupshash = grouphash;
+					data.groups = model.groups;
+				}
 			}
 
 			if (!keys || keys.roles)
@@ -696,6 +699,7 @@ NEWSCHEMA('Users', function(schema) {
 
 				var id = response.id;
 				response.dbms.replace(data).log($, data, response.name).save(function() {
+
 					if (!keys || keys.apps) {
 						model.id = id;
 						processapps(model, function() {
@@ -704,7 +708,7 @@ NEWSCHEMA('Users', function(schema) {
 							MAIN.session.refresh(id);
 							FUNC.clearcache(id);
 
-							if (!keys || keys.apps || keys.groups)
+							if (!keys || keys.apps)
 								FUNC.refreshgroupsrolesdelay();
 
 							if (!keys || keys.company || keys.groups || keys.locality || keys.language || keys.directory)
@@ -717,7 +721,7 @@ NEWSCHEMA('Users', function(schema) {
 						MAIN.session.refresh(id);
 						FUNC.clearcache(id);
 
-						if (!keys || keys.apps || keys.groups)
+						if (!keys || keys.apps || updategroups)
 							FUNC.refreshgroupsrolesdelay();
 
 						if (!keys || keys.company || keys.groups || keys.locality || keys.language || keys.directory)

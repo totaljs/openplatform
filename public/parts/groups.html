@@ -12,12 +12,13 @@
 		<script type="text/plain">
 			[
 				{ name: 'id', text: '@(ID)', width: 200 },
-				{ name: 'name', text: '@(Name)', width: 200 },
-				{ name: 'note', text: '@(Note)', width: 300, sort: false },
-				{ name: 'roles', text: '@(Roles)', width: 350, template: '{{ roles | joinbgcolor(\' \') }}', search: true },
+				{ name: 'name', text: '@(Name)', width: 200, template: '{{ if !count }}<span class="badge badge-red mr5">@(unused)</span>{{ fi }}{{ name }}' },
 				{ name: 'apps2', text: '@(Applications)', width: 350, template: '{{ apps2 | join }}', search: true, sort: false },
-				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[ts]', filter: false },
-				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[ts]', filter: false },
+				{ name: 'count', text: '@(Used)', width: 100, align: 2, monospace: 1 },
+				{ name: 'roles', text: '@(Roles)', width: 350, template: '{{ roles | joinbgcolor(\' \') }}', search: true },
+				{ name: 'note', text: '@(Note)', width: 300, sort: false },
+				{ name: 'dtupdated', text: '@(Updated)', width: 140, align: 1, format: '[ts]', filter: false },
+				{ name: 'dtcreated', text: '@(Created)', width: 140, align: 1, format: '[ts]', filter: false },
 				{ type: 'controls', template: '<button name="edit"><i class="fa fa-pencil mr5"></i>@(Edit)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>
@@ -31,7 +32,7 @@
 	PLUGIN('groups', function(exports) {
 
 		exports.refresh = function() {
-			DAPI('groups', function(response) {
+			DAPI('groups?count=1', function(response) {
 				var apps = main.apps;
 				for (var i = 0; i < response.length; i++) {
 					var item = response[i];
@@ -39,6 +40,8 @@
 
 					item.roles = {};
 					item.appsroles = {};
+					if (!item.count)
+						item.count = 0;
 
 					for (var j = 0; j < item.apps.length; j++) {
 						var a = item.apps[j];

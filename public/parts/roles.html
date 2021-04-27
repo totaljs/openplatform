@@ -7,8 +7,9 @@
 	<div data---="datagrid__?.items__height:.ui-layout-section;noborder:1;checkbox:0;margin:45">
 		<script type="text/plain">
 			[
-				{ name: 'name', text: '@(Name)', width: 200, template: '{{ name | bgcolor }}' },
-				{ name: 'roles', text: '@(Groups)', width: 350, template: '{{ groups | join }}', search: true, sort: false },
+				{ name: 'name', text: '@(Name)', width: 200, template: '{{ if !count }}<span class="badge badge-red mr5">@(unused)</span>{{ fi }}<b>{{ name }}</b>' },
+				{ name: 'groups', text: '@(Groups)', width: 350, template: '{{ groups | join }}', search: true, sort: false },
+				{ name: 'count', text: '@(Used)', width: 100, align: 2, monospace: 1 },
 				{ name: 'apps', text: '@(Applications)', width: 500, template: '{{ apps | join }}', search: true, sort: false }
 			]
 		</script>
@@ -34,6 +35,9 @@
 					obj.groups = [];
 					obj.apps = [];
 
+					if (!obj.count)
+						obj.count = 0;
+
 					for (var j = 0; j < groups.length; j++) {
 						var group = groups[j];
 						for (var k = 0; k < group.apps.length; k++) {
@@ -56,7 +60,19 @@
 					arr.push(obj);
 				}
 
-				SET('?.items', arr);
+				DAPI('roles', function(response) {
+
+					for (var i = 0; i < response.length; i++) {
+						var item = response[i];
+						var role = arr.findItem('id', item.id);
+						if (role)
+							role.count = item.count;
+					}
+
+					arr.quicksort('name');
+					SET('?.items', arr);
+				});
+
 			});
 		};
 

@@ -10,27 +10,22 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		var arr = [];
+		var db = DBMS();
+		db.find('tbl_group').set('groups').sort('id');
+		db.find('tbl_group_app').fields('appid as id,groupid,roles').set('apps');
+		$.query.count && db.query('SELECT UNNEST(groups) as id, COUNT(1)::int4 as count FROM tbl_user GROUP BY UNNEST(groups)').set('count');
+		db.callback(function(err, response) {
 
-		for (var i = 0; i < MAIN.groups.length; i++) {
-			var group = MAIN.groups[i];
-			var obj = {};
-			obj.id = group.id;
-			obj.name = group.name;
-			obj.dtcreated = group.dtcreated;
-			obj.dtupdated = group.dtupdated;
-			obj.note = group.note;
-			obj.apps = [];
-
-			for (var j = 0; j < group.apps.length; j++) {
-				var appid = group.apps[j];
-				obj.apps.push({ id: appid, roles: group.appsroles[appid] || EMPTYARRAY });
+			for (var i = 0; i < response.groups.length; i++) {
+				var item = response.groups[i];
+				item.apps = response.apps.findAll('groupid', item.id);
+				if (response.count)
+					item.count = response.count.findValue('id', item.id, 'count');
 			}
 
-			arr.push(obj);
-		}
+			$.callback(response.groups);
+		});
 
-		$.callback(arr);
 	});
 
 	schema.setPatch(function($, model) {
@@ -78,10 +73,9 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		db.log($, model, model.name);
 
 		db.callback(function() {
-			FUNC.refreshgroupsroles(function() {
-				FUNC.refreshmeta($.done(id));
-				EMIT('groups/' + (insert ? 'create' : 'udpate'), id);
-			});
+			FUNC.refreshgroupsrolesdelay();
+			FUNC.refreshmeta($.done());
+			EMIT('groups/' + (insert ? 'create' : 'udpate'), id);
 		});
 	});
 
@@ -105,10 +99,9 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		db.remove('tbl_group').query('id=' + pgid);
 		db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_remove(groups,{0}) WHERE ({0}=ANY(groups))'.format(pgid));
 		db.callback(function() {
-			FUNC.refreshgroupsroles(function() {
-				FUNC.refreshmeta($.done());
-				EMIT('groups/remove', id);
-			});
+			FUNC.refreshgroupsrolesdelay();
+			FUNC.refreshmeta($.done());
+			EMIT('groups/remove', id);
 		});
 	});
 

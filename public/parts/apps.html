@@ -3,6 +3,7 @@
 		<label><i class="fa fa-rocket"></i>@(Apps)</label>
 		<div>
 			<button class="exec" data-exec="?/create"><i class="fa fa-plus-circle green"></i>@(Add)</button>
+			<button class="exec" data-exec="?/refreshall"><i class="fas fa-sync"></i>@(Refresh meta-data)</button>
 		</div>
 	</div>
 
@@ -19,7 +20,7 @@
 						{{ foreach m in value }}
 						<figure>
 							<div class="item exec{{ if m.blocked }} disabled{{ fi }}{{ if !m.online }} offline{{ fi }}" data-exec="?/edit" data-id="{{ m.id }}">
-								<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="far fa-arrow-alt-circle-down"></i></span><b class="hellip"><i class="{{ m.icon | icon }}"></i>{{ m.title }}{{ if !online }}<em>@(offline)</em>{{ fi }}</b></div>
+								<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="fas fa-ellipsis-h"></i></span><b class="hellip"><i class="{{ m.icon | icon }}"></i>{{ m.title }}{{ if !online }}<em>@(offline)</em>{{ fi }}</b></div>
 								<div class="padding npb">
 									<div class="info">{{ m.url | appurl }}</div>
 									<div class="info">{{ m.email | empty }}</div>
@@ -72,6 +73,22 @@
 		exports.secrets_load = function(com) {
 			var selected = GET('?.selected');
 			com.reconfigure({ title: selected.name });
+		};
+
+		exports.refreshall = function(el) {
+
+			var icon;
+
+			if (el instanceof jQuery)
+				icon = el.find('i');
+
+			icon && icon.aclass('fa-spin');
+			DAPI('apps_refresh @showloading', function() {
+				icon && icon.rclass('fa-spin');
+				OP.play('success');
+				exports.refresh();
+				OP.loading(false, 1000);
+			});
 		};
 
 		exports.options = function(el) {

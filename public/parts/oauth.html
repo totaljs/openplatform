@@ -19,7 +19,7 @@
 						{{ foreach m in value }}
 						<figure>
 							<div class="item exec{{ if m.blocked }} disabled{{ fi }}" data-exec="?/secrets" data-id="{{ m.id }}">
-								<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="far fa-arrow-alt-circle-down"></i></span><b class="hellip">{{ m.name }}</b></div>
+								<div class="name"><span class="exec" data-exec="?/options" data-prevent="true"><i class="fas fa-ellipsis-h"></i></span><b class="hellip">{{ m.name }}</b></div>
 								<div class="padding">
 									<div class="value"><span>{{ m.dtcreated | format }}</span>@(Created)</div>
 									<div class="value"><span>{{ m.dtupdated | format }}</span>@(Updated)</div>

@@ -208,7 +208,7 @@
 
 		exports.reload = function(appid) {
 			var app = user.apps.findItem('id', appid);
-			app && app.send('reload');
+			app && app.send && app.send('reload');
 		};
 
 		exports.restart = function(appid) {
