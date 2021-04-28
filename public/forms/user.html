@@ -318,14 +318,17 @@
 			}
 
 			// Compare apps
-			prev.apps.quicksort('id');
-			model.apps.quicksort('id');
+			if (prev.apps) {
+				prev.apps.quicksort('id');
+				for (var i = 0; i < prev.apps.length; i++)
+					prev.apps[i].roles.sort();
+			}
 
-			for (var i = 0; i < model.apps.length; i++)
-				model.apps[i].roles.sort();
-
-			for (var i = 0; i < prev.apps.length; i++)
-				prev.apps[i].roles.sort();
+			if (model.apps) {
+				model.apps.quicksort('id');
+				for (var i = 0; i < model.apps.length; i++)
+					model.apps[i].roles.sort();
+			}
 
 			if (STRINGIFY(prev.apps) === STRINGIFY(model.apps))
 				delete model.apps;
