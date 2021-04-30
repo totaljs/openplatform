@@ -4,7 +4,6 @@ var USAGE_STATS = [];
 NEWSCHEMA('Apps', function(schema) {
 
 	schema.define('previd', 'UID')(null); // internal for re-importing of apps
-	// schema.define('typeid', ['external', 'designer'])('external');
 	schema.define('typeid', ['external'])('external');
 	schema.define('url', 'Url', true);
 	schema.define('title', 'String(40)', true);
@@ -153,9 +152,6 @@ NEWSCHEMA('Apps', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		if (model.typeid === 'designer')
-			model.name = model.title;
-
 		if (!model.name) {
 			$.invalid('error-apps-meta');
 			return;
@@ -171,11 +167,6 @@ NEWSCHEMA('Apps', function(schema) {
 		model.servicetoken = GUID(15);
 		model.linker = model.name.slug(40);
 		model.search = (model.name + ' ' + model.title).toSearch().max(40);
-
-		if (model.typeid === 'designer') {
-			model.online = true;
-			model.url = null;
-		}
 
 		if (!model.services)
 			delete model.services;
@@ -207,9 +198,6 @@ NEWSCHEMA('Apps', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 
-		if (model.typeid === 'designer')
-			model.name = model.title;
-
 		if (!model.name) {
 			$.invalid('error-apps-meta');
 			return;
@@ -225,11 +213,6 @@ NEWSCHEMA('Apps', function(schema) {
 
 		if (!model.titles)
 			model.titles = null;
-
-		if (model.typeid === 'designer') {
-			model.online = true;
-			model.url = null;
-		}
 
 		model.permissions = undefined;
 		model.rebuildaccesstoken = undefined;
@@ -305,11 +288,9 @@ NEWSCHEMA('Apps', function(schema) {
 			var arr = [];
 			for (var i = 0; i < MAIN.apps.length; i++) {
 				var item = MAIN.apps[i];
-				if (item.type !== 'designer') {
-					var app = FUNC.makeapp(item, obj.app.allowreadapps);
-					if (app)
-						arr.push(app);
-				}
+				var app = FUNC.makeapp(item, obj.app.allowreadapps);
+				if (app)
+					arr.push(app);
 			}
 			$.callback(arr);
 		});
@@ -445,12 +426,7 @@ NEWSCHEMA('Apps', function(schema) {
 
 				key = '+' + (user.darkmode === 1 ? 'darkmode' : 'lightmode');
 				usage[key] = (usage[key] || 0) + 1;
-
-				// MAIN.session.set2(user.id, user);
 			}
-
-			if (app.typeid === 'designer')
-				data.url = '/builder/' + $.id + '/';
 
 			$.callback(data);
 

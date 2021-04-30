@@ -630,8 +630,8 @@ FUNC.notadmin = function($) {
 
 // Auth token
 FUNC.encodeauthtoken = function(app, user) {
-	var sign = app.id + '-' + user.id;
-	sign += '-' + ((user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true));
+	var sign = app.id + '-' + user.sessionid;
+	sign += '-' + ((user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.sessionid + user.verifytoken + CONF.accesstoken).crc32(true));
 	return sign.encrypt(CONF.accesstoken.substring(0, 20));
 };
 
@@ -677,8 +677,7 @@ FUNC.decodeauthtoken = function($, callback) {
 
 	var user = USERS[arr[1]];
 	if (user) {
-
-		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
+		var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + arr[1] + user.verifytoken + CONF.accesstoken).crc32(true);
 		if (tmp === arr[2]) {
 			var obj = { app: app, user: user };
 			if (FUNC.unauthorized(obj, $)) {
@@ -691,13 +690,11 @@ FUNC.decodeauthtoken = function($, callback) {
 			DDOS[$.ip] = (DDOS[$.ip] || 0) + 1;
 			$.invalid('error-invalid-accesstoken');
 		}
-
 	} else {
-
 		// reads user from DB
-		readuser(arr[1], function(err, user) {
+		readusersession(arr[1], function(err, user) {
 			if (user) {
-				var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + user.id + user.verifytoken + CONF.accesstoken).crc32(true);
+				var tmp = (user.accesstoken + app.accesstoken).crc32(true) + '' + (app.id + arr[1] + user.verifytoken + CONF.accesstoken).crc32(true);
 				if (tmp === arr[2]) {
 					var obj = { app: app, user: user };
 					if (FUNC.unauthorized(obj, $)) {
@@ -1456,8 +1453,18 @@ ON('ready', function() {
 	});
 });
 
+function readusersession(id, callback) {
+	DBMS().read('tbl_user_session').fields('userid').id(id).where('dtexpire>NOW()').callback(function(err, response) {
+		if (response)
+			readuser(response.userid, callback);
+		else
+			callback('error-users-404');
+	});
+}
+
 // Reads a user
 function readuser(id, callback) {
+
 	var db = DBMS();
 	db.read('tbl_user').id(id).query('inactive=FALSE AND blocked=FALSE').fields('id,supervisorid,deputyid,accesstoken,verifytoken,directory,directoryid,statusid,status,photo,name,linker,search,dateformat,timeformat,numberformat,firstname,lastname,gender,email,phone,company,locking,pin,language,reference,locality,position,login,colorscheme,background,repo,roles,groups,blocked,customer,notifications,notificationsemail,notificationsphone,countnotifications,countbadges,volume,sa,darkmode,inactive,sounds,online,dtbirth,dtbeg,dtend,dtupdated,dtmodified,dtcreated,dtlogged,dtnotified,countsessions,otp,middlename,contractid,ou,groupshash,dtpassword,desktop,groupid,checksum,oauth2,dn,stamp');
 	db.error('error-users-404');

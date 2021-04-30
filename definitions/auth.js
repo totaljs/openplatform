@@ -39,6 +39,7 @@ ON('loaded', function() {
 		$.req.locked = locked;
 
 		user.ip = $.ip;
+		user.sessionid = session.sessionid;
 
 		if (user.desktop == null)
 			user.desktop = 1;
