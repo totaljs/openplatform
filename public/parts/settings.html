@@ -136,8 +136,11 @@
 					</div>
 					<label class="bg-smoke"><i class="fab fa-node-js"></i>@(Total API)</label>
 					<div class="padding npb">
-						<p>@(With the <b>Total API key</b>, the OpenPlatform can send SMS messages or email messages. You can obtain Total API key on) <a href="https://platform.totaljs.com/?open=api" target="_blank">Total.js Platform</a>.</p>
+						<p>@(With the <b>Total API key</b>, the OpenPlatform can send SMS messages or email messages.)</p>
 						<div class="row">
+							<div class="col-md-4 m">
+								<div class="alert">@(You can obtain the Total.js API key on the link:) <a href="https://platform.totaljs.com/?open=api" class="b" target="_blank">https://platform.totaljs.com?open=api</a></div>
+							</div>
 							<div class="col-md-4">
 								<div data---="input__?.totalapi__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_totalapi__enabled">@(Total API key)</div>
 							</div>
@@ -200,6 +203,9 @@
 					<div class="padding npb">
 						<p><i class="fas fa-circle mr5" data-bind="?.allow_tms__.green__.red:!value"></i>@(TMS allows you to publish and subscribe most important internal operations in the OpenPlatform.) <a href="https://docs.totaljs.com/tms/" target="_blank"><i class="fas fa-book mr5"></i>@(TMS documentation)</a>.</p>
 						<div class="row">
+							<div class="col-md-4 m">
+								<div class="alert" data-bind="?.url__text b:value + '/$tms/'">@(Endpoint for the Total.js Message Service app will be in the form <b></b>)</div>
+							</div>
 							<div class="col-md-4 m">
 								<div data---="input__?.secret_tms__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_tms__enabled">@(Security token)</div>
 								<div class="help"><span class="exec link" data-exec="?/tms_token"><i class="fas fa-retweet mr5"></i>@(Generate token)</span></div>
