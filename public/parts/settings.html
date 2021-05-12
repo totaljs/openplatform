@@ -134,15 +134,15 @@
 					<div class="pull-right" style="margin:9px 10px 0 0">
 						<div data---="togglebutton__?.allow_totalapi"></div>
 					</div>
-					<label class="bg-smoke"><i class="fab fa-node-js"></i>@(Total API)</label>
+					<label class="bg-smoke"><i class="fab fa-node-js"></i>@(Total.js API)</label>
 					<div class="padding">
-						<p>@(With the <b>Total API key</b>, the OpenPlatform can send SMS messages or email messages.)</p>
+						<p>@(With the <b>Total.js API key</b>, the OpenPlatform can send SMS messages or email messages.)</p>
 						<div class="row">
 							<div class="col-md-4 m">
 								<div class="alert">@(You can obtain the Total.js API key on the link:) <a href="https://platform.totaljs.com/?open=api" class="b" target="_blank">https://platform.totaljs.com?open=api</a></div>
 							</div>
 							<div class="col-md-4">
-								<div data---="input__?.totalapi__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_totalapi__enabled">@(Total API key)</div>
+								<div data---="input__?.totalapi__maxlength:100;required:1;placeholder:@(Enter key);camouflage:•__''" data-bind="?.allow_totalapi__enabled">@(Total.js API key)</div>
 								<div class="help"><span class="link exec" data-exec="?/verifytotalapi"><i class="fa fa-angle-right mr5"></i>@(Verify API key)</span></div>
 							</div>
 						</div>
