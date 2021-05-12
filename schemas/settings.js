@@ -51,6 +51,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allow_tms', Boolean);
 	schema.define('allow_totalapi', Boolean);
 	schema.define('secret_tms', 'String(100)');
+	schema.define('mail_api', Boolean);
 
 	schema.setRead(function($) {
 
@@ -93,12 +94,10 @@ NEWSCHEMA('Settings', function(schema) {
 		doc.dtcreated = NOW;
 	};
 
-	schema.setSave(function($) {
+	schema.setSave(function($, model) {
 
 		if ($.controller && FUNC.notadmin($))
 			return;
-
-		var model = $.clean();
 
 		// Removing older background
 		if (CONF.background && model.background !== CONF.background) {

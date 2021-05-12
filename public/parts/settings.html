@@ -135,7 +135,7 @@
 						<div data---="togglebutton__?.allow_totalapi"></div>
 					</div>
 					<label class="bg-smoke"><i class="fab fa-node-js"></i>@(Total API)</label>
-					<div class="padding npb">
+					<div class="padding">
 						<p>@(With the <b>Total API key</b>, the OpenPlatform can send SMS messages or email messages.)</p>
 						<div class="row">
 							<div class="col-md-4 m">
@@ -143,22 +143,23 @@
 							</div>
 							<div class="col-md-4">
 								<div data---="input__?.totalapi__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_totalapi__enabled">@(Total API key)</div>
+								<div class="help"><span class="link exec" data-exec="?/verifytotalapi"><i class="fa fa-angle-right mr5"></i>@(Verify API key)</span></div>
 							</div>
 						</div>
+						<div data---="checkbox__?.mail_api" data-bind="?.allow_totalapi__enabled">@(Enable sending mail messages via Total.js API)</div>
 						<div data-bind="%settingstotalapiresponse__template">
 							<script type="text/html">
 								{{ if value }}
 									<div class="mt10">
 										{{ if value.credits != null }}
-											<div class="inline-message"><i class="fa fa-check-circle"></i> @(Total API is <b>valid</b>. Balance:) <b>{{ value.credits | format(2) }} &euro;</b></div>
+											<div class="nmb inline-message"><i class="fa fa-check-circle"></i> @(Total API key is <b>valid</b>. Balance:) <b>{{ value.credits | format(2) }} &euro;</b></div>
 										{{ else }}
-											<div class="inline-message inline-message-error"><i class="fa fa-warning"></i> @(Total API is <b>invalid</b>).</div>
+											<div class="nmb inline-message inline-message-error"><i class="fa fa-warning"></i> @(Total API key is <b>invalid</b>).</div>
 										{{ fi }}
 									</div>
 								{{ fi }}
 							</script>
 						</div>
-						<div class="help m"><span class="link exec" data-exec="?/verifytotalapi"><i class="fa fa-angle-right mr5"></i>@(Verify API key)</span></div>
 					</div>
 				</div>
 				<br />

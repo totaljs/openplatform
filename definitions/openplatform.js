@@ -375,6 +375,7 @@ FUNC.reconfigure = function(callback) {
 
 		CONF.mail_smtp && Mail.use(CONF.mail_smtp, CONF.mail_smtp_options, err => err && FUNC.log('Error/SMTP', null, CONF.mail_smtp + ': ' + err));
 		MAIN.id = CONF.url.crc32(true);
+		CMD('refresh_tms');
 		callback && callback();
 		EMIT('configure');
 	});
