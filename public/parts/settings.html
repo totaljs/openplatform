@@ -129,78 +129,114 @@
 					</div>
 				</div>
 				<br />
-				<div class="caption"><i class="fas fa-key"></i>@(Total API)</div>
-				<div class="alert m">@(With the <b>Total API key</b>, the OpenPlatform can send SMS messages or email messages. You can obtain Total API key on) <a href="https://platform.totaljs.com/?open=api" target="_blank">Total.js Platform</a>.</div>
-				<div class="row">
-					<div class="col-md-4">
-						<div data---="input__?.totalapi__maxlength:100;camouflage:•__''">@(Total API key)</div>
-					</div>
-				</div>
-				<div data-bind="%settingstotalapiresponse__template">
-					<script type="text/html">
-						{{ if value }}
-							<div class="mt10">
-								{{ if value.credits != null }}
-									<div class="inline-message"><i class="fa fa-check-circle"></i> @(Total API is <b>valid</b>. Balance:) <b>{{ value.credits | format(2) }} &euro;</b></div>
-								{{ else }}
-									<div class="inline-message inline-message-error"><i class="fa fa-warning"></i> @(Total API is <b>invalid</b>).</div>
-								{{ fi }}
-							</div>
-						{{ fi }}
-					</script>
-				</div>
-				<div class="help m"><span class="link exec" data-exec="?/verifytotalapi"><i class="fa fa-angle-right mr5"></i>@(Verify API key)</span></div>
 
-				<div class="caption"><i class="far fa-envelope-o"></i>@(SMTP settings)</div>
-				<div class="row">
-					<div class="col-md-4 m">
-						<div data---="input__?.smtp__maxlength:100;placeholder:localhost;camouflage:•__'localhost'">@(SMTP server)</div>
+				<div class="panel">
+					<div class="pull-right" style="margin:9px 10px 0 0">
+						<div data---="togglebutton__?.allow_totalapi"></div>
 					</div>
-					<div class="col-md-4 m">
-						<div data---="input__?.sender__type:email;forcevalidation:0__'@'">@(Sender email address)</div>
+					<label class="bg-smoke"><i class="fab fa-node-js"></i>@(Total API)</label>
+					<div class="padding npb">
+						<p>@(With the <b>Total API key</b>, the OpenPlatform can send SMS messages or email messages. You can obtain Total API key on) <a href="https://platform.totaljs.com/?open=api" target="_blank">Total.js Platform</a>.</p>
+						<div class="row">
+							<div class="col-md-4">
+								<div data---="input__?.totalapi__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_totalapi__enabled">@(Total API key)</div>
+							</div>
+						</div>
+						<div data-bind="%settingstotalapiresponse__template">
+							<script type="text/html">
+								{{ if value }}
+									<div class="mt10">
+										{{ if value.credits != null }}
+											<div class="inline-message"><i class="fa fa-check-circle"></i> @(Total API is <b>valid</b>. Balance:) <b>{{ value.credits | format(2) }} &euro;</b></div>
+										{{ else }}
+											<div class="inline-message inline-message-error"><i class="fa fa-warning"></i> @(Total API is <b>invalid</b>).</div>
+										{{ fi }}
+									</div>
+								{{ fi }}
+							</script>
+						</div>
+						<div class="help m"><span class="link exec" data-exec="?/verifytotalapi"><i class="fa fa-angle-right mr5"></i>@(Verify API key)</span></div>
 					</div>
-				</div>
-				<div data---="input__?.smtpsettings__maxlength:200;dirplaceholder:@(Search application);placeholder:localhost;camouflage:•">@(SMTP settings)</div>
-				<div class="help">@(SMTP settings have to be in valid <b>JSON format</b>, according to the Total.js documentation). <a href="https://docs.totaljs.com/total4/4047d003kk51c/#6ce08001ug51c" target="_blank">@(Documentation)</a></div>
-				<hr />
-				<div data-bind="%settingssmtpresponse__template">
-					<script type="text/html">
-						{{ if value }}
-							{{ if value.success }}
-								<div class="inline-message"><i class="fa fa-check-circle"></i> @(SMTP server is <b>configured correctly</b>).</div>
-							{{ else }}
-								<div class="inline-message inline-message-error"><i class="fa fa-warning"></i> {{ value[0].error }}</div>
-							{{ fi }}
-						{{ fi }}
-					</script>
-				</div>
-				<div class="fs12">
-					<span class="link exec" data-exec="?/verifysmtp"><i class="fa fa-angle-right mr5"></i>@(Verify SMTP server)</span>
 				</div>
 				<br />
-				<div class="caption"><i class="fa fa-users"></i>@(Connect users from another OpenPlatform)</div>
 
-				<div class="alert m">
-					@(Access to this OpenPlatform will be fully under control of defined OpenPlatform below, <b>sign-in form will be disabled</b>. Users won't be able to change own credentials in this OpenPlatform.)
+				<div class="panel">
+					<label class="bg-smoke"><i class="far fa-envelope-o"></i>@(SMTP settings)</label>
+					<div class="padding">
+						<div class="row">
+							<div class="col-md-4 m">
+								<div data---="input__?.smtp__maxlength:100;placeholder:localhost;camouflage:•__'localhost'">@(SMTP server)</div>
+							</div>
+							<div class="col-md-4 m">
+								<div data---="input__?.sender__type:email;forcevalidation:0__'@'">@(Sender email address)</div>
+							</div>
+						</div>
+						<div data---="input__?.smtpsettings__maxlength:200;dirplaceholder:@(Search application);placeholder:localhost;camouflage:•">@(SMTP settings)</div>
+						<div class="help">@(SMTP settings have to be in valid <b>JSON format</b>, according to the Total.js documentation). <a href="https://docs.totaljs.com/total4/4047d003kk51c/#6ce08001ug51c" target="_blank">@(Documentation)</a></div>
+						<hr />
+						<div data-bind="%settingssmtpresponse__template">
+							<script type="text/html">
+								{{ if value }}
+									{{ if value.success }}
+										<div class="inline-message"><i class="fa fa-check-circle"></i> @(SMTP server is <b>configured correctly</b>).</div>
+									{{ else }}
+										<div class="inline-message inline-message-error"><i class="fa fa-warning"></i> {{ value[0].error }}</div>
+									{{ fi }}
+								{{ fi }}
+							</script>
+						</div>
+						<div class="fs12">
+							<span class="link exec" data-exec="?/verifysmtp"><i class="fa fa-angle-right mr5"></i>@(Verify SMTP server)</span>
+						</div>
+					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-md-4 m">
-						<div data---="input__?.oauthopenplatform__maxlength:200__''">@(URL address)</div>
+				<br />
+				<div class="panel">
+					<div class="pull-right" style="margin:9px 10px 0 0">
+						<div data---="togglebutton__?.allow_tms"></div>
 					</div>
-					<div class="col-md-4 m">
-						<div data---="input__?.oauthkey__maxlength:30;camouflage:•__''">@(OAuth 2 key)</div>
-					</div>
-					<div class="col-md-4 m">
-						<div data---="input__?.oauthsecret__maxlength:50;camouflage:•__''">@(OAuth 2 secret)</div>
+					<label class="bg-smoke"><i class="fas fa-send-back"></i>@(Total.js Message Service (TMS))</label>
+					<div class="padding npb">
+						<p><i class="fas fa-circle mr5" data-bind="?.allow_tms__.green__.red:!value"></i>@(TMS allows you to publish and subscribe most important internal operations in the OpenPlatform.) <a href="https://docs.totaljs.com/tms/" target="_blank"><i class="fas fa-book mr5"></i>@(TMS documentation)</a>.</p>
+						<div class="row">
+							<div class="col-md-4 m">
+								<div data---="input__?.secret_tms__maxlength:100;required:1;placeholder:@(Enter token);camouflage:•__''" data-bind="?.allow_tms__enabled">@(Security token)</div>
+								<div class="help"><span class="exec link" data-exec="?/tms_token"><i class="fas fa-retweet mr5"></i>@(Generate token)</span></div>
+							</div>
+						</div>
 					</div>
 				</div>
+				<br />
 
-				<div data-bind="?__show:value&&value.oauthopenplatform&&value.oauthkey&&value.oauthsecret__track:oauthopenplatform,oauthkey,oauthsecret" class="hidden help">
-					<span class="link exec red" data-exec="?/removeoauth2"><i class="fa fa-trash mr5"></i>@(Remove OAuth 2.0 settings)</span>
+				<div class="panel">
+					<div class="pull-right" style="margin:9px 10px 0 0">
+						<div data---="togglebutton__?.allowoauthsync"></div>
+					</div>
+					<label class="bg-smoke"><i class="fa fa-users"></i>@(Connect users from another OpenPlatform)</label>
+					<div class="padding">
+
+						<p>@(Access to this OpenPlatform will be fully under control of defined OpenPlatform below, <b>sign-in form will be disabled</b>. Users won't be able to change own credentials in this OpenPlatform.)</p>
+
+						<div class="row">
+							<div class="col-md-4 m">
+								<div data---="input__?.oauthopenplatform__maxlength:200;placeholder:@(Enter URL address);required:1__''" data-bind="?.allowoauthsync__enabled">@(URL address)</div>
+							</div>
+							<div class="col-md-4 m">
+								<div data---="input__?.oauthkey__maxlength:30;placeholder:@(Enter key);required:1;camouflage:•__''" data-bind="?.allowoauthsync__enabled">@(OAuth 2 key)</div>
+							</div>
+							<div class="col-md-4 m">
+								<div data---="input__?.oauthsecret__maxlength:50;placeholder:@(Enter secret);required:1;camouflage:•__''" data-bind="?.allowoauthsync__enabled">@(OAuth 2 secret)</div>
+							</div>
+						</div>
+
+						<div data-bind="?__show:value&&value.oauthopenplatform&&value.oauthkey&&value.oauthsecret__track:oauthopenplatform,oauthkey,oauthsecret" class="hidden help">
+							<span class="link exec red" data-exec="?/removeoauth2"><i class="fa fa-trash mr5"></i>@(Remove OAuth 2.0 settings)</span>
+						</div>
+					</div>
 				</div>
-
 			</div>
+
 		</div>
 	</div>
 	<div class="buttons" data---="validation__?__track:verifytoken">
@@ -237,6 +273,10 @@
 
 		exports.verifytoken = function() {
 			SET('?.verifytoken', GUID(10));
+		};
+
+		exports.tms_token = function() {
+			SET('?.secret_tms', Date.now() + GUID(30));
 		};
 
 		exports.verifytotalapi = function(el) {

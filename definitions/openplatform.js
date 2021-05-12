@@ -29,7 +29,7 @@ MAIN.metadirectories = {};
 var USERS = {};
 
 MAIN.logout = function(controller) {
-	if (CONF.oauthopenplatform)
+	if (CONF.allowoauthsync && CONF.oauthopenplatform)
 		controller.redirect(CONF.oauthopenplatform + '/logout/');
 	else
 		controller.redirect('/');

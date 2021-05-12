@@ -43,10 +43,14 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.define('allowrememberopenapps', Boolean);
 	schema.define('cookie_expiration', 'String(20)');
 	schema.define('maxmembers', Number);
+	schema.define('allowoauthsync', Boolean);
 	schema.define('oauthopenplatform', 'URL');
 	schema.define('oauthkey', 'String(30)');
 	schema.define('oauthsecret', 'String(50)');
 	schema.define('totalapi', 'String(100)');
+	schema.define('allow_tms', Boolean);
+	schema.define('allow_totalapi', Boolean);
+	schema.define('secret_tms', 'String(100)');
 
 	schema.setRead(function($) {
 

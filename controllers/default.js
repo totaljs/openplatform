@@ -41,6 +41,12 @@ function manifest(req, res) {
 
 function oauthsync() {
 	var self = this;
+
+	if (!CONF.allowoauthsync) {
+		self.throw400();
+		return;
+	}
+
 	var data = {};
 	data.code = self.query.code;
 	data.client_id = CONF.oauthkey;
@@ -341,7 +347,7 @@ function login() {
 		return;
 	}
 
-	if (CONF.oauthopenplatform && CONF.oauthkey && CONF.oauthsecret) {
+	if (CONF.allowoauthsync && CONF.oauthopenplatform && CONF.oauthkey && CONF.oauthsecret) {
 		self.redirect(CONF.oauthopenplatform + '/oauth/authorize/?client_id=' + CONF.oauthkey + '&redirect_uri=' + encodeURIComponent(CONF.url + '/oauth/sync/'));
 		return;
 	}
