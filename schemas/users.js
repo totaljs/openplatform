@@ -930,7 +930,10 @@ function processapps(model, callback) {
 
 		var rem = [];
 		var tmp = {};
-
+		
+		// User don´t have apps configured
+		if(!model.apps) { model.apps = []; }
+		
 		for (var i = 0; i < model.apps.length; i++) {
 			var app = model.apps[i];
 			var id = app.id;
