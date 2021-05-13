@@ -58,7 +58,7 @@
 	};
 
 	Thelpers.ou = function(val) {
-		return val ? val.join('/') : '';
+		return val ? val instanceof Array ? val.join('/') : val : '';
 	};
 
 	PLUGIN('users', function(exports) {
