@@ -204,7 +204,7 @@ function oauthsession() {
 	var db = DBMS();
 	db.one('tbl_user_session').fields('userid,dtexpire').id(code).where('dtexpire>=NOW()').set('session');
 	db.err('error-invalid-accesstoken');
-	db.one('tbl_oauth').fields('name').id(filter.client_id).where('accesstoken', filter.client_secret);
+	db.one('tbl_oauth').fields('name').id(filter.client_id).where('accesstoken', filter.client_secret).set('oauth');
 	db.err('error-invalid-accesstoken');
 	db.callback(function(err, response) {
 		if (response) {
