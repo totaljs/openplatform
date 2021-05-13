@@ -368,6 +368,7 @@ NEWSCHEMA('Apps', function(schema) {
 				user.apps[$.id].countnotifications = 0;
 
 				if (isreset) {
+
 					db.modify('tbl_user_app', DB_RESET).id($.user.id + $.id);
 
 					var isresetprofile = true;
