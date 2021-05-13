@@ -345,7 +345,7 @@
 		exports.password = function() {
 			var model = GET('?');
 			if (!model.otp)
-				SET('?.password', GUID(20));
+				SET('?.password', GUID(20), 'show');
 		};
 
 		exports.searchcompany = function(q, next) {
