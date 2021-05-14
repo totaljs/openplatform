@@ -2,30 +2,55 @@
 // Created: 2019-12-04 10:32
 // Updated: 2020-02-29 10:51
 
-error-invalid-url            : Neplatná URL adresa OpenPlatformy.
-error-users-404              : Používateľ sa nenašiel.
-error-users-group            : Skupina "@" sa nenašla.
-error-users-role             : Rola "@" sa nenašla.
-error-permissions            : Nemáte požadované práva.
-error-invalid-accesstoken    : Neplatný access-token.
-error-credentials            : Neplatné prihlasovacie údaje.
-error-blocked                : Váš účet bol zablokovaný.
-error-settings-smtp          : Chyba SMTP: @.
-error-inactive               : Váš účet je neaktívny.
-error-invalid-origin         : Vaša IP adresa nie je na zozname povolených adries.
-error-accessible             : Používateľ nie je prístupný.
-error-notifications-muted    : Používateľ má zablokované notifikácie pre túto aplikáciu.
-error-offline                : Používateľ je offline
-error-file-type              : Neplatný typ súboru.
-error-apps-404               : Aplikácia sa nenašla.
-error-apps-exists            : Aplikácia už existuje v databáze.
-error-pin                    : PIN je neplatný.
-error-totp                   : Token je neplatný.
-error-blocked-ip             : Vaša IP adresa bola zablokovaná.
-error-users-email            : Emailová adresa je už registrovaná v databáze.
-error-users-login            : Prihlasovacie meno je už registrované v databáze.
-error-members-limit          : Prekročili ste maximálny počet členov.
-error-invalid-clientkey      : Chybný kľúč
+error-invalid-url             : Neplatná URL adresa OpenPlatformy.
+error-users-404               : Používateľ sa nenašiel.
+error-users-group             : Skupina "@" sa nenašla.
+error-users-role              : Rola "@" sa nenašla.
+error-permissions             : Nemáte požadované práva.
+error-invalid-accesstoken     : Neplatný access-token.
+error-credentials             : Neplatné prihlasovacie údaje.
+error-blocked                 : Váš účet bol zablokovaný.
+error-settings-smtp           : Chyba SMTP: @.
+error-inactive                : Váš účet je neaktívny.
+error-invalid-origin          : Vaša IP adresa nie je na zozname povolených adries.
+error-accessible              : Používateľ nie je prístupný.
+error-notifications-muted     : Používateľ má zablokované notifikácie pre túto aplikáciu.
+error-offline                 : Používateľ je offline
+error-file-type               : Neplatný typ súboru.
+error-apps-404                : Aplikácia sa nenašla.
+error-apps-exists             : Aplikácia už existuje v databáze.
+error-pin                     : PIN je neplatný.
+error-totp                    : Token je neplatný.
+error-blocked-ip              : Vaša IP adresa bola zablokovaná.
+error-users-email             : Emailová adresa je už registrovaná v databáze.
+error-users-login             : Prihlasovacie meno je už registrované v databáze.
+error-members-limit           : Prekročili ste maximálny počet členov.
+error-invalid-clientkey       : Chybný kľúč
+error-apps-meta               : Neplatné meta údaje
+error-password-dn             : Neplatné heslo pre LDAP
+error-users-current           : Operáciu nemôžete vykonať na svoj používateľský účet
+
+T7a5kdn                       : OAuth 2.0
+T122m3wt                      : Aktualizvať meta-data
+T16xrql                       : Total.js API
+T1g8y8jg                      : S <b>Total.js API kľúčom</b> môže OpenPlatform odosielať SMS a emailové správy.
+T1ptq6sr                      : Total.js API kľúč môžete získať na adrese:
+Tixcfzr                       : Vložiť kľúč
+Ttk4p64                       : Total.js API kľúč
+Tuqibm5                       : Odblokuje odosielanie emailov cez Total.js AP
+T6w099y                       : Total API kľúč je <b>platný</b>. Zostatok:
+T1jitqwx                      : Total API kľúč je <b>neplatný</b>
+Tfbhscm                       : Total.js Message Service (TMS)
+T8p6hb0                       : TMS Vám povoluje publikovať alebo odoberať data z veľmi dôležitých interných operácií v OpenPlatform.
+T3mr6z8                       : TMS dokumentácia
+Tx6i49z                       : URL adresa pre Total.js Message Service applikáciu bude vo forme <b></b>
+T4dh6z5                       : Vložiť token
+Tiro1mh                       : Bezpečnostný token
+T68a9x7                       : Vložiť URL adresu
+T1ry0jko                      : Vložiť kľúč
+
+// schemas/apps-sms.js, schemas/sms.js
+T1m7x0y6                      : Neplatný Total.js API kľúč
 
 // schemas/account-sessions.js
 T93gaqk                       : Chybný session identifikátor
@@ -45,6 +70,7 @@ T1rgso9a                      : Emailová adresa je už registrovaná
 // views/admin.html
 T706k13                       : # strán,# strana,# strany,# strán
 Tmm5bl3                       : # položiek,# položka,# položky,# položiek
+T1dz1j                        : LDAP
 
 // views/admin.html, public/parts/logs.html
 T1evv3                        : Logy
@@ -175,11 +201,6 @@ Ttl7vn                        : Pamätať si posledne otvorené aplikácie
 Tqmxfkt                       : Odkaz na marketplace
 Tthevwb                       : Odkaz na uvítaciu stránku
 Ty7jyiy                       : Formát času
-Tnkgs8u                       : Total API
-Tn6j1kl                       : S <b>Total API kľúčom</b> môže OpenPlatforma odosielať SMS a emailové správy. Kľúč môžete získať na
-Ta51oal                       : Total API key
-T1sanw53                      : Total API je <b>platné</b>. Zostatok:
-Tvdtddu                       : Total API je <b>neplatné</b>
 T1ogq01e                      : Overiť API kľúč
 Tkuj21z                       : SMTP nastavenie môže byť definované iba v <b>JSON formáte</b> podľa Total.js dokumentácie
 Tijgge1                       : SMTP server je <b>správne nastavený</b>
