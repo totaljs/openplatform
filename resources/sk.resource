@@ -174,11 +174,11 @@ T19yi21x                      : Servisný účet je potrebný pre získanie skup
 Tt8fm2a                       : Synch. interval
 Tmggfx5                       : Synchronizačný interval určuje interval pre synchronizáciu skupín a používateľov cez LDAP. Interval môže byť definovaný v EN: minutes, hours, alebo days.
 Tbu7ldh                       : Dodatočné mapovanie
-T1b4oin0                      : S dodatočným mapovaním si môžete namapovať ďalšie informácie o užívateľov z LDAPu do OpenPlatformy.
+T1b4oin0                      : S dodatočným mapovaním si môžete namapovať ďalšie informácie o používateľov z LDAPu do OpenPlatformy.
 T13yiahz                      : LDAP nastavenie bolo úspešne uložené.
-T11si7c0                      : Meno užívateľa
+T11si7c0                      : Meno používateľa
 T12tbn1                       : Vyčistiť
-Tp3gepc                       : ID užívateľa
+Tp3gepc                       : ID používateľa
 Txsr3hy                       : Zariadenie
 T19hvu                        : Dáta
 T1sg1ozx                      : Detail logu
@@ -205,7 +205,7 @@ T1ogq01e                      : Overiť API kľúč
 Tkuj21z                       : SMTP nastavenie môže byť definované iba v <b>JSON formáte</b> podľa Total.js dokumentácie
 Tijgge1                       : SMTP server je <b>správne nastavený</b>
 Teqxgzm                       : Spojiť OpenPlatformu s inou OpenPlatformou
-T1nbhhx2                      : Prístup do OpenPlatformy bude plne pod kontrolou OpenPlatformy na definovaje URL adrese. Priame <b>prihlasovanie bude zablokované</b> a užívatelia nebudú môcť zmeniť svoje osobné údaje v tejto OpenPlatforme.
+T1nbhhx2                      : Prístup do OpenPlatformy bude plne pod kontrolou OpenPlatformy na definovaje URL adrese. Priame <b>prihlasovanie bude zablokované</b> a používatelia nebudú môcť zmeniť svoje osobné údaje v tejto OpenPlatforme.
 T111byy0                      : OAuth 2 key
 T1eejjyf                      : OAuth 2 secret
 T2jq3w4                       : Odstrániť OAuth 2.0 nastavenie
@@ -326,7 +326,7 @@ T16w3qf1                     : deň.mesiac.rok
 T1chob25                     : mesiac.den.rok
 
 // views/admin.html, public/parts/apps-grid.html, public/parts/users-grid.html
-T1cu3mw                      : Užívatelia
+T1cu3mw                      : Používatelia
 
 // views/admin.html, public/panels/users-profile.html, public/parts/users-grid.html, public/parts/users-groups.html, public/parts/users-roles.html
 Tzex2pg                      : Skupiny
@@ -351,7 +351,7 @@ T1kh5hed                     : menej ako minúta
 Tf94w0l                      : 'pred ' + seconds + ' ' + Thelpers.pluralize(seconds >> 0, 'sekundami', 'sekundou', 'sekundami', 'sekundami')
 
 // public/parts/dashboard.html
-T14vx9uc                     : Posledne prihlásení užívatelia
+T14vx9uc                     : Posledne prihlásení používatelia
 
 // views/admin.html, views/mails/welcome.html
 Tft8p6c                      : Dashboard
@@ -677,7 +677,7 @@ T1kgcfnq                     : Cookie / relácia expirácia
 Tsufc8t                      : Zadajte čas vypršania platnosti vo formáte: <code> 2 dni </code> alebo <code> 3 minúty </code>
 Tivtqxv                      : Povoliť neregistrovaných <b>Hostí</b>
 Tlicjt7                      : Zobraziť hodiny
-Tsqan7f                      : Užívatelia môžu zmeniť svoj profil
+Tsqan7f                      : Používatelia môžu zmeniť svoj profil
 Trlqe6h                      : Povoliť zmenu režimu pracovnej plochy
 T1em6vtv                     : Povoliť zmenu pozadia
 T1ezgqx5                     : Povoliť zmenu farebných motívov
