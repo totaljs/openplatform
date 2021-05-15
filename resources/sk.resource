@@ -668,11 +668,11 @@ Tac8jo0                      : Povoliť používateľom zmeniť prezývku
 Tv3rkyz                      : Max. povolených členov
 Tk4uq5z                      : zablokovuje limitáciu
 Tugxn5o                      : VAROVANIE
-T1mzkjcd                     : Zmena adresy URL bude mať za následok stratu údajov v aplikáciách tretích strán. URL adresa je jedinečný identifikátor OpenPlatform. Každá aplikácia tretej strany vytvára jedinečný identifikátor OpenPlatform z adresy URL a overovacieho znaku.
+T1mzkjcd                     : Zmena adresy URL bude mať za následok stratu údajov v aplikáciách tretích strán. URL adresa je jedinečný identifikátor OpenPlatform. Každá aplikácia tretej strany vytvára jedinečný identifikátor OpenPlatform z adresy URL a overovacieho tokenu.
 Tr01vwu                      : OpenPlatform meno
 T17p4uej                     : E-mail podpory
 T1reuuhg                     : Overovací token
-T1ufwq7i                     : Generovanie znaku
+T1ufwq7i                     : Generovanie tokenu
 T1kgcfnq                     : Cookie / relácia expirácia
 Tsufc8t                      : Zadajte čas vypršania platnosti vo formáte: <code> 2 dni </code> alebo <code> 3 minúty </code>
 Tivtqxv                      : Povoliť neregistrovaných <b>Hostí</b>
