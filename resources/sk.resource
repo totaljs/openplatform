@@ -444,7 +444,7 @@ T1bx8wg2                     : Vitajte
 T3mdnc1                      : Ovládací panel
 Tizbdg9                      : Nastavenie
 T7pqagh                      : Moje relácie
-Tjz5ash                      : Uzamknúť obrazovku
+Tjz5ash                      : Uzamknúť
 T5fk7f                       : Stlmiť zvuky
 Tcyuekh                      : Vypnúť oznámenia
 T19hc5a3                     : Obnoviť
