@@ -141,7 +141,7 @@ FUNC.ldap_import = function(login, callback) {
 			return;
 		}
 
-		if (!item.sAMAccountName) {
+		if (!item || !item.sAMAccountName) {
 			callback(409);
 			return;
 		}

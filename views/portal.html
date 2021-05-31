@@ -39,6 +39,7 @@
 						{{ fi }}
 					</script>
 				</div>
+
 				@{if !user.guest}
 				<button class="notifications exec" data-exec="openplatform/notifications"><span data-bind="user.countnotifications__show:value > 0__html:value > 99 ? 99 : value" class="hidden">0</span><i class="far fa-bell"></i></button>
 				@{fi}
