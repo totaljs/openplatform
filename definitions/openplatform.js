@@ -410,6 +410,7 @@ FUNC.meta = function(app, user, serverside) {
 
 	meta.name = CONF.name;
 	meta.version = MAIN.version;
+	meta.mode = CONF.mode;
 
 	// meta.colorscheme = CONF.colorscheme;
 	// meta.background = CONF.background;
@@ -469,6 +470,7 @@ FUNC.metaguest = function() {
 	meta.openplatformid = MAIN.id;
 	meta.name = CONF.name;
 	meta.guest = true;
+	meta.mode = CONF.mode;
 	meta.id = '0';
 
 	if (CONF.email)
