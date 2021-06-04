@@ -257,6 +257,8 @@ NEWSCHEMA('Account', function(schema) {
 		FUNC.profile($.user, function(err, data) {
 			data && (data.ip = $.ip);
 			data.config = { allowdesktopfluid: CONF.allowdesktopfluid, name: CONF.name, allowstatus: CONF.allowstatus, welcome: CONF.welcome, allowprofile: CONF.allowprofile, allowmembers: CONF.allowmembers, maxmembers: CONF.maxmembers };
+			$.user.dtlogged2 = NOW;
+			$.user.ping = NOW;
 			$.callback(data);
 		});
 	});
