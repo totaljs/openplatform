@@ -48,6 +48,11 @@
 		.panel button .fa { margin-right: 5px; }
 		footer { font-size: 11px; text-align: center; color: #A0A0A0; margin: 15px 0 0 0; border-top: 1px solid #E0E0E0; padding: 10px; }
 
+		.keyvalue { line-height: 17px; font-size: 12px; color: black; }
+		.keyvalue .value { margin-left: 85px; text-align: right; }
+		.keyvalue .key { float: left; width: 100px; }
+		.keyvalue > * { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+
 		@media(max-width: 768px) {
 			.panel { margin: -200px 20px 20px !important; left: 0; position: relative; top: 50%; width: auto; max-width: 1000px; }
 		}
@@ -72,6 +77,20 @@
 		@{fi}
 		<div data-bind="password.response__show:value && value.success === true" class="success hidden"><i class="fa fa-check-circle mr5"></i>@(We sent you email with instructions for resetting of your password.)</div>
 		<div class="padding">
+
+			@{if PREF.initcredentials}
+				<div class="alert m">
+					<div class="m"><i class="fa fa-lock mr5"></i>@(Your default credentials are below. You can change them after you sign in.)</div>
+					<div class="keyvalue">
+						<div class="key">@(Name)</div>
+						<div class="value b">@{PREF.initcredentials.login}</div>
+					</div>
+					<div class="keyvalue">
+						<div class="key">@(Password)</div>
+						<div class="value b">@{PREF.initcredentials.password}</div>
+					</div>
+				</div>
+			@{fi}
 
 			<div data-bind="common.type__show:value === 'login'" class="hidden">
 				<form method="POST" action="/" id="login">

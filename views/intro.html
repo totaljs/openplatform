@@ -110,8 +110,10 @@
 			</div>
 			<div class="clearfix"></div>
 			<div class="padding npb" style="padding:5px 15px 0;height:30px">
-				<div class="help green nmb b hidden npt" data-bind="intro__show:value&&value.password===value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="far fa-check-circle"></i>@(Password will be changed.)</div>
-				<div class="help red nmb b hidden npt" data-bind="intro__show:value&&value.password!==value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="fa fa-warning"></i>@(Passwords do not match.)</div>
+				<div style="position:absolute;margin-top:-10px">
+					<div class="help green nmb b hidden npt" data-bind="intro__show:value&&value.password===value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="far fa-check-circle"></i>@(Password will be changed.)</div>
+					<div class="help red nmb b hidden npt" data-bind="intro__show:value&&value.password!==value.passwordreply&&value.password&&value.passwordreply__track:password,passwordreply"><i class="fa fa-warning"></i>@(Passwords do not match.)</div>
+				</div>
 			</div>
 		</div>
 	</figure>

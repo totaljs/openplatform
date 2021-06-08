@@ -217,6 +217,7 @@
 		common.allowoauth = '@{CONF.allowoauth}'==='true';
 
 		OP.jcomponent();
+		OFF('request');
 
 		OP.on('menu', function() {
 			SET('common.layout', common.layout === 'menu' ? '' : 'menu');

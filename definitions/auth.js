@@ -30,7 +30,7 @@ ON('loaded', function() {
 
 		$.req.$langauge = user.language;
 
-		if (!locked && (user.locking && user.pin && user.dtlogged2 && !$.req.mobile && user.dtlogged2 < NOW.add('-' + (user.locking + 1) + ' minutes'))) {
+		if (!locked && (user.locking && user.pin && user.dtlogged2 && !$.req.mobile && user.dtlogged2 < NOW.add('-' + (user.locking + 2) + ' minutes'))) {
 			locked = true;
 			DBMS().query('UPDATE tbl_user_session SET locked=true WHERE id=' + PG_ESCAPE(session.sessionid));
 		}
@@ -87,7 +87,7 @@ ON('loaded', function() {
 	};
 
 	opt.onfree = function(meta) {
-		var mod = { online: false };
+		var mod = { online: false, dtlogged: NOW }; // dtlogged is due to locking
 		var db = DBMS();
 
 		db.modify('tbl_user_session', mod).query('online=TRUE').id(meta.sessions);

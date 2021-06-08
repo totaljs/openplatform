@@ -95,7 +95,12 @@
 
 			filter.page = page || 1;
 			filter.sort = sort;
-			DAPI(QUERIFY('users', filter) + ' @showloading', '?.items @hideloading');
+			DAPI(QUERIFY('users', filter) + ' @showloading', function(response, err) {
+				if (err)
+					OP.restart();
+				else
+					SET('?.items @hideloading', response);
+			});
 		};
 
 		exports.button = function(name, row) {
