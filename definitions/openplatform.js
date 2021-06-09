@@ -767,7 +767,8 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	// type 4: app users - all info
 
 	// if (type > 2 && (!user.apps || !user.apps[app.id]) || user.inactive)
-	if (type > 2 && user.inactive)
+	// if (type > 2 || user.inactive)
+	if (type > 2)
 		return;
 
 	var obj = {};
@@ -791,6 +792,9 @@ FUNC.makeprofile = function(user, type, app, fields) {
 		} else
 			obj.directoryid = 0;
 	}
+
+	if (user.inactive && (!fields || fields.inactive))
+		obj.inactive = true;
 
 	if (!fields || fields.statusid)
 		obj.statusid = user.statusid;
