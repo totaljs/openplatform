@@ -768,8 +768,8 @@ FUNC.makeprofile = function(user, type, app, fields) {
 
 	// if (type > 2 && (!user.apps || !user.apps[app.id]) || user.inactive)
 	// if (type > 2 || user.inactive)
-	if (type > 2)
-		return;
+	//if (type > 2)
+	//	return;
 
 	var obj = {};
 
