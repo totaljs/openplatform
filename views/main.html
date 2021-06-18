@@ -201,6 +201,7 @@
 				app.callback = callback;
 				EMIT('app_open', app);
 				UPD('user.apps', 'open');
+				$('body').rclass('menushow');
 				exports.remember();
 			});
 
