@@ -107,7 +107,7 @@ footer .sa i { margin-right: 5px; }
 .process-progress div { height: 3px; display: block; background-color: var(--color); }
 .ui-dark .process-progress { background-color: #333; }
 
-.process-message { height: 31px; background-color: #68B25B; position: absolute; left: 0; right: 0; top: 0; pointer-events: none; line-height: 31px; color: #FFF; border-radius: var(--radius) var(--radius) 0 0; padding: 0 10px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: none; }
+.process-message { height: 31px; background-color: #68B25B; position: absolute; left: 0; right: 0; top: 0; pointer-events: none; line-height: 31px; color: #FFF; border-radius: var(--radius) var(--radius) 0 0; padding: 0 10px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: none; z-index: 3; }
 .process-message i { width: 15px; text-align: center; margin-right: 5px; }
 .process-message-success { background-color: #68B25B; display: block; }
 .process-message-warning { background-color: #E73323; display: block; }

@@ -19,7 +19,8 @@
 				{ name: 'sa', text: '@(Admin)', width: 70, template: '{{ sa | boolean }}', align: 1, sort: false, options: [{ text: '@(Yes)', value: true }, { text: '@(No)', value: false }] },
 				{ name: 'gender', text: '@(Gender)', width: 100, options: [{ text: '@(Male)', value: 'male' }, { text: '@(Female)', value: 'female' }], template: '{{ if gender === \'female\' }}@(Female){{ else if gender === \'male\' }}@(Male){{ fi }}', sort: false },
 				{ name: 'name', text: '@(Nickname)', width: 200, template: '{{ name }}{{ if blocked }}<span class="badge badge-red ml5">@(blocked)</span>{{ fi }}' },
-				{ name: 'lastname', text: '@(Name)', width: 200, template: '{{ firstname }} {{ lastname }}' },
+				{ name: 'firstname', text: '@(First name)', width: 150 },
+				{ name: 'lastname', text: '@(Last name)', width: 150 },
 				{ name: 'groups', text: '@(Groups)', width: 250, template: '{{ groups | groups }}', sort: false, options: 'main.meta.groups' },
 				{ name: 'statusid', text: '@(Status)', width: 120, template: '{{ statusid | status }}', sort: false, options: 'statuses', otext: 'name', ovalue: 'id' },
 				{ name: 'reference', text: '@(Reference)', width: 150 },
@@ -39,9 +40,9 @@
 				{ name: 'supervisor', text: '@(Supervisor)', width: 200 },
 				{ name: 'running', text: '@(Running)', width: 200, template: '{{ running | runningapps }}', filter: false, sort: false },
 				{ name: 'note', text: '@(Note)', width: 200 },
-				{ name: 'dtlogged', text: '@(Logged)', width: 120, align: 1, format: '[ts]' },
-				{ name: 'dtupdated', text: '@(Updated)', width: 120, align: 1, format: '[ts]' },
-				{ name: 'dtcreated', text: '@(Created)', width: 120, align: 1, format: '[ts]' },
+				{ name: 'dtlogged', text: '@(Logged)', width: 140, align: 1, format: '[ts]' },
+				{ name: 'dtupdated', text: '@(Updated)', width: 140, align: 1, format: '[ts]' },
+				{ name: 'dtcreated', text: '@(Created)', width: 140, align: 1, format: '[ts]' },
 				{ type: 'controls', template: '<button name="edit"><i class="fa fa-pencil mr5"></i>@(Edit)</button><button name="remove"><i class="fa fa-trash-o red"></i></button>' }
 			]
 		</script>
