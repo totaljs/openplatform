@@ -871,7 +871,7 @@ FUNC.makeprofile = function(user, type, app, fields) {
 	if (user.dn && (!fields || fields.dn))
 		obj.dn = user.dn;
 
-	if (user.reference && (!fields || fields.locality))
+	if (user.reference && (!fields || fields.reference))
 		obj.reference = user.reference;
 
 	if (user.dateformat && (!fields || fields.dateformat))
