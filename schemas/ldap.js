@@ -9,6 +9,7 @@ NEWSCHEMA('LDAP', function(schema) {
 	schema.define('active', Boolean);
 	schema.define('interval', String);
 	schema.define('mapper', String);
+	schema.define('noauth', Boolean);
 
 	var insert = function(doc, id) {
 		doc.id = id;
@@ -58,6 +59,7 @@ NEWSCHEMA('LDAP', function(schema) {
 		opt.dn = model.dn;
 		opt.user = model.user;
 		opt.password = model.password;
+		opt.noauth = model.noauth;
 		LDAP(opt, $.done());
 	});
 
@@ -91,6 +93,7 @@ function import_groups(callback) {
 	opt.dn = CONF.ldap_dn;
 	opt.user = CONF.ldap_user;
 	opt.password = CONF.ldap_password;
+	opt.noauth = CONF.ldap_noauth;
 
 	LDAP(opt, async function(err, response) {
 
@@ -133,6 +136,7 @@ FUNC.ldap_import = function(login, callback) {
 	opt.user = CONF.ldap_user;
 	opt.password = CONF.ldap_password;
 	opt.login = login;
+	opt.noauth = CONF.ldap_noauth;
 
 	LDAP(opt, async function(err, item) {
 
@@ -141,7 +145,7 @@ FUNC.ldap_import = function(login, callback) {
 			return;
 		}
 
-		if (!item || !item.sAMAccountName) {
+		if (!item) {
 			callback(409);
 			return;
 		}
@@ -157,7 +161,16 @@ FUNC.ldap_import = function(login, callback) {
 
 		var model = {};
 
-		model.reference = item.sAMAccountName;
+		if (map.reference)
+			model.reference = item[map.reference];
+
+		if (!model.reference)
+			model.reference = item.sAMAccountName;
+
+		if (!model.reference) {
+			callback(409);
+			return;
+		}
 
 		if (CONF.ldap_user.indexOf(model.reference) !== -1) {
 			callback(409);
@@ -177,14 +190,11 @@ FUNC.ldap_import = function(login, callback) {
 			}
 		}
 
-		model.checksum = (item.displayName + '_' + item.distinguishedName + '_' + (item.mail || item.userPrincipalName) + '_' + groups.join(',')).makeid();
-		model.name = item.displayName;
+		if (map.name)
+			model.name = item[map.name];
 
-		if (!model.name) {
-			FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty name', { model: model, ldap: item });
-			callback(409);
-			return;
-		}
+		if (!model.name)
+			model.name = item.displayName || '';
 
 		var arr = model.name.split(' ');
 		model.firstname = arr[0];
@@ -210,6 +220,26 @@ FUNC.ldap_import = function(login, callback) {
 		// OP_NAME=LDAP_NAME
 		for (var key in map)
 			model[key] = item[map[key]];
+
+		model.checksum = (model.name + '_' + (model.dn || '') + '_' + model.email + '_' + groups.join(',')).makeid();
+
+		if (!model.dn) {
+			FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty DN', { model: model, ldap: item });
+			callback(409);
+			return;
+		}
+
+		if (!model.name) {
+			FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty name', { model: model, ldap: item });
+			callback(409);
+			return;
+		}
+
+		if (!model.email) {
+			FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty email', { model: model, ldap: item });
+			callback(409);
+			return;
+		}
 
 		EXEC('+Users --> insert', model, function(err, response) {
 			err && FUNC.log('LDAP/Error.users', model.reference, model.reference + ': ' + err + '', { model: model, ldap: item });
@@ -245,7 +275,7 @@ function import_users(callback) {
 
 	LDAP(opt, async function(err, response) {
 
-		if (err) {
+		if (err && (!response || !response.length)) {
 			callback && callback(err);
 			return;
 		}
@@ -260,7 +290,11 @@ function import_users(callback) {
 
 			var model = {};
 
-			model.reference = item.sAMAccountName;
+			if (map.reference)
+				model.reference = item[map.reference];
+
+			if (!model.reference)
+				model.reference = item.sAMAccountName;
 
 			if (!model.reference) {
 				next();
@@ -285,7 +319,39 @@ function import_users(callback) {
 				}
 			}
 
-			model.checksum = (item.displayName + '_' + item.distinguishedName + '_' + (item.mail || item.userPrincipalName) + '_' + groups.join(',')).makeid();
+			if (map.name)
+				model.name = item[map.name];
+
+			if (!model.name)
+				model.name = item.displayName || '';
+
+			model.login = item.sAMAccountName;
+			model.email = item.mail || item.userPrincipalName;
+			model.dn = item.distinguishedName;
+
+			// OP_NAME=LDAP_NAME
+			for (var key in map)
+				model[key] = item[map[key]];
+
+			if (!model.dn) {
+				FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty DN', { model: model, ldap: item });
+				next();
+				return;
+			}
+
+			if (!model.name) {
+				FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty name', { model: model, ldap: item });
+				next();
+				return;
+			}
+
+			if (!model.email) {
+				FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty email', { model: model, ldap: item });
+				next();
+				return;
+			}
+
+			model.checksum = (model.name + '_' + (model.dn || '') + '_' + model.email + '_' + groups.join(',')).makeid();
 
 			var user = users.findItem('reference', model.reference);
 			if (user) {
@@ -300,8 +366,6 @@ function import_users(callback) {
 				}
 
 			} else {
-
-				model.name = item.displayName;
 
 				if (!model.name) {
 					FUNC.log('LDAP/Error.users', model.reference, model.reference + ': Empty name', { model: model, ldap: item });
@@ -326,9 +390,6 @@ function import_users(callback) {
 				countinserted++;
 			}
 
-			model.login = item.sAMAccountName;
-			model.email = item.mail || item.userPrincipalName;
-			model.dn = item.distinguishedName;
 			model.groups = groups;
 			model.stamp = stamp;
 			model.inactive = false;
@@ -357,7 +418,6 @@ function import_users(callback) {
 
 	});
 }
-
 
 // Auto-synchronization
 ON('service', function() {

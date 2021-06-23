@@ -24,6 +24,7 @@
 								<div data---="input__?.password__required:1;camouflage:1__''">@(Password)</div>
 							</div>
 						</div>
+						<div data---="checkbox__?.noauth">@(Disable authorization)</div>
 						<hr style="margin-top:10px" />
 						<div class="row">
 							<div class="col-sm-5">
@@ -33,7 +34,7 @@
 						<div class="help">@(Synchronization interval determines an interval for synchronization groups and users via LDAP. The interval can be defined in minutes, hours, or days.)</div>
 					</div>
 					<div class="padding bg-smoke">
-						<div data---="input__?.mapping__placeholder:USERFIELD=LDAPFIELD, USERFIELD=LDAPFIELD__''">@(Additional mapping)</div>
+						<div data---="input__?.mapper__placeholder:USERFIELD=LDAPFIELD, USERFIELD=LDAPFIELD__''">@(Additional mapping)</div>
 						<div class="help">@(With the help of additional mapping, you can map a user's values from LDAP to the OpenPlatform database.)</div>
 					</div>
 					<div class="padding" data---="validation__?">
