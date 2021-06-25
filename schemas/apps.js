@@ -30,6 +30,12 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('allowreadprofile', Number);
 	schema.define('allowreadmeta', Boolean);
 
+	// TMS
+	schema.jsonschema_define('userid', 'String');
+	schema.jsonschema_define('ip', 'String');
+	schema.jsonschema_define('ua', 'String');
+	schema.jsonschema_define('dttms', 'Date');
+
 	// schema.required('url', (model) => model.typeid === 'external');
 
 	schema.setQuery(function($) {
@@ -183,6 +189,7 @@ NEWSCHEMA('Apps', function(schema) {
 		db.insert('tbl_app', model).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
+					PUBLISH('apps-create', FUNC.tms($, model));
 					EMIT('apps/create', model.id);
 					FUNC.refreshguest();
 					FUNC.updateroles($.done(model.id));
@@ -228,6 +235,7 @@ NEWSCHEMA('Apps', function(schema) {
 		db.mod('tbl_app', model).id($.id).callback(function(err, response) {
 			if (response) {
 				FUNC.refreshapps(function() {
+					PUBLISH('apps-update', FUNC.tms($, model));
 					EMIT('apps/update', $.id);
 					FUNC.refreshguest();
 					FUNC.updateroles($.done($.id));
@@ -252,6 +260,7 @@ NEWSCHEMA('Apps', function(schema) {
 		var db = DBMS();
 		db.remove('tbl_app').id($.id).callback(function() {
 			FUNC.refreshapps(function() {
+				PUBLISH('apps-remove', FUNC.tms($, { success: true, id: $.id }));
 				FUNC.updateroles($.done());
 				FUNC.clearcache(null, $.id);
 			});
@@ -339,6 +348,8 @@ NEWSCHEMA('Apps', function(schema) {
 		}
 
 		var db = DBMS();
+
+		PUBLISH('apps-open', FUNC.tms($, { name: app.name }));
 
 		db.log($, null, app.name);
 
