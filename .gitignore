@@ -3,3 +3,4 @@ logs/
 databases/
 debug.pid
 sftp-config.json
+node_modules
