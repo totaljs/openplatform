@@ -37,6 +37,16 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		var insert = false;
 		var apps = model.apps;
 
+		// TMS
+		var publish = {};
+		var publish_name;
+		publish.id = model.id;
+		publish.name = model.name;
+		publish.note = model.note;
+		publish.apps = apps.map(app => app.id);
+		publish_name = 'groups-update';
+		publish.dtupdated = NOW;
+
 		model.id = undefined;
 		model.apps = undefined;
 		model.dtupdated = NOW;
@@ -46,10 +56,16 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		$.extend && $.extend(model);
 
 		db.upd('tbl_group', model, true).id(id).insert(function(doc) {
+			publish_name = 'groups-create';
+			publish.dtcreated = NOW;
+			publish.dtupdated = undefined;
+
 			doc.dtcreated = NOW;
 			doc.dtupdated = undefined;
 			doc.id = id;
 			insert = true;
+		}).callback(function() {
+			PUBLISH(publish_name, FUNC.tms($, publish));
 		});
 
 		db.query('UPDATE tbl_user SET dtmodified=$1 WHERE groups && $2', [NOW, [id]]);
@@ -99,6 +115,7 @@ NEWSCHEMA('Users/Groups', function(schema) {
 		db.remove('tbl_group').query('id=' + pgid);
 		db.query('UPDATE tbl_user SET dtmodified=NOW(), dtupdated=NOW(), groups=array_remove(groups,{0}) WHERE ({0}=ANY(groups))'.format(pgid));
 		db.callback(function() {
+			PUBLISH('groups-remove', FUNC.tms($, { id: id }));
 			FUNC.refreshgroupsrolesdelay();
 			FUNC.refreshmeta($.done());
 			EMIT('groups/remove', id);

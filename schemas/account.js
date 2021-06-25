@@ -30,6 +30,15 @@ NEWSCHEMA('Account', function(schema) {
 	schema.define('colorscheme', 'Lower(7)');
 	schema.define('background', 'String(150)');
 
+	// TMS
+	schema.jsonschema_define('id', 'String');
+	schema.jsonschema_define('userid', 'String');
+	schema.jsonschema_define('ua', 'String');
+	schema.jsonschema_define('ip', 'String');
+	schema.jsonschema_define('dtcreated', 'Date');
+	schema.jsonschema_define('dtupdated', 'Date');
+	schema.jsonschema_define('dttms', 'Date');
+
 	schema.setRead(function($) {
 
 		if ($.user.guest) {
@@ -193,6 +202,8 @@ NEWSCHEMA('Account', function(schema) {
 			model.pin = undefined;
 
 		$.extend && $.extend(model);
+
+		PUBLISH('account-save', FUNC.tms($, model));
 
 		var db = DBMS();
 		db.modify('tbl_user', model).id($.user.id).error('error-users-404').done($, function() {
