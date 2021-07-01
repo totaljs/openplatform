@@ -315,7 +315,7 @@ NEWSCHEMA('Users', function(schema) {
 			MAIL(model.email, TRANSLATOR(model.language, '@(Welcome to {0})').format(CONF.name), '/mails/welcome', $.model, model.language);
 		}
 
-		PUBLISH('users-create', FUNC.tms($, model));
+		PUBLISH('users_create', FUNC.tms($, model));
 
 		$.extend(model, function() {
 			DBMS().insert('tbl_user', model).callback(function(err) {
@@ -384,7 +384,7 @@ NEWSCHEMA('Users', function(schema) {
 		else
 			builder.id(id);
 
-		PUBLISH('users-update', FUNC.tms($, model));
+		PUBLISH('users_update', FUNC.tms($, model));
 
 		builder.orm().callback(function(err, response) {
 
@@ -767,7 +767,7 @@ NEWSCHEMA('Users', function(schema) {
 				$.extend(null, function() {
 					// Removes data
 					db.remove('tbl_user').id(id).callback(function() {
-						PUBLISH('users-remove', FUNC.tms($, { success: true, id: id}));
+						PUBLISH('users_remove', FUNC.tms($, { success: true, id: id}));
 						FUNC.refreshmetadelay();
 						EMIT('users/remove', id);
 						MAIN.session.refresh(id);

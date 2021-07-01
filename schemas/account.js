@@ -203,7 +203,7 @@ NEWSCHEMA('Account', function(schema) {
 
 		$.extend && $.extend(model);
 
-		PUBLISH('account-save', FUNC.tms($, model));
+		PUBLISH('account_save', FUNC.tms($, model));
 
 		var db = DBMS();
 		db.modify('tbl_user', model).id($.user.id).error('error-users-404').done($, function() {

@@ -2,24 +2,24 @@
 const universal = 'id:String,userid:String,ua:String,ip:String,dttms:Date';
 
 // Account
-NEWPUBLISH('account-save', 'Account');
+NEWPUBLISH('account_save', 'Account');
 
 // Group
 const group = 'id:String,userid:String,ua:String,ip:String,name:String,note:String,apps:[String],dtcreated:Date';
-NEWPUBLISH('groups-create', group);
-NEWPUBLISH('groups-update', group + ',dtupdated:Date');
-NEWPUBLISH('groups-remove', universal);
+NEWPUBLISH('groups_create', group);
+NEWPUBLISH('groups_update', group + ',dtupdated:Date');
+NEWPUBLISH('groups_remove', universal);
 
 // Apps
-NEWPUBLISH('apps-open', universal + ',name:String');
-NEWPUBLISH('apps-create', 'Apps');
-NEWPUBLISH('apps-update', 'Apps');
-NEWPUBLISH('apps-remove', universal);
+NEWPUBLISH('apps_open', universal + ',name:String');
+NEWPUBLISH('apps_create', 'Apps');
+NEWPUBLISH('apps_update', 'Apps');
+NEWPUBLISH('apps_remove', universal);
 
 // Users
-NEWPUBLISH('users-create', 'Users');
-NEWPUBLISH('users-update', 'Users');
-NEWPUBLISH('users-remove', universal);
+NEWPUBLISH('users_create', 'Users');
+NEWPUBLISH('users_update', 'Users');
+NEWPUBLISH('users_remove', universal);
 
 // Helper
 FUNC.tms = function($, data = {}) {
