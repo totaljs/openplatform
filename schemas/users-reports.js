@@ -91,9 +91,9 @@ NEWSCHEMA('Users/Reports', function(schema) {
 		if ($.controller && FUNC.notadmin($))
 			return;
 		var db = DBMS();
-		db.one('reports').id($.id).fields('username,appname').data(response => db.log($, null, response.username + ' - ' + response.appname));
+		db.one('tbl_user_report').id($.id).fields('username,appname').data(response => db.log($, null, response.username + ' - ' + response.appname));
 		db.err(404);
-		db.mod('reports', { solved: true, dtsolved: NOW }).id($.id);
+		db.mod('tbl_user_report', { solved: true, dtsolved: NOW }).id($.id);
 		db.callback($.done());
 	});
 
