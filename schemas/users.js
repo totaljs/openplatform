@@ -22,9 +22,9 @@ NEWSCHEMA('Users', function(schema) {
 	schema.define('contractid', Number);
 	schema.define('statusid', Number);
 	schema.define('status', 'String(70)');
-	schema.define('firstname', 'Name(40)', true);
-	schema.define('lastname', 'Name(40)', true);
-	schema.define('middlename', 'Name(40)');
+	schema.define('firstname', 'Capitalize(40)', true);
+	schema.define('lastname', 'Capitalize(40)', true);
+	schema.define('middlename', 'Capitalize(40)');
 	schema.define('gender', ['male', 'female'])('');
 	schema.define('email', 'Email', true);
 	schema.define('phone', 'Phone');
