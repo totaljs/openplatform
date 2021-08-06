@@ -27,7 +27,7 @@ header .apps .app .close { float: right; margin-right: 5px; font-size: 11px; wid
 header .apps .app .close:hover { color: red; }
 header .apps .running .close { display: block; }
 header .apps .badges { border-radius: 100px; background-color: red; width: 6px; height: 6px; position: absolute; margin: 9px 0 0 -3px; }
-header .apps .app .name { margin-left: 30px; }
+header .apps .app .name { margin-left: 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 header .apps .app:hover { background-color: rgba(0,0,0,0.1); }
 header hr { border-color: rgba(0,0,0,0.1); margin: 15px 0; }
 
