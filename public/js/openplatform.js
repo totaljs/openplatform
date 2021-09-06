@@ -1,6 +1,6 @@
 var OP = {};
 
-OP.version = 430;
+OP.version = 431;
 OP.callbacks = {};
 OP.events = {};
 OP.is = parent !== window;
@@ -553,7 +553,7 @@ OP.restart = function() {
 };
 
 OP.open = function(id, data) {
-	return OP.send('open', { id: id, data: data });
+	return OP.send('open', { id: id, body: data });
 };
 
 OP.minimize = function() {

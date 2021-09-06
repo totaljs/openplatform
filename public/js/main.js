@@ -748,8 +748,10 @@ $(W).on('message', function(e) {
 						return;
 				}
 
-				data.body.app = { id: app.id, name: app.name, type: app.type };
-				EXEC('openplatform/open', target.id, data.body);
+				var tmp = {};
+				tmp.app = { id: app.id, name: app.name, type: app.type };
+				tmp.body = data.body;
+				EXEC('openplatform/open', target.id, tmp);
 			}
 
 			break;
@@ -938,6 +940,7 @@ $(W).on('message', function(e) {
 			break;
 
 		case 'open':
+
 			var target = user.apps.findItem('id', data.body.id);
 			if (target == null) {
 				data.body.id = data.body.id.toLowerCase();
@@ -950,7 +953,10 @@ $(W).on('message', function(e) {
 			}
 
 			if (target) {
-				EXEC('openplatform/open', target.id, data.body.body);
+				var tmp = {};
+				tmp.app = { id: app.id, name: app.name, type: app.type };
+				tmp.body = data.body.body;
+				EXEC('openplatform/open', target.id, tmp);
 				EMIT('app_open', target);
 			}
 
