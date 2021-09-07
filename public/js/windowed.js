@@ -44,11 +44,16 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 	var lastWW = WW;
 	var lastWH = WH;
 	var resetcounter = 0;
+	var resizer;
 
 	self.readonly();
 
 	self.make = function() {
+
 		self.aclass(cls);
+		self.append('<div class="{0}-resizer hidden"></div>'.format(cls));
+		resizer = self.find(cls2 + '-resizer');
+
 		self.event('click', cls2 + '-control', function() {
 			var el = $(this);
 			var name = el.attrd('name');
@@ -176,7 +181,9 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 			drag.x = pos.left;
 			drag.y = pos.top;
 			drag.width = drag.el.width();
-			drag.height = drag.body.height();
+			drag.title = drag.el.find(cls2 + '-title').height();
+			drag.height = drag.body.height() + drag.title + 2;
+			resizer.css({ left: drag.x, top: drag.y, width: drag.width, height: drag.height }).rclass('hidden');
 		} else {
 			drag.el = el.closest(cls2 + '-item');
 			pos = drag.el.position();
@@ -236,14 +243,14 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 
 					if (drag.resize === true || drag.resize === 'width') {
 						obj.width = w;
-						drag.el.css(obj);
+						resizer.css(obj);
 					}
 
 					if (drag.resize === true || drag.resize === 'height') {
 						obj.height = h;
 						delete obj.width;
 						delete obj.top;
-						drag.body.css(obj);
+						resizer.css(obj);
 					}
 					break;
 
@@ -257,14 +264,14 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 					if (drag.resize === true || drag.resize === 'width') {
 						obj.width = w;
 						obj.top = y;
-						drag.el.css(obj);
+						resizer.css(obj);
 					}
 
 					if (drag.resize === true || drag.resize === 'height') {
 						obj.height = h;
 						delete obj.width;
 						delete obj.top;
-						drag.body.css(obj);
+						resizer.css(obj);
 					}
 
 					break;
@@ -280,13 +287,13 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 					if (drag.resize === true || drag.resize === 'width') {
 						obj.left = x;
 						obj.width = w;
-						drag.el.css(obj);
+						resizer.css(obj);
 						delete obj.width;
 					}
 
 					if (drag.resize === true || drag.resize === 'height') {
-						obj.height = h;
-						drag.body.css(obj);
+						obj.height = h + drag.title;
+						resizer.css(obj);
 					}
 
 					break;
@@ -300,13 +307,13 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 
 					if (drag.resize === true || drag.resize === 'width') {
 						obj.width = w;
-						drag.el.css(obj);
+						resizer.css(obj);
 						delete obj.width;
 					}
 
 					if (drag.resize === true || drag.resize === 'height') {
-						obj.height = h;
-						drag.body.css(obj);
+						obj.height = h + drag.title;
+						resizer.css(obj);
 					}
 
 					break;
@@ -333,6 +340,7 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 
 		drag.el.rclass(cls + '-dragged').rclass(cls + '-block');
 		$(W).off('mousemove touchmove', events.move).off('mouseup touchend', events.up);
+		resizer.aclass('hidden', 1);
 		$('body').rclass(cls + '-moving');
 		self.resetbody();
 		resetcounter = 0;
@@ -342,15 +350,17 @@ COMPONENT('windowed', 'menuicon:fa fa-navicon;reoffsetresize:0;marginleft:0;marg
 
 		var item = drag.item;
 		var meta = item.meta;
-		var pos = drag.el.position();
+		var pos = drag.resize ? resizer.position() : drag.el.position();
 
 		drag.is = false;
 		drag.x = meta.x = item.x = pos.left;
 		drag.y = meta.y = item.y = pos.top;
 
 		if (drag.resize) {
-			item.width = meta.width = drag.el.width();
-			item.height = meta.height = drag.body.height();
+			item.width = resizer.width();
+			item.height = resizer.height() - drag.title;
+			drag.el.css({ left: drag.x, top: drag.y, width: item.width });
+			drag.body.css({ height: item.height });
 		}
 
 		meta.move && meta.move.call(item, item.x, item.y, drag.body);

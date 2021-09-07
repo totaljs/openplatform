@@ -87,7 +87,7 @@ footer .sa i { margin-right: 5px; }
 /* Version: 1 */
 /* Updated: 2021-01-24 01:08 */
 .ui-windowed-moving iframe { pointer-events: none; }
-.ui-windowed-item { position: absolute; border-radius: var(--radius); box-shadow: 0 3px 25px rgba(0,0,0,0.2); background-color: #FFF; z-index: 80; }
+.ui-windowed-item { position: absolute; border-radius: var(--radius); box-shadow: 0 3px 25px rgba(0,0,0,0.2); background-color: #FFF; z-index: 4; }
 .ui-windowed-title { border: 1px solid #E0E0E0; border-radius: var(--radius) var(--radius) 0 0; height: 32px; }
 .ui-windowed-control { float: right; width: 30px; text-align: center; border-left: 1px solid #E0E0E0; line-height: 30px; cursor: pointer; font-size: 13px; }
 .ui-windowed-control:last-child { border-radius: 0 0 var(--radius) 0; }
@@ -99,7 +99,7 @@ footer .sa i { margin-right: 5px; }
 .ui-windowed-body { border: 1px solid #E0E0E0; border-top: 0; border-radius: 0 0 var(--radius) var(--radius); overflow-x: hidden; }
 .ui-windowed-dragged { z-index: 100; }
 .ui-windowed-dragged .ui-windowed-title { background-color: #FAFAFA; }
-.ui-windowed-focused { z-index: 90; }
+.ui-windowed-focused { z-index: 5; }
 .ui-windowed-maximized { box-shadow: none; }
 .ui-windowed-maximized .ui-windowed-title { border-left: 0; border-right: 0; border-radius: 0; border-top: 0 }
 .ui-windowed-maximized .ui-windowed-control { height: 31px; }
@@ -118,6 +118,7 @@ footer .sa i { margin-right: 5px; }
 .ui-windowed-resize-bl { left: 0; bottom: 0; cursor: nesw-resize; }
 .ui-windowed-resize-br { right: 0; bottom: 0; cursor: nwse-resize; }
 .ui-windowed-block iframe, .ui-windowed-block webview { pointer-events: none; }
+.ui-windowed-resizer { position: absolute; border-radius: var(--radius); border: 1px dashed rgba(0,0,0,0.8); z-index: 7; pointer-events: none; }
 
 .ui-dark .ui-windowed-item { background-color: #202020; box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
 .ui-dark .ui-windowed-title { border-color: #404040; }
@@ -125,6 +126,7 @@ footer .sa i { margin-right: 5px; }
 .ui-dark .ui-windowed-control { border-color: #404040; }
 .ui-dark .ui-windowed-control:hover { background-color: #272727; }
 .ui-dark .ui-windowed-dragged .ui-windowed-title { background-color: #272727; }
+.ui-dark .ui-windowed-resizer { border-color: rgba(255,255,255,0.9); }
 /* End: j-Windows */
 
 .disable iframe { pointer-events: none; }
