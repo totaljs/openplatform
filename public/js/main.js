@@ -750,7 +750,7 @@ $(W).on('message', function(e) {
 
 				var tmp = {};
 				tmp.app = { id: app.id, name: app.name, type: app.type };
-				tmp.body = data.body;
+				tmp.body = data.body.body;
 				EXEC('openplatform/open', target.id, tmp);
 			}
 
