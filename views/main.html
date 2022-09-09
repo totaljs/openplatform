@@ -240,6 +240,8 @@
 		};
 
 		exports.appearance = function() {
+			if (!user.colorscheme)
+				user.colorscheme = '#4285F4';
 			var checksum = user.colorscheme + '_' + user.darkmode;
 			if (common.appearance !== checksum) {
 				common.appearance = checksum;
