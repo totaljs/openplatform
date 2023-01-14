@@ -26,10 +26,10 @@ __Docker Hub__:
 
 ```bash
 docker pull totalplatform/openplatform
-docker run -p 8000:8000 totalplatform/openplatform --env DATABASE="postgresql://user:pass@hostname/database"
+docker run --env DATABASE='postgresql://user:pass@hostname/database' -p 8000:8000 totalplatform/openplatform
 ````
 
-__Docker__:
+__Docker Compose__:
 
 ```bash
 docker-compose up
