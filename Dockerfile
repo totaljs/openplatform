@@ -25,8 +25,6 @@ COPY config .
 COPY license.txt .
 COPY package.json .
 
-RUN ls -la /www/*
-
 RUN npm install
 EXPOSE 8000
 
