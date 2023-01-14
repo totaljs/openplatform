@@ -1,0 +1,24 @@
+@{layout('mail/layout')}
+
+<div>
+	<div style="font-size:16px;font-weight:bold;margin-bottom:10px">@(Feedback)</div>
+	<div style="color:#606060">@(This message you are reading contains feedback from a platform user. I would appreciate your review and response.)</div>
+</div>
+<div style="color:#606060">
+	<div style="margin:17px 0;height:1px;border:0;border-top:1px solid #E0E0E0"></div>
+	<div><b>@{'%name'}</b></div>
+	<div>@(URL:) <a href="@{'%url'}">@{'%url'}</a></div>
+	@{if model.app}
+	<div>@(App:) <b>@{model.app}</b></div>
+	@{fi}
+	<div style="margin:17px 0;height:1px;border:0;border-top:1px solid #E0E0E0"></div>
+	<div>@(User:) <b>@{model.account}</b></div>
+	<div>@(Device:) <b>@{model.ua}</b></div>
+	<div>@(E-mail address:) <a href="mailto:@{model.email}">@{model.email}</a></div>
+	@{if model.reference}
+	<div>@(Reference:) @{model.reference}</div>
+	@{fi}
+	<div style="margin:17px 0;height:1px;border:0;border-top:1px solid #E0E0E0"></div>
+	<div><b>@(Message:)</b></div>
+	<div style="white-space:pre;margin-top:7px">@{model.body}</div>
+</div>

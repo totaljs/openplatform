@@ -1,0 +1,109 @@
+:root {
+	--radius: 5px;
+}
+
+html,body { padding: 0; margin: 0; overflow: hidden; background-color: #F7F7F7; height: 100%; }
+header { height: 53px; padding: 0 5px; position: absolute; bottom: 3px; left: 0; right: 0; }
+header > div { position: relative; }
+header .logo { float: left; line-height: 45px; width: 50px; height: 50px; text-align: center; }
+header .logo img { height: 26px; image-rendering: -webkit-optimize-contrast; }
+header .user { float: right; width: 60px; text-align: right; margin: 4px 0 0; text-align: center; }
+header .user .initials { width: 38px; height: 38px; line-height: 38px; font-size: 14px; position: relative; display: inline-block; cursor: pointer; border-radius: 100px; }
+header .user .photo { width: 38px; height: 38px; line-height: 38px; font-size: 12px; position: relative; display: inline-block; cursor: pointer; border-radius: 100px; border: 1px solid #F0F0F0; image-rendering: -webkit-optimize-contrast; }
+header .openplatform { line-height: 48px; height: 49px; padding: 0 13px; float: left; font-size: 14px; color: #000; max-width: 250px; }
+header .openplatform b { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: block; }
+header .openplatform i { font-size: 18px; margin-right: 8px; float: left; line-height: 48px; }
+header .openplatform img { width: 32px; height: 32px; float: left; border-radius: 8px; margin: 7px 8px 0 0; border: 1px solid #E9E9E9; }
+header .notifications { float: right; line-height: 0; font-size: 18px; height: 50px; padding: 4px 0 0 0; width: 40px; }
+header .notifications > ui-bind { border-radius: 100px; background-color: #E73323; color: #FFF; font-size: 10px; width: 16px; height: 16px; position: absolute; line-height: 14px; text-align: center; margin: 22px 0 0 20px; z-index: 1; }
+header .notifications > div { width: 38px; height: 38px; cursor: pointer; border: 1px solid transparent; line-height: 38px; text-align: center; border-radius: 100px; }
+header .notifications > div:hover { background-color: #EBEBEB; border-color: #EBECF2; }
+header .apps { padding: 5px 120px 0 0; margin-left: 250px; margin-right: 100px; text-align: center; }
+header .apps ui-bind { position: relative; display: inline-block; }
+header .apps ui-bind button { margin-left: 10px; }
+header .apps button { position: relative; display: inline-block; width: 35px; height: 35px; text-align: center; line-height: 32px; color: #A0A0A0; font-size: 18px; border: 0; background-color: transparent; }
+header .apps button span { position: absolute; font-size: 6px; color: #68B25B; margin: 27px 0 0 6px; }
+header .apps button:hover { color: #000; }
+header .apps button.selected { color: #000; }
+header .apps button.startmenubutton { color: var(--color); transition-duration: 0.3s; background-color: #FFF; border-radius: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); text-align: center; padding: 0; margin: 0; }
+header .apps button.startmenubutton:after { content: ''; background: var(--color); display: block; position: absolute; padding-top: 100%; padding-left: 100%; margin-left: 0; margin-top: -95%; opacity: 0; transition: all 0.3s; border-radius: 8px; }
+header .apps button.startmenubutton:active:after { padding: 0; margin: 0; opacity: 1; transition: 0s; }
+
+.thirdparty { position: absolute; left: 15px; right: 15px; top: 15px; bottom: 50px; }
+.ui-content { background-color: #FFF; border: 1px solid #E7E7E7; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden; }
+.ui-preview img { border-radius: 100px; }
+
+.ml5 { margin-left: 5px; }
+.block { display: block; }
+
+.menu { padding: 10px 0; }
+.menu > a, .menu > button { display: block; width: 38px; line-height: 38px; height: 38px; text-align: center; font-size: 18px; border-radius: var(--radius); color: #999; margin: 0 auto; margin-bottom: 5px; border: 1px solid transparent; }
+.menu hr { margin: 10px 0; border-color: #EBEBEB; }
+.menu > a:hover, .menu > button:hover, .menu > a.selected, .menu > button.selected { background-color: #EBEBEB; color: #000; border-color: #EBECF2; }
+.menu > a .running { font-size: 6px; color: #68B25B; position: absolute; margin: 15px 0 0 24px; }
+.menu.bottom { border-top: 1px solid #EBEBEB; }
+main { margin-left: 80px; }
+
+.masked { opacity: 0; pointer-events: none; z-index: -1; }
+.ui-apps { position: relative; border-radius: 5px; }
+
+.ui-iframe-item { border-radius: 5px; overflow: hidden; }
+.ui-iframe-item iframe { width: 100%; height: 100%; border: 0; margin: 0; padding: 0; border-radius: 0 0 5px 5px; display: block; }
+.ui-iframe-focus { z-index: 1; }
+.ui-iframe-header { height: 24px; border-bottom: 1px solid #EBEBEB; background-color: #F8F8F8; padding-right: 5px; border-radius: 5px 5px 0 0; }
+.ui-iframe-header span { float: right; width: 25px; height: 24px; text-align: center; line-height: 23px; cursor: pointer; }
+.ui-iframe-header span:hover { opacity: 0.8; }
+.ui-iframe-header .close { color: #E73323; font-weight: bold; font-size: 13px !important; }
+.ui-iframe-header .refresh { color: #A0A0A0; font-size: 11px; }
+.ui-iframe-header .detach { color: #A0A0A0; }
+.jc-xs .ui-iframe-header .detach { display: none; }
+.ui-iframe-header .feedback { color: #A0A0A0; font-size: 12px; }
+.ui-iframe-header div i { margin-right: 5px; }
+.ui-iframe-header div { margin: 0 30px 0 0; padding-left: 8px; font-size: 11px; color: #A0A0A0; line-height: 23px; border-radius: 5px 5px 0 0; }
+.ui-iframe-loading  { background-color: rgba(255,255,255, .9); width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; justify-content: center; align-items: center; }
+.ui-iframe-loading i { font-size: 50px; color: var(--color); }
+.ui-windows-item .ui-iframe-header { display: none; }
+.ui-windows-item .ui-iframe-item { border-radius: 0; }
+
+.ui-time { position: absolute; left: 30px; top: 30px; font-size: 12px; color: #999; }
+.ui-time i { margin: 0 6px 0 0; }
+.ui-time span { vertical-align: middle; }
+
+h2 { margin: 0 0 20px; font: bold 24px Arial; }
+.link { color: var(--color); }
+.color { color: var(--color) !important; }
+.feedback { color: #8A2094 !important; }
+
+.empty { margin: 30px; }
+.empty > i { float: left; width: 36px; height: 36px; line-height: 36px; font-size: 18px; text-align: center; background-color: #F0F0F0; border-radius: var(--radius); margin-right: 10px; }
+.empty > div { font-size: 12px; font-weight: bold; padding-top: 2px; }
+.empty > summary { font-size: 11px; color: #999; border: 0; background: transparent; }
+
+.ui-parts { position: absolute; z-index: 1; }
+.ui-parts-item { display: none; }
+.ui-parts-focused { display: block; }
+
+.button { border: 0; margin: 0; background-color: #E7E7E7; height: 40px; padding: 0 20px; color: #000; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; width: 100%; }
+.button i { width: 15px; text-align: center; margin-right: 5px; }
+.button:hover { opacity: 0.8; }
+.button[name='submit'] { font-weight: bold; background-color: var(--color); color: #FFF; }
+.button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: #A0A0A0 !important; cursor: not-allowed; box-shadow: none; }
+.button:disabled i { color: #A0A0A0 !important; }
+.button:first-child { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); }
+.button:last-child { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+.button.small { height: 24px; padding: 0 8px; line-height: 14px; font-size: 12px; }
+
+.ui-windows-body { overflow: hidden; }
+.ui-windows-item { box-shadow: 0 10px 20px rgb(0 0 0 / 15%); }
+.ui-windows-title span { font-size: 12px; font-weight: normal; color: #777; }
+
+@media (max-width: 600px) {
+	.jc-ios header { bottom: 5px; }
+	header .openplatform img { display: none; }
+	header .openplatform { max-width: 150px; }
+	header .apps { position: absolute; left: 0; margin: 0; padding: 0; left: 50%; margin-left: -30px; top: 5px; }
+	header .apps > ui-bind { display: none; }
+	header button.startmenubutton { width: 60px; }
+	header .apps button.startmenubutton:after { padding-top: 60%; padding-left: 100%; margin-top: -58%;  }
+	.ui-time { display: none; }
+}

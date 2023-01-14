@@ -1,0 +1,11 @@
+@{layout('mail/layout')}
+
+<div>
+	<div style="font-size:16px;font-weight:bold;margin-bottom:10px">Hello @{model.name}!</div>
+	<div style="color:#606060">@(Please be reminded that you have unread notifications (@{model.unread}) in the @{CONF.name}. If you would like to review them, please sign in to the portal.)</div>
+	<div style="color:#999;font-size:12px;margin-top:8px">@{CONF.url}</div>
+	<div style="margin:17px 0;height:1px;border:0;border-top:1px solid #E0E0E0"></div>
+</div>
+<div style="margin:30px 0 20px">
+	<a href="@{CONF.url}" target="_blank" style="padding:12px 25px;border-radius:6px;background-color:@{model.color};text-decoration:none;color:#FFF;font-weight:bold">@(Read notifications)</a>
+</div>

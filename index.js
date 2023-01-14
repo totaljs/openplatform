@@ -23,6 +23,7 @@ options.servicemode = process.argv.indexOf('--servicemode', 1) !== -1;
 // options.servicemode = 'definitions,modules,config';
 
 // Enables cluster:
+// options.tz = 'utc';
 // options.cluster = 'auto';
 // options.cluster_limit = 10; // max 10. threads (works only with "auto" scaling)
 

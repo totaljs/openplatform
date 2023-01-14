@@ -1,0 +1,131 @@
+<header>
+	<label><i class="ti ti-totaljs"></i>@(Settings)</label>
+</header>
+
+<ui-plugin>
+	<ui-component name="viewbox" path="common.page" config="parent:window;margin:50;scrollbarshadow:1">
+
+		<br />
+		<div style="margin:0 auto;max-width:600px;text-align:left;padding:var(--gap)">
+			<div class="panel">
+				<div class="bg-smoke" style="padding:var(--gap);border-radius:var(--radius) var(--radius) 0 0">
+					<div style="margin:10px auto 0;width:150px">
+						<ui-component name="preview" path="?.icon" config="url:/upload/base64/;width:150;height:150;empty:/img/icon.png"></ui-component>
+					</div>
+					<div class="help center">@(Icon 150x150)</div>
+				</div>
+				<div style="padding:var(--gap)">
+					<div>
+						<div class="m">
+							<ui-component name="input" path="?.name" config="required:1">@(Name)</ui-component>
+						</div>
+						<div class="m">
+							<ui-component name="input" path="?.url" config="required:1;type:url" default="location.origin">@(URL address)</ui-component>
+						</div>
+					</div>
+
+					<div class="caption m">
+						<label><i class="ti ti-totaljs"></i>@(Total.js TMS)</label>
+					</div>
+					<p>@(The Total.js Message Service allows you to capture data from the OpenPlatform using the Total.js Flow Visual Programming Interface.)</p>
+
+					<div class="m">
+						<ui-component name="input" path="?.allow_tms" config="type:checkbox" class="b">@(Enable TMS)</ui-component>
+					</div>
+
+					<ui-bind path="?.allow_tms" config="show" class="m block hidden">
+						<ui-component name="input" path="?.secret_tms" config="required:1;camouflage:1">@(Access token)</ui-component>
+						<div class="help">
+							<span class="pull-right exec link" data-exec="?/generate">@(Generate)</span>
+							<div><i class="ti ti-link"></i><b>@(TMS endpoint):</b> <ui-bind path="location.origin" config="text:value.replace(/^https/, 'wss') + '/$tms/'" class="exec" data-exec="?/copy"></ui-bind></div>
+						</div>
+					</ui-bind>
+
+					<hr />
+
+					<div class="caption m">
+						<div class="toolbar">
+							<button class="exec" data-exec="?/test"><i class="ti ti-bong"></i>@(Test)</button>
+						</div>
+						<label><i class="ti ti-envelope"></i>@(SMTP settings)</label>
+					</div>
+
+					<div class="grid-2">
+						<div class="m">
+							<ui-component name="input" path="?.mail_from" config="type:email;forcevalidation:0" default="'@'">@(Sender address)</ui-component>
+						</div>
+						<div class="m">
+							<ui-component name="input" path="?.mail_smtp" config="camouflage:1;placeholder:smtp.yourserver.com">@(SMTP server)</ui-component>
+						</div>
+					</div>
+
+					<div class="m">
+						<ui-component name="input" path="?.mail_smtp_options" config="camouflage:1" default="'{}'">@(SMTP options)</ui-component>
+						<div class="help"><i class="ti ti-lightbulb"></i>@(SMTP options have to be in valid JSON format, according to the Total.js documentation). <a href="https://docs.totaljs.com/total4/4047d003kk51c/#6ce08001ug51c" target="_blank">@(Documentation)</a></div>
+					</div>
+
+					<ui-bind path="?.mail_check" config="template" class="block m">
+						<script type="text/html">
+							{{ if value == null }}
+							<div class="message message-info"><i class="ti ti-lightbulb mr5"></i>@(SMTP server is not configured yet.)</div>
+							{{ else if value.success === true }}
+							<div class="message message-success"><i class="ti ti-check-circle mr5"></i>@(SMTP server is configured correctly.)</div>
+							{{ else }}
+							<div class="message message-error">
+								<div class="b">@(SMTP response:)</div>
+								<i class="ti ti-bug mr5"></i>{{ value[0].error }}</div>
+							</div>
+							{{ fi }}
+						</script>
+					</ui-bind>
+
+					<ui-component name="validate" path="?">
+						<button name="submit" class="button exec" data-exec="?/submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+					</ui-component>
+				</div>
+			</div>
+		</div>
+		<br />
+		<br />
+
+	</ui-component>
+
+</ui-plugin>
+
+<script>
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			exports.tapi('settings ERROR', function(response) {
+				exports.set(response);
+				if (response.mail_smtp)
+					exports.test();
+			});
+		};
+
+		exports.submit = function() {
+			var form = exports.form;
+			exports.tapi('settings_save ERROR', form, function() {
+				EXEC('-notify/success', '@(Settings have been saved successfully).');
+			});
+		};
+
+		exports.copy = function(el) {
+			EXEC('-clipboard/copy', el.text());
+			EXEC('-notify/success', '@(URL address has been copied)');
+		};
+
+		exports.generate = function() {
+			exports.set('secret_tms @type:show', GUID(35));
+		};
+
+		exports.test = function() {
+			var model = exports.model;
+			if (model.mail_smtp)
+				exports.tapi('settings_test @showloading', model, 'mail_check @hideloading');
+			else
+				exports.nul('mail_check');
+		};
+
+	});
+</script>

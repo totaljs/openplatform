@@ -1,0 +1,29 @@
+<ui-component name="intro" path="common.form" config="if:formwelcome;exec:?/submit;next:@(Next);close:@(Setup)" class="hidden" plugin="~PATH~">
+
+	<figure>
+		<div class="padding">
+			<div><i class="ti ti-flag-alt color" style="font-size:60px"></i></div>
+			<br />
+			<div>@(Welcome <ui-bind path="user.name" config="text" class="b"></ui-bind> to <ui-bind path="document.title" config="text" class="b"></ui-bind>. You are the platform's first super user.)</div>
+		</div>
+	</figure>
+
+	<figure>
+		<div class="padding">
+			<div><i class="ti ti-totaljs color" style="font-size:60px"></i></div>
+			<br />
+			<div>@(The first step is to update the main OpenPlatform configuration through the setup interface. Then you can register users and apps.)</div>
+		</div>
+	</figure>
+
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+		exports.submit = function(hide) {
+			EXEC('common/setup');
+		};
+	});
+
+</script>

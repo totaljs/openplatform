@@ -1,0 +1,118 @@
+<style>
+	.~PATH~ .item > div, .~PATH~ .checkboxes .item { line-height: 17px; font-size: 12px; cursor: pointer; position: relative; display: inline-block; width: 33.33%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+	.~PATH~ .item label { vertical-align: middle; cursor: pointer; }
+	.~PATH~ .item span { vertical-align: middle; }
+	.~PATH~ .item .selection { margin-right: 5px; }
+	.~PATH~ .item.selected span i { display: block; }
+	.~PATH~ .item.selected span { border-color: #000; }
+	.~PATH~ .caption label { font-size: 12px; font-weight: normal; color: #777; }
+	.~PATH~ .caption.selected > label { font-weight: bold; color: #000; }
+	.ui-dark .~PATH~ .item.selected span { border-color: #FFF; }
+</style>
+
+<ui-component name="box" path="common.form" config="if:~PATH~;icon:folder;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:600;scrollbarshadow:1" class="hidden ~PATH~" plugin="~PATH~">
+
+	<div class="padding">
+
+		<div class="m">
+			<ui-component name="input" path="?.name" config="innerlabel:1;required:1;placeholder:@(Enter application name)">@(Name)</ui-component>
+		</div>
+
+		<div class="grid-3">
+			<div class="m">
+				<ui-component name="input" path="?.icon" config="type:icon">@(Icon)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
+			</div>
+		</div>
+
+		<div class="caption m">
+			<label>@(Additional settings)</label>
+		</div>
+
+		<div class="m">
+			<ui-component name="input" path="?.isdisabled" config="type:checkbox">@(Disable group)</ui-component>
+		</div>
+		<br />
+
+		<div class="panel">
+			<label><i class="ti ti-rocket"></i>@(Allowed apps)</label>
+			<div style="padding:var(--gap)" class="bg-smoke">
+				<ui-bind path="?.permissions" config="macro:showcheckboxes">
+					<ui-component name="selection" path="?.permissions" config="datasource:%permissions;selector:.item;dblclickselectall:false">
+						<ui-bind path="%apps" config="template">
+							{{ foreach m in value }}
+							<figure>
+								<div class="caption item appid" data-id="_{{ m.id }}">
+									<div class="pull-right" style="width:auto;margin:12px 0 0;">
+										<span class="selection"><i class="ti ti-check"></i></span>
+										<label>@(Enable)</label>
+									</div>
+									<label>{{ m.name }}</label>
+								</div>
+								{{ if m.permissions.length }}
+								<div class="checkboxes mt10 m">
+									{{ foreach p in m.permissions }}
+										<div class="item" data-id="{{ p.id }}">
+											<span class="selection"><i class="ti ti-check"></i></span>
+											<label>{{ p.name }}</label>
+										</div>
+									{{ end }}
+								</div>
+								{{ fi }}
+							</figure>
+							{{ end }}
+						</ui-bind>
+					</ui-component>
+				</ui-bind>
+			</div>
+		</div>
+
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	MACRO('showcheckboxes', function(self, element) {
+
+		var rebind = function() {
+			var elements = element.find('.appid');
+			for (var i = 0; i < elements.length; i++) {
+				var el = $(elements[i]);
+				var is = el.hclass('selected');
+				el.closest('figure').find('.checkboxes').tclass('hidden', !is);
+			}
+		};
+
+		self.setter = function(value, path, type) {
+			setTimeout(rebind, 100);
+		};
+
+	});
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function(com) {
+			var model = exports.model;
+			var id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update group)' : '@(Create group)' });
+		};
+
+		exports.submit = function(hide) {
+			var model = exports.form;
+			exports.tapi((model.id ? ('groups_update/' + model.id) : 'groups_create') + ' @showloading', model, ERROR(function() {
+				hide();
+				exports.caller && exports.caller.exec('refresh');
+			}));
+		};
+
+	});
+
+</script>

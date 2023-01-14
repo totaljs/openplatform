@@ -1,0 +1,128 @@
+<style>
+	.~PATH~ .headline { margin: 19px; font-size: 15px; font-weight: 500; color: gray; }
+	.~PATH~ .wrapper { max-width: 800px; margin: 0 auto; }
+	.~PATH~ figure { position: relative; display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 30px; background-color: var(--bgcolor); border-radius: var(--radius); padding: 50px 30px; }
+	.~PATH~ figure .number { position: relative; font-size: 42px; line-height: 42px; }
+	.~PATH~ figure .title { font-size: 14px; margin-bottom: 8px; }
+	.~PATH~ figure .number .badge { position: absolute; top: 2px; right: -15px; padding: 0; width: 12px; height: 12px; }
+	.~PATH~ figure .icon { position: absolute; right: 30px; top: 50%; transform: translate(0, -50%); margin-bottom: 5px; padding-bottom: 5px; }
+	.~PATH~ figure .icon i { font-size: 40px; opacity: .1; }
+	.~PATH~ figure.small .icon { right: 15px; }
+	.~PATH~ figure.small { padding: 25px 30px; }
+
+	.jc-xs .~PATH~ figure { padding: 15px; }
+	.jc-xs .~PATH~ figure .number { font-size: 30px; line-height: 30px; }
+	.jc-xs .~PATH~ figure .title { font-size: 12px; }
+	.jc-xs .~PATH~ figure .badge { right: -12px; width: 10px; height: 10px; }
+	.jc-xs .~PATH~ figure .icon i { font-size: 30px; }
+	.jc-xs .~PATH~ figure .icon { top: 60%; transform: translate(0, -50%); }
+	.jc-xs .~PATH~ .grid-xs-2 figure:first-child { grid-column: 1 / 3; }
+</style>
+
+<ui-plugin class="~PATH~">
+
+	<header>
+		<label><i class="ti ti-dashboard"></i>@(Dashboard)</label>
+	</header>
+
+	<ui-component name="viewbox" path="common.page" config="parent:auto;margin:50;centered:1;scrollbarshadow:1" class="invisible">
+		<div class="padding">
+
+			<ui-bind path="?" config="template">
+				<script type="text/html">
+					<div class="wrapper">
+
+						<div class="m left fs12">
+							<div class="pull-right"><i class="ti ti-users mr5"></i>@(Open:) <b>{{ value.sessions | pluralize('@(# sessions,# session,# sessions,# sessions)') }}</b></div>
+							<div><i class="ti ti-microchip mr5"></i>@(Used memory) <b>{{ value.memory }} MB</b></div>
+						</div>
+
+						<div class="grid-3 grid-xs-2">
+							<figure style="background-color:#def0c8;border:4px solid #c8e4c1">
+								<div class="icon"><i class="ti ti-users"></i></div>
+								<div class="title"><b>@(Online)</b> @(users)</div>
+								<div class="number">{{ value.online }}<div class="badge badge-green"></div></div>
+							</figure>
+							<figure style="background-color:#FDE3E1">
+								<div class="icon"><i class="ti ti-database"></i></div>
+								<div class="title">@(Registered users)</b></div>
+								<div class="number">{{ value.users }}</div>
+							</figure>
+							<figure style="background-color:#ece7ff">
+								<div class="icon"><i class="ti ti-envelope"></i></div>
+								<div class="title">@(Open feedback)</div>
+								<div class="number">{{ value.feedback }}</div>
+							</figure>
+						</div>
+
+						<div class="caption left m">
+							<label><i class="ti ti-clock"></i>@(Today statistics)</label>
+						</div>
+
+						<div class="grid-3 grid-xs-2">
+							<figure class="small" style="background-color:#dde9f4">
+								<div class="icon"><i class="ti ti-account"></i></div>
+								<div class="title">@(Max. logged users)</div>
+								<div class="number">{{ value.today.maxlogged }}</div>
+							</figure>
+							<figure class="small" style="background-color:#dde9f4">
+								<div class="icon"><i class="ti ti-desktop"></i></div>
+								<div class="title">@(Desktop computers)</div>
+								<div class="number">{{ value.today.desktop }}</div>
+							</figure>
+							<figure class="small" style="background-color:#dde9f4">
+								<div class="icon"><i class="ti ti-mobile"></i></div>
+								<div class="title">@(Mobile devices)</div>
+								<div class="number">{{ value.today.mobile }}</div>
+							</figure>
+						</div>
+
+						<div class="caption left m">
+							<label><i class="ti ti-calendar"></i>@(Total statistics)</label>
+						</div>
+
+						<div class="grid-3 grid-xs-2">
+							<figure class="small" style="background-color:#fdeddc">
+								<div class="icon"><i class="ti ti-account"></i></div>
+								<div class="title">@(Max. logged users)</div>
+								<div class="number">{{ value.total.maxlogged }}</div>
+							</figure>
+							<figure class="small" style="background-color:#fdeddc">
+								<div class="icon"><i class="ti ti-desktop"></i></div>
+								<div class="title">@(Desktop computers)</div>
+								<div class="number">{{ value.total.desktop }}</div>
+							</figure>
+							<figure class="small" style="background-color:#fdeddc">
+								<div class="icon"><i class="ti ti-mobile"></i></div>
+								<div class="title">@(Mobile devices)</div>
+								<div class="number">{{ value.total.mobile }}</div>
+							</figure>
+						</div>
+
+					</div>
+				</script>
+			</ui-bind>
+
+		</div>
+	</ui-component>
+
+</ui-plugin>
+
+<script>
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.refresh = function() {
+			exports.tapi('dashboard', '');
+		};
+
+		ON('service', function() {
+			if (common.page === exports.name)
+				exports.refresh();
+		});
+
+	});
+</script>

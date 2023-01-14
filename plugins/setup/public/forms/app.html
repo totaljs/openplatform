@@ -1,0 +1,233 @@
+<style>
+	.~PATH~ .permissions { font-size: 12px; }
+	.~PATH~ .permissions section > span { float: right; width: 30px; text-align: right; min-height: 24px; }
+	.~PATH~ .permissions section > div { min-height: 17px; line-height: 17px; }
+	.~PATH~ .permissions section > .value { margin-left: 200px; border-left: 1px solid #E0E0E0; padding: 0 10px; outline: 0; }
+	.~PATH~ .permissions section > .name { float: left; width: 200px; outline: 0; }
+	.~PATH~ .tokens { padding: 10px; border: 2px solid #E0E0E0; margin: 10px 0; border-radius: var(--radius); background-color: #F8F8F8; }
+	.~PATH~ .tokens i { transform: scale(1); }
+	.~PATH~ .tokens .token { height: 20px; cursor: pointer; }
+	.~PATH~ .tokens span i { margin-right: 5px; }
+	.~PATH~ .tokens .token > i { margin: 2px 0 0 5px; float: right; }
+	.~PATH~ .tokens code { float: right; font-size: 12px; padding: 1px 0 0; }
+	.~PATH~ .tokens span { font-size: 12px; float: left; font-weight: bold; }
+	.~PATH~ .tokens .help { border-top: 1px solid #E0E0E0; padding: 5px 0 0; }
+</style>
+
+<ui-component name="box" path="common.form" config="if:~PATH~;icon:rocket;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:680;scrollbarshadow:1" class="hidden ~PATH~" plugin="~PATH~">
+
+	<nav>
+		<button class="exec" data-exec="?/copy" title="@(Copy settings)"><i class="ti ti-copy nmr"></i></button>
+		<button class="exec" data-exec="?/paste" title="@(Paste settings)"><i class="ti ti-paste nmr"></i></button>
+		<button class="exec" data-exec="?/import"><i class="ti ti-file-import"></i>@(Import)</button>
+	</nav>
+
+	<div class="padding">
+
+		<div class="m">
+			<ui-component name="input" path="?.name" config="innerlabel:1;required:1;placeholder:@(Enter application name)">@(Name)</ui-component>
+		</div>
+
+		<div class="m">
+			<ui-component name="input" path="?.url" config="innerlabel:1;required:1;type:url" default="'https://'">@(URL address)</ui-component>
+			<ui-bind path="?.meta" config="show;template">
+				<script type="text/html">
+					<div class="help"><b>@(Origin:)</b> <a href="{{ value }}" target="_blank">{{ value }}</a></div>
+				</script>
+			</ui-bind>
+		</div>
+
+		<div class="m">
+			<ui-component name="input" path="?.isbookmark" config="type:checkbox" default="false">@(Set as a bookmark)</ui-component>
+			<div class="help">@(The app will be used as a bookmark to the external web app)</div>
+		</div>
+
+		<ui-bind path="?.isbookmark" config="hide" class="block">
+
+			<div class="caption m">
+				<label><i class="ti ti-key"></i>@(Security)</label>
+			</div>
+
+			<ui-bind path="?" config="track:reqtoken,restoken,id;template">
+				<script type="text/html">
+				<div class="tokens">
+					<div class="token exec" data-exec="?/copytoken">
+						<i class="ti ti-copy"></i>
+						<span><i class="ti ti-circle-alt color"></i>@(Request token)</span>
+						<code data-hidden="{{ value.reqtoken }}" class="exec" data-prevent="true" data-exec="?/toggle">{{ if value.id }}*******************{{ else }}{{ value.reqtoken }}{{ fi }}</code>
+					</div>
+					<div class="token exec" data-exec="?/copytoken">
+						<i class="ti ti-copy"></i>
+						<span><i class="ti ti-circle-alt color"></i>@(Response token)</span>
+						<code data-hidden="{{ value.restoken }}" class="exec" data-prevent="true" data-exec="?/toggle">{{ if value.id }}*******************{{ else }}{{ value.restoken }}{{ fi }}</code>
+					</div>
+				</div>
+				</script>
+			</ui-bind>
+
+			<p style="margin-top:15px"><i class="ti ti-warning mr5"></i>@(You can allow only specific IP addresses to access sensitive user information for this app.)</p>
+			<ui-component name="input" path="?.allow" config="placeholder:@(11.11.11.11)">@(Allowed IP addresses)</ui-component>
+			<div class="help"><i class="ti ti-keyboard"></i>@(Enter IP addresses separated by the comma)</div>
+			<br />
+		</ui-bind>
+
+		<div class="caption m">
+			<label>@(Additional settings)</label>
+		</div>
+
+		<div class="grid-4">
+			<div class="m">
+				<ui-component name="input" path="?.icon" config="required:1;type:icon" default="'ti ti-rocket'">@(Icon)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
+			</div>
+		</div>
+
+		<hr />
+
+		<ui-bind path="?.isbookmark" config="hide" class="block">
+			<ui-component name="input" path="?.isnewtab" config="type:checkbox" default="false">@(Allow opening the app in a new tab)</ui-component>
+			<ui-component name="input" path="?.notifications" config="type:checkbox" default="true">@(Enable notifications)</ui-component>
+		</ui-bind>
+		<ui-component name="input" path="?.isdisabled" config="type:checkbox">@(Disable application)</ui-component>
+
+		<ui-bind path="?.isbookmark" config="hide" class="block">
+			<br />
+
+			<div class="caption m">
+				<div class="toolbar">
+					<button class="exec" data-exec="?/permissionsadd"><i class="ti ti-check-circle green"></i>@(Add)</button>
+				</div>
+				<label><i class="ti ti-lock"></i>@(Permissions)</label>
+			</div>
+
+			<ui-bind path="?.permissions" config="template:figure" class="listing2 permissions block">
+				<script type="text/html">
+				{{ if !value || !value.length }}
+					<figure style="cursor:default">
+						<section>
+							@(The app doesn't have any defined permissions)
+						</section>
+					</figure>
+				{{ fi }}
+				{{ foreach m in value }}
+					<figure data-id="{{ m.id }}">
+						<section>
+							<span class="red exec" data-exec="?/permissionsrem"><i class="ti ti-remove"></i></span>
+							<div class="edit name hellip" data-edit="selectall:1;exec:?/permissionsupd;prop:name">{{ m.name }}</div>
+							<div class="edit value hellip monospace" data-edit="selectall:1;exec:?/permissionsupd;prop:value">{{ m.value }}</div>
+						</section>
+					</figure>
+				{{ end }}
+				</script>
+			</ui-bind>
+		</ui-bind>
+
+	</div>
+	<nav>
+		<ui-component name="validate" path="?" config="validonly:1">
+			<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function(com) {
+			var model = exports.model;
+			var id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update app)' : '@(Register app)' });
+		};
+
+		exports.import = function() {
+			var path = 'formimport';
+			var fn = model => exports.extend(model);
+			SET(path + ' @default', { callback: fn });
+			SET('common.form2', path);
+		};
+
+		exports.toggle = function(el) {
+
+			var dom = el[0];
+			var token = el.attrd('hidden');
+			var text;
+
+			if (dom.$bktoken) {
+				var text = el.text();
+				if (text.charAt(0) === '*')
+					text = token;
+				else
+					text = dom.$bktoken;
+				dom.$bktoken = el.text();
+				el.text(text);
+			} else {
+				dom.$bktoken = el.text();
+				text = token;
+			}
+
+			el.text(text);
+		};
+
+		exports.copytoken = function(el) {
+			EXEC('-clipboard/copy', el.find('code').attrd('hidden'));
+			EXEC('-notify/success', '@(Token has been copied)');
+		};
+
+		exports.permissionsadd = function() {
+			exports.push('permissions', { id: '_' + GUID(5), name: '@(Name)', value: '@(value)' });
+		};
+
+		exports.permissionsupd = function(opt, next) {
+
+			var id = ATTRD(opt.element);
+			var prop = opt.prop;
+			var model = exports.model;
+			var item = model.permissions.findItem('id', id);
+			item[prop] = opt.value;
+
+			next(true);
+			exports.upd('name @change');
+		};
+
+		exports.permissionsrem = function(el) {
+			var id = ATTRD(el);
+			var model = exports.model;
+			var index = model.permissions.findIndex('id', id);
+			model.permissions.splice(index, 1);
+			exports.upd('permissions');
+		};
+
+		exports.submit = function(hide) {
+			var model = exports.form;
+			exports.tapi((model.id ? ('apps_update/' + model.id) : 'apps_create') + ' @showloading', model, ERROR(function() {
+				hide();
+				exports.caller && exports.caller.exec('refresh');
+			}));
+		};
+
+		exports.copy = function() {
+			EXEC('-clipboard/copy', ENCRYPT(exports.model, 'openplatform', 'app'));
+			EXEC('-notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			navigator.clipboard.readText().then(function(text) {
+				var model = exports.model;
+				var data = DECRYPT(text, 'openplatform', 'app');
+				if (data) {
+					if (data.id !== model.id)
+						data.id = model.id;
+					exports.set('@change', data);
+					EXEC('-notify/success', '@(Pasted)');
+				} else
+					EXEC('-message/warning', '@(Invalid clipboard data)');
+			});
+		};
+
+	});
+
+</script>

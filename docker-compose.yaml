@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=total
+      - POSTGRES_PASSWORD=platform
+      - POSTGRES_DB=openplatform
+
+  openplatform:
+    container_name: openplatform
+    image: totalplatform/openplatform:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - openplatform:/www/databases/
+    environment:
+      - DATABASE=postgresql://total:platform@postgres:5432/openplatform
+
+volumes:
+  pgdata:
+  openplatform:

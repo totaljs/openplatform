@@ -1,0 +1,80 @@
+<ui-component name="box" path="common.form" config="if:formfeedback;reload:?/reload;title:@(Feedback);submit:?/submit;icon:ti ti-envelope;width:700;closeesc:1" class="hidden" plugin="formfeedback">
+	<div class="padding">
+
+		<ui-bind path="?" config="template">
+			<script type="text/html">
+				<div class="m">{{ value.rating | rating }}</div>
+				<div class="grid-2 detail">
+					<div>
+						<figure>
+							<span>@(Created)</span>
+							<div>{{ value.dtcreated | format('[ts]') }}</div>
+						</figure>
+						<figure>
+							<span>@(User)</span>
+							<div class="b">{{ value.account }}</div>
+						</figure>
+						<figure>
+							<span>@(Email)</span>
+							<div><a href="mailto:{{ value.email }}">{{ value.email }}</a></div>
+						</figure>
+						<figure>
+							<span>@(App)</span>
+							<div>{{ value.app | empty }}</div>
+						</figure>
+					</div>
+					<div>
+						<figure>
+							<span><i class="ti ti-desktop"></i>@(Device)</span>
+							<div>{{ value.ua }}</div>
+						</figure>
+						<figure>
+							<span><i class="ti ti-globe"></i>@(IP address)</span>
+							<div>{{ value.ip }}</div>
+						</figure>
+						<figure>
+							<span>@(Solved)</span>
+							<div>{{ if value.iscomplete }}<i class="ti ti-check-circle green"></i><span class="gray ml5">{{ value.dtupdated | format('[ts]') }}</span>{{ else }}---{{ fi }}</div>
+						</figure>
+						<figure>
+							<span>@(Updated by)</span>
+							<div>{{ value.updatedby | empty }}</div>
+						</figure>
+					</div>
+				</div>
+				{{ if value.iscomplete }}
+				<br />
+				{{ else }}
+				<div class="message message-alert mt10">
+					<div class="pull-right" style="margin-top:3px"><button class="button small exec" data-exec="?/submit" style="width:auto"><i class="ti ti-check-circle green mr5"></i>@(Mark as solved)</button></div>
+					<div>
+						<i class="ti ti-lightbulb mr5"></i><b>@(The feedback is not solved yet)</b>
+						<div class="help nmt">@(The system doesn't send email after solving.)</div>
+					</div>
+				</div>
+				{{ fi }}
+				<div class="caption">
+					<label>@(Message)</label>
+				</div>
+				<pre style="white-space:pre-wrap;padding:15px 0;margin:0;font-family:Arial;font-size:15px">{{ value.body }}</pre>
+			</script>
+		</ui-bind>
+
+	</div>
+	<nav>
+		<button name="cancel" style="width:100%">@(Cancel)</button>
+	</nav>
+</ui-component>
+
+<script>
+	PLUGIN(function(exports) {
+		exports.submit = function() {
+			var model = exports.form;
+			exports.tapi('feedback_update/{id} ERROR'.arg(model), { iscomplete: true }, function() {
+				exports.set('iscomplete', true);
+				exports.set('updatedby', user.name);
+				exports.caller && exports.caller.exec('refresh');
+			});
+		};
+	});
+</script>

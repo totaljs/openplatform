@@ -1,0 +1,57 @@
+<ui-component name="miniform" path="common.form" config="if:~PATH~;title:@(My account);icon:ti ti-account;autofocus:true;submit:?/submit;width:500;scrollbar:1;scrollbarshadow:1" class="hidden" plugin="~PATH~">
+
+	<div class="padding bg-smoke">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4 m">
+				<br />
+				<ui-component name="preview" path="?.photo" config="url:/upload/base64/;width:200;height:200;empty:/img/photo.jpg"></ui-component>
+				<div class="help center">@(Account photo 200x200)</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="padding npb">
+
+		<div class="row">
+			<div class="col-md-6 m">
+				<ui-component name="input" path="?.name" config="required:1;maxlength:50">@(Account name)</ui-component>
+			</div>
+			<div class="col-md-6 m">
+				<ui-component name="input" path="?.email" config="required:1;maxlength:120;type:email">@(Email)</ui-component>
+			</div>
+		</div>
+
+		<ui-component name="input" path="?.notifications" config="type:checkbox">@(Enable notifications)</ui-component>
+		<ui-component name="input" path="?.sounds" config="type:checkbox">@(Enable sounds)</ui-component>
+
+		<hr />
+
+		<ui-component name="colorselector" path="?.color" class="m"></ui-component>
+
+	</div>
+
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+		exports.submit = function(hide) {
+			var form = exports.form;
+			exports.tapi('account_update ERROR @showloading', form, function() {
+				COPY(form, user);
+				user.color = form.color;
+				EXE('-notify/success', '@(Account has been changed successfully)');
+				UPD('user @hideloading');
+				hide();
+			});
+		};
+	});
+
+</script>

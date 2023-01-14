@@ -1,0 +1,119 @@
+<ui-component name="box" path="common.form" config="if:~PATH~;icon:user;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:600;scrollbarshadow:1" class="hidden" plugin="~PATH~">
+
+	<nav>
+		<button class="exec" data-exec="?/copy" title="@(Copy settings)"><i class="ti ti-copy nmr"></i></button>
+		<button class="exec" data-exec="?/paste" title="@(Paste settings)"><i class="ti ti-paste nmr"></i></button>
+	</nav>
+
+	<div class="padding bg-smoke">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4 m">
+				<br />
+				<ui-component id="previewuserphoto" name="preview" path="?.photo" config="url:/upload/base64/;width:200;height:200;empty:/img/photo.jpg"></ui-component>
+				<div class="help center">@(User photo 200x200)</div>
+			</div>
+		</div>
+	</div>
+	<div class="padding">
+
+		<ui-component name="choose" path="?.gender" config="selector:div;limit:1" class="iconmenu m">
+			<div data-id="male">
+				<i class="ti ti-male"></i>
+				<span>@(Male)</span>
+			</div>
+			<div data-id="female">
+				<i class="ti ti-female"></i>
+				<span>@(Female)</span>
+			</div>
+		</ui-component>
+
+		<div class="grid-2" style="margin-top:20px">
+			<div class="m">
+				<ui-component name="input" path="?.name" config="innerlabel:1;required:1;placeholder:@(Enter account name)">@(Account name)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.email" config="innerlabel:1;required:1;type:email" default="'@'">@(E-mail)</ui-component>
+			</div>
+		</div>
+
+		<div class="m">
+			<ui-component name="input" path="?.groups" config="innerlabel:1;multiple:1;dirsource:%groups;placeholder:@(Choose groups)">@(Groups)</ui-component>
+		</div>
+
+		<ui-component name="colorselector" path="?.color" class="m"></ui-component>
+
+		<ui-component name="input" path="?.sounds" config="type:checkbox" default="true">@(Enable sounds)</ui-component>
+		<ui-component name="input" path="?.notifications" config="type:checkbox" default="true">@(Enable notifications)</ui-component>
+		<hr />
+		<ui-component name="input" path="?.isconfirmed" config="type:checkbox">@(User email address is confirmed)</ui-component>
+		<ui-component name="input" path="?.isdisabled" config="type:checkbox">@(Disable user account)</ui-component>
+		<ui-component name="input" path="?.isinactive" config="type:checkbox">@(User account is inactive)</ui-component>
+		<ui-component name="input" path="?.sa" config="type:checkbox"><b class="red">@(Super privileges)</b></ui-component>
+		<hr />
+		<ui-component name="input" path="?.iswelcome" config="type:checkbox">@(Send a Welcome mail message)</ui-component>
+		<ui-component name="input" path="?.ispassword" config="type:checkbox" class="m">@(Change password)</ui-component>
+
+		<ui-bind path="?.ispassword" config="show" class="hidden">
+			<ui-component name="input" path="?.password" config="innerlabel:1;required:1;camouflage:1;placeholder:@(Enter new password)" default="''">@(Password)</ui-component>
+		</ui-bind>
+
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="fa fa-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function(com) {
+			var model = exports.model;
+			var id = model ? model.id : null;
+			com.reconfigure({ title: id ? '@(Update user)' : '@(Create user)' });
+		};
+
+		exports.submit = function(hide) {
+			var model = exports.form;
+			exports.tapi((model.id ? ('users_update/' + model.id) : 'users_create') + ' @showloading', model, ERROR(function() {
+				hide();
+				exports.caller && exports.caller.exec('refresh');
+			}));
+		};
+
+		exports.copy = function() {
+			var model = CLONE(exports.model);
+
+			if (model.photo)
+				model.photo = location.origin + model.photo;
+
+			EXEC('-clipboard/copy', ENCRYPT(model, 'openplatform', 'user'));
+			EXEC('-notify/success', '@(Copied)');
+		};
+
+		exports.paste = function() {
+			navigator.clipboard.readText().then(function(text) {
+				var model = exports.model;
+				var data = DECRYPT(text, 'openplatform', 'user');
+				if (data) {
+
+					if (data.id !== model.id)
+						data.id = model.id;
+
+					exports.set('@change', data);
+					EXEC('-notify/success', '@(Pasted)');
+
+					if (data.photo && (/^http(s)\:\/\//).test(data.photo))
+						setTimeout(() => previewuserphoto.ui.reupload(), 500);
+
+				} else
+					EXEC('-message/warning', '@(Invalid clipboard data)');
+			});
+		};
+
+	});
+
+</script>

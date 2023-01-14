@@ -1,0 +1,82 @@
+<ui-component name="box" path="common.form" config="if:~PATH~;icon:ti ti-book-open;title:@(My open sessions);reload:?/reload;scrollbar:1;submit:?/submit;width:800;scrollbarshadow:1" class="hidden" plugin="~PATH~">
+
+	<div class="padding">
+
+		<ui-bind path="?.items" config="show:value && value.length > 1" class="hidden">
+			<div class="message message-alert">
+				<div class="pull-right pull" style="margin:6px 0 0">
+					<button class="button small exec" data-exec="?/clear"><i class="ti ti-trash"></i>@(Clear)</button>
+				</div>
+				<div style="margin-right:10px;margin-right:100px">
+					<div class="b">@(Auto-cleaner)</div>
+					@(The program removes all open sessions except the one you are currently in.)
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</ui-bind>
+
+		<ui-bind path="?.items" config="template:figure" class="listing fs12">
+			<script type="text/html">
+				{{ foreach m in value }}
+					<figure data-id="{{ m.id }}">
+						<section style="cursor:default">
+							<span class="pull-right exec link red" data-exec="?/cancel"><i class="ti ti-remove mr5"></i>@(Cancel)</span>
+							<div class="pull-right mr10 gray">{{ m.dtupdated | time }}</div>
+							<div{{ if m.current }} class="b"{{ fi }}><i class="ti ti-desktop mr5"></i>{{ m.ua }} <span class="badge badge-gray badge-small">{{ m.ip }}</span></div>
+						</section>
+					</figure>
+				{{ end }}
+			</script>
+		</ui-bind>
+	</div>
+
+	<nav>
+		<button name="cancel" style="width:100%">@(Cancel)</button>
+	</nav>
+
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.refresh = function() {
+			exports.tapi('sessions ERROR', 'items @hideloading');
+		};
+
+		exports.cancel = function(el) {
+			SETTER('approve/show', '@(Are you sure you want to cancel selected session?)', '"far fa-trash-alt" @(Cancel)', function() {
+				var id = ATTRD(el);
+				var model = exports.model;
+				var item = model.items.findItem('id', id);
+				exports.tapi('sessions_remove/{0} ERROR'.format(id), function() {
+					if (item.current)
+						location.href = '/';
+					else
+						exports.refresh();
+				});
+			});
+		};
+
+		exports.clear = function() {
+			SETTER('approve/show', '@(Are you sure you want to clear all unused sessions?)', '"far fa-trash-alt" @(Clear)', function() {
+				SETTER('loading/show');
+				exports.model.items.wait(function(item, next) {
+					if (item.current)
+						next();
+					else
+						exports.tapi('sessions_remove/' + item.id, next);
+				}, function() {
+					SETTER('message/success', '@(Done, unused sessions have been removed)');
+					exports.refresh();
+				});
+			});
+		};
+
+	});
+
+</script>

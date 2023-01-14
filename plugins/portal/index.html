@@ -1,0 +1,681 @@
+@{layout('')}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>@{CONF.name}</title>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=11" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="robots" content="all,follow" />
+	<meta name="apple-mobile-web-app-title" content="@{CONF.name}" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link rel="apple-touch-icon" href="@{CONF.icon}" />
+	<link href="@{'%cdn'}/spa.min@19.css" rel="stylesheet" />
+	<script src="@{'%cdn'}/spa.min@19.js"></script>
+	<script src="@{REPO.uiportal}"></script>
+	@{import('/_portal/default.js', '/_portal/default.css', 'favicon.ico')}
+</head>
+<body>
+
+	<ui-component name="LAZY message"></ui-component>
+	<ui-component name="LAZY features"></ui-component>
+	<ui-component name="LAZY approve"></ui-component>
+	<ui-component name="LAZY notify" config="position:bottom right;timeout:5000"></ui-component>
+	<ui-component name="LAZY menu" config="style:2"></ui-component>
+
+	<ui-component name="locale"></ui-component>
+	<ui-component name="exec"></ui-component>
+	<ui-component name="errorhandler" config="exec:common/errorhandler"></ui-component>
+	<ui-component name="loading" class="hidden"></ui-component>
+	<ui-component name="shortcuts"></ui-component>
+	<ui-component name="sounds" path="user.sounds" config="url:/_portal/sounds/;volume:20"></ui-component>
+	<ui-component name="windows" path="common.windows"></ui-component>
+
+	<div class="thirdparty">
+		<ui-component name="parts" path="common.running" config="parent:window;margin:74;gap:15"></ui-component>
+	</div>
+
+	<header>
+		<div>
+			<div class="user exec" data-exec="common/account">
+				<ui-bind path="!user" config="template;track:name,photo;show:value.name;changes;title:value.name" class="hidden">
+					<script type="text/html">
+						{{ if value.photo }}
+							<img src="{{ value.photo }}" alt="{{ value.name }}" border="0" class="photo" />
+						{{ else }}
+							{{ value.name | initials }}
+						{{ fi }}
+					</script>
+				</ui-bind>
+			</div>
+
+			<div class="notifications exec" data-exec="common/notifications">
+				<ui-bind path="user.unread" config="show;text" class="hidden"></ui-bind>
+				<div title="@(Notifications)">
+					<i class="ti ti-bell"></i>
+				</div>
+			</div>
+
+			<div class="openplatform">
+				<div>
+					<img src="@{CONF.icon}" />
+					<b>@{CONF.name}</b>
+				</div>
+			</div>
+
+			<div class="apps">
+				<button class="startmenubutton exec" data-exec="common/open" data-id="welcome" title="@(Start menu)"><i class="ti ti-menu"></i></button>
+				<ui-bind path="common.running" config="template:.exec">
+					<script type="text/html">
+						{{ foreach m in value }}
+							{{ if !m.root }}
+							<button title="{{ m.name }}" class="running exec{{ if m.focused }} selected{{ fi }} exec3" data-exec="common/open" data-exec3="common/app" data-id="{{ m.id }}">{{ if m.running }}<span class="ti ti-circle running"></span>{{ fi }}<i class="{{ m.icon }}"></i></button>
+							{{ fi }}
+						{{ end }}
+					</script>
+				</ui-bind>
+			</div>
+		</div>
+	</header>
+
+	<ui-component name="importer" path="common.form" config="url:/_portal/forms/intro.html;if:formintro"></ui-component>
+	<ui-component name="importer" path="common.form" config="url:/_portal/forms/welcome.html;if:formwelcome"></ui-component>
+	<ui-component name="importer" path="common.form" config="url:/_portal/forms/account.html;if:formaccount"></ui-component>
+	<ui-component name="importer" path="common.form" config="url:/_portal/forms/password.html;if:formpassword"></ui-component>
+	<ui-component name="importer" path="common.form" config="url:/_portal/forms/sessions.html;if:formsessions"></ui-component>
+	<ui-component name="importer" path="common.form" config="url:/_portal/forms/feedback.html;if:formfeedback"></ui-component>
+	<ui-component name="importer" path="common.panel" config="url:/_portal/forms/notifications.html;if:formnotifications"></ui-component>
+
+	<script>
+
+		NAV.clientside('.jR');
+
+		MONTHS[0] = '@(January)';
+		MONTHS[1] = '@(February)';
+		MONTHS[2] = '@(March)';
+		MONTHS[3] = '@(April)';
+		MONTHS[4] = '@(May)';
+		MONTHS[5] = '@(Juny)';
+		MONTHS[6] = '@(July)';
+		MONTHS[7] = '@(August)';
+		MONTHS[8] = '@(September)';
+		MONTHS[9] = '@(October)';
+		MONTHS[10] = '@(November)';
+		MONTHS[11] = '@(December)';
+		DAYS[0] = '@(Sunday)';
+		DAYS[1] = '@(Monday)';
+		DAYS[2] = '@(Tuesday)';
+		DAYS[3] = '@(Wednesday)';
+		DAYS[4] = '@(Thursday)';
+		DAYS[5] = '@(Friday)';
+		DAYS[6] = '@(Saturday)';
+
+		ENV('date', 'yyyy-MM-dd');
+
+		DEF.api = '/api/';
+		DEF.webcomponentsonly = true;
+
+		var common = {};
+
+		common.volume = 20;
+		common.running = [];
+		common.apps = [];
+		common.open = location.hash.substring(1);
+		common.paths = {};
+		common.detach = {};
+		common.windows = [];
+		common.template = '<ui-component name="content" class="invisible"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}"></ui-component></ui-component></ui-component>';
+
+		ON('@flag showloading', function() {
+			EXEC('-loading/show');
+		});
+
+		ON('@flag hideloading', function() {
+			EXEC('-loading/hide', 1000);
+		});
+
+		PLUGIN('common', function(exports) {
+
+			var findiframe = function(item) {
+				var iframe = item.element.find('ui-component[name="iframe"]')[0];
+				if (!iframe)
+					iframe = $('.ui-windows-item[data-id="app{0}"]'.format(item.id)).find('ui-component[name="iframe"]')[0];
+				return iframe;
+			};
+
+			ON('service', function(counter) {
+				if (counter % 15 === 0)
+					exports.refresh();
+				else
+					exports.refresh_account();
+			});
+
+			exports.refresh_account = function() {
+				TAPI('account ERROR', 'user');
+			};
+
+			exports.feedback = function(id) {
+				var path = 'formfeedback';
+				var model = exports.model;
+				var app = id ? model.apps.findItem('id', id) : null;
+				SET(path + '.app', app);
+				RESET(path + '.*');
+				SET('common.form', path);
+			};
+
+			exports.refresh = function(callback) {
+				exports.tapi('account ERROR', function(response) {
+
+					var tmp = W.user || {};
+
+					SET('user', response);
+
+					if (response.unread) {
+						if (!tmp.unread)
+							tmp.unread = 0;
+						if (response.unread != tmp.unread)
+							EXEC('-sounds/play', 'notifications');
+					}
+
+					exports.tapi('apps ERROR', function(response) {
+
+						var model = exports.model;
+
+						if (user.sa) {
+							app = response.findItem('id', 'setup');
+							if (!app) {
+								var obj = {};
+								obj.id = 'setup';
+								obj.icon = 'ti ti-cog';
+								obj.name = '@(Setup)';
+								obj.url = '/setup/';
+								obj.sortindex = 999;
+								response.push(obj);
+							}
+						}
+
+						for (var app of response)
+							app.linker = app.name.slug();
+
+						response.quicksort('sortindex');
+						exports.set('apps', response);
+
+						for (var item of response) {
+							var key = 'app' + item.id;
+							if (!model.detach[key])
+								model.detach[key] = false;
+						}
+
+						var id = model.open;
+						var isrunning = false;
+						if (id) {
+							model.open = '';
+							var params = id.split('~');
+							var search = params[0];
+							for (var app of response) {
+								if (app.id === id || app.name.slug().indexOf(search) !== -1) {
+									isrunning = true;
+									setTimeout((app, path) => exports.open(app, path), 500, app, params[1]);
+									break;
+								}
+							}
+						}
+
+						// Check running apps
+						for (var m of model.running) {
+							if (!m.root && !model.apps.findItem('id', m.id))
+								EXEC('-parts/close', m.id);
+						}
+
+						if (user.welcome)
+							SET('common.form', 'formwelcome');
+
+						if (!model.ready) {
+
+							exports.push('running', { id: 'welcome', html: '<ui-component name="content" class="invisible"><ui-import config="url:/_portal/pages/welcome.html" class="content"></ui-import></ui-component>', root: true });
+							model.ready = true;
+							var is = false;
+
+							if (NAV.query.reset) {
+								exports.password();
+								is = true;
+							}
+
+							if (NAV.query.welcome) {
+								is = true;
+								SET('common.form', 'formintro');
+							}
+
+							is && REDIRECT('/');
+						}
+
+					});
+				});
+			};
+
+			exports.checkapps = function() {
+
+				var model = exports.model;
+				var apps = model.apps;
+				var is = false;
+				var focusname;
+
+				for (var item of apps) {
+					var running = model.running.findItem('id', item.id);
+					var tmp = running != null;
+					if (item.running == null)
+						item.running = false;
+					if (item.running !== tmp) {
+						is = true;
+						item.running = tmp;
+					}
+					if (running && running.focused) {
+						var path = model.paths[item.id];
+						focusname = running.linker + (path ? ('~' + path) : '');
+					}
+				}
+
+				is && exports.upd('apps');
+				location.hash = focusname ? focusname : '';
+			};
+
+			exports.notifications = function() {
+				SET('common.panel', 'formnotifications');
+			};
+
+			exports.open = function(el, path) {
+				var model = exports.model;
+				var id = ATTRD(el);
+
+				exports.set('menu', false);
+
+				if (typeof(path) === 'string')
+					model.paths[id] = path;
+
+				if (model.running.findItem('id', id)) {
+					EXEC('-parts/focus', id);
+					return;
+				}
+
+				var app = model.apps.findItem('id', id);
+				if (!app)
+					return;
+
+				if (id === 'setup') {
+					var app = model.apps.findItem('id', 'setup');
+					if (app) {
+						app = CLONE(app);
+						app.html = model.template.arg(app);
+						exports.push('running', app);
+					}
+					return;
+				}
+
+				exports.tapi('run/{0} ERROR'.format(id), function(response) {
+
+					if (app.isbookmark) {
+						W.open(response.url);
+						return;
+					}
+
+					response.focus = 'common/appfocus';
+					response.linker = response.name.slug();
+					response.html = model.template.arg(response);
+					exports.push('running', response);
+				});
+			};
+
+			exports.newtab = function(el) {
+				var model = exports.model;
+				var id = ATTRD(el);
+				var app = model.apps.findItem('id', id);
+				app && app.isnewtab && exports.tapi('run/{0} ERROR'.format(id), function(response) {
+					W.open(response.url);
+				});
+			};
+
+			exports.close = function(el) {
+				SETTER('parts/close', ATTRD(el));
+			};
+
+			exports.search = function() {
+
+				var model = exports.model;
+				var opt = {};
+				opt.placeholder = '@(Search)';
+				opt.items = [];
+
+				var running = model.running.length;
+				var focused = null;
+				for (var app of model.apps)
+					opt.items.push({ id: 'app', name: '<b>{0}</b>'.format(app.name), icon: app.icon, appid: app.id });
+
+				for (var app of model.running) {
+					if (app.focused) {
+						focused = app;
+						break;
+					}
+				}
+
+				if (running) {
+					focused && !focused.root && opt.items.push({ id: 'closefocused', name: '@(Close <b>{0}</b>)'.format(focused.name), icon: 'ti ti-times-circle red', appid: focused.id });
+					opt.items.push({ id: 'close', name: '@(Close all open applications)', icon: 'ti ti-times-circle red' });
+				}
+
+				opt.items.push({ id: 'feedback', name: '@(Report a problem)', keywords: '@(feedback)', icon: 'ti ti-bug' });
+				opt.items.push({ id: 'notifications', name: '@(Notifications)', icon: 'ti ti-bell' });
+				opt.items.push({ id: 'sessions', name: '@(Open sessions)', icon: 'ti ti-book-open' });
+				opt.items.push({ id: 'settings', name: '@(My account)', icon: 'ti ti-account', keywords: '@(profile)' });
+				opt.items.push({ id: 'refresh', name: '@(Reload account)', icon: 'ti ti-sync', keywords: '@(refresh)' });
+				opt.items.push({ id: 'logout', name: '@(Logout)', icon: 'ti ti-sign-out red' });
+
+				opt.callback = function(item) {
+					switch (item.id) {
+						case 'app':
+							exports.open(item.appid);
+							break;
+						case 'close':
+							var arr = model.running.slice(0);
+							for (var m of arr) {
+								if (!m.root)
+									EXEC('-parts/close', m.id);
+							}
+							break;
+						case 'closefocused':
+							EXEC('-parts/close', item.appid);
+							break;
+						case 'refresh':
+							exports.refresh();
+							EXEC('-notify/success', '@(Account has been reloaded)');
+							break;
+						default:
+							var fn = exports[item.id];
+							fn();
+							break;
+					}
+				};
+
+				SETTER('features/show', opt);
+			};
+
+			exports.account = function(el) {
+
+				var model = exports.model;
+				var opt = {};
+				opt.element = el;
+				opt.items =[];
+
+				opt.items.push({ id: 'search', name: '<b>F1</b>@(Search)', icon: 'ti ti-search' });
+				opt.items.push({ id: 'feedback', name: '@(Report a problem)', icon: 'ti ti-bug feedback' });
+
+				var app = model.running.findItem('focused', true);
+				if (app && app.id !== 'welcome') {
+					opt.items.push('-');
+					opt.items.push({ id: 'restart', name: '@(Restart <strong>{0}</strong>)'.format(app.name), icon: 'ti ti-sync', app: app });
+					opt.items.push({ id: 'close', name: '@(Close <strong>{0}</strong>)'.format(app.name), icon: 'ti ti-power-off red', app: app });
+				}
+
+				opt.items.push('-');
+				opt.items.push({ id: 'refresh', name: '@(Reload account)', icon: 'ti ti-sync' });
+				opt.items.push({ id: 'sessions', name: '@(Open sessions)', icon: 'ti ti-book-open' });
+				opt.items.push({ id: 'settings', name: '@(My account)', icon: 'ti ti-account' });
+				opt.items.push({ id: 'password', name: '@(Change password)', icon: 'ti ti-key' });
+
+				if (user.sa)
+					opt.items.push({ id: 'setup', name: '@(Setup)', icon: 'ti ti-cog', disabled: isMOBILE });
+
+				opt.items.push('-');
+				opt.items.push({ id: 'logout', name: '@(Logout)', icon: 'ti ti-sign-out red' });
+				opt.offsetY = -5;
+				opt.offsetX = -5;
+				opt.position = 'bottom';
+				opt.align = 'right';
+				opt.callback = function(selected) {
+					switch (selected.id) {
+						case 'refresh':
+							exports.refresh();
+							EXEC('-notify/success', '@(Account has been reloaded)');
+							break;
+						case 'restart':
+							var com = findiframe(selected.app);
+							com && com.ui.restart();
+							break;
+						case 'close':
+							EXEC('-parts/close', selected.app.id);
+							break;
+						case 'logout':
+							location.href = '/logout/';
+							break;
+						case 'setup':
+							exports.open('setup');
+							break;
+						default:
+							var fn = exports[selected.id];
+							fn && fn();
+							break;
+					}
+				};
+
+				EXEC('-menu/show', opt);
+			};
+
+			exports.settings = function() {
+				exports.tapi('account ERROR', function(response) {
+					SET('formaccount @reset', response);
+					SET('common.form', 'formaccount');
+				});
+			};
+
+			exports.app = function(el, e) {
+
+				var id = ATTRD(el);
+				var model = exports.model;
+				var running = model.running.findItem('id', id);
+				var item = model.apps.findItem('id', id);
+
+				if (!item)
+					return;
+
+				var opt = {};
+
+				if (el.hclass('launchpad')) {
+					opt.x = e.pageX;
+					opt.y = e.pageY;
+				} else {
+					opt.position =  'bottom';
+					opt.element = el;
+				}
+
+				opt.items = [];
+
+				if (item.isnewtab)
+					opt.items.push({ id: 'newtab', name: '@(Open in new tab)', icon: 'ti ti-window-alt' });
+
+				if (running) {
+					opt.items.length && opt.items.push('-');
+					opt.items.push({ id: 'restart', name: '@(Restart)', icon: 'ti ti-sync' });
+					opt.items.push({ id: 'close', name: '@(Close)', icon: 'ti ti-sign-out red' });
+				}
+
+				if (!opt.items.length)
+					return;
+
+				opt.callback = function(selected) {
+					switch (selected.id) {
+						case 'newtab':
+							exports.newtab(item);
+							break;
+						case 'restart':
+							var com = findiframe(running);
+							com && com.ui.restart();
+							break;
+						case 'close':
+							EXEC('-parts/close', item.id);
+							break;
+					}
+				};
+
+				SETTER('menu/show', opt);
+			};
+
+			exports.password = function() {
+				SET('formpassword @default', { isreset: user.isreset });
+				SET('common.form', 'formpassword');
+			};
+
+			exports.sessions = function() {
+				SET('common.form', 'formsessions');
+			};
+
+			exports.menu = function() {
+				TOGGLE('?.menu', 10);
+			};
+
+			exports.errorhandler = function(response) {
+				if (response.login)
+					location.href = '/';
+				SETTER('message/warning', response.message);
+			};
+
+			exports.appfocus = function(el, app) {
+				var iframe = findiframe(app);
+				if (iframe) {
+					var model = exports.model;
+					var path = model.paths[app.id] || '';
+					iframe.ui.send({ TYPE: 'focus', data: path });
+					location.hash = app.linker + (path ? ('~' + path) : '');
+				}
+			};
+
+			exports.windetach = function(children, el) {
+
+				var model = exports.model;
+				var id = ATTRD(el);
+				var div = document.createElement('DIV');
+				var app = model.apps.findItem('id', id);
+
+				var w = (WW / 100) * 70 >> 0;
+				var h = (WH / 100) * 85 >> 0;
+
+				var win = {};
+				win.id = 'app' + id;
+				win.cachekey = win.id;
+				win.offset = { x: (WW / 2 - (w / 2)) >> 0, y: ((WH / 2 - (h / 2)) >> 0) - 20, width: w, height: h, minwidth: 450, minheight: 300 };
+				win.actions = { move: true, close: true, resize: true, maximize: true, minimize: true, autosave: true };
+				win.title = app.name;
+				win.html = div;
+
+				win.close = function(next) {
+					exports.set('detach.' + win.id, false);
+					next();
+				};
+
+				var iframe = el.find('ui-component[name="iframe"]')[0];
+
+				for (var m of children)
+					div.appendChild(m);
+
+				exports.push('windows', win);
+				iframe.$com.resize();
+
+				el.parent().aclass('invisible');
+			};
+
+			exports.winattach = function(children, el) {
+
+				var model = exports.model;
+				var id = 'app' + ATTRD(el);
+
+				el.parent().rclass('invisible');
+
+				for (var m of children)
+					el[0].appendChild(m);
+
+				model.windows.splice(model.windows.findIndex('id', id), 1);
+				exports.upd('windows');
+
+				var iframe = el.find('ui-component[name="iframe"]')[0];
+				iframe.$com.resize();
+			};
+
+			exports.winremove = function(children, el) {
+
+				var model = exports.model;
+				var id = 'app' + ATTRD(el);
+				var index = model.windows.findIndex('id', id);
+
+				if (index !== -1) {
+					model.windows.splice(index, 1);
+					exports.upd('windows');
+				}
+			};
+
+			exports.nextwindow = function(id) {
+
+				var model = exports.model;
+				var apps = model.running;
+				var running = [];
+
+				for (var item of apps) {
+					if (item.id !== 'welcome')
+						running.push(item.id);
+				}
+
+				var index = running.indexOf(id);
+				if (index === -1)
+					return;
+
+				index++;
+
+				if (index >= running.length)
+					index = 0;
+
+				var id = running[index];
+				id && EXEC('-parts/focus', id);
+			};
+
+			exports.refresh();
+			exports.watch('running', exports.checkapps);
+
+		});
+
+		$(W).on('hashchange', function() {
+			var hash = location.hash.substring(1);
+			if (hash) {
+				var arr = hash.split('~');
+				for (var app of common.apps) {
+					if (app.linker.indexOf(arr[0]) !== -1) {
+						EXEC('common/open', app.id, arr[1]);
+						break;
+					}
+				}
+			}
+		});
+
+		FIND('shortcuts', function(com) {
+			com.register('F1', AEXEC('common/search'), true);
+		});
+
+		// Component: Tangular-Time
+		// Version: 1
+		// Updated: 2021-10-07 20:10
+		Thelpers.time=function(value){if(!value)return value;var diff=Date.now()-(value instanceof Date?value:value.parseDate()).getTime();var minutes=((diff/1000)/60)>>0;if(minutes<60){if(minutes<3)return'now';return minutes+' minutes ago'}var hours=(minutes/60)>>0;if(hours<24)return hours+' '+Thelpers.pluralize(hours,'hours','hour','hours','hours')+' ago';var days=(hours/24)>>0;if(days<30)return days+' '+Thelpers.pluralize(days,'days','day','days','days')+' ago';var months=(days/29)>>0;if(months<12)return months+' '+Thelpers.pluralize(months,'months','month','months','months')+' ago';var years=(months/12)>>0;return years+' '+Thelpers.pluralize(years,'years','year','years','years')+' ago'};Thelpers.time2=function(value){return value?'<span class="ta-time" data-time="{0}" title="{2}">{1}</span>'.format(value.getTime(),Thelpers.time(value),value.format(null)):value};ON('knockknock',function(){$('.ta-time').each(function(){var el=$(this);el.html(Thelpers.time(new Date(+el.attrd('time'))))})});
+		// End: Tangular-Time
+
+		$(document).on('click', function(e) {
+			if (common.menu)
+				SET('common.menu', false);
+		});
+
+		WATCH('user', function(path, value) {
+			var model = { color: value.color || '@{CONF.color}', sound: value.sounds, notifications: value.notifications };
+			APPEARANCE(model);
+			EXEC('-parts/send', { TYPE: 'appearance', data: model });
+		});
+
+	</script>
+
+</body>
+</html>

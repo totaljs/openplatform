@@ -1,0 +1,80 @@
+<style>
+	.~PATH~ figure { padding: 8px 10px; border-radius: var(--radius); cursor: default; font-size: 13px; line-height: 16px; min-height: 55px; color: #888; }
+	.~PATH~ figure.exec { cursor: pointer; }
+	.~PATH~ figure:hover { background-color: #F8F8F8; }
+	.~PATH~ figure .photo { float: left; width: 40px; height: 40px; border-radius: var(--radius); margin-right: 10px; }
+	.~PATH~ figure .photo img { max-width: auto; width: 100%; height: auto; }
+	.~PATH~ figure .date { font-size: 11px; color: #999; margin-top: 3px; }
+	.~PATH~ figure .name { font-size: 12px; color: #333; margin: 0 0 3px; font-weight: bold; }
+	.~PATH~ figure .name i { margin-right: 5px; }
+	.~PATH~ figure.unread { color: #000; }
+	.~PATH~ figure.unread .date { font-weight: bold; color: var(--color); }
+</style>
+
+<ui-component name="box" path="common.panel" config="if:~PATH~;icon:ti ti-comments;title:@(Notifications);reload:?/reload;scrollbar:1;menu:?/menu;align:right;padding:15;background:false;width:350;closeoutside:1" class="hidden ~PATH~" plugin="~PATH~">
+	<nav>
+		<ui-bind path="?.items" config="show:value && value.length">
+			<button class="exec" data-exec="?/clear"><i class="ti ti-trash"></i>@(Clear)</button>
+		</ui-bind>
+	</nav>
+	<div>
+		<div style="padding:10px">
+			<ui-bind path="?.items" config="show:!value || !value.length" class="hidden">
+				<div class="empty" style="margin:15px">
+					<i class="ti ti-gamepad"></i>
+					<div>@(Time to relax!)</div>
+					<summary>@(You don't have any notifications)</summary>
+				</div>
+			</ui-bind>
+			<ui-bind path="?.items" config="template:figure">
+				<script type="text/html">
+					{{ foreach m in value }}
+					<figure data-id="{{ m.id }}" class="exec{{ if !m.isread }} unread{{ fi }}" data-exec="?/click">
+						<div class="name"><i class="{{ m.icon }}"{{ if m.color }} style="color:{{ m.color }}"{{ fi }}></i>{{ m.name }}</div>
+						<div>{{ m.body | raw }}</div>
+						<div class="date">{{ m.dtcreated | time }}</div>
+					</figure>
+					{{ end }}
+				</script>
+			</ui-bind>
+		</div>
+	</div>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		var prev = user.unread;
+
+		exports.reload = function(com) {
+			exports.refresh();
+		};
+
+		exports.click = function(el) {
+			var model = exports.model;
+			var id = ATTRD(el);
+			var item = model.items.findItem('id', id);
+			EXEC('common/open', item.appid, item.path);
+		};
+
+		exports.clear = function() {
+			exports.tapi('notifications_clear ERROR', () => exports.set('items', EMPTYARRAY));
+		};
+
+		exports.refresh = function() {
+			exports.tapi('notifications ERROR', function(response) {
+				prev = 0;
+				SET('user.unread', 0);
+				exports.set('items', response);
+			});
+		};
+
+		WATCH('user.unread', function(path, value) {
+			if (prev !== value && common.panel === exports.name)
+				exports.refresh();
+		});
+
+	});
+
+</script>

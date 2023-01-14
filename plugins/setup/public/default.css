@@ -1,0 +1,41 @@
+:root {
+	--radius: 5px;
+}
+
+html,body { overflow: hidden; height: 100%; margin: 0; padding: 0; }
+
+header { height: 50px; border-bottom: 1px solid #E0E0E0; }
+header label { float: left; line-height: 50px; font-size: 15px; color: #000; font-weight: bold; margin: 0 15px; }
+header label i { margin-right: 8px; }
+header .toolbar { float: right; margin: 12px 12px 0 0; }
+
+.nav { background: transparent; margin: 0; }
+.nav hr { margin: 8px 5px; border-color: #F0F0F0; }
+.color { color: var(--color); }
+
+.selection { width: 16px; height: 16px; border: 1px solid #D0D0D0; border-radius: var(--radius); font-size: 8px; float: left; text-align: center; margin-right: 8px; background-color: #FFF; line-height: 14px; color: #000; }
+.selection i { display: none; line-height: 14px; }
+.selection.selected i { display: block; }
+
+.ui-preview img { border-radius: 8px; }
+
+.button { border: 0; margin: 0; background-color: #E7E7E7; height: 40px; padding: 0 20px; color: #000; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; width: 100%; }
+.button i { width: 15px; text-align: center; margin-right: 5px; }
+.button:hover { opacity: 0.8; }
+.button[name='submit'] { font-weight: bold; background-color: var(--color); color: #FFF; }
+.button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: #A0A0A0 !important; cursor: not-allowed; box-shadow: none; }
+.button:disabled i { color: #A0A0A0 !important; }
+.button:first-child { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); }
+.button:last-child { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+.button.small { height: 24px; padding: 0 8px; line-height: 14px; font-size: 12px; }
+
+.dg-value .icon { width: 14px; text-align: center; margin-right: 7px; }
+.highlight { background-color: rgba(0,0,0,0.03); }
+.left { text-align: left; }
+.nmr { margin-right: 0; }
+
+.ui-navlayout > section { border-right: 1px solid #E0E0E0; background-color: #FFF; }
+.jc-xs .ui-navlayout > section, .jc-sm .ui-navlayout > section { border-right: 0; z-index: 10 !important; }
+
+.mobilemenu { width: 48px; height: 48px; line-height: 46px; font-size: 18px; border-radius: 100%; background-color: #FFF; box-shadow: 0 3px 20px rgba(0,0,0,0.15); text-align: center; position: absolute; left: 50%; margin-left: -24px; bottom: 20px; display: none; z-index: 11; }
+.jc-xs .mobilemenu, .jc-sm .mobilemenu { display: block; }

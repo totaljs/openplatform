@@ -1,0 +1,89 @@
+<ui-plugin>
+	<header>
+		<ui-bind path="?.checked" config="enabled .D:value && value.length >0 ">
+			<div class="toolbar">
+				<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle green"></i>@(Add)</button>
+				<button class="exec hidden-xs" data-exec="?/import"><i class="ti ti-file-import"></i><b>@(Import)</b></button>
+				<button class="exec hidden-xs" data-exec="?/refresh"><i class="ti ti-sync"></i>@(Refresh)</button>
+				<button class="exec D" data-exec="?/remove" disabled><i class="ti ti-remove red"></i>@(Remove)</button>
+			</div>
+		</ui-bind>
+		<label><i class="ti ti-rocket"></i>@(Apps)</label>
+	</header>
+
+	<ui-component name="datagrid" path="?.list" config="checked:?.checked;margin:50;height:main;click:?/detail;noborder:1" class="invisible">
+		<script type="text/plain">
+			[
+				{ name: 'id', text: '@(ID)', width: 120, monospace: 1, align: 1, hide: true },
+				{ name: 'name', text: '@(Name)', width: 270, template: '<i class="icon {{ icon }}"{{ if color }} style="color:{{ color }}"{{ fi }}></i>{{ name }}{{ if isdisabled }}<span class="badge badge-silver badge-small ml5">@(disabled)</span>{{ fi }}{{ if isbookmark }}<span class="badge badge-color badge-small ml5">@(bookmark)</span>{{ fi }}' },
+				{ name: 'notifications', text: '@(Notifications)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'isdisabled', text: '@(Disabled)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'isbookmark', text: '@(Bookmark)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'logged', text: '@(Used)', width: 120, type: 'number' },
+				{ name: 'dtlogged', text: '@(Last usage)', align: 1, format: '[ts]', type: 'date' },
+				{ name: 'dtupdated', text: '@(Updated)', align: 1, format: '[date]', type: 'date' },
+				{ name: 'dtcreated', text: '@(Created)', align: 1, format: '[date]', type: 'date' }
+			]
+		</script>
+	</ui-component>
+
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:formapp;url:/_setup/forms/app.html"></ui-component>
+<ui-component name="importer" path="common.form2" config="if:formimport;url:/_setup/forms/import.html"></ui-component>
+
+<script>
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.refresh = function(el) {
+			exports.tapi('apps ERROR @showloading', 'list @hideloading');
+		};
+
+		exports.create = function(data) {
+
+			var model = {};
+			if (data && !(data instanceof jQuery) && typeof(data) === 'object')
+				model = data;
+
+			if (!model.reqtoken)
+				model.reqtoken = (Math.random().toString(36).substring(2) + GUID(30)).toLowerCase();
+
+			if (!model.restoken)
+				model.restoken = (Math.random().toString(36).substring(2) + GUID(30)).toLowerCase();
+
+			SET('formapp @default', model);
+			SET('common.form', 'formapp');
+		};
+
+		exports.import = function(el) {
+			SET('formimport @default', {});
+			SET('common.form2', 'formimport');
+		};
+
+		exports.detail = function(row) {
+			exports.tapi('apps_read/' + ATTRD(row) + ' ERROR @showloading', function(response) {
+				SET('formapp @reset @hideloading', response);
+				SET('common.form', 'formapp');
+			});
+		};
+
+		exports.remove = function() {
+			var model = exports.model;
+			if (model.checked.length) {
+				EXEC('-approve/show', '@(Are you sure you want to remove selected apps?)', '@(Remove)', function() {
+					model.checked.wait(function(item, next) {
+						exports.tapi('apps_remove/{id}'.arg(item), next);
+					}, function() {
+						EXEC('-notify/success', '@(Done.)');
+						exports.refresh();
+					});
+				});
+			}
+		};
+
+	});
+</script>

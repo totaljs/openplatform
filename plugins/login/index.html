@@ -1,0 +1,208 @@
+@{layout('')}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>@(Login) - @{CONF.name}</title>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=10" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
+	<meta name="robots" content="all,follow" />
+	<link rel="stylesheet" href="@{'%cdn'}/spa.min@19.css" />
+	<script src="@{'%cdn'}/spa.min@19.js"></script>
+	<script src="@{REPO.uilogin}"></script>
+	<style>
+		:root {
+			--radius: 5px;
+		}
+		.button { border: 0; margin: 0; background-color: #E7E7E7; height: 40px; padding: 0 20px; color: #000; cursor: pointer; font-family: Arial; line-height: 34px; vertical-align: middle; outline: 0; font-size: 14px; text-decoration: none; transition: all 0.3s; width: 100%; }
+		.button i { width: 15px; text-align: center; margin-right: 5px; }
+		.button:hover { opacity: 0.8; }
+		.button[name='submit'] { font-weight: bold; background-color: var(--color); color: #FFF; }
+		.button:disabled { background-color: #F5F5F5 !important; border-color: #E0E0E0 !important; color: #A0A0A0 !important; cursor: not-allowed; box-shadow: none; }
+		.button:disabled i { color: #A0A0A0 !important; }
+		.button:first-child { border-top-left-radius: var(--radius); border-bottom-left-radius: var(--radius); }
+		.button:last-child { border-top-right-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+		.button.small { height: 24px; padding: 0 8px; line-height: 14px; font-size: 12px; }
+	</style>
+</head>
+<body>
+
+	<ui-component name="locale"></ui-component>
+	<ui-component name="exec"></ui-component>
+	<ui-component name="errorhandler"></ui-component>
+
+	<ui-component name="LAZY message" config="style:2"></ui-component>
+
+	<ui-component name="viewbox" config="centered:1;parent:window" class="invisible">
+
+		<ui-bind path="common.page" config="show:value==='login'" style="display:block;max-width:300px;margin:0 auto;text-align:left" class="hidden">
+			<div class="panel">
+				<ui-plugin path="pagelogin">
+					<ui-component name="autofill">
+						<ui-component name="enter" style="padding:var(--gap)">
+
+							<div class="center m">
+								<img src="@{'%icon'}" alt="@{'%name'}" style="width:100px" />
+								<div class="caption">
+									<label>@{'%name'}</label>
+								</div>
+							</div>
+
+							<ui-component name="input" path="?.email" config="type:email;required:1;placeholder:@(Enter e-mail address)" default="'@'" class="m">@(E-mail address)</ui-component>
+							<ui-component name="input" path="?.password" config="type:password;required:1;placeholder:@(Enter password)" class="m">@(Password)</ui-component>
+
+							<div class="fs12 mt5 m">
+								<div class="link exec" data-exec="gopage" data-id="reset"><i class="ti ti-caret-right mr5"></i>@(Reset password)</div>
+								<!--
+								<div class="link exec b" data-exec="gopage" data-id="create"><i class="ti ti-caret-right mr5"></i>@(Don't have an account?)</div>
+								-->
+							</div>
+
+							<ui-component name="validate" path="?">
+								<button name="submit" class="button exec" data-exec="?/submit" disabled><i class="ti ti-key"></i>@(SIGN IN)</button>
+							</ui-component>
+
+						</ui-component>
+					</ui-component>
+				</ui-plugin>
+			</div>
+		</ui-bind>
+
+		<ui-bind path="common.page" config="show:value==='reset'" style="display:block;max-width:300px;margin:0 auto;text-align:left" class="hidden">
+			<div class="panel">
+				<ui-plugin path="pagereset">
+					<ui-component name="enter" style="padding:var(--gap)">
+
+						<div class="center m">
+							<img src="@{'%icon'}" alt="@{'%name'}" style="width:100px" />
+							<div class="caption">
+								<label>@{'%name'}</label>
+							</div>
+						</div>
+
+						<ui-component name="input" path="?.email" config="type:email;required:1;placeholder:@(Enter e-mail address)" default="'@'">@(E-mail address)</ui-component>
+						<div class="help"><i class="ti ti-lightbulb"></i>@(You will receive instructions for resetting your password by email.)</div>
+
+						<hr />
+
+						<div class="fs12 m">
+							<div class="link exec" data-exec="gopage" data-id="login"><i class="ti ti-caret-right mr5"></i>@(Sign-in form)</div>
+							<!--
+							<div class="link exec b" data-exec="gopage" data-id="create"><i class="ti ti-caret-right mr5"></i>@(Don't have an account?)</div>
+							-->
+						</div>
+
+						<ui-component name="validate" path="?">
+							<button name="submit" class="button exec" data-exec="?/submit" disabled><i class="ti ti-check-circle"></i>@(RESET)</button>
+						</ui-component>
+
+					</ui-component>
+				</ui-plugin>
+			</div>
+		</ui-bind>
+
+		<ui-bind path="common.page" config="show:value==='create'" style="display:block;max-width:500px;margin:0 auto;text-align:left" class="hidden">
+			<div class="panel">
+				<ui-plugin path="pagecreate">
+					<div style="padding:var(--gap)">
+
+						<div class="center m">
+							<img src="@{'%icon'}" alt="@{'%name'}" style="width:100px" />
+							<div class="caption">
+								<label>@{'%name'}</label>
+							</div>
+						</div>
+
+						<br />
+
+						<div class="grid-2">
+							<div class="m">
+								<ui-component name="input" path="?.name" config="required:1;placeholder:@(Enter name)">@(Account name)</ui-component>
+							</div>
+							<div class="m">
+								<ui-component name="input" path="?.email" config="type:email;required:1;placeholder:@(Enter e-mail address)" default="'@'">@(E-mail address)</ui-component>
+							</div>
+						</div>
+						<div class="grid-2">
+							<div class="m">
+								<ui-component name="input" path="?.password" config="required:1;type:password;placeholder:@(Enter your password)">@(Password)</ui-component>
+							</div>
+							<div class="m">
+								<ui-component name="input" path="?.passwordreply" config="required:1;type:password;placeholder:@(Enter your password again)">@(Reply password)</ui-component>
+							</div>
+						</div>
+
+						<ui-bind path="?" config="show:value && value.password && value.passwordreply && value.password !== value.passwordreply" class="hidden">
+							<div class="message message-alert">
+								<i class="ti ti-warning"></i>@(Passwords do not match.)
+							</div>
+						</ui-bind>
+
+						<hr />
+
+						<div class="fs12 m">
+							<div class="link exec" data-exec="gopage" data-id="login"><i class="ti ti-caret-right mr5"></i>@(Sign-in form)</div>
+						</div>
+
+						<ui-component name="validate" path="?" config="if:value.password && value.password===value.passwordreply">
+							<button name="submit" class="button exec" data-exec="?/submit" disabled><i class="ti ti-check-circle"></i>@(CREATE ACCOUNT)</button>
+						</ui-component>
+					</div>
+				</ui-plugin>
+			</div>
+		</ui-bind>
+
+	</ui-component>
+
+	<script>
+
+		var common = {};
+
+		common.page = 'login';
+		DEF.webcomponentsonly = true;
+
+		function gopage(el) {
+			SET('common.page', ATTRD(el));
+		}
+
+		PLUGIN('pagelogin', function(exports) {
+
+			exports.submit = function() {
+				var model = exports.form;
+				exports.ajax('POST /api/login/ ERROR', model, function(response) {
+					location.href = '/';
+				});
+			};
+
+		});
+
+		PLUGIN('pagereset', function(exports) {
+
+			exports.submit = function() {
+				var model = exports.form;
+				exports.ajax('POST /api/reset/ ERROR', model, function() {
+					exports.set('@default', {});
+					SETTER('message/success', '@(You received an email with instructions for resetting your password.)');
+				});
+			};
+
+		});
+
+		PLUGIN('pagecreate', function(exports) {
+
+			exports.submit = function() {
+				var model = exports.form;
+				exports.ajax('POST /api/create/ ERROR', model, function() {
+					exports.set('@default', {});
+					SETTER('message/success', '@(Your account has been created successfully. A confirmation message was sent to your email address.)');
+				});
+			};
+
+		});
+
+	</script>
+
+</body>
+</html>

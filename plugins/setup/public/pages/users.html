@@ -1,0 +1,120 @@
+<ui-plugin>
+	<header>
+		<ui-bind path="?.checked" config="enabled .D:value && value.length >0 ">
+			<div class="toolbar">
+				<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle green"></i>@(Add)</button>
+				<button class="exec hidden-xs" data-exec="?/refresh"><i class="ti ti-sync"></i>@(Refresh)</button>
+				<button class="exec D hidden-xs" data-exec="?/assign" disabled><i class="ti ti-folder"></i>@(Assign)</button>
+				<button class="exec D" data-exec="?/remove" disabled><i class="ti ti-remove red"></i>@(Remove)</button>
+			</div>
+		</ui-bind>
+		<label><i class="ti ti-users"></i>@(Users)</label>
+	</header>
+
+	<ui-component name="datagrid" path="?.list" config="checked:?.checked;margin:50;height:main;click:?/detail;exec:?/filter;noborder:1" class="invisible">
+		<script type="text/plain">
+			[
+				{ name: 'id', text: '@(ID)', width: 120, monospace: 1, align: 1, hide: true },
+				{ name: 'name', text: '@(Name)', width: 300, class: 'highlight', template: '<i class="ti ti-bull mr5 {{ if isonline }}green{{ else }}red{{ fi }}"></i>{{ if photo }}<i class="icon ti ti-camera"></i>{{ fi }}{{ name }}{{ if isonline }}<span class="badge badge-green badge-small ml5">@(online)</span>{{ fi }}{{ if sa }}<span class="badge badge-red badge-small ml5">@(admin)</span>{{ fi }}' },
+				{ name: 'email', text: '@(Email)', width: 250, type: 'email' },
+				{ name: 'groups', text: '@(Groups)', width: 250, template: '{{ groups | users_groups }}' },
+				{ name: 'logged', text: '@(Logged)', width: 120, type: 'number' },
+				{ name: 'sa', text: '@(Admin)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'isonline', text: '@(Online)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'isdisabled', text: '@(Disabled)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'isinactive', text: '@(Inactive)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'dtlogged', text: '@(Logged)', align: 1, template: '{{ dtlogged | time }}', type: 'date' },
+				{ name: 'dtupdated', text: '@(Updated)', align: 1, format: '[date]', type: 'date' },
+				{ name: 'dtcreated', text: '@(Created)', align: 1, format: '[date]', type: 'date' }
+			]
+		</script>
+	</ui-component>
+
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:formuser;url:/_setup/forms/user.html"></ui-component>
+<ui-component name="importer" path="common.form" config="if:formassign;url:/_setup/forms/assign.html"></ui-component>
+
+<script>
+
+	Thelpers.users_groups = function(val) {
+
+		if (val) {
+			var arr = val.split(',');
+			var tmp = '';
+			for (var m of arr)
+				tmp += (tmp ? ' ' : '') + Thelpers.ui_datagrid_colorize(m.trim(), true);
+			return tmp;
+		}
+
+		return '';
+	};
+
+	PLUGIN(function(exports) {
+
+		var loaded = false;
+
+		exports.reload = function() {
+			exports.tapi('groups', '%groups');
+			loaded && exports.refresh();
+		};
+
+		exports.refresh = function() {
+			exports.nul('list');
+		};
+
+		exports.filter = function(type, filter, sort, page) {
+			if (!filter)
+				filter = {};
+			filter.sort = sort;
+			filter.page = page;
+			exports.tapi(QUERIFY('users', filter) + ' ERROR @showloading', 'list @hideloading');
+			loaded = true;
+		};
+
+		exports.create = function() {
+			SET('formuser @default', { iswelcome: true });
+			SET('common.form', 'formuser');
+		};
+
+		exports.detail = function(row) {
+			exports.tapi('users_read/' + ATTRD(row) + ' ERROR @showloading', function(response) {
+				SET('formuser @reset @hideloading', response);
+				SET('common.form', 'formuser');
+			});
+		};
+
+		exports.remove = function() {
+			var model = exports.model;
+			if (model.checked.length) {
+				EXEC('-approve/show', '@(Are you sure you want to remove selected users?)', '@(Remove)', function() {
+					model.checked.wait(function(item, next) {
+						exports.tapi('users_remove/{id}'.arg(item), next);
+					}, function() {
+						EXEC('-notify/success', '@(Done.)');
+						exports.refresh();
+					});
+				});
+			}
+		};
+
+		exports.assign = function() {
+			var model = exports.model;
+			var data = {};
+			data.callback = function(list) {
+				EXEC('-loading/show');
+				model.checked.wait(function(item, next) {
+					list.wait(function(groupid, resume) {
+						exports.tapi(QUERIFY('users_assign/{id}'.arg(item), { groupid: groupid }), resume);
+					}, next);
+				}, function() {
+					EXEC('-notify/success', '@(Done.)');
+					exports.refresh();
+				});
+			};
+			SET('formassign @default', data);
+			SET('common.form', 'formassign');
+		};
+
+	});
+</script>

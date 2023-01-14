@@ -1,0 +1,89 @@
+<ui-plugin>
+	<header>
+		<ui-bind path="?.checked" config="enabled .D:value && value.length >0 ">
+			<div class="toolbar">
+				<button class="exec" data-exec="?/refresh"><i class="ti ti-sync"></i>@(Refresh)</button>
+				<button class="exec D" data-exec="?/remove" disabled><i class="ti ti-remove red"></i>@(Remove)</button>
+			</div>
+		</ui-bind>
+		<label><i class="ti ti-bug"></i>@(Feedback)</label>
+	</header>
+
+	<ui-component name="datagrid" path="?.list" config="checked:?.checked;margin:50;height:main;click:?/detail;exec:?/filter;noborder:1" class="invisible">
+		<script type="text/plain">
+			[
+				{ name: 'id', text: '@(ID)', width: 120, monospace: 1, align: 1, hide: true },
+				{ name: 'iscomplete', text: '@(Solved)', width: 100, type: 'boolean', options: [{ name: '@(Solved)', id: true }, { name: '@(Open)', id: false }] },
+				{ name: 'account', text: '@(Account)', width: 200 },
+				{ name: 'rating', text: '@(Rating)', width: 120, template: '{{ rating | rating }}', align: 1 },
+				{ name: 'app', text: '@(App)', width: 200 },
+				{ name: 'email', text: '@(Email)', width: 250, type: 'email' },
+				{ name: 'ip', text: '@(IP)', width: 150, monospace: 1, align: 1 },
+				{ name: 'ua', text: '@(Device)', width: 150 },
+				{ name: 'updatedby', text: '@(Updated by)', width: 200 },
+				{ name: 'dtupdated', text: '@(Updated)', align: 1, format: '[ts]', type: 'date' },
+				{ name: 'dtcreated', text: '@(Created)', align: 1, format: '[ts]', type: 'date' }
+			]
+		</script>
+	</ui-component>
+
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:formfeedback;url:/_setup/forms/feedback.html"></ui-component>
+
+<script>
+
+	Thelpers.rating = function(val) {
+		var icon = '<i class="mr5 ti ti-star-alt silver"{0}></i>';
+		var builder = [];
+		for (var i = 0; i < 5; i++)
+			builder.push(icon.format(''));
+		for (var i = 0; i < val; i++)
+			builder[i] = icon.format(' style="color:#EC8632!important"');
+		return builder.join('');
+	};
+
+	PLUGIN(function(exports) {
+
+		var loaded = false;
+
+		exports.reload = function() {
+			loaded && exports.refresh();
+		};
+
+		exports.refresh = function() {
+			exports.nul('list');
+		};
+
+		exports.filter = function(type, filter, sort, page) {
+			if (!filter)
+				filter = {};
+			filter.sort = sort;
+			filter.page = page;
+			exports.tapi(QUERIFY('feedback', filter) + ' ERROR @showloading', 'list @hideloading');
+			loaded = true;
+		};
+
+		exports.detail = function(row) {
+			exports.tapi('feedback_read/' + ATTRD(row) + ' ERROR @showloading', function(response) {
+				SET('formfeedback @reset @hideloading', response);
+				SET('common.form', 'formfeedback');
+			});
+		};
+
+		exports.remove = function() {
+			var model = exports.model;
+			if (model.checked.length) {
+				EXEC('-approve/show', '@(Are you sure you want to remove selected feedback?)', '@(Remove)', function() {
+					model.checked.wait(function(item, next) {
+						exports.tapi('feedback_remove/{id}'.arg(item), next);
+					}, function() {
+						EXEC('-notify/success', '@(Done.)');
+						exports.refresh();
+					});
+				});
+			}
+		};
+
+	});
+</script>

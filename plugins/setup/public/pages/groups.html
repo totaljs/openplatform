@@ -1,0 +1,87 @@
+<ui-plugin>
+	<header>
+		<ui-bind path="?.checked" config="enabled .D:value && value.length >0 ">
+			<div class="toolbar">
+				<button class="exec" data-exec="?/create"><i class="ti ti-plus-circle green"></i>@(Add)</button>
+				<button class="exec hidden-xs" data-exec="?/refresh"><i class="ti ti-sync"></i>@(Refresh)</button>
+				<button class="exec D" data-exec="?/remove" disabled><i class="ti ti-remove red"></i>@(Remove)</button>
+			</div>
+		</ui-bind>
+		<label><i class="ti ti-folder"></i>@(Groups)</label>
+	</header>
+
+	<ui-component name="datagrid" path="?.list" config="checked:?.checked;margin:50;height:main;click:?/detail;noborder:1" class="invisible">
+		<script type="text/plain">
+			[
+				{ name: 'id', text: '@(ID)', width: 120, monospace: 1, align: 1, hide: true },
+				{ name: 'name', text: '@(Name)', width: 250, template: '<i class="icon {{ icon | empty(\'ti ti-folder\') }}"{{ if color }} style="color:{{ color }}"{{ fi }}></i>{{ name }}' },
+				{ name: 'users', text: '@(Users)', width: 100, type: 'number', align: 1 },
+				{ name: 'dtupdated', text: '@(Updated)', align: 1, format: '[date]', type: 'date' },
+				{ name: 'dtcreated', text: '@(Created)', align: 1, format: '[date]', type: 'date' }
+			]
+		</script>
+	</ui-component>
+
+</ui-plugin>
+
+<ui-component name="importer" path="common.form" config="if:formgroup;url:/_setup/forms/group.html"></ui-component>
+
+<script>
+	PLUGIN(function(exports) {
+
+		exports.reload = function() {
+			exports.refresh();
+		};
+
+		exports.refresh = function(el) {
+			exports.tapi('groups ERROR @showloading', 'list @hideloading');
+		};
+
+		exports.permissions = function(callback) {
+			exports.tapi('groups_apps ERROR', function(response) {
+
+				var permissions = [];
+				for (var m of response) {
+					permissions.push({ id: '_' + m.id });
+					for (var p of m.permissions)
+						permissions.push({ id: p.id });
+				}
+
+				SET('%permissions', permissions);
+				SET('%apps', response);
+				callback();
+			});
+		};
+
+		exports.create = function() {
+			exports.permissions(function() {
+				SET('formgroup @default', {});
+				SET('common.form', 'formgroup');
+			});
+		};
+
+		exports.detail = function(row) {
+			exports.permissions(function() {
+				exports.tapi('groups_read/' + ATTRD(row) + ' ERROR @showloading', function(response) {
+					SET('formgroup @reset @hideloading', response);
+					SET('common.form', 'formgroup');
+				});
+			});
+		};
+
+		exports.remove = function() {
+			var model = exports.model;
+			if (model.checked.length) {
+				EXEC('-approve/show', '@(Are you sure you want to remove selected groups?)', '@(Remove)', function() {
+					model.checked.wait(function(item, next) {
+						exports.tapi('groups_remove/{id}'.arg(item), next);
+					}, function() {
+						EXEC('-notify/success', '@(Done.)');
+						exports.refresh();
+					});
+				});
+			}
+		};
+
+	});
+</script>

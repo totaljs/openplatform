@@ -1,0 +1,65 @@
+<ui-component name="miniform" path="common.form2" config="if:~PATH~;title:@(Import app);icon:ti ti-file-import;autofocus:true;submit:?/submit;width:400;zindex:50" class="hidden" plugin="~PATH~">
+	<div style="padding:var(--gap)">
+		<div class="m"><img src="/_setup/import.png" class="img-responsive" alt="" /></div>
+		<p>@(Enter the URL for the OpenPlatform app metadata.)</p>
+		<ui-component name="input" path="?.url" config="innerlabel:1;type:url;required:1;placeholder:@(https://www.yourdomain.com/openplatform.json)">@(URL address)</ui-component>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(IMPORT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+		exports.submit = function(hide) {
+			var form = exports.form;
+			exports.tapi(QUERIFY('apps_download', { url: form.url }) + ' @showloading ERROR', function(response) {
+
+				var model = {};
+
+				model.meta = form.url;
+				model.name = response.name || '';
+				model.url = response.url || 'htpts://';
+				model.icon = response.icon || 'ti ti-rocket';
+				model.color = response.color || '';
+				model.permissions = response.permissions || [];
+
+				if (response.reqtoken)
+					model.reqtoken = response.reqtoken;
+
+				if (response.restoken)
+					model.restoken = response.restoken;
+
+				model.notifications = true;
+				model.disabled = false;
+				model.allow = response.origin || response.allow;
+
+				for (var m of model.permissions) {
+					if (m.id) {
+						m.value = m.id;
+						m.id = undefined;
+					}
+				}
+
+				if (model.allow)
+					model.allow = model.allow instanceof Array ? model.allow.join(', ') : model.allow.toString();
+				else
+					model.allow = '';
+
+				hide();
+
+				SETTER('loading/hide');
+
+				if (form.callback) {
+					form.callback(model);
+				} else
+					EXEC('pageapps/create', model);
+			});
+		};
+	});
+
+</script>

@@ -1,0 +1,10 @@
+@{layout('mail/layout')}
+
+<div>
+	<div style="font-size:16px;font-weight:bold;margin-bottom:10px">@(Reset your password)</div>
+	@(If you have lost your password or wish to reset it, use the link below to get started with <b>@{CONF.name}</b>.)
+	<div style="margin-top:15px;color:#888">@(You can safely ignore this email if you did not request a password reset. Account passwords can only be reset by someone who has access to your email.)</div>
+</div>
+<div style="margin:40px 0 20px">
+	<a href="@{CONF.url}/auth/?token=@{model.token}" target="_blank" style="padding:15px 30px;border-radius:6px;background-color:@{model.color};text-decoration:none;color:#FFF;font-weight:bold">@(Reset password)</a>
+</div>

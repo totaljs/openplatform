@@ -1,729 +1,327 @@
--- ==============================
+---------------------------------------
 -- TABLES
--- ==============================
+---------------------------------------
 
-CREATE TABLE "public"."cl_config" (
-	"id" varchar(30) NOT NULL,
-	"type" varchar(10),
+CREATE SCHEMA op;
+
+---------------------------------------
+-- TABLES
+---------------------------------------
+
+CREATE TABLE "op"."cl_config" (
+	"id" text NOT NULL,
 	"value" text,
-	"name" varchar(50),
+	"type" text,
+	"name" text,
+	"dtupdated" timestamp DEFAULT now(),
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "op"."tbl_group" (
+	"id" text NOT NULL,
+	"checksum" text,
+	"reference" text,
+	"name" text,
+	"color" text,
+	"icon" text,
+	"isdisabled" bool DEFAULT false,
+	"isprocessed" bool DEFAULT false,
+	"dtprocessed" timestamp,
 	"dtcreated" timestamp DEFAULT now(),
 	"dtupdated" timestamp,
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE "public"."cl_language" (
-	"id" varchar(2) NOT NULL,
-	"name" varchar(50),
-	"spoken" varchar(40),
-	"active" boolean DEFAULT true,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_user" (
-	"id" varchar(25) NOT NULL,
-	"supervisorid" varchar(25),
-	"deputyid" varchar(25),
-	"groupid" varchar(30),
-	"profileid" varchar(50),
-	"oauth2" varchar(25),
-	"accesstoken" varchar(50),
-	"verifytoken" varchar(20),
-	"directory" varchar(25),
-	"directoryid" int4,
-	"contractid" int4,
-	"statusid" int2,
-	"status" varchar(70),
-	"photo" varchar(80),
-	"name" varchar(80),
-	"linker" varchar(80),
-	"search" varchar(80),
-	"dateformat" varchar(20),
-	"timeformat" int2,
-	"numberformat" int2,
-	"firstname" varchar(40),
-	"lastname" varchar(40),
-	"middlename" varchar(40),
-	"gender" varchar(6),
-	"email" varchar(120),
-	"phone" varchar(30),
-	"company" varchar(40),
-	"locking" int2,
-	"pin" varchar(20),
-	"language" varchar(2),
-	"reference" varchar(100),
-	"locality" varchar(40),
-	"position" varchar(40),
-	"login" varchar(120),
-	"password" varchar(80),
-	"otpsecret" varchar(80),
-	"colorscheme" varchar(7),
-	"background" varchar(150),
-	"checksum" varchar(30),
-	"stamp" varchar(25),
-	"note" varchar(80),
-	"repo" jsonb,
-	"dn" varchar(500),
-	"ou" _varchar,
-	"roles" _varchar,
-	"groups" _varchar,
-	"groupshash" varchar(20),
-	"blocked" bool DEFAULT false,
-	"customer" bool DEFAULT false,
+CREATE TABLE "op"."tbl_user" (
+	"id" text NOT NULL,
+	"token" text,
+	"checksum" text,
+	"reference" text,
+	"language" text,
+	"gender" text,
+	"photo" text,
+	"name" text,
+	"search" text,
+	"email" text,
+	"password" text,
+	"color" text,
+	"interface" text,
+	"unread" int4 DEFAULT 0,
+	"darkmode" int2 DEFAULT 0,
+	"logged" int4 DEFAULT 0,
+	"sounds" bool DEFAULT true,
 	"notifications" bool DEFAULT true,
-	"notificationsemail" bool DEFAULT true,
-	"notificationsphone" bool DEFAULT false,
-	"countnotifications" int2 DEFAULT '0'::smallint,
-	"countbadges" int2 DEFAULT '0'::smallint,
-	"countsessions" int2 DEFAULT '0'::smallint,
-	"volume" int2 DEFAULT '50'::smallint,
 	"sa" bool DEFAULT false,
-	"darkmode" bool DEFAULT false,
-	"inactive" bool DEFAULT false,
-	"sounds" bool DEFAULT true,
-	"desktop" int2 DEFAULT '1'::smallint,
-	"otp" bool DEFAULT false,
-	"online" bool DEFAULT false,
-	"running" _varchar,
-	"dtbirth" timestamp,
-	"dtbeg" timestamp,
-	"dtend" timestamp,
-	"dtlogged" timestamp,
+	"isreset" bool DEFAULT false,
+	"isdisabled" bool DEFAULT false,
+	"isconfirmed" bool DEFAULT false,
+	"isinactive" bool DEFAULT false,
+	"isonline" bool DEFAULT false,
+	"isprocessed" bool DEFAULT false,
+	"isremoved" bool DEFAULT false,
+	"cache" json,
+	"cachefilter" _text,
+	"dtbirth" date,
 	"dtnotified" timestamp,
-	"dtpassword" timestamp,
-	"dtmodified" timestamp,
-	"dtupdated" timestamp,
-	"dtcreated" timestamp DEFAULT now(),
-	CONSTRAINT "tbl_user_supervisorid_fkey" FOREIGN KEY ("supervisorid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_user_deputyid_fkey" FOREIGN KEY ("deputyid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
-	PRIMARY KEY(id)
-);
-
-CREATE TABLE "public"."tbl_app" (
-	"id" varchar(25) NOT NULL,
-	"typeid" varchar(10),
-	"url" varchar(500),
-	"origintoken" varchar(50),
-	"accesstoken" varchar(50),
-	"checksum" varchar(30),
-	"name" varchar(30),
-	"title" varchar(40),
-	"titles" json, -- localized titles
-	"reference" varchar(40),
-	"linker" varchar(40),
-	"servicetoken" varchar(40),
-	"search" varchar(40),
-	"description" varchar(100),
-	"sn" varchar(50),
-	"author" varchar(50),
-	"type" varchar(30),
-	"icon" varchar(30),
-	"color" varchar(7),
-	"frame" varchar(500),
-	"email" varchar(120),
-	"roles" _varchar,
-	"origin" _varchar,
-	"directories" _varchar,
-	"custom" varchar(1000),
-	"hostname" varchar(80),
-	"version" varchar(20),
-	"position" int2 DEFAULT '0'::smallint,
-	"width" int2,
-	"height" int2,
-	"settings" jsonb,
-	"services" jsonb,
-	"allownotifications" bool DEFAULT true,
-	"allowmail" bool DEFAULT false,
-	"allowsms" bool DEFAULT false,
-	"allowreadusers" int2 DEFAULT '0'::smallint,
-	"allowreadapps" int2 DEFAULT '0'::smallint,
-	"allowreadprofile" int2 DEFAULT '0'::smallint,
-	"allowreadmeta" bool DEFAULT true,
-	"allowguestuser" bool DEFAULT false,
-	"mobilemenu" bool DEFAULT false,
-	"autorefresh" bool DEFAULT false,
-	"serververify" bool DEFAULT true,
-	"responsive" bool DEFAULT false,
-	"blocked" bool DEFAULT false,
-	"screenshots" bool DEFAULT false,
-	"resize" bool DEFAULT true,
-	"guest" bool DEFAULT false,
-	"online" bool DEFAULT false,
-	"dtupdated" timestamp,
-	"dtcreated" timestamp DEFAULT now(),
-	"dtsync" timestamp,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_user_app" (
-	"id" varchar(50) NOT NULL,
-	"userid" varchar(25),
-	"appid" varchar(25),
-	"version" varchar(10),
-	"roles" _varchar,
-	"position" int2 DEFAULT 0,
-	"settings" varchar(100),
-	"sounds" bool DEFAULT true,
-	"notifications" bool DEFAULT true,
-	"inherited" bool DEFAULT false,
-	"favorite" bool DEFAULT false,
-	"countnotifications" int4 DEFAULT 0,
-	"countbadges" int4 DEFAULT 0,
-	"countopen" int4 DEFAULT 0,
-	"dtopen" timestamp,
-	"dtcreated" timestamp,
-	"dtupdated" timestamp,
-	CONSTRAINT "tbl_user_app_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_user_app_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_user_removed" (
-	"id" varchar(25) NOT NULL,
-	"contractid" int2,
-	"groupid" varchar(25),
-	"reference" varchar(25),
-	"groups" _varchar,
-	"dtcreated" timestamp,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_user_config" (
-	"id" varchar(50) NOT NULL,
-	"userid" varchar(25),
-	"appid" varchar(25),
-	"body" text,
-	"dtcreated" timestamp,
-	"dtupdated" timestamp,
-	CONSTRAINT "tbl_user_config_id_fkey" FOREIGN KEY ("id") REFERENCES "public"."tbl_user_app"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_user_config_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_user_config_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE
-);
-
-CREATE TABLE "public"."tbl_user_session" (
-	"id" varchar(25) NOT NULL,
-	"userid" varchar(25),
-	"profileid" varchar(50),
-	"ip" cidr,
-	"ua" varchar(50),
-	"referrer" varchar(150),
-	"locked" bool DEFAULT false,
-	"logged" int4 DEFAULT 0,
-	"online" bool DEFAULT false,
-	"dtexpire" timestamp,
-	"dtcreated" timestamp,
 	"dtlogged" timestamp,
-	CONSTRAINT "tbl_user_session_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_log" (
-	"id" serial,
-	"userid" varchar(25),
-	"rowid" varchar(50),
-	"type" varchar(80),
-	"message" varchar(500),
-	"username" varchar(60),
-	"ua" varchar(30),
-	"data" text,
-	"ip" cidr,
-	"dtcreated" timestamp DEFAULT NOW(),
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_user_notification" (
-	"id" varchar(25) NOT NULL,
-	"userappid" varchar(50),
-	"userid" varchar(25),
-	"appid" varchar(25),
-	"type" int2,
-	"title" varchar(100),
-	"body" varchar(1000),
-	"data" varchar(1000),
-	"ip" cidr,
-	"unread" boolean DEFAULT TRUE,
+	"dtprocessed" timestamp,
+	"dtpassword" timestamp,
 	"dtcreated" timestamp DEFAULT now(),
-	CONSTRAINT "tbl_notification_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_notification_userappid_fkey" FOREIGN KEY ("userappid") REFERENCES "public"."tbl_user_app"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_notification_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE
-);
-
-CREATE TABLE "public"."tbl_user_report" (
-	"id" varchar(25) NOT NULL,
-	"userid" varchar(25),
-	"appid" varchar(25),
-	"type" varchar(30),
-	"subject" varchar(100),
-	"body" text,
-	"ip" cidr,
-	"username" varchar(50),
-	"useremail" varchar(120),
-	"userphoto" varchar(80),
-	"userposition" varchar(40),
-	"appname" varchar(50),
-	"appicon" varchar(30),
-	"screenshot" boolean DEFAULT false,
-	"solved" bool DEFAULT false,
-	"priority" bool DEFAULT false,
-	"dtsolved" timestamp,
-	"dtcreated" timestamp DEFAULT now(),
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_user_member" (
-	"id" varchar(25) NOT NULL,
-	"userid" varchar(25),
-	"email" varchar(120),
-	"dtcreated" timestamp,
-	CONSTRAINT "tbl_user_member_userid_fkey" FOREIGN KEY ("userid") REFERENCES "public"."tbl_user"("id") ON DELETE CASCADE,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."cl_role" (
-	"id" varchar(50) NOT NULL,
-	"name" varchar(50)
-);
-
-CREATE TABLE "public"."tbl_group" (
-	"id" varchar(50) NOT NULL,
-	"parentid" varchar(50),
-	"name" varchar(50),
-	"note" varchar(200),
-	"dtcreated" timestamp,
-	"dtupdated" timestamp,
-	CONSTRAINT "tbl_group_parentid_fkey" FOREIGN KEY ("parentid") REFERENCES "public"."tbl_group"("id") ON DELETE CASCADE,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_group_app" (
-	"id" varchar(75) NOT NULL,
-	"groupid" varchar(50),
-	"appid" varchar(25),
-	"roles" _varchar,
-	CONSTRAINT "tbl_group_app_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE,
-	CONSTRAINT "tbl_group_app_groupid_fkey" FOREIGN KEY ("groupid") REFERENCES "public"."tbl_group"("id") ON DELETE CASCADE,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_oauth" (
-	"id" varchar(25) NOT NULL,
-	"accesstoken" varchar(50),
-	"name" varchar(40),
-	"url" varchar(500),
-	"icon" varchar(30),
-	"version" varchar(20),
-	"allowreadprofile" int2 DEFAULT 0,
-	"allowreadapps" int2 DEFAULT 0,
-	"allowreadusers" int2 DEFAULT 0,
-	"allowreadmeta" int2 DEFAULT 0,
-	"blocked" bool DEFAULT false,
-	"dtused" timestamp,
-	"dtcreated" timestamp,
+	"dtremoved" timestamp,
 	"dtupdated" timestamp,
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE "public"."tbl_usage" (
-	"id" varchar(10) NOT NULL,
-	"online" int4 DEFAULT 0,
+COMMENT ON COLUMN "op"."tbl_user"."checksum" IS 'It can help with synchronization users from difference sources';
+COMMENT ON COLUMN "op"."tbl_user"."isprocessed" IS 'Was the record processed by 3rd party system?';
+
+CREATE TABLE "op"."tbl_session" (
+	"id" text NOT NULL,
+	"userid" text,
+	"ua" text,
+	"ip" text,
+	"isonline" bool DEFAULT false,
+	"isreset" bool DEFAULT false,
 	"logged" int4 DEFAULT 0,
-	"maxonline" int4 DEFAULT 0,
+	"device" text,
+	"dtlogged" timestamp,
+	"dtexpire" timestamp,
+	"dtcreated" timestamp DEFAULT now(),
+	CONSTRAINT "tbl_session_userid_fkey" FOREIGN KEY ("userid") REFERENCES "op"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "op"."tbl_app" (
+	"id" text NOT NULL,
+	"checksum" text,
+	"reference" text,
+	"name" text,
+	"color" text,
+	"icon" text,
+	"meta" text,
+	"url" text,
+	"reqtoken" text,
+	"restoken" text,
+	"allow" text,
+	"cache" json,
+	"sortindex" int2 DEFAULT 0,
+	"notifications" bool DEFAULT true,
+	"isnewtab" bool DEFAULT false,
+	"isbookmark" bool DEFAULT false,
+	"isprocessed" bool DEFAULT false,
+	"isdisabled" bool DEFAULT false,
+	"isremoved" bool DEFAULT false,
+	"logged" int4 DEFAULT 0,
+	"dtlogged" timestamp,
+	"dtprocessed" timestamp,
+	"dtupdated" timestamp,
+	"dtcreated" timestamp DEFAULT now(),
+	"dtremoved" timestamp,
+	PRIMARY KEY ("id")
+);
+
+COMMENT ON COLUMN "op"."tbl_app"."allow" IS 'Allows only specific IP addresses';
+
+CREATE TABLE "op"."tbl_app_permission" (
+	"id" text NOT NULL,
+	"appid" text,
+	"name" text,
+	"value" text,
+	"sortindex" int2 DEFAULT 0,
+	CONSTRAINT "tbl_app_permission_appid_fkey" FOREIGN KEY ("appid") REFERENCES "op"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "op"."tbl_group_permission" (
+	"id" text NOT NULL,
+	"appid" text,
+	"permissionid" text,
+	"groupid" text,
+	CONSTRAINT "tbl_group_permission_appid_fkey" FOREIGN KEY ("appid") REFERENCES "op"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_group_permission_permissionid_fkey" FOREIGN KEY ("permissionid") REFERENCES "op"."tbl_app_permission"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_group_permission_groupid_fkey" FOREIGN KEY ("groupid") REFERENCES "op"."tbl_group"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "op"."tbl_app_session" (
+	"id" text NOT NULL,
+	"sessionid" text,
+	"userid" text,
+	"appid" text,
+	"device" text,
+	"ip" text,
+	"url" text,
+	"reqtoken" text,
+	"restoken" text,
+	"dtexpire" timestamp,
+	"dtcreated" timestamp DEFAULT now(),
+	CONSTRAINT "tbl_app_session_sessionid_fkey" FOREIGN KEY ("sessionid") REFERENCES "op"."tbl_session"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_app_session_appid_fkey" FOREIGN KEY ("appid") REFERENCES "op"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_app_session_userid_fkey" FOREIGN KEY ("userid") REFERENCES "op"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+COMMENT ON COLUMN "op"."tbl_app_session"."reqtoken" IS 'Pregenerated for verification purpose only';
+COMMENT ON COLUMN "op"."tbl_app_session"."restoken" IS 'Pregenerated for verification purpose only';
+
+CREATE TABLE "op"."tbl_notification" (
+	"id" text NOT NULL,
+	"userid" text,
+	"appid" text,
+	"color" text,
+	"icon" text,
+	"name" text,
+	"body" text,
+	"path" text,
+	"isread" bool DEFAULT false,
+	"dtcreated" timestamp DEFAULT now(),
+	CONSTRAINT "tbl_notification_userid_fkey" FOREIGN KEY ("userid") REFERENCES "op"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_notification_appid_fkey" FOREIGN KEY ("appid") REFERENCES "op"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "op"."tbl_user_app" (
+	"id" text NOT NULL,
+	"userid" text,
+	"appid" text,
+	"notify" text,
+	"notifytoken" text,
+	"unread" int4 DEFAULT 0,
+	"badges" int4 DEFAULT 0,
+	"sortindex" int2 DEFAULT 0,
+	"isfavorite" bool DEFAULT false,
+	"notifications" bool DEFAULT true,
+	"muted" timestamp,
+	"dtupdated" timestamp DEFAULT now(),
+	CONSTRAINT "tbl_user_app_userid_fkey" FOREIGN KEY ("userid") REFERENCES "op"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_user_app_appid_fkey" FOREIGN KEY ("appid") REFERENCES "op"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+CREATE TABLE "op"."tbl_user_group" (
+	"id" text NOT NULL,
+	"userid" text,
+	"groupid" text,
+	CONSTRAINT "tbl_user_group_groupid_fkey" FOREIGN KEY ("groupid") REFERENCES "op"."tbl_group"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_user_group_userid_fkey" FOREIGN KEY ("userid") REFERENCES "op"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY ("id")
+);
+
+COMMENT ON COLUMN "op"."tbl_user_group"."id" IS 'userid + groupid';
+
+CREATE TABLE "op"."tbl_visitor" (
+	"id" int4 NOT NULL,
+	"maxlogged" int4 DEFAULT 0,
 	"desktop" int4 DEFAULT 0,
 	"mobile" int4 DEFAULT 0,
-	"windowed" int4 DEFAULT 0,
-	"tabbed" int4 DEFAULT 0,
-	"portal" int4 DEFAULT 0,
-	"lightmode" int4 DEFAULT 0,
-	"darkmode" int4 DEFAULT 0,
+	"tablet" int4 DEFAULT 0,
 	"date" date,
-	"dtupdated" timestamp,
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE "public"."tbl_usage_app" (
-	"id" varchar(35) NOT NULL,
-	"appid" varchar(25),
-	"count" int4 DEFAULT 0,
-	"mobile" int4 DEFAULT 0,
-	"desktop" int4 DEFAULT 0,
-	"windowed" int4 DEFAULT 0,
-	"tabbed" int4 DEFAULT 0,
-	"portal" int4 DEFAULT 0,
-	"lightmode" int4 DEFAULT 0,
-	"darkmode" int4 DEFAULT 0,
-	"date" date,
+CREATE TABLE "op"."tbl_feedback" (
+	"id" text NOT NULL,
+	"userid" text,
+	"appid" text,
+	"account" text,
+	"email" text,
+	"app" text,
+	"ua" text,
+	"ip" text,
+	"body" text,
+	"rating" int2 DEFAULT 0,
+	"updatedby" text,
+	"iscomplete" bool DEFAULT false,
+	"dtcreated" timestamp DEFAULT now(),
 	"dtupdated" timestamp,
-	CONSTRAINT "tbl_usage_app_appid_fkey" FOREIGN KEY ("appid") REFERENCES "public"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_feedback_appid_fkey" FOREIGN KEY ("appid") REFERENCES "op"."tbl_app"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT "tbl_feedback_userid_fkey" FOREIGN KEY ("userid") REFERENCES "op"."tbl_user"("id") ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE "public"."tbl_usage_browser" (
-	"id" varchar(35) NOT NULL,
-	"count" int2,
-	"name" varchar(50),
-	"windowed" int4 DEFAULT 0,
-	"tabbed" int4 DEFAULT 0,
-	"portal" int4 DEFAULT 0,
-	"lightmode" int4 DEFAULT 0,
-	"darkmode" int4 DEFAULT 0,
-	"mobile" bool DEFAULT false,
-	"date" date,
-	"dtupdated" timestamp,
-	PRIMARY KEY ("id")
-);
-
-CREATE TABLE "public"."tbl_usage_oauth" (
-	"id" varchar(35) NOT NULL,
-	"oauthid" varchar(25),
-	"count" int4 DEFAULT 0,
-	"mobile" int4 DEFAULT 0,
-	"desktop" int4 DEFAULT 0,
-	"windowed" int4 DEFAULT 0,
-	"tabbed" int4 DEFAULT 0,
-	"portal" int4 DEFAULT 0,
-	"lightmode" int4 DEFAULT 0,
-	"darkmode" int4 DEFAULT 0,
-	"date" date,
-	"dtupdated" timestamp,
-	CONSTRAINT "tbl_usage_oauth_oauthid_fkey" FOREIGN KEY ("oauthid") REFERENCES "public"."tbl_oauth"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY ("id")
-);
-
--- ==============================
--- VIEWS
--- ==============================
-
-CREATE VIEW view_user AS
-	SELECT a.id,
-		a.supervisorid,
-		a.deputyid,
-		a.groupid,
-		a.profileid,
-		a.directory,
-		a.directoryid,
-		a.statusid,
-		a.status,
-		a.photo,
-		a.name,
-		a.linker,
-		a.search,
-		a.note,
-		a.firstname,
-		a.lastname,
-		a.middlename,
-		a.gender,
-		a.email,
-		a.phone,
-		a.company,
-		a.locking,
-		a.pin,
-		a.ou,
-		a.language,
-		a.reference,
-		a.locality,
-		a."position",
-		a.roles,
-		a.groups,
-		a.blocked,
-		a.customer,
-		a.notifications,
-		a.notificationsemail,
-		a.notificationsphone,
-		a.sa,
-		a.inactive,
-		a.online,
-		a.countsessions,
-		a.countbadges,
-		a.countnotifications,
-		a.otp,
-		a.sounds,
-		a.contractid,
-		a.colorscheme,
-		a.darkmode,
-		a.background,
-		a.desktop,
-		a.dateformat,
-		a.timeformat,
-		a.numberformat,
-		a.running,
-		a.dtbirth,
-		a.dtbeg,
-		a.dtend,
-		a.dtupdated,
-		a.dtcreated,
-		a.dtlogged,
-		a.dtmodified,
-		a.oauth2,
-		a.dn,
-		CASE WHEN (length(a.deputyid) > 0) THEN (SELECT b.name FROM tbl_user b WHERE b.id = a.deputyid LIMIT 1) ELSE ''::text END AS deputy,
-		CASE WHEN (length(a.supervisorid) > 0) THEN (SELECT c.name FROM tbl_user c WHERE c.id=a.supervisorid LIMIT 1) ELSE ''::text END AS supervisor
-	FROM tbl_user a;
-
--- ==============================
+---------------------------------------
 -- INDEXES
--- ==============================
+---------------------------------------
 
-CREATE INDEX tbl_user_app_idx_query ON tbl_user_app(userid text_ops);
-CREATE INDEX tbl_user_idx_login ON tbl_user(login text_ops);
-CREATE INDEX tbl_user_idx_member ON tbl_user(email text_ops);
-CREATE INDEX tbl_user_member_idx_user ON tbl_user_member(userid text_ops);
-CREATE INDEX tbl_user_idx_group ON tbl_user(groupshash text_ops);
-CREATE INDEX tbl_user_notification_idx_query ON tbl_user_notification(userappid text_ops);
-CREATE INDEX tbl_user_idx_reference ON tbl_user(reference text_ops);
-CREATE INDEX tbl_user_inx_dn ON tbl_user(dn text_ops);
+CREATE INDEX "tbl_user_idx" ON "op"."tbl_user" USING BTREE ("email");
+CREATE INDEX "tbl_session_idx" ON "op"."tbl_session" USING BTREE ("userid");
+CREATE INDEX "tbl_notification_idx" ON "op"."tbl_notification" USING BTREE ("userid","dtcreated");
+CREATE INDEX "tbl_user_group_idx" ON "op"."tbl_user_group" USING BTREE ("userid","groupid");
 
--- ==============================
--- COMMENTS
--- ==============================
+---------------------------------------
+-- VIEWS
+---------------------------------------
 
-COMMENT ON COLUMN "public"."tbl_user_app"."id" IS 'userid + appid';
-COMMENT ON COLUMN "public"."tbl_user_app"."inherited" IS 'Is the app inherited from a group?';
-COMMENT ON COLUMN "public"."tbl_user_notification"."userappid" IS 'userid + appid';
-COMMENT ON COLUMN "public"."tbl_user_config"."id" IS 'userid + appid';
-COMMENT ON COLUMN "public"."tbl_app"."url" IS 'URL address to openplatform.json';
-COMMENT ON COLUMN "public"."tbl_app"."frame" IS 'Frame URL address';
+CREATE OR REPLACE VIEW op.view_user AS
+	SELECT
+		a.id,
+		a.name,
+		a.language,
+		a.gender,
+		a.photo,
+		a.search,
+		a.email,
+		a.color,
+		a.interface,
+		a.unread,
+		a.darkmode,
+		a.logged,
+		a.sounds,
+		a.notifications,
+		a.sa,
+		a.isdisabled,
+		a.isinactive,
+		a.dtbirth,
+		a.dtlogged,
+		a.dtpassword,
+		a.dtcreated,
+		a.dtupdated,
+		a.dtnotified,
+		array_to_string(ARRAY(SELECT b.name FROM op.tbl_group b WHERE (b.id IN (SELECT c.groupid FROM op.tbl_user_group c WHERE c.userid = a.id))), ', '::text) AS groups,
+		a.isonline
+	FROM op.tbl_user a
+		WHERE a.isremoved = false;
 
--- ==============================
+CREATE OR REPLACE VIEW op.view_group AS
+	SELECT
+		a.id,
+		a.reference,
+		a.name,
+		a.color,
+		a.icon,
+		a.isdisabled,
+		a.dtcreated,
+		a.dtupdated,
+		(SELECT count(1) AS count FROM op.tbl_user_group b WHERE b.groupid = a.id) AS users
+	FROM op.tbl_group a;
+
+---------------------------------------
 -- DATA
--- ==============================
+---------------------------------------
 
-/*
--- INSERT UI Components
-INSERT INTO "public"."cl_component" ("id") VALUES
-('https://cdn.componentator.com/designer/components.json');
-*/
+INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
+	('app_session_expire', '1 day', 'string', 'App session expiration'),
+	('auth_cookie', '{cookie}', 'string', 'Cookie name'),
+	('auth_cookie_expire', '1 month', 'string', 'Cookie expiration'),
+	('auth_cookie_options', '{"httponly":true,"secure":true,"security":"lax"}', 'object', 'Cookie settings'),
+	('auth_expire', '5 minutes', 'string', 'Session expiration'),
+	('auth_secret', '{secret}', 'string', 'Cookie secret'),
+	('auth_strict', 'false', 'boolean', 'Strict session'),
+	('allow_tms', 'false', 'boolean', 'Allow TMS'),
+	('cdn', 'https://cdn.componentator.com/', 'string', 'CDN'),
+	('color', '#4285F4', 'string', 'Color'),
+	('icon', '', 'string', 'Icon'),
+	('id', '{id}', 'string', 'ID'),
+	('language', '', 'string', 'A default language'),
+	('mail_from', '', 'string', 'Sender address'),
+	('mail_smtp', '', 'string', 'SMTP server'),
+	('mail_smtp_options', '{"port":465,"secure":true,"user":"","password":""}', 'object', 'SMTP options'),
+	('name', 'OpenPlatform', 'string', 'Name'),
+	('salt', '{salt}', 'string', 'Salt for passwords'),
+	('saltchecksum', '{saltchecksum}', 'string', 'Salf for checksums'),
+	('secret', '{secret}', 'string', 'Secret for tokens'),
+	('secret_tms', '{tms}', 'string', 'TMS token'),
+	('url', '{url}', 'string', 'URL address');
 
--- INSERT DEFAULT CONFIGURATION
-INSERT INTO "public"."cl_config" ("id", "type", "value", "name", "dtcreated") VALUES
-('accesstoken', 'string', (SELECT md5(random()::text)), 'accesstoken', NOW()),
-('auth_cookie', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_cookie', NOW()),
-('auth_secret', 'string', (SELECT SUBSTRING(md5(random()::text)::text, 0, 10)), 'auth_secret', NOW()),
-('cdn', 'string', '//cdn.componentator.com', 'cdn', NOW()),
-('language', 'string', 'en', 'language', NOW()),
-('dateformat', 'string', 'yyyy-MM-dd', 'dateformat', NOW()),
-('timeformat', 'number', '24', 'timeformat', NOW()),
-('desktop', 'number', '3', 'desktop', NOW()),
-('numberformat', 'number', '1', 'numberformat', NOW()),
-('allow_custom_titles', 'boolean', 'true', 'allow_custom_titles', NOW()),
-('allowappearance', 'boolean', 'true', 'allowappearance', NOW()),
-('allowbackground', 'boolean', 'true', 'allowbackground', NOW()),
-('allowpassword', 'boolean', 'true', 'allowpassword', NOW()),
-('allowclock', 'boolean', 'true', 'allowclock', NOW()),
-('allowcreate', 'string', '', 'allowcreate', NOW()),
-('allowdesktop', 'boolean', 'true', 'allowdesktop', NOW()),
-('allowdesktopfluid', 'boolean', 'true', 'allowdesktopfluid', NOW()),
-('allowmembers', 'boolean', 'true', 'allowmembers', NOW()),
-('allownickname', 'boolean', 'true', 'allownickname', NOW()),
-('allownotifications', 'boolean', 'true', 'allownotifications', NOW()),
-('allowprofile', 'boolean', 'true', 'allowprofile', NOW()),
-('allowsmembers', 'boolean', 'false', 'allowsmembers', NOW()),
-('allowstatus', 'boolean', 'true', 'allowstatus', NOW()),
-('allowtheme', 'boolean', 'true', 'allowtheme', NOW()),
-('allowaccesstoken', 'boolean', 'true', 'allowaccesstoken', NOW()),
-('allowoauth', 'boolean', 'true', 'allowoauth', NOW()),
-('background', 'string', '', 'background', NOW()),
-('colorscheme', 'string', '#4285f4', 'colorscheme', NOW()),
-('cookie_expiration', 'string', '3 days', 'cookie_expiration', NOW()),
-('defaultappid', 'string', '', 'defaultappid', NOW()),
-('email', 'string', 'info@totaljs.com', 'email', NOW()),
-('guest', 'boolean', 'false', 'guest', NOW()),
-('marketplace', 'string', 'https://marketplace.openplatform.cloud', 'marketplace', NOW()),
-('maxmembers', 'number', '10', 'maxmembers', NOW()),
-('name', 'string', 'OpenPlatform', 'name', NOW()),
-('mode', 'string', 'dev', 'mode', NOW()),
-('sender', 'string', 'info@totaljs.com', 'sender', NOW()),
-('smtp', 'string', 'localhost', 'smtp', NOW()),
-('smtpsettings', 'json', '{"user":"","password":"","timeout":2000}', 'smtpsettings', NOW()),
-('test', 'boolean', 'true', 'test', NOW()),
-('url', 'string', 'https://YOURDOMAIN.com', 'url', NOW()),
-('verifytoken', 'string', SUBSTRING((SELECT md5(random()::text)), 0, 25), 'verifytoken', NOW()),
-('welcome', 'string', '', 'welcome', NOW());
-
--- INSERT LANGUAGES
-INSERT INTO "public"."cl_language" ("id", "name", "spoken") VALUES
-('aa', 'Afar', 'Afaraf'),
-('ab', 'Abkhaz', 'Аҧсуа'),
-('ae', 'Avestan', 'avesta'),
-('af', 'Afrikaans', 'Afrikaans'),
-('ak', 'Akan', 'Akan'),
-('am', 'Amharic', 'አማርኛ'),
-('an', 'Aragonese', 'Aragonés'),
-('ar', 'Arabic', 'العربية'),
-('as', 'Assamese', 'অসমীয়া'),
-('av', 'Avaric', 'авар мацӀ; магӀарул мацӀ'),
-('ay', 'Aymara', 'aymar aru'),
-('az', 'Azerbaijani', 'azərbaycan dili'),
-('ba', 'Bashkir', 'башҡорт теле'),
-('be', 'Belarusian', 'Беларуская'),
-('bg', 'Bulgarian', 'български език'),
-('bh', 'Bihari', 'भोजपुरी'),
-('bi', 'Bislama', 'Bislama'),
-('bm', 'Bambara', 'bamanankan'),
-('bn', 'Bengali', 'বাংলা'),
-('bo', 'Tibetan', 'བོད་ཡིག'),
-('br', 'Breton', 'brezhoneg'),
-('bs', 'Bosnian', 'bosanski jezik'),
-('ca', 'Catalan', 'Català'),
-('ce', 'Chechen', 'нохчийн мотт'),
-('ch', 'Chamorro', 'Chamoru'),
-('co', 'Corsican', 'corsu; lingua corsa'),
-('cr', 'Cree', 'ᓀᐦᐃᔭᐍᐏᐣ'),
-('cs', 'Czech', 'čeština'),
-('cu', 'Church Slavic', 'словѣньскъ ѩꙁꙑкъ'),
-('cv', 'Chuvash', 'чӑваш чӗлхи'),
-('cy', 'Welsh', 'Cymraeg'),
-('da', 'Danish', 'dansk'),
-('de', 'German', 'Deutsch'),
-('dv', 'Divehi', 'ދިވެހި'),
-('dz', 'Dzongkha', 'རྫོང་ཁ'),
-('ee', 'Ewe', 'Ɛʋɛgbɛ'),
-('el', 'Greek', 'Ελληνικά'),
-('en', 'English', 'English'),
-('eo', 'Esperanto', 'Esperanto'),
-('es', 'Spanish', 'español; castellano'),
-('et', 'Estonian', 'Eesti keel'),
-('eu', 'Basque', 'euskara'),
-('fa', 'Persian', 'فارسی'),
-('ff', 'Fulah', 'Fulfulde'),
-('fi', 'Finnish', 'Suomen kieli'),
-('fj', 'Fijian', 'vosa Vakaviti'),
-('fo', 'Faroese', 'Føroyskt'),
-('fr', 'French', 'français; langue française'),
-('fy', 'Western Frisian', 'Frysk'),
-('ga', 'Irish', 'Gaeilge'),
-('gd', 'Gaelic', 'Gàidhlig'),
-('gl', 'Galician', 'Galego'),
-('gn', 'Guaraní', 'Avañe''ẽ'),
-('gu', 'Gujarati', 'ગુજરાતી'),
-('gv', 'Manx', 'Ghaelg'),
-('ha', 'Hausa', 'هَوُسَ'),
-('he', 'Hebrew', 'עברית'),
-('hi', 'Hindi', 'हिन्दी'),
-('ho', 'Hiri Motu', 'Hiri Motu'),
-('hr', 'Croatian', 'Hrvatski'),
-('ht', 'Haitian', 'Kreyòl ayisyen'),
-('hu', 'Hungarian', 'Magyar'),
-('hy', 'Armenian', 'Հայերեն'),
-('hz', 'Herero', 'Otjiherero'),
-('ia', 'Interlingua', 'Interlingua'),
-('id', 'Indonesian', 'Bahasa Indonesia'),
-('ie', 'Interlingue', 'Interlingue'),
-('ig', 'Igbo', 'Igbo'),
-('ii', 'Sichuan Yi', 'ꆇꉙ'),
-('ik', 'Inupiaq', 'Iñupiaq; Iñupiatun'),
-('io', 'Ido', 'Ido'),
-('is', 'Icelandic', 'Íslenska'),
-('it', 'Italian', 'Italiano'),
-('iu', 'Inuktitut', 'ᐃᓄᒃᑎᑐᑦ'),
-('ja', 'Japanese', '日本語 (にほんご)'),
-('jv', 'Javanese', 'basa Jawa'),
-('ka', 'Georgian', 'ქართული'),
-('kg', 'Kongo', 'KiKongo'),
-('ki', 'Kikuyu', 'Gĩkũyũ'),
-('kj', 'Kuanyama', 'Kuanyama'),
-('kk', 'Kazakh', 'Қазақ тілі'),
-('kl', 'Kalaallisut', 'kalaallisut; kalaallit oqaasii'),
-('km', 'Khmer', 'ភាសាខ្មែរ'),
-('kn', 'Kannada', 'ಕನ್ನಡ'),
-('ko', 'Korean', '한국어 (韓國語); 조선말 (朝鮮語)'),
-('kr', 'Kanuri', 'Kanuri'),
-('ks', 'Kashmiri', 'कश्मीरी; كشميري'),
-('ku', 'Kurdish', 'Kurdî; كوردی'),
-('kv', 'Komi', 'коми кыв'),
-('kw', 'Cornish', 'Kernewek'),
-('ky', 'Kirghiz', 'кыргыз тили'),
-('la', 'latin', 'latine; lingua latina'),
-('lb', 'Luxembourgish', 'Lëtzebuergesch'),
-('lg', 'Ganda', 'Luganda'),
-('li', 'Limburgish', 'Limburgs'),
-('ln', 'Lingala', 'Lingála'),
-('lo', 'Lao', 'ພາສາລາວ'),
-('lt', 'Lithuanian', 'lietuvių kalba'),
-('lu', 'Luba-Katanga', 'luba'),
-('lv', 'Latvian', 'latviešu valoda'),
-('mg', 'Malagasy', 'Malagasy fiteny'),
-('mh', 'Marshallese', 'Kajin M̧ajeļ'),
-('mi', 'Māori', 'te reo Māori'),
-('mk', 'Macedonian', 'македонски јазик'),
-('ml', 'Malayalam', 'മലയാളം'),
-('mn', 'Mongolian', 'Монгол'),
-('mo', 'Moldavian', 'лимба молдовеняскэ'),
-('mr', 'Marathi', 'मराठी'),
-('ms', 'Malay', 'bahasa Melayu; بهاس ملايو'),
-('mt', 'Maltese', 'Malti'),
-('my', 'Burmese', 'မ္ရန္‌မာစကား (Myanma zaga)'),
-('na', 'Nauru', 'Ekakairũ Naoero'),
-('nb', 'Norwegian Bokmål', 'Norsk (bokmål)'),
-('nd', 'North Ndebele', 'isiNdebele'),
-('ne', 'Nepali', 'नेपाली'),
-('ng', 'Ndonga', 'Owambo'),
-('nl', 'Dutch', 'Nederlands'),
-('nn', 'Norwegian Nynorsk', 'Nynorsk'),
-('no', 'Norwegian', 'Norsk'),
-('nr', 'South Ndebele', 'Ndébélé'),
-('nv', 'Navajo', 'Diné bizaad; Dinékʼehǰí'),
-('ny', 'Chichewa', 'chiCheŵa; chinyanja'),
-('oc', 'Occitan', 'Occitan'),
-('oj', 'Ojibwa', 'ᐊᓂᔑᓈᐯᒧᐎᓐ'),
-('om', 'Oromo', 'Afaan Oromoo'),
-('or', 'Oriya', 'ଓଡ଼ିଆ'),
-('os', 'Ossetian', 'Ирон æвзаг'),
-('pa', 'Panjabi', 'ਪੰਜਾਬੀ; پنجابی'),
-('pi', 'Pāli', 'पाऴि'),
-('pl', 'Polish', 'Polski'),
-('ps', 'Pashto', 'پښتو'),
-('pt', 'Portuguese', 'Português'),
-('qu', 'Quechua', 'Runa Simi; Kichwa'),
-('rm', 'Raeto-Romance', 'rumantsch grischun'),
-('rn', 'Kirundi', 'kiRundi'),
-('ro', 'Romanian', 'română'),
-('ru', 'Russian', 'русский язык'),
-('rw', 'Kinyarwanda', 'Kinyarwanda'),
-('sa', 'Sanskrit', 'संस्कृतम्'),
-('sc', 'Sardinian', 'sardu'),
-('sd', 'Sindhi', 'सिन्धी; سنڌي، سندھی'),
-('se', 'Northern Sami', 'Davvisámegiella'),
-('sg', 'Sango', 'yângâ tî sängö'),
-('sh', 'Serbo-Croatian', 'Српскохрватски'),
-('si', 'Sinhala', 'සිංහල'),
-('sk', 'Slovak', 'slovenčina'),
-('sl', 'Slovenian', 'slovenščina'),
-('sm', 'Samoan', 'gagana fa''a Samoa'),
-('sn', 'Shona', 'chiShona'),
-('so', 'Somali', 'Soomaaliga; af Soomaali'),
-('sq', 'Albanian', 'Shqip'),
-('sr', 'Serbian', 'српски језик'),
-('ss', 'Swati', 'SiSwati'),
-('st', 'Southern Sotho', 'seSotho'),
-('su', 'Sundanese', 'Basa Sunda'),
-('sv', 'Swedish', 'Svenska'),
-('sw', 'Swahili', 'Kiswahili'),
-('ta', 'Tamil', 'தமிழ்'),
-('te', 'Telugu', 'తెలుగు'),
-('tg', 'Tajik', 'тоҷикӣ; toğikī; تاجیکی'),
-('th', 'Thai', 'ไทย'),
-('ti', 'Tigrinya', 'ትግርኛ'),
-('tk', 'Turkmen', 'Türkmen; Түркмен'),
-('tl', 'Tagalog', 'Tagalog'),
-('tn', 'Tswana', 'seTswana'),
-('to', 'Tonga', 'faka Tonga'),
-('tr', 'Turkish', 'Türkçe'),
-('ts', 'Tsonga', 'xiTsonga'),
-('tt', 'Tatar', 'татарча; tatarça; تاتارچا'),
-('tw', 'Twi', 'Twi'),
-('ty', 'Tahitian', 'Reo Mā`ohi'),
-('ug', 'Uighur', 'Uyƣurqə; ئۇيغۇرچ '),
-('uk', 'Ukrainian', 'українська мова'),
-('ur', 'Urdu', 'اردو'),
-('uz', 'Uzbek', 'O''zbek; Ўзбек; أۇزبېك'),
-('ve', 'Venda', 'tshiVenḓa'),
-('vi', 'Vietnamese', 'Tiếng Việt'),
-('vo', 'Volapük', 'Volapük'),
-('wa', 'Walloon', 'Walon'),
-('wo', 'Wolof', 'Wollof'),
-('xh', 'Xhosa', 'isiXhosa'),
-('yi', 'Yiddish', 'ייִדיש'),
-('yo', 'Yoruba', 'Yorùbá'),
-('za', 'Zhuang', 'Saɯ cueŋƅ; Saw cuengh'),
-('zh', 'Chinese', '中文、汉语、漢語'),
-('zu', 'Zulu', 'isiZulu');
+-- DEFAULT USER
+INSERT INTO "op"."tbl_user" ("id", "token", "name", "search", "email", "password", "color", "sa", "isconfirmed", "dtcreated") VALUES('{userid}', '{token}', 'John Connor', 'john conor', 'info@totaljs.com', '{password}', '#4285F4', 't', 't', NOW());

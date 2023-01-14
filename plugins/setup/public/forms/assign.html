@@ -1,0 +1,40 @@
+<ui-component name="miniform" path="common.form" config="if:~PATH~;title:@(Assign groups);icon:ti ti-folder;submit:?/submit;width:400" class="hidden" plugin="~PATH~">
+	<div class="padding">
+		<div class="m">
+			<ui-component name="input" path="?.add" config="innerlabel:1;multiple:1;dirsource:%groups;placeholder:@(Choose groups)" default="[]">@(Add groups)</ui-component>
+		</div>
+		<div class="m">
+			<ui-component name="input" path="?.rem" config="innerlabel:1;multiple:1;dirsource:%groups;placeholder:@(Choose groups)" default="[]">@(Remove groups)</ui-component>
+		</div>
+	</div>
+	<nav>
+		<ui-component name="validate" path="?" config="if:value.add.length || value.rem.length">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+		exports.submit = function(hide) {
+
+			var form = exports.form;
+			var list = [];
+
+			for (var m of form.add)
+				list.push('+' + m);
+
+			for (var m of form.rem)
+				list.push('-' + m);
+
+			EXEC('-approve/show', '@(Are you sure you want to update selected users?)', '"ti ti-check-circle" @(Update)', function() {
+				form.callback(list);
+				hide();
+			});
+
+		};
+	});
+
+</script>

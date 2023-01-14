@@ -1,24 +1,36 @@
-# OpenPlatform v4.8
+# OpenPlatform v5
 
 - [Documentation](https://docs.totaljs.com/openplatform/)
 - [Join Total.js Telegram](https://t.me/totaljs)
 - [Support](https://www.totaljs.com/support/)
 
-OpenPlatform is a simple enterprise-ready platform for running, integrating and managing multiple web applications. __We recommend to use [bundled version](https://github.com/totaljs/openplatform-bundle)__.
+OpenPlatform is a simple enterprise-ready platform for running, integrating and managing multiple web applications.
 
-## Install instructions
+![OpenPlatform](https://docs.totaljs.com/download/x978001kb41d-tywfj5-640x464-1.gif)
 
-- download `openplatform`
-- perform `npm install`
-- create a database
-- execute `database.sql`
-- update database connection string in the `/config` file
-- run it `$ node index.js`
-- default login is `admin` default password is `admin`
+## Installation
 
-## Requirements
+__Manual installation__:
 
-- Total.js `+v4`
-- PostgreSQL `+v10`
-- DBMS module - lastest version
-- PostgreSQL module - latest version
+- Install latest version of [__Node.js platform__](https://nodejs.org/en/)
+- Install PostgreSQL
+- Create a database for the OpenPlatform
+- Install NPM dependencies via terminal `$ npm install` in the root of application
+- Update connection strings in `/config` file
+- [Download __Source-Code__](https://github.com/totaljs/openplatform)
+- Run it `$ node index.js`
+- Open `http://127.0.0.1:8000` in your web browser
+- __IMPORTANT__: Then open settings and configure the platform
+
+__Docker Hub__:
+
+```bash
+docker pull totalplatform/openplatform
+docker run -p 8000:8000 totalplatform/openplatform --env DATABASE="postgresql://user:pass@hostname/database"
+````
+
+__Docker__:
+
+```bash
+docker-compose up
+````

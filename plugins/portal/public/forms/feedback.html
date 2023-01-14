@@ -1,0 +1,51 @@
+<ui-component name="miniform" path="common.form" config="if:~PATH~;title:@(Feedback);icon:ti ti-bug;autofocus:true;submit:?/submit;width:440;scrollbar:1;scrollbarshadow:1" class="hidden" plugin="~PATH~">
+
+	<div class="padding">
+
+		<p>@(Send us your feedback or report a problem. Whenever a message is reported, we thoroughly investigate it. You will receive an email response from us.)</p>
+
+		<div class="m">
+			<div class="help b">@(Rate us:)</div>
+			<ui-component name="rating" path="?.rating" style="text-align:left"></ui-component>
+		</div>
+
+		<hr />
+		<ui-bind path="?.app" config="show;template" class="block m">
+			<script type="text/html">
+			<div class="message message-alert" style="font-size:14px">
+				<div class="help nmt nmb">@(Application:)</div>
+				<div><i class="{{ value.icon }} mr5"></i><b>{{ value.name }}</b></div>
+			</div>
+			</script>
+		</ui-bind>
+
+		<ui-component name="input" path="?.body" config="type:multiline;required:1;height:100">@(Message)</ui-component>
+
+	</div>
+
+	<nav>
+		<ui-component name="validate" path="?">
+			<button name="submit" disabled><i class="ti ti-check-circle"></i>@(SUBMIT)</button>
+			<button name="cancel">@(Cancel)</button>
+		</ui-component>
+	</nav>
+
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+		exports.submit = function(hide) {
+			var form = CLONE(exports.form);
+			form.appid = form.app ? form.app.id : null;
+			delete form.app;
+			exports.tapi('feedback ERROR', form, function() {
+				EXEC('-sounds/play', 'success');
+				EXEC('-message/success', '@(Thank you for reaching out and providing us with valuable feedback.)');
+				hide();
+				exports.set('@default', {});
+			});
+		};
+	});
+
+</script>

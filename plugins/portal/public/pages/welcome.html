@@ -1,0 +1,45 @@
+<style>
+	.emptybody figure { height: 100%; height: 140px; display: flex; align-items: center; }
+	.emptybody figure button { width: 80%; height: 80%; border: 0; background-color: #FFF; font-size: 12px; border-radius: 5px; margin: 0 0 0 10%; position: relative; }
+	.emptybody figure button em { position: absolute; right: 10px; top: 10px; color: #A0A0A0; }
+	.emptybody figure button.highlight { background-color: #F9F9F9; }
+	.emptybody figure button i { font-size: 24px; display: block; margin-bottom: 12px; }
+	.emptybody figure button:hover { background-color: #F8F8F8; }
+
+	.emptybody .meta { height: 100px; }
+	.emptybody .meta .icon { position: relative; display: inline-block; width: 70px; height: 70px; vertical-align: middle; }
+	.emptybody .meta .icon img { width: 70px; border-radius: var(--radius); }
+	.emptybody .meta .icon i { display: block; width: 70px; height: 70px; text-align: center; line-height: 70px; font-size: 45px; }
+	.emptybody .meta .name { vertical-align: middle; position: relative; display: inline-block; margin-left: 15px; text-align: left; font-size: 12px; color: #777; line-height: 20px; }
+	.emptybody .meta .name ui-bind { font-size: 20px; font-weight: bold; display: block; color: #000; }
+</style>
+
+<ui-component name="time" path="common.page" class="ui-time"></ui-component>
+<ui-component name="viewbox" path="common.page" config="parent:auto;centered:1;margin:80" class="emptybody invisible">
+	<div class="padding">
+
+		<div class="meta">
+			<div class="icon">
+				<i class="ti ti-flag-alt"></i>
+			</div>
+			<div class="name">
+				@(Account)
+				<ui-bind path="user.name" config="text"></ui-bind>
+			</div>
+		</div>
+
+		<div style="width:100%;max-width:1100px;margin:0 auto;text-align:left">
+			<ui-component name="tablegrid" path="common.apps" config="countxs:2;countsm:3;countlg:6" class="apps">
+				<script type="text/html">
+					<figure>
+						<button class="exec exec3 launchpad" data-exec="common/open" data-exec3="common/app" data-id="{{ value.id }}">{{ if value.isbookmark }}<em class="ti ti-link"></em>{{ fi }}<i class="{{ value.icon }}"{{ if value.color }} style="color:{{ value.color }}"{{ fi }}></i><span>{{ value.name }}</span></button>
+					</figure>
+				</script>
+				<script type="text/html">
+					<figure></figure>
+				</script>
+			</ui-component>
+		</div>
+	</div>
+
+</ui-component>

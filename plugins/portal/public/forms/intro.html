@@ -1,0 +1,34 @@
+<ui-component name="intro" path="common.form" config="if:formintro;exec:?/submit;next:@(Next);close:@(Done)" class="hidden" plugin="~PATH~">
+
+	<figure>
+		<div class="padding">
+			<div><i class="ti ti-flag-alt color" style="font-size:60px"></i></div>
+			<br />
+			<div>@(Welcome <ui-bind path="user.name" config="text" class="b"></ui-bind> to <ui-bind path="document.title" config="text" class="b"></ui-bind>. We are very thrilled to welcome you on board.)</div>
+		</div>
+	</figure>
+
+	<figure>
+		<div class="padding">
+			<div><i class="ti ti-account color" style="font-size:60px"></i></div>
+			<br />
+			<div class="center">
+				<div class="b">@(That's all)</div>
+				@(You can update your profile now.)
+			</div>
+		</div>
+	</figure>
+
+</ui-component>
+
+<script>
+
+	PLUGIN(function(exports) {
+
+		exports.submit = function(hide) {
+			EXEC('common/' + (user.isreset ? 'password' : 'settings'));
+		};
+
+	});
+
+</script>
