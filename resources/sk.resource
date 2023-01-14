@@ -262,3 +262,7 @@ T3egjfd      : pred # hodinami,pred # hodinou,pred # hodinami,pred # hodinami
 T9wgord      : pred # dňami,pred # dňom,pred # dňami,pred # dňami
 T1mqtx3t     : pred # mesiacmi,pred # mesiacom,pred # mesiacmi,pred # mesiacmi
 Tlcnga       : Aplikácia bola dočasne zablokovaná
+T74vdr9      : Nastaviť ako záložku
+T1xgd2c1     : Aplikácia bude použitá ako záložka pre externú aplikáciu
+Tx5y7ue      : záložka
+Ty8frkm      : Záložka

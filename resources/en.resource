@@ -148,6 +148,7 @@ T8zw3zk      : Paste settings
 Txh3l5w      : Copied
 T13f1p3l     : Pasted
 Tymsnrx      : Invalid clipboard data
+T10a9v45     : Import
 Tqns537      : Enter application name
 Twdcm3g      : Additional settings
 T1cq6x       : Icon
@@ -155,6 +156,8 @@ T12ve4j      : Color
 T1fvl7       : Name
 Tttxmoz      : URL address
 T7n6th0      : Origin:
+T74vdr9      : Set as a bookmark
+T1xgd2c1     : The app will be used as a bookmark to the external web app
 Tgrkjmo      : Security
 Tc9wkjs      : Request token
 Tvwxchm      : Response token
@@ -209,15 +212,16 @@ T1yehj0z     : Send a Welcome mail message
 T8kpxfn      : Enter new password
 Th4z2qq      : Update user
 Tigj0b3      : Create user
-T10a9v45     : Import
-T4hb798      : disabled
-T1kpnh       : Used
-T14wzruf     : Last usage
-T1cmsyog     : Are you sure you want to remove selected apps?
 T14f871g     : Remove
 T1sr         : ID
 Tnnin4r      : Updated
 T13f7ws      : Done.
+T4hb798      : disabled
+Tx5y7ue      : bookmark
+Ty8frkm      : Bookmark
+T1kpnh       : Used
+T14wzruf     : Last usage
+T1cmsyog     : Are you sure you want to remove selected apps?
 T5jsqzg      : Disabled
 T19hez4      : Open:
 Trw6u07      : # sessions,# session,# sessions,# sessions
