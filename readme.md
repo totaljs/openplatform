@@ -6,7 +6,7 @@
 
 OpenPlatform is a simple enterprise-ready platform for running, integrating and managing multiple web applications.
 
-![OpenPlatform](https://docs.totaljs.com/download/x978001kb41d-tywfj5-640x464-1.gif)
+![OpenPlatform](https://docs.totaljs.com/download/xav3001kb41d-1si7hid-640x492-1.gif)
 
 ## Installation
 
