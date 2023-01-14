@@ -8,6 +8,7 @@ exports.install = function() {
 	ROUTE('+API    /api/    +account_update          *Account   --> update');
 	ROUTE('+API    /api/    -run/{appid}             *Account   --> run');
 	ROUTE('+API    /api/    -apps                    *Account   --> apps');
+	ROUTE('+API    /api/    +reorder                 *Account   --> reorder');
 	ROUTE('+API    /api/    -notifications           *Account   --> notifications');
 	ROUTE('+API    /api/    -notifications_clear     *Account   --> notifications_clear');
 	ROUTE('+API    /api/    -sessions                *Account   --> sessions');
@@ -17,7 +18,6 @@ exports.install = function() {
 
 	ROUTE('POST    /upload/base64/', upload, 1024 * 2);
 	ROUTE('FILE    /files/*.jpg', files);
-
 };
 
 async function upload() {

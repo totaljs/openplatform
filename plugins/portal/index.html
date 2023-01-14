@@ -636,6 +636,34 @@
 				id && EXEC('-parts/focus', id);
 			};
 
+			function reoder() {
+				var output = [];
+				var model = exports.model;
+
+				for (var m of model.apps) {
+					if (m.id !== 'setup')
+						output.push(m.id);
+				}
+
+				output.length && exports.tapi('reorder', { id: output }, NOOP);
+			}
+
+			exports.reorder = function(arr) {
+
+				var output = [];
+				var model = exports.model;
+
+				for (var i = 0; i < arr.length; i++) {
+					var id = ATTRD(arr[i]);
+					var app = model.apps.findItem('id', id);
+					app.sortindex = i + 1;
+				}
+
+				model.apps.quicksort('sortindex');
+				exports.upd('apps');
+				setTimeout2('reoder', reoder, 3000);
+			};
+
 			exports.refresh();
 			exports.watch('running', exports.checkapps);
 

@@ -85,6 +85,46 @@ NEWSCHEMA('Account', function(schema) {
 		}
 	});
 
+	schema.action('reorder', {
+		name: 'Reorder apps',
+		input: '*id:[UID]',
+		action: function($, model) {
+
+			FUNC.permissions($.user.id, async function(data) {
+
+				var builder = [];
+				var db = DB();
+				var userapps = await db.find('op.tbl_user_app').fields('id,appid,sortindex').where('userid', $.user.id).in('appid', data.apps).promise($);
+
+				for (var i = 0; i < model.id.length; i++) {
+
+					var id = model.id[i];
+
+					// Check the app existence
+					if (!data.apps.includes(id))
+						continue;
+
+					var ua = userapps.findItem('appid', id);
+
+					if (ua) {
+						// modify
+						id && builder.push('UPDATE op.tbl_user_app SET sortindex={0}, dtupdated=NOW() WHERE id=\'{1}\';'.format(i + 1, ua.id));
+					} else {
+						// create
+						await db.insert('op.tbl_user_app', { id: $.user.id + id, userid: $.user.id, appid: id, notifications: true, sortindex: i + 1, dtupdated: NOW }).promise($);
+					}
+
+				}
+
+				if (builder.length)
+					await db.query(builder.join('\n')).promise($);
+
+				$.success();
+			});
+
+		}
+	});
+
 	schema.action('run', {
 		name: 'Run app',
 		params: '*appid:UID',

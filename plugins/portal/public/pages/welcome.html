@@ -29,15 +29,17 @@
 		</div>
 
 		<div style="width:100%;max-width:1100px;margin:0 auto;text-align:left">
-			<ui-component name="tablegrid" path="common.apps" config="countxs:2;countsm:3;countlg:6" class="apps">
-				<script type="text/html">
-					<figure>
-						<button class="exec exec3 launchpad" data-exec="common/open" data-exec3="common/app" data-id="{{ value.id }}">{{ if value.isbookmark }}<em class="ti ti-link"></em>{{ fi }}<i class="{{ value.icon }}"{{ if value.color }} style="color:{{ value.color }}"{{ fi }}></i><span>{{ value.name }}</span></button>
-					</figure>
-				</script>
-				<script type="text/html">
-					<figure></figure>
-				</script>
+			<ui-component name="movable" config="selector:.movable;container:.apps;move:0;exec:common/reorder">
+				<ui-component name="tablegrid" path="common.apps" config="countxs:2;countsm:3;countlg:6" class="apps">
+					<script type="text/html">
+						<figure{{ if value.id !== 'setup' }} draggable="true" class="movable" data-id="{{ value.id }}"{{ fi }}>
+							<button class="exec exec3 launchpad" data-exec="common/open" data-exec3="common/app" data-id="{{ value.id }}">{{ if value.isbookmark }}<em class="ti ti-link"></em>{{ fi }}<i class="{{ value.icon }}"{{ if value.color }} style="color:{{ value.color }}"{{ fi }}></i><span>{{ value.name }}</span></button>
+						</figure>
+					</script>
+					<script type="text/html">
+						<figure></figure>
+					</script>
+				</ui-component>
 			</ui-component>
 		</div>
 	</div>

@@ -35,6 +35,11 @@ NEWSCHEMA('Settings', function(schema) {
 			for (var key in model)
 				await db.modify('op.cl_config', { value: model[key] }).id(key).promise();
 
+			if (CONF.url !== model.url) {
+				await db.query('UPDATE op.tbl_user_app SET notify=NULL, notifytoken=NULL WHERE notify IS NOT NULL OR notifytoken IS NOT NULL');
+				await db.query('DELETE FROM op.tbl_app_session');
+			}
+
 			MAIN.reconfigure();
 			$.success();
 		}
