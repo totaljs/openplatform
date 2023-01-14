@@ -201,6 +201,7 @@ async function init() {
 	var is = await DB().check('information_schema.tables').where('table_schema', 'op').where('table_name', 'cl_config').promise();
 
 	if (is) {
+		PAUSESERVER('Database');
 		reconfigure();
 		auth();
 		return;
@@ -232,8 +233,16 @@ async function init() {
 		reconfigure();
 		auth();
 
+		PAUSESERVER('Database');
+
 	});
 
 }
 
-init();
+PAUSESERVER('Database');
+
+// Docker
+if (process.env.DATABASE)
+	setTimeout(init, 3000);
+else
+	init();
