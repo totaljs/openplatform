@@ -303,7 +303,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('app_session_expire', '1 day', 'string', 'App session expiration'),
 	('auth_cookie', '{cookie}', 'string', 'Cookie name'),
 	('auth_cookie_expire', '1 month', 'string', 'Cookie expiration'),
-	('auth_cookie_options', '{"httponly":true,"secure":true,"security":"lax"}', 'object', 'Cookie settings'),
+	('auth_cookie_options', '{"httponly":true,"security":"lax"}', 'object', 'Cookie settings'),
 	('auth_expire', '5 minutes', 'string', 'Session expiration'),
 	('auth_secret', '{secret}', 'string', 'Cookie secret'),
 	('auth_strict', 'false', 'boolean', 'Strict session'),
