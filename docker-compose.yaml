@@ -12,6 +12,11 @@ services:
       - POSTGRES_USER=total
       - POSTGRES_PASSWORD=platform
       - POSTGRES_DB=openplatform
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "total", "-d", "openplatform"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
 
   openplatform:
     container_name: openplatform
@@ -22,7 +27,12 @@ services:
       - openplatform:/www/databases/
     environment:
       - DATABASE=postgresql://total:platform@postgres:5432/openplatform
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata:
+    driver: local
   openplatform:
+    driver: local
