@@ -10,6 +10,8 @@ OpenPlatform is a simple enterprise-ready platform for running, integrating and 
 
 ## Installation
 
+WARNING: Please do not execute `database.sql`, this script will use OpenPlatform internally.
+
 __Manual installation__:
 
 - Install latest version of [__Node.js platform__](https://nodejs.org/en/)
