@@ -34,3 +34,10 @@ __Docker Compose__:
 ```bash
 docker-compose up
 ````
+
+## Default credentials
+
+```html
+login : info@totaljs.com
+password : admin
+```
