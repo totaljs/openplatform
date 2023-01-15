@@ -1,2 +1,2 @@
-database              : postgresql://postgres@localhost/openplatform
-// database    (env)     : DATABASE
+// database              : postgresql://user:pass@localhost:5432/database
+database    (env)     : DATABASE
