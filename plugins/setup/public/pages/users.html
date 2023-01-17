@@ -15,12 +15,13 @@
 		<script type="text/plain">
 			[
 				{ name: 'id', text: '@(ID)', width: 120, monospace: 1, align: 1, hide: true },
-				{ name: 'name', text: '@(Name)', width: 300, class: 'highlight', template: '<i class="ti ti-bull mr5 {{ if isonline }}green{{ else }}red{{ fi }}"></i>{{ if photo }}<i class="icon ti ti-camera"></i>{{ fi }}{{ name }}{{ if isonline }}<span class="badge badge-green badge-small ml5">@(online)</span>{{ fi }}{{ if sa }}<span class="badge badge-red badge-small ml5">@(admin)</span>{{ fi }}' },
+				{ name: 'name', text: '@(Name)', width: 300, class: 'highlight', template: '<i class="ti ti-bull mr5 {{ if isonline }}green{{ else }}red{{ fi }}"></i>{{ if photo }}<i class="icon ti ti-camera"></i>{{ fi }}{{ name }}{{ if !isconfirmed }}<span class="badge badge-gray badge-small ml5">@(unconfirmed)</span>{{ fi }}{{ if isonline }}<span class="badge badge-green badge-small ml5">@(online)</span>{{ fi }}{{ if sa }}<span class="badge badge-red badge-small ml5">@(admin)</span>{{ fi }}{{ if isdisabled }}<span class="badge badge-yellow badge-small ml5">@(disabled)</span>{{ fi }}' },
 				{ name: 'email', text: '@(Email)', width: 250, type: 'email' },
 				{ name: 'groups', text: '@(Groups)', width: 250, template: '{{ groups | users_groups }}' },
 				{ name: 'logged', text: '@(Logged)', width: 120, type: 'number' },
 				{ name: 'sa', text: '@(Admin)', width: 120, type: 'boolean', options: '#boolean' },
 				{ name: 'isonline', text: '@(Online)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'isconfirmed', text: '@(Confirmed)', width: 120, type: 'boolean', options: '#boolean' },
 				{ name: 'isdisabled', text: '@(Disabled)', width: 120, type: 'boolean', options: '#boolean' },
 				{ name: 'isinactive', text: '@(Inactive)', width: 120, type: 'boolean', options: '#boolean' },
 				{ name: 'dtlogged', text: '@(Logged)', align: 1, template: '{{ dtlogged | time }}', type: 'date' },

@@ -269,6 +269,7 @@ CREATE OR REPLACE VIEW op.view_user AS
 		a.sounds,
 		a.notifications,
 		a.sa,
+		a.isconfirmed,
 		a.isdisabled,
 		a.isinactive,
 		a.dtbirth,

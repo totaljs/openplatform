@@ -27,7 +27,7 @@ NEWSCHEMA('Users', function(schema) {
 		name: 'List of users',
 		action: function($) {
 			var builder = DB().list('op.view_user');
-			builder.autoquery($.query, 'id:UID,groups,photo,language,gender,name,sa:Boolean,isonline:Boolean,unread:Number,isdisabled:Boolean,isinactive:Boolean,email,logged:Number,dtlogged:Date,dtcreated:Date,dtupdated:Date', 'dtcreated_desc', 100);
+			builder.autoquery($.query, 'id:UID,groups,photo,language,gender,name,sa:Boolean,isonline:Boolean,unread:Number,isdisabled:Boolean,isconfirmed:Boolean,isinactive:Boolean,email,logged:Number,dtlogged:Date,dtcreated:Date,dtupdated:Date', 'dtcreated_desc', 100);
 			builder.callback($.callback);
 		}
 	});
