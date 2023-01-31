@@ -13,7 +13,10 @@ COMPONENT('iframe', 'parent:auto;margin:23;gap:0;lrefresh:Refresh;ldetach:Detach
 		var width = parent.width();
 		var height = parent.height() - config.margin;
 
-		self.html(('<div class="content ui-iframe-item"><div class="ui-iframe-header"><span class="close exec" data-exec="common/close" title="{lclose}"><i class="ti ti-times"></i></span><span class="refresh" title="{lrefresh}"><i class="ti ti-sync"></i></span><span class="detach" title="{ldetach}"><i class="ti ti-window"></i></span><span class="feedback" title="{lfeedback}"><i class="ti ti-bug feedback"></i></span><div><i class="{0}"></i>{1}</div></div><ifr' + 'ame src="{2}" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" style="width:{3}px;height:{4}px"></ifr' + 'ame></div>').format(icon, name, url, width, height).arg(config));
+		if(url != '/setup/')
+			var feedback = '<span class="feedback" title="{lfeedback}"><i class="ti ti-bug feedback"></i></span>';
+		
+		self.html(('<div class="content ui-iframe-item"><div class="ui-iframe-header"><span class="close exec" data-exec="common/close" title="{lclose}"><i class="ti ti-times"></i></span><span class="refresh" title="{lrefresh}"><i class="ti ti-sync"></i></span><span class="detach" title="{ldetach}"><i class="ti ti-window"></i></span>{5}<div><i class="{0}"></i>{1}</div></div><ifr' + 'ame src="{2}" frameborder="0" scrolling="no" allowtransparency="true" allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" style="width:{3}px;height:{4}px"></ifr' + 'ame></div>').format(icon, name, url, width, height, feedback).arg(config));
 
 		iframe = self.find('iframe');
 		header = self.find('.ui-iframe-header');
