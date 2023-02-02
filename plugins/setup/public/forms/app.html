@@ -86,8 +86,9 @@
 
 		<hr />
 
+		<ui-component name="input" path="?.isnewtab" config="type:checkbox" default="false">@(Allow opening the app in a new tab)</ui-component>
+
 		<ui-bind path="?.isbookmark" config="hide" class="block">
-			<ui-component name="input" path="?.isnewtab" config="type:checkbox" default="false">@(Allow opening the app in a new tab)</ui-component>
 			<ui-component name="input" path="?.notifications" config="type:checkbox" default="true">@(Enable notifications)</ui-component>
 		</ui-bind>
 		<ui-component name="input" path="?.isdisabled" config="type:checkbox">@(Disable application)</ui-component>

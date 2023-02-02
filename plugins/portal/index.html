@@ -316,7 +316,14 @@
 				exports.tapi('run/{0} ERROR'.format(id), function(response) {
 
 					if (app.isbookmark) {
-						W.open(response.url);
+						if (app.isnewtab) {
+							W.open(response.url);
+						} else {
+							app = CLONE(app);
+							app.url = response.url;
+							app.html = model.template.arg(app);
+							exports.push('running', app);
+						}
 						return;
 					}
 
