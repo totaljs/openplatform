@@ -140,7 +140,7 @@ NEWSCHEMA('Account', function(schema) {
 				}
 
 				var db = DB();
-				var app = await db.read('op.tbl_app').fields('id,url,icon,color,name,reqtoken,restoken,isdisabled').id(params.appid).error('@(App not found)').where('isremoved=FALSE').promise($);
+				var app = await db.read('op.tbl_app').fields('id,url,icon,color,name,reqtoken,restoken,isdisabled,isbookmark').id(params.appid).error('@(App not found)').where('isremoved=FALSE').promise($);
 
 				if (app.isdisabled) {
 					$.invalid('@(App has been temporary disabled)');
@@ -149,7 +149,7 @@ NEWSCHEMA('Account', function(schema) {
 
 				var session = {};
 
-				session.id = Date.now().toString(36) + GUID(8);
+				session.id = Date.now().toString(36) + GUID(10);
 				session.sessionid = $.sessionid;
 				session.userid = $.user.id;
 				session.appid = app.id;
@@ -172,7 +172,9 @@ NEWSCHEMA('Account', function(schema) {
 				await db.insert('op.tbl_app_session', session).promise($);
 				await db.query('UPDATE op.tbl_app SET logged=logged+1, dtlogged=NOW() WHERE id=' + PG_ESCAPE(app.id)).promise();
 
-				if (!app.isbookmark)
+				if (app.isbookmark)
+					app.url = QUERIFY(app.url, { openplatformid: FUNC.checksum(session.id + 'X' + session.sessionid) });
+				else
 					app.url = QUERIFY(app.url, { openplatform: session.url + '~' + session.reqtoken });
 
 				app.reqtoken = undefined;

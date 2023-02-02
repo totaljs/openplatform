@@ -5,6 +5,7 @@ exports.install = function() {
 	// 3rd party apps
 	ROUTE('GET    /verify/', verify);
 	ROUTE('POST   /notify/', notify);
+	ROUTE('GET    /session/', session);
 
 };
 
@@ -240,4 +241,28 @@ async function makenotification($, db, userapp) {
 	}
 
 	return model.id;
+}
+
+async function session() {
+
+	var $ = this;
+	var session = $.query.openplatformid || $.query.token || $.query.session;
+
+	if (!session) {
+		$.invalid('@(Invalid token)');
+		return;
+	}
+
+	var arr = session.split('X');
+
+	if (FUNC.checksum(arr[0] + 'X' + arr[1]) !== session) {
+		$.invalid('@(Invalid token)');
+		return;
+	}
+
+	var user = await DB().query('SELECT b.id,b.language,b.name,b.color,b.sa,a.isonline FROM op.tbl_session a INNER JOIN op.tbl_user b ON b.id=a.userid AND b.isremoved=FALSE AND b.isdisabled=FALSE AND b.isinactive=FALSE WHERE a.id={0} AND dtexpire>=NOW()'.format(PG_ESCAPE(arr[1]))).first().promise($);
+	if (user)
+		$.json(user);
+	else
+		$.invalid('@(Invalid token)');
 }
