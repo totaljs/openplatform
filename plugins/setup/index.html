@@ -81,7 +81,7 @@
 		NAV.custom(true);
 		NAV.clientside('.jR');
 
-		CONFIG('datagrid', 'otext:name;ovalue:id;pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items)');
+		CONFIG('datagrid', 'otext:name;ovalue:id;pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items);filterlabel:@(Filter);buttonapply:@(Apply);buttonreset:@(Reset)');
 
 		ON('@flag showloading', () => SETTER('loading/show'));
 		ON('@flag hideloading', () => SETTER('loading/hide', 800));
