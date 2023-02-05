@@ -2,7 +2,7 @@
 
 <div style="font-size:20px;color:black">@(Welcome)</div>
 <br />
-<div style="color:#606060">@(Dear @{model.name}, welcome to the <b>@{'%name'}</b>. We're excited that you've joined the platform. Please confirm your account via the link below.)</div>
+<div style="color:#606060">@(Dear @{model.name}, welcome to the <b>@{CONF.name}</b>. We're excited that you've joined the platform. Please confirm your account via the link below.)</div>
 <div style="margin:30px 0 20px">
 	<a href="@{CONF.url}/auth/?token=@{model.token}" target="_blank" style="padding:15px 30px;border-radius:6px;background-color:@{CONF.color};text-decoration:none;color:#FFF;font-weight:bold">@(Confirm account)</a>
 </div>
