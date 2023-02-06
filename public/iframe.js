@@ -75,7 +75,8 @@
 		msg.TYPE = 'focus';
 		msg.data = auto;
 		obj.send(msg);
-		W.focus();
+		if (!auto)
+			W.focus();
 	};
 
 	obj.copy = function(text) {
@@ -259,7 +260,6 @@
 		var msg = {};
 		msg.TYPE = 'init';
 		obj.send(msg);
-
 		W.APP_INIT && W.APP_INIT();
 	}, 2);
 
