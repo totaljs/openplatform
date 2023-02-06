@@ -92,10 +92,10 @@ async function verify() {
 
 	if (user.photo)
 		user.photo = CONF.url + user.photo;
-	
-	if(!user.language)
+
+	if (!user.language)
 		user.language = CONF.language;
-	
+
 	FUNC.permissions(user.id, function(data) {
 
 		user.openplatformid = CONF.id;
