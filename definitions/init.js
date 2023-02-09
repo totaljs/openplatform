@@ -138,6 +138,7 @@ function auth() {
 					db.modify('op.tbl_user', { isreset: false, isonline: true, dtlogged: NOW, '+logged': 1 }).id(meta.userid);
 					user.sessionid = meta.sessionid;
 					PUBLISH('Session.create', user);
+					DEF.onLocale = () => user.language ? (user.language || CONF.language) : CONF.language;
 				} else
 					next(err || 404);
 			});
@@ -158,7 +159,6 @@ function auth() {
 	db.query('UPDATE op.tbl_user SET isonline=FALSE WHERE isonline=TRUE');
 
 	AUTH(options);
-	DEF.onLocale = req => req.user ? (req.user.language || CONF.language) : CONF.language;
 	ON('configure', authconfig);
 
 	MAIN.auth = {};
