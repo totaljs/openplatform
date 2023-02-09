@@ -173,7 +173,7 @@ NEWSCHEMA('Account', function(schema) {
 				await db.query('UPDATE op.tbl_app SET logged=logged+1, dtlogged=NOW() WHERE id=' + PG_ESCAPE(app.id)).promise();
 
 				if (app.isbookmark)
-					app.url = QUERIFY(app.url, { openplatformid: FUNC.checksum(session.id + 'X' + session.sessionid) });
+					app.url = QUERIFY(app.url, { ssid: FUNC.checksum(session.id + 'X' + session.sessionid) });
 				else
 					app.url = QUERIFY(app.url, { openplatform: session.url + '~' + session.reqtoken });
 
