@@ -40,7 +40,7 @@
 			<label><i class="ti ti-rocket"></i>@(Allowed apps)</label>
 			<div style="padding:var(--gap)" class="bg-smoke">
 				<ui-bind path="?.permissions" config="macro:showcheckboxes">
-					<ui-component name="selection" path="?.permissions" config="datasource:%permissions;selector:.item;dblclickselectall:false">
+					<ui-component name="selection" path="?.permissions" config="datasource:%permissions;click:.item;selector:.item;dblclickselectall:false">
 						<ui-bind path="%apps" config="template">
 							{{ foreach m in value }}
 							<figure>
