@@ -106,6 +106,7 @@ function auth() {
 	function authconfig() {
 		options.secret = CONF.auth_secret;
 		options.cookie = CONF.auth_cookie;
+		options.options = CONF.auth_cookie_options;
 		options.expire = CONF.auth_expire || '5 minutes';
 		options.strict = CONF.auth_strict == null || CONF.auth_strict == true;
 		options.ddos = CONF.auth_ddos || 10;
@@ -138,7 +139,6 @@ function auth() {
 					db.modify('op.tbl_user', { isreset: false, isonline: true, dtlogged: NOW, '+logged': 1 }).id(meta.userid);
 					user.sessionid = meta.sessionid;
 					PUBLISH('Session.create', user);
-					DEF.onLocale = () => user.language ? (user.language || CONF.language) : CONF.language;
 				} else
 					next(err || 404);
 			});
@@ -159,6 +159,7 @@ function auth() {
 	db.query('UPDATE op.tbl_user SET isonline=FALSE WHERE isonline=TRUE');
 
 	AUTH(options);
+	DEF.onLocale = req => (req.user ? req.user.language : req.query.language) || CONF.language || '';
 	ON('configure', authconfig);
 
 	MAIN.auth = {};
@@ -178,7 +179,7 @@ function auth() {
 		obj.dtcreated = NOW;
 
 		DB().insert('op.tbl_session', obj).callback(function() {
-			options.authcookie($, obj.id, userid, CONF.auth_cookie_expire, CONF.auth_cookie_options);
+			options.authcookie($, obj.id, userid, CONF.auth_cookie_expire);
 			callback && callback(null, obj);
 		});
 
