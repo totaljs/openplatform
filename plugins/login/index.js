@@ -5,4 +5,4 @@ exports.install = function() {
 	// ROUTE('-POST    /api/create/   *Login   --> create');
 };
 
-COMPONENTATOR('uilogin', 'exec,locale,intranetcss,viewbox,errorhandler,message,input,validate,choose,enter,autofill');
+COMPONENTATOR('uilogin', 'exec,locale,intranetcss,viewbox,errorhandler,message,input,validate,choose,enter,autofill', true);

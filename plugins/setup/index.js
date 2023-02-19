@@ -40,4 +40,4 @@ exports.install = function() {
 	ROUTE('+API    /setup/    -dashboard               *Dashboard  --> stats');
 };
 
-COMPONENTATOR('uisetup', 'exec,intranetcss,navlayout,importer,page,box,input,datagrid,loading,approve,notify,errorhandler,aselected,localize,locale,validate,directory,icons,colorpicker,edit,viewbox,preview,choose,selection,colorselector,menu,clipboard,miniform,message');
+COMPONENTATOR('uisetup', 'exec,intranetcss,navlayout,importer,page,box,input,datagrid,loading,approve,notify,errorhandler,aselected,localize,locale,validate,directory,icons,colorpicker,edit,viewbox,preview,choose,selection,colorselector,menu,clipboard,miniform,message', true);
