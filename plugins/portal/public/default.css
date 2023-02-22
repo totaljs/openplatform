@@ -3,7 +3,7 @@
 }
 
 html,body { padding: 0; margin: 0; overflow: hidden; background-color: #F7F7F7; height: 100%; }
-header { height: 53px; padding: 0 5px; position: absolute; bottom: 3px; left: 0; right: 0; }
+header { height: 53px; padding: 0 5px; position: absolute; bottom: 3px; left: 0; right: 0; color: #888; }
 header > div { position: relative; }
 header .logo { float: left; line-height: 45px; width: 50px; height: 50px; text-align: center; }
 header .logo img { height: 26px; image-rendering: -webkit-optimize-contrast; }
@@ -14,10 +14,13 @@ header .openplatform { line-height: 48px; height: 49px; padding: 0 13px; float: 
 header .openplatform b { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: block; }
 header .openplatform i { font-size: 18px; margin-right: 8px; float: left; line-height: 48px; }
 header .openplatform img { width: 32px; height: 32px; float: left; border-radius: 8px; margin: 7px 8px 0 0; border: 1px solid #E9E9E9; }
+header .search { float: right; line-height: 0; font-size: 18px; height: 50px; padding: 4px 0 0 0; width: 40px; margin-right: 5px; }
+header .search > div { width: 38px; height: 38px; cursor: pointer; border: 1px solid transparent; line-height: 38px; text-align: center; border-radius: 100px; }
+header .search > div:hover { background-color: #EBEBEB; border-color: #EBECF2; color: #000; }
 header .notifications { float: right; line-height: 0; font-size: 18px; height: 50px; padding: 4px 0 0 0; width: 40px; }
 header .notifications > ui-bind { border-radius: 100px; background-color: #E73323; color: #FFF; font-size: 10px; width: 16px; height: 16px; position: absolute; line-height: 14px; text-align: center; margin: 22px 0 0 20px; z-index: 1; }
 header .notifications > div { width: 38px; height: 38px; cursor: pointer; border: 1px solid transparent; line-height: 38px; text-align: center; border-radius: 100px; }
-header .notifications > div:hover { background-color: #EBEBEB; border-color: #EBECF2; }
+header .notifications > div:hover { background-color: #EBEBEB; border-color: #EBECF2; color: #000; }
 header .apps { padding: 5px 120px 0 0; margin-left: 250px; margin-right: 100px; text-align: center; }
 header .apps ui-bind { position: relative; display: inline-block; }
 header .apps ui-bind button { margin-left: 10px; }

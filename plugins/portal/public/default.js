@@ -3,6 +3,8 @@ COMPONENT('iframe', 'parent:auto;margin:23;gap:0;lrefresh:Refresh;ldetach:Detach
 	var iframe;
 	var header;
 
+	self.readonly();
+
 	self.make = function() {
 
 		self.aclass(cls);
@@ -58,6 +60,8 @@ COMPONENT('content', 'marginleft:15;marginright:15;margintop:15;marginbottom:70;
 
 	var init = false;
 
+	self.readonly();
+
 	self.make = function() {
 		self.aclass(cls);
 		self.resizeforce();
@@ -91,6 +95,8 @@ COMPONENT('parts', 'parent:auto;margin:0', function(self, config, cls) {
 	var skip = false;
 	var partw;
 	var parth;
+
+	self.readonly();
 
 	self.make = function() {
 		self.aclass(cls);
