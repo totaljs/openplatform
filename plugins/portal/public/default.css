@@ -32,6 +32,8 @@ header .apps button.startmenubutton { color: var(--color); transition-duration: 
 header .apps button.startmenubutton:after { content: ''; background: var(--color); display: block; position: absolute; padding-top: 100%; padding-left: 100%; margin-left: 0; margin-top: -95%; opacity: 0; transition: all 0.3s; border-radius: 8px; }
 header .apps button.startmenubutton:active:after { padding: 0; margin: 0; opacity: 1; transition: 0s; }
 
+.jc-xs header .search { display: none; }
+
 .thirdparty { position: absolute; left: 15px; right: 15px; top: 15px; bottom: 50px; }
 .ui-content { background-color: #FFF; border: 1px solid #E7E7E7; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden; }
 .ui-preview img { border-radius: 100px; }
