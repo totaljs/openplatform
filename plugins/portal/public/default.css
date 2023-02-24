@@ -22,10 +22,10 @@ header .notifications > ui-bind { border-radius: 100px; background-color: #E7332
 header .notifications > div { width: 38px; height: 38px; cursor: pointer; border: 1px solid transparent; line-height: 38px; text-align: center; border-radius: 100px; }
 header .notifications > div:hover { background-color: #EBEBEB; border-color: #EBECF2; color: #000; }
 header .apps { padding: 5px 120px 0 0; margin-left: 250px; margin-right: 100px; text-align: center; }
-header .apps ui-bind { position: relative; display: inline-block; }
-header .apps ui-bind button { margin-left: 10px; }
+header .apps ui-bind { position: relative; display: inline-block; margin-left: 10px; }
+header .apps ui-bind button { margin-left: 2px; }
 header .apps button { position: relative; display: inline-block; width: 35px; height: 35px; text-align: center; line-height: 32px; color: #A0A0A0; font-size: 18px; border: 0; background-color: transparent; }
-header .apps button span { position: absolute; font-size: 6px; color: #68B25B; margin: 27px 0 0 6px; }
+header .apps button span { position: absolute; font-size: 6px; color: #68B25B; margin: 32px 0 0 6px; }
 header .apps button:hover { color: #000; }
 header .apps button.selected { color: #000; }
 header .apps button.startmenubutton { color: var(--color); transition-duration: 0.3s; background-color: #FFF; border-radius: 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); text-align: center; padding: 0; margin: 0; }
