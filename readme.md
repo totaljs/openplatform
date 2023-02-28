@@ -16,10 +16,10 @@ __Manual installation__:
 
 - Install latest version of [__Node.js platform__](https://nodejs.org/en/)
 - Install PostgreSQL
+- [Download __Source-Code__](https://github.com/totaljs/openplatform)
 - Create a database for the OpenPlatform
 - Install NPM dependencies via terminal `$ npm install` in the root of application
 - Update connection strings in `/config` file
-- [Download __Source-Code__](https://github.com/totaljs/openplatform)
 - Run it `$ node index.js`
 - Open `http://127.0.0.1:8000` in your web browser
 - __IMPORTANT__: Then open settings and configure the platform
