@@ -249,7 +249,7 @@ async function makenotification($, db, userapp) {
 async function session() {
 
 	var $ = this;
-	var session = $.query.openplatformid || $.query.token || $.query.session;
+	var session = $.query.ssid || $.query.openplatformid || $.query.token || $.query.session;
 
 	if (!session) {
 		$.invalid('@(Invalid token)');
