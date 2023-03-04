@@ -1,9 +1,9 @@
 Tagsor7      : Invalid data
+T14lakc0     : Invalid token
 T1gkjkgn     : Unread notifications
 Tm0qe9a      : E-mail address is already used
 T13oi6c6     : App not found
 Tlcnga       : App has been temporary disabled
-T14lakc0     : Invalid token
 T178h6ff     : Session not found
 T1dwzbwy     : You must enter old password
 T39vorh      : Invalid old password
@@ -32,6 +32,13 @@ Tb4wo6k      : Reset password
 Tjsvyke      : Account name
 T9sze77      : Passwords do not match.
 Ty97he0      : Notifications
+T14w27d4     : Search
+T2cba        : now
+Tnhjmc9      : # minutes ago,# minute ago,# minutes ago,# minutes ago
+T3egjfd      : # hours ago,# hour ago,# hours ago,# hours ago
+T9wgord      : # days ago,# day ago,# days ago,# days ago
+T1mqtx3t     : # months ago,# month ago,# months ago,# months ago
+To0b6h       : # years ago,# year ago,# years ago,# years ago
 T5zhbb1      : Start menu
 T1wcnolm     : January
 T1vqhghu     : February
@@ -70,7 +77,6 @@ T1qonvrk     : Open in new tab
 T19oinzj     : Restart
 T19hc5a3     : Refresh
 T1bhvtp      : Setup
-T14w27d4     : Search
 Tizbdg9      : My account
 T41pkh7      : Change password
 Tft8p6c      : Dashboard
@@ -82,11 +88,9 @@ T1whz        : Yes
 T1y9         : No
 T706k13      : # pages,# page,# pages,# pages
 Tmm5bl3      : # items,# item,# items,# items
-T2cba        : now
-Tnhjmc9      : # minutes ago,# minute ago,# minutes ago,# minutes ago
-T3egjfd      : # hours ago,# hour ago,# hours ago,# hours ago
-T9wgord      : # days ago,# day ago,# days ago,# days ago
-T1mqtx3t     : # months ago,# month ago,# months ago,# months ago
+Tysvd08      : Filter
+T11sitq      : Apply
+T1ay23z      : Reset
 Tmaxa8e      : This message you are reading contains feedback from a platform user. I would appreciate your review and response.
 T1k0jv       : URL:
 T17vx5       : App:
@@ -150,11 +154,6 @@ T13f1p3l     : Pasted
 Tymsnrx      : Invalid clipboard data
 T10a9v45     : Import
 Tqns537      : Enter application name
-Twdcm3g      : Additional settings
-T1cq6x       : Icon
-T12ve4j      : Color
-T1fvl7       : Name
-Tttxmoz      : URL address
 T7n6th0      : Origin:
 T74vdr9      : Set as a bookmark
 T1xgd2c1     : The app will be used as a bookmark to the external web app
@@ -173,6 +172,11 @@ Ts1qoa2      : Update app
 T19h9suc     : Register app
 T1ukb8mj     : Token has been copied
 T1unypd      : value
+T1fvl7       : Name
+Tttxmoz      : URL address
+Twdcm3g      : Additional settings
+T1cq6x       : Icon
+T12ve4j      : Color
 T1eo1        : Add
 T1ekbk05     : Assign groups
 T1o15c9f     : Add groups
@@ -190,6 +194,7 @@ T1eyp        : App
 Txsr3hy      : Device
 T151r95x     : Solved
 Ts2wqv0      : Updated by
+T10cah3n     : Enter a group name
 T19zj9rb     : Disable group
 T1v8kwlm     : Allowed apps
 Tyedbj7      : Enable
@@ -217,16 +222,16 @@ T1sr         : ID
 Tnnin4r      : Updated
 T13f7ws      : Done.
 T4hb798      : disabled
+T5jsqzg      : Disabled
 Tx5y7ue      : bookmark
 Ty8frkm      : Bookmark
 T1kpnh       : Used
 T14wzruf     : Last usage
 T1cmsyog     : Are you sure you want to remove selected apps?
-T5jsqzg      : Disabled
 T19hez4      : Open:
 Trw6u07      : # sessions,# session,# sessions,# sessions
 T17eh95w     : Used memory
-T1ufimg      : users
+T1b6t9xe     : <b>Online</b> users
 T185y3gq     : Registered users
 Tbyb14r      : Open feedback
 T1l7n05e     : Today statistics
@@ -234,7 +239,6 @@ T1qw2huo     : Max. logged users
 T1vtxcb8     : Desktop computers
 Tj9ic8v      : Mobile devices
 T11qu4db     : Total statistics
-T1350pkj     : Online
 T1gtii       : Open
 T14d5cxp     : Rating
 T1t3         : IP
@@ -260,9 +264,12 @@ T7bylzj      : SMTP response:
 Txgsqvt      : Settings have been saved successfully
 T1x0qenp     : URL address has been copied
 Twl9frj      : Assign
+T1mv43c6     : unconfirmed
 T1iagm6r     : online
 T1j67nz      : admin
 T11qceci     : Logged
 T11ksof      : Admin
+T1350pkj     : Online
+Tjud4qn      : Confirmed
 T1h67ij      : Inactive
 Tphxixg      : Are you sure you want to remove selected users?

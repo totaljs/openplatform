@@ -209,7 +209,6 @@ T5jsqzg      : Zablokované
 T19hez4      : Otvorené:
 Trw6u07      : # relácií,# relácia,# relácie,# relácií
 T17eh95w     : Použitá RAM
-T1ufimg      : používatelia
 T185y3gq     : Registrovaní používatelia
 Tbyb14r      : Otvorené spätné väzby
 T1l7n05e     : Dnešné štatistiky
@@ -223,7 +222,7 @@ T14d5cxp     : Hodnotenie
 T1t3         : IP
 T1b3mt7h     : Naozaj chcete odstrániť vybratú spätnú väzbu?
 Tgdx3fy      : Naozaj chcete odstrániť vybraté skupiny?
-T1qe2tcp     : Icon 150x150
+T1qe2tcp     : Piktogram 150x150
 T1jsmq       : Test
 T1e7nx65     : SMTP nastavenie
 T1tbx2cp     : E-mail odosielateľa
@@ -266,3 +265,11 @@ T74vdr9      : Nastaviť ako záložku
 T1xgd2c1     : Aplikácia bude použitá ako záložka pre externú aplikáciu
 Tx5y7ue      : záložka
 Ty8frkm      : Záložka
+To0b6h       : # rokov,# rok,# roky,# rokov
+Tysvd08      : Filter
+T11sitq      : Použiť
+T1ay23z      : Resetovať
+T10cah3n     : Zadajte názov skupiny
+T1b6t9xe     : <b>Online</b> používatelia
+T1mv43c6     : Nepotvdené
+Tjud4qn      : Potvrdené
