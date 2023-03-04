@@ -160,6 +160,7 @@ function auth() {
 
 	AUTH(options);
 	DEF.onLocale = req => (req.user ? req.user.language : req.query.language) || CONF.language || '';
+
 	ON('configure', authconfig);
 
 	MAIN.auth = {};
@@ -222,6 +223,7 @@ async function init() {
 		data.url = CONF.url || '';
 		data.token = FUNC.checksum(GUID(30));
 		data.userid = UID();
+		data.groupid = UID();
 		data.password = 'admin'.sha256(data.salt);
 
 		// Temporary

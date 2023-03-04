@@ -313,7 +313,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('color', '#4285F4', 'string', 'Color'),
 	('icon', '', 'string', 'Icon'),
 	('id', '{id}', 'string', 'ID'),
-	('language', '', 'string', 'A default language'),
+	('language', 'en', 'string', 'A default language'),
 	('mail_from', '', 'string', 'Sender address'),
 	('mail_smtp', '', 'string', 'SMTP server'),
 	('mail_smtp_options', '{"port":465,"secure":true,"user":"","password":""}', 'object', 'SMTP options'),
@@ -324,5 +324,11 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('secret_tms', '{tms}', 'string', 'TMS token'),
 	('url', '{url}', 'string', 'URL address');
 
+-- DEFAULT GROUP
+INSERT INTO "op"."tbl_group" ("id", "name", "dtcreated") VALUES('{groupid}', 'Admin', NOW());
+
 -- DEFAULT USER
 INSERT INTO "op"."tbl_user" ("id", "token", "name", "search", "email", "password", "color", "sa", "isconfirmed", "dtcreated") VALUES('{userid}', '{token}', 'John Connor', 'john conor', 'info@totaljs.com', '{password}', '#4285F4', 't', 't', NOW());
+
+-- ASSIGN A DEFAULT GROUP TO THE USER
+INSERT INTO "op"."tbl_user_group" ("id", "userid", "groupid") VALUES('{userid}{groupid}', '{userid}', '{groupid}');
