@@ -34,6 +34,8 @@ docker run --env DATABASE='postgresql://user:pass@hostname/database' -p 8000:800
 __Docker Compose__:
 
 ```bash
+git clone https://github.com/totaljs/openplatform.git
+cd openplatform
 docker-compose up
 ````
 
