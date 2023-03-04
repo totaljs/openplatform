@@ -36,7 +36,7 @@ __Docker Compose__:
 ```bash
 git clone https://github.com/totaljs/openplatform.git
 cd openplatform
-docker-compose up
+docker compose up
 ````
 
 ## Default credentials
