@@ -50,7 +50,7 @@ COMPONENT('iframe', 'parent:auto;margin:23;gap:0;lrefresh:Refresh;ldetach:Detach
 
 	self.resizeforce = function() {
 		var parent = self.parent(config.parent);
-		var margin = HIDDEN(header) ? 0 : config.margin;
+		var margin = self.closest('.ui-windows-body').length ? 0 : config.margin;
 		iframe.css({ width: parent.width(), height: parent.height() - margin });
 	};
 
