@@ -100,6 +100,7 @@ async function verify() {
 
 		user.openplatformid = CONF.id;
 		user.openplatform = CONF.url;
+		user.ssid = FUNC.checksum(session.id + 'X' + session.sessionid);
 
 		if (user.notifications)
 			user.notify = userapp.notify;
