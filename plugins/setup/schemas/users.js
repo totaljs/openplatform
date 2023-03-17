@@ -75,7 +75,7 @@ NEWSCHEMA('Users', function(schema) {
 
 			model.id = UID();
 			model.search = model.name.toSearch();
-			model.dtcreated = NOW;
+			model.dtcreated = NOW = new Date();
 			model.token = FUNC.checksum(GUID(30));
 
 			if (!model.password)
