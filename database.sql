@@ -314,7 +314,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('color', '#4285F4', 'string', 'Color'),
 	('icon', '', 'string', 'Icon'),
 	('id', '{id}', 'string', 'ID'),
-	('language', 'en', 'string', 'A default language'),
+	('language', 'eu', 'string', 'A default language'),
 	('mail_from', '', 'string', 'Sender address'),
 	('mail_smtp', '', 'string', 'SMTP server'),
 	('mail_smtp_options', '{"port":465,"secure":true,"user":"","password":""}', 'object', 'SMTP options'),
