@@ -28,7 +28,7 @@
 					<div class="caption m">
 						<label><i class="ti ti-users"></i>@(Allow reading for all users and groups)</label>
 					</div>
-					<p>@(This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header.)</p>
+					<p>@(This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.)</p>
 
 					<div class="m">
 						<ui-component name="input" path="?.allow_token" config="type:checkbox" class="b">@(Enable API)</ui-component>
@@ -129,7 +129,8 @@
 		};
 
 		exports.copy = function(el) {
-			EXEC('-clipboard/copy', el.text());
+			var model = exports.model;
+			EXEC('-clipboard/copy', el.text() + '?token=' + model.token);
 			EXEC('-notify/success', '@(URL address has been copied)');
 		};
 
