@@ -94,7 +94,9 @@ function users() {
 		return;
 	}
 
-	if ($.headers['x-token'] !== CONF.token) {
+	var token = $.query.token || $.headers['x-token'];
+
+	if (token !== CONF.token) {
 		$.invalid(401);
 		return;
 	}
