@@ -106,6 +106,7 @@ async function verify() {
 			user.notify = userapp.notify;
 
 		user.permissions = data.permissions[app.id] || EMPTYARRAY;
+		user.groups = data.groups;
 
 		// Compress data
 		for (var key in user) {

@@ -44,6 +44,10 @@ FUNC.permissions = async function(userid, callback) {
 
 	data.apps = apps;
 	data.permissions = cache;
+	data.groups = [];
+
+	for (var m of groups)
+		data.groups.push(m.id);
 
 	var filter = [];
 
