@@ -218,7 +218,8 @@ async function init() {
 		data.secret = GUID(25);
 		data.salt = GUID(25);
 		data.saltchecksum = CONF.saltchecksum = GUID(25);
-		data.secret = GUID(25);
+		data.secret_tms = GUID(30);
+		data.maintoken = GUID(30);
 		data.tms = GUID(35);
 		data.url = CONF.url || '';
 		data.token = FUNC.checksum(GUID(30));

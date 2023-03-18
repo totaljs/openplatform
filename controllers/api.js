@@ -16,6 +16,8 @@ exports.install = function() {
 	ROUTE('+API    /api/    +password                *Account   --> password');
 	ROUTE('+API    /api/    +feedback                *Account   --> feedback');
 
+	ROUTE('GET     /users/', users);
+
 	ROUTE('POST    /upload/base64/', upload, 1024 * 2);
 	ROUTE('FILE    /files/*.jpg', files);
 };
@@ -76,4 +78,39 @@ function files(req, res) {
 	else
 		res.throw404();
 
+}
+
+function users() {
+
+	var $ = this;
+
+	if (!CONF.allow_token || !CONF.token) {
+		$.invalid('Public API is disabled');
+		return;
+	}
+
+	if (BLOCKED($, 20)) {
+		$.invalid(401);
+		return;
+	}
+
+	if ($.headers['x-token'] !== CONF.token) {
+		$.invalid(401);
+		return;
+	}
+
+	BLOCKED($, null);
+
+	var db = DB();
+
+	db.query('SELECT a.id,a.name,a.icon,a.color FROM op.tbl_group a').set('groups');
+	db.query('SELECT a.id,a.reference,a.language,a.gender,a.photo,a.name,a.search,a.email,a.color,a.interface,a.sounds,a.notifications,a.sa,a.isdisabled,a.isinactive,a.isonline,a.dtlogged,a.dtcreated,a.dtupdated,ARRAY(SELECT x.groupid FROM op.tbl_user_group x WHERE x.userid=a.id) AS groups FROM op.tbl_user a WHERE a.isremoved=FALSE ORDER BY dtcreated ASC').set('users');
+
+	db.callback($.successful(function(response) {
+		for (var m of response.users) {
+			if (m.photo)
+				m.photo = CONF.url + m.photo;
+		}
+		$.json(response);
+	}));
 }

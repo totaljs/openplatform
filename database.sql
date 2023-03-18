@@ -309,6 +309,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('auth_secret', '{secret}', 'string', 'Cookie secret'),
 	('auth_strict', 'false', 'boolean', 'Strict session'),
 	('allow_tms', 'false', 'boolean', 'Allow TMS'),
+	('allow_token', 'false', 'boolean', 'Allow API'),
 	('cdn', 'https://cdn.componentator.com/', 'string', 'CDN'),
 	('color', '#4285F4', 'string', 'Color'),
 	('icon', '', 'string', 'Icon'),
@@ -322,6 +323,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('saltchecksum', '{saltchecksum}', 'string', 'Salf for checksums'),
 	('secret', '{secret}', 'string', 'Secret for tokens'),
 	('secret_tms', '{tms}', 'string', 'TMS token'),
+	('token', '{maintoken}', 'string', 'Secret token'),
 	('url', '{url}', 'string', 'URL address');
 
 -- DEFAULT GROUP

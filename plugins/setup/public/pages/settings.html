@@ -15,6 +15,7 @@
 					<div class="help center">@(Icon 150x150)</div>
 				</div>
 				<div style="padding:var(--gap)">
+
 					<div>
 						<div class="m">
 							<ui-component name="input" path="?.name" config="required:1">@(Name)</ui-component>
@@ -23,6 +24,23 @@
 							<ui-component name="input" path="?.url" config="required:1;type:url" default="location.origin">@(URL address)</ui-component>
 						</div>
 					</div>
+
+					<div class="caption m">
+						<label><i class="ti ti-users"></i>@(Allow reading for all users and groups)</label>
+					</div>
+					<p>@(This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header.)</p>
+
+					<div class="m">
+						<ui-component name="input" path="?.allow_token" config="type:checkbox" class="b">@(Enable API)</ui-component>
+					</div>
+
+					<ui-bind path="?.allow_token" config="show" class="m block hidden">
+						<ui-component name="input" path="?.token" config="required:1;camouflage:1">@(Access token)</ui-component>
+						<div class="help">
+							<span class="pull-right exec link" data-exec="?/generate">@(Generate)</span>
+							<div><i class="ti ti-link"></i><b>@(Endpoint):</b> <ui-bind path="location.origin" config="text:value + '/users/'" class="exec" data-exec="?/copy"></ui-bind></div>
+						</div>
+					</ui-bind>
 
 					<div class="caption m">
 						<label><i class="ti ti-totaljs"></i>@(Total.js TMS)</label>
@@ -36,7 +54,7 @@
 					<ui-bind path="?.allow_tms" config="show" class="m block hidden">
 						<ui-component name="input" path="?.secret_tms" config="required:1;camouflage:1">@(Access token)</ui-component>
 						<div class="help">
-							<span class="pull-right exec link" data-exec="?/generate">@(Generate)</span>
+							<span class="pull-right exec link" data-exec="?/generatetms">@(Generate)</span>
 							<div><i class="ti ti-link"></i><b>@(TMS endpoint):</b> <ui-bind path="location.origin" config="text:value.replace(/^https/, 'wss') + '/$tms/'" class="exec" data-exec="?/copy"></ui-bind></div>
 						</div>
 					</ui-bind>
@@ -116,6 +134,10 @@
 		};
 
 		exports.generate = function() {
+			exports.set('token @type:show', GUID(35));
+		};
+
+		exports.generatetms = function() {
 			exports.set('secret_tms @type:show', GUID(35));
 		};
 
