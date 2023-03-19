@@ -200,9 +200,9 @@ function auth() {
 
 async function init() {
 
-	var is = await DB().check('information_schema.tables').where('table_schema', 'op').where('table_name', 'cl_config').promise();
+	var op_tables = await DB().query("SELECT FROM pg_tables WHERE schemaname = 'op' AND tablename = 'cl_config' LIMIT 1").promise();
 
-	if (is) {
+	if (op_tables.length) {
 		PAUSESERVER('Database');
 		reconfigure();
 		auth();
