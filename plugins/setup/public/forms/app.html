@@ -17,9 +17,12 @@
 <ui-component name="box" path="common.form" config="if:~PATH~;icon:rocket;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:680;scrollbarshadow:1" class="hidden ~PATH~" plugin="~PATH~">
 
 	<nav>
-		<button class="exec" data-exec="?/copy" title="@(Copy settings)"><i class="ti ti-copy nmr"></i></button>
-		<button class="exec" data-exec="?/paste" title="@(Paste settings)"><i class="ti ti-paste nmr"></i></button>
-		<button class="exec" data-exec="?/import"><i class="ti ti-file-import"></i>@(Import)</button>
+		<ui-bind path="?.meta" config="show .A;hide .B">
+			<button class="exec" data-exec="?/copy" title="@(Copy settings)"><i class="ti ti-copy nmr"></i></button>
+			<button class="exec" data-exec="?/paste" title="@(Paste settings)"><i class="ti ti-paste nmr"></i></button>
+			<button class="exec A hidden" data-exec="?/sync"><i class="ti ti-sync"></i>@(Synchronize)</button>
+			<button class="exec B hidden" data-exec="?/import"><i class="ti ti-file-import"></i>@(Import)</button>
+		</ui-bind>
 	</nav>
 
 	<div class="padding">
@@ -226,6 +229,39 @@
 					EXEC('-notify/success', '@(Pasted)');
 				} else
 					EXEC('-message/warning', '@(Invalid clipboard data)');
+			});
+		};
+
+		exports.sync = function() {
+			var model = exports.model;
+			exports.tapi(QUERIFY('apps_download', { url: model.meta }) + ' @showloading ERROR', function(response) {
+
+				model.meta = model.meta;
+				model.url = response.url || 'htpts://';
+				model.permissions = response.permissions || [];
+
+				if (response.reqtoken)
+					model.reqtoken = response.reqtoken;
+
+				if (response.restoken)
+					model.restoken = response.restoken;
+
+				model.allow = response.origin || response.allow;
+
+				for (var m of model.permissions) {
+					if (m.id) {
+						m.value = m.id;
+						m.id = undefined;
+					}
+				}
+
+				if (model.allow)
+					model.allow = model.allow instanceof Array ? model.allow.join(', ') : model.allow.toString();
+				else
+					model.allow = '';
+
+				SETTER('loading/hide');
+				exports.upd();
 			});
 		};
 
