@@ -35,7 +35,7 @@ header .apps button.startmenubutton:active:after { padding: 0; margin: 0; opacit
 .jc-xs header .search { display: none; }
 
 .thirdparty { position: absolute; left: 15px; right: 15px; top: 15px; bottom: 50px; }
-.ui-content { background-color: #FFF; border: 1px solid #E7E7E7; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden; }
+.ui-content { background-color: #FFF; border: 1px solid #E7E7E7; border-radius: 5px; overflow: hidden; }
 .ui-preview img { border-radius: 100px; }
 
 .ml5 { margin-left: 5px; }
