@@ -28,7 +28,7 @@ ON('loaded', function() {
 		var user = session.data;
 		var locked = user.locked == true;
 
-		$.req.$langauge = user.language;
+		$.req.$language = user.language;
 
 		if (!locked && (user.locking && user.pin && user.dtlogged2 && !$.req.mobile && user.dtlogged2 < NOW.add('-' + (user.locking + 2) + ' minutes'))) {
 			locked = true;
