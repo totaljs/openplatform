@@ -105,11 +105,11 @@ NEWSCHEMA('Apps', function(schema) {
 
 			for (let m of diff.upd) {
 				m.form.id = undefined;
-				await db.modify('op.tbl_app_permission', m.form).id('id', m.db.id).where('appid', params.id).promise($);
+				await db.modify('op.tbl_app_permission', m.form).id(m.db.id).where('appid', params.id).promise($);
 			}
 
 			for (let m of diff.rem)
-				await db.remove('op.tbl_app_permission').id('id', m.id).where('appid', params.id).promise($);
+				await db.remove('op.tbl_app_permission').id(m).where('appid', params.id).promise($);
 
 			FUNC.clearcache('A' + params.id);
 			$.success(params.id);
