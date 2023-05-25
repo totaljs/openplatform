@@ -28,7 +28,7 @@ NEWSCHEMA('Settings', function(schema) {
 
 	schema.action('save', {
 		name: 'Save settings',
-		input: 'name:String, url:URL, mail_smtp:String, mail_smtp_options:JSON, mail_from:Email, icon:String, allow_tms:Boolean, secret_tms:String, allow_token:Boolean, token:String',
+		input: 'name:String, url:URL, language:String, mail_smtp:String, mail_smtp_options:JSON, mail_from:Email, icon:String, allow_tms:Boolean, secret_tms:String, allow_token:Boolean, token:String',
 		action: async function($, model) {
 
 			var db = DB();
