@@ -23,6 +23,9 @@
 						<div class="m">
 							<ui-component name="input" path="?.url" config="required:1;type:url" default="location.origin">@(URL address)</ui-component>
 						</div>
+						<div class="m">
+							<ui-component name="input" path="?.language" config="dirsource:en|English,fr|French,es|Spanish,sk|Slovak;required:1;innerlabel:1" default="en" class="m">@(Language)</ui-component>
+						</div>
 					</div>
 
 					<div class="caption m">
