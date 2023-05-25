@@ -3,7 +3,7 @@ NEWSCHEMA('Settings', function(schema) {
 	schema.action('read', {
 		name: 'Read settings',
 		action: async function($) {
-			var items = await DB().find('op.cl_config').fields('id,value,type').in('id', 'icon,name,url,mail_smtp,mail_smtp_options,mail_from,allow_tms,secret_tms,allow_token,token'.split(',')).promise($);
+			var items = await DB().find('op.cl_config').fields('id,value,type').in('id', 'icon,name,url,language,mail_smtp,mail_smtp_options,mail_from,allow_tms,secret_tms,allow_token,token'.split(',')).promise($);
 			var model = {};
 
 			for (var m of items) {
