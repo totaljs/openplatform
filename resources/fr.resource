@@ -5,18 +5,18 @@ Tm0qe9a      : L'adresse e-mail est déjà utilisée
 T13oi6c6     : L'application n'a pas été trouvée
 Tlcnga       : L'application a été temporairement désactivée
 T178h6ff     : Session non trouvée
-T1dwzbwy     : Vous devez entrer l'ancien mot de passe
+T1dwzbwy     : Vous devez entrer l&#39;ancien mot de passe
 T39vorh      : Ancien mot de passe non valide
 T1bjrc82     : Compte introuvable
 T1kod7hb     : Le compte est désactivé
 T1glqo0e     : Le compte est inactif
 T1wxl291     : Feedback
 T17tfm1      : Connexion
-T14ranob     : Saisir l'adresse e-mail
+T14ranob     : Saisir l&#39;adresse e-mail
 T1w7l82b     : Adresse e-mail
 Tdrftoj      : Saisir le mot de passe
-Tykg00t      : Vous n'avez pas de compte ?
-T1aeqyco     : S'INSCRIRE
+Tykg00t      : Vous n&#39;avez pas de compte ?
+T1aeqyco     : S&#39;INSCRIRE
 Tf821nc      : Vous recevrez par courriel les instructions pour réinitialiser votre mot de passe.
 Tibgsfj      : Formulaire de connexion
 T1acy0f      : RÉINITIALISER
@@ -91,7 +91,7 @@ Tmm5bl3      : # éléments,# éléments,# éléments,# éléments
 Tysvd08      : Filtre
 T11sitq      : Appliquer
 T1ay23z      : Réinitialiser
-Tmaxa8e      : Le message que vous lisez actuellement contient les commentaires d'un utilisateur de la plateforme. Je vous serais reconnaissant de l'examiner et d'y répondre.
+Tmaxa8e      : Le message que vous lisez actuellement contient les commentaires d&#39;un utilisateur de la plateforme. Je vous serais reconnaissant de l&#39;examiner et d&#39;y répondre.
 T1k0jv       : URL :
 T17vx5       : App :
 T1cu3lb      : Utilisateur :
@@ -101,17 +101,17 @@ T1jvf5v3     : Référence :
 T1sghbn7     : Message :
 Tnf4szb      : Changer votre mot de passe
 Tga1kxw      : Si vous avez perdu votre mot de passe ou si vous souhaitez le réinitialiser, utilisez le lien ci-dessous pour commencer avec <b>@{CONF.name}</b>.
-T3e79n1      : Vous pouvez ignorer cet e-mail si vous n'avez pas demandé la réinitialisation de votre mot de passe. Les mots de passe des comptes ne peuvent être réinitialisés que par une personne ayant accès à votre adresse électronique.
+T3e79n1      : Vous pouvez ignorer cet e-mail si vous n&#39;avez pas demandé la réinitialisation de votre mot de passe. Les mots de passe des comptes ne peuvent être réinitialisés que par une personne ayant accès à votre adresse électronique.
 Tnigz7n      : Nous vous rappelons que vous avez des notifications non lues (@{model.unread}) dans le @{CONF.name}. Si vous souhaitez les consulter, veuillez vous connecter au portail.
 T1r2awam     : Lire les notifications
 T1bx8wg2     : Bienvenue
 Tsz897w      : Cher @{model.name}, bienvenue sur le <b>@{'%name'}</b>. Nous nous réjouissons que vous ayez rejoint la plateforme. Veuillez confirmer votre compte via le lien ci-dessous.
 T1dgvp2l     : Confirmer le compte
 T102cmcz     : Identifiants invalides
-Tlrm4jz      : Le compte n'est pas confirmé
+Tlrm4jz      : Le compte n&#39;est pas confirmé
 Tep427u      : Réactions non trouvées
 T4w8eic      : Groupe non trouvé
-T180ypcd     : Compte d'utilisateur non trouvé
+T180ypcd     : Compte d&#39;utilisateur non trouvé
 T1v0doob     : Photo du compte 200x200
 T1ppiecu     : Le compte a été modifié avec succès
 T13xh18      : Email
@@ -119,7 +119,7 @@ Tlv3xuz      : Activer les notifications
 Twvcu3l      : Activer les sons
 T14mox7c     : Soumettre
 Tx9d2fu      : Annuler
-Tfd0in7      : Envoyez-nous vos commentaires ou signalez un problème. Chaque fois qu'un message est signalé, nous procédons à une enquête approfondie. Vous recevrez une réponse par courrier électronique.
+Tfd0in7      : Envoyez-nous vos commentaires ou signalez un problème. Chaque fois qu&#39;un message est signalé, nous procédons à une enquête approfondie. Vous recevrez une réponse par courrier électronique.
 T80zqrg      : Évaluez-nous :
 Ti7tjwq      : Application :
 Tb6sf2n      : Merci de nous avoir contactés et de nous avoir fait part de vos commentaires.
@@ -127,25 +127,25 @@ T17bmnl3     : Message
 T1fytv       : Suivant
 T19s4i       : Terminé
 Tn6oih5      : Bienvenue <ui-bind path="user.name" config="text" class="b"></ui-bind> à <ui-bind path="document.title" config="text" class="b"></ui-bind>. Nous sommes ravis de vous accueillir à bord.
-Teuofo       : C'est tout
+Teuofo       : C&#39;est tout
 To92iba      : Vous pouvez maintenant mettre à jour votre profil.
-T12tbn1      : C'est bon
-T84f2oz      : C'est l'heure de se détendre !
-T16dbrot     : Vous n'avez pas de notifications
+T12tbn1      : C&#39;est bon
+T84f2oz      : C&#39;est l&#39;heure de se détendre !
+T16dbrot     : Vous n&#39;avez pas de notifications
 T1nh15nd     : Entrez votre ancien mot de passe
 Tujl5zo      : Ancien mot de passe
-T18z50iy     : Nous vous recommandons d'utiliser des caractères variés tels que des chiffres, des caractères spéciaux, des minuscules et des majuscules.
+T18z50iy     : Nous vous recommandons d&#39;utiliser des caractères variés tels que des chiffres, des caractères spéciaux, des minuscules et des majuscules.
 Tbhyivq      : Les mots de passe ne peuvent pas être réutilisés.
 Tliwp51      : Réponse au mot de passe
 Tf7qnvg      : Le mot de passe a été modifié avec succès
 T1scnbkv     : Mes sessions ouvertes
 Tvezzy0      : Nettoyeur automatique
-T1e4t50a     : Le programme supprime toutes les sessions ouvertes à l'exception de celle dans laquelle vous vous trouvez actuellement.
+T1e4t50a     : Le programme supprime toutes les sessions ouvertes à l&#39;exception de celle dans laquelle vous vous trouvez actuellement.
 T17i0zgc     : Êtes-vous sûr de vouloir annuler la session sélectionnée ?
 Th2px7i      : Êtes-vous sûr de vouloir supprimer toutes les sessions inutilisées ?
-T1qrqsk5     : C'est fait, les sessions inutilisées ont été supprimées.
+T1qrqsk5     : C&#39;est fait, les sessions inutilisées ont été supprimées.
 T73iban      : Bienvenue <ui-bind path="user.name" config="text" class="b"></ui-bind> à <ui-bind path="document.title" config="text" class="b"></ui-bind>. Vous êtes le premier super utilisateur de la plateforme.
-T4ucl30      : La première étape consiste à mettre à jour la configuration principale de l'OpenPlatform via l'interface de configuration. Ensuite, vous pouvez enregistrer des utilisateurs et des applications.
+T4ucl30      : La première étape consiste à mettre à jour la configuration principale de l&#39;OpenPlatform via l&#39;interface de configuration. Ensuite, vous pouvez enregistrer des utilisateurs et des applications.
 T8259n1      : Compte
 Tgeudzi      : Copier les paramètres
 T8zw3zk      : Coller les paramètres
@@ -153,23 +153,23 @@ Txh3l5w      : Copié
 T13f1p3l     : Collé
 Tymsnrx      : Données du presse-papiers non valides
 T10a9v45     : Importation
-Tqns537      : Saisir le nom de l'application
+Tqns537      : Saisir le nom de l&#39;application
 T7n6th0      : Origine :
 T74vdr9      : Définir comme signet
-T1xgd2c1     : L'application sera utilisée comme signet vers l'application web externe
+T1xgd2c1     : L&#39;application sera utilisée comme signet vers l&#39;application web externe
 Tgrkjmo      : Sécurité
 Tc9wkjs      : Jeton de demande
 Tvwxchm      : Jeton de réponse
-T1k8gb7p     : Vous pouvez autoriser uniquement des adresses IP spécifiques à accéder aux informations sensibles de l'utilisateur pour cette application.
+T1k8gb7p     : Vous pouvez autoriser uniquement des adresses IP spécifiques à accéder aux informations sensibles de l&#39;utilisateur pour cette application.
 Tfz4xv2      : 11.11.11.11.11
 Tkt0rcx      : Adresses IP autorisées
 T1fjh48b     : Saisir les adresses IP séparées par une virgule
-Truotm0      : Autoriser l'ouverture de l'application dans un nouvel onglet
-T4xiins      : Désactiver l'application
+Truotm0      : Autoriser l&#39;ouverture de l&#39;application dans un nouvel onglet
+T4xiins      : Désactiver l&#39;application
 T1abzfj8     : Permissions
-T1usp52l     : L'application n'a pas de permissions définies
-Ts1qoa2      : Mettre à jour l'application
-T19h9suc     : Enregistrer l'application
+T1usp52l     : L&#39;application n&#39;a pas de permissions définies
+Ts1qoa2      : Mettre à jour l&#39;application
+T19h9suc     : Enregistrer l&#39;application
 T1ukb8mj     : Le jeton a été copié
 T1unypd      : valeur
 T1fvl7       : Nom
@@ -188,8 +188,8 @@ T18jgseg     : Créé
 T1kpnv       : Utilisateur
 T1eim7ln     : Adresse IP
 T1hg9934     : Marquer comme résolu
-T1yrok3o     : Le feedback n'est pas encore résolu
-Tk4ctwy      : Le système n'envoie pas d'email après la résolution.
+T1yrok3o     : Le feedback n&#39;est pas encore résolu
+Tk4ctwy      : Le système n&#39;envoie pas d&#39;email après la résolution.
 T1eyp        : App
 Txsr3hy      : Dispositif
 T151r95x     : Résolu
@@ -201,21 +201,21 @@ Tyedbj7      : Activer
 Txupfgo      : Mettre à jour le groupe
 T3rra0r      : Créer un groupe
 T1w396bq     : Importer une application
-Tqxymaz      : Saisir l'URL des métadonnées de l'application OpenPlatform.
+Tqxymaz      : Saisir l&#39;URL des métadonnées de l&#39;application OpenPlatform.
 T13pqvju     : https://www.votredomaine.com/openplatform.json
 Tzs3c11      : IMPORTER
-Tswy1e1      : Photo de l'utilisateur 200x200
+Tswy1e1      : Photo de l&#39;utilisateur 200x200
 T1f8kt       : Homme
 Tyqofos      : Femme
 T1us6m12     : Saisir le nom du compte
 Txeubzz      : E-mail
-T30e032      : L'adresse e-mail de l'utilisateur est confirmée
+T30e032      : L&#39;adresse e-mail de l&#39;utilisateur est confirmée
 Tw0pwkw      : Désactiver le compte utilisateur
-T6bmgs9      : Le compte de l'utilisateur est inactif
+T6bmgs9      : Le compte de l&#39;utilisateur est inactif
 T1irlupz     : Super privilèges
 T1yehj0z     : Envoyer un message de bienvenue
 T8kpxfn      : Entrer un nouveau mot de passe
-Th4z2qq      : Mettre à jour l'utilisateur
+Th4z2qq      : Mettre à jour l&#39;utilisateur
 Tigj0b3      : Créer un utilisateur
 T14f871g     : Supprimer
 T1sr         : ID
@@ -235,7 +235,7 @@ T1b6t9xe     : <b>Utilisateurs en ligne</b> users
 T185y3gq     : Utilisateurs enregistrés
 Tbyb14r      : Feedback ouvert
 T1l7n05e     : Statistiques du jour
-T1qw2huo     : Nombre maximum d'utilisateurs connectés
+T1qw2huo     : Nombre maximum d&#39;utilisateurs connectés
 T1vtxcb8     : Ordinateurs de bureau
 Tj9ic8v      : Appareils mobiles
 T11qu4db     : Statistiques totales
@@ -246,23 +246,23 @@ T1b3mt7h     : Êtes-vous sûr de vouloir supprimer les commentaires sélectionn
 Tgdx3fy      : Etes-vous sûr de vouloir supprimer les groupes sélectionnés ?
 T1qe2tcp     : Icône 150x150
 T16y5rh      : Total.js TMS
-T1hw0tk2     : Total.js Message Service vous permet de capturer des données depuis l'OpenPlatform en utilisant l'interface de programmation visuelle Total.js Flow.
+T1hw0tk2     : Total.js Message Service vous permet de capturer des données depuis l&#39;OpenPlatform en utilisant l&#39;interface de programmation visuelle Total.js Flow.
 T1s93rwd     : Activer  TMS
-Tbupqhp      : Jeton d'accès
+Tbupqhp      : Jeton d&#39;accès
 Tv0c3o5      : Générer
 Tvywxyz      : Point de terminaison TMS
 T1jsmq       : Test
 T1e7nx65     : Paramètres SMTP
-T1tbx2cp     : Adresse de l'expéditeur
+T1tbx2cp     : Adresse de l&#39;expéditeur
 Titpmq5      : Serveur SMTP
 Tww2dw4      : Options SMTP
 T189bd17     : Les options SMTP doivent être au format JSON valide, selon la documentation Total.js
 T13gs4nu     : Documentation
-T1p9z8wo     : Le serveur SMTP n'est pas encore configuré.
+T1p9z8wo     : Le serveur SMTP n&#39;est pas encore configuré.
 T20b5iu      : Le serveur SMTP est configuré correctement.
 T7bylzj      : Réponse SMTP :
 Txgsqvt      : Les paramètres ont été sauvegardés avec succès
-T1x0qenp     : L'adresse URL a été copiée
+T1x0qenp     : L&#39;adresse URL a été copiée
 Twl9frj      : Attribuer
 T1mv43c6     : non confirmé
 T1iagm6r     : en ligne
