@@ -28,8 +28,6 @@ ON('loaded', function() {
 		var user = session.data;
 		var locked = user.locked == true;
 
-		$.req.$language = user.language;
-
 		if (!locked && (user.locking && user.pin && user.dtlogged2 && !$.req.mobile && user.dtlogged2 < NOW.add('-' + (user.locking + 2) + ' minutes'))) {
 			locked = true;
 			DBMS().query('UPDATE tbl_user_session SET locked=true WHERE id=' + PG_ESCAPE(session.sessionid));
