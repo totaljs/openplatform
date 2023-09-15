@@ -170,7 +170,6 @@ T1abzfj8     : Permissions
 T1usp52l     : The app doesn't have any defined permissions
 Ts1qoa2      : Update app
 T19h9suc     : Register app
-T1ukb8mj     : Token has been copied
 T1unypd      : value
 T1fvl7       : Name
 Tttxmoz      : URL address
@@ -273,3 +272,11 @@ T1350pkj     : Online
 Tjud4qn      : Confirmed
 T1h67ij      : Inactive
 Tphxixg      : Are you sure you want to remove selected users?
+T1rgn0a8     : Synchronize
+T62mms       : Enable explicit scrolling in the iframe
+Ttk2mlu      : Token has been copied into the clipboard.
+T1219pnu     : The app metadata has been exported to the clipboard.
+Tpp7bbq      : Allow reading for all users and groups
+T1t8blnf     : This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.
+T1s93dvh     : Enable API
+Ttv3f05      : Endpoint

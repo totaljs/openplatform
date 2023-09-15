@@ -153,7 +153,6 @@ T1abzfj8     : Povolenia
 T1usp52l     : Aplikácia nemá žiadne definované povolenia
 Ts1qoa2      : Aktualizovať aplikáciu
 T19h9suc     : Zaregistrovať aplikáciu
-T1ukb8mj     : Token bol skopírovaný
 T1unypd      : hodnota
 T1eo1        : Pridať
 T1ekbk05     : Prideliť skupiny
@@ -273,3 +272,11 @@ T10cah3n     : Zadajte názov skupiny
 T1b6t9xe     : <b>Online</b> používatelia
 T1mv43c6     : Nepotvdené
 Tjud4qn      : Potvrdené
+T1rgn0a8     : Synchronizovať
+T62mms       : Povoliť explicitné posúvanie v rámci iframe
+Ttk2mlu      : Token bol skopírovaný do schránky.
+T1219pnu     : Metadáta aplikácie boli exportované do schránky.
+Tpp7bbq      : Povoliť čítanie všetkých používateľov a skupín
+T1t8blnf     : Táto konfigurácia umožňuje externým aplikáciám čítať všetky skupiny a používateľské profily cez koncový bod REST.
+T1s93dvh     : Token nižšie musí byť nastavený v hlavičke X-Token alebo prostredníctvom parametra dopytu "?token=".
+Ttv3f05      : Povoliť API
