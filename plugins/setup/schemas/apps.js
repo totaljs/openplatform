@@ -18,6 +18,7 @@ NEWSCHEMA('Apps', function(schema) {
 	schema.define('notifications', Boolean);
 	schema.define('isbookmark', Boolean);
 	schema.define('isnewtab', Boolean);
+	schema.define('isscrollbar', Boolean);
 	schema.define('isdisabled', Boolean);
 
 	// Not in DB

@@ -133,7 +133,7 @@
 		common.paths = {};
 		common.detach = {};
 		common.windows = [];
-		common.template = '<ui-component name="content" class="invisible"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}"></ui-component></ui-component></ui-component>';
+		common.template = '<ui-component name="content" class="invisible"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}" data-scrollbar="{scrollbar}"></ui-component></ui-component></ui-component>';
 
 		ON('@flag showloading', function() {
 			EXEC('-loading/show');
@@ -203,8 +203,10 @@
 							}
 						}
 
-						for (var app of response)
+						for (var app of response) {
+							app.scrollbar = app.isscrollbar ? 'yes' : 'no';
 							app.linker = app.name.slug();
+						}
 
 						response.quicksort('sortindex');
 						exports.set('apps', response);
@@ -222,7 +224,7 @@
 							var params = id.split('~');
 							var search = params[0];
 							for (var app of response) {
-								if (app.id === id || app.name.slug().indexOf(search) !== -1) {
+								if (app.id === id || app.name.slug() == search) {
 									isrunning = true;
 									setTimeout((app, path) => exports.open(app, path), 500, app, params[1]);
 									break;
@@ -334,6 +336,7 @@
 						return;
 					}
 
+					response.scrollbar = app.scrollbar;
 					response.focus = 'common/appfocus';
 					response.linker = response.name.slug();
 					response.html = model.template.arg(response);
@@ -688,7 +691,7 @@
 			if (hash) {
 				var arr = hash.split('~');
 				for (var app of common.apps) {
-					if (app.linker.indexOf(arr[0]) !== -1) {
+					if (app.linker === arr[0]) {
 						EXEC('common/open', app.id, arr[1]);
 						break;
 					}

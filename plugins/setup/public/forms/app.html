@@ -89,11 +89,12 @@
 
 		<hr />
 
-		<ui-component name="input" path="?.isnewtab" config="type:checkbox" default="false">@(Allow opening the app in a new tab)</ui-component>
-
 		<ui-bind path="?.isbookmark" config="hide" class="block">
+			<ui-component name="input" path="?.isnewtab" config="type:checkbox" default="false">@(Allow opening the app in a new tab)</ui-component>
 			<ui-component name="input" path="?.notifications" config="type:checkbox" default="true">@(Enable notifications)</ui-component>
+			<ui-component name="input" path="?.isscrollbar" config="type:checkbox" default="false">@(Enable explicit scrolling in the iframe)</ui-component>
 		</ui-bind>
+
 		<ui-component name="input" path="?.isdisabled" config="type:checkbox">@(Disable application)</ui-component>
 
 		<ui-bind path="?.isbookmark" config="hide" class="block">
@@ -178,7 +179,7 @@
 
 		exports.copytoken = function(el) {
 			EXEC('-clipboard/copy', el.find('code').attrd('hidden'));
-			EXEC('-notify/success', '@(Token has been copied)');
+			EXEC('-notify/success', '@(Token has been copied into the clipboard.)');
 		};
 
 		exports.permissionsadd = function() {
@@ -195,6 +196,27 @@
 
 			next(true);
 			exports.upd('name @change');
+		};
+
+		exports.export = function() {
+
+			var url = '';
+			var model = CLONE(exports.model);
+
+			delete model.id;
+			delete model.checksum;
+			delete model.dtcreated;
+			delete model.dtupdated;
+			delete model.dtlogged;
+			delete model.dtprocessed;
+			delete model.dtremoved;
+			delete model.isremoved;
+			delete model.isprocessed;
+			delete model.logged;
+
+			url = 'openplatform://' + ENCRYPT(model, 'openplatform', 'app');
+			EXEC('-clipboard/copy', url);
+			EXEC('-notify/success', '@(The app metadata has been exported to the clipboard.)');
 		};
 
 		exports.permissionsrem = function(el) {

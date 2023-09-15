@@ -110,6 +110,7 @@ CREATE TABLE "op"."tbl_app" (
 	"isbookmark" bool DEFAULT false,
 	"isprocessed" bool DEFAULT false,
 	"isdisabled" bool DEFAULT false,
+	"isscrollbar" bool DEFAULT false,
 	"isremoved" bool DEFAULT false,
 	"logged" int4 DEFAULT 0,
 	"dtlogged" timestamp,

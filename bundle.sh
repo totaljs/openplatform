@@ -8,6 +8,7 @@ cp -a ../public/ public
 cp -a ../resources/ resources
 cp -a ../schemas/ schemas
 cp -a ../views/ views
+cp -a ../database.sql database.sql
 
 # cd ..
 total4 --bundle app.bundle

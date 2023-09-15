@@ -65,7 +65,7 @@ NEWSCHEMA('Account', function(schema) {
 				if (data && data.apps.length) {
 
 					var db = DB();
-					var apps = await db.find('op.tbl_app').fields('id,name,icon,color,isnewtab,isbookmark,sortindex').in('id', data.apps).where('isremoved=FALSE AND isdisabled=FALSE').promise($);
+					var apps = await db.find('op.tbl_app').fields('id,name,icon,color,isnewtab,isbookmark,isscrollbar,sortindex').in('id', data.apps).where('isremoved=FALSE AND isdisabled=FALSE').promise($);
 					var userapps = await db.find('op.tbl_user_app').where('userid', $.user.id).in('appid', data.apps).query('appid IN (SELECT x.id FROM op.tbl_app x WHERE x.isremoved=FALSE AND x.isdisabled=FALSE)').promise($);
 
 					for (var app of userapps) {
