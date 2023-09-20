@@ -5,51 +5,58 @@
 	.emptybody figure button.highlight { background-color: #F9F9F9; }
 	.emptybody figure button i { font-size: 24px; display: block; margin-bottom: 12px; }
 	.emptybody figure button:hover { background-color: #F8F8F8; }
-	.emptybody .meta { height: 100px; }
-	.emptybody .meta .icon { position: relative; display: inline-block; width: 70px; height: 70px; vertical-align: middle; }
+	.emptybody .meta { height: 100px; display: block; }
+	.emptybody .meta .icon { position: relative; display: inline-block; width: 70px; height: 70px; vertical-align: middle; margin-right: 10px; }
 	.emptybody .meta .icon img { width: 80px; height: 80px; vertical-align: middle; border-radius: 100px; border: 1px solid #F0F0F0; image-rendering: -webkit-optimize-contrast; }
 	.emptybody .meta .name { vertical-align: middle; position: relative; display: inline-block; margin-left: 15px; text-align: left; font-size: 12px; color: #777; line-height: 20px; }
-	.emptybody .meta .name ui-bind { font-size: 20px; font-weight: bold; display: block; color: #000; }
+	.emptybody .meta .name > div { font-size: 20px; font-weight: bold; display: block; color: #000; }
 </style>
 
 <ui-component name="time" path="common.page" class="ui-time"></ui-component>
 <ui-component name="viewbox" path="common.page" config="parent:auto;centered:1;margin:0" class="emptybody invisible">
-	<div class="padding">
+	<ui-plugin>
+		<div class="padding">
 
-		<div class="meta">
-			<div class="icon">
-				<ui-bind path="!user" config="template;track:name,photo;show:value.name;changes;title:value.name" class="hidden">
-					<script type="text/html">
-						{{ if value.photo }}
-							<img src="{{ value.photo }}" alt="{{ value.name }}" border="0" />
-						{{ else if "CONF.icon" }}
-							<img src="@{CONF.icon}" alt="{{ value.name }}" border="0" />
-						{{else}}
-							<img src="/img/icon.png" alt="{{ value.name }}" border="0" />
-						{{ fi }}
-					</script>
-				</ui-bind>
-			</div>
-			<div class="name">
-				@(Account)
-				<ui-bind path="user.name" config="text"></ui-bind>
-			</div>
-		</div>
+			<ui-bind path="?" class="meta exec" config="template" data-exec="common/settings">
+				<script type="text/html">
+					<div class="icon">
+						<img src="{{ value.icon }}" border="0" />
+					</div>
+					<div class="name">
+						@(Account)
+						<div>{{ value.name }}</div>
+					</div>
+				</script>
+			</ui-bind>
 
-		<div style="width:100%;max-width:1100px;margin:0 auto;text-align:left">
-			<ui-component name="movable" config="selector:.movable;container:.apps;move:0;exec:common/reorder">
-				<ui-component name="tablegrid" path="common.apps" config="countxs:2;countsm:3;countlg:6" class="apps">
-					<script type="text/html">
-						<figure{{ if value.id !== 'setup' }} draggable="true" class="movable" data-id="{{ value.id }}"{{ fi }}>
-							<button class="exec exec3 launchpad" data-exec="common/open" data-exec3="common/app" data-id="{{ value.id }}">{{ if value.isbookmark }}<em class="ti ti-link"></em>{{ fi }}<i class="{{ value.icon }}"{{ if value.color }} style="color:{{ value.color }}"{{ fi }}></i><span>{{ value.name }}</span></button>
-						</figure>
-					</script>
-					<script type="text/html">
-						<figure></figure>
-					</script>
+			<div style="width:100%;max-width:1100px;margin:0 auto;text-align:left">
+				<ui-component name="movable" config="selector:.movable;container:.apps;move:0;exec:common/reorder">
+					<ui-component name="tablegrid" path="common.apps" config="countxs:2;countsm:3;countlg:6" class="apps">
+						<script type="text/html">
+							<figure{{ if value.id !== 'setup' }} draggable="true" class="movable" data-id="{{ value.id }}"{{ fi }}>
+								<button class="exec exec3 launchpad" data-exec="common/open" data-exec3="common/app" data-id="{{ value.id }}">{{ if value.isbookmark }}<em class="ti ti-link"></em>{{ fi }}<i class="{{ value.icon }}"{{ if value.color }} style="color:{{ value.color }}"{{ fi }}></i><span>{{ value.name }}</span></button>
+							</figure>
+						</script>
+						<script type="text/html">
+							<figure></figure>
+						</script>
+					</ui-component>
 				</ui-component>
-			</ui-component>
+			</div>
 		</div>
-	</div>
-
+	</ui-plugin>
 </ui-component>
+
+<script>
+	PLUGIN(function(exports) {
+
+
+		exports.reload = function() {
+			var model = {};
+			model.icon = user.photo || common.icon;
+			model.name = user.name;
+			exports.set(model);
+		};
+
+	});
+</script>

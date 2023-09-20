@@ -133,6 +133,7 @@
 		common.paths = {};
 		common.detach = {};
 		common.windows = [];
+		common.icon = '@{CONF.icon}';
 		common.template = '<ui-component name="content" class="invisible"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}" data-scrollbar="{scrollbar}"></ui-component></ui-component></ui-component>';
 
 		ON('@flag showloading', function() {
@@ -243,7 +244,7 @@
 
 						if (!model.ready) {
 
-							exports.push('running', { id: 'welcome', html: '<ui-component name="content" class="invisible"><ui-import config="url:/_portal/pages/welcome.html" class="content"></ui-import></ui-component>', root: true });
+							exports.push('running', { id: 'welcome', reload: '?/reload', html: '<ui-component name="content" class="invisible"><ui-import config="url:/_portal/pages/welcome.html;path:welcome" class="content"></ui-import></ui-component>', root: true });
 							model.ready = true;
 							var is = false;
 

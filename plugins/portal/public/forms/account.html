@@ -49,6 +49,7 @@
 				user.color = form.color;
 				EXE('-notify/success', '@(Account has been changed successfully)');
 				UPD('user @hideloading');
+				EXE('welcome/reload');
 				hide();
 			});
 		};
