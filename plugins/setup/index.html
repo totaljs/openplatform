@@ -56,14 +56,13 @@
 						<div><span><i class="ti ti-totaljs green"></i>Plugins</span></div>
 						<hr />
 					</div>
-					<ui-component name="aselected">
-						<div class="nav">
-							<nav>
-								{{ foreach m in value }}
-									<a href="{{m.url}}" class="jR"><i class="{{m.icon}}"></i>{{m.name}}</a>
-								{{ end }}
-							</nav>
-						</div>
+					<div class="nav">
+						<nav>
+							{{ foreach m in value }}
+								<a href="{{m.url}}" class="jR"><i class="{{m.icon}}" {{if m.color}}style="color:{{m.color}}"{{fi}}></i>{{m.name}}</a>
+							{{ end }}
+						</nav>
+					</div>
 					</script>
 				</ui-bind>
 			</ui-component>
