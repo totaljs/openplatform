@@ -151,7 +151,7 @@ async function notifygroup($) {
 	if(data.group) {
 		var group = await db.read('op.tbl_group').where('name', data.group).fields('id,name,icon,color').promise($);
 
-		if(!group) {
+		if(!group || group.isdisabled) {
 			$.invalid('@(Invalid group)');
 			return;
 		}
