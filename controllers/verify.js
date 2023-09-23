@@ -323,7 +323,7 @@ async function makenotification($, db, userapp) {
 	await db.insert('op.tbl_notification', model).promise();
 
 	if (model.body)
-		await db.query('UPDATE op.tbl_user SET unread=unread+1 WHERE id={1}'.format(PG_ESCAPE(userapp.userid))).promise();
+		await db.query('UPDATE op.tbl_user SET unread=unread+1 WHERE id={0}'.format(PG_ESCAPE(userapp.userid))).promise();
 
 	MAIN.auth.update(model.userid, makenotificationunread);
 
