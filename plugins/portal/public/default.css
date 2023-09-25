@@ -9,11 +9,11 @@ header .logo { float: left; line-height: 45px; width: 50px; height: 50px; text-a
 header .logo img { height: 26px; image-rendering: -webkit-optimize-contrast; }
 header .user { float: right; width: 60px; text-align: right; margin: 4px 0 0; text-align: center; }
 header .user .initials { width: 38px; height: 38px; line-height: 38px; font-size: 14px; position: relative; display: inline-block; cursor: pointer; border-radius: 100px; }
-header .user .photo { width: 38px; height: 38px; line-height: 38px; font-size: 12px; position: relative; display: inline-block; cursor: pointer; border-radius: 100px; border: 1px solid #F0F0F0; image-rendering: -webkit-optimize-contrast; }
+header .user .photo { width: 38px; height: 38px; line-height: 38px; font-size: 12px; position: relative; display: inline-block; cursor: pointer; border-radius: 100px; border: 1px solid #F0F0F0; image-rendering: -webkit-optimize-contrast; image-rendering: optimizeQuality; }
 header .openplatform { line-height: 48px; height: 49px; padding: 0 13px; float: left; font-size: 14px; color: #000; max-width: 250px; }
 header .openplatform b { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: block; }
 header .openplatform i { font-size: 18px; margin-right: 8px; float: left; line-height: 48px; }
-header .openplatform img { width: 32px; height: 32px; float: left; border-radius: 8px; margin: 7px 8px 0 0; border: 1px solid #E9E9E9; }
+header .openplatform img { width: 32px; height: 32px; float: left; border-radius: 8px; margin: 7px 8px 0 0; border: 1px solid #E9E9E9; image-rendering: -webkit-optimize-contrast; image-rendering: optimizeQuality; }
 header .search { float: right; line-height: 0; font-size: 18px; height: 50px; padding: 4px 0 0 0; width: 40px; margin-right: 5px; }
 header .search > div { width: 38px; height: 38px; cursor: pointer; border: 1px solid transparent; line-height: 38px; text-align: center; border-radius: 100px; }
 header .search > div:hover { background-color: #EBEBEB; border-color: #EBECF2; color: #000; }
@@ -36,8 +36,8 @@ header .apps button.startmenubutton:active:after { padding: 0; margin: 0; opacit
 
 .thirdparty { position: absolute; left: 15px; right: 15px; top: 15px; bottom: 50px; }
 .ui-content { background-color: #FFF; border: 1px solid #E7E7E7; border-radius: 5px; overflow: hidden; }
-.ui-preview img { border-radius: 100px; }
-
+.ui-preview img { border-radius: 100px; image-rendering: -webkit-optimize-contrast; image-rendering: optimizeQuality; }
+.img-responsive { image-rendering: -webkit-optimize-contrast; image-rendering: optimizeQuality;}
 .ml5 { margin-left: 5px; }
 .block { display: block; }
 
