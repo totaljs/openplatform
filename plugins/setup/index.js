@@ -1,6 +1,6 @@
 exports.install = function() {
 
-	ROUTE('+GET    /setup/', '#setup/index');
+	ROUTE('+GET    /setup/', setup);
 
 	// Users
 	ROUTE('+API    /setup/    -users                   *Users      --> list');
@@ -41,3 +41,28 @@ exports.install = function() {
 };
 
 COMPONENTATOR('uisetup', 'exec,intranetcss,navlayout,importer,page,box,input,datagrid,loading,approve,notify,errorhandler,aselected,localize,locale,validate,directory,icons,colorpicker,edit,viewbox,preview,choose,selection,colorselector,menu,clipboard,miniform,message', true);
+
+function setup() {
+	var $ = this;
+	var plugins = [];
+
+	for (var key in F.plugins) {
+		var item = F.plugins[key];
+		if (($.user.sa || !item.visible || item.visible($.user)) && item.type == 'setup') {
+			var obj = {};
+			obj.id = item.id;
+			obj.url = '/{0}/'.format(item.id);
+			obj.sortindex = item.position;
+			obj.name = TRANSLATOR($.user.language || '', item.name);
+			obj.icon = item.icon;
+			obj.color = item.color;
+			obj.type = item.type;
+			obj.import = item.import;
+			obj.hidden = item.hidden;
+			plugins.push(obj);
+		}
+	}
+
+	plugins.quicksort('position');
+	$.view('#setup/index', plugins);
+}
