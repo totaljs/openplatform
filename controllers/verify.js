@@ -121,6 +121,90 @@ async function verify() {
 	});
 }
 
+async function notifygroup($) {
+	var data = CONVERT($.body, 'app:String,group:String,permission:String');
+	var db = DATA;
+
+	var app,userapp,users;
+
+	// App notify
+	if(data.app) {
+		app = await db.read('op.tbl_app').where('name', data.app).fields('id,allow,name,icon,color').promise($);
+
+		if(!app) {
+			$.invalid('@(Invalid app)');
+			return;
+		}
+
+		if (app.allow && app.allow.length && app.allow.indexOf($.ip) === -1) {
+			MAIN.cache[reqtokenerr] = 'Not allowed IP address';
+			$.invalid(MAIN.cache[reqtokenerr]);
+			return;
+		}
+
+		userapp = await db.find('op.tbl_user_app').fields('userid,appid,notifytoken,notifications').where('appid', app.id).promise($);
+		var usersid = userapp.map(i=> { return i.userid; });
+		users = await db.find('op.tbl_user').fields('id,name,email').in('id', usersid).promise($);
+	}
+
+	// Group Notify
+	if(data.group) {
+		var group = await db.read('op.tbl_group').where('name', data.group).fields('id,name,icon,color').promise($);
+
+		if(!group || group.isdisabled) {
+			$.invalid('@(Invalid group)');
+			return;
+		}
+
+		if (!group.icon)
+			group.icon = 'ti ti-bullhorn';
+		group.name = TRANSLATOR(DEF.onLocale($.req), '@(To Group)') + ': ' + group.name;
+		app = group;
+
+		var groupusers = await db.find('op.tbl_user_group').fields('userid').where('groupid', group.id).promise($);
+		var usersid = groupusers.map(i=> { return i.userid; });
+		userapp = await db.query('SELECT DISTINCT ON (userid) userid,appid,notifytoken,notifications FROM op.tbl_user_app WHERE userid IN ({0}) AND notifications is TRUE;'.format(PG_ESCAPE(usersid))).promise($);
+		users = await db.find('op.tbl_user').fields('id,name,email').in('id', usersid).promise($);
+	}
+
+	// Role Notify
+	if(data.permission) {
+		var permission = await db.read('op.tbl_app_permission').fields('id,name,appid').where('name', data.permission).promise($);
+
+		if(!permission) {
+			$.invalid('@(Invalid permission name)');
+			return;
+		}
+
+		permission.icon = 'ti ti-bullhorn';
+		permission.name = TRANSLATOR(DEF.onLocale($.req), '@(To role)') + ': ' + permission.name;
+		app = permission;
+
+		userapp = await db.find('op.tbl_user_app').fields('userid,appid,notifytoken,notifications').where('appid', permission.appid).where('notifications', 't').promise($);
+		var usersid = userapp.map(i=> { return i.userid; });
+		users = await db.find('op.tbl_user').fields('id,name,email').in('id', usersid).promise($);
+	}
+
+	if (userapp.length) {
+		for (var i = 0; i < userapp.length; i++) {
+			var user = users.findItem('id', userapp[i].userid);
+
+			userapp[i].user = user.name;
+			userapp[i].email = user.email;
+			userapp[i].name = app.name;
+			userapp[i].icon = app.icon;
+			userapp[i].color = app.color;
+
+			$.status = 200;
+			userapp[i].notifytoken = undefined;
+			//MAIN.cache[reqtoken] = userapp[i];
+			id = makenotification($, db, userapp[i]);
+		}
+		$.success(app.id);
+	} else
+		$.invalid('@(Invalid data)');
+}
+
 async function notify() {
 
 	var $ = this;
@@ -155,6 +239,12 @@ async function notify() {
 		MAIN.cache[reqtokenerr] = ERR_INVALID;
 		$.invalid(ERR_INVALID);
 		return;
+	}
+
+	// If notify meta includes group, app or permission then execute notifygroup.
+	if ($.body.group || $.body.permission || $.body.app) {
+		var notifications = await notifygroup($);
+		return notifications;
 	}
 
 	var db = DB();
@@ -233,7 +323,7 @@ async function makenotification($, db, userapp) {
 	await db.insert('op.tbl_notification', model).promise();
 
 	if (model.body)
-		await db.query('UPDATE op.tbl_user SET unread=unread+1 WHERE id=' + PG_ESCAPE(userapp.userid)).promise();
+		await db.query('UPDATE op.tbl_user SET unread=unread+1 WHERE id={0}'.format(PG_ESCAPE(userapp.userid))).promise();
 
 	MAIN.auth.update(model.userid, makenotificationunread);
 
