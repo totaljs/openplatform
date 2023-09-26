@@ -676,10 +676,9 @@
 				var model = exports.model;
 
 				for (var m of model.apps) {
-					if (m.id !== 'setup')
+					if (m.id !== 'setup' && common.plugins.findIndex('id', m.id) < 0)
 						output.push(m.id);
 				}
-
 				output.length && exports.tapi('reorder', { id: output }, NOOP);
 			}
 
