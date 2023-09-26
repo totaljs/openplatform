@@ -49,22 +49,20 @@
 						<hr />
 						<a href="/settings/" class="jR"><i class="ti ti-cog"></i>@(Settings)</a>
 					</nav>
-				</div>
 				<ui-bind path="common.plugins" config="show:value.length > 0;template">
 					<script type="text/html">
 					<div class="divider">
 						<div><span><i class="ti ti-openplatform"></i>@(Plugins)</span></div>
 						<hr />
 					</div>
-					<div class="nav">
 						<nav>
-							{{ foreach m in value }}
-								<a href="{{m.url}}" class="jR"><i class="{{m.icon}}" {{if m.color}}style="color:{{m.color}}"{{fi}}></i>{{m.name}}</a>
-							{{ end }}
+						{{ foreach m in value }}
+							<a href="{{m.url}}" class="jR"><i class="{{m.icon}}" {{if m.color}}style="color:{{m.color}}"{{fi}}></i>{{m.name}}</a>
+						{{ end }}
 						</nav>
-					</div>
 					</script>
 				</ui-bind>
+				</div>
 			</ui-component>
 		</section>
 
