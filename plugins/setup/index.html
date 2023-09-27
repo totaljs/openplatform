@@ -18,7 +18,7 @@
 
 	<ui-component name="LAZY approve"></ui-component>
 	<ui-component name="LAZY directory" config="placeholder:@(Search)"></ui-component>
-	<ui-component name="LAZY icons"></ui-component>
+	<ui-component name="LAZY icons" config="search:@(Search)"></ui-component>
 	<ui-component name="LAZY colorpicker"></ui-component>
 	<ui-component name="LAZY notify" config="position:bottom right;timeout:5000"></ui-component>
 	<ui-component name="LAZY menu"></ui-component>
@@ -35,31 +35,59 @@
 
 		<section>
 			<header>
-				<label class="color"><i class="ti ti-totaljs"></i>OpenPlatform</label>
+				<label class="color"><i class="ti ti-openplatform"></i>@{CONF.name}</label>
 			</header>
 			<ui-component name="aselected">
 				<div class="nav">
 					<nav>
 						<a href="/" class="jR"><i class="ti ti-dashboard"></i>@(Dashboard)</a>
-						<a href="/users/" class="jR"><i class="ti ti-users"></i>@(Users)</a>
-						<a href="/apps/" class="jR"><i class="ti ti-rocket"></i>@(Apps)</a>
-						<a href="/groups/" class="jR"><i class="ti ti-folder"></i>@(Groups)</a>
 						<a href="/feedback/" class="jR"><i class="ti ti-bug"></i>@(Feedback)</a>
+						<hr />
+						<a href="/users/" class="jR"><i class="ti ti-users"></i>@(Users)</a>
+						<a href="/groups/" class="jR"><i class="ti ti-folder"></i>@(Groups)</a>
+						<a href="/apps/" class="jR"><i class="ti ti-rocket"></i>@(Apps)</a>
 						<hr />
 						<a href="/settings/" class="jR"><i class="ti ti-cog"></i>@(Settings)</a>
 					</nav>
+				<ui-bind path="common.plugins" config="show:value.length > 0;template">
+					<script type="text/html">
+					<div class="divider">
+						<div><span><i class="ti ti-openplatform"></i>@(Plugins)</span></div>
+						<hr />
+					</div>
+						<nav>
+						{{ foreach m in value }}
+							<a href="{{m.url}}" class="jR"><i class="{{m.icon}}" {{if m.color}}style="color:{{m.color}}"{{fi}}></i>{{m.name}}</a>
+						{{ end }}
+						</nav>
+					</script>
+				</ui-bind>
 				</div>
 			</ui-component>
 		</section>
 
 		<main>
+			<ui-component name="page" path="common.page" config="if:pagedashboard;url:/_setup/pages/dashboard.html;reload:?/reload" class="invisible hidden"></ui-component>
 			<ui-component name="page" path="common.page" config="if:pagefeedback;url:/_setup/pages/feedback.html;reload:?/reload" class="invisible hidden"></ui-component>
 			<ui-component name="page" path="common.page" config="if:pageusers;url:/_setup/pages/users.html;reload:?/reload" class="invisible hidden"></ui-component>
+			<ui-component name="page" path="common.page" config="if:pagegroups;url:/_setup/pages/groups.html;reload:?/reload" class="invisible hidden"></ui-component>
 			<ui-component name="page" path="common.page" config="if:pageapps;url:/_setup/pages/apps.html;reload:?/reload" class="invisible hidden"></ui-component>
 			<ui-component name="page" path="common.page" config="if:pagelogs;url:/_setup/pages/logs.html;reload:?/reload" class="invisible hidden"></ui-component>
-			<ui-component name="page" path="common.page" config="if:pagegroups;url:/_setup/pages/groups.html;reload:?/reload" class="invisible hidden"></ui-component>
-			<ui-component name="page" path="common.page" config="if:pagedashboard;url:/_setup/pages/dashboard.html;reload:?/reload" class="invisible hidden"></ui-component>
 			<ui-component name="page" path="common.page" config="if:pagesettings;url:/_setup/pages/settings.html;reload:?/reload" class="invisible hidden"></ui-component>
+			<ui-bind path="common.plugins" config="template">
+				<script type="text/html">
+					{{ foreach m in value }}
+					<ui-component name="page" path="common.page" config="if:plugin{{ m.id }};url:/_{{ m.id }}/pages/index.html;reload:?/reload;id:_{{ m.id }}" class="hidden invisible"></ui-component>
+					{{ if m.routes }}
+						{{ foreach route in m.routes }}
+							{{ if route.html }}
+								<ui-component name="page" path="common.page" config="if:plugin{{ m.id }}{{ route.html }};url:/_{{ m.id }}/{{ route.html }}.html;reload:?/reload;hidden:?/hide;id:_{{ m.id }}" class="hidden invisible"></ui-component>
+							{{ fi }}
+						{{ end }}
+					{{ fi }}
+					{{ end }}
+				</script>
+			</ui-bind>
 		</main>
 
 	</ui-component>
@@ -67,9 +95,11 @@
 	<div class="mobilemenu exec" data-exec="common/menu"><i class="ti ti-navicon"></i></div>
 
 	<script src="/iframe.js"></script>
+	@{json(model, 'pluginsdata')}
 
 	<script>
 		var common = {};
+		common.plugins = PARSE('#pluginsdata');
 
 		DEF.api = '/setup/';
 		DEF.ajaxerrors = true;
@@ -87,37 +117,44 @@
 		ON('@flag hideloading', () => SETTER('loading/hide', 800));
 
 		PLUGIN('common', function(exports) {
+			var model = exports.model;
+			model.plugins.forEach(function(plugin) {
+				ROUTE(plugin.url, () => exports.set('page', 'plugin' + plugin.id), 'init');
+				plugin.routes && plugin.routes.forEach(item => ROUTE('@{#}' + item.url, () => exports.set('page', 'plugin' + plugin.id + (item.html === 'index' ? '' : item.html)), 'init'));
+				plugin.import && $(document.body).append('<ui-import config="url:{0};id:_{1}"></ui-import>'.format('@{#}/_' + plugin.id + '/' + plugin.import, plugin.id));
+			});
+
 			exports.menu = function() {
 				exports.toggle('menu');
 			};
-		});
-
-		ROUTE('/users/', function() {
-			SET('common.page', 'pageusers');
 		});
 
 		ROUTE('/', function() {
 			SET('common.page', 'pagedashboard');
 		});
 
-		ROUTE('/logs/', function() {
-			SET('common.page', 'pagelogs');
+		ROUTE('/feedback/', function() {
+			SET('common.page', 'pagefeedback');
 		});
 
-		ROUTE('/apps/', function() {
-			SET('common.page', 'pageapps');
-		});
-
-		ROUTE('/settings/', function() {
-			SET('common.page', 'pagesettings');
+		ROUTE('/users/', function() {
+			SET('common.page', 'pageusers');
 		});
 
 		ROUTE('/groups/', function() {
 			SET('common.page', 'pagegroups');
 		});
 
-		ROUTE('/feedback/', function() {
-			SET('common.page', 'pagefeedback');
+		ROUTE('/apps/', function() {
+			SET('common.page', 'pageapps');
+		});
+
+		ROUTE('/logs/', function() {
+			SET('common.page', 'pagelogs');
+		});
+
+		ROUTE('/settings/', function() {
+			SET('common.page', 'pagesettings');
 		});
 
 		ON('location', function() {

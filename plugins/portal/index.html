@@ -95,6 +95,7 @@
 	<ui-component name="importer" path="common.form" config="url:/_portal/forms/feedback.html;if:formfeedback"></ui-component>
 	<ui-component name="importer" path="common.panel" config="url:/_portal/forms/notifications.html;if:formnotifications"></ui-component>
 
+	@{json(model, 'pluginsdata')}
 	<script>
 
 		NAV.clientside('.jR');
@@ -126,6 +127,7 @@
 
 		var common = {};
 
+		common.plugins = PARSE('#pluginsdata');
 		common.volume = 20;
 		common.running = [];
 		common.apps = [];
@@ -145,7 +147,6 @@
 		});
 
 		PLUGIN('common', function(exports) {
-
 			var findiframe = function(item) {
 				var iframe = item.element.find('ui-component[name="iframe"]')[0];
 				if (!iframe)
@@ -202,6 +203,12 @@
 								obj.sortindex = 999;
 								response.push(obj);
 							}
+						}
+
+						for (var i = 0; i < common.plugins.length; i++) {
+							app = response.findItem('id', common.plugins[i].id);
+							if (!app)
+								response.push(common.plugins[i]);
 						}
 
 						for (var app of response) {
@@ -298,7 +305,6 @@
 			exports.open = function(el, path) {
 				var model = exports.model;
 				var id = ATTRD(el);
-
 				exports.set('menu', false);
 
 				if (typeof(path) === 'string')
@@ -312,6 +318,17 @@
 				var app = model.apps.findItem('id', id);
 				if (!app)
 					return;
+
+				// Execute plugin
+				if(common.plugins.findItem('id', id)) {
+					var app = model.apps.findItem('id', id);
+					if (app) {
+						app = CLONE(app);
+						app.html = model.template.arg(app);
+						exports.push('running', app);
+					}
+					return;
+				}
 
 				if (id === 'setup') {
 					var app = model.apps.findItem('id', 'setup');
@@ -659,10 +676,9 @@
 				var model = exports.model;
 
 				for (var m of model.apps) {
-					if (m.id !== 'setup')
+					if (m.id !== 'setup' && common.plugins.findIndex('id', m.id) < 0)
 						output.push(m.id);
 				}
-
 				output.length && exports.tapi('reorder', { id: output }, NOOP);
 			}
 
