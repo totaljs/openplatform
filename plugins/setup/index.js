@@ -40,7 +40,9 @@ exports.install = function() {
 	ROUTE('+API    /setup/    -dashboard               *Dashboard  --> stats');
 };
 
-COMPONENTATOR('uisetup', 'exec,intranetcss,navlayout,importer,page,box,input,datagrid,loading,approve,notify,errorhandler,aselected,localize,locale,validate,directory,icons,colorpicker,edit,viewbox,preview,choose,selection,colorselector,menu,clipboard,miniform,message', true);
+ON('ready', function() {
+	COMPONENTATOR('uisetup', 'exec,intranetcss,navlayout,importer,page,box,input,datagrid,loading,approve,notify,errorhandler,aselected,localize,locale,validate,directory,icons,colorpicker,edit,viewbox,preview,choose,selection,colorselector,menu,clipboard,miniform,message', true);
+});
 
 function setup() {
 	var $ = this;
@@ -48,7 +50,7 @@ function setup() {
 
 	for (var key in F.plugins) {
 		var item = F.plugins[key];
-		if (($.user.sa || !item.visible || item.visible($.user)) && item.type == 'setup') {
+		if (item.type == 'setup' && ($.user.sa || !item.visible || item.visible($.user))) {
 			var obj = {};
 			obj.id = item.id;
 			obj.url = '/{0}/'.format(item.id);

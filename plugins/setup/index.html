@@ -49,19 +49,19 @@
 						<hr />
 						<a href="/settings/" class="jR"><i class="ti ti-cog"></i>@(Settings)</a>
 					</nav>
-				<ui-bind path="common.plugins" config="show:value.length > 0;template">
-					<script type="text/html">
-					<div class="divider">
-						<div><span><i class="ti ti-openplatform"></i>@(Plugins)</span></div>
-						<hr />
-					</div>
-						<nav>
-						{{ foreach m in value }}
-							<a href="{{m.url}}" class="jR"><i class="{{m.icon}}" {{if m.color}}style="color:{{m.color}}"{{fi}}></i>{{m.name}}</a>
-						{{ end }}
-						</nav>
-					</script>
-				</ui-bind>
+					<ui-bind path="common.plugins" config="show:value.length > 0;template">
+						<script type="text/html">
+						<div class="divider">
+							<div><span><i class="ti ti-openplatform"></i>@(Plugins)</span></div>
+							<hr />
+						</div>
+							<nav>
+							{{ foreach m in value }}
+								<a href="{{m.url}}" class="jR"><i class="{{m.icon}}" {{if m.color}}style="color:{{m.color}}"{{fi}}></i>{{m.name}}</a>
+							{{ end }}
+							</nav>
+						</script>
+					</ui-bind>
 				</div>
 			</ui-component>
 		</section>
@@ -74,6 +74,7 @@
 			<ui-component name="page" path="common.page" config="if:pageapps;url:/_setup/pages/apps.html;reload:?/reload" class="invisible hidden"></ui-component>
 			<ui-component name="page" path="common.page" config="if:pagelogs;url:/_setup/pages/logs.html;reload:?/reload" class="invisible hidden"></ui-component>
 			<ui-component name="page" path="common.page" config="if:pagesettings;url:/_setup/pages/settings.html;reload:?/reload" class="invisible hidden"></ui-component>
+
 			<ui-bind path="common.plugins" config="template">
 				<script type="text/html">
 					{{ foreach m in value }}
@@ -88,6 +89,7 @@
 					{{ end }}
 				</script>
 			</ui-bind>
+
 		</main>
 
 	</ui-component>
@@ -117,10 +119,12 @@
 		ON('@flag hideloading', () => SETTER('loading/hide', 800));
 
 		PLUGIN('common', function(exports) {
+
 			var model = exports.model;
+
 			model.plugins.forEach(function(plugin) {
 				ROUTE(plugin.url, () => exports.set('page', 'plugin' + plugin.id), 'init');
-				plugin.routes && plugin.routes.forEach(item => ROUTE('@{#}' + item.url, () => exports.set('page', 'plugin' + plugin.id + (item.html === 'index' ? '' : item.html)), 'init'));
+				plugin.routes && plugin.routes.forEach(item => ROUTE(item.url, () => exports.set('page', 'plugin' + plugin.id + (item.html === 'index' ? '' : item.html)), 'init'));
 				plugin.import && $(document.body).append('<ui-import config="url:{0};id:_{1}"></ui-import>'.format('@{#}/_' + plugin.id + '/' + plugin.import, plugin.id));
 			});
 

@@ -2,7 +2,9 @@ exports.install = function() {
 	ROUTE('+GET /*', index);
 };
 
-COMPONENTATOR('uiportal', 'exec,locale,menu,notify,features,shortcuts,loading,importer,tangular-initials,viewbox,page,tablegrid,errorhandler,ready,box,intranetcss,input,validate,preview,colorselector,miniform,approve,intro,message,rating,sounds,windows,detach,movable', true);
+ON('ready', function() {
+	COMPONENTATOR('uiportal', 'exec,locale,menu,notify,features,shortcuts,loading,importer,tangular-initials,viewbox,page,tablegrid,errorhandler,ready,box,intranetcss,input,validate,preview,colorselector,miniform,approve,intro,message,rating,sounds,windows,detach,movable', true);
+});
 
 function index() {
 	var $ = this;
@@ -10,7 +12,7 @@ function index() {
 
 	for (var key in F.plugins) {
 		var item = F.plugins[key];
-		if (($.user.sa || !item.visible || item.visible($.user)) && item.type == 'portal') {
+		if (item.type == 'portal' && ($.user.sa || !item.visible || item.visible($.user))) {
 			var obj = {};
 			obj.id = item.id;
 			obj.url = '/{0}/'.format(item.id);
