@@ -17,7 +17,7 @@
 	<ui-plugin>
 		<div class="padding">
 
-			<ui-bind path="?" class="meta exec" config="template" data-exec="common/settings">
+			<ui-bind path="?" class="meta exec" config="template;changes:1" data-exec="common/settings">
 				<script type="text/html">
 					<div class="icon">
 						<img src="{{ value.icon }}" border="0" />
@@ -50,13 +50,14 @@
 <script>
 	PLUGIN(function(exports) {
 
-
 		exports.reload = function() {
 			var model = {};
 			model.icon = user.photo || common.icon;
 			model.name = user.name;
 			exports.set(model);
 		};
+
+		exports.reload();
 
 	});
 </script>
