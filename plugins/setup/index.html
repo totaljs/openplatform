@@ -39,29 +39,27 @@
 			</header>
 			<ui-component name="aselected">
 				<div class="nav">
-					<nav>
+					<nav style="padding-bottom:0">
 						<a href="/" class="jR"><i class="ti ti-dashboard"></i>@(Dashboard)</a>
 						<a href="/feedback/" class="jR"><i class="ti ti-bug"></i>@(Feedback)</a>
 						<hr />
 						<a href="/users/" class="jR"><i class="ti ti-users"></i>@(Users)</a>
 						<a href="/groups/" class="jR"><i class="ti ti-folder"></i>@(Groups)</a>
 						<a href="/apps/" class="jR"><i class="ti ti-rocket"></i>@(Apps)</a>
-						<hr />
-						<a href="/settings/" class="jR"><i class="ti ti-cog"></i>@(Settings)</a>
 					</nav>
-					<ui-bind path="common.plugins" config="show:value.length > 0;template">
+					<ui-bind path="common.plugins" config="show:value.length > 0;template" class="block">
 						<script type="text/html">
-						<div class="divider">
-							<div><span><i class="ti ti-openplatform"></i>@(Plugins)</span></div>
-							<hr />
-						</div>
-							<nav>
+							<nav style="padding-top:0;padding-bottom:0">
 							{{ foreach m in value }}
 								<a href="{{m.url}}" class="jR"><i class="{{m.icon}}" {{if m.color}}style="color:{{m.color}}"{{fi}}></i>{{m.name}}</a>
 							{{ end }}
 							</nav>
 						</script>
 					</ui-bind>
+					<nav style="padding-top:0">
+						<hr />
+						<a href="/settings/" class="jR"><i class="ti ti-cog"></i>@(Settings)</a>
+					</nav>
 				</div>
 			</ui-component>
 		</section>
@@ -78,7 +76,7 @@
 			<ui-bind path="common.plugins" config="template">
 				<script type="text/html">
 					{{ foreach m in value }}
-					<ui-component name="page" path="common.page" config="if:plugin{{ m.id }};url:/_{{ m.id }}/pages/index.html;reload:?/reload;id:_{{ m.id }}" class="hidden invisible"></ui-component>
+					<ui-component name="page" path="common.page" config="if:plugin{{ m.id }};url:/_{{ m.id }}/pages/setup.html;reload:?/reload;id:_{{ m.id }}" class="hidden invisible"></ui-component>
 					{{ if m.routes }}
 						{{ foreach route in m.routes }}
 							{{ if route.html }}
@@ -110,7 +108,7 @@
 
 		ENVIRONMENT('setup');
 
-		NAV.custom(true);
+		NAV.custom();
 		NAV.clientside('.jR');
 
 		CONFIG('datagrid', 'otext:name;ovalue:id;pluralizepages:@(# pages,# page,# pages,# pages);pluralizeitems:@(# items,# item,# items,# items);filterlabel:@(Filter);buttonapply:@(Apply);buttonreset:@(Reset)');
