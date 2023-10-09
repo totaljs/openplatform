@@ -95,7 +95,6 @@
 	<ui-component name="importer" path="common.form" config="url:/_portal/forms/feedback.html;if:formfeedback"></ui-component>
 	<ui-component name="importer" path="common.panel" config="url:/_portal/forms/notifications.html;if:formnotifications"></ui-component>
 
-	@{json(model, 'pluginsdata')}
 	<script>
 
 		NAV.clientside('.jR');
@@ -127,7 +126,6 @@
 
 		var common = {};
 
-		common.plugins = PARSE('#pluginsdata');
 		common.volume = 20;
 		common.running = [];
 		common.apps = [];
@@ -203,12 +201,6 @@
 								obj.sortindex = 999;
 								response.push(obj);
 							}
-						}
-
-						for (var i = 0; i < common.plugins.length; i++) {
-							app = response.findItem('id', common.plugins[i].id);
-							if (!app)
-								response.push(common.plugins[i]);
 						}
 
 						for (var app of response) {
@@ -318,17 +310,6 @@
 				var app = model.apps.findItem('id', id);
 				if (!app)
 					return;
-
-				// Execute plugin
-				if(common.plugins.findItem('id', id)) {
-					var app = model.apps.findItem('id', id);
-					if (app) {
-						app = CLONE(app);
-						app.html = model.template.arg(app);
-						exports.push('running', app);
-					}
-					return;
-				}
 
 				if (id === 'setup') {
 					var app = model.apps.findItem('id', 'setup');
@@ -676,7 +657,7 @@
 				var model = exports.model;
 
 				for (var m of model.apps) {
-					if (m.id !== 'setup' && common.plugins.findIndex('id', m.id) < 0)
+					if (m.id !== 'setup')
 						output.push(m.id);
 				}
 				output.length && exports.tapi('reorder', { id: output }, NOOP);
