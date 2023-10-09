@@ -50,7 +50,7 @@ function setup() {
 
 	for (var key in F.plugins) {
 		var item = F.plugins[key];
-		if (item.type == 'setup' && ($.user.sa || !item.visible || item.visible($.user))) {
+		if (item.setup && ($.user.sa || !item.visible || item.visible($.user))) {
 			var obj = {};
 			obj.id = item.id;
 			obj.url = '/{0}/'.format(item.id);
