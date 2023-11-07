@@ -29,11 +29,11 @@
 </head>
 <body>
 
-	<ui-component name="locale" config="requests:1"></ui-component>
+	<ui-component name="LAZY message" config="style:2"></ui-component>
+
+	<ui-component name="locale" config="requests:1;language:@{language}"></ui-component>
 	<ui-component name="exec"></ui-component>
 	<ui-component name="errorhandler"></ui-component>
-
-	<ui-component name="LAZY message" config="style:2"></ui-component>
 
 	<ui-component name="viewbox" config="centered:1;parent:window" class="invisible">
 
