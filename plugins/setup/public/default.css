@@ -11,6 +11,7 @@ header .toolbar { float: right; margin: 12px 12px 0 0; }
 
 .nav { background: transparent; margin: 0; }
 .nav hr { margin: 8px 5px; border-color: #F0F0F0; }
+.nav nav > div, .nav nav > a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .color { color: var(--color); }
 
 .selection { width: 16px; height: 16px; border: 1px solid #D0D0D0; border-radius: var(--radius); font-size: 8px; float: left; text-align: center; margin-right: 8px; background-color: #FFF; line-height: 14px; color: #000; }
