@@ -41,7 +41,7 @@ exports.install = function() {
 };
 
 ON('ready', function() {
-	COMPONENTATOR('uisetup', 'exec,intranetcss,navlayout,importer,page,box,input,datagrid,loading,approve,notify,errorhandler,aselected,localize,locale,validate,directory,icons,colorpicker,edit,viewbox,preview,choose,selection,colorselector,menu,clipboard,miniform,message', true);
+	COMPONENTATOR('uisetup', 'exec,intranetcss,navlayout,importer,page,box,input,datagrid,loading,approve,notify,errorhandler,aselected,localize,locale,validate,directory,icons,colorpicker,edit,viewbox,preview,choose,selection,colorselector,menu,clipboard,miniform,message,datepicker', true);
 });
 
 function setup() {
