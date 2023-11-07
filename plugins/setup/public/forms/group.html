@@ -5,9 +5,15 @@
 	.~PATH~ .item .selection { margin-right: 5px; }
 	.~PATH~ .item.selected span i { display: block; }
 	.~PATH~ .item.selected span { border-color: #000; }
-	.~PATH~ .caption label { font-size: 12px; font-weight: normal; color: #777; }
-	.~PATH~ .caption.selected > label { font-weight: bold; color: #000; }
-	.ui-dark .~PATH~ .item.selected span { border-color: #FFF; }
+	.~PATH~ .caption2 label { font-size: 14px; font-weight: normal; color: #777; }
+	.~PATH~ figure { background-color: #F6E6E6; margin: 10px 0; padding: 5px 10px 2px; border-radius: var(--radius); }
+	.~PATH~ .caption2 { height: 26px; }
+	.~PATH~ .caption2 .selection { margin: 3px 5px 0 0; }
+	.~PATH~ .caption2.selected > label { font-weight: bold; color: #000; }
+	.~PATH~ .checkboxes { display: none; }
+	.~PATH~ .checked .caption2 { margin-left: 0; }
+	.~PATH~ .checked { background-color: #FFFEDF; margin: 10px 0; padding: 5px 10px; border-radius: var(--radius); }
+	.~PATH~ .checked .checkboxes { display: block; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px; }
 </style>
 
 <ui-component name="box" path="common.form" config="if:~PATH~;icon:folder;autofocus:true;reload:?/reload;scrollbar:1;submit:?/submit;width:600;scrollbarshadow:1" class="hidden ~PATH~" plugin="~PATH~">
@@ -47,15 +53,11 @@
 						<ui-bind path="%apps" config="template">
 							{{ foreach m in value }}
 							<figure>
-								<div class="caption item appid" data-id="_{{ m.id }}">
-									<div class="pull-right" style="width:auto;margin:12px 0 0;">
-										<span class="selection"><i class="ti ti-check"></i></span>
-										<label>@(Enable)</label>
-									</div>
-									<label>{{ m.name }}</label>
+								<div class="caption2 item appid" data-id="_{{ m.id }}">
+									<label><span class="selection mr5"><i class="ti ti-check"></i></span>{{ m.name }}</label>
 								</div>
 								{{ if m.permissions.length }}
-								<div class="checkboxes mt10 m">
+								<div class="checkboxes">
 									{{ foreach p in m.permissions }}
 										<div class="item" data-id="{{ p.id }}">
 											<span class="selection"><i class="ti ti-check"></i></span>
@@ -90,7 +92,7 @@
 			for (var i = 0; i < elements.length; i++) {
 				var el = $(elements[i]);
 				var is = el.hclass('selected');
-				el.closest('figure').find('.checkboxes').tclass('hidden', !is);
+				el.closest('figure').tclass('checked', is);
 			}
 		};
 
