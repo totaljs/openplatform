@@ -40,25 +40,6 @@ T9wgord      : il y a # jours,il y a # jours,il y a # jours,il y a # jours
 T1mqtx3t     : il y a # mois,# mois,# mois,# mois,# mois
 To0b6h       : il y a # ans,# il y a # ans,# il y a # ans,# il y a # ans
 T5zhbb1      : Menu de démarrage
-T1wcnolm     : Janvier
-T1vqhghu     : Février
-T184ieb      : Mars
-T11sk86      : Avril
-T1nid        : Mai
-T1dqie       : Juin
-T1dqgo       : Juillet
-Twm5mar      : Août
-T1ylpbqp     : Septembre
-Tpp6m8       : Octobre
-Ts6ds2a      : Novembre
-Taczpl1      : Décembre
-T1552x9s     : Dimanche
-T127ifcg     : Lundi
-Tbd7fal      : Mardi
-T1k6s6ra     : Mercredi
-Tr2g5iy      : Jeudi
-Tyxr9fj      : Vendredi
-T114ux95     : Samedi
 T12tjh4      : Fermer
 Txspnlf      : Détacher
 Twnfthw      : Soumettre un probleme
@@ -170,7 +151,6 @@ T1abzfj8     : Permissions
 T1usp52l     : L&#39;application n&#39;a pas de permissions définies
 Ts1qoa2      : Mettre à jour l&#39;application
 T19h9suc     : Enregistrer l&#39;application
-T1ukb8mj     : Le jeton a été copié
 T1unypd      : valeur
 T1fvl7       : Nom
 Tttxmoz      : Adresse URL
@@ -273,3 +253,19 @@ T1350pkj     : En ligne
 Tjud4qn      : Confirmé
 T1h67ij      : Inactif
 Tphxixg      : Êtes-vous sûr de vouloir supprimer les utilisateurs sélectionnés ?
+T14e78xi     : Invalid group
+Thvmnq2      : To Group
+Tgtcv77      : Invalid permission name
+T7gzhej      : To role
+T1c7py9      : Today
+Tkg5z0p      : Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+T1maqqy3     : January,February,March,April,May,Juny,July,August,September,October,November,December
+T1rgn0a8     : Synchronize
+T62mms       : Enable explicit scrolling in the iframe
+Ttk2mlu      : Token has been copied into the clipboard.
+T1219pnu     : The app metadata has been exported to the clipboard.
+Thuap0r      : Reference
+Tpp7bbq      : Allow reading for all users and groups
+T1t8blnf     : This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.
+T1s93dvh     : Enable API
+Ttv3f05      : Endpoint
