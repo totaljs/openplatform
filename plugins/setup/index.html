@@ -30,12 +30,13 @@
 	<ui-component name="exec"></ui-component>
 	<ui-component name="loading" class="hidden"></ui-component>
 	<ui-component name="errorhandler"></ui-component>
+	<ui-component name="datepicker" config="today:@(Today);days:@(Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday);clear:@(Clear);months:@(January,February,March,April,May,Juny,July,August,September,October,November,December)"></ui-component>
 
 	<ui-component name="navlayout" path="common.menu" config="width:200;parent:window" class="invisible">
 
 		<section>
 			<header>
-				<label class="color"><i class="ti ti-openplatform"></i>@{CONF.name}</label>
+				<label class="color hellip block" style="float:none"><i class="ti ti-openplatform"></i>@{CONF.name}</label>
 			</header>
 			<ui-component name="aselected">
 				<div class="nav">
