@@ -1,271 +1,280 @@
-T102cmcz                 : Credenciales no válidas
-T10a9v45                 : Importar
-T10cah3n                 : Introduce un nombre de grupo
-T11ksof                  : Administración
-T11qceci                 : Registrado
-T11qckoa                 : Cerrar sesión
-T11qu4db                 : Estadísticas totales
-T11sitq                  : Aplicar
-T1297zig                 : Reiniciar <strong>{0}</strong>
-T12cvb0z                 : Sesiones abiertas
-T12tbn1                  : Limpiar
-T12tjh4                  : Cerrar
-T12ve4j                  : Color
-T133axy1                 : ¿Deseas actualizar los usuarios seleccionados?
-T1350pkj                 : En línea
-T13f1p3l                 : Pegado
-T13f7ws                  : Hecho.
-T13gs4nu                 : Documentación
-T13oi6c6                 : Aplicación no encontrada
-T13pqvju                 : https://www.tudominio.com/openplatform.json
-T13xh18                  : Correo electrónico
-T14d5cxp                 : Calificación
-T14f871g                 : Eliminar
-T14lakc0                 : Token no valido
-T14mox7c                 : ENVIAR
-T14ranob                 : Introduce la dirección e-mail
-T14w27d4                 : Buscar
-T14wzruf                 : Último uso
-T151r95x                 : Resuelto
-T1608rft                 : Actualizar
-T16dbrot                 : No tienes ninguna notificación.
-T16y5rh                  : Total.js TMS
-T16zabwn                 : Cerrar <b>{0}</b>
-T178h6ff                 : Sesión no encontrada
-T17bmnl3                 : Mensaje
-T17eh95w                 : Memoria usada
-T17i0zgc                 : ¿Deseas cancelar la sesión seleccionada?
-T17tfm1                  : Acceder
-T17vx5                   : App:
-T17vyq                   : Aplicaciones
-T180ypcd                 : Cuenta de usuario no encontrada
-T185y3gq                 : Usuarios Registrados
-T189bd17                 : Las opciones de SMTP deben estar en un formato JSON válido, de acuerdo con la documentación de Total.js
-T18jgseg                 : Creado
-T18z50iy                 : Recomendamos usar varios caracteres como números, caracteres especiales y minúsculas/mayúsculas.
-T19h9suc                 : Registrar aplicación
-T19hc5a3                 : Actualizar
-T19hez4                  : En uso:
-T19oinzj                 : Reiniciar
-T19s4i                   : Hecho
-T19zj9rb                 : Deshabilitar grupo
-T1abzfj8                 : Permisos
-T1acy0f                  : REINICIAR
-T1aeqyco                 : INICIAR SESIÓN
-T1ay23z                  : Reiniciar
-T1b3mt7h                 : ¿Deseas eliminar los comentarios seleccionados?
-T1b6t9xe                 : Usuarios <b>en línea</b>
-T1bhvtp                  : Configuración
-T1bjrc82                 : Cuenta no encontrada
-T1bx8wg2                 : Bienvenido
-T1cmsyog                 : ¿Deseas eliminar las aplicaciones seleccionadas?
-T1cq6x                   : Icono
-T1cu3lb                  : Usuario:
-T1cu3mw                  : Usuarios
-T1cyekzk                 : Introduce tu contraseña de nuevo
-T1dgvp2l                 : Confirmar cuenta
+Tgtcv77                  : Nombre de permiso no válido
+Tlcnga                   : La aplicación ha sido deshabilitada temporalmente
 T1dwzbwy                 : Debes ingresar la contraseña anterior
-T1e4t50a                 : El programa elimina todas las sesiones abiertas excepto en la que te encuentras actualmente.
-T1e7nx65                 : Configuración de SMTP
-T1eim7ln                 : Dirección IP
-T1ekbk05                 : Asignar grupos
-T1eo1                    : Agregar
-T1eyp                    : App
+T18z50iy                 : Recomendamos utilizar varios caracteres como números, caracteres especiales y minúsculas/mayúsculas.
+Thuap0r                  : Referencia
+T14w27d4                 : Buscar
+T1acy0f                  : REINICIAR
+T14e78xi                 : Grupo no válido
+Tb4wo6k                  : Restablecer la contraseña
+Tgeudzi                  : Copiar configuración
+T8zw3zk                  : Pegar configuración
+T13f1p3l                 : Pegado
+T14f871g                 : Eliminar
+T1eo1                    : Añadir
+Thvmnq2                  : Al grupo
+Tx9d2fu                  : Cancelar
+Tosmo8z                  : Ajustes
+Tft8p6c                  : Panel
+T1qonvrk                 : Abrir en una pestaña nueva
+T1297zig                 : Reiniciar <strong>{0}</strong>
+T10a9v45                 : Importar
+T12ve4j                  : Color
+Tzs3c11                  : IMPORTAR
 T1f8kt                   : Masculino
-T1fjh48b                 : Ingresa las direcciones IP separadas por coma
-T1fvl7                   : Nombre
-T1fytv                   : Siguiente
-T1gkjkgn                 : Notificaciones sin leer
-T1glqo0e                 : La cuenta está inactiva
-T1gtii                   : Abierto
-T1h67ij                  : Inactivo
-T1hbr8uc                 : Dispositivo:
-T1hg9934                 : Marcar como solucionado
-T1hw0tk2                 : El servicio de mensajes de Total.js permite capturar datos de OpenPlatform mediante la interfaz de programación visual Total.js Flow.
-T1iagm6r                 : en línea
-T1in0cqv                 : Dirección de correo electrónico:
-T1irlupz                 : Súper privilegios
-T1j67nz                  : admin
-T1jsmq                   : Test
-T1jvf5v3                 : Referencia:
-T14e78xi                 : Invalid group
-Thvmnq2                  : To Group
-Tgtcv77                  : Invalid permission name
-T7gzhej                  : To role
-Tagsor7                  : Invalid data
-Tm0qe9a                  : E-mail address is already used
-Tlcnga                   : App has been temporary disabled
-T39vorh                  : Invalid old password
-T1kod7hb                 : Account is disabled
-T1wxl291                 : Feedback
-T1w7l82b                 : E-mail address
-Tdrftoj                  : Enter password
-Tykg00t                  : Don't have an account?
-Tf821nc                  : You will receive instructions for resetting your password by email.
-Tibgsfj                  : Sign-in form
-Tigv5rn                  : Enter name
-Tt35tog                  : Enter your password
-T1sksnqp                 : Reply password
-Trjmw2x                  : CREATE ACCOUNT
-Tqmy8m2                  : You received an email with instructions for resetting your password.
-T3qscoh                  : Your account has been created successfully. A confirmation message was sent to your email address.
-Tl71ry3                  : Password
-Tb4wo6k                  : Reset password
-Tjsvyke                  : Account name
-T9sze77                  : Passwords do not match.
-T1c7py9                  : Today
-Tkg5z0p                  : Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
-T1maqqy3                 : January,February,March,April,May,Juny,July,August,September,October,November,December
-T2cba                    : now
-Tnhjmc9                  : # minutes ago,# minute ago,# minutes ago,# minutes ago
-T3egjfd                  : # hours ago,# hour ago,# hours ago,# hours ago
-T9wgord                  : # days ago,# day ago,# days ago,# days ago
-T1mqtx3t                 : # months ago,# month ago,# months ago,# months ago
-To0b6h                   : # years ago,# year ago,# years ago,# years ago
-Ty97he0                  : Notifications
-T5zhbb1                  : Start menu
-Txspnlf                  : Detach
-Twnfthw                  : Report a problem
-Ttmatki                  : Close all open applications
-T1vv3iit                 : feedback
-T1twvzjd                 : profile
-Tvggo92                  : Reload account
-Thy8ul7                  : refresh
-Treh6vn                  : Account has been reloaded
-Tzjt9hb                  : Close <strong>{0}</strong>
-T1qonvrk                 : Open in new tab
-Tizbdg9                  : My account
-T41pkh7                  : Change password
-Tft8p6c                  : Dashboard
-Tzex2pg                  : Groups
-Tosmo8z                  : Settings
-T1whz                    : Yes
-T1y9                     : No
-T706k13                  : # pages,# page,# pages,# pages
-Tmm5bl3                  : # items,# item,# items,# items
-Tysvd08                  : Filter
-Tmaxa8e                  : This message you are reading contains feedback from a platform user. I would appreciate your review and response.
-T1k0jv                   : URL:
-T1sghbn7                 : Message:
-Tnf4szb                  : Reset your password
-Tga1kxw                  : If you have lost your password or wish to reset it, use the link below to get started with <b>@{CONF.name}</b>.
-T3e79n1                  : You can safely ignore this email if you did not request a password reset. Account passwords can only be reset by someone who has access to your email.
-Tnigz7n                  : Please be reminded that you have unread notifications (@{model.unread}) in the @{CONF.name}. If you would like to review them, please sign in to the portal.
-T1r2awam                 : Read notifications
-Tsz897w                  : Dear @{model.name}, welcome to the <b>@{'%name'}</b>. We're excited that you've joined the platform. Please confirm your account via the link below.
-Tlrm4jz                  : Account is not confirmed
-Tep427u                  : Feedback not found
-T4w8eic                  : Group not found
-T1v0doob                 : Account photo 200x200
-T1ppiecu                 : Account has been changed successfully
-Tlv3xuz                  : Enable notifications
-Twvcu3l                  : Enable sounds
-Tx9d2fu                  : Cancel
-Tfd0in7                  : Send us your feedback or report a problem. Whenever a message is reported, we thoroughly investigate it. You will receive an email response from us.
-T80zqrg                  : Rate us:
-Ti7tjwq                  : Application:
-Tb6sf2n                  : Thank you for reaching out and providing us with valuable feedback.
-Tn6oih5                  : Welcome <ui-bind path="user.name" config="text" class="b"></ui-bind> to <ui-bind path="document.title" config="text" class="b"></ui-bind>. We are very thrilled to welcome you on board.
-Teuofo                   : That's all
-To92iba                  : You can update your profile now.
-T84f2oz                  : Time to relax!
-T1nh15nd                 : Enter your old password
-Tujl5zo                  : Old password
-Tbhyivq                  : Passwords cannot be reused.
-Tliwp51                  : Password reply
-Tf7qnvg                  : Password has been changed successfully
-T1scnbkv                 : My open sessions
-Tvezzy0                  : Auto-cleaner
-Th2px7i                  : Are you sure you want to clear all unused sessions?
-T1qrqsk5                 : Done, unused sessions have been removed
-T73iban                  : Welcome <ui-bind path="user.name" config="text" class="b"></ui-bind> to <ui-bind path="document.title" config="text" class="b"></ui-bind>. You are the platform's first super user.
-T4ucl30                  : The first step is to update the main OpenPlatform configuration through the setup interface. Then you can register users and apps.
-T8259n1                  : Account
-Tgeudzi                  : Copy settings
-T8zw3zk                  : Paste settings
-Txh3l5w                  : Copied
-Tymsnrx                  : Invalid clipboard data
-T1rgn0a8                 : Synchronize
-Tqns537                  : Enter application name
-T7n6th0                  : Origin:
-T74vdr9                  : Set as a bookmark
-T1xgd2c1                 : The app will be used as a bookmark to the external web app
-Tgrkjmo                  : Security
-Tc9wkjs                  : Request token
+T17bmnl3                 : Mensaje
+T13gs4nu                 : Documentación
 Tvwxchm                  : Response token
-T1k8gb7p                 : You can allow only specific IP addresses to access sensitive user information for this app.
-Tfz4xv2                  : 11.11.11.11
-Tkt0rcx                  : Allowed IP addresses
-Truotm0                  : Allow opening the app in a new tab
-T62mms                   : Enable explicit scrolling in the iframe
-T4xiins                  : Disable application
-T1usp52l                 : The app doesn't have any defined permissions
-Ts1qoa2                  : Update app
-Ttk2mlu                  : Token has been copied into the clipboard.
-T1unypd                  : value
-T1219pnu                 : The app metadata has been exported to the clipboard.
-Tttxmoz                  : URL address
-Twdcm3g                  : Additional settings
-T1o15c9f                 : Add groups
-Tshmg9c                  : Remove groups
-T1uvyeal                 : Choose groups
-T1kpnv                   : User
-T1yrok3o                 : The feedback is not solved yet
-Tk4ctwy                  : The system doesn't send email after solving.
-Txsr3hy                  : Device
-Ts2wqv0                  : Updated by
-Thuap0r                  : Reference
-T1v8kwlm                 : Allowed apps
-Tyedbj7                  : Enable
-Txupfgo                  : Update group
-T3rra0r                  : Create group
-T1w396bq                 : Import app
-Tqxymaz                  : Enter the URL for the OpenPlatform app metadata.
-Tzs3c11                  : IMPORT
-Tswy1e1                  : User photo 200x200
-Tyqofos                  : Female
-T1us6m12                 : Enter account name
-Txeubzz                  : E-mail
-T30e032                  : User email address is confirmed
-Tw0pwkw                  : Disable user account
-T6bmgs9                  : User account is inactive
-T1yehj0z                 : Send a Welcome mail message
-T8kpxfn                  : Enter new password
-Th4z2qq                  : Update user
-Tigj0b3                  : Create user
+T1ay23z                  : Reiniciar
+T19s4i                   : Hecho
+To92iba                  : Puedes actualizar tu perfil ahora.
+Twvcu3l                  : Activar sonidos
+Ts2wqv0                  : Actualizado por
+T1h67ij                  : Inactivo
+T1y9                     : No
+Tnhjmc9                  : hace # minutos, hace # minuto, hace # minutos, hace # minutos
+Tf821nc                  : Recibirás instrucciones para restablecer tu contraseña por correo electrónico.
 T1sr                     : ID
-Tnnin4r                  : Updated
-T4hb798                  : disabled
-T5jsqzg                  : Disabled
-Tx5y7ue                  : bookmark
-Ty8frkm                  : Bookmark
-T1kpnh                   : Used
-Trw6u07                  : # sessions,# session,# sessions,# sessions
-Tbyb14r                  : Open feedback
-T1l7n05e                 : Today statistics
-T1qw2huo                 : Max. logged users
-T1vtxcb8                 : Desktop computers
-Tj9ic8v                  : Mobile devices
+T1sksnqp                 : Repetir contraseña
+T1cq6x                   : Icono
+T1fytv                   : Siguiente
+T1wxl291                 : Reportes
+T9wgord                  : hace # días,hace # día,hace # días,hace # días
+Tymsnrx                  : Datos del portapapeles no válidos
+T3e79n1                  : Puedes ignorar este correo electrónico con seguridad si no solicitaste un restablecimiento de contraseña. Las contraseñas de las cuentas solo las puede restablecer alguien que tenga acceso a tu correo electrónico.
+T1uvyeal                 : Elige grupos
+Txh3l5w                  : Copiado
+Tagsor7                  : Datos inválidos
+T7gzhej                  : Al rol
+T14lakc0                 : Token no valido
+Tfd0in7                  : Envíanos tus comentarios o informa de un problema. Cada vez que se reporta un mensaje, lo investigamos a fondo. Recibirás una respuesta por correo electrónico de nuestra parte.
+T13pqvju                 : https://www.tudominio.com/openplatform.json
+T1maqqy3                 : Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre
+T18jgseg                 : Creado
+Tkg5z0p                  : Domingo,Lunes,Martes,Miércoles,Jueves,Viernes,Sábado
+T1c7py9                  : Hoy
+Tqmy8m2                  : Recibiste un correo electrónico con instrucciones para restablecer tu contraseña.
+Tibgsfj                  : Formulario de inicio de sesión
+T19hc5a3                 : Actualizar
+Tjsvyke                  : Nombre de la cuenta
+T9sze77                  : Las contraseñas no coinciden.
+T14ratqj                 : La aplicación está comenzando &hellip;
+Tyoexct                  : Fallido
+T6wp898                  : FALLÓ (@{model.failed}x)
+T13f1ocw                 : Aprobado
+T12wv59s                 : APROBADO
+T1r4o0cr                 : Espera por favor
+T2p7d47                  : REFRESCANDO
+Tujlvns                  : Resultados de la prueba
+T1xsdwik                 : TEXTO PARA TRADUCIR
+T14mox7c                 : ENVIAR
+Tt35tog                  : Ingresa tu contraseña
+Ttmatki                  : Cerrar todas las aplicaciones abiertas
+T1jvf5v3                 : Referencia:
+T1bx8wg2                 : Bienvenido
+T4w8eic                  : Grupo no encontrado
+Tb6sf2n                  : Gracias por comunicarte con nosotros y brindarnos comentarios valiosos.
+Tf7qnvg                  : La contraseña ha sido cambiada exitosamente
+T17i0zgc                 : ¿Deseas cancelar la sesión seleccionada?
+T73iban                  : Hola <ui-bind path="user.name" config="text" class="b"></ui-bind> te damos la bienvenida a <ui-bind path="document.title" config="text" class="b "></ui-bind>. Eres el primer superusuario de la plataforma.
+To0b6h                   : hace # años,hace # año,hace # años,hace # años
+T1ppiecu                 : La cuenta ha sido cambiada exitosamente
+T1608rft                 : Actualizar
+T133axy1                 : ¿Deseas actualizar los usuarios seleccionados?
+Ty97he0                  : Notificaciones
+T5zhbb1                  : Menu de inicio
+T1xgd2c1                 : La aplicación se utilizará como marcador de la aplicación web externa.
+Truotm0                  : Permitir abrir la aplicación en una nueva pestaña
+Ttk2mlu                  : El token se ha copiado en el portapapeles.
+T1hg9934                 : Marcar como resuelto
+Tttxmoz                  : Dirección URL
+Tqxymaz                  : Ingresa la URL de los metadatos de la aplicación OpenPlatform.
+T1x0qenp                 : La dirección URL ha sido copiada.
+Twl9frj                  : Asignar
+Tvywxyz                  : Ruta TMS
+Tx5y7ue                  : marcador
+T19hez4                  : Abierto:
+T1l7n05e                 : Estadísticas de hoy
 T1t3                     : IP
-Tgdx3fy                  : Are you sure you want to remove selected groups?
-T1qe2tcp                 : Icon 150x150
-Tpp7bbq                  : Allow reading for all users and groups
-T1t8blnf                 : This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.
-T1s93dvh                 : Enable API
-Tbupqhp                  : Access token
-Tv0c3o5                  : Generate
+T1s93rwd                 : Habilitar TMS
+Tww2dw4                  : Opciones SMTP
+T4hb798                  : desactivado
+Tphxixg                  : ¿Deseas eliminar los usuarios seleccionados?
+Twnfthw                  : Informar de un problema
+T12cvb0z                 : Sesiones abiertas
+T1twvzjd                 : perfil
+T1v0doob                 : Foto de cuenta 200x200
+Ti7tjwq                  : Aplicación:
+T1rgn0a8                 : Sincronizar
+T7n6th0                  : Origen:
+T1abzfj8                 : Permisos
+Ts1qoa2                  : Actualizar aplicación
+T1vv3iit                 : reporte
+Tvggo92                  : Recargar cuenta
+Thy8ul7                  : actualizar
+Treh6vn                  : La cuenta ha sido recargada
+T11qckoa                 : Cerrar sesión
+Tmm5bl3                  : # elementos,# elemento,# elementos,# elementos
+T3egjfd                  : hace # horas,hace # hora,hace # horas,hace # horas
+T1qw2huo                 : Máx. usuarios conectados
+T102cmcz                 : Credenciales no válidas
+Tpp7bbq                  : Permitir la lectura para todos los usuarios y grupos
+T7bylzj                  : Respuesta SMTP:
+T1kpnv                   : Usuario
+T12tbn1                  : Limpiar
+T1fvl7                   : Nombre
+T1glqo0e                 : La cuenta está inactiva
+T39vorh                  : Contraseña antigua no válida
+T13xh18                  : Correo electrónico
+Tnnin4r                  : Actualizado
+T5jsqzg                  : Desactivado
+Tm0qe9a                  : La dirección de correo electrónico ya está utilizada
+T1gkjkgn                 : Notificaciones no leídas
+T178h6ff                 : Sesión no encontrada
+T17tfm1                  : Acceso
+Tykg00t                  : ¿No tienes una cuenta?
+Tbsl9p4                  : Aplicación no válida
+T13oi6c6                 : Aplicación no encontrada
+T14ranob                 : Introducir la dirección de correo electrónico
+T1whz                    : Sí
+Tigv5rn                  : Ingresa nombre
+Trjmw2x                  : CREAR UNA CUENTA
+T19oinzj                 : Reiniciar
+T1kod7hb                 : Cuenta deshabilitada
+Tl71ry3                  : Contraseña
+Txspnlf                  : Despegar
+Tzjt9hb                  : Cerrar <strong>{0}</strong>
+T17vx5                   : Aplicación:
+T1hbr8uc                 : Dispositivo:
+T1sghbn7                 : Mensaje:
+Tnf4szb                  : Restablecer contraseña
+T1r2awam                 : Leer notificaciones
+T1dgvp2l                 : Confirmar cuenta
+Tlrm4jz                  : La cuenta no está confirmada
+T180ypcd                 : Cuenta de usuario no encontrada
+Tep427u                  : Reporte no encontrado
+T1qe2tcp                 : Icono 150x150
+Tyqofos                  : Femenino
+Txeubzz                  : Correo electrónico
+T1irlupz                 : Súper privilegios
+T8kpxfn                  : Ingresa nueva contraseña
+T30e032                  : La dirección de correo electrónico del usuario está confirmada.
+T11ksof                  : Administrador
+T1iagm6r                 : en línea
+T16dbrot                 : No tienes ninguna notificación
+Teuofo                   : Eso es todo
+T1nh15nd                 : Ingresa tu antigua contraseña
+Tujl5zo                  : Contraseña anterior
+Tbhyivq                  : Las contraseñas no se pueden reutilizar.
+T1scnbkv                 : Mis sesiones abiertas
+Tvezzy0                  : Limpiador automático
+T1qrqsk5                 : Listo, las sesiones no utilizadas se han eliminado
+T8259n1                  : Cuenta
+Tqns537                  : Introduce el nombre de la aplicación
+T74vdr9                  : Establecer como marcador
+Tgrkjmo                  : Seguridad
+Tfz4xv2                  : 11.11.11.11
+Tkt0rcx                  : Direcciones IP permitidas
+T1fjh48b                 : Introduce las direcciones IP separadas por coma
+T62mms                   : Habilitar el desplazamiento explícito en el iframe
+T4xiins                  : Deshabilitar aplicación
+T19h9suc                 : Registrar aplicación
+T1unypd                  : valor
+T1o15c9f                 : Añadir grupos
+Tshmg9c                  : Eliminar grupos
+T151r95x                 : Resuelto
+Tk4ctwy                  : El sistema no envía correo electrónico después de resolver.
+T10cah3n                 : Escribe un nombre de grupo
+T11qu4db                 : Estadísticas totales
+T1v8kwlm                 : Aplicaciones permitidas
+T3rra0r                  : Crea un grupo
+Th4z2qq                  : Actualizar usuario
+Tigj0b3                  : Crear usuario
+T1kpnh                   : Usado
+T14wzruf                 : Último uso
+T1b6t9xe                 : Usuarios <b>en línea</b>
+Tbyb14r                  : Abrir reporte
+Tj9ic8v                  : Dispositivos móviles
+T14d5cxp                 : Clasificación
+T11qceci                 : Conectado
+Tbupqhp                  : Token de acceso
+T1tbx2cp                 : Dirección del remitente
+T1e7nx65                 : Configuración SMTP
+T1b3mt7h                 : ¿Deseas eliminar los reportes seleccionados?
+Tgdx3fy                  : ¿Deseas eliminar los grupos seleccionados?
+T1s93dvh                 : Habilitar API
 Ttv3f05                  : Endpoint
-T1s93rwd                 : Enable TMS
-Tvywxyz                  : TMS endpoint
-T1tbx2cp                 : Sender address
-Titpmq5                  : SMTP server
-Tww2dw4                  : SMTP options
-T1p9z8wo                 : SMTP server is not configured yet.
-T20b5iu                  : SMTP server is configured correctly.
-T7bylzj                  : SMTP response:
-Txgsqvt                  : Settings have been saved successfully
-T1x0qenp                 : URL address has been copied
-Twl9frj                  : Assign
-T1mv43c6                 : unconfirmed
-Tjud4qn                  : Confirmed
-Tphxixg                  : Are you sure you want to remove selected users?
+Titpmq5                  : Servidor SMTP
+T1p9z8wo                 : El servidor SMTP aún no está configurado.
+T20b5iu                  : El servidor SMTP está configurado correctamente.
+T1jsmq                   : Probar
+Tv0c3o5                  : Generar
+Tc9wkjs                  : Request token
+T1k8gb7p                 : Puedes permitir que solo direcciones IP específicas accedan a información confidencial del usuario para esta aplicación.
+Tga1kxw                  : Si has perdido tu contraseña o deseas restablecerla, utiliza el siguiente enlace para comenzar con <b>@{CONF.name}</b>.
+T80zqrg                  : Valóranos:
+T12tjh4                  : Cerrar
+T1k0jv                   : URL:
+T1cyekzk                 : Ingresa tu contraseña nuevamente
+T1cu3mw                  : Usuarios
+Tdrftoj                  : Introduce la contraseña
+Tizbdg9                  : Mi cuenta
+T6bmgs9                  : La cuenta de usuario está inactiva
+T1350pkj                 : En línea
+Tliwp51                  : Repetir contraseña
+T1cmsyog                 : ¿Deseas eliminar las aplicaciones seleccionadas?
+T1bjrc82                 : Cuenta no encontrada
+T1aeqyco                 : INICIAR SESIÓN
+T3qscoh                  : Tu cuenta ha sido creada con éxito. Se envió un mensaje de confirmación a tu dirección de correo electrónico.
+Trw6u07                  : # sesiones,# sesión,# sesiones,# sesiones
+T1w7l82b                 : Dirección de correo electrónico
+T1219pnu                 : Los metadatos de la aplicación se han exportado al portapapeles.
+T11sitq                  : Aplicar
+T1w396bq                 : Importar aplicación
+T706k13                  : # páginas,# página,# páginas,# páginas
+Tysvd08                  : Filtro
+T1bhvtp                  : Configuración
+T16zabwn                 : Cerrar <b>{0}</b>
+T41pkh7                  : Cambiar la contraseña
+T17vyq                   : Aplicaciones
+T2cba                    : ahora
+T1mqtx3t                 : hace # meses,hace # mes,hace # meses,hace # meses
+Tzex2pg                  : Grupos
+Tmaxa8e                  : Este mensaje contiene comentarios de un usuario de la plataforma. Agradecerá tu reseña y respuesta.
+T1cu3lb                  : Usuario:
+T1in0cqv                 : Dirección de correo electrónico:
+Tnigz7n                  : Recuerda que tienes notificaciones sin leer (@{model.unread}) en @{CONF.name}. Si desea revisarlas, inicia sesión en el portal.
+Tsz897w                  : Hola @{model.name}, te damos la bienvenida a <b>@{'%name'}</b>. Nos alegra que te hayas unido a la plataforma. Confirma tu cuenta a través del siguiente enlace.
+Txsr3hy                  : Dispositivo
+T1eim7ln                 : Dirección IP
+T1eyp                    : Aplicación
+Tswy1e1                  : Foto de usuario 200x200
+Tlv3xuz                  : Permitir notificaciones
+Tw0pwkw                  : Deshabilitar cuenta de usuario
+T1us6m12                 : Introduce el nombre de la cuenta
+T1yehj0z                 : Enviar un mensaje de correo de bienvenida
+T1j67nz                  : administrador
+Tjud4qn                  : Confirmado
+T1mv43c6                 : sin confirmar
+T13f7ws                  : Hecho.
+Txgsqvt                  : La configuración se ha guardado correctamente.
+T1gtii                   : Abierto
+T1vtxcb8                 : Ordenadores
+Tn6oih5                  : Hola <ui-bind path="user.name" config="text" class="b"></ui-bind> te damos la bienvenida a <ui-bind path="document.title" config="text" class="b "></ui-bind>. Estamos muy emocionados de tenerte a bordo.
+T84f2oz                  : ¡Tiempo para relajarse!
+T1e4t50a                 : El programa elimina todas las sesiones abiertas excepto aquella en la que te encuentras actualmente.
+Th2px7i                  : ¿Deseas borrar todas las sesiones no utilizadas?
+T4ucl30                  : El primer paso es actualizar la configuración principal de OpenPlatform a través de la interfaz de configuración. Luego podrás registrar usuarios y aplicaciones.
+Twdcm3g                  : Ajustes adicionales
+T1usp52l                 : La aplicación no tiene ningún permiso definido.
+T1ekbk05                 : Asignar grupos
+T1yrok3o                 : Los reportes aún no están resueltos.
+T19zj9rb                 : Desactivar grupo
+Txupfgo                  : Actualizar grupo
+Ty8frkm                  : Marcador
+T17eh95w                 : Memoria usada
+T185y3gq                 : Usuarios Registrados
+T1t8blnf                 : Esta configuración permite que las aplicaciones externas lean todos los grupos y perfiles de usuario a través del punto de acceso REST. El siguiente token debe configurarse en el encabezado X-Token o mediante el parámetro de consulta "?token=".
+T16y5rh                  : Total.js TMS
+T189bd17                 : Las opciones SMTP deben estar en formato JSON válido, según la documentación de Total.js
+T1hw0tk2                 : El servicio de mensajes Total.js te permite capturar datos de OpenPlatform utilizando la interfaz de programación visual Total.js Flow.
