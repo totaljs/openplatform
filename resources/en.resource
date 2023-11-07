@@ -1,6 +1,11 @@
+T14e78xi     : Invalid group
+Thvmnq2      : To Group
+Tgtcv77      : Invalid permission name
+T7gzhej      : To role
 Tagsor7      : Invalid data
 T14lakc0     : Invalid token
 T1gkjkgn     : Unread notifications
+T102cmcz     : Invalid credentials
 Tm0qe9a      : E-mail address is already used
 T13oi6c6     : App not found
 Tlcnga       : App has been temporary disabled
@@ -31,34 +36,19 @@ Tl71ry3      : Password
 Tb4wo6k      : Reset password
 Tjsvyke      : Account name
 T9sze77      : Passwords do not match.
-Ty97he0      : Notifications
 T14w27d4     : Search
+T1c7py9      : Today
+Tkg5z0p      : Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+T1maqqy3     : January,February,March,April,May,Juny,July,August,September,October,November,December
 T2cba        : now
 Tnhjmc9      : # minutes ago,# minute ago,# minutes ago,# minutes ago
 T3egjfd      : # hours ago,# hour ago,# hours ago,# hours ago
 T9wgord      : # days ago,# day ago,# days ago,# days ago
 T1mqtx3t     : # months ago,# month ago,# months ago,# months ago
 To0b6h       : # years ago,# year ago,# years ago,# years ago
+T12tbn1      : Clear
+Ty97he0      : Notifications
 T5zhbb1      : Start menu
-T1wcnolm     : January
-T1vqhghu     : February
-T184ieb      : March
-T11sk86      : April
-T1nid        : May
-T1dqie       : Juny
-T1dqgo       : July
-Twm5mar      : August
-T1ylpbqp     : September
-Tpp6m8       : October
-Ts6ds2a      : November
-Taczpl1      : December
-T1552x9s     : Sunday
-T127ifcg     : Monday
-Tbd7fal      : Tuesday
-T1k6s6ra     : Wednesday
-Tr2g5iy      : Thursday
-Tyxr9fj      : Friday
-T114ux95     : Saturday
 T12tjh4      : Close
 Txspnlf      : Detach
 Twnfthw      : Report a problem
@@ -81,8 +71,8 @@ Tizbdg9      : My account
 T41pkh7      : Change password
 Tft8p6c      : Dashboard
 T1cu3mw      : Users
-T17vyq       : Apps
 Tzex2pg      : Groups
+T17vyq       : Apps
 Tosmo8z      : Settings
 T1whz        : Yes
 T1y9         : No
@@ -107,7 +97,6 @@ T1r2awam     : Read notifications
 T1bx8wg2     : Welcome
 Tsz897w      : Dear @{model.name}, welcome to the <b>@{'%name'}</b>. We're excited that you've joined the platform. Please confirm your account via the link below.
 T1dgvp2l     : Confirm account
-T102cmcz     : Invalid credentials
 Tlrm4jz      : Account is not confirmed
 Tep427u      : Feedback not found
 T4w8eic      : Group not found
@@ -129,7 +118,6 @@ T19s4i       : Done
 Tn6oih5      : Welcome <ui-bind path="user.name" config="text" class="b"></ui-bind> to <ui-bind path="document.title" config="text" class="b"></ui-bind>. We are very thrilled to welcome you on board.
 Teuofo       : That's all
 To92iba      : You can update your profile now.
-T12tbn1      : Clear
 T84f2oz      : Time to relax!
 T16dbrot     : You don't have any notifications
 T1nh15nd     : Enter your old password
@@ -152,7 +140,7 @@ T8zw3zk      : Paste settings
 Txh3l5w      : Copied
 T13f1p3l     : Pasted
 Tymsnrx      : Invalid clipboard data
-T10a9v45     : Import
+T1rgn0a8     : Synchronize
 Tqns537      : Enter application name
 T7n6th0      : Origin:
 T74vdr9      : Set as a bookmark
@@ -165,12 +153,16 @@ Tfz4xv2      : 11.11.11.11
 Tkt0rcx      : Allowed IP addresses
 T1fjh48b     : Enter IP addresses separated by the comma
 Truotm0      : Allow opening the app in a new tab
+T62mms       : Enable explicit scrolling in the iframe
 T4xiins      : Disable application
 T1abzfj8     : Permissions
 T1usp52l     : The app doesn't have any defined permissions
 Ts1qoa2      : Update app
 T19h9suc     : Register app
+Ttk2mlu      : Token has been copied into the clipboard.
 T1unypd      : value
+T1219pnu     : The app metadata has been exported to the clipboard.
+T10a9v45     : Import
 T1fvl7       : Name
 Tttxmoz      : URL address
 Twdcm3g      : Additional settings
@@ -194,6 +186,7 @@ Txsr3hy      : Device
 T151r95x     : Solved
 Ts2wqv0      : Updated by
 T10cah3n     : Enter a group name
+Thuap0r      : Reference
 T19zj9rb     : Disable group
 T1v8kwlm     : Allowed apps
 Tyedbj7      : Enable
@@ -244,11 +237,15 @@ T1t3         : IP
 T1b3mt7h     : Are you sure you want to remove selected feedback?
 Tgdx3fy      : Are you sure you want to remove selected groups?
 T1qe2tcp     : Icon 150x150
+Tpp7bbq      : Allow reading for all users and groups
+T1t8blnf     : This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.
+T1s93dvh     : Enable API
+Tbupqhp      : Access token
+Tv0c3o5      : Generate
+Ttv3f05      : Endpoint
 T16y5rh      : Total.js TMS
 T1hw0tk2     : The Total.js Message Service allows you to capture data from the OpenPlatform using the Total.js Flow Visual Programming Interface.
 T1s93rwd     : Enable TMS
-Tbupqhp      : Access token
-Tv0c3o5      : Generate
 Tvywxyz      : TMS endpoint
 T1jsmq       : Test
 T1e7nx65     : SMTP settings
@@ -272,11 +269,3 @@ T1350pkj     : Online
 Tjud4qn      : Confirmed
 T1h67ij      : Inactive
 Tphxixg      : Are you sure you want to remove selected users?
-T1rgn0a8     : Synchronize
-T62mms       : Enable explicit scrolling in the iframe
-Ttk2mlu      : Token has been copied into the clipboard.
-T1219pnu     : The app metadata has been exported to the clipboard.
-Tpp7bbq      : Allow reading for all users and groups
-T1t8blnf     : This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.
-T1s93dvh     : Enable API
-Ttv3f05      : Endpoint

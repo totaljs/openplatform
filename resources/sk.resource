@@ -30,25 +30,6 @@ Tjsvyke      : Názov účtu
 T9sze77      : Heslá sa nezhodujú.
 Ty97he0      : Notifikácie
 T5zhbb1      : Štart menu
-T1wcnolm     : Január
-T1vqhghu     : Február
-T184ieb      : Marec
-T11sk86      : Apríl
-T1nid        : Máj
-T1dqie       : Jún
-T1dqgo       : Júl
-Twm5mar      : August
-T1ylpbqp     : September
-Tpp6m8       : Október
-Ts6ds2a      : November
-Taczpl1      : December
-T1552x9s     : Nedeľa
-T127ifcg     : Pondelok
-Tbd7fal      : Utorok
-T1k6s6ra     : Streda
-Tr2g5iy      : Štvrtok
-Tyxr9fj      : Piatok
-T114ux95     : Sobota
 T16zabwn     : Zatvoriť <b>{0}</b>
 Ttmatki      : Zatvoriť otvorené aplikácie
 Twnfthw      : Nahlásiť problém
@@ -278,5 +259,13 @@ Ttk2mlu      : Token bol skopírovaný do schránky.
 T1219pnu     : Metadáta aplikácie boli exportované do schránky.
 Tpp7bbq      : Povoliť čítanie všetkých používateľov a skupín
 T1t8blnf     : Táto konfigurácia umožňuje externým aplikáciám čítať všetky skupiny a používateľské profily cez koncový bod REST.
-T1s93dvh     : Token nižšie musí byť nastavený v hlavičke X-Token alebo prostredníctvom parametra dopytu "?token=".
-Ttv3f05      : Povoliť API
+Ttv3f05      : Token nižšie musí byť nastavený v hlavičke X-Token alebo prostredníctvom parametra dopytu "?token="
+T1s93dvh     : Povoliť API
+T14e78xi     : Neplatná skupina
+Thvmnq2      : Do skupiny
+Tgtcv77      : Neplatný názov povolenia
+T7gzhej      : Do role
+T1c7py9      : Dnes
+Tkg5z0p      : Nedeľa,Pondelok,Utorok,Streda,Štvrtok,Piatok,Sobota
+T1maqqy3     : Január,Február,Marec,Apríl,Máj,Jún,Júl,August,September,Október,November,December
+Thuap0r      : Referencia
