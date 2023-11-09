@@ -55,7 +55,7 @@ function setup() {
 			obj.id = item.id;
 			obj.url = '/{0}/'.format(item.id);
 			obj.sortindex = item.position;
-			obj.name = TRANSLATOR($.user.language || '', item.name);
+			obj.name = TRANSLATOR($.user.language || CONF.language, item.name);
 			obj.icon = item.icon;
 			obj.color = item.color;
 			obj.type = item.type;
