@@ -269,3 +269,5 @@ T1c7py9      : Dnes
 Tkg5z0p      : Nedeľa,Pondelok,Utorok,Streda,Štvrtok,Piatok,Sobota
 T1maqqy3     : Január,Február,Marec,Apríl,Máj,Jún,Júl,August,September,Október,November,December
 Thuap0r      : Referencia
+T19ewry0     : Jazyk
+T1h2tt0h     : Predvolený

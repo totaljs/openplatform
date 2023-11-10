@@ -269,3 +269,5 @@ Tpp7bbq      : Allow reading for all users and groups
 T1t8blnf     : This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.
 T1s93dvh     : Enable API
 Ttv3f05      : Endpoint
+T19ewry0     : Language
+T1h2tt0h     : Default

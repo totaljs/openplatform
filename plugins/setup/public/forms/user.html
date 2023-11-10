@@ -27,12 +27,15 @@
 			</div>
 		</ui-component>
 
-		<div class="grid-2" style="margin-top:20px">
+		<div class="grid-3" style="margin-top:20px">
 			<div class="m">
-				<ui-component name="input" path="?.name" config="innerlabel:1;required:1;placeholder:@(Enter account name)">@(Account name)</ui-component>
+				<ui-component name="input" path="?.name" config="required:1;placeholder:@(Enter account name)">@(Account name)</ui-component>
 			</div>
 			<div class="m">
-				<ui-component name="input" path="?.email" config="innerlabel:1;required:1;type:email" default="'@'">@(E-mail)</ui-component>
+				<ui-component name="input" path="?.email" config="required:1;type:email" default="'@'">@(E-mail)</ui-component>
+			</div>
+			<div class="m">
+				<ui-component name="input" path="?.language" config="dirsource:#resources;icon:ti ti-language-alt;dirempty:@(Default)">@(Language)</ui-component>
 			</div>
 		</div>
 

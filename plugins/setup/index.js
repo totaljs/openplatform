@@ -30,6 +30,7 @@ exports.install = function() {
 	ROUTE('+API    /setup/    -settings                *Settings   --> read');
 	ROUTE('+API    /setup/    +settings_save           *Settings   --> save');
 	ROUTE('+API    /setup/    +settings_test           *Settings   --> test');
+	ROUTE('+API    /setup/    -resources               *Settings   --> resources');
 
 	// Feedback
 	ROUTE('+API    /setup/    -feedback                *Feedback   --> list');
@@ -55,7 +56,7 @@ function setup() {
 			obj.id = item.id;
 			obj.url = '/{0}/'.format(item.id);
 			obj.sortindex = item.position;
-			obj.name = TRANSLATOR($.user.language || CONF.language, item.name);
+			obj.name = TRANSLATOR($.user.language || '', item.name);
 			obj.icon = item.icon;
 			obj.color = item.color;
 			obj.type = item.type;

@@ -269,3 +269,5 @@ T1350pkj     : Online
 Tjud4qn      : Confirmed
 T1h67ij      : Inactive
 Tphxixg      : Are you sure you want to remove selected users?
+T19ewry0     : Language
+T1h2tt0h     : Default

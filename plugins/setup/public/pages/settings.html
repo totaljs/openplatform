@@ -16,13 +16,16 @@
 				</div>
 				<div style="padding:var(--gap)">
 
-					<div>
+					<div class="grid-2">
 						<div class="m">
 							<ui-component name="input" path="?.name" config="required:1">@(Name)</ui-component>
 						</div>
 						<div class="m">
-							<ui-component name="input" path="?.url" config="required:1;type:url" default="location.origin">@(URL address)</ui-component>
+							<ui-component name="input" path="?.language" config="dirsource:#resources;icon:ti ti-language-alt;dirempty:@(Default)">@(Language)</ui-component>
 						</div>
+					</div>
+					<div class="m">
+						<ui-component name="input" path="?.url" config="required:1;type:url" default="location.origin">@(URL address)</ui-component>
 					</div>
 
 					<div class="caption m">
