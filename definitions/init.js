@@ -4,8 +4,7 @@ MAIN.cache = {};
 
 async function reconfigure() {
 
-	var db = DB();
-	var config = await db.find('op.cl_config').fields('id,value,type').promise();
+	var config = await DATA.find('op.cl_config').fields('id,value,type').promise();
 
 	LOADCONFIG(config);
 
@@ -26,7 +25,6 @@ async function reconfigure() {
 	}
 
 	CONF.ismail = CONF.mail_smtp && CONF.mail_from ? true : false;
-
 	EMIT('configure');
 }
 
@@ -46,20 +44,17 @@ ON('service', async function(counter) {
 	if (counter % 480 === 0)
 		reconfigure();
 
-	var db;
-
 	// 12 hours
 	// Remove expired sessions
 	if (counter % 720 === 0) {
-		db = DB();
-		db.remove('op.tbl_app_session').where('dtexpire<NOW()');
-		db.remove('op.tbl_session').where('dtexpire<NOW()');
+		DATA.remove('op.tbl_app_session').where('dtexpire<NOW()');
+		DATA.remove('op.tbl_session').where('dtexpire<NOW()');
 	}
 
 	// 11 minutes
 	// Email notifications
 	if (CONF.ismail && counter % 11 === 0) {
-		var users = await DB().query("UPDATE op.tbl_user SET unread=unread+1, dtnotified=NOW() WHERE isremoved=FALSE AND isdisabled=FALSE AND isonline=FALSE AND isinactive=FALSE AND unread>0 AND (dtnotified IS NULL OR (dtnotified + '3 days') <= NOW()) RETURNING id,language,name,color,email,unread").promise();
+		var users = await DATA.query("UPDATE op.tbl_user SET unread=unread+1, dtnotified=NOW() WHERE isremoved=FALSE AND isdisabled=FALSE AND isonline=FALSE AND isinactive=FALSE AND unread>0 AND (dtnotified IS NULL OR (dtnotified + '3 days') <= NOW()) RETURNING id,language,name,color,email,unread").promise();
 		for (var m of users) {
 			if (!m.color)
 				m.color = CONF.color;
@@ -72,14 +67,13 @@ ON('service', async function(counter) {
 NEWPUBLISH('Stats.create', 'online:Number,date:Date,device');
 async function makestats() {
 
-	var db = DB();
-	var online = await db.query('SELECT COUNT(1)::int4 AS count FROM op.tbl_session WHERE isonline=TRUE').promise();
+	var online = await DATA.query('SELECT COUNT(1)::int4 AS count FROM op.tbl_session WHERE isonline=TRUE').promise();
 
 	online = online[0].count;
 
 	if (online) {
 
-		var devices = await db.query('SELECT device, COUNT(1)::int4 AS count FROM op.tbl_session WHERE isonline=TRUE GROUP BY device').promise();
+		var devices = await DATA.query('SELECT device, COUNT(1)::int4 AS count FROM op.tbl_session WHERE isonline=TRUE GROUP BY device').promise();
 		var model = {};
 
 		model['>maxlogged'] = online;
@@ -90,7 +84,7 @@ async function makestats() {
 		model.id = +NOW.format('yyyyMMdd');
 		model.date = NOW;
 
-		await db.modify('op.tbl_visitor', model, true).id(model.id).promise();
+		await DATA.modify('op.tbl_visitor', model, true).id(model.id).promise();
 		PUBLISH('Stats.create', model);
 	}
 }
@@ -101,7 +95,7 @@ function auth() {
 	NEWPUBLISH('Session.create', 'id,sessionid,photo,name,language,sa:Boolean,color:Color,isreset:Boolean,sounds:Boolean,notifications:Boolean,unread:Number');
 
 	var options = {};
-	var onprofile = (userid, callback) => DB().one('op.tbl_user').fields('id,photo,name,language,sa,color,interface,isreset,darkmode,sounds,notifications,unread').id(userid).where('isconfirmed=TRUE AND isdisabled=FALSE AND isinactive=FALSE AND isremoved=FALSE').callback(callback);
+	var onprofile = (userid, callback) => DATA.one('op.tbl_user').fields('id,photo,name,language,sa,color,interface,isreset,darkmode,sounds,notifications,unread').id(userid).where('isconfirmed=TRUE AND isdisabled=FALSE AND isinactive=FALSE AND isremoved=FALSE').callback(callback);
 
 	function authconfig() {
 		options.secret = CONF.auth_secret;
@@ -129,14 +123,13 @@ function auth() {
 		// meta.ua {String}
 		// next(err, USER_DATA) {Function} callback function
 
-		var db = DB();
-		var session = await db.one('op.tbl_session').fields('id,userid').id(meta.sessionid).query('dtexpire>NOW()').promise();
+		var session = await DATA.one('op.tbl_session').fields('id,userid').id(meta.sessionid).query('dtexpire>NOW()').promise();
 		if (session) {
 			onprofile(meta.userid, function(err, user) {
 				if (user) {
 					next(err, user);
-					db.modify('op.tbl_session', { isonline: true, dtlogged: NOW, '+logged': 1, ua: meta.ua }).id(meta.sessionid);
-					db.modify('op.tbl_user', { isreset: false, isonline: true, dtlogged: NOW, '+logged': 1 }).id(meta.userid);
+					DATA.modify('op.tbl_session', { isonline: true, dtlogged: NOW, '+logged': 1, ua: meta.ua }).id(meta.sessionid);
+					DATA.modify('op.tbl_user', { isreset: false, isonline: true, dtlogged: NOW, '+logged': 1 }).id(meta.userid);
 					user.sessionid = meta.sessionid;
 					PUBLISH('Session.create', user);
 				} else
@@ -148,18 +141,15 @@ function auth() {
 
 	options.onfree = function(meta) {
 		var mod = { isonline: false };
-		var db = DB();
-		meta.sessions && db.modify('op.tbl_session', mod).query('isonline=TRUE').id(meta.sessions);
-		meta.users && db.modify('op.tbl_user', mod).query('isonline=TRUE').id(meta.users);
+		meta.sessions && DATA.modify('op.tbl_session', mod).query('isonline=TRUE').id(meta.sessions);
+		meta.users && DATA.modify('op.tbl_user', mod).query('isonline=TRUE').id(meta.users);
 	};
 
-	var db = DB();
-
-	db.query('UPDATE op.tbl_session SET isonline=FALSE WHERE isonline=TRUE');
-	db.query('UPDATE op.tbl_user SET isonline=FALSE WHERE isonline=TRUE');
+	DATA.query('UPDATE op.tbl_session SET isonline=FALSE WHERE isonline=TRUE');
+	DATA.query('UPDATE op.tbl_user SET isonline=FALSE WHERE isonline=TRUE');
 
 	AUTH(options);
-	DEF.onLocale = req => (req.user ? req.user.language : req.query.language) || CONF.language || '';
+	DEF.onLocalize = $ => ($.user ? $.user.language : $.query.language) || CONF.language || '';
 
 	ON('configure', authconfig);
 
@@ -187,7 +177,7 @@ function auth() {
 	};
 
 	MAIN.auth.logout = function($, callback) {
-		DB().remove('op.tbl_session').id($.session.sessionid).callback(function() {
+		DATA.remove('op.tbl_session').id($.session.sessionid).callback(function() {
 			options.logout($);
 			callback && callback();
 		});
@@ -200,7 +190,7 @@ function auth() {
 
 async function init() {
 
-	var op_tables = await DB().query("SELECT FROM pg_tables WHERE schemaname='op' AND tablename='cl_config' LIMIT 1").promise();
+	var op_tables = await DATA.query("SELECT FROM pg_tables WHERE schemaname='op' AND tablename='cl_config' LIMIT 1").promise();
 
 	if (op_tables.length) {
 		PAUSESERVER('Database');
@@ -233,7 +223,7 @@ async function init() {
 		var sql = buffer.toString('utf8').arg(data);
 
 		// Run SQL
-		await DB().query(sql).promise();
+		await DATA.query(sql).promise();
 		reconfigure();
 		auth();
 
