@@ -239,7 +239,7 @@ NEWACTION('Account/notifications', {
 	action: function($) {
 		var userid = $.user.id;
 
-		DATA.find('op.tbl_notification').fields('id,appid,name,icon,path,body,color,isread,dtcreated').where('userid', userid).sort('dtcreated', true).take(50).callback($.callback);
+		DATA.find('op.tbl_notification').fields('id,appid,name,icon,path,body,color,isread,dtcreated').where('userid', userid).sort('dtcreated', true).take(50).callback($);
 
 		if ($.user.unread) {
 			userid = PG_ESCAPE(userid);
