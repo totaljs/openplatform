@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
-    "total4": "latest",
+    "total5": "beta",
     "querybuilderpg": "latest"
   },
   "scripts": {
