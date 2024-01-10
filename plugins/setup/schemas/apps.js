@@ -25,22 +25,22 @@ NEWACTION('Apps/create', {
 	input: '@Apps',
 	action: async function($, model) {
 
-		var permissions = model.permissions;
+		var permissions = model.permissions || [];
 
 		model.permissions = undefined;
 		model.id = UID();
 		model.dtcreated = NOW;
 
 		if (!model.sortindex)
-			model.sortindex = (await db.count('op.tbl_app').promise()) + 1;
+			model.sortindex = (await DATA.count('op.tbl_app').promise()) + 1;
 
-		await db.insert('op.tbl_app', model).promise($);
+		await DATA.insert('op.tbl_app', model).promise($);
 
 		for (let m of permissions) {
 			if (!m.id || m.id[0] === '_')
 				m.id = UID();
 			m.appid = model.id;
-			await db.insert('op.tbl_app_permission', m).promise($);
+			await DATA.insert('op.tbl_app_permission', m).promise($);
 		}
 
 		$.success(model.id);
@@ -54,7 +54,7 @@ NEWACTION('Apps/update', {
 	action: async function($, model) {
 
 		var params = $.params;
-		var newpermissions = model.permissions;
+		var newpermissions = model.permissions || [];
 
 		if (model.isbookmark)
 			newpermissions = EMPTYARRAY;
@@ -68,26 +68,24 @@ NEWACTION('Apps/update', {
 		model.dtupdated = NOW;
 		model.isprocessed = false;
 
-		var db = DB();
+		await DATA.modify('op.tbl_app', model).id(params.id).error('@(App not found)').where('isremoved=FALSE').promise($);
 
-		await db.modify('op.tbl_app', model).id(params.id).error('@(App not found)').where('isremoved=FALSE').promise($);
-
-		var oldpermissions = await db.find('op.tbl_app_permission').where('appid', params.id).promise($);
+		var oldpermissions = await DATA.find('op.tbl_app_permission').where('appid', params.id).promise($);
 		var diff = DIFFARR('id', oldpermissions, newpermissions);
 
 		for (let m of diff.add) {
 			m.id = UID();
 			m.appid = params.id;
-			await db.insert('op.tbl_app_permission', m).promise($);
+			await DATA.insert('op.tbl_app_permission', m).promise($);
 		}
 
 		for (let m of diff.upd) {
 			m.form.id = undefined;
-			await db.modify('op.tbl_app_permission', m.form).id(m.db.id).where('appid', params.id).promise($);
+			await DATA.modify('op.tbl_app_permission', m.form).id(m.db.id).where('appid', params.id).promise($);
 		}
 
 		for (let m of diff.rem)
-			await db.remove('op.tbl_app_permission').id(m).where('appid', params.id).promise($);
+			await DATA.remove('op.tbl_app_permission').id(m).where('appid', params.id).promise($);
 
 		FUNC.clearcache('A' + params.id);
 		$.success(params.id);
@@ -99,8 +97,7 @@ NEWACTION('Apps/remove', {
 	params: '*id:UID',
 	action: async function($) {
 		var params = $.params;
-		var db = DB();
-		await db.modify('op.tbl_app', { isprocessed: false, isremoved: true, dtremoved: NOW }).id(params.id).error('@(App not found)').where('isremoved=FALSE').promise($);
+		await DATA.modify('op.tbl_app', { isprocessed: false, isremoved: true, dtremoved: NOW }).id(params.id).error('@(App not found)').where('isremoved=FALSE').promise($);
 		FUNC.clearcache('A' + params.id);
 		$.success(params.id);
 	}
