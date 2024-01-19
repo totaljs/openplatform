@@ -1,8 +1,8 @@
 exports.install = function() {
 	ROUTE('-GET     /*', '#login/index');
-	ROUTE('-POST    /api/login/    *Login   --> login');
-	ROUTE('-POST    /api/reset/    *Login   --> reset');
-	// ROUTE('-POST    /api/create/   *Login   --> create');
+	ROUTE('-POST    /api/login/   --> Login/login');
+	ROUTE('-POST    /api/reset/   --> Login/reset');
+	// ROUTE('-POST    /api/create/  --> Login/create');
 };
 
 ON('ready', function() {

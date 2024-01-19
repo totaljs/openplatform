@@ -61,7 +61,8 @@ main { margin-left: 80px; }
 .ui-iframe-header .close { color: #E73323; font-weight: bold; font-size: 13px !important; }
 .ui-iframe-header .refresh { color: #A0A0A0; font-size: 11px; }
 .ui-iframe-header .detach { color: #A0A0A0; }
-.jc-xs .ui-iframe-header .detach { display: none; }
+.ui-iframe-header .minimalize { color: #A0A0A0; }
+.jc-xs .ui-iframe-header .minimalize, .jc-xs .ui-iframe-header .detach { display: none; }
 .ui-iframe-header .feedback { color: #A0A0A0; font-size: 12px; }
 .ui-iframe-header div i { margin-right: 5px; }
 .ui-iframe-header div { margin: 0 30px 0 0; padding-left: 8px; font-size: 11px; color: #A0A0A0; line-height: 23px; border-radius: 5px 5px 0 0; }

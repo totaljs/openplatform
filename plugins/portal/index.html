@@ -116,7 +116,7 @@
 		common.detach = {};
 		common.windows = [];
 		common.icon = '@{CONF.icon}';
-		common.template = '<ui-component name="content" class="invisible"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}" data-scrollbar="{scrollbar}"></ui-component></ui-component></ui-component>';
+		common.template = '<ui-component name="content" class="invisible"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lminimalize:@(Minimalize);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}" data-scrollbar="{scrollbar}"></ui-component></ui-component></ui-component>';
 
 		ON('@flag showloading', function() {
 			EXEC('-loading/show');

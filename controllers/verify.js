@@ -1,17 +1,17 @@
 const ERR_INVALID = 'Invalid token';
+const SchemaNotification = 'body:String, path:String, icon:Icon, color:Color'.toJSONSchema();
 
 exports.install = function() {
 
 	// 3rd party apps
-	ROUTE('GET    /verify/', verify);
-	ROUTE('POST   /notify/', notify);
+	ROUTE('GET    /verify/',  verify);
+	ROUTE('POST   /notify/',  notify);
 	ROUTE('GET    /session/', session);
 
 };
 
-async function verify() {
+async function verify($) {
 
-	var $ = this;
 	var reqtoken = $.query.token;
 	var restoken = $.headers['x-token'];
 
@@ -30,7 +30,7 @@ async function verify() {
 	// Internal in-memory cache
 	if (MAIN.cache[reqtoken]) {
 		$.status = 200;
-		$.content(MAIN.cache[reqtoken], 'application/json');
+		$.jsonstring(MAIN.cache[reqtoken]);
 		return;
 	}
 
@@ -40,15 +40,13 @@ async function verify() {
 		return;
 	}
 
-	var db = DB();
-	var session = await db.read('op.tbl_app_session').id(reqarr[0]).error('Invalid token session').promise($);
-
+	var session = await DATA.read('op.tbl_app_session').id(reqarr[0]).error('Invalid token session').promise($);
 	if (session.reqtoken !== sign || session.restoken !== restoken) {
 		$.invalid(ERR_INVALID);
 		return;
 	}
 
-	var app = await db.read('op.tbl_app').fields('id,allow,reqtoken,restoken').id(session.appid).error('Invalid token session').promise($);
+	var app = await DATA.read('op.tbl_app').fields('id,allow,reqtoken,restoken').id(session.appid).error('Invalid token session').promise($);
 	if (app.allow && app.allow.length) {
 		if (!app.allow.includes($.ip)) {
 			$.invalid('Not allowed IP address');
@@ -56,7 +54,7 @@ async function verify() {
 		}
 	}
 
-	var user = await db.read('op.tbl_user').fields('id,email,name,photo,sa,gender,reference,language,color,interface,darkmode,sounds,notifications,dtbirth,dtcreated,dtupdated,isonline,isdisabled,isinactive').id(session.userid).where('isremoved=FALSE').error('User not found').promise($);
+	var user = await DATA.read('op.tbl_user').fields('id,email,name,photo,sa,gender,reference,language,color,interface,darkmode,sounds,notifications,dtbirth,dtcreated,dtupdated,isonline,isdisabled,isinactive').id(session.userid).where('isremoved=FALSE').error('User not found').promise($);
 
 	if (user.isdisabled) {
 		$.invalid('User has been disabled');
@@ -69,20 +67,20 @@ async function verify() {
 	}
 
 	var userappid = user.id + app.id;
-	var userapp = await db.read('op.tbl_user_app').fields('notify').id(userappid).promise();
+	var userapp = await DATA.read('op.tbl_user_app').fields('notify').id(userappid).promise();
 
 	if (!userapp) {
 		userapp = FUNC.makenotify(app, user.id);
 		userapp.id = userappid;
 		userapp.appid = session.appid;
 		userapp.userid = user.id;
-		await db.insert('op.tbl_user_app', userapp).promise();
+		await DATA.insert('op.tbl_user_app', userapp).promise();
 	}
 
 	if (!userapp.notify) {
 		userapp = FUNC.makenotify(app, user.id);
 		userapp.dtupdated = NOW;
-		await db.modify('op.tbl_user_app', userapp).id(userappid).promise();
+		await DATA.modify('op.tbl_user_app', userapp).id(userappid).promise();
 	}
 
 	// Clean useless fields
@@ -117,111 +115,34 @@ async function verify() {
 
 		MAIN.cache[reqtoken] = JSON.stringify(user);
 		$.status = 200;
-		$.content(MAIN.cache[reqtoken], 'application/json');
+		$.jsonstring(MAIN.cache[reqtoken]);
 	});
 }
 
-async function notifygroup($) {
-	var data = CONVERT($.body, 'app:String,group:String,permission:String');
-	var db = DATA;
+async function notify($) {
 
-	var app,userapp,users;
-
-	// App notify
-	if(data.app) {
-		app = await db.read('op.tbl_app').where('name', data.app).fields('id,allow,name,icon,color').promise($);
-
-		if(!app) {
-			$.invalid('@(Invalid app)');
-			return;
-		}
-
-		if (app.allow && app.allow.length && app.allow.indexOf($.ip) === -1) {
-			MAIN.cache[reqtokenerr] = 'Not allowed IP address';
-			$.invalid(MAIN.cache[reqtokenerr]);
-			return;
-		}
-
-		userapp = await db.find('op.tbl_user_app').fields('userid,appid,notifytoken,notifications').where('appid', app.id).promise($);
-		var usersid = userapp.map(i=> { return i.userid; });
-		users = await db.find('op.tbl_user').fields('id,name,email').in('id', usersid).promise($);
-	}
-
-	// Group Notify
-	if(data.group) {
-		var group = await db.read('op.tbl_group').where('name', data.group).fields('id,name,icon,color').promise($);
-
-		if(!group || group.isdisabled) {
-			$.invalid('@(Invalid group)');
-			return;
-		}
-
-		if (!group.icon)
-			group.icon = 'ti ti-bullhorn';
-		group.name = TRANSLATOR(DEF.onLocale($.req), '@(To Group)') + ': ' + group.name;
-		app = group;
-
-		var groupusers = await db.find('op.tbl_user_group').fields('userid').where('groupid', group.id).promise($);
-		var usersid = groupusers.map(i=> { return i.userid; });
-		userapp = await db.query('SELECT DISTINCT ON (userid) userid,appid,notifytoken,notifications FROM op.tbl_user_app WHERE userid IN ({0}) AND notifications is TRUE;'.format(PG_ESCAPE(usersid))).promise($);
-		users = await db.find('op.tbl_user').fields('id,name,email').in('id', usersid).promise($);
-	}
-
-	// Role Notify
-	if(data.permission) {
-		var permission = await db.read('op.tbl_app_permission').fields('id,name,appid').where('name', data.permission).promise($);
-
-		if(!permission) {
-			$.invalid('@(Invalid permission name)');
-			return;
-		}
-
-		permission.icon = 'ti ti-bullhorn';
-		permission.name = TRANSLATOR(DEF.onLocale($.req), '@(To role)') + ': ' + permission.name;
-		app = permission;
-
-		userapp = await db.find('op.tbl_user_app').fields('userid,appid,notifytoken,notifications').where('appid', permission.appid).where('notifications', 't').promise($);
-		var usersid = userapp.map(i=> { return i.userid; });
-		users = await db.find('op.tbl_user').fields('id,name,email').in('id', usersid).promise($);
-	}
-
-	if (userapp.length) {
-		for (var i = 0; i < userapp.length; i++) {
-			var user = users.findItem('id', userapp[i].userid);
-
-			userapp[i].user = user.name;
-			userapp[i].email = user.email;
-			userapp[i].name = app.name;
-			userapp[i].icon = app.icon;
-			userapp[i].color = app.color;
-
-			$.status = 200;
-			userapp[i].notifytoken = undefined;
-			//MAIN.cache[reqtoken] = userapp[i];
-			id = makenotification($, db, userapp[i]);
-		}
-		$.success(app.id);
-	} else
-		$.invalid('@(Invalid data)');
-}
-
-async function notify() {
-
-	var $ = this;
 	var reqtoken = $.query.token;
 	var restoken = $.headers['x-token'];
 	var id;
 
-	$.status = 401;
+	$.response.status = 401;
 
 	if (!restoken || !reqtoken) {
 		$.invalid(ERR_INVALID);
 		return;
 	}
 
+	var tmp = SchemaNotification.transform($.body);
+	if (tmp.error) {
+		$.invalid(tmp.error);
+		return;
+	}
+
+	$.body = tmp.response;
+
 	if (MAIN.cache[reqtoken]) {
 		$.status = 200;
-		id = makenotification($, DB(), MAIN.cache[reqtoken]);
+		id = makenotification($, MAIN.cache[reqtoken]);
 		$.success(id);
 		return;
 	}
@@ -241,14 +162,7 @@ async function notify() {
 		return;
 	}
 
-	// If notify meta includes group, app or permission then execute notifygroup.
-	if ($.body.group || $.body.permission || $.body.app) {
-		var notifications = await notifygroup($);
-		return notifications;
-	}
-
-	var db = DB();
-	var userapp = await db.read('op.tbl_user_app').fields('userid,appid,notifytoken,notifications').id(reqarr[0]).promise($);
+	var userapp = await DATA.read('op.tbl_user_app').fields('userid,appid,notifytoken,notifications').id(reqarr[0]).promise($);
 
 	if (!userapp || restoken !== userapp.notifytoken) {
 		MAIN.cache[reqtokenerr] = ERR_INVALID;
@@ -262,7 +176,7 @@ async function notify() {
 		return;
 	}
 
-	var user = await db.read('op.tbl_user').fields('name,email,notifications,isremoved,isconfirmed,isdisabled,isinactive').id(userapp.userid).promise($);
+	var user = await DATA.read('op.tbl_user').fields('name,email,notifications,isremoved,isconfirmed,isdisabled,isinactive').id(userapp.userid).promise($);
 
 	if (!user || user.isremoved || !user.isconfirmed || user.isdisabled || user.isinactive) {
 		MAIN.cache[reqtokenerr] = ERR_INVALID;
@@ -276,7 +190,7 @@ async function notify() {
 		return;
 	}
 
-	var app = await db.read('op.tbl_app').id(userapp.appid).fields('allow,name,icon,color').promise();
+	var app = await DATA.read('op.tbl_app').id(userapp.appid).fields('allow,name,icon,color').promise();
 	if (app.allow && app.allow.length && app.allow.indexOf($.ip) === -1) {
 		MAIN.cache[reqtokenerr] = 'Not allowed IP address';
 		$.invalid(MAIN.cache[reqtokenerr]);
@@ -292,7 +206,8 @@ async function notify() {
 	$.status = 200;
 	userapp.notifytoken = undefined;
 	MAIN.cache[reqtoken] = userapp;
-	id = makenotification($, db, userapp);
+	id = makenotification($, userapp);
+
 	if (id)
 		$.success(id);
 	else
@@ -305,9 +220,9 @@ function makenotificationunread(user) {
 
 NEWPUBLISH('Notifications.create', 'id,userid,appid,body,path,app,user,email,color,icon,dtcreated');
 
-async function makenotification($, db, userapp) {
+async function makenotification($, userapp) {
 
-	var data = CONVERT($.body, 'body:String, path:String, icon:Icon, color:Color');
+	var data = $.body;
 	var model = {};
 
 	model.id = UID();
@@ -320,14 +235,14 @@ async function makenotification($, db, userapp) {
 	model.icon = data.icon || userapp.icon;
 	model.dtcreated = NOW = new Date();
 
-	await db.insert('op.tbl_notification', model).promise();
+	await DATA.insert('op.tbl_notification', model).promise();
 
 	if (model.body)
-		await db.query('UPDATE op.tbl_user SET unread=unread+1 WHERE id={0}'.format(PG_ESCAPE(userapp.userid))).promise();
+		await DATA.query('UPDATE op.tbl_user SET unread=unread+1 WHERE id={0}'.format(PG_ESCAPE(userapp.userid))).promise();
 
 	MAIN.auth.update(model.userid, makenotificationunread);
 
-	if (CONF.allow_tms) {
+	if (CONF.$tms) {
 		model.app = model.name;
 		model.user = userapp.name;
 		model.email = userapp.email;
@@ -338,9 +253,8 @@ async function makenotification($, db, userapp) {
 	return model.id;
 }
 
-async function session() {
+async function session($) {
 
-	var $ = this;
 	var session = $.query.ssid || $.query.openplatformid || $.query.token || $.query.session;
 
 	if (!session) {
@@ -355,7 +269,7 @@ async function session() {
 		return;
 	}
 
-	var user = await DB().query('SELECT b.id,b.language,b.name,b.color,b.sa,a.isonline FROM op.tbl_session a INNER JOIN op.tbl_user b ON b.id=a.userid AND b.isremoved=FALSE AND b.isdisabled=FALSE AND b.isinactive=FALSE WHERE a.id={0} AND dtexpire>=NOW()'.format(PG_ESCAPE(arr[1]))).first().promise($);
+	var user = await DATA.query('SELECT b.id,b.language,b.name,b.color,b.sa,a.isonline FROM op.tbl_session a INNER JOIN op.tbl_user b ON b.id=a.userid AND b.isremoved=FALSE AND b.isdisabled=FALSE AND b.isinactive=FALSE WHERE a.id={0} AND dtexpire>=NOW()'.format(PG_ESCAPE(arr[1]))).first().promise($);
 	if (user)
 		$.json(user);
 	else

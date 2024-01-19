@@ -1,30 +1,28 @@
 exports.install = function() {
 
-	ROUTE('+GET    /logout/  *Account   --> logout');
-	ROUTE('-GET    /auth/    *Account   --> token');
+	ROUTE('+GET    /logout/                           --> Account/logout');
+	ROUTE('-GET    /auth/                             --> Account/token');
 
-	ROUTE('+API    /api/    -session                 *Account   --> session');
-	ROUTE('+API    /api/    -account                 *Account   --> read');
-	ROUTE('+API    /api/    +account_update          *Account   --> update');
-	ROUTE('+API    /api/    -run/{appid}             *Account   --> run');
-	ROUTE('+API    /api/    -apps                    *Account   --> apps');
-	ROUTE('+API    /api/    +reorder                 *Account   --> reorder');
-	ROUTE('+API    /api/    -notifications           *Account   --> notifications');
-	ROUTE('+API    /api/    -notifications_clear     *Account   --> notifications_clear');
-	ROUTE('+API    /api/    -sessions                *Account   --> sessions');
-	ROUTE('+API    /api/    -sessions_remove/{id}    *Account   --> sessions_remove');
-	ROUTE('+API    /api/    +password                *Account   --> password');
-	ROUTE('+API    /api/    +feedback                *Account   --> feedback');
+	ROUTE('+API    /api/    -session                  --> Account/session');
+	ROUTE('+API    /api/    -account                  --> Account/read');
+	ROUTE('+API    /api/    +account_update           --> Account/update');
+	ROUTE('+API    /api/    -run/{appid}              --> Account/run');
+	ROUTE('+API    /api/    -apps                     --> Account/apps');
+	ROUTE('+API    /api/    +reorder                  --> Account/reorder');
+	ROUTE('+API    /api/    -notifications            --> Account/notifications');
+	ROUTE('+API    /api/    -notifications_clear      --> Account/notifications_clear');
+	ROUTE('+API    /api/    -sessions                 --> Account/sessions');
+	ROUTE('+API    /api/    -sessions_remove/{id}     --> Account/sessions_remove');
+	ROUTE('+API    /api/    +password                 --> Account/password');
+	ROUTE('+API    /api/    +feedback                 --> Account/feedback');
 
 	ROUTE('GET     /users/', users);
 
-	ROUTE('POST    /upload/base64/', upload, 1024 * 2);
+	ROUTE('POST    /upload/base64/ <2MB', upload);
 	ROUTE('FILE    /files/*.jpg', files);
 };
 
-async function upload() {
-
-	var $ = this;
+async function upload($) {
 
 	if (BLOCKED($, 20)) {
 		$.invalid(401);
@@ -44,13 +42,19 @@ async function upload() {
 		return;
 	}
 
-	var type = $.body.file.base64ContentType();
+	var file = $.body.file.parseDataURI();
+	if (!file) {
+		$.invalid('Invalid data');
+		return;
+	}
+
+	var type = file.type;
 	if (!type || type !== 'image/jpeg') {
 		$.invalid('Invalid file type');
 		return;
 	}
 
-	var buffer = $.body.file.base64ToBuffer();
+	var buffer = file.buffer;
 	if (!buffer) {
 		$.invalid('Invalid file data');
 		return;
@@ -61,28 +65,26 @@ async function upload() {
 	$.json('/files/' + FUNC.checksum(id) + '.jpg');
 }
 
-function files(req, res) {
+function files($) {
 
-	if (req.split.length !== 2) {
-		res.throw404();
+	if ($.split.length !== 2) {
+		$.invalid(404);
 		return;
 	}
 
-	var id = req.split[1];
+	var id = $.split[1];
 
 	id = id.substring(0, id.lastIndexOf('.'));
 	var arr = id.split('X');
 
 	if (FUNC.checksum(arr[0]) === id)
-		res.filefs('files', arr[0]);
+		$.filefs('files', arr[0]);
 	else
-		res.throw404();
+		$.invalid(404);
 
 }
 
-function users() {
-
-	var $ = this;
+function users($) {
 
 	if (!CONF.allow_token || !CONF.token) {
 		$.invalid('Public API is disabled');
