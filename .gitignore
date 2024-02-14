@@ -5,3 +5,4 @@ debug.pid
 sftp-config.json
 node_modules
 .DS_Store
+/index.js.map
