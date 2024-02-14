@@ -177,7 +177,7 @@ function auth() {
 	};
 
 	MAIN.auth.logout = function($, callback) {
-		DATA.remove('op.tbl_session').id($.session.sessionid).callback(function() {
+		DATA.remove('op.tbl_session').id($.sessionid).callback(function() {
 			options.logout($);
 			callback && callback();
 		});
