@@ -258,6 +258,8 @@
 			var model = exports.model;
 			exports.tapi(QUERIFY('apps_download', { url: model.meta }) + ' @showloading ERROR', function(response) {
 
+				var prevpermissions = model.permissions || EMPTYARRAY;
+
 				model.meta = model.meta;
 				model.url = response.url || 'htpts://';
 				model.permissions = response.permissions || [];
@@ -271,10 +273,9 @@
 				model.allow = response.origin || response.allow;
 
 				for (var m of model.permissions) {
-					if (m.id) {
+					if (m.id)
 						m.value = m.id;
-						m.id = undefined;
-					}
+					m.id = prevpermissions.findValue('value', m.value, 'id', null);
 				}
 
 				if (model.allow)
