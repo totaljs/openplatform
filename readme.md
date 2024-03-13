@@ -45,3 +45,7 @@ docker compose up
 login : info@totaljs.com
 password : admin
 ```
+
+## Good to know
+
+__Don't forget:__ every added third-party app must be assigned to a group.
