@@ -1,4 +1,4 @@
-NEWACTION('Account/ession', {
+NEWACTION('Account/session', {
 	name: 'Read session data',
 	action: async function($) {
 		$.callback($.user);
