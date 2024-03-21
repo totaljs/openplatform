@@ -11,7 +11,7 @@ cp -a ../views/ views
 cp -a ../database.sql database.sql
 
 # cd ..
-total4 --bundle app.bundle
+total5 --bundle app.bundle
 cp app.bundle ../app.bundle
 
 cd ..
