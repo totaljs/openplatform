@@ -15,10 +15,11 @@
 		<script type="text/plain">
 			[
 				{ name: 'id', text: '@(ID)', width: 120, monospace: 1, align: 1, hide: true },
-				{ name: 'name', text: '@(Name)', width: 270, template: '<i class="icon {{ icon }}"{{ if color }} style="color:{{ color }}"{{ fi }}></i>{{ name }}{{ if isdisabled }}<span class="badge badge-silver badge-small ml5">@(disabled)</span>{{ fi }}{{ if isbookmark }}<span class="badge badge-color badge-small ml5">@(bookmark)</span>{{ fi }}' },
+				{ name: 'name', text: '@(Name)', width: 270, template: '<i class="icon {{ icon }}"{{ if color }} style="color:{{ color }}"{{ fi }}></i>{{ name }}{{ if isdisabled }}<span class="badge badge-silver badge-small ml5">@(disabled)</span>{{ fi }}{{ if isbookmark }}<span class="badge badge-color badge-small ml5">@(bookmark)</span>{{ else if isexternal }}<span class="badge badge-yellow badge-small ml5">@(external)</span>{{ fi }}' },
 				{ name: 'notifications', text: '@(Notifications)', width: 120, type: 'boolean', options: '#boolean' },
 				{ name: 'isdisabled', text: '@(Disabled)', width: 120, type: 'boolean', options: '#boolean' },
 				{ name: 'isbookmark', text: '@(Bookmark)', width: 120, type: 'boolean', options: '#boolean' },
+				{ name: 'isexternal', text: '@(External)', width: 120, type: 'boolean', options: '#boolean' },
 				{ name: 'logged', text: '@(Used)', width: 120, type: 'number' },
 				{ name: 'dtlogged', text: '@(Last usage)', align: 1, format: '[ts]', type: 'date' },
 				{ name: 'dtupdated', text: '@(Updated)', align: 1, format: '[date]', type: 'date' },

@@ -34,7 +34,7 @@
 					<ui-component name="tablegrid" path="common.apps" config="countxs:2;countsm:3;countlg:6" class="apps">
 						<script type="text/html">
 							<figure{{ if value.id !== 'setup' }} draggable="true" class="movable" data-id="{{ value.id }}"{{ fi }}>
-								<button class="exec exec3 launchpad" data-exec="common/open" data-exec3="common/app" data-id="{{ value.id }}">{{ if value.isbookmark }}<em class="ti ti-link"></em>{{ fi }}<i class="{{ value.icon }}"{{ if value.color }} style="color:{{ value.color }}"{{ fi }}></i><span>{{ value.name }}</span></button>
+								<button class="exec exec3 launchpad" data-exec="common/open" data-exec3="common/app" data-id="{{ value.id }}">{{ if value.isbookmark }}<em class="ti ti-link"></em>{{ else if value.isexternal }}<em class="ti ti-clone"></em>{{ fi }}<i class="{{ value.icon }}"{{ if value.color }} style="color:{{ value.color }}"{{ fi }}></i><span>{{ value.name }}</span></button>
 							</figure>
 						</script>
 						<script type="text/html">

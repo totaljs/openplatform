@@ -90,9 +90,12 @@
 		<hr />
 
 		<ui-bind path="?.isbookmark" config="hide" class="block">
-			<ui-component name="input" path="?.isnewtab" config="type:checkbox" default="false">@(Allow opening the app in a new tab)</ui-component>
+			<ui-component name="input" path="?.isexternal" config="type:checkbox" default="false">@(Open the app always externally in a new tab)</ui-component>
+			<ui-bind path="?.isexternal" config="disabled" class="block">
+				<ui-component name="input" path="?.isnewtab" config="type:checkbox" default="false">@(Allow opening the app in a new tab)</ui-component>
+				<ui-component name="input" path="?.isscrollbar" config="type:checkbox" default="false">@(Enable explicit scrolling in the iframe)</ui-component>
+			</ui-bind>
 			<ui-component name="input" path="?.notifications" config="type:checkbox" default="true">@(Enable notifications)</ui-component>
-			<ui-component name="input" path="?.isscrollbar" config="type:checkbox" default="false">@(Enable explicit scrolling in the iframe)</ui-component>
 		</ui-bind>
 
 		<ui-component name="input" path="?.isdisabled" config="type:checkbox">@(Disable application)</ui-component>

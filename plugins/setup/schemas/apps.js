@@ -1,10 +1,10 @@
 NEWSCHEMA('@Apps/Permissions', 'id:UID,*name,*value,sortindex:Number');
-NEWSCHEMA('@Apps', '*name,color:Color,icon:Icon,meta:URL,*url:URL,*reqtoken,*restoken,sortindex:Number,notifications:Boolean,isbookmark:Boolean,isnewtab:Boolean,isscrollbar:Boolean,isdisabled:Boolean,permissions:[@Apps/Permissions]');
+NEWSCHEMA('@Apps', '*name,color:Color,icon:Icon,meta:URL,*url:URL,*reqtoken,*restoken,sortindex:Number,notifications:Boolean,isbookmark:Boolean,isnewtab:Boolean,isscrollbar:Boolean,isdisabled:Boolean,isexternal:Boolean,permissions:[@Apps/Permissions]');
 
 NEWACTION('Apps/list', {
 	name: 'List of apps',
 	action: function($) {
-		DATA.find('op.tbl_app').autoquery($.query, 'id:UID,name,color,icon,notifications:Boolean,isbookmark:Boolean,isnewtab:Boolean,isdisabled:Boolean,url:URL,logged:Number,dtlogged:Date,dtcreated:Date,dtupdated:Date', 'name', 1000).where('isremoved=FALSE').callback($);
+		DATA.find('op.tbl_app').autoquery($.query, 'id:UID,name,color,icon,notifications:Boolean,isexternal:Boolean,isbookmark:Boolean,isnewtab:Boolean,isdisabled:Boolean,url:URL,logged:Number,dtlogged:Date,dtcreated:Date,dtupdated:Date', 'name', 1000).where('isremoved=FALSE').callback($);
 	}
 });
 

@@ -51,10 +51,10 @@
 					<p>@(The Total.js Message Service allows you to capture data from the OpenPlatform using the Total.js Flow Visual Programming Interface.)</p>
 
 					<div class="m">
-						<ui-component name="input" path="?.allow_tms" config="type:checkbox" class="b">@(Enable TMS)</ui-component>
+						<ui-component name="input" path="?.$tms" config="type:checkbox" class="b">@(Enable TMS)</ui-component>
 					</div>
 
-					<ui-bind path="?.allow_tms" config="show" class="m block hidden">
+					<ui-bind path="?.$tms" config="show" class="m block hidden">
 						<ui-component name="input" path="?.secret_tms" config="required:1;camouflage:1">@(Access token)</ui-component>
 						<div class="help">
 							<span class="pull-right exec link" data-exec="?/generatetms">@(Generate)</span>

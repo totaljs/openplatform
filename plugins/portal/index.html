@@ -116,7 +116,7 @@
 		common.detach = {};
 		common.windows = [];
 		common.icon = '@{CONF.icon}';
-		common.template = '<ui-component name="content" class="invisible"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lminimalize:@(Minimalize);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}" data-scrollbar="{scrollbar}"></ui-component></ui-component></ui-component>';
+		common.template = '<ui-component name="content" class="invisible2"><ui-component name="detach" path="common.detach.app{id}" config="detach:common/windetach;attach:common/winattach;remove:common/winremove"><ui-component name="iframe" config="lclose:@(Close);ldetach:@(Detach);lminimalize:@(Minimalize);lrefresh:@(Refresh);lfeedback:@(Report a problem)" data-icon="{icon}" data-name="{name}" data-url="{url}" data-scrollbar="{scrollbar}"></ui-component></ui-component></ui-component>';
 
 		ON('@flag showloading', function() {
 			EXEC('-loading/show');
@@ -314,6 +314,11 @@
 							app.html = model.template.arg(app);
 							exports.push('running', app);
 						}
+						return;
+					}
+
+					if (response.isexternal) {
+						W.open(response.url);
 						return;
 					}
 
@@ -578,7 +583,7 @@
 				exports.push('windows', win);
 				iframe.$com.resize();
 
-				el.parent().aclass('invisible');
+				el.parent().aclass('invisible2');
 			};
 
 			exports.winattach = function(children, el) {
@@ -586,7 +591,7 @@
 				var model = exports.model;
 				var id = 'app' + ATTRD(el);
 
-				el.parent().rclass('invisible');
+				el.parent().rclass('invisible2');
 
 				for (var m of children)
 					el[0].appendChild(m);

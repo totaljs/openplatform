@@ -61,7 +61,7 @@ NEWACTION('Account/apps', {
 		FUNC.permissions($.user.id, async function(data) {
 			if (data && data.apps.length) {
 
-				var apps = await DATA.find('op.tbl_app').fields('id,name,icon,color,isnewtab,isbookmark,isscrollbar,sortindex').in('id', data.apps).where('isremoved=FALSE AND isdisabled=FALSE').promise($);
+				var apps = await DATA.find('op.tbl_app').fields('id,name,icon,color,isnewtab,isbookmark,isexternal,isscrollbar,sortindex').in('id', data.apps).where('isremoved=FALSE AND isdisabled=FALSE').promise($);
 				var userapps = await DATA.find('op.tbl_user_app').where('userid', $.user.id).in('appid', data.apps).query('appid IN (SELECT x.id FROM op.tbl_app x WHERE x.isremoved=FALSE AND x.isdisabled=FALSE)').promise($);
 
 				for (var app of userapps) {
@@ -134,7 +134,7 @@ NEWACTION('Account/run', {
 				return;
 			}
 
-			var app = await DATA.read('op.tbl_app').fields('id,url,icon,color,name,reqtoken,restoken,isdisabled,isbookmark').id(params.appid).error('@(App not found)').where('isremoved=FALSE').promise($);
+			var app = await DATA.read('op.tbl_app').fields('id,url,icon,color,name,reqtoken,restoken,isdisabled,isbookmark,isexternal').id(params.appid).error('@(App not found)').where('isremoved=FALSE').promise($);
 
 			if (app.isdisabled) {
 				$.invalid('@(App has been temporary disabled)');
@@ -176,7 +176,7 @@ NEWACTION('Account/run', {
 
 			$.callback(app);
 
-			if (CONF.allow_tms) {
+			if (CONF.$tms) {
 				session.reqtoken = undefined;
 				session.restoken = undefined;
 				session.url = app.url;
