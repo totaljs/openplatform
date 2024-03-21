@@ -46,7 +46,7 @@ async function verify($) {
 		return;
 	}
 
-	var app = await DATA.read('op.tbl_app').fields('id,allow,reqtoken,restoken').id(session.appid).error('Invalid token session').promise($);
+	var app = await DATA.read('op.tbl_app').fields('id,allow,reqtoken,restoken,isexternal').id(session.appid).error('Invalid token session').promise($);
 	if (app.allow && app.allow.length) {
 		if (!app.allow.includes($.ip)) {
 			$.invalid('Not allowed IP address');
@@ -105,6 +105,7 @@ async function verify($) {
 
 		user.permissions = data.permissions[app.id] || EMPTYARRAY;
 		user.groups = data.groups;
+		user.iframe = app.isexternal ? false : true;
 
 		// Compress data
 		for (var key in user) {
