@@ -493,7 +493,7 @@
 
 				opt.items = [];
 
-				if (item.isnewtab)
+				if (item.isnewtab && !item.isexternal)
 					opt.items.push({ id: 'newtab', name: '@(Open in new tab)', icon: 'ti ti-window-alt' });
 
 				if (running) {
