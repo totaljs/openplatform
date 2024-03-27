@@ -63,6 +63,14 @@
 		obj.send(msg);
 	};
 
+	obj.open = function(id, path) {
+		var msg = {};
+		msg.TYPE = 'open';
+		msg.app = id;
+		msg.path = path;
+		obj.send(msg);
+	};
+
 	obj.error = function(body) {
 		var msg = {};
 		msg.TYPE = 'error';

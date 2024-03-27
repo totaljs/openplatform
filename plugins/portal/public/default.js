@@ -420,6 +420,19 @@ $(W).on('message', function(e) {
 			EXEC('common/nextwindow', app.id);
 			break;
 
+		case 'open':
+
+			var open = null;
+			for (var m of common.apps) {
+				if (m.id === msg.app || m.linker === msg.app || m.name === msg.app) {
+					open = m;
+					break;
+				}
+			}
+
+			open && EXEC('common/open', open, msg.path || '');
+			break;
+
 		case 'focus':
 
 			if (!msg.data)
