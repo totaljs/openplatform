@@ -40,7 +40,7 @@ NEWACTION('Users/create', {
 			return;
 		}
 
-		var groups = model.groups;
+		var groups = model.groups || EMPTYARRAY;
 		var iswelcome = model.iswelcome;
 
 		if (model.ispassword)
