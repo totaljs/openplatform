@@ -99,7 +99,7 @@ NEWACTION('Users/update', {
 
 		await DATA.check('op.tbl_user').where('email', model.email).where('id', '<>', params.id).where('isremoved=FALSE').error('@(E-mail address is already used)', true).promise($);
 
-		var groups = model.groups;
+		var groups = model.groups || EMPTYARRAY;
 		var iswelcome = model.iswelcome == true;
 
 		if (model.ispassword)
