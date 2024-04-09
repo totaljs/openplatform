@@ -1,4 +1,4 @@
-NEWSCHEMA('@Group', '*name,color:Color,icon:Icon,permissions:[String]');
+NEWSCHEMA('@Group', '*name,color:Color,icon:Icon,reference,permissions:[String]');
 
 NEWACTION('Groups/list', {
 	name: 'List of groups',
