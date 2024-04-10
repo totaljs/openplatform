@@ -233,6 +233,7 @@
 		exports.submit = function(hide) {
 			var model = exports.form;
 			exports.tapi((model.id ? ('apps_update/' + model.id) : 'apps_create') + ' @showloading', model, ERROR(function() {
+				SETTER('loading/hide');
 				hide();
 				exports.caller && exports.caller.exec('refresh');
 			}));
