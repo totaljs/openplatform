@@ -305,7 +305,7 @@
 
 				exports.tapi('run/{0} ERROR'.format(id), function(response) {
 
-					if (app.isbookmark) {
+					if (app.isbookmark && !response.isexternal) {
 						if (app.isnewtab) {
 							W.open(response.url);
 						} else {
