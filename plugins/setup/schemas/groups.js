@@ -29,7 +29,7 @@ NEWACTION('Groups/create', {
 	input: '@Group',
 	action: async function($, model) {
 
-		var permissions = model.permissions;
+		var permissions = model.permissions || EMPTYARRAY;
 		model.permissions = undefined;
 		model.id = UID();
 		model.dtcreated = NOW;
