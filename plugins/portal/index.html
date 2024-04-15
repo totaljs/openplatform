@@ -81,7 +81,7 @@
 					<script type="text/html">
 						{{ foreach m in value }}
 							{{ if !m.root }}
-							<button title="{{ m.name }}" class="running exec{{ if m.focused }} selected{{ fi }} exec3" data-exec="common/open" data-exec3="common/app" data-id="{{ m.id }}">{{ if m.focused }}<span class="ti ti-circle-alt running"></span>{{ fi }}<i class="{{ m.icon }}"></i></button>
+							<button title="{{ m.name }}" class="running exec{{ if m.focused }} selected{{ fi }} exec3" data-exec="common/open" data-exec3="common/app" data-id="{{ m.id }}">{{ if m.focused }}<span class="ti ti-circle-alt running"></span>{{ fi }}<i class="{{ m.icon }}" {{if m.color}}style="color:{{m.color}};"{{fi}}></i></button>
 							{{ fi }}
 						{{ end }}
 					</script>
@@ -305,7 +305,7 @@
 
 				exports.tapi('run/{0} ERROR'.format(id), function(response) {
 
-					if (app.isbookmark) {
+					if (app.isbookmark && !response.isexternal) {
 						if (app.isnewtab) {
 							W.open(response.url);
 						} else {
