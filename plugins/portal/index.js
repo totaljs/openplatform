@@ -10,30 +10,18 @@ ON('ready', function() {
 
 function index($) {
 
-	var plugins = [];
-
-	for (var key in PLUGINS) {
-		var item = PLUGINS[key];
-		if (item.type == 'portal' && ($.user.sa || !item.visible || item.visible($.user))) {
-			var obj = {};
-			obj.id = item.id;
-			obj.url = '/{0}/'.format(item.id);
-			obj.sortindex = item.position;
-			obj.name = TRANSLATE($.user.language || '', item.name);
-			obj.icon = item.icon;
-			obj.color = item.color;
-			obj.type = item.type;
-			obj.import = item.import;
-			obj.hidden = item.hidden;
-			plugins.push(obj);
-		}
+	if (REG_REDIRECT.test($.url)) {
+		$.redirect('/');
+		return;
 	}
 
-	plugins.quicksort('sortindex');
+	var plugins = [];
 
-	if (REG_REDIRECT.test($.url))
-		$.redirect('/');
-	else
-		$.view('#portal/index',plugins);
+	for (let key in PLUGINS) {
+		let item = PLUGINS[key];
+		item.portal && plugins.push(item.portal);
+	}
 
+	var view = $.view('#portal/index');
+	view.repository.plugins = plugins.length ? plugins.join('\n') : '';
 }

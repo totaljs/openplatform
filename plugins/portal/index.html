@@ -108,10 +108,12 @@
 
 		var common = {};
 
+		common.layout = 'portal';
 		common.volume = 20;
 		common.running = [];
 		common.apps = [];
 		common.open = location.hash.substring(1);
+		common.plugins = PARSE('#pluginsdata');
 		common.paths = {};
 		common.detach = {};
 		common.windows = [];
@@ -127,6 +129,7 @@
 		});
 
 		PLUGIN('common', function(exports) {
+
 			var findiframe = function(item) {
 				var iframe = item.element.find('ui-component[name="iframe"]')[0];
 				if (!iframe)
@@ -533,7 +536,7 @@
 			};
 
 			exports.menu = function() {
-				TOGGLE('?.menu', 10);
+				exports.toggle('menu', 10);
 			};
 
 			exports.errorhandler = function(response) {
@@ -706,6 +709,12 @@
 		});
 
 	</script>
+
+	@{if repository.plugins}
+		<script>
+			@{!repository.plugins}
+		</script>
+	@{fi}
 
 </body>
 </html>
