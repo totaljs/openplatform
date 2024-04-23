@@ -77,7 +77,7 @@ NEWACTION('Groups/update', {
 	action: async function($, model) {
 
 		var params = $.params;
-		var permissions = model.permissions;
+		var permissions = model.permissions || EMPTYARRAY;
 
 		model.permissions = undefined;
 		model.dtupdated = NOW;
