@@ -98,6 +98,7 @@ async function verify($) {
 
 		user.openplatformid = CONF.id;
 		user.openplatform = CONF.url;
+		user.appid = session.appid;
 		user.ssid = FUNC.checksum(session.id + 'X' + session.sessionid);
 
 		if (user.notifications)
@@ -107,16 +108,21 @@ async function verify($) {
 		user.groups = data.groups;
 		user.iframe = app.isexternal ? false : true;
 
-		// Compress data
-		for (var key in user) {
-			var val = user[key];
-			if (val == null || val === '')
-				user[key] = undefined;
-		}
+		$.transform('verify', user, function(err, user) {
 
-		MAIN.cache[reqtoken] = JSON.stringify(user);
-		$.status = 200;
-		$.jsonstring(MAIN.cache[reqtoken]);
+			// Compress data
+			for (var key in user) {
+				var val = user[key];
+				if (val == null || val === '')
+					user[key] = undefined;
+			}
+
+			MAIN.cache[reqtoken] = JSON.stringify(user);
+			$.status = 200;
+			$.jsonstring(MAIN.cache[reqtoken]);
+
+		});
+
 	});
 }
 
@@ -236,6 +242,8 @@ async function makenotification($, userapp) {
 	model.icon = data.icon || userapp.icon;
 	model.dtcreated = NOW = new Date();
 
+	model = await $.transform('notify', model);
+
 	await DATA.insert('op.tbl_notification', model).promise();
 
 	if (model.body)
@@ -271,8 +279,9 @@ async function session($) {
 	}
 
 	var user = await DATA.query('SELECT b.id,b.language,b.name,b.color,b.sa,a.isonline FROM op.tbl_session a INNER JOIN op.tbl_user b ON b.id=a.userid AND b.isremoved=FALSE AND b.isdisabled=FALSE AND b.isinactive=FALSE WHERE a.id={0} AND dtexpire>=NOW()'.format(PG_ESCAPE(arr[1]))).first().promise($);
-	if (user)
+	if (user) {
+		user = await $.transform('session', user);
 		$.json(user);
-	else
+	} else
 		$.invalid('@(Invalid token)');
 }

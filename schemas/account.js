@@ -20,7 +20,6 @@ NEWACTION('Account/read', {
 		profile.isinactive = undefined;
 		profile.isremoved = undefined;
 		profile.isconfirmed = undefined;
-
 		profile.isreset = $.user.isreset;
 
 		if (CONF.welcome) {
@@ -33,6 +32,7 @@ NEWACTION('Account/read', {
 			DATA.modify('op.cl_config', { value: CONF.url }).id('url');
 		}
 
+		profile = await $.transform('profile', profile);
 		$.callback(profile);
 	}
 });
