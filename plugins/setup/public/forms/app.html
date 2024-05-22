@@ -54,13 +54,15 @@
 			<ui-bind path="?" config="track:reqtoken,restoken,id;template">
 				<script type="text/html">
 				<div class="tokens">
-					<div class="token exec" data-exec="?/copytoken">
+					<div class="token exec" data-exec="?/copytoken" data-id="reqtoken">
 						<i class="ti ti-copy"></i>
+						<i class="ti ti-pencil mr5 exec" title="@(Edit token)" data-exec="?/changetoken" data-prevent="true"></i>
 						<span><i class="ti ti-circle-alt color"></i>@(Request token)</span>
 						<code data-hidden="{{ value.reqtoken }}" class="exec" data-prevent="true" data-exec="?/toggle">{{ if value.id }}*******************{{ else }}{{ value.reqtoken }}{{ fi }}</code>
 					</div>
-					<div class="token exec" data-exec="?/copytoken">
+					<div class="token exec" data-exec="?/copytoken" data-id="restoken">
 						<i class="ti ti-copy"></i>
+						<i class="ti ti-pencil mr5 exec" title="@(Edit token)" data-exec="?/changetoken" data-prevent="true"></i>
 						<span><i class="ti ti-circle-alt color"></i>@(Response token)</span>
 						<code data-hidden="{{ value.restoken }}" class="exec" data-prevent="true" data-exec="?/toggle">{{ if value.id }}*******************{{ else }}{{ value.restoken }}{{ fi }}</code>
 					</div>
@@ -290,6 +292,17 @@
 				SETTER('loading/hide');
 				exports.upd();
 			});
+		};
+
+		exports.changetoken = function(el) {
+			var name = ATTRD(el);
+			var model = exports.model;
+			var opt = {};
+			opt.centered = true;
+			opt.name = '@(Change token)';
+			opt.value = model[name];
+			opt.callback = val => exports.set(name + ' @change', val);
+			SETTER('prompt/show', opt);
 		};
 
 	});

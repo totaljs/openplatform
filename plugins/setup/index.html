@@ -23,6 +23,7 @@
 	<ui-component name="LAZY colorpicker"></ui-component>
 	<ui-component name="LAZY notify" config="position:bottom right;timeout:5000"></ui-component>
 	<ui-component name="LAZY menu"></ui-component>
+	<ui-component name="LAZY prompt" config="cancel:@(Cancel);submit:@(OK);zindex:80"></ui-component>
 	<ui-component name="LAZY message"></ui-component>
 	<ui-component name="LAZY clipboard"></ui-component>
 
@@ -47,8 +48,8 @@
 							<a href="/feedback/" class="jR"><i class="ti ti-bug"></i>@(Feedback)</a>
 							<hr />
 							<a href="/users/" class="jR"><i class="ti ti-users"></i>@(Users)</a>
-							<a href="/groups/" class="jR"><i class="ti ti-folder"></i>@(Groups)</a>
 							<a href="/apps/" class="jR"><i class="ti ti-rocket"></i>@(Apps)</a>
+							<a href="/groups/" class="jR"><i class="ti ti-folder"></i>@(Groups)</a>
 						</nav>
 						<ui-bind path="common.plugins" config="show:value.length > 0;template" class="block">
 							<script type="text/html">
