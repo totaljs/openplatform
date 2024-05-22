@@ -94,6 +94,9 @@ async function verify($) {
 	if (!user.language)
 		user.language = CONF.language;
 
+	if (!user.color)
+		user.color = CONF.color;
+
 	FUNC.permissions(user.id, function(data) {
 
 		user.openplatformid = CONF.id;
