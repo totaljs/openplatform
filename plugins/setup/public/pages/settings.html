@@ -133,10 +133,11 @@
 
 		exports.copy = function(el) {
 			var model = exports.model;
-			EXEC('-clipboard/copy', el.text() + '?token=' + model.token);
+			var tms = el.text().slice(0, 2) === 'ws';
+			EXEC('-clipboard/copy', el.text() + '?token=' + (tms ? model.secret_tms : model.token));
 			EXEC('-notify/success', '@(URL address has been copied)');
 		};
-
+		
 		exports.generate = function() {
 			exports.set('token @type:show', GUID(35));
 		};
