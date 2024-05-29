@@ -58,7 +58,7 @@
 						<ui-component name="input" path="?.secret_tms" config="required:1;camouflage:1">@(Access token)</ui-component>
 						<div class="help">
 							<span class="pull-right exec link" data-exec="?/generatetms">@(Generate)</span>
-							<div><i class="ti ti-link"></i><b>@(TMS endpoint):</b> <ui-bind path="location.origin" config="text:value.replace(/^https/, 'wss') + '/$tms/'" class="exec" data-exec="?/copy_tms" style="text-decoration:underline"></ui-bind></div>
+							<div><i class="ti ti-link"></i><b>@(TMS endpoint):</b> <ui-bind path="location.origin" config="text:value.replace(/^https/, 'wss') + '/$tms/'" class="exec" data-exec="?/copy" style="text-decoration:underline"></ui-bind></div>
 						</div>
 					</ui-bind>
 
@@ -133,13 +133,8 @@
 
 		exports.copy = function(el) {
 			var model = exports.model;
-			EXEC('-clipboard/copy', el.text() + '?token=' + model.token);
-			EXEC('-notify/success', '@(URL address has been copied)');
-		};
-
-		exports.copy_tms = function(el) {
-			var model = exports.model;
-			EXEC('-clipboard/copy', el.text() + '?token=' + model.secret_tms);
+			var tms = el.text().slice(0, 2) === 'ws';
+			EXEC('-clipboard/copy', el.text() + '?token=' + (tms ? model.secret_tms : model.token));
 			EXEC('-notify/success', '@(URL address has been copied)');
 		};
 		
