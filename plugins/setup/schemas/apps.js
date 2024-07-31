@@ -60,11 +60,6 @@ NEWACTION('Apps/update', {
 			newpermissions = EMPTYARRAY;
 
 		model.permissions = undefined;
-
-		// Because of generated tokens
-		model.restoken = undefined;
-		model.reqtoken = undefined;
-
 		model.dtupdated = NOW;
 		model.isprocessed = false;
 
