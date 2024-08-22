@@ -15,8 +15,29 @@
 <script>
 
 	PLUGIN(function(exports) {
+
+		var parseQuery = function(url) {
+			var query = {};
+			var index = url.indexOf('?');
+			if (index === -1)
+				return query;
+			var arr = url.substring(index + 1).split('&');
+			for (let kv of arr) {
+				let v = kv.split('=');
+				let key = decodeURIComponent(v[0] || '');
+				let val = decodeURIComponent(v[1] || '');
+				query[key] = val;
+			}
+			return query;
+		};
+
 		exports.submit = function(hide) {
+
 			var form = exports.form;
+
+			// Added support for ?reqtoken=TOKEN&restoken=TOKEN
+			var query = parseQuery(form.url);
+
 			exports.tapi(QUERIFY('apps_download', { url: form.url }) + ' @showloading ERROR', function(response) {
 
 				var model = {};
@@ -27,6 +48,12 @@
 				model.icon = response.icon || 'ti ti-rocket';
 				model.color = response.color || '';
 				model.permissions = response.permissions || [];
+
+				if (query.reqtoken)
+					model.reqtoken = query.reqtoken;
+
+				if (query.restoken)
+					model.restoken = query.restoken;
 
 				if (response.reqtoken)
 					model.reqtoken = response.reqtoken;
@@ -45,11 +72,7 @@
 					}
 				}
 
-				if (model.allow)
-					model.allow = model.allow instanceof Array ? model.allow.join(', ') : model.allow.toString();
-				else
-					model.allow = '';
-
+				model.allow = model.allow ? (model.allow instanceof Array ? model.allow.join(', ') : model.allow.toString()) : '';
 				hide();
 
 				SETTER('loading/hide');
