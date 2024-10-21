@@ -310,7 +310,7 @@
 
 					if (app.isbookmark && !response.isexternal) {
 						if (app.isnewtab) {
-							W.open(response.url);
+							setTimeout(() => W.open(response.url), 5);
 						} else {
 							app = CLONE(app);
 							app.url = response.url;
@@ -321,7 +321,7 @@
 					}
 
 					if (response.isexternal) {
-						W.open(response.url);
+						setTimeout(() => W.open(response.url), 5);
 						return;
 					}
 
@@ -338,7 +338,7 @@
 				var id = ATTRD(el);
 				var app = model.apps.findItem('id', id);
 				app && app.isnewtab && exports.tapi('run/{0} ERROR'.format(id), function(response) {
-					W.open(response.url);
+					setTimeout(() => W.open(response.url), 5);
 				});
 			};
 
