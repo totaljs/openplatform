@@ -172,7 +172,7 @@
 			exports.submit = function() {
 				var model = exports.form;
 				exports.ajax('POST /api/login/ ERROR', model, function(response) {
-					location.href = '/';
+					location.href = QUERIFY('/', NAV.query);
 				});
 			};
 

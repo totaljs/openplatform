@@ -113,6 +113,7 @@
 		common.running = [];
 		common.apps = [];
 		common.open = location.hash.substring(1);
+		common.newtab = '@{CONF.newtab}'.toLowerCase() !== 'false';
 		common.plugins = PARSE('#pluginsdata');
 		common.paths = {};
 		common.detach = {};
@@ -127,6 +128,13 @@
 		ON('@flag hideloading', function() {
 			EXEC('-loading/hide', 1000);
 		});
+
+		function openapp(url) {
+			if (common.newtab)
+				setTimeout(url => W.open(url), 5);
+			else
+				location.href = url;
+		}
 
 		PLUGIN('common', function(exports) {
 
@@ -310,7 +318,7 @@
 
 					if (app.isbookmark && !response.isexternal) {
 						if (app.isnewtab) {
-							setTimeout(() => W.open(response.url), 5);
+							openapp(response.url);
 						} else {
 							app = CLONE(app);
 							app.url = response.url;
@@ -321,7 +329,7 @@
 					}
 
 					if (response.isexternal) {
-						setTimeout(() => W.open(response.url), 5);
+						openapp(response.url);
 						return;
 					}
 
@@ -337,9 +345,7 @@
 				var model = exports.model;
 				var id = ATTRD(el);
 				var app = model.apps.findItem('id', id);
-				app && app.isnewtab && exports.tapi('run/{0} ERROR'.format(id), function(response) {
-					setTimeout(() => W.open(response.url), 5);
-				});
+				app && app.isnewtab && exports.tapi('run/{0} ERROR'.format(id), response => openapp(response.url));
 			};
 
 			exports.close = function(el) {

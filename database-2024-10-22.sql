@@ -1,0 +1,1 @@
+INSERT INTO op.cl_config (id, value, type, name) VALUES('newtab', 'true', 'boolean', 'Open external and bookmarks in new tab/window');

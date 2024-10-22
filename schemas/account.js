@@ -124,7 +124,7 @@ NEWACTION('Account/run', {
 	name: 'Run app',
 	params: '*appid:UID',
 	publish: 'id,sessionid,appid,userid,name,color,icon,user,device,ip,dtcreated:Date,dtexpire:Date',
-	action: async function($) {
+	action: function($) {
 		FUNC.permissions($.user.id, async function(data) {
 
 			var params = $.params;
@@ -142,9 +142,8 @@ NEWACTION('Account/run', {
 			}
 
 			var session = {};
-
 			session.id = Date.now().toString(36) + GUID(10);
-			session.sessionid = $.sessionid;
+			session.sessionid = $.sessionid || $.user.sessionid;
 			session.userid = $.user.id;
 			session.appid = app.id;
 			session.ip = $.ip;

@@ -312,6 +312,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('auth_strict', 'false', 'boolean', 'Strict session'),
 	('$tms', 'false', 'boolean', 'Allow TMS'),
 	('allow_token', 'false', 'boolean', 'Allow API'),
+	('newtab', 'false', 'boolean', 'Open external and bookmarks in new tab/window'),
 	('cdn', 'https://cdn.componentator.com/', 'string', 'CDN'),
 	('color', '#4285F4', 'string', 'Color'),
 	('icon', '', 'string', 'Icon'),

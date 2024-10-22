@@ -27,6 +27,9 @@
 					<div class="m">
 						<ui-component name="input" path="?.url" config="required:1;type:url" default="location.origin">@(URL address)</ui-component>
 					</div>
+					<div class="m">
+						<ui-component name="input" path="?.newtab" config="type:checkbox" default="true">@(Open external and bookmarks in new tab/window)</ui-component>
+					</div>
 
 					<div class="caption m">
 						<label><i class="ti ti-users"></i>@(Allow reading for all users and groups)</label>
@@ -34,7 +37,7 @@
 					<p>@(This configuration allows external apps to read all groups and user profiles through the REST endpoint. The token below must be set in the X-Token header or via "?token=" query parameter.)</p>
 
 					<div class="m">
-						<ui-component name="input" path="?.allow_token" config="type:checkbox" class="b">@(Enable API)</ui-component>
+						<ui-component name="input" path="?.allow_token" config="type:checkbox">@(Enable API)</ui-component>
 					</div>
 
 					<ui-bind path="?.allow_token" config="show" class="m block hidden">
@@ -51,7 +54,7 @@
 					<p>@(The Total.js Message Service allows you to capture data from the OpenPlatform using the Total.js Flow Visual Programming Interface.)</p>
 
 					<div class="m">
-						<ui-component name="input" path="?.$tms" config="type:checkbox" class="b">@(Enable TMS)</ui-component>
+						<ui-component name="input" path="?.$tms" config="type:checkbox">@(Enable TMS)</ui-component>
 					</div>
 
 					<ui-bind path="?.$tms" config="show" class="m block hidden">
@@ -133,11 +136,10 @@
 
 		exports.copy = function(el) {
 			var model = exports.model;
-			var tms = el.text().slice(0, 2) === 'ws';
-			EXEC('-clipboard/copy', el.text() + '?token=' + (tms ? model.secret_tms : model.token));
+			EXEC('-clipboard/copy', el.text() + '?token=' + model.token);
 			EXEC('-notify/success', '@(URL address has been copied)');
 		};
-		
+
 		exports.generate = function() {
 			exports.set('token @type:show', GUID(35));
 		};
