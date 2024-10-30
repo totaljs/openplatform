@@ -4,7 +4,7 @@ NEWSCHEMA('@Apps', '*name,color:Color,icon:Icon,meta:URL,*url:URL,*reqtoken,*res
 NEWACTION('Apps/list', {
 	name: 'List of apps',
 	action: function($) {
-		DATA.find('op.tbl_app').autoquery($.query, 'id:UID,name,color,icon,notifications:Boolean,isexternal:Boolean,isbookmark:Boolean,isnewtab:Boolean,isdisabled:Boolean,url:URL,logged:Number,dtlogged:Date,dtcreated:Date,dtupdated:Date', 'name', 1000).where('isremoved=FALSE').callback($);
+		DATA.find('op.tbl_app').autoquery($.query, 'id:UID,name,url,color,icon,notifications:Boolean,isexternal:Boolean,isbookmark:Boolean,isnewtab:Boolean,isdisabled:Boolean,url:URL,logged:Number,dtlogged:Date,dtcreated:Date,dtupdated:Date', 'name', 1000).where('isremoved=FALSE').callback($);
 	}
 });
 
