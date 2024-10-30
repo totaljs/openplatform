@@ -29,6 +29,7 @@ NEWACTION('Dashboard/stats', {
 
 		data.memory = consumption.memory;
 		data.date = consumption.date;
+		data.clients = MAIN.ws ? MAIN.ws.online : 0;
 
 		$.callback(data);
 	}

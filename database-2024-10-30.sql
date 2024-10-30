@@ -1,0 +1,2 @@
+INSERT INTO op.cl_config (id, value, type, name) VALUES('sync', 'false', 'boolean', 'WebSocket synchronization endpoint for 3rd party apps');
+INSERT INTO op.cl_config (id, value, type, name) VALUES('sync_token', md5(random()::text), 'string', 'WebSocket synchronization token');

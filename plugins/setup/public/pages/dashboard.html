@@ -37,7 +37,7 @@
 							<div><i class="ti ti-microchip mr5"></i>@(Used memory) <b>{{ value.memory }} MB</b></div>
 						</div>
 
-						<div class="grid-3 grid-xs-2">
+						<div class="grid-4 grid-xs-2">
 							<figure style="background-color:#def0c8;border:4px solid #c8e4c1">
 								<div class="icon"><i class="ti ti-users"></i></div>
 								<div class="title">@(<b>Online</b> users)</div>
@@ -52,6 +52,11 @@
 								<div class="icon"><i class="ti ti-envelope"></i></div>
 								<div class="title">@(Open feedback)</div>
 								<div class="number">{{ value.feedback }}</div>
+							</figure>
+							<figure style="background-color:#F0F0F0">
+								<div class="icon"><i class="ti ti-sync"></i></div>
+								<div class="title">@(Subscribers)</div>
+								<div class="number">{{ value.clients }}</div>
 							</figure>
 						</div>
 
