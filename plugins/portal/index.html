@@ -129,8 +129,8 @@
 			EXEC('-loading/hide', 1000);
 		});
 
-		function openapp(url) {
-			if (common.newtab)
+		function openapp(url, contextmenu) {
+			if (contextmenu || common.newtab)
 				setTimeout(url => W.open(url), 5);
 			else
 				location.href = url;
@@ -345,7 +345,7 @@
 				var model = exports.model;
 				var id = ATTRD(el);
 				var app = model.apps.findItem('id', id);
-				app && app.isnewtab && exports.tapi('run/{0} ERROR'.format(id), response => openapp(response.url));
+				app && app.isnewtab && exports.tapi('run/{0} ERROR'.format(id), response => openapp(response.url, true));
 			};
 
 			exports.close = function(el) {
