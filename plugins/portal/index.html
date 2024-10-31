@@ -131,7 +131,7 @@
 
 		function openapp(url, contextmenu) {
 			if (contextmenu || common.newtab)
-				setTimeout(url => W.open(url), 5);
+				setTimeout(url => W.open(url), 5, url);
 			else
 				location.href = url;
 		}
