@@ -44,7 +44,6 @@ function socket($) {
 
 	$.on('message', function(client, message) {
 		if (client.confirmed) {
-			console.log(timeout, message);
 			if (timeout)
 				pending.push({ client: client, text: message });
 			else
