@@ -10,7 +10,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="robots" content="all,follow" />
 	<meta name="apple-mobile-web-app-title" content="@{CONF.name}" />
-	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<link rel="apple-touch-icon" href="@{CONF.icon}" />
 	<link href="@{'%cdn'}/spa.min@19.css" rel="stylesheet" />
 	<script src="@{'%cdn'}/spa.min@19.js"></script>
@@ -316,9 +315,9 @@
 
 				exports.tapi('run/{0} ERROR'.format(id), function(response) {
 
-					if (app.isbookmark && !response.isexternal) {
-						if (app.isnewtab) {
-							openapp(response.url);
+					if (app.isbookmark) {
+						if (app.isexternal || app.isnewtab) {
+							openapp(response.url, app.isnewtab);
 						} else {
 							app = CLONE(app);
 							app.url = response.url;
@@ -329,7 +328,7 @@
 					}
 
 					if (response.isexternal) {
-						openapp(response.url);
+						openapp(response.url, app.isnewtab);
 						return;
 					}
 
