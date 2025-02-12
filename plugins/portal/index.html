@@ -287,9 +287,15 @@
 			};
 
 			exports.open = function(el, path) {
+
 				var model = exports.model;
 				var id = ATTRD(el);
+				var newtab = false;
+
 				exports.set('menu', false);
+
+				if (typeof(path) === 'object')
+					newtab = path.ctrlKey || path.metaKey;
 
 				if (typeof(path) === 'string')
 					model.paths[id] = path;
@@ -317,7 +323,7 @@
 
 					if (app.isbookmark) {
 						if (app.isexternal || app.isnewtab) {
-							openapp(response.url, app.isnewtab);
+							openapp(response.url, app.isnewtab || newtab);
 						} else {
 							app = CLONE(app);
 							app.url = response.url;
@@ -328,7 +334,7 @@
 					}
 
 					if (response.isexternal) {
-						openapp(response.url, app.isnewtab);
+						openapp(response.url, app.isnewtab || newtab);
 						return;
 					}
 
