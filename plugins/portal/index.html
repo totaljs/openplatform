@@ -290,12 +290,8 @@
 
 				var model = exports.model;
 				var id = ATTRD(el);
-				var newtab = false;
 
 				exports.set('menu', false);
-
-				if (typeof(path) === 'object')
-					newtab = path.ctrlKey || path.metaKey;
 
 				if (typeof(path) === 'string')
 					model.paths[id] = path;
@@ -308,6 +304,11 @@
 				var app = model.apps.findItem('id', id);
 				if (!app)
 					return;
+
+				var newtab = false;
+
+				if (typeof(path) === 'object' && (app.isexternal || app.isnewtab))
+					newtab = path.ctrlKey || path.metaKey;
 
 				if (id === 'setup') {
 					var app = model.apps.findItem('id', 'setup');
@@ -333,7 +334,7 @@
 						return;
 					}
 
-					if (response.isexternal) {
+					if (response.isexternal || newtab) {
 						openapp(response.url, app.isnewtab || newtab);
 						return;
 					}
