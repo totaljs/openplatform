@@ -6,7 +6,7 @@
 	<ui-component name="viewbox" path="common.page" config="parent:window;margin:50;scrollbarshadow:1">
 
 		<br />
-		<div style="margin:0 auto;max-width:600px;text-align:left;padding:var(--gap)">
+		<div style="margin:0 auto;max-width:740px;text-align:left;padding:var(--gap)">
 			<div class="panel">
 				<div class="bg-smoke" style="padding:var(--gap);border-radius:var(--radius) var(--radius) 0 0">
 					<div style="margin:10px auto 0;width:150px">
@@ -20,8 +20,13 @@
 						<div class="m">
 							<ui-component name="input" path="?.name" config="required:1">@(Name)</ui-component>
 						</div>
-						<div class="m">
-							<ui-component name="input" path="?.language" config="dirsource:#resources;icon:ti ti-language-alt;dirempty:@(Default)">@(Language)</ui-component>
+						<div class="grid-2">
+							<div class="m">
+								<ui-component name="input" path="?.language" config="dirsource:#resources;icon:ti ti-language-alt;dirempty:@(Default)">@(Language)</ui-component>
+							</div>
+							<div class="m">
+								<ui-component name="input" path="?.color" config="type:color">@(Color)</ui-component>
+							</div>
 						</div>
 					</div>
 					<div class="m">

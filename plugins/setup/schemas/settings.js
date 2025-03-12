@@ -1,7 +1,7 @@
 NEWACTION('Settings/read', {
 	name: 'Read settings',
 	action: async function($) {
-		var items = await DATA.find('op.cl_config').fields('id,value,type').in('id', 'icon,name,url,mail_smtp,mail_smtp_options,language,mail_from,$tms,secret_tms,allow_token,token,newtab,sync,sync_token'.split(',')).promise($);
+		var items = await DATA.find('op.cl_config').fields('id,value,type').in('id', 'icon,name,url,mail_smtp,mail_smtp_options,language,mail_from,$tms,secret_tms,allow_token,token,newtab,sync,sync_token,color'.split(',')).promise($);
 		var model = {};
 
 		for (var m of items) {
@@ -26,7 +26,7 @@ NEWACTION('Settings/read', {
 
 NEWACTION('Settings/save', {
 	name: 'Save settings',
-	input: 'name:String, url:URL, language:Lower, mail_smtp:String, mail_smtp_options:JSON, mail_from:Email, icon:String, $tms:Boolean, secret_tms:String, allow_token:Boolean, token:String, newtab:Boolean, sync:Boolean, sync_token:String',
+	input: 'name:String, url:URL, color:Color, language:Lower, mail_smtp:String, mail_smtp_options:JSON, mail_from:Email, icon:String, $tms:Boolean, secret_tms:String, allow_token:Boolean, token:String, newtab:Boolean, sync:Boolean, sync_token:String',
 	action: async function($, model) {
 
 		for (var key in model)

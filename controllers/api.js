@@ -112,6 +112,8 @@ function users($) {
 
 	db.callback($.successful(function(response) {
 		for (var m of response.users) {
+			if (!m.color)
+				m.color = CONF.color;
 			if (m.photo)
 				m.photo = CONF.url + m.photo;
 		}
