@@ -315,7 +315,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('newtab', 'false', 'boolean', 'Open external and bookmarks in new tab/window'),
 	('cdn', 'https://cdn.componentator.com/', 'string', 'CDN'),
 	('color', '#4285F4', 'string', 'Color'),
-	('icon', '', 'string', 'Icon'),
+	('icon', '/icon.png', 'string', 'Icon'),
 	('id', '{id}', 'string', 'ID'),
 	('language', 'eu', 'string', 'A default language'),
 	('mail_from', '', 'string', 'Sender address'),
