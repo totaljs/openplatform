@@ -7,6 +7,7 @@
 	.emptybody figure button:hover { background-color: #F8F8F8; }
 	.emptybody .meta { height: 100px; display: block; }
 	.emptybody .meta .icon { position: relative; display: inline-block; width: 70px; height: 70px; vertical-align: middle; margin-right: 10px; }
+	.emptybody .meta .icon span { width: 70px; height: 70px; vertical-align: middle; border-radius: 100px; line-height: 68px; font-size: 24px; }
 	.emptybody .meta .icon img { width: 70px; height: 70px; vertical-align: middle; border-radius: 100px; border: 1px solid #F0F0F0; image-rendering: -webkit-optimize-contrast; image-rendering: optimizeQuality; }
 	.emptybody .meta .name { vertical-align: middle; position: relative; display: inline-block; margin-left: 10px; text-align: left; font-size: 12px; color: #777; line-height: 20px; }
 	.emptybody .meta .name > div { font-size: 20px; font-weight: bold; display: block; color: #000; }
@@ -20,7 +21,7 @@
 			<ui-bind path="?" class="meta exec" config="template;changes:1" data-exec="common/settings">
 				<script type="text/html">
 					<div class="icon">
-						<img src="{{ value.icon }}" border="0" />
+						{{ if value.icon }}<img src="{{ value.icon }}" border="0" />{{ else }}{{ value.name | initials }}{{ fi }}
 					</div>
 					<div class="name">
 						@(Account)
@@ -52,7 +53,7 @@
 
 		exports.reload = function() {
 			var model = {};
-			model.icon = user.photo || common.icon;
+			model.icon = '';//user.photo || common.icon;
 			model.name = user.name;
 			exports.set(model);
 		};
