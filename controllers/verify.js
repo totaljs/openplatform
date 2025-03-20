@@ -97,7 +97,7 @@ async function verify($) {
 	if (!user.color)
 		user.color = CONF.color;
 
-	FUNC.permissions(user.id, function(data) {
+	FUNC.permissions(user.id, async function(data) {
 
 		user.openplatformid = CONF.id;
 		user.openplatform = CONF.url;
@@ -108,8 +108,11 @@ async function verify($) {
 			user.notify = userapp.notify;
 
 		user.permissions = data.permissions[app.id] || EMPTYARRAY;
-		user.groups = data.groups;
 		user.iframe = app.isexternal ? false : true;
+		user.groups = await DATA.find('op.tbl_group').fields('id,name').sort('name').promise($);
+
+		for (let m of user.groups)
+			m.selected = data.groups.includes(m.id);
 
 		$.transform('verify', user, function(err, user) {
 
