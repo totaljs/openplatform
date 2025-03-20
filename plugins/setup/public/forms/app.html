@@ -2,8 +2,9 @@
 	.~PATH~ .permissions { font-size: 12px; }
 	.~PATH~ .permissions section > span { float: right; width: 30px; text-align: right; min-height: 24px; }
 	.~PATH~ .permissions section > div { min-height: 17px; line-height: 17px; }
-	.~PATH~ .permissions section > .value { margin-left: 200px; border-left: 1px solid #E0E0E0; padding: 0 10px; outline: 0; }
+	.~PATH~ .permissions section > .value { margin-left: 200px; border-left: 1px solid rgba(0,0,0,0.2); padding: 0 10px; outline: 0; }
 	.~PATH~ .permissions section > .name { float: left; width: 200px; outline: 0; }
+	.~PATH~ .permissions .admin { cursor: default; background-color: rgba(255,115,115,0.2); }
 	.~PATH~ .tokens { padding: 10px; border: 2px solid #E0E0E0; margin: 10px 0; border-radius: var(--radius); background-color: #F8F8F8; }
 	.~PATH~ .tokens i { transform: scale(1); }
 	.~PATH~ .tokens .token { height: 20px; cursor: pointer; }
@@ -125,11 +126,13 @@
 					</figure>
 				{{ fi }}
 				{{ foreach m in value }}
-					<figure data-id="{{ m.id }}">
+					<figure data-id="{{ m.id }}"{{ if m.value === 'admin' }} class="admin"{{ fi }}>
 						<section>
+							{{ if m.value !== 'admin' }}
 							<span class="red exec" data-exec="?/permissionsrem"><i class="ti ti-remove"></i></span>
-							<div class="edit name hellip" data-edit="selectall:1;exec:?/permissionsupd;prop:name">{{ m.name }}</div>
-							<div class="edit value hellip monospace" data-edit="selectall:1;exec:?/permissionsupd;prop:value">{{ m.value }}</div>
+							{{ fi }}
+							<div class="{{ if m.value !== 'admin' }}edit {{ fi }}name hellip" data-edit="selectall:1;exec:?/permissionsupd;prop:name">{{ m.name }}</div>
+							<div class="{{ if m.value !== 'admin' }}edit {{ fi }}value hellip monospace" data-edit="selectall:1;exec:?/permissionsupd;prop:value">{{ m.value }}</div>
 						</section>
 					</figure>
 				{{ end }}
@@ -237,6 +240,10 @@
 
 		exports.submit = function(hide) {
 			var model = exports.form;
+
+			if (!model.permissions.findItem('value', 'admin'))
+				model.permissions.unshift({ name: 'Admin', value: 'admin' });
+
 			exports.tapi((model.id ? ('apps_update/' + model.id) : 'apps_create') + ' @showloading', model, ERROR(function() {
 				SETTER('loading/hide');
 				hide();

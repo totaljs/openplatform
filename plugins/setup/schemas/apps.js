@@ -1,4 +1,4 @@
-NEWSCHEMA('@Apps/Permissions', 'id:UID,*name,*value,sortindex:Number');
+NEWSCHEMA('@Apps/Permissions', 'id,*name,*value,sortindex:Number');
 NEWSCHEMA('@Apps', '*name,color:Color,icon:Icon,meta:URL,*url:URL,*reqtoken,*restoken,sortindex:Number,notifications:Boolean,isbookmark:Boolean,isnewtab:Boolean,isscrollbar:Boolean,isdisabled:Boolean,isexternal:Boolean,permissions:[@Apps/Permissions]');
 
 NEWACTION('Apps/list', {
