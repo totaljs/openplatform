@@ -55,8 +55,12 @@
 		exports.create = function(data) {
 
 			var model = {};
+
 			if (data && !(data instanceof jQuery) && typeof(data) === 'object')
 				model = data;
+
+			if (!model.permissions)
+				model.permissions = [];
 
 			if (!model.reqtoken)
 				model.reqtoken = (Math.random().toString(36).substring(2) + GUID(30)).toLowerCase();

@@ -241,6 +241,9 @@
 		exports.submit = function(hide) {
 			var model = exports.form;
 
+			if (!model.permissions)
+				model.permissions = [];
+
 			if (!model.permissions.findItem('value', 'admin'))
 				model.permissions.unshift({ name: 'Admin', value: 'admin' });
 
