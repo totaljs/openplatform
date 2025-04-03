@@ -109,10 +109,16 @@ async function verify($) {
 
 		user.permissions = data.permissions[app.id] || EMPTYARRAY;
 		user.iframe = app.isexternal ? false : true;
-		user.groups = await DATA.find('op.tbl_group').fields('id,name').sort('name').promise($);
+		user.groups = data.groups;
 
-		for (let m of user.groups)
-			m.selected = data.groups.includes(m.id);
+		user.platform = {};
+
+		if (CONF.icon)
+			user.platform.logo = CONF.url + CONF.icon;
+
+		user.platform.name = CONF.name;
+		user.platform.groups = await DATA.find('op.tbl_group').fields('id,name').sort('name').promise($);
+		user.platform.apps = await DATA.find('op.tbl_app').fields('id,name,icon,color,reference').sort('name').where('isremoved=FALSE and isdisabled=FALSE').in('id', data.apps).promise($);
 
 		$.transform('verify', user, function(err, user) {
 
