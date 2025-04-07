@@ -91,7 +91,6 @@ COMPONENT('content', 'marginleft:15;marginright:15;margintop:15;marginbottom:70;
 
 });
 
-
 // Modified
 COMPONENT('parts', 'parent:auto;margin:0', function(self, config, cls) {
 
