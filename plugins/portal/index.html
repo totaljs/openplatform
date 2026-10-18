@@ -150,8 +150,17 @@
 					exports.refresh_account();
 			});
 
+			function updateaccount(response) {
+				var unread = W.user ? W.user.unread || 0 : 0;
+
+				SET('user', response);
+
+				if (response.unread && response.unread != unread)
+					EXEC('-sounds/play', 'notifications');
+			}
+
 			exports.refresh_account = function() {
-				TAPI('account ERROR', 'user');
+				exports.tapi('account ERROR', updateaccount);
 			};
 
 			exports.feedback = function(id) {
@@ -166,16 +175,7 @@
 			exports.refresh = function(callback) {
 				exports.tapi('account ERROR', function(response) {
 
-					var tmp = W.user || {};
-
-					SET('user', response);
-
-					if (response.unread) {
-						if (!tmp.unread)
-							tmp.unread = 0;
-						if (response.unread != tmp.unread)
-							EXEC('-sounds/play', 'notifications');
-					}
+					updateaccount(response);
 
 					exports.tapi('apps ERROR', function(response) {
 
