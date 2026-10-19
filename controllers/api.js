@@ -29,7 +29,8 @@ async function upload($) {
 		return;
 	}
 
-	if (!$.user && $.query.token !== CONF.servicetoken) {
+	// Without a session the service token is required, and it has to be configured
+	if (!$.user && (!CONF.servicetoken || $.query.token !== CONF.servicetoken)) {
 		$.invalid(401);
 		return;
 	}
