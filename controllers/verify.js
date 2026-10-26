@@ -27,10 +27,12 @@ async function verify($) {
 		return;
 	}
 
-	// Internal in-memory cache
-	if (MAIN.cache[reqtoken]) {
+	// Internal in-memory cache: it answers only the caller that sends the same secrets as the session
+	var cachekey = 'verify|' + reqtoken;
+	var cached = MAIN.cache[cachekey];
+	if (cached && cached.sign === sign && cached.restoken === restoken) {
 		$.status = 200;
-		$.jsonstring(MAIN.cache[reqtoken]);
+		$.jsonstring(cached.value);
 		return;
 	}
 
@@ -129,9 +131,10 @@ async function verify($) {
 					user[key] = undefined;
 			}
 
-			MAIN.cache[reqtoken] = JSON.stringify(user);
+			var value = JSON.stringify(user);
+			MAIN.cache[cachekey] = { sign: sign, restoken: restoken, value: value };
 			$.status = 200;
-			$.jsonstring(MAIN.cache[reqtoken]);
+			$.jsonstring(value);
 
 		});
 

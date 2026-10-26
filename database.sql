@@ -326,6 +326,7 @@ INSERT INTO "op"."cl_config" ("id", "value", "type", "name") VALUES
 	('saltchecksum', '{saltchecksum}', 'string', 'Salf for checksums'),
 	('secret', '{secret}', 'string', 'Secret for tokens'),
 	('secret_tms', '{tms}', 'string', 'TMS token'),
+	('servicetoken', md5(random()::text), 'string', 'Service token for the upload of images without a session'),
 	('sync', 'false', 'boolean', 'WebSocket synchronization endpoint for 3rd party apps'),
 	('sync_token', md5(random()::text), 'string', 'WebSocket synchronization token'),
 	('token', '{maintoken}', 'string', 'Secret token'),
